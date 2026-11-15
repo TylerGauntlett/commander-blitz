@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "karametra_god_of_harvests",
+    "name": "Karametra, God of Harvests",
+    "oracle_text": "Indestructible\nAs long as your devotion to green and white is less than seven, Karametra isn't a creature.\nWhenever you cast a creature spell, you may search your library for a Forest or Plains card, put it onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{3}{G}{W}",
+    "types": ["Enchantment", "Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["God"],
+    "power": 6,
+    "toughness": 7,
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "keywords": ["indestructible"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as your devotion to green and white is less than seven, Karametra isn't a creature.",
+        "effect": "set_types",
+        "affects": {"self_only": true},
+        "types": ["Enchantment"],
+        "condition": {
+          "cmp": "<",
+          "left": {"mana_symbols": {"objects": {"controller": "you", "zone": "battlefield"}, "of": ["G", "W"]}},
+          "right": {"const": 7}
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a creature spell, you may search your library for a Forest or Plains card, put it onto the battlefield tapped, then shuffle.",
+        "trigger": {"event": "spell_cast", "controller": "you", "filter": {"types": ["Creature"]}},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Search your library for a Forest or Plains card?",
+            "effects": [
+              {
+                "op": "search_library",
+                "player": "you",
+                "count": 1,
+                "selector": {"subtypes": ["Forest", "Plains"]},
+                "destination": "battlefield",
+                "tapped": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

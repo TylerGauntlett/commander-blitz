@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "kruphix_god_of_horizons",
+    "name": "Kruphix, God of Horizons",
+    "oracle_text": "Indestructible\nAs long as your devotion to green and blue is less than seven, Kruphix isn't a creature.\nYou have no maximum hand size.\nIf you would lose unspent mana, that mana becomes colorless instead.",
+    "mana_cost": "{3}{G}{U}",
+    "types": ["Enchantment", "Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["God"],
+    "power": 4,
+    "toughness": 7,
+    "colors": ["G", "U"],
+    "color_identity": ["G", "U"],
+    "keywords": ["indestructible"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "set_types",
+        "affects": {"self_only": true},
+        "types": ["Enchantment"],
+        "condition": {
+          "cmp": "<",
+          "left": {"mana_symbols": {"objects": {"controller": "you", "zone": "battlefield"}, "of": ["G", "U"]}},
+          "right": {"const": 7}
+        },
+        "text": "As long as your devotion to green and blue is less than seven, Kruphix isn't a creature."
+      },
+      {
+        "kind": "static",
+        "effect": "no_hand_limit",
+        "affects_player": "you",
+        "text": "You have no maximum hand size."
+      },
+      {
+        "kind": "static",
+        "effect": "mana_becomes_colorless",
+        "affects_player": "you",
+        "text": "If you would lose unspent mana, that mana becomes colorless instead."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
