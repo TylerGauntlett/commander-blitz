@@ -16368,6 +16368,14 @@
   "regathan_firecat": {
     "zone": "battlefield"
   },
+  "regisaur_alpha": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "dinosaur_3_3_g_trample"
+    },
+    "zone": "battlefield"
+  },
   "rejoin_the_fight": {
     "hand_size": {
       "0": 1
@@ -21320,6 +21328,10 @@
   "thundering_giant": {
     "zone": "battlefield"
   },
+  "thundering_spineback": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thundering_tanadon": {
     "zone": "battlefield"
   },
@@ -21544,6 +21556,16 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "topiary_stomper": {
+    "battlefield_count": 34,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "battlefield"
   },

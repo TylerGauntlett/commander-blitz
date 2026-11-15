@@ -195827,6 +195827,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Dinosaur"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Dinosaurs you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "dinosaur_3_3_g_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 3/3 green Dinosaur creature token with trample.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "regisaur_alpha",
+      "mana_cost": "{3}{R}{G}",
+      "name": "Regisaur Alpha",
+      "oracle_text": "Other Dinosaurs you control have haste.\nWhen this creature enters, create a 3/3 green Dinosaur creature token with trample.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -256968,6 +257026,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Dinosaur"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Dinosaurs you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dinosaur_3_3_g_trample"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{G}: Create a 3/3 green Dinosaur creature token with trample."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thundering_spineback",
+      "mana_cost": "{5}{G}{G}",
+      "name": "Thundering Spineback",
+      "oracle_text": "Other Dinosaurs you control get +1/+1.\n{5}{G}: Create a 3/3 green Dinosaur creature token with trample. (It can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -259724,6 +259839,108 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "This creature can't attack or block unless you control seven or more lands."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            }
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't attack or block unless you control seven or more lands."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "topiary_stomper",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "name": "Topiary Stomper",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)\nWhen this creature enters, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nThis creature can't attack or block unless you control seven or more lands.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Plant",
+        "Dinosaur"
       ],
       "toughness": 4,
       "types": [

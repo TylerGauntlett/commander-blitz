@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **342** capabilities.
+**399 cards** blocked by **348** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,6 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
+| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 2 | 1052 | static_effect |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -72,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
-| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -119,6 +119,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [combat-damage-batch-amount](#combat-damage-batch-amount) | 1 | 1956 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -126,6 +127,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
+| [cost-reduction-if-all-targets-match](#cost-reduction-if-all-targets-match) | 1 | 8292 | value |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
@@ -134,6 +136,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
+| [dealt-damage-batched-per-subject](#dealt-damage-batched-per-subject) | 1 | 2617 | trigger_event |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -144,6 +147,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
+| [double-triggers-dealt-damage-cause](#double-triggers-dealt-damage-cause) | 1 | 8292 | static_effect |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -297,6 +301,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
+| [reveal-from-hand-cost](#reveal-from-hand-cost) | 1 | 5370 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
@@ -308,6 +313,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
+| [shares-a-creature-type-with-a-permanent](#shares-a-creature-type-with-a-permanent) | 1 | 2179 | selector |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -1017,6 +1023,24 @@ Blocks **2** cards.
 
 </details>
 
+## add-mana-on-tap-any-color
+
+Blocks **2** cards.
+
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip. Here combined with tapped_permanent {types: ["Land"]}, affects_player "you" and condition {is_monarch: ...}
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {types: [Land]} and an is_monarch static condition covers the trigger and the 'while you're the monarch' clause, but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; player_statics._mana_added parses a literal and runs inside cost payment where no choice can be asked. A fixed '{G}' would be a different, narrower card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fertile Ground** (rank 1052) — `fertile_ground`
+  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
+- **Regal Behemoth** (rank 2390) — `regal_behemoth`
+  - Whenever you tap a land for mana while you're the monarch, add an additional one mana of any color.
+
+</details>
+
 ## all-creature-types
 
 Blocks **2** cards.
@@ -1686,20 +1710,6 @@ Blocks **1** card.
 
 </details>
 
-## add-mana-on-tap-any-color
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fertile Ground** (rank 1052) — `fertile_ground`
-  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
-
-</details>
-
 ## additional-cost-target
 
 Blocks **1** card.
@@ -2356,6 +2366,20 @@ Blocks **1** card.
 
 </details>
 
+## combat-damage-batch-amount
+
+Blocks **1** card.
+
+- **(value)** a value reading the total combat damage that the creatures bound by a batched creatures_deal_combat_damage trigger (narrowed by its filter, per damaged player under per_player) dealt to that player in this damage step, usable as create_token power/toughness
+  <br>Why the existing vocabulary won't do: The CREATURES_DEALT_COMBAT_DAMAGE payload built by combat._fire_damage_batch carries only damagers, damaged, damaged_battles and hits (oid lists), no amounts, so {"binding": "amount"} is unbound on it; damage_dealt_to_this_turn / damage_taken_this_turn count the whole turn and every source, not just the trample creatures in this batch. Secondary: _matching_damagers checks the filter against the printed face, so a creature granted trample would not count as 'with trample'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Quartzwood Crasher** (rank 1956) — `quartzwood_crasher`
+  - Whenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player.
+
+</details>
+
 ## companion
 
 Blocks **1** card.
@@ -2453,6 +2477,21 @@ Blocks **1** card.
 
 - **Sentry Bot** (rank 9998) — `sentry_bot`
   - This spell costs {1} less to cast for each creature attacking you.
+
+</details>
+
+## cost-reduction-if-all-targets-match
+
+Blocks **1** card.
+
+- **(value)** an activated ability's mana_reduction gated on its chosen targets where EVERY object target (here both fight targets) must match the filter (Creature, controller you), not just any one of them
+  <br>Why the existing vocabulary won't do: The `targeting` gate (cost_reduction.own_reduction / ability_cost_reduction) is true when ANY object target matches; since the first fight target is always a creature you control, any-match would discount every activation. It is also documented for a card's own spell cost_reduction, not for an activated ability's cost.mana_reduction
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wayta, Trainer Prodigy** (rank 8292) — `wayta_trainer_prodigy`
+  - {2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.
+  - If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
 
 </details>
 
@@ -2567,6 +2606,20 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+
+</details>
+
+## dealt-damage-batched-per-subject
+
+Blocks **1** card.
+
+- **(trigger_event)** A `dealt_damage` trigger watching OTHER permanents (filter: Dinosaur you control) that batches simultaneous damage per damaged permanent: one firing per Dinosaur per damage event, `subject` that Dinosaur and `amount` the total damage dealt to it by every source at once (two blockers on one Dinosaur = one trigger for the sum; a sweeper hitting three Dinosaurs = three triggers, each with its own amount and subject).
+  <br>Why the existing vocabulary won't do: `batched: true` keys the batch by (permanent, ability, batch) in `triggers._collect_one`, not by subject, so a sweeper hitting several Dinosaurs folds them into ONE firing whose subject is the first Dinosaur and whose amount is the sum of all of them (`_joins_batched_damage`). Without `batched`, the trigger fires once per DAMAGE_DEALT, which `damage_permanent` emits per source, so a Dinosaur blocked by two creatures triggers twice with split amounts and can split the damage between two targets, which the printed single trigger cannot. Boros Reckoner's self-only batched form is right only because its subject is always the same permanent.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wrathful Raptors** (rank 2617) — `wrathful_raptors`
+  - Whenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur.
 
 </details>
 
@@ -2711,6 +2764,21 @@ Blocks **1** card.
 
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
+
+</details>
+
+## double-triggers-dealt-damage-cause
+
+Blocks **1** card.
+
+- **(static_effect)** a double_triggers cause clause meaning 'a creature you control being dealt damage': only the permanent half of DAMAGE_DEALT (to='permanent') whose victim (oid) is a creature you control counts as the cause
+  <br>Why the existing vocabulary won't do: double_triggers with cause_events ['dealt_damage'] + cause_filter {types: Creature, controller: you} loads, but triggers._cause_matches never applies EVENT_HALVES, and on the player half of DAMAGE_DEALT (no oid) _subject_oid falls through to event.source, the dealer -- so your creature dealing damage to a player would also double triggers, which is wider than the printed line. Needs _cause_matches to honour _half_matches (or a dedicated flag like cause_combat_damage_to_player)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wayta, Trainer Prodigy** (rank 8292) — `wayta_trainer_prodigy`
+  - {2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.
+  - If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.
 
 </details>
 
@@ -4905,6 +4973,20 @@ Blocks **1** card.
 
 </details>
 
+## reveal-from-hand-cost
+
+Blocks **1** card.
+
+- **(cost)** a cost node that reveals N cards matching a selector from the payer's own hand without moving them (the source spell excluded, 601.2a), usable as one option of additional_cost_options beside a {1} mana option -- the Ixalan 'reveal a Dinosaur/Dragon card from your hand or pay {1}' cycle
+  <br>Why the existing vocabulary won't do: behold is the closest cost and does reveal from hand, but its pool always also includes matching permanents you control, so a Dinosaur on the battlefield would wrongly pay it; exile_from_hand and discard move the card, which the printed cost does not
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thunderherd Migration** (rank 5370) — `thunderherd_migration`
+  - As an additional cost to cast this spell, reveal a Dinosaur card from your hand or pay {1}.
+
+</details>
+
 ## reveal-secret-choice
 
 Blocks **1** card.
@@ -5061,6 +5143,20 @@ Blocks **1** card.
 
 - **Preston Garvey, Minuteman** (rank 12594) — `preston_garvey_minuteman`
   - At the beginning of combat on your turn, create a green Aura enchantment token named Settlement attached to up to one target land you control. It has enchant land and "Enchanted land has '{T}: Add one mana of any color.'"
+
+</details>
+
+## shares-a-creature-type-with-a-permanent
+
+Blocks **1** card.
+
+- **(selector)** a library-card selector clause matching a card that shares a creature type with ANY creature matching a filter (here: a creature you control), e.g. shares_a_creature_type_with: {"types": ["Creature"], "controller": "you"}, usable in look_at_top's objects so look_at_top {amount 1, cast_free, rest_to_bottom} with a reveal says the whole sentence
+  <br>Why the existing vocabulary won't do: The selector key shares_a_creature_type_with compares against exactly one object -- "self" or a single-oid binding (selectors._bound_oid ignores list bindings such as reveal's or look_at_top's `as`) -- so it cannot test against the union of creature types of every creature you control. The only free cast from the library that also bottoms a declined card is look_at_top's cast_free + rest_to_bottom, whose pool is filtered by that selector. Inverting it (if + exists over creatures you control sharing a type with the revealed card) fails because the revealed card's binding is a list, and cast_card pays the mana cost rather than casting free. for_each over your creatures would offer the cast repeatedly and is not the printed sentence.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Descendants' Path** (rank 2179) — `descendants_path`
+  - At the beginning of your upkeep, reveal the top card of your library. If it's a creature card that shares a creature type with a creature you control, you may cast it without paying its mana cost. If you don't cast it, put it on the bottom of your library.
 
 </details>
 

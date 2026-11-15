@@ -1,0 +1,25 @@
+{
+  "card_id": "wayta_trainer_prodigy",
+  "name": "Wayta, Trainer Prodigy",
+  "oracle_text": "Haste\n{2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.\nIf a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+  "blocked_sentences": [
+    "{2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.",
+    "If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_if_all_targets_match",
+      "kind": "value",
+      "what": "an activated ability's mana_reduction gated on its chosen targets where EVERY object target (here both fight targets) must match the filter (Creature, controller you), not just any one of them",
+      "why_existing_wont_do": "The `targeting` gate (cost_reduction.own_reduction / ability_cost_reduction) is true when ANY object target matches; since the first fight target is always a creature you control, any-match would discount every activation. It is also documented for a card's own spell cost_reduction, not for an activated ability's cost.mana_reduction"
+    },
+    {
+      "capability": "double_triggers_dealt_damage_cause",
+      "kind": "static_effect",
+      "what": "a double_triggers cause clause meaning 'a creature you control being dealt damage': only the permanent half of DAMAGE_DEALT (to='permanent') whose victim (oid) is a creature you control counts as the cause",
+      "why_existing_wont_do": "double_triggers with cause_events ['dealt_damage'] + cause_filter {types: Creature, controller: you} loads, but triggers._cause_matches never applies EVENT_HALVES, and on the player half of DAMAGE_DEALT (no oid) _subject_oid falls through to event.source, the dealer -- so your creature dealing damage to a player would also double triggers, which is wider than the printed line. Needs _cause_matches to honour _half_matches (or a dedicated flag like cause_combat_damage_to_player)"
+    }
+  ],
+  "closest_existing": ["double_triggers", "ability_cost_reduction", "fight"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "wrathful_raptors",
+  "name": "Wrathful Raptors",
+  "oracle_text": "Trample\nWhenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur.",
+  "blocked_sentences": [
+    "Whenever a Dinosaur you control is dealt damage, it deals that much damage to any target that isn't a Dinosaur."
+  ],
+  "needs": [
+    {
+      "capability": "dealt_damage_batched_per_subject",
+      "kind": "trigger_event",
+      "what": "A `dealt_damage` trigger watching OTHER permanents (filter: Dinosaur you control) that batches simultaneous damage per damaged permanent: one firing per Dinosaur per damage event, `subject` that Dinosaur and `amount` the total damage dealt to it by every source at once (two blockers on one Dinosaur = one trigger for the sum; a sweeper hitting three Dinosaurs = three triggers, each with its own amount and subject).",
+      "why_existing_wont_do": "`batched: true` keys the batch by (permanent, ability, batch) in `triggers._collect_one`, not by subject, so a sweeper hitting several Dinosaurs folds them into ONE firing whose subject is the first Dinosaur and whose amount is the sum of all of them (`_joins_batched_damage`). Without `batched`, the trigger fires once per DAMAGE_DEALT, which `damage_permanent` emits per source, so a Dinosaur blocked by two creatures triggers twice with split amounts and can split the damage between two targets, which the printed single trigger cannot. Boros Reckoner's self-only batched form is right only because its subject is always the same permanent."
+    }
+  ],
+  "closest_existing": ["dealt_damage", "batched", "source_object"],
+  "confidence": "high"
+}

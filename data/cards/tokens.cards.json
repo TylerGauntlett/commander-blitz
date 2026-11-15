@@ -947,6 +947,54 @@
       "is_token": true
     },
     {
+      "id": "dinosaur_3_3_g_trample",
+      "name": "Dinosaur Token",
+      "oracle_text": "3/3 green Dinosaur creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "trample"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "dinosaur_beast_x_x_g_trample",
+      "name": "Dinosaur Beast Token",
+      "oracle_text": "X/X green Dinosaur Beast creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dinosaur",
+        "Beast"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "keywords": [
+        "trample"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "dragon_4_4_r_flying",
       "name": "Dragon Token",
       "oracle_text": "4/4 red Dragon creature token with flying.",

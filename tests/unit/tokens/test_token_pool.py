@@ -2890,3 +2890,39 @@ class TestSophiasTinyIsALegendaryDogDetective:
     def test_the_near_misses_are_still_separate(self, pool):
         assert not pool.get("wolf_2_2_g").keywords
         assert (pool.get("dog_1_1_w").power, pool.get("dog_1_1_w").toughness) == (1, 1)
+
+
+class TestTheGreenDinosaursAreTramplers:
+    """Regisaur Alpha and Thundering Spineback: *"create a **3/3 green
+    Dinosaur** creature token with **trample**"*; Quartzwood Crasher: *"create
+    an **X/X green Dinosaur Beast** creature token with **trample**"*.
+
+    The pool's only Dinosaur was `dinosaur_3_1_r`, a red 3/1 with no keyword,
+    and its 3/3 green tramplers were other creature types. Both cards care
+    about the subtype -- Regisaur Alpha grants haste to *other Dinosaurs*, the
+    Spineback pumps them -- so a near miss would change what the cards do.
+    """
+
+    def test_the_three_three_is_a_green_dinosaur_with_trample(self, pool):
+        token = pool.get("dinosaur_3_3_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert list(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Dinosaur"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_x_x_is_a_green_dinosaur_beast_with_trample(self, pool):
+        token = pool.get("dinosaur_beast_x_x_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Beast", "Dinosaur"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_red_dinosaur_is_still_a_separate_token(self, pool):
+        other = pool.get("dinosaur_3_1_r")
+        assert (other.power, other.toughness) == (3, 1)
+        assert list(other.colors) == ["R"]
+        assert not other.keywords

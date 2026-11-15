@@ -219232,12 +219232,12 @@
     },
     "Regisaur Alpha": {
       "edhrec_rank": 2474,
-      "gate": "template",
+      "gate": null,
       "name": "Regisaur Alpha",
-      "reason": "no template for: Other Dinosaurs you control have haste",
+      "reason": "",
       "scryfall_id": "38a51e82-cbfc-4487-9a81-6e793e93f545",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Regna's Sanction": {
@@ -286292,12 +286292,12 @@
     },
     "Thundering Spineback": {
       "edhrec_rank": 8454,
-      "gate": "template",
+      "gate": null,
       "name": "Thundering Spineback",
-      "reason": "no template for: Other Dinosaurs you control get +1/+1",
+      "reason": "",
       "scryfall_id": "51269cfb-e4a9-4dc2-a412-8fc1664f465e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thundering Tanadon": {
@@ -289342,12 +289342,12 @@
     },
     "Topiary Stomper": {
       "edhrec_rank": 1222,
-      "gate": "template",
+      "gate": null,
       "name": "Topiary Stomper",
-      "reason": "no template for: This creature can't attack or block unless you control seven or more lands",
+      "reason": "",
       "scryfall_id": "420a077c-1660-4921-9c0c-724ca8e33916",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Topography Tracker": {
