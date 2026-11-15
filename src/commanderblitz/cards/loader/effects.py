@@ -907,6 +907,17 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
             f"{where}: a delayed_trigger watches an event, and {STATE_TRIGGER!r} "
             f"is a printed state trigger's, not one"
         )
+    if event == "deals_damage":
+        # One firing per damage event, its recipients folded together, is done
+        # against the queued trigger of a hosting permanent
+        # (`triggers._joins_damage_dealt`). A delayed subscription is armed
+        # per DAMAGE_DEALT instead, so a trampler would fire it twice and
+        # "that much" would read one recipient's share.
+        raise DslError(
+            f"{where}: 'deals_damage' groups a damage event's recipients into one "
+            f"firing, which only a printed trigger does; a delayed_trigger would "
+            f"fire once per recipient"
+        )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:
         raise DslError(

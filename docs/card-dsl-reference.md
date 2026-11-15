@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 58 |
+| [Trigger events](#trigger-events) | 59 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 98 |
 | [Player-wide statics](#player-wide-statics) | 48 |
@@ -481,6 +481,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage` | `creature_dealt_combat_damage` | A creature deals combat damage to anything. | ["…deals combat damage", to anything — deals_combat_damage](card-dsl.md#deals-combat-damage-to-anything--deals_combat_damage) |
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
+| `deals_damage` | `damage_dealt` | A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer. | ["Whenever this creature deals damage" — deals_damage](card-dsl.md#whenever-this-creature-deals-damage--deals_damage) |
 | `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
@@ -1206,7 +1207,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `creatures_attacked_player` | `creatures_attack_player` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_dealt_combat_damage` | `creatures_deal_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `cycled` | `cycle` |  | [Triggers](card-dsl.md#triggers) |
-| `damage_dealt` | `dealt_damage` `deals_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
+| `damage_dealt` | `dealt_damage` `deals_damage_to_player` `deals_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `damage_prevented` | `damage_prevented` |  | [Triggers](card-dsl.md#triggers) |
 | `dice_rolled` |  |  | [Triggers](card-dsl.md#triggers) |
 | `dies` | `dies` `creature_dies` |  | [Triggers](card-dsl.md#triggers) |

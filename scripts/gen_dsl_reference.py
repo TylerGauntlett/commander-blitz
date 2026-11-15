@@ -855,6 +855,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "deals_combat_damage_to_planeswalker": ("A creature deals combat damage to a planeswalker.",
                                             '"…deals combat damage to a player or planeswalker"'),
     "deals_combat_damage_to_player": ("A creature deals combat damage to a player.", None),
+    "deals_damage": ("A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer.",
+                     '"Whenever this creature deals damage" — `deals_damage`'),
     "deals_damage_to_player": ("A source deals any damage to a player.", None),
     "dealt_damage": ("A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total.",
                      H_BATCHED),

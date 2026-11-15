@@ -406,6 +406,26 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: damage and fires it not at all -- infect is why this is hung on the damage
     #: and not on the life total.
     "deals_damage_to_player": EventType.DAMAGE_DEALT,
+    #: "Whenever this creature **deals damage**, you gain that much life" --
+    #: Exalted Angel. Every DAMAGE_DEALT from the dealer, both halves: combat
+    #: or noncombat, to a player, a planeswalker, a battle or a creature. The
+    #: subject is the **dealer** (`_subject_oid`), never the victim.
+    #:
+    #: Once per damage *event*, not per recipient. 510.2 makes a combat damage
+    #: step's damage one simultaneous event, and one effect dealing damage to
+    #: several things deals it at once, so a trampler hitting its blocker and
+    #: the player, or one ability hitting each creature and each player, is one
+    #: "deals damage" (603.2c) with "that much" the total. So the firing is
+    #: grouped by (dealer, `batch`) -- the batch `damage_permanent` and
+    #: `damage_player` stamp, one per combat damage step or effect op -- and
+    #: every later event of the group adds its damage to the queued firing's
+    #: ``amount`` (`_joins_damage_dealt`). First strike and regular damage are
+    #: two steps (510.4) and so two firings.
+    #:
+    #: `deals_combat_damage` is the near miss and is combat-only; and
+    #: `deals_damage_to_player` is the player half only, so a fight or a blocked
+    #: creature's damage is missed. Lifelink is a static, not a trigger.
+    "deals_damage": EventType.DAMAGE_DEALT,
     #: Heroic (702.109) and ward (702.21): "whenever this becomes the target of
     #: a spell…".  Fired as the spell goes on the stack (603.2d), which is the
     #: timing that makes ward mean anything.
@@ -657,6 +677,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # because the player half of DAMAGE_DEALT carries no `oid` -- there is
         # no permanent on the receiving end to carry one.
         "deals_damage_to_player",
+        # The **dealer** on both halves of DAMAGE_DEALT. Read off
+        # `event.source` by name in `_subject_oid`, because the permanent half
+        # carries the victim as `oid`.
+        "deals_damage",
         # The permanent that was targeted, for the same reason: `source: "self"`
         # on heroic means "a spell targeting *me*", and the event's `source` is
         # the spell doing the targeting.
@@ -986,6 +1010,8 @@ def _collect_one(
     if not _matches(state, obj, spec, event):
         return
     if _joins_batched_damage(state, obj, ability, event):
+        return
+    if _joins_damage_dealt(state, obj, ability, event):
         return
     if _joins_batched_arrival(state, obj, ability, event):
         return
@@ -1590,7 +1616,7 @@ def _matches(
     if spec.event == "connives" and spec.source == "self" and subject_oid != obj.oid:
         return False
 
-    if spec.event == "deals_damage_to_player" and subject_oid is None:
+    if spec.event in ("deals_damage_to_player", "deals_damage") and subject_oid is None:
         # "Whenever **enchanted creature** deals damage" is a claim about a
         # permanent, and the subject is the only thing that names it. Damage can
         # reach a player with no source object at all (`source_oid=None`), and
@@ -2282,6 +2308,9 @@ def _player_or_planeswalker(state: GameState, permanent: Any) -> bool:
 def _subject_oid(dsl_event: str, event: GameEvent) -> int | None:
     if dsl_event not in OBJECT_SUBJECT_TRIGGERS:
         return None
+    if dsl_event == "deals_damage":
+        # The dealer, on either half: on the permanent half `oid` is the victim.
+        return event.source
     for key in ("oid", "spell_oid", "attacker", "blocker", "land_oid"):
         value = event.data.get(key)
         if value is not None:
@@ -3000,6 +3029,12 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     if batched_key is not None and spec.event == "dealt_damage":
         # What `_joins_batched_damage` finds this firing by.
         bindings["batch"] = batched_key[2]
+    if spec.event == "deals_damage" and (group := _damage_dealt_key(obj, ability, event)):
+        # The firing this damage event's later recipients fold into. Marked
+        # here, where every queued copy (a doubler's included) is written, and
+        # outside `batched_key`: the grouping is the event's, not a flag's.
+        state.batched_triggers.add(group)
+        bindings["deals_batch"] = _deals_batch_label(group)
     if batched_key is not None and spec.event == "put_into_graveyard":
         # "…put one of **them** onto the battlefield" (Colossal Grave-Reaver):
         # the group's matching cards, this one first and the rest added by
@@ -3068,6 +3103,52 @@ def _joins_batched_damage(
             and pending.ability_index == ability_index
             and pending.granted_by == granted_by
             and pending.bindings.get("batch") == batch
+        ):
+            pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+    return True
+
+
+def _damage_dealt_key(obj: GameObject, ability: Ability, event: GameEvent) -> tuple | None:
+    """The (permanent, ability, "deals", batch, dealer) group a `deals_damage`
+    firing belongs to, or None for damage that carries no batch."""
+    batch = event.data.get("batch")
+    if batch is None or event.source is None:
+        return None
+    return (obj.oid, ability.index, "deals", batch, event.source)
+
+
+def _deals_batch_label(group: tuple) -> str:
+    """The group as a binding: a string, so it survives a serialized state."""
+    return f"{group[3]}:{group[4]}"
+
+
+def _joins_damage_dealt(
+    state: GameState, obj: GameObject, ability: Ability, event: GameEvent
+) -> bool:
+    """Fold a later recipient's damage into the `deals_damage` firing it joins.
+
+    "You gain **that much** life" -- Exalted Angel. One damage event from one
+    dealer (a combat damage step, 510.2, or one effect op) is one "deals
+    damage" however many things it hit, so the firing queued on its first
+    recipient reads the rest too. True when the event belongs to a group that
+    already fired this ability, so `_collect_one` queues nothing more for it.
+    Here rather than in `_queue` for `_joins_batched_damage`'s reason: a
+    trigger doubler calls `_queue` again for the same event.
+    """
+    spec = ability.trigger
+    if spec is None or spec.event != "deals_damage":
+        return False
+    group = _damage_dealt_key(obj, ability, event)
+    if group is None or group not in state.batched_triggers:
+        return False
+    granted_by, ability_index = _granter_of(state, obj, ability)
+    amount = int(event.data.get("amount", 0))
+    for pending in state.pending_triggers:
+        if (
+            pending.source_oid == obj.oid
+            and pending.ability_index == ability_index
+            and pending.granted_by == granted_by
+            and pending.bindings.get("deals_batch") == _deals_batch_label(group)
         ):
             pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
     return True

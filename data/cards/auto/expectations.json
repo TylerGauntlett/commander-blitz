@@ -6493,6 +6493,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "exalted_angel": {
+    "zone": "battlefield"
+  },
   "exalted_flamer_of_tzeentch": {
     "battlefield_count": 33,
     "life": {

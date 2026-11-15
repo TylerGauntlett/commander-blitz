@@ -87652,12 +87652,12 @@
     },
     "Exalted Angel": {
       "edhrec_rank": 14896,
-      "gate": "template",
+      "gate": null,
       "name": "Exalted Angel",
-      "reason": "no template for: Whenever this creature deals damage, you gain that much life",
+      "reason": "",
       "scryfall_id": "7a6b087b-a3ac-4c4d-a519-ec5584b4b42d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exalted Dragon": {

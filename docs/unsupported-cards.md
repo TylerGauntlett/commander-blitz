@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**398 cards** blocked by **345** capabilities.
+**397 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -135,7 +135,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
-| [deals-damage-trigger](#deals-damage-trigger) | 1 | 14896 | trigger_event |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -2587,20 +2586,6 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-
-</details>
-
-## deals-damage-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event 'deals_damage' whose subject is the dealing permanent and which fires on every DAMAGE_DEALT from that source -- combat or noncombat, to a player, a planeswalker or a creature -- binding the amount dealt so the effect can read 'that much'
-  <br>Why the existing vocabulary won't do: deals_combat_damage covers combat damage only; deals_damage_to_player covers only the player half of DAMAGE_DEALT (EVENT_HALVES), so noncombat damage to a creature (e.g. a fight) is missed; dealt_damage is the victim's side (enrage). Lifelink is a static, not a trigger, and differs in rules (it is not a triggered ability on the stack), so it would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exalted Angel** (rank 14896) — `exalted_angel`
-  - Whenever this creature deals damage, you gain that much life.
 
 </details>
 

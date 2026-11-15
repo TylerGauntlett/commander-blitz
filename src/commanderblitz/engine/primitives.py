@@ -438,7 +438,8 @@ def damage_player(
 
     ``batch`` is the simultaneous damage event this damage belongs to, put on
     the `LIFE_LOST` it causes for a ``batched`` `life_lost` trigger to group
-    by, and handed to `damage_permanent` when a redirect moves it. Combat
+    by and on the `DAMAGE_DEALT` for a `deals_damage` trigger to, and handed
+    to `damage_permanent` when a redirect moves it. Combat
     damage passes the step's own (510.2); anything else is part of the effect
     op dealing it, `state.event_batch`.
 
@@ -701,6 +702,9 @@ def damage_player(
         # there -- there is no defending player when a Shock hits a Bear.
         controller=None if src is None else src.controller,
         defender=pid,
+        # The simultaneous damage event, as on the permanent half: what a
+        # `deals_damage` trigger folds one dealer's recipients together by.
+        batch=state.event_batch if batch is None else batch,
     )
     _apply_lifelink(state, source_oid, amount)
 
