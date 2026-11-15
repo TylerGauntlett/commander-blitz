@@ -372,7 +372,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `loyalty_activations_this_turn` | Loyalty abilities the player activated this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `mana_spent_from` | Units of mana spent to cast this whose source matched a `paid_by`-style filter ("for each mana from a Desert"). | [mana_spent_from — how much of the payment came from a kind of permanent](card-dsl.md#mana_spent_from--how-much-of-the-payment-came-from-a-kind-of-permanent) |
 | `mana_spent_of` | Mana of a color actually spent to cast this. | [mana_spent_of — what was paid, not what is printed](card-dsl.md#mana_spent_of--what-was-paid-not-what-is-printed) |
-| `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
+| `mana_symbols` | Pips of a color, or of any of a list of colors, among a pool's mana costs (chroma, devotion). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `mana_value_of` | Mana value of an object (summed over a pool). | [Value expressions](card-dsl.md#value-expressions) |
 | `max` | The greatest of several values. | [Value expressions](card-dsl.md#value-expressions) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
@@ -1050,7 +1050,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `distinct` | The number of card types among a counting filter's pool off the battlefield (delirium); `of: "card_type"` only. | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least printed mana value among a counting filter's pool, or a `union` of them. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
-| `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
+| `mana_symbols` | Pips of a color, or of any of a list of colors, among a pool's mana costs (chroma, devotion). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_life_of` | The highest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `max_poison_of` | The most poison counters on any one of a spec's players (corrupted). | [Corrupted — "an opponent has three or more poison counters"](card-dsl.md#corrupted--an-opponent-has-three-or-more-poison-counters) |

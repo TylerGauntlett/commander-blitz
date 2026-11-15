@@ -1976,6 +1976,8 @@ Anywhere a number is expected -- the leaf list is
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
                     "objects": { "controller": "you" } } }
+{ "mana_symbols": { "of": ["W", "B"],           // devotion to white and black
+                    "objects": { "controller": "you" } } }
 { "colors_of_mana_spent": true }                // sunburst, converge
 { "rolled": { "binding": "roll" } }             // how many dice a roll_dice threw
 { "rolled": { "binding": "roll",                // …how many came up even
@@ -2620,6 +2622,12 @@ A **hybrid** pip counts for each of its colours (rule 107.4f) — a Kitchen Fink
 adds one to a green count and one to a white one. `ManaCost` stores `hybrid`
 apart from `colored`, deliberately and for unrelated reasons, so this is the case
 that would otherwise count for neither.
+
+**Devotion to two colours** (rule 700.5a) is `of` as a list of distinct colours:
+`["W", "B"]` counts every symbol that is white *or* black, so a `{W/B}` pip
+counts **once**. A `sum` of two single-colour leaves is the near miss — it counts
+that pip twice and turns Athreos, Shroud-Veiled into a creature early. The loader
+refuses a list of fewer than two colours or with a repeat.
 
 It reads the **printed** cost, which is what the keyword says and also what makes
 it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
@@ -7159,7 +7167,7 @@ smaller than the effect-side `value_keys`:
 | `{"const": n}` | a literal |
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key); on the battlefield the filter may be [a union](#any_of-in-a-count--base-power-or-toughness-1) |
 | `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
-| `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
+| `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs; `of` a list is devotion to several colours |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |

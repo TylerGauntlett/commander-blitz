@@ -15415,6 +15415,146 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "W",
+                  "B"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to white and black is less than seven, Athreos isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "coin",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, put a coin counter on another target creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "union": [
+                  {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  {
+                    "binding": "subject",
+                    "zone": "exile"
+                  }
+                ]
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with a coin counter on it dies or is put into exile, return that card to the battlefield under your control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "coin"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "to_zones": [
+              "graveyard",
+              "exile"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "athreos_shroud_veiled",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{4}{W}{B}",
+      "name": "Athreos, Shroud-Veiled",
+      "oracle_text": "Indestructible\nAs long as your devotion to white and black is less than seven, Athreos isn't a creature.\nAt the beginning of your end step, put a coin counter on another target creature.\nWhenever a creature with a coin counter on it dies or is put into exile, return that card to the battlefield under your control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "G"
@@ -148274,6 +148414,75 @@
         {
           "effects": [
             {
+              "amount": {
+                "x": true
+              },
+              "op": "create_token",
+              "token": "vampire_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create X 1/1 white Vampire creature tokens with lifelink.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "vampire_demon_4_3_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if your devotion to white and black is seven or greater, create a 4/3 white and black Vampire Demon creature token with flying.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "mana_symbols": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "battlefield"
+                  },
+                  "of": [
+                    "W",
+                    "B"
+                  ]
+                }
+              },
+              "right": {
+                "const": 7
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "march_of_the_canonized",
+      "mana_cost": "{X}{W}{W}",
+      "name": "March of the Canonized",
+      "oracle_text": "When this enchantment enters, create X 1/1 white Vampire creature tokens with lifelink.\nAt the beginning of your upkeep, if your devotion to white and black is seven or greater, create a 4/3 white and black Vampire Demon creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": "you"
             }
@@ -155606,6 +155815,106 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "B",
+                  "R"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to black and red is less than seven, Mogis isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Sacrifice a creature? (Otherwise Mogis deals 2 damage to you.)"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's upkeep, Mogis deals 2 damage to that player unless they sacrifice a creature of their choice.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "mogis_god_of_slaughter",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Mogis, God of Slaughter",
+      "oracle_text": "Indestructible\nAs long as your devotion to black and red is less than seven, Mogis isn't a creature.\nAt the beginning of each opponent's upkeep, Mogis deals 2 damage to that player unless they sacrifice a creature of their choice.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },

@@ -2069,9 +2069,11 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # control". A *printed* mana cost is a pipeline input like a zone count,
         # so reading it here cannot make one static depend on another's output.
         spec = expr["mana_symbols"]
-        color = str(spec.get("of", ""))
+        # A list in `of` is devotion to several colours (700.5a), each pip
+        # counted once however many listed colours it has.
+        colors = spec.get("of", "")
         return sum(
-            state.card_of(obj).mana_cost.symbols_of(color)
+            state.card_of(obj).mana_cost.symbols_of_any(colors)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
         )
     if "greatest_commander_mana_value" in expr:

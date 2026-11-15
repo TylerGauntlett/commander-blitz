@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **344** capabilities.
+**399 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,15 +35,16 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
+| [adventure-half-in-index](#adventure-half-in-index) | 2 | 2673 | engine |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
+| [bat-1-1-b-flying](#bat-1-1-b-flying) | 2 | 9598 | token |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 2 | 6335 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
-| [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
@@ -59,6 +60,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
+| [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 2 | 1918 | cost |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
@@ -76,7 +78,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
-| [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
@@ -90,7 +91,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
-| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -124,7 +124,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
-| [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
@@ -217,6 +216,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
+| [linked-exile-granted-return](#linked-exile-granted-return) | 1 | 9598 | engine |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
@@ -263,6 +263,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
+| [persist](#persist) | 1 | 7523 | keyword |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -298,7 +299,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
-| [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
@@ -318,6 +318,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-object-targets-filter](#stack-object-targets-filter) | 1 | 2461 | selector |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
+| [static-life-gained-this-turn](#static-life-gained-this-turn) | 1 | 6095 | value |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -1019,6 +1020,24 @@ Blocks **2** cards.
 
 </details>
 
+## adventure-half-in-index
+
+Blocks **2** cards.
+
+- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
+  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
+- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row for this card has layout `adventure`, type line 'Enchantment // Sorcery — Adventure' and cost '{1}{B} // {2}{B}', but its back_name/back_oracle_text are empty and the MTGJSON deck file (BloodRites_LCC) carries only side a, so the packet has `back_face: {}` and no Foul Rebirth text in oracle_text. The second_face entry cannot be authored without inventing its rules text.
+  <br>Why the existing vocabulary won't do: The front face is expressible today: an `end_step` trigger whose effect is `may` with `pay: {sacrifice: {types: [Creature], not_subtypes: [Demon]}}` and, on payment, populate as `choose_permanents` (controller you, Creature, is_token) bound with `as` followed by `copy_permanent` over that binding (the shape a shipped populate card in templates.cards.json uses). The engine also already casts Adventures via `second_face` + `adventure: true` + `second_face_zone: hand` (Beanstalk Giant // Fertile Footsteps). The only missing piece is the Adventure half's printed text in the index; a front-only answer would be a half-implemented card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
+  - This creature can block only creatures with flying.
+- **Promise of Aclazotz // Foul Rebirth** (rank 7398) — `promise_of_aclazotz_foul_rebirth`
+  - Foul Rebirth {2}{B} Sorcery — Adventure: <printed text absent from the packet and from data/catalog/cards.sqlite>
+
+</details>
+
 ## all-creature-types
 
 Blocks **2** cards.
@@ -1054,6 +1073,24 @@ Blocks **2** cards.
   - {T}: Attach target Aura or Equipment you control to target creature you control. Activate only as a sorcery.
 - **Inventory Management** (rank 3346) — `inventory_management`
   - For each Aura and Equipment you control, you may attach it to a creature you control.
+
+</details>
+
+## bat-1-1-b-flying
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 black Bat creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
+- **(token)** a 1/1 black Bat creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Bat token at all; the nearest 1/1 fliers (bird_1_1_w_flying, bird_illusion_1_1_u_flying) are the wrong colour and creature type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Timothar, Baron of Bats** (rank 9598) — `timothar_baron_of_bats`
+  - Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped."
+- **Bat Colony** (rank 20382) — `bat_colony`
+  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 
@@ -1165,24 +1202,6 @@ Blocks **2** cards.
 - **Otherworldly Escort** (rank 19485) — `otherworldly_escort`
   - When this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)
   - {1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn.
-
-</details>
-
-## devotion
-
-Blocks **2** cards.
-
-- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are white OR black, where a hybrid {W/B} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["W", "B"]` that counts each pip at most once if it contains any listed colour
-  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of W plus mana_symbols of B double-counts every {W/B} hybrid pip because Requirement.symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
-- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["B", "R"]` that counts each pip at most once if it contains any listed colour
-  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mogis, God of Slaughter** (rank 2401) — `mogis_god_of_slaughter`
-  - As long as your devotion to black and red is less than seven, Mogis isn't a creature.
-- **Athreos, Shroud-Veiled** (rank 3082) — `athreos_shroud_veiled`
-  - As long as your devotion to white and black is less than seven, Athreos isn't a creature.
 
 </details>
 
@@ -1459,6 +1478,24 @@ Blocks **2** cards.
   - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
 - **Automated Assembly Line** (rank 7338) — `automated_assembly_line`
   - Pay {E}{E}{E}: Create a tapped 3/3 colorless Robot artifact creature token.
+
+</details>
+
+## sacrifice-multiple-distinct
+
+Blocks **2** cards.
+
+- **(cost)** an activated-ability cost that sacrifices several groups of permanents each matching its own selector and count -- here the source itself (self_only, count 1) AND thirteen Blood tokens (subtypes Blood, is_token, count 13) -- payable only when every part can be met; e.g. `sacrifice` accepting a list of selectors
+  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`), and there is no separate sacrifice-self cost key; `count: 14` with `any_of` [self_only, Blood] would accept fourteen Blood tokens while keeping the artifact, and sacrificing the source in the effects moves part of the payment to resolution. The other two lines are expressible (`you_attack` with an `exists` on `attackers` subtypes Vampire creating `blood_token`; a `{B}`+tap+pay_life cost creating `vampire_1_1_wb_lifelink`).
+- **(cost)** an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors
+  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: ["graveyard"]` with a `return_to_hand` of `self_only`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jarad, Golgari Lich Lord** (rank 1918) — `jarad_golgari_lich_lord`
+  - Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.
+- **Glass-Cast Heart** (rank 4793) — `glass_cast_heart`
+  - {B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life.
 
 </details>
 
@@ -1748,20 +1785,6 @@ Blocks **1** card.
 
 </details>
 
-## adventure-half-in-index
-
-Blocks **1** card.
-
-- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
-  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
-  - This creature can block only creatures with flying.
-
-</details>
-
 ## alien-token
 
 Blocks **1** card.
@@ -1942,20 +1965,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## bat-1-1-b-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black Bat creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bat Colony** (rank 20382) — `bat_colony`
-  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 
@@ -2431,20 +2440,6 @@ Blocks **1** card.
 
 - **Shield Broker** (rank 10319) — `shield_broker`
   - You gain control of that creature for as long as it has a shield counter on it.
-
-</details>
-
-## convoke
-
-Blocks **1** card.
-
-- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line
-  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys
-
-<details><summary>Cards waiting on this</summary>
-
-- **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
-  - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
 
 </details>
 
@@ -3764,6 +3759,20 @@ Blocks **1** card.
 
 </details>
 
+## linked-exile-granted-return
+
+Blocks **1** card.
+
+- **(engine)** a link from the card exiled by Timothar's dies trigger to the specific token created in the same resolution, so that an ability granted to that token ("When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped") can name exactly that exiled card when it later resolves
+  <br>Why the existing vocabulary won't do: grant_ability can hand the token a deals_combat_damage_to_player trigger with sacrifice + put_onto_battlefield tapped, but the granted ability's only way to find a card in exile is the selector `exiled_with`, which keys on the ability's source (the token) rather than on Timothar or on the trigger's `as` binding; bindings from the dies trigger (`as` on exile) do not survive into a separately triggered granted ability, and exile's `link`/`until_leaves` returns the card when a permanent leaves rather than on the token's damage trigger. Each Bat must return its own card, so returning 'cards exiled with Timothar' would also be wrong
+
+<details><summary>Cards waiting on this</summary>
+
+- **Timothar, Baron of Bats** (rank 9598) — `timothar_baron_of_bats`
+  - Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped."
+
+</details>
+
 ## living-metal
 
 Blocks **1** card.
@@ -4423,6 +4432,20 @@ Blocks **1** card.
 
 </details>
 
+## persist
+
+Blocks **1** card.
+
+- **(keyword)** the persist keyword (702.79): a triggered ability 'When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it', grantable until end of turn via grant_keyword to a selector (here nontoken Vampire creatures you control)
+  <br>Why the existing vocabulary won't do: persist is not in the keywords list, so grant_keyword cannot name it. Spelling it as a grant_ability of a granted 'dies' trigger plus put_onto_battlefield with counters would need the intervening-if to read the -1/-1 counters the creature had on the battlefield (last-known information); counters_on would read the graveyard card, and snapshot is not general LKI, so the condition could not be said exactly
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dusk Legion Sergeant** (rank 7523) — `dusk_legion_sergeant`
+  - {1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn. (When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)
+
+</details>
+
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -4924,20 +4947,6 @@ Blocks **1** card.
 
 </details>
 
-## sacrifice-multiple-distinct
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors
-  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: ["graveyard"]` with a `return_to_hand` of `self_only`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jarad, Golgari Lich Lord** (rank 1918) — `jarad_golgari_lich_lord`
-  - Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.
-
-</details>
-
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -5208,6 +5217,20 @@ Blocks **1** card.
 
 - **Summary Dismissal** (rank 8784) — `summary_dismissal`
   - Exile all other spells and counter all abilities.
+
+</details>
+
+## static-life-gained-this-turn
+
+Blocks **1** card.
+
+- **(value)** admit the per-turn life-gain ledger value {"life_gained_this_turn": "you"} into STATIC_VALUE_KEYS, so a static's condition can say "if you gained life this turn" as {"cmp": ">", "left": {"life_gained_this_turn": "you"}, "right": {"const": 0}} -- here on the card's own cast_from_graveyard static with active_zones ["graveyard"] and affects_player "you" (the Gravecrawler shape)
+  <br>Why the existing vocabulary won't do: cast_from_graveyard with active_zones ["graveyard"] carries the card's own permission and takes a static condition, but the static condition language's cmp may only read static_value_keys, which has cards_drawn_this_turn, creatures_died_this_turn and spells_cast_this_turn but not life_gained_this_turn; that value exists only for effect-side conditions (trigger intervening-ifs). graveyard_cost is an unconditional alternative price, and flashback/retrace are different permissions.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oathsworn Vampire** (rank 6095) — `oathsworn_vampire`
+  - You may cast this card from your graveyard if you gained life this turn.
 
 </details>
 

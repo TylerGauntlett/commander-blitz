@@ -1319,6 +1319,10 @@
     },
     "zone": "battlefield"
   },
+  "athreos_shroud_veiled": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "atomize": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -12427,6 +12431,14 @@
   "marble_diamond": {
     "zone": "battlefield"
   },
+  "march_of_the_canonized": {
+    "battlefield_count": 53,
+    "tokens": {
+      "count": 20,
+      "id": "vampire_1_1_w_lifelink"
+    },
+    "zone": "battlefield"
+  },
   "marchesa_s_decree": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13092,6 +13104,10 @@
     "zone": "battlefield"
   },
   "mog_moogle_warrior": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mogis_god_of_slaughter": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

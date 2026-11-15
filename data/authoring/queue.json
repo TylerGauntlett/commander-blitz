@@ -15662,12 +15662,12 @@
     },
     "Athreos, Shroud-Veiled": {
       "edhrec_rank": 3082,
-      "gate": "template",
+      "gate": null,
       "name": "Athreos, Shroud-Veiled",
-      "reason": "no template for: As long as your devotion to white and black is less than seven, Athreos isn't a creature",
+      "reason": "",
       "scryfall_id": "f50ffa76-f704-4d53-a15c-8316b07c1d12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atla Palani, Nest Tender": {
@@ -167352,12 +167352,12 @@
     },
     "March of the Canonized": {
       "edhrec_rank": 4961,
-      "gate": "template",
+      "gate": null,
       "name": "March of the Canonized",
-      "reason": "no template for: When this enchantment enters, create X 1/1 white Vampire creature tokens with lifelink",
+      "reason": "",
       "scryfall_id": "547581d0-025a-435a-8016-ee7c6b890e53",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "March of the Drowned": {
@@ -177282,12 +177282,12 @@
     },
     "Mogis, God of Slaughter": {
       "edhrec_rank": 2401,
-      "gate": "template",
+      "gate": null,
       "name": "Mogis, God of Slaughter",
-      "reason": "no template for: As long as your devotion to black and red is less than seven, Mogis isn't a creature",
+      "reason": "",
       "scryfall_id": "521911e5-9ce5-4d55-bfc4-fbfeba4047fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moira Brown, Guide Author": {
