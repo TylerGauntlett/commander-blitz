@@ -149172,12 +149172,12 @@
     },
     "King Narfi's Betrayal": {
       "edhrec_rank": 8768,
-      "gate": "template",
+      "gate": null,
       "name": "King Narfi's Betrayal",
-      "reason": "no template for: I — Each player mills four cards. Then you may exile a creature or planeswalker card from ",
+      "reason": "",
       "scryfall_id": "4c4edeef-7582-4027-8087-e643601d5161",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "King Solomon's Frogs": {

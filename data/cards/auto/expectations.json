@@ -11291,6 +11291,16 @@
   "king_cheetah": {
     "zone": "battlefield"
   },
+  "king_narfi_s_betrayal": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "battlefield"
+  },
   "king_solomon_s_frogs": {
     "battlefield_count": 33,
     "zone": "battlefield"
