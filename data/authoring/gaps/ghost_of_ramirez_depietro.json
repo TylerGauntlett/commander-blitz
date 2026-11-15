@@ -1,0 +1,22 @@
+{
+  "card_id": "ghost_of_ramirez_depietro",
+  "name": "Ghost of Ramirez DePietro",
+  "oracle_text": "Ghost of Ramirez DePietro can't be blocked by creatures with toughness 3 or greater.\nWhenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.\nPartner (You can have two commanders if both have partner.)",
+  "blocked_sentences": [
+    "Whenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand."
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_arrival_this_turn",
+      "kind": "selector",
+      "what": "a per-turn record, on each card in a graveyard, of how it got there this turn -- discarded from hand, or moved from a library (mill, surveil, any library-to-graveyard move) by any source and any player -- exposed as a selector key for graveyard targets, e.g. `put_into_graveyard_this_turn: {\"by\": [\"discard\", \"from_library\"]}`, so the target is `{\"kind\": \"card\", \"optional\": true, \"selector\": {\"zone\": \"graveyard\", \"controller\": \"any\", \"put_into_graveyard_this_turn\": {...}}}` and the effect a return_to_hand of it. The same record would serve the existing `milled_this_turn` gap (Raul, Tato Farmer, The Master, Transcendent) as the from_library half",
+      "why_existing_wont_do": "selector_keys has drawn_this_turn, entered_this_turn and surveilled_this_turn but nothing that reads how or when a card arrived in a graveyard; the value keys cards_discarded_this_turn and cards_to_graveyard_this_turn are only counts, not per-card filters; the ability key arrived_this_turn_from belongs to the play_lands_from_graveyard static, not to target selectors; discard and mill `as` bindings only cover cards moved by that one resolution, not every card discarded or milled this turn by any source"
+    }
+  ],
+  "closest_existing": [
+    "surveilled_this_turn",
+    "cards_discarded_this_turn",
+    "arrived_this_turn_from"
+  ],
+  "confidence": "high"
+}
