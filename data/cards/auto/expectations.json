@@ -2744,6 +2744,11 @@
   "bronze_walrus": {
     "zone": "battlefield"
   },
+  "bronzebeak_foragers": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "broodhatch_nantuko": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5665,6 +5670,10 @@
   "drossforge_bridge": {
     "zone": "battlefield"
   },
+  "drover_of_the_mighty": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "drown_in_dreams": {
     "hand_size": {
       "0": 21
@@ -5825,6 +5834,10 @@
     "zone": "battlefield"
   },
   "earth_elemental": {
+    "zone": "battlefield"
+  },
+  "earthshaker_dreadmaw": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "earthshaking_si": {

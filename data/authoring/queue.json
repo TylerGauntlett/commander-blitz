@@ -35172,12 +35172,12 @@
     },
     "Bronzebeak Foragers": {
       "edhrec_rank": 4015,
-      "gate": "template",
+      "gate": null,
       "name": "Bronzebeak Foragers",
-      "reason": "no template for: When this creature enters, for each opponent, exile up to one target nonland permanent tha",
+      "reason": "",
       "scryfall_id": "37730957-0483-49b7-9fe0-aff7c45f5d03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bronzebeak Moa": {
@@ -75872,12 +75872,12 @@
     },
     "Drover of the Mighty": {
       "edhrec_rank": 5954,
-      "gate": "template",
+      "gate": null,
       "name": "Drover of the Mighty",
-      "reason": "no template for: This creature gets +2/+2 as long as you control a Dinosaur",
+      "reason": "",
       "scryfall_id": "b8fe3040-e92c-4277-810d-1e87e5811b5a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drown in Dreams": {
@@ -78642,12 +78642,12 @@
     },
     "Earthshaker Dreadmaw": {
       "edhrec_rank": 2359,
-      "gate": "template",
+      "gate": null,
       "name": "Earthshaker Dreadmaw",
-      "reason": "no template for: When this creature enters, draw a card for each other Dinosaur you control",
+      "reason": "",
       "scryfall_id": "158ad2e4-5e81-439b-9629-a9d217c45d83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Earthshaker Giant": {

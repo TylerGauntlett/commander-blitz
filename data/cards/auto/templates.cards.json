@@ -33293,6 +33293,119 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, for each opponent, exile up to one target nonland permanent that player controls until this creature leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, for each opponent, exile up to one target nonland permanent that player controls until this creature leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{X}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_exiled_into_graveyard"
+            },
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_exile",
+              "selector": {
+                "controller": "any",
+                "exiled_with": "self",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                }
+              }
+            }
+          ],
+          "text": "{X}{W}: Put target card with mana value X exiled with this creature into its owner's graveyard. You gain X life."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bronzebeak_foragers",
+      "mana_cost": "{3}{W}",
+      "name": "Bronzebeak Foragers",
+      "oracle_text": "When this creature enters, for each opponent, exile up to one target nonland permanent that player controls until this creature leaves the battlefield.\n{X}{W}: Put target card with mana value X exiled with this creature into its owner's graveyard. You gain X life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {
@@ -68179,6 +68292,107 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Dinosaur"
+              ]
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "This creature gets +2/+2 as long as you control a Dinosaur.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "drover_of_the_mighty",
+      "mana_cost": "{1}{G}",
+      "name": "Drover of the Mighty",
+      "oracle_text": "This creature gets +2/+2 as long as you control a Dinosaur.\n{T}: Add one mana of any color.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -69935,6 +70149,56 @@
         "Elemental"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Dinosaur"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card for each other Dinosaur you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "earthshaker_dreadmaw",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Earthshaker Dreadmaw",
+      "oracle_text": "Trample\nWhen this creature enters, draw a card for each other Dinosaur you control.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
