@@ -1,0 +1,20 @@
+{
+  "card_id": "glass_cast_heart",
+  "name": "Glass-Cast Heart",
+  "oracle_text": "Whenever one or more Vampires you control attack, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\n{B}, {T}, Pay 1 life: Create a 1/1 white and black Vampire creature token with lifelink.\n{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life.",
+  "blocked_sentences": [
+    "{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life."
+  ],
+  "needs": [
+    {
+      "capability": "sacrifice_multiple_distinct",
+      "kind": "cost",
+      "what": "an activated-ability cost that sacrifices several groups of permanents each matching its own selector and count -- here the source itself (self_only, count 1) AND thirteen Blood tokens (subtypes Blood, is_token, count 13) -- payable only when every part can be met; e.g. `sacrifice` accepting a list of selectors",
+      "why_existing_wont_do": "The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`), and there is no separate sacrifice-self cost key; `count: 14` with `any_of` [self_only, Blood] would accept fourteen Blood tokens while keeping the artifact, and sacrificing the source in the effects moves part of the payment to resolution. The other two lines are expressible (`you_attack` with an `exists` on `attackers` subtypes Vampire creating `blood_token`; a `{B}`+tap+pay_life cost creating `vampire_1_1_wb_lifelink`)."
+    }
+  ],
+  "closest_existing": [
+    "sacrifice"
+  ],
+  "confidence": "high"
+}

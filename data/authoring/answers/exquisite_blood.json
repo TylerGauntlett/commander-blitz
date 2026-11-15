@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "exquisite_blood",
+    "name": "Exquisite Blood",
+    "oracle_text": "Whenever an opponent loses life, you gain that much life.",
+    "mana_cost": "{4}{B}",
+    "types": ["Enchantment"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent loses life, you gain that much life.",
+        "trigger": {"event": "life_lost", "controller": "opponent"},
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"binding": "amount"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "life": {"0": 40, "1": 40}}
+}

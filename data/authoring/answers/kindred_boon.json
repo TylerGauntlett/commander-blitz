@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "kindred_boon",
+    "name": "Kindred Boon",
+    "oracle_text": "As this enchantment enters, choose a creature type.\n{1}{W}: Put a divinity counter on target creature you control of the chosen type.\nEach creature you control with a divinity counter on it has indestructible.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "As this enchantment enters, choose a creature type.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [{"op": "choose_type", "prompt": "Choose a creature type"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{W}: Put a divinity counter on target creature you control of the chosen type.",
+        "cost": {"mana": "{1}{W}"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "subtypes": [{"chosen_type_of": "self"}]
+            }
+          }
+        ],
+        "effects": [
+          {"op": "add_counters", "counter": "divinity", "amount": {"const": 1}, "objects": {"target": "t1"}}
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Each creature you control with a divinity counter on it has indestructible.",
+        "effect": "grant_keyword",
+        "keywords": ["indestructible"],
+        "affects": {"controller": "you", "types": ["Creature"], "has_counters": "divinity"}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "opponent_battlefield_count": 6}
+}

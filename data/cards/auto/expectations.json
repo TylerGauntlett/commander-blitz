@@ -2281,6 +2281,13 @@
     },
     "zone": "battlefield"
   },
+  "bloodtracker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "bloom_tender": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2809,6 +2816,10 @@
     "zone": "battlefield"
   },
   "butch_deloria_tunnel_snake": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "butcher_of_malakir": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4286,6 +4297,13 @@
     "zone": "battlefield"
   },
   "crookshank_kobolds": {
+    "zone": "battlefield"
+  },
+  "crossway_troublemakers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "crowd_s_favor": {
@@ -5997,6 +6015,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "elenda_s_hierophant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elenda_the_dusk_rose": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6385,6 +6407,10 @@
       "amount": 1,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "etchings_of_the_chosen": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "eternal_skylord": {

@@ -1,0 +1,14 @@
+{
+  "card_id": "oathsworn_vampire",
+  "name": "Oathsworn Vampire",
+  "oracle_text": "This creature enters tapped.\nYou may cast this card from your graveyard if you gained life this turn.",
+  "blocked_sentences": ["You may cast this card from your graveyard if you gained life this turn."],
+  "needs": [{
+    "capability": "static_life_gained_this_turn",
+    "kind": "value",
+    "what": "admit the per-turn life-gain ledger value {\"life_gained_this_turn\": \"you\"} into STATIC_VALUE_KEYS, so a static's condition can say \"if you gained life this turn\" as {\"cmp\": \">\", \"left\": {\"life_gained_this_turn\": \"you\"}, \"right\": {\"const\": 0}} -- here on the card's own cast_from_graveyard static with active_zones [\"graveyard\"] and affects_player \"you\" (the Gravecrawler shape)",
+    "why_existing_wont_do": "cast_from_graveyard with active_zones [\"graveyard\"] carries the card's own permission and takes a static condition, but the static condition language's cmp may only read static_value_keys, which has cards_drawn_this_turn, creatures_died_this_turn and spells_cast_this_turn but not life_gained_this_turn; that value exists only for effect-side conditions (trigger intervening-ifs). graveyard_cost is an unconditional alternative price, and flashback/retrace are different permissions."
+  }],
+  "closest_existing": ["cast_from_graveyard", "cards_drawn_this_turn"],
+  "confidence": "high"
+}

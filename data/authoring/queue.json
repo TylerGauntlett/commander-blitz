@@ -29222,12 +29222,12 @@
     },
     "Bloodtracker": {
       "edhrec_rank": 6205,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodtracker",
-      "reason": "no template for: {B}, Pay 2 life: Put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "d654462f-5346-454f-9905-41218cf6b29e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodvial Purveyor": {
@@ -37022,12 +37022,12 @@
     },
     "Butcher of Malakir": {
       "edhrec_rank": 1299,
-      "gate": "template",
+      "gate": null,
       "name": "Butcher of Malakir",
-      "reason": "no template for: Whenever this creature or another creature you control dies, each opponent sacrifices a cr",
+      "reason": "",
       "scryfall_id": "1a015b68-eb88-4c20-867e-fa61ef046188",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Butcher of the Horde": {
@@ -56492,12 +56492,12 @@
     },
     "Crossway Troublemakers": {
       "edhrec_rank": 3569,
-      "gate": "template",
+      "gate": null,
       "name": "Crossway Troublemakers",
-      "reason": "no template for: Attacking Vampires you control have deathtouch and lifelink",
+      "reason": "",
       "scryfall_id": "03a5e19c-4cb8-4bd7-923c-4db747dc6ca3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crossway Vampire": {
@@ -80812,12 +80812,12 @@
     },
     "Elenda's Hierophant": {
       "edhrec_rank": 1891,
-      "gate": "template",
+      "gate": null,
       "name": "Elenda's Hierophant",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "763ff418-da7e-4d39-97c8-9694f4088132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elenda, Saint of Dusk": {
@@ -86552,12 +86552,12 @@
     },
     "Etchings of the Chosen": {
       "edhrec_rank": 3030,
-      "gate": "template",
+      "gate": null,
       "name": "Etchings of the Chosen",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "496e4759-9d6b-42fa-833c-1fff2c9d03f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eternal Dominion": {
