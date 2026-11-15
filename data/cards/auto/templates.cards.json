@@ -235220,6 +235220,94 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "parley_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "not_types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "map_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a Map token. Then each player draws a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "storm_fleet_negotiator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Storm Fleet Negotiator",
+      "oracle_text": "Flying\nParley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a Map token. Then each player draws a card. (A Map token is an artifact with \"{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

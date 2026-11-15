@@ -19722,6 +19722,10 @@
   "storm_crow": {
     "zone": "battlefield"
   },
+  "storm_fleet_negotiator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "storm_kiln_artist": {
     "battlefield_count": 33,
     "hand_size": {

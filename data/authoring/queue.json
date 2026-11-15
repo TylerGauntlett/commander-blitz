@@ -265812,12 +265812,12 @@
     },
     "Storm Fleet Negotiator": {
       "edhrec_rank": 8996,
-      "gate": "template",
+      "gate": null,
       "name": "Storm Fleet Negotiator",
-      "reason": "no template for: Parley — Whenever this creature attacks, each player reveals the top card of their library",
+      "reason": "",
       "scryfall_id": "2ce69f1b-c4a5-4e44-9dfc-4fb65c22e3c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm Fleet Pyromancer": {
