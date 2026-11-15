@@ -2199,6 +2199,21 @@ class TurnLedger:
     #: loses the type afterwards still dealt the damage as one. Never cleared
     #: per oid -- the record is about the damage, not about any object.
     players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
+    #: The same record, but **which** creatures: subtype -> seat -> the
+    #: dealers -- Admiral Beckett Brass's "a player who was dealt combat damage
+    #: by **three or more** Pirates this turn". The seat set above says only
+    #: that some Pirate got through, so one Pirate would unlock the steal.
+    #: Subtypes are read as the damage lands, for that field's reason.
+    #:
+    #: A dealer is its oid while it stays the object that dealt the damage.
+    #: When the oid enters the battlefield again it is a new object (400.7),
+    #: so its old entries are re-keyed to a negative id of their own
+    #: (`retire_combat_damager`): the old Pirate still counts as one of the
+    #: three, and the new one is not the same Pirate counted twice.
+    combat_damagers_by_subtype: dict[str, dict[int, set[int]]] = field(default_factory=dict)
+    #: How many dealers `retire_combat_damager` has re-keyed this turn, so each
+    #: gets a negative id nothing else holds.
+    retired_combat_damagers: int = 0
     #: Damage dealt to each **permanent** this turn, split by who controlled
     #: the source: victim oid -> {source controller: amount}. "Each player
     #: draws cards equal to the amount of damage dealt to Grothama this turn
@@ -2563,6 +2578,35 @@ class TurnLedger:
         """
         return any(entry.oid == oid for entry in self.permanents_entered)
 
+    def retire_combat_damager(self, oid: int) -> None:
+        """Re-key ``oid``'s `combat_damagers_by_subtype` entries as it re-enters.
+
+        The object that dealt the damage is gone (400.7) and the damage it
+        dealt still counts, so its entries keep a dealer of their own -- one
+        negative id for every seat and subtype, since they were one creature.
+        """
+        holding = [
+            dealers
+            for seats in self.combat_damagers_by_subtype.values()
+            for dealers in seats.values()
+            if oid in dealers
+        ]
+        if not holding:
+            return
+        self.retired_combat_damagers += 1
+        gone = -self.retired_combat_damagers
+        for dealers in holding:
+            dealers.discard(oid)
+            dealers.add(gone)
+
+    def combat_damagers_of(self, subtypes, pid: int) -> set[int]:
+        """The distinct dealers with any of ``subtypes`` that dealt ``pid``
+        combat damage this turn."""
+        dealers: set[int] = set()
+        for name in subtypes:
+            dealers |= self.combat_damagers_by_subtype.get(str(name), {}).get(pid, set())
+        return dealers
+
     def set_object_flag(self, oid: int, flag: str) -> None:
         """Write a word onto an object for the rest of this turn."""
         self.object_flags.setdefault(oid, set()).add(flag)
@@ -2606,6 +2650,8 @@ class TurnLedger:
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.players_dealt_combat_damage_by_subtype.clear()
+        self.combat_damagers_by_subtype.clear()
+        self.retired_combat_damagers = 0
         self.damage_to_permanents.clear()
         self.damage_taken.clear()
         self.life_lost.clear()

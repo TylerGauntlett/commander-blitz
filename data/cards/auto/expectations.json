@@ -121,6 +121,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "admiral_beckett_brass": {
+    "zone": "battlefield"
+  },
   "admiral_brass_unsinkable": {
     "battlefield_count": 33,
     "graveyard_size": {

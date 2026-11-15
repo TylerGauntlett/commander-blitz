@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**401 cards** blocked by **352** capabilities.
+**400 cards** blocked by **351** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -135,7 +135,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
-| [dealt-combat-damage-by-count](#dealt-combat-damage-by-count) | 1 | 5946 | value |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -2581,20 +2580,6 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-
-</details>
-
-## dealt-combat-damage-by-count
-
-Blocks **1** card.
-
-- **(value)** a per-player count of DISTINCT creatures with a given subtype (here Pirate, read as the damage lands) that dealt combat damage to that player this turn, usable as a threshold in a player spec / selector `controller` -- e.g. `{"dealt_combat_damage_by": {"subtypes": ["Pirate"], "at_least": 3}}` -- so a permanent target can be restricted to nonland permanents controlled by a player hit by three or more Pirates
-  <br>Why the existing vocabulary won't do: `dealt_combat_damage_by` with `{"subtypes": ["Pirate"]}` reads `turn_ledger.players_dealt_combat_damage_by_subtype`, which is a set of seats hit by ANY Pirate, with no record of how many distinct Pirates hit each seat; `players_dealt_combat_damage_by` is keyed per source oid but does not remember each source's subtype at damage time; the `combat_damage_by` condition is table-wide and says only that a Pirate got through. Using the subtype set would let one Pirate unlock the steal, a much stronger card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Admiral Beckett Brass** (rank 5946) — `admiral_beckett_brass`
-  - At the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.
 
 </details>
 

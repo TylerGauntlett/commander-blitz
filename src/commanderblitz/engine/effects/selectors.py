@@ -1627,13 +1627,25 @@ def _seats_dealt_combat_damage_by(ctx: EffectContext, subject: Any) -> set[int]:
 
     ``"self"`` is the ability's source, by oid; ``{"subtypes": [...]}`` is any
     creature that had one of those subtypes as the damage was dealt, whoever
-    controlled it; ``{"any_of": [...]}`` is the union of its subjects. The
+    controlled it, and with ``"at_least": N`` the seats N or more distinct such
+    creatures dealt it to; ``{"any_of": [...]}`` is the union of its subjects. The
     loader (`loader.effects._validate_dealt_combat_damage_subject`) refuses
     every other shape, so nothing here guesses.
     """
     ledger = ctx.state.turn_ledger
     if subject == "self":
         return set(ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set()))
+    if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
+        # "…a player who was dealt combat damage by **three or more** Pirates
+        # this turn" -- Admiral Beckett Brass. Distinct creatures per seat,
+        # off `TurnLedger.combat_damagers_by_subtype`: the plain seat set says
+        # only that one Pirate got through.
+        need = int(subject["at_least"])
+        return {
+            pid
+            for pid in ctx.state.alive()
+            if len(ledger.combat_damagers_of(subject["subtypes"], pid)) >= need
+        }
     if isinstance(subject, Mapping) and "subtypes" in subject:
         seats: set[int] = set()
         for name in subject["subtypes"]:

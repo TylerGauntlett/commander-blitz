@@ -5463,7 +5463,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ] } | { "any_of": [ … ] } }`
+`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -5544,6 +5544,7 @@ The subject is one of three shapes, and anything else is a load error:
 |---|---|
 | `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
 | `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
+| `{ "subtypes": ["Pirate"], "at_least": 3 }` | the seats dealt combat damage by at least that many **distinct** such creatures |
 | `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
 
 ```jsonc
@@ -5566,6 +5567,24 @@ the damage as a Dragon, and a creature made a Dragon after combat did not.
 `except: "you"` is what makes it "your opponents": an opponent's Dragon that hit
 you put your seat in the set. The `combat_damage_by` condition (prowl) is the
 near miss — it says a Dragon got through, not to whom, so it cannot count.
+
+`at_least` counts creatures rather than seats, off
+`TurnLedger.combat_damagers_by_subtype` (subtype → seat → dealers): one Pirate
+hitting three times, or in two combats, is one Pirate, and three Pirates split
+across two players reach neither. A Pirate that hit and then re-entered the
+battlefield is a new object (400.7), so its old hit still counts and a new one
+counts again. The loader refuses it without `subtypes` and anything but a
+positive whole number. Without it, `subtypes` alone is "one or more".
+
+```jsonc
+// Admiral Beckett Brass: "At the beginning of your end step, gain control of
+// target nonland permanent controlled by a player who was dealt combat damage by
+// three or more Pirates this turn."
+"targets": [ { "id": "t1", "kind": "permanent",
+               "selector": { "zone": "battlefield", "not_types": ["Land"],
+                             "controller": { "dealt_combat_damage_by":
+                               { "subtypes": ["Pirate"], "at_least": 3 } } } } ]
+```
 
 ### `not` — the player a card *excludes*
 

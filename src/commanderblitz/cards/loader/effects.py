@@ -776,8 +776,9 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
 def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
     """Check whom a ``dealt_combat_damage_by`` spec asks about.
 
-    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names) or
-    ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
+    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names,
+    optionally with ``"at_least": N``, a positive count of distinct creatures)
+    or ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
     reads the ledger under a key nothing writes, so it counts nobody -- on
     Estinien Varlineau that is a card that silently never draws.
     """
@@ -786,6 +787,17 @@ def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
         f'{{"any_of": ["self", {{"subtypes": ["Dragon"]}}]}}, got {subject!r}'
     )
     if subject == "self":
+        return
+    if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
+        # "…by **three or more** Pirates": a count of distinct creatures per
+        # seat. A positive integer, since 0 would name every player and a bool
+        # would read as 1.
+        need = subject["at_least"]
+        if isinstance(need, bool) or not isinstance(need, int) or need < 1:
+            raise DslError(f"{where}.at_least: needs a positive whole number, got {need!r}")
+        if len(subject) != 2:
+            raise DslError(shape)
+        _validate_dealt_combat_damage_subject({"subtypes": subject["subtypes"]}, where)
         return
     if not isinstance(subject, Mapping) or len(subject) != 1:
         raise DslError(shape)
