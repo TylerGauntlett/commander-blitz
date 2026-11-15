@@ -4043,6 +4043,10 @@
     "artist": "Ron Spears",
     "scryfall_id": "b9b760d5-60a3-4399-b1ae-faf68fd122c6"
   },
+  "daring_buccaneer": {
+    "artist": "Jason Rainville",
+    "scryfall_id": "1d413b88-8f5d-415f-bd07-169f6c175e6b"
+  },
   "daring_thunder_thief": {
     "artist": "Inkognit",
     "scryfall_id": "b41a2bf7-248c-4f8b-92ec-3010d276cb59"
@@ -7463,6 +7467,10 @@
   "goldlust_triad": {
     "artist": "Arif Wijaya",
     "scryfall_id": "a770d7c1-565a-4cec-a4e3-dbb17b9a2b95"
+  },
+  "goldmeadow_stalwart": {
+    "artist": "Wayne Reynolds",
+    "scryfall_id": "6a7a9110-6aea-460b-91fa-5f8a507160e7"
   },
   "goldmire_bridge": {
     "artist": "Aaron Miller",
@@ -13868,6 +13876,10 @@
     "artist": "Alexander Skripnikov",
     "scryfall_id": "041351b5-e253-41ec-bc6d-579ae89d6396"
   },
+  "quartzwood_crasher": {
+    "artist": "Antonio Jos\u00e9 Manzanedo",
+    "scryfall_id": "d39e00aa-9af9-4e53-8540-3fb56009c9b4"
+  },
   "queen_mother_ramonda": {
     "artist": "Michael Machira",
     "scryfall_id": "081cb05a-e6d6-46fe-8809-b537c0a49fa7"
@@ -15044,6 +15056,10 @@
     "artist": "Karl Kopinski",
     "scryfall_id": "4c5c8eb3-c866-4974-90eb-be99c07af1a1"
   },
+  "sadistic_skymarcher": {
+    "artist": "Seb McKinnon",
+    "scryfall_id": "1334ee90-c798-42ec-b2be-68dac766a7eb"
+  },
   "sage_of_the_beyond": {
     "artist": "Cristi Balanescu",
     "scryfall_id": "226a4c5d-bf49-40d8-a7a4-341c18029634"
@@ -16200,6 +16216,10 @@
     "artist": "Terese Nielsen",
     "scryfall_id": "9d33e866-cfd8-44e6-8070-df8df1ce965d"
   },
+  "silvergill_adept": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "9312622d-ebe7-4616-b5c1-bcb9e90985a2"
+  },
   "silverquill_campus": {
     "artist": "Titus Lunter",
     "scryfall_id": "354efff0-aea5-4274-94d6-9fce02430255"
@@ -17008,6 +17028,10 @@
     "artist": "Kato Ayaka",
     "scryfall_id": "51df7137-8bfc-4140-b436-88834bd78b73"
   },
+  "squeaking_pie_sneak": {
+    "artist": "Jeff Miracola",
+    "scryfall_id": "b7184715-3ed3-4f56-9bf3-ff431cca86be"
+  },
   "squee_goblin_nabob": {
     "artist": "Greg Staples",
     "scryfall_id": "8aabc541-ff2a-416f-a973-44eda8ec4706"
@@ -17587,6 +17611,10 @@
   "surrakar_banisher": {
     "artist": "Matt Cavotta",
     "scryfall_id": "27e88b32-ba7a-4a40-bbe6-903303079570"
+  },
+  "surtland_elementalist": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "1c9e7fdc-676f-4901-83ff-bfea3a96d937"
   },
   "surveillance_room": {
     "artist": "Maxim Ruabtsev",
@@ -20507,6 +20535,10 @@
     "artist": "David Astruga",
     "scryfall_id": "60d4d916-8229-4285-b8e6-34c3973eb8ae"
   },
+  "wayta_trainer_prodigy": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "04f2d7ee-43a4-48e8-af64-d9fad4b9c5f1"
+  },
   "wayward_giant": {
     "artist": "Filip Burburan",
     "scryfall_id": "340e8df4-23b7-421f-b98c-1ef7cfc53132"
@@ -21086,6 +21118,10 @@
   "wrath_of_god": {
     "artist": "Willian Murai",
     "scryfall_id": "537d2b05-3f52-45d6-8fe3-26282085d0c6"
+  },
+  "wrathful_raptors": {
+    "artist": "April Prime",
+    "scryfall_id": "49243e92-93e3-4090-b4f7-86fa4ca2fef5"
   },
   "wreck_and_rebuild": {
     "artist": "Ben Hill",

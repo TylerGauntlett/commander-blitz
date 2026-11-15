@@ -60742,12 +60742,12 @@
     },
     "Daring Buccaneer": {
       "edhrec_rank": 22257,
-      "gate": "template",
+      "gate": null,
       "name": "Daring Buccaneer",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Pirate card from your hand or pay {2}",
+      "reason": "",
       "scryfall_id": "1d413b88-8f5d-415f-bd07-169f6c175e6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Daring Demolition": {
@@ -114562,12 +114562,12 @@
     },
     "Goldmeadow Stalwart": {
       "edhrec_rank": 24565,
-      "gate": "template",
+      "gate": null,
       "name": "Goldmeadow Stalwart",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Kithkin card from your hand or pay {3}",
+      "reason": "",
       "scryfall_id": "6a7a9110-6aea-460b-91fa-5f8a507160e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goldmire Bridge": {
@@ -230772,12 +230772,12 @@
     },
     "Sadistic Skymarcher": {
       "edhrec_rank": 23861,
-      "gate": "template",
+      "gate": null,
       "name": "Sadistic Skymarcher",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Vampire card from your hand or pay {1}",
+      "reason": "",
       "scryfall_id": "1334ee90-c798-42ec-b2be-68dac766a7eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sadistic Slash": {
@@ -247782,12 +247782,12 @@
     },
     "Silvergill Adept": {
       "edhrec_rank": 12570,
-      "gate": "template",
+      "gate": null,
       "name": "Silvergill Adept",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Merfolk card from your hand or pay {3}",
+      "reason": "",
       "scryfall_id": "9312622d-ebe7-4616-b5c1-bcb9e90985a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silvergill Douser": {
@@ -261702,12 +261702,12 @@
     },
     "Squeaking Pie Sneak": {
       "edhrec_rank": 27735,
-      "gate": "template",
+      "gate": null,
       "name": "Squeaking Pie Sneak",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Goblin card from your hand or pay {3}",
+      "reason": "",
       "scryfall_id": "b7184715-3ed3-4f56-9bf3-ff431cca86be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squealing Devil": {
@@ -271032,12 +271032,12 @@
     },
     "Surtland Elementalist": {
       "edhrec_rank": 16988,
-      "gate": "template",
+      "gate": null,
       "name": "Surtland Elementalist",
-      "reason": "no template for: As an additional cost to cast this spell, reveal a Giant card from your hand or pay {2}",
+      "reason": "",
       "scryfall_id": "1c9e7fdc-676f-4901-83ff-bfea3a96d937",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surtland Flinger": {

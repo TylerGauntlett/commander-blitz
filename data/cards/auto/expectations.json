@@ -4658,6 +4658,13 @@
   "dancing_scimitar": {
     "zone": "battlefield"
   },
+  "daring_buccaneer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "daring_thunder_thief": {
     "zone": "battlefield"
   },
@@ -8591,6 +8598,13 @@
   },
   "goldlust_triad": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "goldmeadow_stalwart": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "goldmire_bridge": {
@@ -17199,6 +17213,13 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "sadistic_skymarcher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sage_of_the_beyond": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18479,6 +18500,16 @@
   "silvercoat_lion": {
     "zone": "battlefield"
   },
+  "silvergill_adept": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "silverquill_campus": {
     "battlefield_count": 33,
     "hand_size": {
@@ -19325,6 +19356,13 @@
     },
     "zone": "battlefield"
   },
+  "squeaking_pie_sneak": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "squee_goblin_nabob": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19996,6 +20034,10 @@
     "zone": "battlefield"
   },
   "surrakar_banisher": {
+    "zone": "battlefield"
+  },
+  "surtland_elementalist": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "surveillance_room": {

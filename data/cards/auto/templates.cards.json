@@ -56327,6 +56327,40 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Pirate"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "daring_buccaneer",
+      "mana_cost": "{R}",
+      "name": "Daring Buccaneer",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Pirate card from your hand or pay {2}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -101285,6 +101319,40 @@
         "Dragon"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Kithkin"
+            ]
+          }
+        },
+        {
+          "mana": "{3}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "goldmeadow_stalwart",
+      "mana_cost": "{W}",
+      "name": "Goldmeadow Stalwart",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Kithkin card from your hand or pay {3}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kithkin",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -205327,6 +205395,44 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Vampire"
+            ]
+          }
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sadistic_skymarcher",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Sadistic Skymarcher",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Vampire card from your hand or pay {1}.\nFlying, lifelink",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_spells": {
@@ -220713,6 +220819,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Merfolk"
+            ]
+          }
+        },
+        {
+          "mana": "{3}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "silvergill_adept",
+      "mana_cost": "{1}{U}",
+      "name": "Silvergill Adept",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Merfolk card from your hand or pay {3}.\nWhen this creature enters, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -230739,6 +230898,43 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Goblin"
+            ]
+          }
+        },
+        {
+          "mana": "{3}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "squeaking_pie_sneak",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Squeaking Pie Sneak",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Goblin card from your hand or pay {3}.\nFear (This creature can't be blocked except by artifact creatures and/or black creatures.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "active_zones": [
@@ -239477,6 +239673,62 @@
         "Surrakar"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "cast_from_hand",
+              "player": "you",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may cast an instant or sorcery spell from your hand without paying its mana cost.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "reveal_from_hand": {
+            "subtypes": [
+              "Giant"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "surtland_elementalist",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Surtland Elementalist",
+      "oracle_text": "As an additional cost to cast this spell, reveal a Giant card from your hand or pay {2}.\nWhenever this creature attacks, you may cast an instant or sorcery spell from your hand without paying its mana cost.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Giant",
+        "Wizard"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
