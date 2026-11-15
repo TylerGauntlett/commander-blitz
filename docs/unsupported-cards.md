@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**399 cards** blocked by **345** capabilities.
+**398 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
-| [adventure-half-in-index](#adventure-half-in-index) | 2 | 2673 | engine |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 2 | 9598 | token |
@@ -78,6 +77,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
+| [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
@@ -1020,24 +1020,6 @@ Blocks **2** cards.
 
 </details>
 
-## adventure-half-in-index
-
-Blocks **2** cards.
-
-- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
-  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
-- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row for this card has layout `adventure`, type line 'Enchantment // Sorcery — Adventure' and cost '{1}{B} // {2}{B}', but its back_name/back_oracle_text are empty and the MTGJSON deck file (BloodRites_LCC) carries only side a, so the packet has `back_face: {}` and no Foul Rebirth text in oracle_text. The second_face entry cannot be authored without inventing its rules text.
-  <br>Why the existing vocabulary won't do: The front face is expressible today: an `end_step` trigger whose effect is `may` with `pay: {sacrifice: {types: [Creature], not_subtypes: [Demon]}}` and, on payment, populate as `choose_permanents` (controller you, Creature, is_token) bound with `as` followed by `copy_permanent` over that binding (the shape a shipped populate card in templates.cards.json uses). The engine also already casts Adventures via `second_face` + `adventure: true` + `second_face_zone: hand` (Beanstalk Giant // Fertile Footsteps). The only missing piece is the Adventure half's printed text in the index; a front-only answer would be a half-implemented card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
-  - This creature can block only creatures with flying.
-- **Promise of Aclazotz // Foul Rebirth** (rank 7398) — `promise_of_aclazotz_foul_rebirth`
-  - Foul Rebirth {2}{B} Sorcery — Adventure: <printed text absent from the packet and from data/catalog/cards.sqlite>
-
-</details>
-
 ## all-creature-types
 
 Blocks **2** cards.
@@ -1782,6 +1764,20 @@ Blocks **1** card.
 
 - **James, Wandering Dad // Follow Him** (rank 8561) — `james_wandering_dad_follow_him`
   - Follow Him {X}{U}{U} (Instant — Adventure): printed text absent from the packet
+
+</details>
+
+## adventure-half-in-index
+
+Blocks **1** card.
+
+- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
+  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
+  - This creature can block only creatures with flying.
 
 </details>
 

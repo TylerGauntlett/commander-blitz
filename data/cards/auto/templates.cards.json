@@ -89048,6 +89048,61 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "foul_rebirth_promise_of_aclazotz",
+      "mana_cost": "{2}{B}",
+      "name": "Foul Rebirth",
+      "oracle_text": "Sacrifice a non-Demon creature. If you do, create a 4/3 white and black Vampire Demon creature token with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "foul_sacrificed",
+          "objects": {
+            "chooser": "controller",
+            "controller": "you",
+            "count": 1,
+            "not_subtypes": [
+              "Demon"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "condition": {
+            "exists": {
+              "binding": "foul_sacrificed"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_demon_4_3_wb_flying"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -184811,6 +184866,78 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "populate_original",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "is_token": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Populate: choose a creature token you control to copy"
+                },
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "populate_original"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "not_subtypes": [
+                    "Demon"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a non-Demon creature to populate?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice a non-Demon creature. If you do, populate. (Create a token that's a copy of a creature token you control.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "promise_of_aclazotz_foul_rebirth",
+      "mana_cost": "{1}{B}",
+      "name": "Promise of Aclazotz // Foul Rebirth",
+      "oracle_text": "At the beginning of your end step, you may sacrifice a non-Demon creature. If you do, populate. (Create a token that's a copy of a creature token you control.)",
+      "second_face": "foul_rebirth_promise_of_aclazotz",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

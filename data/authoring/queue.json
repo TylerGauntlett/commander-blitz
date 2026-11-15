@@ -208302,12 +208302,12 @@
     },
     "Promise of Aclazotz // Foul Rebirth": {
       "edhrec_rank": 7398,
-      "gate": "template",
+      "gate": null,
       "name": "Promise of Aclazotz // Foul Rebirth",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice a non-Demon creature. If you do, popu",
+      "reason": "",
       "scryfall_id": "a138b213-653d-4f1d-8674-db71e871c8d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Promise of Bunrei": {

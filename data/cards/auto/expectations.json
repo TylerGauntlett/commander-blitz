@@ -15471,6 +15471,10 @@
     },
     "zone": "battlefield"
   },
+  "promise_of_aclazotz_foul_rebirth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "promise_of_loyalty": {
     "battlefield_count": 31,
     "opponent_battlefield_count": 5,
