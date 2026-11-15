@@ -17,6 +17,7 @@ from ..primitives import (
     grant_ability,
     grant_keyword,
     lock_abilities,
+    lose_all_abilities_timed,
     pump,
 )
 from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
@@ -146,18 +147,32 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
     Both mean the same thing about the printed list; they differ only in who is
     saying it and for how long.
 
-    Permanent for as long as the permanent is. "Loses all abilities until end of
-    turn" is `temp_effects`' business and a different clause; this one is The
-    Irencrag's, which never changes back.
+    Permanent for as long as the permanent is, with no ``duration`` (or
+    ``"permanent"``): The Irencrag's, which never changes back. A ``duration``
+    of ``until_end_of_turn`` or ``until_your_next_turn`` is Warkite Marauder's
+    "loses all abilities … until end of turn", written as a timed entry
+    (`primitives.lose_all_abilities_timed`) that hides the older grants rather
+    than deleting them, so they are back when it wears off.
 
     **Other** abilities: the grants applied alongside it survive, because
     `_derived_abilities` drops the *printed* list and appends the granted ones
     after -- which is exactly what "loses all other abilities and gains …" says.
     """
+    timed = spec.get("duration", "permanent") != "permanent"
+    until_player = until_player_of(ctx, spec) if timed else None
     oids = yield from choose_objects(ctx, spec.get("objects"), "Loses all abilities")
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None or not obj.on_battlefield:
+            continue
+        if timed:
+            lose_all_abilities_timed(
+                ctx.state,
+                oid,
+                cutoff=ctx.began_at,
+                source=ctx.source_oid,
+                until_player=until_player,
+            )
             continue
         obj.lost_all_abilities = True
         _drop_earlier_grants(obj, ctx.began_at)

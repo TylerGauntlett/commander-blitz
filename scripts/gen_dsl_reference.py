@@ -375,7 +375,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "become_level": ("Modify", "A Class becomes level N.", H_CLASSES),
     "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
               H_CASES),
-    "lose_all_abilities": ("Modify", "Permanents lose all abilities for a duration.",
+    "lose_all_abilities": ("Modify", "Permanents lose all abilities: for good, or with "
+                           "`duration` until end of turn or your next turn.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",

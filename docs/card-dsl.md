@@ -2712,8 +2712,7 @@ gate it.
 So the fact goes on the object and is read by `_derived_abilities` beside the
 static — the one place that decides what abilities a permanent has. The two mean
 the same thing about the printed list and differ only in who is saying it and for
-how long. ("Loses all abilities **until end of turn**" is `temp_effects`' job and
-a different clause.)
+how long.
 
 Two other readers honour it: `abilities_of`'s fast path, which returns the
 printed list outright when no static and no op grant is in sight, and
@@ -2722,6 +2721,28 @@ printed list outright when no static and no op grant is in sight, and
 **Other** abilities: a grant applied in the same breath survives, because
 `_derived_abilities` drops the *printed* list and appends the granted ones after
 — which is what "loses all other abilities and gains …" says.
+
+**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`
+or `"until_your_next_turn"` for the timed one:
+
+```jsonc
+// Warkite Marauder: "…target creature defending player controls loses all
+// abilities and has base power and toughness 0/1 until end of turn."
+{ "op": "lose_all_abilities", "objects": { "target": "t1" },
+  "duration": "until_end_of_turn" },
+{ "op": "animate", "objects": { "target": "t1" },
+  "power": { "const": 0 }, "toughness": { "const": 1 } }
+```
+
+The timed loss is a `TempEffect(kind="lose_all_abilities")` on the permanent,
+stamped with the resolution's start. While it stands the printed abilities are
+gone and every keyword, protection and ability *granted* before it is read past
+(613.7); one granted after it survives. Nothing is deleted, which is the
+difference from the permanent loss: a grant that lasts as long as the permanent
+does (riot's haste, a `"permanent"` `grant_keyword`) is back when cleanup — or,
+for `until_your_next_turn`, that seat's untap step — ends the loss. Any other
+spelling is a load error, since a misspelt clock would otherwise read as the
+permanent loss, the strictly stronger card.
 
 ### Changing a permanent's name
 

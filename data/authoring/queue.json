@@ -310902,12 +310902,12 @@
     },
     "Warkite Marauder": {
       "edhrec_rank": 6345,
-      "gate": "template",
+      "gate": null,
       "name": "Warkite Marauder",
-      "reason": "no template for: Whenever this creature attacks, target creature defending player controls loses all abilit",
+      "reason": "",
       "scryfall_id": "be9c4e92-7a20-4070-96b2-57f310d27c12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Warleader's Call": {

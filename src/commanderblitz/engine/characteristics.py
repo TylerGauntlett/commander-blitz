@@ -90,7 +90,7 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaCost, ManaOrigin, printed_cost_is
 from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
-from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
+from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics, TempEffect
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
 
@@ -893,6 +893,11 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     timestamps by construction, and the same rule keeps them.
         if _loses_abilities(state, obj):
             keywords = set()
+        #    A timed loss (Warkite Marauder) also hides every keyword *granted*
+        #    before it, for as long as it stands -- what the permanent op does
+        #    by deleting those grants, done here by reading past them so they
+        #    are back when it wears off (613.7).
+        cut = timed_loss_cutoff(obj)
 
         #    "Equipped creature gets +10/+10 **and loses flying**" (Colossus
         #    Hammer): a plain removal, which 613.7 orders by timestamp among
@@ -992,6 +997,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 # static is reading another static here.
                 if temp.only_your_turn and state.active_player != obj.controller:
                     continue
+                if cut is not None and temp.timestamp < cut:
+                    continue
                 keywords.add(temp.keyword)
                 if stamped is not None:
                     stamped.append((temp.timestamp, temp.keyword))
@@ -999,7 +1006,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         # 7. haste from suspend, which is *not* an until-end-of-turn effect: it
         #    lasts as long as the permanent does. Without it a suspended creature
         #    arrives summoning sick and suspend is never worth doing.
-        if obj.hasted_by_suspend:
+        if obj.hasted_by_suspend and (cut is None or obj.timestamp >= cut):
             keywords.add(Keyword.HASTE.value)
             if stamped is not None:
                 stamped.append((obj.timestamp, Keyword.HASTE.value))
@@ -1010,13 +1017,18 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    above is the same idea for one specific keyword; this is the
         #    general form, and the two stay separate because suspend's is set
         #    while the card is still in exile.
-        keywords.update(obj.granted_keywords)
+        lasting = [
+            word
+            for word in obj.granted_keywords
+            if cut is None or obj.granted_keyword_at.get(word, obj.timestamp) >= cut
+        ]
+        keywords.update(lasting)
         if stamped is not None:
             # Riot's haste, written as the permanent arrives, carries no stamp
             # of its own: it began with the arrival.
             stamped.extend(
                 (obj.granted_keyword_at.get(word, obj.timestamp), word)
-                for word in obj.granted_keywords
+                for word in lasting
             )
 
         # 8b. The timestamped removals gathered before step 2. Printed
@@ -1215,11 +1227,28 @@ def _timestamped_removals(
     return out
 
 
+def timed_loss_cutoff(obj: GameObject) -> int | None:
+    """The cutoff of the newest timed "loses all abilities" on ``obj``, if any.
+
+    `primitives.lose_all_abilities_timed` writes one `TempEffect` per loss with
+    the resolution's start as its ``timestamp``. While any stands, the printed
+    abilities are gone and every ability grant older than the newest cutoff is
+    read past (613.7); ``None`` when nothing timed is stripping it.
+    """
+    stamps = [t.timestamp for t in obj.until_eot if t.kind == "lose_all_abilities"]
+    return max(stamps) if stamps else None
+
+
+def _hidden_by_loss(temp: TempEffect, cut: int | None) -> bool:
+    """Is this grant older than a timed loss that is still standing?"""
+    return cut is not None and temp.timestamp < cut
+
+
 def _loses_abilities(state: GameState, obj: GameObject) -> bool:
     """Is something stripping every ability from this permanent right now?"""
     if not obj.on_battlefield:
         return False
-    if obj.lost_all_abilities:
+    if obj.lost_all_abilities or timed_loss_cutoff(obj) is not None:
         return True
     return any(
         static.get("effect") == "lose_all_abilities"
@@ -1357,7 +1386,12 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
-    if not statics and not _has_op_grants(obj) and not obj.lost_all_abilities:
+    if (
+        not statics
+        and not _has_op_grants(obj)
+        and not obj.lost_all_abilities
+        and timed_loss_cutoff(obj) is None
+    ):
         return printed
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
@@ -1396,7 +1430,7 @@ def _derived_abilities(
     # (The Irencrag). Either way the printed abilities are not here -- and the
     # grants below still are, which is what "loses all **other** abilities and
     # gains …" says.
-    if not obj.lost_all_abilities and not any(
+    if not obj.lost_all_abilities and timed_loss_cutoff(obj) is None and not any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in statics
@@ -1449,8 +1483,11 @@ def granted_abilities(state: GameState, oid: int):
     # battlefield has had `until_eot` emptied by `reset_permanent_state`, and
     # its own leave-the-battlefield triggers have not fired yet. Empty for
     # everything else, so this reads as plain `until_eot` in every other case.
+    cut = timed_loss_cutoff(obj) if obj.on_battlefield else None
     for temp in (*obj.until_eot, *obj.granted_abilities_permanent, *obj.left_with):
         if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        if _hidden_by_loss(temp, cut):
             continue
         source = state.objects.get(temp.source)
         if source is None:
@@ -1496,8 +1533,11 @@ def _op_granted_abilities(
     that the object which comes back has none of it.
     """
     out: list[tuple[Ability, tuple[int, int]]] = []
+    cut = timed_loss_cutoff(obj)
     for temp in (*obj.until_eot, *obj.granted_abilities_permanent):
         if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        if _hidden_by_loss(temp, cut):
             continue
         granter = state.objects.get(temp.source)
         if granter is None:
@@ -3451,8 +3491,11 @@ def protection_from(
     # joins the printed statics' qualities in the same flat set, and the four
     # rules that read this -- damage, enchant/equip, block, target -- all see it
     # without knowing where it came from.
+    cut = timed_loss_cutoff(obj)
     out.update(
-        str(temp.keyword) for temp in obj.until_eot if temp.kind == "protection" and temp.keyword
+        str(temp.keyword)
+        for temp in obj.until_eot
+        if temp.kind == "protection" and temp.keyword and not _hidden_by_loss(temp, cut)
     )
     return frozenset(out)
 

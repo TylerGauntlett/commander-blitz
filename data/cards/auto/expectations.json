@@ -23495,6 +23495,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "warkite_marauder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "warlord_s_axe": {
     "zone": "battlefield"
   },

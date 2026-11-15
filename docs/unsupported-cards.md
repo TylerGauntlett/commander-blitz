@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **345** capabilities.
+**392 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -218,7 +218,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
-| [lose-all-abilities-until-end-of-turn](#lose-all-abilities-until-end-of-turn) | 1 | 6345 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [madness](#madness) | 1 | 3016 | replacement |
@@ -3754,20 +3753,6 @@ Blocks **1** card.
 
 - **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
   - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
-
-</details>
-
-## lose-all-abilities-until-end-of-turn
-
-Blocks **1** card.
-
-- **(op)** a duration on the lose_all_abilities op (duration: until_end_of_turn, as a TempEffect) so a targeted permanent loses its printed and earlier-granted abilities only until end of turn, then gets them back
-  <br>Why the existing vocabulary won't do: op lose_all_abilities takes only `objects` and sets the permanent flag obj.lost_all_abilities (its docstring says 'until end of turn' is a different clause left to temp_effects); lose_keyword strips keywords only; lock_abilities only stops activation; the lose_all_abilities static lives on the source's printed face and cannot follow a trigger's target. The base 0/1 half is sayable with animate (power 0, toughness 1, default until-end-of-turn duration), but the card cannot be written without the ability loss
-
-<details><summary>Cards waiting on this</summary>
-
-- **Warkite Marauder** (rank 6345) — `warkite_marauder`
-  - Whenever this creature attacks, target creature defending player controls loses all abilities and has base power and toughness 0/1 until end of turn.
 
 </details>
 
