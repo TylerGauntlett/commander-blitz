@@ -53912,12 +53912,12 @@
     },
     "Corsair Captain": {
       "edhrec_rank": 5091,
-      "gate": "template",
+      "gate": null,
       "name": "Corsair Captain",
-      "reason": "no template for: When this creature enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "d5017dbc-07fd-45ea-9629-7c584144e8be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corsairs of Umbar": {
@@ -67262,12 +67262,12 @@
     },
     "Desolate Lighthouse": {
       "edhrec_rank": 2161,
-      "gate": "template",
+      "gate": null,
       "name": "Desolate Lighthouse",
-      "reason": "no template for: {1}{U}{R}, {T}: Draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "c155cc10-09f4-424b-b366-142adf9c1712",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Desolate Mire": {

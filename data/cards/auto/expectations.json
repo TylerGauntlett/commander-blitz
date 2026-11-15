@@ -4185,6 +4185,14 @@
       "0": 3
     }
   },
+  "corsair_captain": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "cosmic_crucible": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5181,6 +5189,10 @@
     "zone": "battlefield"
   },
   "deserted_beach": {
+    "zone": "battlefield"
+  },
+  "desolate_lighthouse": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "desolate_mire": {
