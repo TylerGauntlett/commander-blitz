@@ -10068,6 +10068,10 @@
     },
     "zone": "battlefield"
   },
+  "icon_of_ancestry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "idol_of_oblivion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -12977,6 +12981,10 @@
       "kind": "+1/+1"
     },
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "merchant_raiders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "merchant_scroll": {

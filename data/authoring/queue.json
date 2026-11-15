@@ -133242,12 +133242,12 @@
     },
     "Icon of Ancestry": {
       "edhrec_rank": 2348,
-      "gate": "template",
+      "gate": null,
       "name": "Icon of Ancestry",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "f6cdbdf3-f8bd-48a9-8a47-6b0b9d5de0db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iconic Shield": {
@@ -171252,12 +171252,12 @@
     },
     "Merchant Raiders": {
       "edhrec_rank": 6899,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant Raiders",
-      "reason": "no template for: Whenever this creature or another Pirate you control enters, tap up to one target creature",
+      "reason": "",
       "scryfall_id": "f6236b1e-2e3e-4088-87e0-9cdf1fc8db66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant Scroll": {
