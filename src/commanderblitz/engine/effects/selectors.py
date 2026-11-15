@@ -791,7 +791,7 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     # objects, and a name this function did not know fell through to
     # `alive()` -- every seat at the table, which for a hand or a graveyard is
     # the widest possible reading of a sentence naming one player.
-    if controller == "enchanted_player":
+    if controller in SEAT_FILTER_WORDS:
         return select_players(ctx, controller)
     return ctx.state.alive()
 
@@ -1074,7 +1074,7 @@ def matches(
     # miss and is exact only at two players -- at a pod it counts the whole
     # table's artifacts, so the enchanted player's toll goes up because somebody
     # else built a Signet.
-    if (isinstance(controller, Mapping) or controller == "enchanted_player") and (
+    if (isinstance(controller, Mapping) or controller in SEAT_FILTER_WORDS) and (
         obj.controller not in select_players(ctx, controller)
     ):
         return False
@@ -1095,7 +1095,7 @@ def matches(
         return False
     if owner == "opponent" and obj.owner == ctx.controller:
         return False
-    if (isinstance(owner, Mapping) or owner == "enchanted_player") and (
+    if (isinstance(owner, Mapping) or owner in SEAT_FILTER_WORDS) and (
         obj.owner not in select_players(ctx, owner)
     ):
         return False
@@ -1600,6 +1600,15 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
     raise DslError(f"{where}: unknown chooser {who!r}")
 
 
+#: The named player specs a selector's ``controller`` and ``owner`` also take,
+#: beside the three words ``you``/``opponent``/``any``: each names one seat that
+#: no combination of those three can. ``enchanted_player`` is the seat an Aura
+#: is attached to; ``monarch`` is whoever holds the crown as the selector is
+#: read (721), and matches nothing while nobody does. Both resolve through
+#: :func:`select_players`, so the selector and the player spec cannot disagree.
+SEAT_FILTER_WORDS = ("enchanted_player", "monarch")
+
+
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
@@ -1629,6 +1638,10 @@ PLAYER_SPEC_NAMES = frozenset(
         # "they create a token" handing one to every opponent is three times the
         # printed card. See `select_players`.
         "gift_recipient",
+        # "…creatures **the monarch** controls" (Azure Fleet Admiral). The seat
+        # holding `GameState.monarch` as the spec is read, and nobody while
+        # the crown is unclaimed (721.2). See `select_players`.
+        "monarch",
     }
 )
 
@@ -1702,6 +1715,15 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
                 obj = state.objects.get(ctx.source_oid)
                 promisee = obj.cast_gift_to if obj is not None else None
             return [promisee] if promisee is not None and state.is_alive(promisee) else []
+        if spec == "monarch":
+            # "…creatures **the monarch** controls" (721). Read as the spec is
+            # asked, never remembered: the crown changes hands mid-turn (a
+            # combat-damage steal, a `become_monarch`), and the sentence always
+            # names whoever wears it now. `[]` while nobody is the monarch, so
+            # the sentence then reaches nothing -- not the controller, and not
+            # the table.
+            pid = state.monarch
+            return [pid] if pid is not None and state.is_alive(pid) else []
         if spec == "enchanted_player":
             # "Enchanted opponent creates a Clue token." The seat this Aura is
             # attached to, read off the **ability's own source** -- the same
@@ -2150,14 +2172,14 @@ def validate_selector(selector: Any, where: str) -> None:
     if (
         controller is not None
         and not isinstance(controller, Mapping)
-        and controller not in ("you", "opponent", "any", "enchanted_player")
+        and controller not in ("you", "opponent", "any", *SEAT_FILTER_WORDS)
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
     owner = selector.get("owner")
     if (
         owner is not None
         and not isinstance(owner, Mapping)
-        and owner not in ("you", "opponent", "any", "enchanted_player")
+        and owner not in ("you", "opponent", "any", *SEAT_FILTER_WORDS)
     ):
         # Refused for the reason `controller` is, and the stakes are higher: an
         # unrecognised word here matches *everything*, so a selector meaning "a

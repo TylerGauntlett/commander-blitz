@@ -8038,6 +8038,28 @@ finds nobody and every "there is no monarch" reads False for the rest of the gam
 stack, so nothing can respond between the damage and the crown moving, or between
 the end step and the draw. The same trade `delay` and the day/night switch record.
 
+#### "Creatures the monarch controls" — `monarch` as a seat
+
+```jsonc
+// Azure Fleet Admiral: "This creature can't be blocked by creatures the monarch controls."
+{ "kind": "static", "text": "…", "effect": "block_restriction",
+  "affects": { "self_only": true },
+  "blockers": { "types": ["Creature"], "controller": "monarch" } }
+```
+
+`"monarch"` is a player spec naming whoever holds `GameState.monarch` **as the
+spec is read**, and nobody while the crown is unclaimed. It is also legal as a
+selector's or a static filter's `controller` and `owner`, beside
+`enchanted_player`: both are seats the words `you`/`opponent`/`any` cannot name.
+In `blockers` it is asked per blocker at declaration, so the crown changing hands
+mid-turn changes who may block, and a 2-player game where you hold the crown lets
+the opponent block freely.
+
+The near miss is `condition: {"is_monarch": "opponent"}` on an unfiltered
+`block_restriction`: that switches the whole static on while *any* opponent is
+the monarch, so at a pod it would refuse blocks from every opponent rather than
+the one wearing the crown.
+
 `is_monarch` is deliberately **not** in the static condition language, unlike
 `has_city_s_blessing`. It would be safe there — the designation is a pipeline
 input — but no card in the pool asks it from a static, and the blessing is in both

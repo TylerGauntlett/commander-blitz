@@ -2396,6 +2396,11 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     # "each_opponent" fell through to *every* player including yourself.
     if who in ("opponent", "each_opponent"):
         return state.opponents(source.controller)
+    # The monarch (721), as the effect-side `select_players` reads it: whoever
+    # holds the crown now, and nobody while it is unclaimed.
+    if who == "monarch":
+        pid = state.monarch
+        return [pid] if pid is not None and state.is_alive(pid) else []
     return state.alive()
 
 
@@ -3036,6 +3041,13 @@ def _matches_wherever(
     # board would say so. `None` -- an Aura on a permanent, or on nobody --
     # matches no permanent, since no seat has that id.
     if controller == "enchanted_player" and obj.controller != source.attached_to_player:
+        return False
+    # "…can't be blocked by creatures **the monarch** controls" (Azure Fleet
+    # Admiral). The crown is a pipeline input -- `GameState.monarch` is written
+    # by `become_monarch` and the combat-damage steal, never by a layer -- so
+    # reading it here makes no static depend on another. Nobody wears it ->
+    # no permanent matches, the same safe direction as `enchanted_player`.
+    if controller == "monarch" and (state.monarch is None or obj.controller != state.monarch):
         return False
     if owner == "you" and obj.owner != source.controller:
         return False

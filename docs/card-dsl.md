@@ -566,8 +566,8 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
 }
 ```
 
-`owner` is `controller`'s ownership twin — the same four words (`you`,
-`opponent`, `any`, `enchanted_player`) and the same player-spec mapping, read
+`owner` is `controller`'s ownership twin — the same five words (`you`,
+`opponent`, `any`, `enchanted_player`, `monarch`) and the same player-spec mapping, read
 off `GameObject.owner` instead. Ownership is written once, when the object is
 made, and `change_control` leaves it alone, so it is the one relation on a
 permanent that gaining control cannot move.
@@ -5507,7 +5507,7 @@ The list with a line each is
 [card-dsl-reference.md#player-specs](card-dsl-reference.md#player-specs).
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
-`"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
+`"enchanted_player"` · `"gift_recipient"` · `"monarch"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
@@ -5520,9 +5520,14 @@ demonstrate needs, since its copy is not targeted.
 
 `"enchanted_player"` is the seat the ability's **own source** is attached to —
 "enchanted opponent", "that player", "enchanted player". It is refused at load
-time on any card that is not an Aura, and it is the only named spec that is also
-legal as a selector's `controller`: see
+time on any card that is not an Aura, and it is one of the two named specs that
+are also legal as a selector's `controller` and `owner`: see
 [An Aura that enchants a player](card-dsl-cookbook.md#an-aura-that-enchants-a-player).
+
+`"monarch"` is whoever holds the crown as the spec is read, and nobody while it
+is unclaimed. It is the other named spec legal as a `controller` or `owner`, in
+effect selectors and static filters alike — "creatures the monarch controls":
+see [The monarch](card-dsl-cookbook.md#creatures-the-monarch-controls--monarch-as-a-seat).
 
 `"gift_recipient"` is the one opponent the caster promised a gift as this spell
 was cast — the only string here naming a seat the **caster chose**, rather than

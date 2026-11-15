@@ -18652,12 +18652,12 @@
     },
     "Azure Fleet Admiral": {
       "edhrec_rank": 9922,
-      "gate": "template",
+      "gate": null,
       "name": "Azure Fleet Admiral",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "adb04bab-a10a-40da-813e-6afa68956efc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Azure Mage": {

@@ -12,7 +12,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 |---|---|
 | [Effect ops](#effect-ops) | 181 |
 | [Selectors](#selectors) | 78 |
-| [Player specs](#player-specs) | 9 |
+| [Player specs](#player-specs) | 10 |
 | [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 59 |
@@ -325,6 +325,7 @@ The named player specs. The structured forms -- `{"target": …}`, `{"controller
 | `each_player` | Every player. | [Player specs](card-dsl.md#player-specs) |
 | `enchanted_player` | The player the source Aura is attached to. | [An Aura that enchants a player](card-dsl-cookbook.md#an-aura-that-enchants-a-player) |
 | `gift_recipient` | The opponent promised a gift as this spell was cast. | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
+| `monarch` | Whoever holds the crown now (nobody while unclaimed); also a selector's `controller`/`owner`. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `opponent` | An opponent (each of them, at a pod). | [Player specs](card-dsl.md#player-specs) |
 | `you` | The ability's controller. | [Player specs](card-dsl.md#player-specs) |
 

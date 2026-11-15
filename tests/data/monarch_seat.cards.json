@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_monarch_blockers.py. `t_crown_evader` is Azure Fleet Admiral's second line alone on a 2/2; `t_crown_toll` counts the monarch's creatures through an effect selector, so the effect-side `controller: \"monarch\"` is pinned beside the static one.",
+  "cards": [
+    {
+      "id": "t_crown_evader",
+      "name": "Test Crown Evader",
+      "oracle_text": "This creature can't be blocked by creatures the monarch controls.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Pirate"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked by creatures the monarch controls.",
+          "effect": "block_restriction",
+          "affects": {"self_only": true},
+          "blockers": {"types": ["Creature"], "controller": "monarch"}
+        }
+      ]
+    },
+    {
+      "id": "t_crown_toll",
+      "name": "Test Crown Toll",
+      "oracle_text": "Draw a card for each creature the monarch controls.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "amount": {"count": {"zone": "battlefield", "types": ["Creature"], "controller": "monarch"}}
+        }
+      ]
+    }
+  ]
+}

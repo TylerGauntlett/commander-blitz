@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **347** capabilities.
+**394 cards** blocked by **346** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -245,7 +245,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
-| [monarch-block-evasion](#monarch-block-evasion) | 1 | 9922 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
@@ -4140,20 +4139,6 @@ Blocks **1** card.
 
 - **Kodama of the West Tree** (rank 831) — `kodama_of_the_west_tree`
   - Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
-
-</details>
-
-## monarch-block-evasion
-
-Blocks **1** card.
-
-- **(selector)** a blocker-filter controller spec on the block_restriction static's `blockers` that matches creatures controlled by whoever is currently the monarch (e.g. `blockers: {"controller": "monarch"}`), read per blocker at declare-blockers time
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` is a static filter whose `controller` resolves through _static_players to only you/opponent/any; the static condition `is_monarch` only switches the whole static on or off for a fixed player spec (or `affected_controller`, which names the attacker's controller, not the blocker's), so `{is_monarch: opponent}` plus an unfiltered block_restriction would make it unblockable by every opponent's creatures in multiplayer, not just the monarch's
-
-<details><summary>Cards waiting on this</summary>
-
-- **Azure Fleet Admiral** (rank 9922) — `azure_fleet_admiral`
-  - This creature can't be blocked by creatures the monarch controls.
 
 </details>
 

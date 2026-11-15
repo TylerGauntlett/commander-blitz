@@ -637,6 +637,8 @@ PLAYER_SPECS: dict[str, Entry] = {
     "active_player": ("Whose turn it is.", None),
     "enchanted_player": ("The player the source Aura is attached to.", "An Aura that enchants a player"),
     "gift_recipient": ("The opponent promised a gift as this spell was cast.", H_GIFT),
+    "monarch": ("Whoever holds the crown now (nobody while unclaimed); also a selector's "
+                "`controller`/`owner`.", H_MONARCH),
 }
 
 VALUES: dict[str, Entry] = {

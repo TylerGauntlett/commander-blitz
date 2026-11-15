@@ -1567,6 +1567,10 @@
   "azure_drake": {
     "zone": "battlefield"
   },
+  "azure_fleet_admiral": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "back_in_town": {
     "zone": "graveyard"
   },
