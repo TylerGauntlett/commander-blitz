@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 180 |
+| [Effect ops](#effect-ops) | 181 |
 | [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
@@ -59,6 +59,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |
 | `grant_playable` | Cards |  | Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
 | `hideaway` | Cards |  | Hideaway: look at the top N, exile one face down, the rest to the bottom. | [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there) |
+| `link_exiled` | Cards |  | Link cards in exile to the permanent bound under `to`, so its own `exiled_with: "self"` finds them (607.2a). | ["Return the exiled card" from a token — link_exiled](card-dsl-cookbook.md#return-the-exiled-card-from-a-token--link_exiled) |
 | `look_at_hand` | Cards |  | Look at a player's hand (private: only you see it). | [Effect ops](card-dsl.md#effect-ops) |
 | `look_at_top` | Cards | yes | Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere. | [Effect ops](card-dsl.md#effect-ops) |
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |

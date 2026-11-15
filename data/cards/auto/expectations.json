@@ -1747,6 +1747,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bat_colony": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "batroc_the_leaper": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -21243,6 +21247,10 @@
     "hand_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "timothar_baron_of_bats": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tin_street_dodger": {

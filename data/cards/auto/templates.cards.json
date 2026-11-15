@@ -20740,6 +20740,85 @@
           "effects": [
             {
               "amount": {
+                "mana_spent_from": {
+                  "subtypes": [
+                    "Cave"
+                  ]
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "bat_1_1_b_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a Cave you control enters, put a +1/+1 counter on target creature you control",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Cave"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bat_colony",
+      "mana_cost": "{2}{W}",
+      "name": "Bat Colony",
+      "oracle_text": "When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.\nWhenever a Cave you control enters, put a +1/+1 counter on target creature you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "power_of": {
                   "self": true
                 }
@@ -255093,6 +255172,138 @@
         "Shaman"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "discard": 1
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Discard a card"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "as": "exiled",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "bat",
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "bat_1_1_b_flying"
+                },
+                {
+                  "ability": 0,
+                  "duration": "permanent",
+                  "objects": {
+                    "binding": "bat"
+                  },
+                  "op": "grant_ability"
+                },
+                {
+                  "objects": {
+                    "binding": "exiled"
+                  },
+                  "op": "link_exiled",
+                  "to": "bat"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} and exile it with Timothar?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains \"When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false,
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "timothar_baron_of_bats",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Timothar, Baron of Bats",
+      "oracle_text": "Ward—Discard a card.\nWhenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains \"When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

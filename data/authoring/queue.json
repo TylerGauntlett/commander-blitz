@@ -21562,12 +21562,12 @@
     },
     "Bat Colony": {
       "edhrec_rank": 20382,
-      "gate": "template",
+      "gate": null,
       "name": "Bat Colony",
-      "reason": "no template for: When this enchantment enters, create a 1/1 black Bat creature token with flying for each m",
+      "reason": "",
       "scryfall_id": "1c02134c-ec9f-4090-820e-8ba7ae4a8c2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bat Whisperer": {
@@ -287722,12 +287722,12 @@
     },
     "Timothar, Baron of Bats": {
       "edhrec_rank": 9598,
-      "gate": "template",
+      "gate": null,
       "name": "Timothar, Baron of Bats",
-      "reason": "no template for: Ward—Discard a card",
+      "reason": "",
       "scryfall_id": "7b01ecb8-02e2-4da2-8bf3-9c3753b23ba4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tin Street Dodger": {

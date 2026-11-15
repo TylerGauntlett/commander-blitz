@@ -2624,6 +2624,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Out of exile and nowhere else: from the battlefield the same move is
     # destroy or sacrifice, from a library mill and from a hand discard, each a
     # rules event of its own that this op would skip.
+    # Both ends are required: without `objects` nothing is linked, and without
+    # a `to` binding the link has no exiler, so the token's "return the exiled
+    # card" would find nothing and the card would stay in exile for ever.
+    if op == "link_exiled":
+        if not isinstance(effect.get("objects"), Mapping):
+            raise DslError(
+                f"{where}: 'link_exiled' needs an 'objects' selector -- the cards to link"
+            )
+        if not isinstance(effect.get("to"), str) or not effect["to"]:
+            raise DslError(
+                f"{where}: 'link_exiled' needs 'to', the binding name of the permanent "
+                f"the cards are exiled with (a create_token 'as')"
+            )
     if op == "put_exiled_into_graveyard":
         objects = effect.get("objects")
         if not isinstance(objects, Mapping):

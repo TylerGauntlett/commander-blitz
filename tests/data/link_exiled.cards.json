@@ -1,0 +1,68 @@
+{
+  "_comment": "Cards for tests/unit/effects/test_link_exiled.py. `t_lx_baron` is Timothar, Baron of Bats' dies trigger without its ward: exile the dead Vampire, create a Bat, grant the Bat a combat-damage trigger that returns 'the exiled card', and `link_exiled` the card to that Bat so the Bat's own `exiled_with: \"self\"` finds it. `t_lx_vampire` is a plain nontoken Vampire for it to watch.",
+  "cards": [
+    {
+      "id": "t_lx_baron",
+      "name": "Test Linked Exile Baron",
+      "oracle_text": "Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains \"When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.\"",
+      "mana_cost": "{4}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Noble"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains \"When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.\"",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "you",
+            "filter": {"exclude_self": true, "is_token": false, "subtypes": ["Vampire"]}
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "you",
+              "pay": {"mana": "{1}"},
+              "prompt": "Pay {1} and exile it?",
+              "condition": {"exists": {"binding": "subject", "zone": "graveyard"}},
+              "effects": [
+                {"op": "exile", "objects": {"binding": "subject", "zone": "graveyard"}, "as": "exiled"},
+                {"op": "create_token", "token": "bat_1_1_b_flying", "amount": {"const": 1}, "as": "bat"},
+                {"op": "grant_ability", "ability": 0, "duration": "permanent",
+                 "objects": {"binding": "bat"}},
+                {"op": "link_exiled", "objects": {"binding": "exiled"}, "to": "bat"}
+              ]
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.",
+          "trigger": {"event": "deals_combat_damage_to_player", "source": "self"},
+          "effects": [
+            {"op": "sacrifice", "objects": {"self_only": true}},
+            {"op": "put_onto_battlefield", "controller": "you", "tapped": true,
+             "objects": {"zone": "exile", "controller": "any", "exiled_with": "self", "count": "all"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lx_vampire",
+      "name": "Test Linked Exile Vampire",
+      "oracle_text": "",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}

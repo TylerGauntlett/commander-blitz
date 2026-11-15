@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **341** capabilities.
+**391 cards** blocked by **339** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -89,7 +89,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
-| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -215,7 +214,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
-| [linked-exile-granted-return](#linked-exile-granted-return) | 1 | 9598 | engine |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
@@ -1921,20 +1919,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## bat-1-1-b-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black Bat creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bat Colony** (rank 20382) — `bat_colony`
-  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 
@@ -3726,20 +3710,6 @@ Blocks **1** card.
 - **Rite of the Raging Storm** (rank 3304) — `rite_of_the_raging_storm`
   - At the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and "At the beginning of the end step, sacrifice this token."
   - Creatures named Lightning Rager can't attack you or planeswalkers you control.
-
-</details>
-
-## linked-exile-granted-return
-
-Blocks **1** card.
-
-- **(engine)** a link from the card exiled by Timothar's dies trigger to the specific token created in the same resolution, so that an ability granted to that token ("When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped") can name exactly that exiled card when it later resolves
-  <br>Why the existing vocabulary won't do: grant_ability can hand the token a deals_combat_damage_to_player trigger with sacrifice + put_onto_battlefield tapped, but the granted ability's only way to find a card in exile is the selector `exiled_with`, which keys on the ability's source (the token) rather than on Timothar or on the trigger's `as` binding; bindings from the dies trigger (`as` on exile) do not survive into a separately triggered granted ability, and exile's `link`/`until_leaves` returns the card when a permanent leaves rather than on the token's damage trigger. Each Bat must return its own card, so returning 'cards exiled with Timothar' would also be wrong
-
-<details><summary>Cards waiting on this</summary>
-
-- **Timothar, Baron of Bats** (rank 9598) — `timothar_baron_of_bats`
-  - Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped."
 
 </details>
 

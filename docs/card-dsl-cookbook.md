@@ -15677,6 +15677,35 @@ The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
 
+### "Return the exiled card" from a token — `link_exiled`
+
+Timothar, Baron of Bats exiles a dead Vampire and makes a Bat whose own granted
+ability returns "the exiled card". The asker is the **Bat**, so the card must be
+exiled with the Bat, not with Timothar: `exile`'s `link` names the resolving
+source, and "cards exiled with Timothar" would let one Bat bring back every
+Vampire it ever exiled. `link_exiled` writes the same `exiled_by` record with a
+permanent this resolution bound as the exiler:
+
+```jsonc
+{"op": "exile", "objects": {"binding": "subject", "zone": "graveyard"}, "as": "exiled"},
+{"op": "create_token", "token": "bat_1_1_b_flying", "amount": {"const": 1}, "as": "bat"},
+{"op": "grant_ability", "ability": 0, "duration": "permanent", "objects": {"binding": "bat"}},
+{"op": "link_exiled", "objects": {"binding": "exiled"}, "to": "bat"}
+
+// the granted ability, on the Bat
+{"op": "sacrifice", "objects": {"self_only": true}},
+{"op": "put_onto_battlefield", "controller": "you", "tapped": true,
+ "objects": {"zone": "exile", "controller": "any", "exiled_with": "self", "count": "all"}}
+```
+
+- `objects` is any selector over the cards; only those still in exile are
+  linked. `to` is a binding name, and the loader refuses the op without either.
+- The link is the card's, so it survives the Bat being sacrificed before the
+  return, and a card that leaves exile (400.7) loses it and comes back to
+  nobody.
+- `exiled_by` holds one exiler: a `to` binding several permanents (a token
+  doubler) links the cards to the first.
+
 ## "If you cast it any time a sorcery couldn't have been cast"
 
 ```jsonc

@@ -192,6 +192,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "shuffle": ("Cards", "Shuffle a library.", None),
     "put_exiled_into_graveyard": ("Cards", "Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived.",
                                   '"Put a card exiled with it into its owner\'s graveyard" — `put_exiled_into_graveyard`'),
+    "link_exiled": ("Cards", "Link cards in exile to the permanent bound under `to`, so its own `exiled_with: \"self\"` finds them (607.2a).",
+                    '"Return the exiled card" from a token — `link_exiled`'),
     "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth.",
                    None),
     "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),

@@ -422,6 +422,38 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
             link_exiled(ctx.state, oid, ctx.source_oid)
 
 
+@register("link_exiled")
+def op_link_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Link cards in exile to a permanent made in the same resolution (607.2a).
+
+    Timothar, Baron of Bats: "…exile it. If you do, create a 1/1 black Bat
+    creature token with flying. It gains 'When this token deals combat damage
+    to a player, sacrifice it and return the exiled card to the battlefield
+    tapped.'" The token's ability is the token's own, so the card it means has
+    to be "exiled with" the **token**: `exile`'s ``link`` names the resolving
+    source (Timothar), and a granted ability asking `exiled_with: "self"` asks
+    about the Bat. This op writes the same `zones.link_exiled` record with the
+    permanent bound under ``to`` (a `create_token` ``as``) as the exiler, so
+    each Bat returns its own card and no other.
+
+    A card no longer in exile is a new object (400.7) and is linked to nothing;
+    a ``to`` that bound no permanent still on the battlefield links nothing.
+    `exiled_by` holds one exiler, so a ``to`` binding several permanents (a
+    token doubler) links the cards to the first of them.
+    """
+    holders = [
+        oid
+        for oid in resolve_pool(ctx, {"binding": str(spec.get("to", ""))})
+        if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
+    ]
+    if not holders:
+        return
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        card = ctx.state.objects.get(oid)
+        if card is not None and card.zone is Zone.EXILE:
+            link_exiled(ctx.state, oid, holders[0])
+
+
 @register("airbend")
 def op_airbend(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "**Airbend** all other creatures." -- Avatar's Wrath.
