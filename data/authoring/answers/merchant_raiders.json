@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "merchant_raiders",
+    "name": "Merchant Raiders",
+    "oracle_text": "Whenever this creature or another Pirate you control enters, tap up to one target creature. That creature doesn't untap during its controller's untap step for as long as you control this creature.",
+    "mana_cost": "{3}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Pirate"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature or another Pirate you control enters, tap up to one target creature. That creature doesn't untap during its controller's untap step for as long as you control this creature.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {"subtypes": ["Pirate"]}
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "optional": true,
+            "selector": {"types": ["Creature"], "zone": "battlefield"}
+          }
+        ],
+        "effects": [
+          {"op": "tap", "objects": {"target": "t1"}},
+          {"op": "freeze", "objects": {"target": "t1"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
