@@ -4766,6 +4766,38 @@ sacrificed permanent to name), the key beside `sacrifice`, beside an `{X}` in
 `mana`, `pay_life_x`, `loyalty_x` or `discard_x` (an ability announces one X),
 and anywhere but an activated ability's cost.
 
+### A sacrifice of several distinct parts — `sacrifice` as a list
+
+"{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent
+loses 13 life and you gain 13 life." — Glass-Cast Heart. "Sacrifice a Swamp and
+a Forest: …" — Jarad, Golgari Lich Lord.
+
+```jsonc
+"cost": { "mana": "{B}{B}", "tap": true,
+          "sacrifice": [ { "self_only": true },
+                         { "subtypes": ["Blood"], "is_token": true, "count": 13 } ] }
+
+"cost": { "sacrifice": [ { "types": ["Land"], "subtypes": ["Swamp"] },
+                         { "types": ["Land"], "subtypes": ["Forest"] } ] }
+```
+
+Each entry is a part: a selector over the battlefield (`controller` defaulting
+to you) with its own `count`, default 1. The cost is payable only when every
+part can be met at once by **different** permanents (118.3, 601.2h) —
+`costs.sacrifice_parts_payable` matches permanents to parts rather than counting
+each part, so a Swamp Forest dual pays one part of Jarad's cost and alone pays
+none. As the cost is paid the controller chooses each part's permanents in
+order, never offered one another part already took or one whose loss would
+leave a later part unpayable, and everything chosen is sacrificed together; the
+source, as a `self_only` part, is still there to be chosen.
+
+Not one selector with `any_of` and a summed `count`: that takes two Swamps for
+"a Swamp and a Forest", and fourteen Blood tokens while keeping the Heart. Not
+the `sacrifice` op in the effects, which moves the payment to resolution. The
+loader refuses a list of fewer than two parts, `as` in a part (there is no one
+sacrificed permanent to name), a `count` that is not a positive whole number,
+the list beside `sacrifice_x`, and anywhere but an activated ability's cost.
+
 ### `tap_x` — tap X untapped permanents, X announced
 
 "{T}, Pay 2 life, Tap X untapped tokens you control: Add X mana in any

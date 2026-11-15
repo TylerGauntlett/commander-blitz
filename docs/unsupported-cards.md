@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**398 cards** blocked by **345** capabilities.
+**396 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
-| [bat-1-1-b-flying](#bat-1-1-b-flying) | 2 | 9598 | token |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 2 | 6335 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -59,7 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
-| [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 2 | 1918 | cost |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
@@ -91,6 +89,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
+| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -1058,24 +1057,6 @@ Blocks **2** cards.
 
 </details>
 
-## bat-1-1-b-flying
-
-Blocks **2** cards.
-
-- **(token)** a 1/1 black Bat creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
-- **(token)** a 1/1 black Bat creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Bat token at all; the nearest 1/1 fliers (bird_1_1_w_flying, bird_illusion_1_1_u_flying) are the wrong colour and creature type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Timothar, Baron of Bats** (rank 9598) — `timothar_baron_of_bats`
-  - Whenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains "When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped."
-- **Bat Colony** (rank 20382) — `bat_colony`
-  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
-
-</details>
-
 ## batched-trigger-objects
 
 Blocks **2** cards.
@@ -1460,24 +1441,6 @@ Blocks **2** cards.
   - {4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.
 - **Automated Assembly Line** (rank 7338) — `automated_assembly_line`
   - Pay {E}{E}{E}: Create a tapped 3/3 colorless Robot artifact creature token.
-
-</details>
-
-## sacrifice-multiple-distinct
-
-Blocks **2** cards.
-
-- **(cost)** an activated-ability cost that sacrifices several groups of permanents each matching its own selector and count -- here the source itself (self_only, count 1) AND thirteen Blood tokens (subtypes Blood, is_token, count 13) -- payable only when every part can be met; e.g. `sacrifice` accepting a list of selectors
-  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`), and there is no separate sacrifice-self cost key; `count: 14` with `any_of` [self_only, Blood] would accept fourteen Blood tokens while keeping the artifact, and sacrificing the source in the effects moves part of the payment to resolution. The other two lines are expressible (`you_attack` with an `exists` on `attackers` subtypes Vampire creating `blood_token`; a `{B}`+tap+pay_life cost creating `vampire_1_1_wb_lifelink`).
-- **(cost)** an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors
-  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: ["graveyard"]` with a `return_to_hand` of `self_only`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jarad, Golgari Lich Lord** (rank 1918) — `jarad_golgari_lich_lord`
-  - Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.
-- **Glass-Cast Heart** (rank 4793) — `glass_cast_heart`
-  - {B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life.
 
 </details>
 
@@ -1961,6 +1924,20 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
+
+</details>
+
+## bat-1-1-b-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Bat creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bat Colony** (rank 20382) — `bat_colony`
+  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 

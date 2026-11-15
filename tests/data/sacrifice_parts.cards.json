@@ -1,0 +1,66 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_sacrifice_parts.py. `t_sp_heart` is Glass-Cast Heart's 'Sacrifice this artifact and thirteen Blood tokens' at three tokens, its effect reduced to 'you gain 13 life' so payment is visible on a life total. `t_sp_lands` is Jarad, Golgari Lich Lord's 'Sacrifice a Swamp and a Forest' on the battlefield, so a Swamp Forest dual is one permanent that may pay only one part. `t_sp_overlap` asks for 'two creatures and a Vampire', the shape where a pick for the first part can strand the second.",
+  "cards": [
+    {
+      "id": "t_sp_heart",
+      "name": "Test Sacrifice Parts Heart",
+      "oracle_text": "{1}, Sacrifice this artifact and three Blood tokens: You gain 13 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Sacrifice this artifact and three Blood tokens: You gain 13 life.",
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": [
+              {"self_only": true},
+              {"subtypes": ["Blood"], "is_token": true, "count": 3}
+            ]
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": 13}]
+        }
+      ]
+    },
+    {
+      "id": "t_sp_lands",
+      "name": "Test Sacrifice Parts Lands",
+      "oracle_text": "Sacrifice a Swamp and a Forest: You gain 2 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a Swamp and a Forest: You gain 2 life.",
+          "cost": {
+            "sacrifice": [
+              {"types": ["Land"], "subtypes": ["Swamp"]},
+              {"types": ["Land"], "subtypes": ["Forest"]}
+            ]
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": 2}]
+        }
+      ]
+    },
+    {
+      "id": "t_sp_overlap",
+      "name": "Test Sacrifice Parts Overlap",
+      "oracle_text": "Sacrifice two creatures and a Vampire: You gain 3 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice two creatures and a Vampire: You gain 3 life.",
+          "cost": {
+            "sacrifice": [
+              {"types": ["Creature"], "count": 2},
+              {"types": ["Creature"], "subtypes": ["Vampire"]}
+            ]
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": 3}]
+        }
+      ]
+    }
+  ]
+}

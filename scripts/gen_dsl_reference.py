@@ -1154,7 +1154,7 @@ ABILITY_COSTS: dict[str, Entry] = {
                                    "`remove_counters_from_among` — counters of any kind, off other permanents"),
     "return_to_hand": ("Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects.",
                        "Ninjutsu — swapping into a combat already under way"),
-    "sacrifice": ("Sacrifice a matching permanent; `as` names it for the effects.",
+    "sacrifice": ("Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents.",
                   "Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed"),
     "sacrifice_x": ("Sacrifice X matching permanents, X announced and bounded by them.",
                     "`sacrifice_x` — sacrifice X permanents, X announced"),

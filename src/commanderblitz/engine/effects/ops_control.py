@@ -165,7 +165,7 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             return
         if (
             cost is not None
-            and (cost.sacrifice or cost.discard or cost.discard_self)
+            and (cost.sacrifice or cost.sacrifice_parts or cost.discard or cost.discard_self)
             and forced_discard_or_sacrifice_barred(ctx.state, chooser, ctx.controller)
         ):
             # Tamiyo, Collector of Tales: "…can't cause you to discard cards or

@@ -97326,6 +97326,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Vampires you control attack, create a Blood token.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Vampire"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{B}",
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_1_1_wb_lifelink"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}, {T}, Pay 1 life: Create a 1/1 white and black Vampire creature token with lifelink."
+        },
+        {
+          "cost": {
+            "mana": "{B}{B}",
+            "sacrifice": [
+              {
+                "self_only": true
+              },
+              {
+                "count": 13,
+                "is_token": true,
+                "subtypes": [
+                  "Blood"
+                ]
+              }
+            ],
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 13
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 13
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "glass_cast_heart",
+      "mana_cost": "{2}{B}",
+      "name": "Glass-Cast Heart",
+      "oracle_text": "Whenever one or more Vampires you control attack, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\n{B}, {T}, Pay 1 life: Create a 1/1 white and black Vampire creature token with lifelink.\n{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent loses 13 life and you gain 13 life.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "glass_golem",
@@ -124411,6 +124510,123 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Jarad gets +1/+1 for each creature card in your graveyard.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{G}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{G}, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "sacrifice": [
+              {
+                "subtypes": [
+                  "Swamp"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Forest"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            ]
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "jarad_golgari_lich_lord",
+      "mana_cost": "{B}{B}{G}{G}",
+      "name": "Jarad, Golgari Lich Lord",
+      "oracle_text": "Jarad gets +1/+1 for each creature card in your graveyard.\n{1}{B}{G}, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power.\nSacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Elf"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

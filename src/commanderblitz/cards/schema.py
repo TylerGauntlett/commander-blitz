@@ -44,7 +44,15 @@ class CostModel(BaseModel):
     #: is a mana ability which never resolves at all. A permanent need be
     #: neither attacking nor a creature to pay it -- Arena of Glory is a land.
     exert: bool = False
-    sacrifice: dict[str, Any] | None = None
+    #: "Sacrifice another creature" -- a selector over the battlefield
+    #: (``controller`` defaults to you) with an optional ``count`` and ``as``.
+    #: **A list of selectors** is a sacrifice of several distinct parts, each
+    #: with its own ``count`` -- Glass-Cast Heart's "Sacrifice this artifact and
+    #: thirteen Blood tokens", Jarad's "Sacrifice a Swamp and a Forest": payable
+    #: only when every part can be met by different permanents, and no
+    #: permanent pays for two parts. Activated abilities only; no ``as`` in a
+    #: part, and at least two parts.
+    sacrifice: dict[str, Any] | list[dict[str, Any]] | None = None
     #: "Return a land you control to its owner's hand" -- Meloku and Trench
     #: Behemoth. A selector over the battlefield, like ``sacrifice``, and
     #: deliberately not that one: sacrificing graveyards the land, which

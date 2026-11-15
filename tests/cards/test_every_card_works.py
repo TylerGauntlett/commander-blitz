@@ -696,9 +696,21 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     board has none -- which reported a working card as unusable.
     """
     cost = ability.cost
-    spec = getattr(cost, "sacrifice", None) if cost else None
-    if not spec:
+    if cost is None:
         return
+    # Glass-Cast Heart sacrifices "this artifact and thirteen Blood tokens":
+    # each part of a list-form cost gets its own fodder, since one permanent
+    # pays for only one part. A `self_only` part is the source, which the
+    # sandbox puts out itself.
+    for spec in getattr(cost, "sacrifice_parts", None) or ():
+        if not spec.get("self_only"):
+            _provide_one_sacrifice(game, registry, spec)
+    if getattr(cost, "sacrifice", None):
+        _provide_one_sacrifice(game, registry, cost.sacrifice)
+
+
+def _provide_one_sacrifice(game: Game, registry, spec) -> None:
+    """Fodder for one sacrifice selector: as many as its ``count``."""
     # As many as the cost asks for, not one. Bolas's Citadel sacrifices **ten**
     # nonland permanents, and a board handed a single creature reported a
     # working card as unusable -- the same false negative this helper exists to

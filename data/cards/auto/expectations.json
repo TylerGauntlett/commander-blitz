@@ -8285,6 +8285,10 @@
     },
     "zone": "battlefield"
   },
+  "glass_cast_heart": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "glass_golem": {
     "zone": "battlefield"
   },
@@ -10491,6 +10495,10 @@
   },
   "jailbreak_scheme": {
     "zone": "graveyard"
+  },
+  "jarad_golgari_lich_lord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "jarvis_earth_s_mightiest_butler": {
     "battlefield_count": 33,

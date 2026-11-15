@@ -110392,12 +110392,12 @@
     },
     "Glass-Cast Heart": {
       "edhrec_rank": 4793,
-      "gate": "template",
+      "gate": null,
       "name": "Glass-Cast Heart",
-      "reason": "no template for: Whenever one or more Vampires you control attack, create a Blood token",
+      "reason": "",
       "scryfall_id": "f36a4054-903c-468a-877b-0ba43a403cc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glassblower's Puzzleknot": {
@@ -142062,12 +142062,12 @@
     },
     "Jarad, Golgari Lich Lord": {
       "edhrec_rank": 1918,
-      "gate": "template",
+      "gate": null,
       "name": "Jarad, Golgari Lich Lord",
-      "reason": "no template for: Jarad gets +1/+1 for each creature card in your graveyard",
+      "reason": "",
       "scryfall_id": "8e3b1844-6fff-40dc-a357-3394f63ea8dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jared Carthalion": {

@@ -318,6 +318,14 @@ class Cost:
     #: never resolves, so the op could not be reached from the only printing.
     exert: bool = False
     sacrifice: Mapping[str, Any] | None = None
+    #: "Sacrifice this artifact and thirteen Blood tokens" -- Glass-Cast Heart;
+    #: "Sacrifice a Swamp and a Forest" -- Jarad. The list form of the DSL's
+    #: ``sacrifice``: one selector per part, each with its own ``count``, paid
+    #: by **distinct** permanents (`costs.sacrifice_parts_payable` is a
+    #: matching, not a count per part). Its own field rather than a second
+    #: shape of ``sacrifice``, so every reader of that one selector keeps
+    #: reading one selector.
+    sacrifice_parts: tuple[Mapping[str, Any], ...] | None = None
     #: "Return a land you control to its owner's hand": a selector over the
     #: battlefield. Distinct from ``sacrifice`` because the permanent comes
     #: back -- Meloku and Trench Behemoth both replay it for landfall.
@@ -518,7 +526,16 @@ class Cost:
             tap=bool(spec.get("tap", False)),
             untap=bool(spec.get("untap", False)),
             exert=bool(spec.get("exert", False)),
-            sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
+            sacrifice=(
+                dict(spec["sacrifice"])
+                if spec.get("sacrifice") and isinstance(spec["sacrifice"], Mapping)
+                else None
+            ),
+            sacrifice_parts=(
+                tuple(dict(part) for part in spec["sacrifice"])
+                if spec.get("sacrifice") and not isinstance(spec["sacrifice"], Mapping)
+                else None
+            ),
             return_to_hand=(
                 dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
             ),
@@ -629,6 +646,7 @@ class Cost:
             # to. Its `{R}` already disqualifies it; this is the claim itself.
             and not self.exert
             and self.sacrifice is None
+            and self.sacrifice_parts is None
             and self.return_to_hand is None
             and self.tap_permanents is None
             and self.untap_permanents is None
@@ -673,7 +691,7 @@ class Cost:
             parts.append("{Q}")
         if self.exert:
             parts.append("Exert this permanent")
-        if self.sacrifice:
+        if self.sacrifice or self.sacrifice_parts:
             parts.append("Sacrifice")
         if self.sacrifice_x:
             parts.append("Sacrifice X")

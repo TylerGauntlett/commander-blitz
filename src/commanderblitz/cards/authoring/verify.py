@@ -1962,7 +1962,7 @@ def _declares_printed_alternative_cost(line: str, card: CardDef) -> bool:
     if (int(life.group(1)) if life else 0) != cost.pay_life:
         return False
     verbs = (
-        (r"\bsacrifice\b", cost.sacrifice is not None),
+        (r"\bsacrifice\b", cost.sacrifice is not None or cost.sacrifice_parts is not None),
         (r"\breturn\b", cost.return_to_hand is not None),
         (r"\bexile\b.*\bfrom your hand\b", cost.exile_from_hand is not None),
         (r"\bdiscard\b", bool(cost.discard)),
