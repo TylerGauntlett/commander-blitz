@@ -3838,6 +3838,15 @@
     },
     "zone": "battlefield"
   },
+  "coercive_recruiter": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "coiled_tinviper": {
     "zone": "battlefield"
   },

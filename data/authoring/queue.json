@@ -49582,12 +49582,12 @@
     },
     "Coercive Recruiter": {
       "edhrec_rank": 3550,
-      "gate": "template",
+      "gate": null,
       "name": "Coercive Recruiter",
-      "reason": "no template for: Whenever this creature or another Pirate you control enters, gain control of target creatu",
+      "reason": "",
       "scryfall_id": "16a1d084-34f1-4278-ae54-d0dac288b1da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coeurl": {
