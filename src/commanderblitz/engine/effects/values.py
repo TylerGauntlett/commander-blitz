@@ -299,6 +299,13 @@ VALUE_KEYS = frozenset(
         # misses every noncreature permanent.
         "permanents_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
+        # Descend: "if you **descended** this turn" (Enterprising Scallywag),
+        # "the number of times you descended this turn". A permanent card put
+        # into the player's own graveyard from anywhere, one descent per card,
+        # off `TurnLedger.graveyard_arrivals`. Not `cards_to_graveyard_this_turn`
+        # (any card, any graveyard) nor `permanents_to_graveyard_this_turn`
+        # (the battlefield only, tokens too, any graveyard).
+        "descended_this_turn",
         "extreme_value",
         # "…if this is the second time this ability has resolved this turn."
         # Keyed by ability rather than by player, and counting the resolution in
@@ -1064,6 +1071,20 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             # artifacts is +0/+0, not an error.
             return 0
         return max(values) if pick == "greatest" else min(values)
+    if "descended_this_turn" in expr:
+        # Each arrival is a card (tokens never fire PUT_INTO_GRAVEYARD) in its
+        # owner's graveyard, so the owner is who descended. The printed face is
+        # what a graveyard card is (the card may have left again since, and
+        # the descent still happened).
+        pids = set(_players(ctx, expr["descended_this_turn"]))
+        registry = ctx.state.registry
+        return sum(
+            1
+            for arrival in ledger.graveyard_arrivals
+            if arrival.owner in pids
+            and arrival.card in registry
+            and registry.get(arrival.card).is_permanent
+        )
     if "cards_from_graveyard_this_turn" in expr:
         # The mirror, and it *does* take a player spec: Gau asks about "**your**
         # graveyard", and the one number the engine already kept counts the
@@ -2008,6 +2029,13 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    if "descended_this_turn" in expr:
+        who = expr["descended_this_turn"]
+        if not (isinstance(who, Mapping) or (isinstance(who, str) and who in PLAYER_SPEC_NAMES)):
+            raise DslError(
+                f"{where}.descended_this_turn: takes a player spec (\"you\" for "
+                f"\"you descended\"), got {who!r}"
+            )
     if "fraction" in expr:
         validate_fraction(expr["fraction"], f"{where}.fraction")
     if "mana_spent_from" in expr:

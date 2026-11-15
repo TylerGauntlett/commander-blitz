@@ -891,6 +891,31 @@ Two near misses, each wrong quietly. `cards_to_graveyard_this_turn` counts
 is missing from it. `creatures_died_this_turn` misses every noncreature
 permanent — a sacrificed Treasure, a destroyed enchantment.
 
+### Descend — "if you descended this turn"
+
+```jsonc
+{ "kind": "triggered",
+  "text": "At the beginning of your end step, if you descended this turn, create a Treasure token.",
+  "trigger": { "event": "end_step", "controller": "you",
+               "condition": { "cmp": ">", "left": { "descended_this_turn": "you" },
+                              "right": { "const": 0 } } },
+  "effects": [ { "op": "create_token", "token": "treasure_token", "amount": { "const": 1 } } ] }
+```
+
+"You descended if a permanent card was put into your graveyard from anywhere"
+(Enterprising Scallywag). `descended_this_turn` takes a player spec and counts
+`TurnLedger.graveyard_arrivals` in that player's own graveyard whose printed card
+is a permanent card, so it is also "the number of times you descended this
+turn": two creature cards milled together are two descents. The arrival is kept
+after the card leaves again, and a token never arrives (111.1). "Descend 4" on
+its own is the board, not the ledger: a `count` of permanent cards in your
+graveyard.
+
+The near misses are the two gravestorm reads above, each wrong on a different
+clause: `cards_to_graveyard_this_turn` counts a milled instant and every
+opponent's graveyard, and `permanents_to_graveyard_this_turn` sees only the
+battlefield, so a milled or discarded creature card is no descent there.
+
 ### Casting out of every graveyard, until end of turn
 
 ```jsonc

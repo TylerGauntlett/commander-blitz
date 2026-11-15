@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**398 cards** blocked by **350** capabilities.
+**397 cards** blocked by **349** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -137,7 +137,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
-| [descend](#descend) | 1 | 5224 | value |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
@@ -2603,20 +2602,6 @@ Blocks **1** card.
 
 - **Demonic Covenant** (rank 7993) — `demonic_covenant`
   - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
-
-</details>
-
-## descend
-
-Blocks **1** card.
-
-- **(value)** a per-player turn-ledger value (or condition) counting permanent cards (artifact, battle, creature, enchantment, land, planeswalker; not tokens) put into that player's own graveyard from any zone this turn, e.g. {"permanent_cards_to_your_graveyard_this_turn": "you"} compared > 0, usable as an end_step trigger's intervening-if condition (rule 702.170, 'you descended this turn')
-  <br>Why the existing vocabulary won't do: permanents_to_graveyard_this_turn counts only permanents leaving the battlefield (tokens included, every controller), missing milled/discarded permanent cards; cards_to_graveyard_this_turn counts every card of any type into every graveyard with no player spec, so an instant milled or a card hitting an opponent's graveyard would wrongly satisfy it; has_turn_flag has no engine-set descend flag
-
-<details><summary>Cards waiting on this</summary>
-
-- **Enterprising Scallywag** (rank 5224) — `enterprising_scallywag`
-  - At the beginning of your end step, if you descended this turn, create a Treasure token. (You descended if a permanent card was put into your graveyard from anywhere.)
 
 </details>
 

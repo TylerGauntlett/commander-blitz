@@ -84702,12 +84702,12 @@
     },
     "Enterprising Scallywag": {
       "edhrec_rank": 5224,
-      "gate": "template",
+      "gate": null,
       "name": "Enterprising Scallywag",
-      "reason": "no template for: At the beginning of your end step, if you descended this turn, create a Treasure token",
+      "reason": "",
       "scryfall_id": "44420f52-2ed8-4f81-93e4-5decc77bed01",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enthralling Hold": {

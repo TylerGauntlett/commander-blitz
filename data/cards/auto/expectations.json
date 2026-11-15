@@ -6411,6 +6411,10 @@
   "enraged_revolutionary": {
     "zone": "battlefield"
   },
+  "enterprising_scallywag": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "enthusiastic_mechanaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
