@@ -66912,12 +66912,12 @@
     },
     "Descendants' Path": {
       "edhrec_rank": 2179,
-      "gate": "template",
+      "gate": null,
       "name": "Descendants' Path",
-      "reason": "no template for: At the beginning of your upkeep, reveal the top card of your library. If it's a creature c",
+      "reason": "",
       "scryfall_id": "6edb20a3-31f5-4bf9-a5e3-943d8d5a1def",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Descent into Avernus": {

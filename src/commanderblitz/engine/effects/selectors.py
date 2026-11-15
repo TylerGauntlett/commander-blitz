@@ -324,6 +324,10 @@ SELECTOR_KEYS = frozenset(
         #: every subtype: a Background, Aura or Arcane is a subtype and not a
         #: creature type. Honoured by trigger filters as well as here; a trigger
         #: filter may only say `"self"`, since nothing is bound when it is asked.
+        #: A nested selector -- ``{"types": ["Creature"], "controller": "you"}``
+        #: -- is "shares a creature type with **a creature you control**"
+        #: (Descendants' Path): any matching object other than the one checked,
+        #: on the battlefield unless the selector names a zone.
         "shares_a_creature_type_with",
         #: "…another permanent you control that **shares a permanent type**
         #: with it" -- Cloudstone Curio. The card-type twin of the clause
@@ -1002,8 +1006,24 @@ def matches(
         # also reads `"self"` -- the ability's own source -- the way
         # `shares_a_color_with` does. Shared with `triggers.matches_card_filter`
         # through `creature_types_of`, so the two halves cannot disagree.
-        other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
-        if not (creature_types_of(state, oid) & creature_types_of(state, other)):
+        #
+        # A selector instead of a name is "a creature card that shares a
+        # creature type with **a creature you control**" (Descendants' Path):
+        # the union of every matching object's creature types, so any one of
+        # them sharing a type is enough. The checked object is left out of the
+        # pool, since a creature sharing a type with itself is no answer.
+        if isinstance(name, Mapping):
+            theirs: frozenset[str] = frozenset().union(
+                *(
+                    creature_types_of(state, other)
+                    for other in resolve_pool(ctx, {"zone": "battlefield", **name})
+                    if other != oid
+                )
+            )
+        else:
+            other = ctx.source_oid if str(name) == "self" else _bound_oid(ctx, str(name))
+            theirs = creature_types_of(state, other)
+        if not (creature_types_of(state, oid) & theirs):
             return False
     if (who := selector.get("shares_a_type_with_commander")) is not None and not (
         subtypes & _commander_subtypes(ctx, str(who))
@@ -2037,6 +2057,19 @@ def validate_selector(selector: Any, where: str) -> None:
                 f"snapshot records one player, so only 'you', 'opponent' and 'any' "
                 f"can be asked of it"
             )
+    shares = selector.get("shares_a_creature_type_with")
+    if isinstance(shares, Mapping):
+        if not shares:
+            raise DslError(
+                f"{where}.shares_a_creature_type_with: an empty selector is every "
+                f"object; name what is compared against"
+            )
+        validate_selector(shares, f"{where}.shares_a_creature_type_with")
+    elif shares is not None and not (isinstance(shares, str) and shares):
+        raise DslError(
+            f"{where}: shares_a_creature_type_with is 'self', a binding name or a "
+            f"selector, got {shares!r}"
+        )
     if "granter" in selector and selector["granter"] is not True:
         # `false` would load as "every permanent but the granter" -- printed
         # on nothing, and on an ungranted ability it would be everything.

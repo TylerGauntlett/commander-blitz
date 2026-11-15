@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**398 cards** blocked by **347** capabilities.
+**397 cards** blocked by **346** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -312,7 +312,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
-| [shares-a-creature-type-with-a-permanent](#shares-a-creature-type-with-a-permanent) | 1 | 2179 | selector |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -5128,20 +5127,6 @@ Blocks **1** card.
 
 - **Preston Garvey, Minuteman** (rank 12594) — `preston_garvey_minuteman`
   - At the beginning of combat on your turn, create a green Aura enchantment token named Settlement attached to up to one target land you control. It has enchant land and "Enchanted land has '{T}: Add one mana of any color.'"
-
-</details>
-
-## shares-a-creature-type-with-a-permanent
-
-Blocks **1** card.
-
-- **(selector)** a library-card selector clause matching a card that shares a creature type with ANY creature matching a filter (here: a creature you control), e.g. shares_a_creature_type_with: {"types": ["Creature"], "controller": "you"}, usable in look_at_top's objects so look_at_top {amount 1, cast_free, rest_to_bottom} with a reveal says the whole sentence
-  <br>Why the existing vocabulary won't do: The selector key shares_a_creature_type_with compares against exactly one object -- "self" or a single-oid binding (selectors._bound_oid ignores list bindings such as reveal's or look_at_top's `as`) -- so it cannot test against the union of creature types of every creature you control. The only free cast from the library that also bottoms a declined card is look_at_top's cast_free + rest_to_bottom, whose pool is filtered by that selector. Inverting it (if + exists over creatures you control sharing a type with the revealed card) fails because the revealed card's binding is a list, and cast_card pays the mana cost rather than casting free. for_each over your creatures would offer the cast repeatedly and is not the printed sentence.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Descendants' Path** (rank 2179) — `descendants_path`
-  - At the beginning of your upkeep, reveal the top card of your library. If it's a creature card that shares a creature type with a creature you control, you may cast it without paying its mana cost. If you don't cast it, put it on the bottom of your library.
 
 </details>
 

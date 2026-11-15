@@ -5118,6 +5118,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "descendants_path": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "desert_cerodon": {
     "zone": "battlefield"
   },
