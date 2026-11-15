@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "don_andres_the_renegade",
+    "name": "Don Andres, the Renegade",
+    "oracle_text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.\nWhenever you cast a noncreature spell you don't own, create two tapped Treasure tokens.",
+    "mana_cost": "{1}{U}{B}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Vampire", "Pirate"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["B", "R", "U"],
+    "color_identity": ["B", "R", "U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.",
+        "effect": "buff",
+        "affects": {"controller": "you", "owner": "opponent", "types": ["Creature"]},
+        "power": {"const": 2},
+        "toughness": {"const": 2}
+      },
+      {
+        "kind": "static",
+        "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.",
+        "effect": "grant_keyword",
+        "affects": {"controller": "you", "owner": "opponent", "types": ["Creature"]},
+        "keywords": ["menace", "deathtouch"]
+      },
+      {
+        "kind": "static",
+        "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.",
+        "effect": "add_subtype",
+        "affects": {"controller": "you", "owner": "opponent", "types": ["Creature"]},
+        "subtypes": ["Pirate"]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a noncreature spell you don't own, create two tapped Treasure tokens.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"not_types": ["Creature"], "owner": "opponent"}
+        },
+        "effects": [
+          {"op": "create_token", "token": "treasure_token", "amount": {"const": 2}, "tapped": true}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["menace", "deathtouch"], "count": 0}
+  }
+}
