@@ -1789,6 +1789,13 @@ class ManaSource:
     #: Already resolved against *this permanent*: `costs.resolve_mana_restriction`
     #: has substituted any chosen type, so what arrives here is literal names.
     restriction: ManaRestriction | None = None
+    #: What each of ``options`` is, when the two lists are not the ability's
+    #: own options one for one: ``(mana option index, extra colours)``. Regal
+    #: Behemoth's "one mana of any color" on top of a tap is a choice the
+    #: solver makes, so each of the land's options appears once per colour and
+    #: `costs.pay_mana` hands the pick back to `costs.activate_mana_ability`.
+    #: ``None`` is the ordinary case, option *i* is mana option *i*.
+    option_keys: tuple[tuple[int, tuple[int, ...]], ...] | None = None
 
     def permits(self, purpose: SpendPurpose | None) -> bool:
         """May this source pay for what ``purpose`` describes?  See :func:`_permits`."""

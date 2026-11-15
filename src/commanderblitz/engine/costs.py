@@ -8,6 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
+import itertools
 from collections.abc import Collection, Generator, Mapping, Sequence
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
@@ -29,7 +30,7 @@ from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.counter_removal import remove_counters_one_at_a_time
 from .effects.selectors import matches, resolve_pool
 from .effects.values import evaluate_value
-from .enums import COLORLESS, Keyword, Zone
+from .enums import COLOR_ORDER, COLORLESS, Keyword, Zone
 from .errors import DslError
 from .events import EventType
 from .mana import (
@@ -52,6 +53,7 @@ from .mana import (
 from .objects import MINUS_ONE
 from .player_statics import (
     ability_cost_reduction,
+    any_color_added_on_tap,
     counters_prohibited,
     mana_added_on_tap,
     player_cant_activate,
@@ -395,21 +397,23 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             state, obj.controller, oid, ability
         ):
             continue
+        options: list[tuple[int, ...]] = []
+        keys: list[tuple[int, tuple[int, ...]]] = []
+        for index, option in enumerate(mana_options_of(state, oid, ability)):
+            produced = mana_produced(option, doubled=doubled, times=mana_amount(state, oid, ability))
+            made = _with_extra(produced)
+            # Regal Behemoth: one more mana of a colour the player picks. The
+            # solver is the one picking, so every colour is a yield of its own.
+            for colors in any_color_choices(state, obj.controller, oid, produced):
+                options.append(plus_colors(made, colors))
+                keys.append((index, colors))
         out.append(
             ManaSource(
                 oid=oid,
                 ability_index=ability.index,
-                options=(
-                    tuple(
-                        _with_extra(
-                            mana_produced(
-                                option,
-                                doubled=doubled,
-                                times=mana_amount(state, oid, ability),
-                            )
-                        )
-                        for option in mana_options_of(state, oid, ability)
-                    )
+                options=tuple(options),
+                option_keys=(
+                    tuple(keys) if any(colors for _, colors in keys) else None
                 ),
                 is_land=is_land,
                 sort_key=(0 if is_land else 1, card.id, oid),
@@ -812,6 +816,24 @@ def mana_added_total(
         for i, v in enumerate(mana):
             total[i] += v
     return tuple(total)
+
+
+def any_color_choices(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> list[tuple[int, ...]]:
+    """Every pick of colours for the "one mana of any color" extras this tap
+    triggers (`player_statics.any_color_added_on_tap`), one colour index per
+    extra. ``[()]`` when there are none, so a caller can always loop."""
+    extras = any_color_added_on_tap(state, pid, oid, produced)
+    return list(itertools.product(range(len(COLOR_ORDER)), repeat=len(extras)))
+
+
+def plus_colors(option: Sequence[int], colors: Sequence[int]) -> tuple[int, ...]:
+    """``option`` with one more mana of each colour index in ``colors``."""
+    out = list(option)
+    for color in colors:
+        out[color] += 1
+    return tuple(out)
 
 
 def plus_mana(option: Sequence[int], extra: Sequence[int] | None) -> tuple[int, ...]:
@@ -2476,7 +2498,11 @@ def pay_mana(
     payment = solve_payment(req, player.mana_pool.spendable(purpose), sources)
     if payment is None:
         return False
+    keyed = {(s.oid, s.ability_index): s.option_keys for s in sources if s.option_keys}
     for oid, ability_index, option_index in payment.taps:
+        extra_colors: tuple[int, ...] = ()
+        if (keys := keyed.get((oid, ability_index))) is not None:
+            option_index, extra_colors = keys[option_index]
         obj = state.objects.get(oid)
         if obj is None or obj.tapped:
             # The plan was made against untapped permanents, so this can only
@@ -2496,7 +2522,9 @@ def pay_mana(
         # before this plan was made (601.2f), so it is not affected.
         if (traits := activation_source_traits(state, oid)) is not None:
             state.turn_ledger.ability_sources.setdefault(pid, []).append(traits)
-        activate_mana_ability(state, oid, ability_index, pid, option_index)
+        activate_mana_ability(
+            state, oid, ability_index, pid, option_index, extra_colors=extra_colors
+        )
     spent = player.mana_pool.spend(req, purpose)
     # The pool is a static's input ("+1/+1 for each unspent mana you have",
     # Omnath, Locus of the Void), and a payment from floating mana taps nothing
@@ -2579,8 +2607,15 @@ def activate_mana_ability(
     *,
     x: int = 0,
     option: tuple[int, ...] | None = None,
+    extra_colors: Sequence[int] = (),
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
+
+    ``extra_colors`` is the colour index picked for each "one mana of any
+    color" extra the tap triggers (Regal Behemoth,
+    `player_statics.any_color_added_on_tap`), in that function's order. The
+    solver's pick rides on its `ManaSource.option_keys`; a by-hand activation
+    asks. An extra with no pick named adds nothing -- this never asks.
 
     The produced mana comes straight from the ability's precomputed
     ``mana_options`` rather than from running its effects.  A modal mana ability
@@ -2646,6 +2681,11 @@ def activate_mana_ability(
     # in its cost, and nothing else.
     tapping = ability.cost is not None and ability.cost.tap
     added_on_tap = mana_added_on_tap(state, pid, oid, produced) if tapping else []
+    if tapping:
+        for source, color in zip(
+            any_color_added_on_tap(state, pid, oid, produced), extra_colors, strict=False
+        ):
+            added_on_tap.append((source, plus_colors((0,) * len(SYMBOLS), (color,))))
 
     if ability.cost is not None and ability.cost.tap:
         # The return value is deliberately not checked: `Game._activate_mana`

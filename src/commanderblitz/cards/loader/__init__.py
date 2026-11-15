@@ -4711,10 +4711,18 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
         # and the colour is read at the mana choke point. Deliberately the same
         # spelling the `add_mana` op accepts, so one card cannot mean two things
         # by it; a source that has chosen nothing yet adds nothing.
+        #
+        # ``{"any_color": 1}`` is "add an additional one mana of **any color**"
+        # (Regal Behemoth): one pip whose colour the tapping player picks as
+        # the triggered mana ability resolves. One, because no card prints more
+        # from one trigger, and a count the reader ignored would be a quietly
+        # smaller card.
+        if model.add_mana == {"any_color": 1}:
+            return
         if set(model.add_mana) != {"chosen_color_of"} or model.add_mana["chosen_color_of"] != "self":
             raise DslError(
-                f'{where}.add_mana: the only dynamic form is {{"chosen_color_of": "self"}}, '
-                f"not {model.add_mana!r}"
+                f'{where}.add_mana: the dynamic forms are {{"chosen_color_of": "self"}} '
+                f'and {{"any_color": 1}}, not {model.add_mana!r}'
             )
         return
     try:

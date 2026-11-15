@@ -219072,12 +219072,12 @@
     },
     "Regal Behemoth": {
       "edhrec_rank": 2390,
-      "gate": "template",
+      "gate": null,
       "name": "Regal Behemoth",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "e3a8bdfa-a39c-4ca7-b591-1c6aca4cc5ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Regal Bloodlord": {

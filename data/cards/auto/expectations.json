@@ -16362,6 +16362,10 @@
     },
     "zone": "graveyard"
   },
+  "regal_behemoth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "regal_imperiosaur": {
     "battlefield_count": 33,
     "zone": "battlefield"

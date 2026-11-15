@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **346** capabilities.
+**396 cards** blocked by **346** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
-| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 2 | 1052 | static_effect |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -73,6 +72,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
+| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -1021,24 +1021,6 @@ Blocks **2** cards.
 
 </details>
 
-## add-mana-on-tap-any-color
-
-Blocks **2** cards.
-
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip. Here combined with tapped_permanent {types: ["Land"]}, affects_player "you" and condition {is_monarch: ...}
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {types: [Land]} and an is_monarch static condition covers the trigger and the 'while you're the monarch' clause, but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; player_statics._mana_added parses a literal and runs inside cost payment where no choice can be asked. A fixed '{G}' would be a different, narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fertile Ground** (rank 1052) — `fertile_ground`
-  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
-- **Regal Behemoth** (rank 2390) — `regal_behemoth`
-  - Whenever you tap a land for mana while you're the monarch, add an additional one mana of any color.
-
-</details>
-
 ## all-creature-types
 
 Blocks **2** cards.
@@ -1705,6 +1687,20 @@ Blocks **1** card.
   - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
+
+</details>
+
+## add-mana-on-tap-any-color
+
+Blocks **1** card.
+
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fertile Ground** (rank 1052) — `fertile_ground`
+  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
 
 </details>
 

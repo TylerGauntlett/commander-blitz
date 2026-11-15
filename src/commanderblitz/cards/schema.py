@@ -1315,7 +1315,9 @@ class AbilityModel(BaseModel):
     tapped_permanent: dict[str, Any] | None = None
     #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
-    #: chosen color", the same spelling the ``add_mana`` op uses.
+    #: chosen color", the same spelling the ``add_mana`` op uses, or
+    #: ``{"any_color": 1}`` for Regal Behemoth's "one mana of any color",
+    #: picked by the tapping player each time.
     add_mana: str | dict[str, Any] | None = None
     #: ``grant_warp``: the price the filtered cards in hand gain -- Tannuk's
     #: ``"{2}{R}"``. Beside `affects_spells` rather than inside it, for

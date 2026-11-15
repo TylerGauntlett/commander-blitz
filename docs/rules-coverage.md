@@ -91,7 +91,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **How much mana came from a kind of source** | `mana_spent_from` counts the units of a cast's payment whose `ManaOrigin` matches a `paid_by`-style filter (106.3; Cataclysmic Prospecting), off `GameObject.mana_spent_origins`, one entry per pip, kept onto the battlefield and cleared on any other move; which same-coloured pip is spent is the pool's newest-first rule |
 | **A rider on mana that outlives the spell** | `mana_grant` on the pip, snapshotted past `reset_permanent_state` for a battlefield destination only (Arena of Glory); `mana_uncounterable` (Cavern of Souls) is read while the spell is on the stack; a `delayed_trigger` rider installed on activation, whose `spell_enters_with_counters` stages counters on the next creature spell for its arrival's one placement (Yuna, Grand Summoner) |
 | **A trigger when this mana is spent** | 106.6: `mana_spent_trigger` tags each activation's pips; a cast that spends them on a matching spell queues one triggered ability per activation, controlled by the activator and stacked above the spell, even after the source has left (Study Hall) |
-| **Triggered mana abilities on tapping** | 605.1b: `add_mana_on_tap` player-wide static read inline at the mana choke point (Crypt Ghast), matched on what was tapped or, with `produced`, on the mana the tap made, per option and once per tap (Forsaken Monument) |
+| **Triggered mana abilities on tapping** | 605.1b: `add_mana_on_tap` player-wide static read inline at the mana choke point (Crypt Ghast), matched on what was tapped or, with `produced`, on the mana the tap made, per option and once per tap (Forsaken Monument); "one mana of any color" (Regal Behemoth) is a pick the solver makes per tap, and a by-hand tap asks |
 
 ### Combat
 
@@ -448,7 +448,6 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Per-turn cast caps (Deafening Silence) and the ability half of Grand Abolisher; `affects` beside `cant_cast_spells` is refused.
 - Equip abilities at instant speed (Leonin Shikari); nothing on `Ability` marks an equip ability.
 - A player-wide "spend mana as though it were mana of any type" (Mycosynth Lattice); `as_any_type` exists as a cost reading and the `playable_any_type` permission only.
-- `add_mana_on_tap`'s "enchanted land" form and any-colour additions.
 - A `filter` on a `delayed_trigger`; a `condition` over the `subject` binding says the same thing.
 - A modal double-faced card whose back face is a spell (712); the land-backed form is implemented and nothing refuses the other, but no shipped card exercises it.
 

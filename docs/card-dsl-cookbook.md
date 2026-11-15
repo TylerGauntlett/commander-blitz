@@ -1798,6 +1798,13 @@ in their cost count (106.12). The loader requires both keys and refuses
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
 op uses, read off the static's own source, and adding nothing while no colour has
 been chosen, since this runs inside cost payment where nothing may stop to ask.
+And it takes `{"any_color": 1}` for Regal Behemoth's "add an additional one mana
+of **any color**": the tapping player picks the colour each time. Inside a
+payment the solver is the one picking, so `costs._sources_of` offers each of the
+tapped source's yields once per colour (`ManaSource.option_keys` remembers which)
+and `pay_mana` names the pick to `activate_mana_ability` as `extra_colors`; a
+mana ability activated by hand asks. A fixed `"{G}"` is the near miss, and a
+narrower card. Any count but 1 is refused.
 
 ### `fight`
 
