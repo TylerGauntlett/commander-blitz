@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**391 cards** blocked by **339** capabilities.
+**393 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -77,6 +77,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
+| [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -127,6 +128,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
+| [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
@@ -203,6 +205,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
+| [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
@@ -1753,6 +1756,20 @@ Blocks **1** card.
 
 </details>
 
+## angel-warrior-4-4-w-flying-vigilance
+
+Blocks **1** card.
+
+- **(token)** a 4/4 white Angel Warrior creature token with flying and vigilance
+  <br>Why the existing vocabulary won't do: token_ids has angel_warrior_4_4_w_flying (Angel Warrior, flying only, no vigilance) and angel_4_4_w_flying_vigilance (flying and vigilance, but subtype Angel only, no Warrior); neither is the printed token. The rest of the line is expressible: cost {mana: {W}{W}{B}, tap: true, sacrifice: [{self_only: true}, {types: [Creature]}]} with sorcery_speed_only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Great Hall of Starnheim** (rank 15412) — `great_hall_of_starnheim`
+  - {W}{W}{B}, {T}, Sacrifice this land and a creature you control: Create a 4/4 white Angel Warrior creature token with flying and vigilance. Activate only as a sorcery.
+
+</details>
+
 ## annihilator-grant
 
 Blocks **1** card.
@@ -2464,6 +2481,21 @@ Blocks **1** card.
 
 - **Lumbering Megasloth** (rank 11563) — `lumbering_megasloth`
   - This spell costs {1} less to cast for each counter among players and permanents.
+
+</details>
+
+## cost-reduction-per-life-gained-this-turn
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction head that reduces the generic cost by the amount of life its caster gained this turn (the turn-ledger value life_gained_this_turn, read at pricing time like energy_spent_this_turn)
+  <br>Why the existing vocabulary won't do: cost_reduction_keys offer amount (a flat int only), count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value and total_power; life_gained_this_turn exists as an effect value but reduction_amount has no head that reads it, and a condition-gated flat amount gives a fixed discount rather than X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sproutback Trudge** (rank 15353) — `sproutback_trudge`
+  - This spell costs {X} less to cast, where X is the amount of life you gained this turn.
+  - At the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard.
 
 </details>
 
@@ -3554,6 +3586,21 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
+## graveyard-trigger-cast-self
+
+Blocks **1** card.
+
+- **(op)** a triggered ability that functions while the card is in its owner's graveyard (beginning of your end step, intervening-if you gained life this turn) and on resolution lets its controller cast that card from the graveyard right then, ignoring sorcery timing, paying its cost
+  <br>Why the existing vocabulary won't do: Oathsworn Vampire's static graveyard_cast permission is a standing permission at normal timing, not a one-shot cast during the end-step trigger's resolution; cast_card/grant_playable act on selected objects from a battlefield source and no trigger key makes the end_step trigger function from the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sproutback Trudge** (rank 15353) — `sproutback_trudge`
+  - This spell costs {X} less to cast, where X is the amount of life you gained this turn.
+  - At the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard.
 
 </details>
 

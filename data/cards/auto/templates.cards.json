@@ -15448,6 +15448,110 @@
         {
           "effects": [
             {
+              "else": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 3
+              },
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Pay 3 life to stop Athreos returning that card to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever another creature you own dies, return it to your hand unless target opponent pays 3 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true,
+              "owner": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "athreos_god_of_passage",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Athreos, God of Passage",
+      "oracle_text": "Indestructible\nAs long as your devotion to white and black is less than seven, Athreos isn't a creature.\nWhenever another creature you own dies, return it to your hand unless target opponent pays 3 life.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "W",
+                  "B"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to white and black is less than seven, Athreos isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -30443,6 +30547,64 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "life_gained_this_turn": "you"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}: Return this card from your graveyard to your hand. Activate only if you gained life this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "brackish_trudge",
+      "mana_cost": "{2}{B}",
+      "name": "Brackish Trudge",
+      "oracle_text": "This creature enters tapped.\n{1}{B}: Return this card from your graveyard to your hand. Activate only if you gained life this turn.",
+      "power": 4,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Fungus",
+        "Beast"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -122399,6 +122561,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "R",
+                  "W"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to red and white is less than seven, Iroas isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have menace."
+        },
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "Prevent all damage that would be dealt to attacking creatures you control."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "iroas_god_of_victory",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{2}{R}{W}",
+      "name": "Iroas, God of Victory",
+      "oracle_text": "Indestructible\nAs long as your devotion to red and white is less than seven, Iroas isn't a creature.\nCreatures you control have menace.\nPrevent all damage that would be dealt to attacking creatures you control.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
@@ -128602,6 +128852,101 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "G",
+                  "W"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to green and white is less than seven, Karametra isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "subtypes": [
+                      "Forest",
+                      "Plains"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a Forest or Plains card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, you may search your library for a Forest or Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "karametra_god_of_harvests",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{G}{W}",
+      "name": "Karametra, God of Harvests",
+      "oracle_text": "Indestructible\nAs long as your devotion to green and white is less than seven, Karametra isn't a creature.\nWhenever you cast a creature spell, you may search your library for a Forest or Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -133755,6 +134100,147 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "R",
+                  "G"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to red and green is less than seven, Klothys isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "player": "each_opponent"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "mana": "{R}",
+                          "op": "add_mana"
+                        }
+                      ],
+                      "label": "R"
+                    },
+                    {
+                      "effects": [
+                        {
+                          "mana": "{G}",
+                          "op": "add_mana"
+                        }
+                      ],
+                      "label": "G"
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your first main phase, exile target card from a graveyard. If it was a land card, add {R} or {G}. Otherwise, you gain 2 life and Klothys deals 2 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "klothys_god_of_destiny",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{1}{R}{G}",
+      "name": "Klothys, God of Destiny",
+      "oracle_text": "Indestructible\nAs long as your devotion to red and green is less than seven, Klothys isn't a creature.\nAt the beginning of your first main phase, exile target card from a graveyard. If it was a land card, add {R} or {G}. Otherwise, you gain 2 life and Klothys deals 2 damage to each opponent.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -135611,6 +136097,79 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "G",
+                  "U"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to green and blue is less than seven, Kruphix isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "affects_player": "you",
+          "effect": "mana_becomes_colorless",
+          "kind": "static",
+          "text": "If you would lose unspent mana, that mana becomes colorless instead."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kruphix_god_of_horizons",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{G}{U}",
+      "name": "Kruphix, God of Horizons",
+      "oracle_text": "Indestructible\nAs long as your devotion to green and blue is less than seven, Kruphix isn't a creature.\nYou have no maximum hand size.\nIf you would lose unspent mana, that mana becomes colorless instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -158394,6 +158953,124 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {B} or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{R}, {T}: Mount Doom deals 1 damage to each opponent."
+        },
+        {
+          "cost": {
+            "mana": "{5}{B}{R}",
+            "sacrifice": [
+              {
+                "self_only": true
+              },
+              {
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              }
+            ],
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "kept",
+              "objects": {
+                "count": 2,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose up to two creatures to keep"
+            },
+            {
+              "objects": {
+                "count": "all",
+                "exclude_binding": "kept",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{5}{B}{R}, {T}, Sacrifice Mount Doom and a legendary artifact: Choose up to two creatures, then destroy the rest. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "mount_doom",
+      "name": "Mount Doom",
+      "oracle_text": "{T}, Pay 1 life: Add {B} or {R}.\n{1}{B}{R}, {T}: Mount Doom deals 1 damage to each opponent.\n{5}{B}{R}, {T}, Sacrifice Mount Doom and a legendary artifact: Choose up to two creatures, then destroy the rest. Activate only as a sorcery.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -178346,6 +179023,110 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "U",
+                  "B"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to blue and black is less than seven, Phenax isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Creatures you control have \"{T}: Target player mills X cards, where X is this creature's toughness.\""
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "toughness_of": {
+                  "self": true
+                }
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "{T}: Target player mills X cards, where X is this creature's toughness."
+        }
+      ],
+      "id": "phenax_god_of_deception",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{U}{B}",
+      "name": "Phenax, God of Deception",
+      "oracle_text": "Indestructible\nAs long as your devotion to blue and black is less than seven, Phenax isn't a creature.\nCreatures you control have \"{T}: Target player mills X cards, where X is this creature's toughness.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -264284,6 +265065,72 @@
               },
               "destination": "battlefield",
               "objects": {
+                "self_only": true
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When it dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": 0
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "undying_evil",
+      "mana_cost": "{B}",
+      "name": "Undying Evil",
+      "oracle_text": "Target creature gains undying until end of turn. (When it dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "ability": 0,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
                 "self_only": true,
                 "zone": "graveyard"
               },
@@ -284714,6 +285561,117 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "battlefield"
+                },
+                "of": [
+                  "R",
+                  "G"
+                ]
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to red and green is less than seven, Xenagos isn't a creature.",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "target": "t1"
+                }
+              },
+              "toughness": {
+                "power_of": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, another target creature you control gains haste and gets +X/+X until end of turn, where X is that creature's power.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "xenagos_god_of_revels",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{R}{G}",
+      "name": "Xenagos, God of Revels",
+      "oracle_text": "Indestructible\nAs long as your devotion to red and green is less than seven, Xenagos isn't a creature.\nAt the beginning of combat on your turn, another target creature you control gains haste and gets +X/+X until end of turn, where X is that creature's power.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {

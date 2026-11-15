@@ -15652,12 +15652,12 @@
     },
     "Athreos, God of Passage": {
       "edhrec_rank": 2899,
-      "gate": "template",
+      "gate": null,
       "name": "Athreos, God of Passage",
-      "reason": "no template for: As long as your devotion to white and black is less than seven, Athreos isn't a creature",
+      "reason": "",
       "scryfall_id": "3380a687-c96b-4e1a-bfd9-3849d085b803",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Athreos, Shroud-Veiled": {
@@ -32642,12 +32642,12 @@
     },
     "Brackish Trudge": {
       "edhrec_rank": 25216,
-      "gate": "template",
+      "gate": null,
       "name": "Brackish Trudge",
-      "reason": "no template for: {1}{B}: Return this card from your graveyard to your hand. Activate only if you gained lif",
+      "reason": "",
       "scryfall_id": "90ba37ee-159f-421f-8d37-a7b5f1b562f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brackwater Elemental": {
@@ -139692,12 +139692,12 @@
     },
     "Iroas, God of Victory": {
       "edhrec_rank": 1464,
-      "gate": "template",
+      "gate": null,
       "name": "Iroas, God of Victory",
-      "reason": "no template for: As long as your devotion to red and white is less than seven, Iroas isn't a creature",
+      "reason": "",
       "scryfall_id": "5113e135-11b9-4ae7-a26a-1603801bcd8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iroh's Demonstration": {
@@ -145932,12 +145932,12 @@
     },
     "Karametra, God of Harvests": {
       "edhrec_rank": 3075,
-      "gate": "template",
+      "gate": null,
       "name": "Karametra, God of Harvests",
-      "reason": "no template for: As long as your devotion to green and white is less than seven, Karametra isn't a creature",
+      "reason": "",
       "scryfall_id": "21efbf4f-f084-4abb-9f3d-f303f2dd8f97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karazikar, the Eye Tyrant": {
@@ -150352,12 +150352,12 @@
     },
     "Klothys, God of Destiny": {
       "edhrec_rank": 5018,
-      "gate": "template",
+      "gate": null,
       "name": "Klothys, God of Destiny",
-      "reason": "no template for: As long as your devotion to red and green is less than seven, Klothys isn't a creature",
+      "reason": "",
       "scryfall_id": "f62a5e40-8fad-4efc-81ae-fb3e3b5b6cab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knacksaw Clique": {
@@ -152952,12 +152952,12 @@
     },
     "Kruphix, God of Horizons": {
       "edhrec_rank": 4656,
-      "gate": "template",
+      "gate": null,
       "name": "Kruphix, God of Horizons",
-      "reason": "no template for: As long as your devotion to green and blue is less than seven, Kruphix isn't a creature",
+      "reason": "",
       "scryfall_id": "9bf153db-742a-42c0-bc8c-5093c1d6e734",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kry Shield": {
@@ -179982,12 +179982,12 @@
     },
     "Mount Doom": {
       "edhrec_rank": 1217,
-      "gate": "template",
+      "gate": null,
       "name": "Mount Doom",
-      "reason": "no template for: {T}, Pay 1 life: Add {B} or {R}",
+      "reason": "",
       "scryfall_id": "2bb2e6cf-6e2d-4b0b-83d3-46aff575eee4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mount Velus Manticore": {
@@ -201082,12 +201082,12 @@
     },
     "Phenax, God of Deception": {
       "edhrec_rank": 5011,
-      "gate": "template",
+      "gate": null,
       "name": "Phenax, God of Deception",
-      "reason": "no template for: As long as your devotion to blue and black is less than seven, Phenax isn't a creature",
+      "reason": "",
       "scryfall_id": "87818ace-64fb-4dca-8f9b-1d3402f088ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phenomenon Investigators": {
@@ -297542,12 +297542,12 @@
     },
     "Undying Evil": {
       "edhrec_rank": 4438,
-      "gate": "template",
+      "gate": null,
       "name": "Undying Evil",
-      "reason": "no template for: Target creature gains undying until end of turn",
+      "reason": "",
       "scryfall_id": "325f2243-54fd-484b-a742-166cea7ec179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Undying Flames": {
@@ -320222,12 +320222,12 @@
     },
     "Xenagos, God of Revels": {
       "edhrec_rank": 1195,
-      "gate": "template",
+      "gate": null,
       "name": "Xenagos, God of Revels",
-      "reason": "no template for: As long as your devotion to red and green is less than seven, Xenagos isn't a creature",
+      "reason": "",
       "scryfall_id": "66581b3b-4e5b-4580-8fec-9684f0168cdb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xenagos, the Reveler": {

@@ -1319,6 +1319,10 @@
     },
     "zone": "battlefield"
   },
+  "athreos_god_of_passage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "athreos_shroud_veiled": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2523,6 +2527,13 @@
       "id": "ox_2_2_w"
     },
     "zone": "graveyard"
+  },
+  "brackish_trudge": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "brain_freeze": {
     "graveyard_size": {
@@ -10330,6 +10341,10 @@
   "ior_ruin_expedition": {
     "zone": "battlefield"
   },
+  "iroas_god_of_victory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iroas_s_champion": {
     "zone": "battlefield"
   },
@@ -10814,6 +10829,10 @@
     },
     "zone": "battlefield"
   },
+  "karametra_god_of_harvests": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },
@@ -11201,6 +11220,10 @@
   "klaw_master_of_sound": {
     "zone": "battlefield"
   },
+  "klothys_god_of_destiny": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "knight_errant": {
     "zone": "battlefield"
   },
@@ -11372,6 +11395,13 @@
     "zone": "battlefield"
   },
   "krovikan_scoundrel": {
+    "zone": "battlefield"
+  },
+  "kruphix_god_of_horizons": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "kulrath_knight": {
@@ -13355,6 +13385,10 @@
     },
     "zone": "battlefield"
   },
+  "mount_doom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mountain_bandit": {
     "zone": "battlefield"
   },
@@ -14936,6 +14970,10 @@
     "zone": "battlefield"
   },
   "pharika_s_chosen": {
+    "zone": "battlefield"
+  },
+  "phenax_god_of_deception": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phenomenon_investigators": {
@@ -22024,6 +22062,13 @@
     },
     "zone": "battlefield"
   },
+  "undying_evil": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "undying_malice": {
     "zone": "graveyard"
   },
@@ -23812,6 +23857,10 @@
     "zone": "battlefield"
   },
   "xander_s_lounge": {
+    "zone": "battlefield"
+  },
+  "xenagos_god_of_revels": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "xenobotanist": {
