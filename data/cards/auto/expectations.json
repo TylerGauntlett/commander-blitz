@@ -121,6 +121,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "admiral_brass_unsinkable": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "battlefield"
+  },
   "adrix_and_nev_twincasters": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1159,6 +1169,13 @@
     "counters": {
       "amount": 5,
       "kind": "slumber"
+    },
+    "zone": "battlefield"
+  },
+  "arm_mounted_anchor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -2209,6 +2226,15 @@
   },
   "blood_glutton": {
     "zone": "battlefield"
+  },
+  "blood_money": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 4,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
   },
   "blood_pact": {
     "hand_size": {

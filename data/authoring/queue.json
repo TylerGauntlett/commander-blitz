@@ -2152,12 +2152,12 @@
     },
     "Admiral Brass, Unsinkable": {
       "edhrec_rank": 7430,
-      "gate": "template",
+      "gate": null,
       "name": "Admiral Brass, Unsinkable",
-      "reason": "no template for: When Admiral Brass enters, mill four cards",
+      "reason": "",
       "scryfall_id": "4d6c2d5c-b3ce-4c38-9af2-7c61f322923b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Admiral's Order": {
@@ -13162,12 +13162,12 @@
     },
     "Arm-Mounted Anchor": {
       "edhrec_rank": 12227,
-      "gate": "template",
+      "gate": null,
       "name": "Arm-Mounted Anchor",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, draw two cards. Then discard t",
+      "reason": "",
       "scryfall_id": "15bcbfae-89cd-4fa4-978c-ad1332e81e18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armada Wurm": {
@@ -28082,12 +28082,12 @@
     },
     "Blood Money": {
       "edhrec_rank": 1656,
-      "gate": "template",
+      "gate": null,
       "name": "Blood Money",
-      "reason": "no template for: Destroy all creatures. For each nontoken creature destroyed this way, you create a tapped ",
+      "reason": "",
       "scryfall_id": "65bd6ec3-7597-499b-8b69-fe7d50ece069",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blood Moon": {
