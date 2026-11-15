@@ -1,0 +1,839 @@
+{
+  "id": "lcc_veloci_ramp_tor",
+  "name": "Veloci-Ramp-Tor",
+  "commanders": [
+    "pantlaza_sun_favored"
+  ],
+  "color_identity": [
+    "G",
+    "R",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "LCC",
+    "set_name": "The Lost Caverns of Ixalan Commander",
+    "date": "2023-11-17"
+  },
+  "notes": "The Lost Caverns of Ixalan Commander precon, card for card (https://mtgjson.com/api/v5/decks/VelociRampTor_LCC.json).",
+  "tags": [
+    "Dinosaurs",
+    "Ramp",
+    "Discover",
+    "Big Creatures"
+  ],
+  "strategy": "Pantlaza, Sun-Favored discovers whenever it or another Dinosaur enters, so every big creature brings a free spell with it, and the deck ramps hard to get there: Cultivate, Farseek, Rampant Growth, Topiary Stomper, Thunderherd Migration and Arcane Signet carry it to six and seven mana by the middle turns. Wayta, Trainer Prodigy, Wrathful Raptors, Ripjaw Raptor and Bellowing Aegisaur turn damage dealt to Dinosaurs into card draw, counters and burn, Regisaur Alpha, Thundering Spineback and Rhythm of the Wild hand out haste and size, and Zacama, Primal Calamity, Etali, Primal Storm and Zetalpa, Primal Dawn close the game, with Path to Exile, Generous Gift and Fiery Confluence clearing what stands in the way.",
+  "archetype": "tribal",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "pantlaza_sun_favored",
+      "why": "Every Dinosaur that enters discovers, a free spell off the top."
+    },
+    {
+      "card_id": "wrathful_raptors",
+      "why": "Damage dealt to a Dinosaur is dealt back to anything that isn't one."
+    },
+    {
+      "card_id": "regal_behemoth",
+      "why": "Makes you the monarch, and every land then taps for an extra mana of any colour."
+    },
+    {
+      "card_id": "zacama_primal_calamity",
+      "why": "Untaps your lands as it enters and turns spare mana into removal and life."
+    }
+  ],
+  "printings": {
+    "akroma_s_will": {
+      "scryfall_id": "608cdbdb-6f7e-438a-bab0-0e7782435f0f",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "lcc",
+      "collector_number": "125"
+    },
+    "apex_altisaur": {
+      "scryfall_id": "1e6beba4-128c-418e-83ed-8a82afc0c39e",
+      "artist": "Simon Dominic",
+      "set_code": "lcc",
+      "collector_number": "232"
+    },
+    "arcane_signet": {
+      "scryfall_id": "fc6c69a0-ac24-4486-8893-a6303d08fc6e",
+      "artist": "Dan Murayama Scott",
+      "set_code": "lcc",
+      "collector_number": "299"
+    },
+    "arch_of_orazca": {
+      "scryfall_id": "581dcadd-7de4-4b39-bab0-d3567194a252",
+      "artist": "Titus Lunter",
+      "set_code": "lcc",
+      "collector_number": "319"
+    },
+    "atzocan_seer": {
+      "scryfall_id": "985448b8-5852-4074-a4bd-1dee5192b104",
+      "artist": "Joseph Meehan",
+      "set_code": "lcc",
+      "collector_number": "265"
+    },
+    "bellowing_aegisaur": {
+      "scryfall_id": "f81607f4-d1cc-41a0-97eb-0c23133cfb6c",
+      "artist": "Craig J Spearing",
+      "set_code": "lcc",
+      "collector_number": "127"
+    },
+    "bronzebeak_foragers": {
+      "scryfall_id": "dadfcd91-3000-448e-a304-be425ff68644",
+      "artist": "Brian Valeza",
+      "set_code": "lcc",
+      "collector_number": "69"
+    },
+    "canopy_vista": {
+      "scryfall_id": "2258c917-763a-43a6-9635-a5181e6bb54d",
+      "artist": "Steven Belledin",
+      "set_code": "lcc",
+      "collector_number": "321"
+    },
+    "chandra_s_ignition": {
+      "scryfall_id": "960f45a3-f9cf-41e6-b813-f3dee620a944",
+      "artist": "Eric Deschamps",
+      "set_code": "lcc",
+      "collector_number": "220"
+    },
+    "cinder_glade": {
+      "scryfall_id": "fe5ef229-2bce-4f13-93de-003c75fedaf8",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "323"
+    },
+    "clifftop_retreat": {
+      "scryfall_id": "6e2b6fe5-e02d-488d-a176-5a1744dce2b8",
+      "artist": "Constantin Marin",
+      "set_code": "lcc",
+      "collector_number": "324"
+    },
+    "command_tower": {
+      "scryfall_id": "d477d733-2360-4f1d-9ecd-cdedc2e8a7ae",
+      "artist": "Evan Shipard",
+      "set_code": "lcc",
+      "collector_number": "325"
+    },
+    "cultivate": {
+      "scryfall_id": "e19cd136-0541-4db0-997f-20a58ec8d028",
+      "artist": "Justyna Dura",
+      "set_code": "lcc",
+      "collector_number": "235"
+    },
+    "curious_altisaur": {
+      "scryfall_id": "83fb87d8-d6f6-4cb0-aca1-49e6fcb181b1",
+      "artist": "Simon Dominic",
+      "set_code": "lcc",
+      "collector_number": "90"
+    },
+    "deathgorge_scavenger": {
+      "scryfall_id": "c175e50f-3858-43d7-8d4b-359ece106ccf",
+      "artist": "Tyler Jacobson",
+      "set_code": "lcc",
+      "collector_number": "236"
+    },
+    "descendants_path": {
+      "scryfall_id": "a2ad7482-8ce2-4e63-8be7-79c2e37d3006",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "lcc",
+      "collector_number": "238"
+    },
+    "dinosaur_egg": {
+      "scryfall_id": "9afdb38b-cdb4-4f64-8fc7-2df666a9db1b",
+      "artist": "Alessandra Pisano",
+      "set_code": "lcc",
+      "collector_number": "92"
+    },
+    "drover_of_the_mighty": {
+      "scryfall_id": "013360b3-c335-46c0-abe3-b7e3760f62c9",
+      "artist": "Eric Deschamps",
+      "set_code": "lcc",
+      "collector_number": "239"
+    },
+    "earthshaker_dreadmaw": {
+      "scryfall_id": "cdcbba6f-aa54-44be-a3b0-f712fa8bd5ad",
+      "artist": "Jesper Ejsing",
+      "set_code": "lci",
+      "collector_number": "183"
+    },
+    "etali_primal_storm": {
+      "scryfall_id": "e74b5f7e-847d-4eca-a77e-96bad5434292",
+      "artist": "Raymond Swanland",
+      "set_code": "lcc",
+      "collector_number": "224"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "fa6a5029-f4df-43dd-b5a9-fbf6ff003675",
+      "artist": "Daniel Ljunggren",
+      "set_code": "lcc",
+      "collector_number": "328"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "a54b6832-9990-4144-99ef-990a9ad4c081",
+      "artist": "Steven Belledin",
+      "set_code": "lcc",
+      "collector_number": "329"
+    },
+    "farseek": {
+      "scryfall_id": "0cfd3cb1-2209-453d-be45-ce1b56265496",
+      "artist": "Hristo D. Chukov",
+      "set_code": "lcc",
+      "collector_number": "242"
+    },
+    "fiery_confluence": {
+      "scryfall_id": "b35459f8-2231-4b89-a222-45e94d1b01d9",
+      "artist": "Kieran Yanner",
+      "set_code": "lcc",
+      "collector_number": "226"
+    },
+    "forest": {
+      "scryfall_id": "f954219a-fd4b-4fb1-945f-7950efc1d975",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "lci",
+      "collector_number": "401"
+    },
+    "fortified_village": {
+      "scryfall_id": "8b9eae78-d2c9-45a6-baaa-c10dea1e0332",
+      "artist": "Cliff Childs",
+      "set_code": "lcc",
+      "collector_number": "331"
+    },
+    "from_the_rubble": {
+      "scryfall_id": "9f7f7c5c-592b-4d22-968b-e5162b024b6e",
+      "artist": "Ryan Valle",
+      "set_code": "lcc",
+      "collector_number": "72"
+    },
+    "furycalm_snarl": {
+      "scryfall_id": "87b34bda-dff0-4cfb-9093-6a287236cd48",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "333"
+    },
+    "game_trail": {
+      "scryfall_id": "69dc5d4f-a562-4d54-a11f-4a31417c1138",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "334"
+    },
+    "generous_gift": {
+      "scryfall_id": "fc70e127-ffc8-45ed-9ca3-7f9f926ac4d5",
+      "artist": "Kev Walker",
+      "set_code": "lcc",
+      "collector_number": "128"
+    },
+    "itzquinth_firstborn_of_gishath": {
+      "scryfall_id": "7112c366-b36a-4bc8-aa64-6bad16bebc39",
+      "artist": "Lars Grant-West",
+      "set_code": "lci",
+      "collector_number": "230"
+    },
+    "ixalli_s_lorekeeper": {
+      "scryfall_id": "4bc94ded-458d-4458-9c0b-136d825b885d",
+      "artist": "Ernanda Souza",
+      "set_code": "lci",
+      "collector_number": "194"
+    },
+    "jungle_shrine": {
+      "scryfall_id": "13c45b1e-dfa4-4318-96e8-aa5e3e74ca27",
+      "artist": "Rob Alexander",
+      "set_code": "lcc",
+      "collector_number": "338"
+    },
+    "kessig_wolf_run": {
+      "scryfall_id": "287ef2b0-530e-4468-b43c-64ac6526562a",
+      "artist": "Eytan Zana",
+      "set_code": "lcc",
+      "collector_number": "340"
+    },
+    "kinjalli_s_sunwing": {
+      "scryfall_id": "04421508-b5ac-4466-9f77-dfef478d3cc2",
+      "artist": "Simon Dominic",
+      "set_code": "lcc",
+      "collector_number": "130"
+    },
+    "lifecrafter_s_bestiary": {
+      "scryfall_id": "b6623cb1-15e4-47b3-8460-dfeb5fb2cd09",
+      "artist": "Izzy",
+      "set_code": "lcc",
+      "collector_number": "307"
+    },
+    "majestic_heliopterus": {
+      "scryfall_id": "637741c4-5420-4a54-839e-4fd454d93172",
+      "artist": "Filip Burburan",
+      "set_code": "lcc",
+      "collector_number": "131"
+    },
+    "marauding_raptor": {
+      "scryfall_id": "0b5cf2aa-f6dd-47d2-a57f-0ae2308c0f9a",
+      "artist": "Bayard Wu",
+      "set_code": "lcc",
+      "collector_number": "228"
+    },
+    "migration_path": {
+      "scryfall_id": "4fc05cc9-176d-4ffb-8777-935e54030140",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "lcc",
+      "collector_number": "246"
+    },
+    "mosswort_bridge": {
+      "scryfall_id": "e2f2bd6c-fd3b-4dbd-a710-f004011fd58b",
+      "artist": "Jeremy Jarvis",
+      "set_code": "lcc",
+      "collector_number": "342"
+    },
+    "mountain": {
+      "scryfall_id": "e82fc4bc-ac81-4ad6-8b33-781d047f60d5",
+      "artist": "Muhammad Firdaus",
+      "set_code": "lci",
+      "collector_number": "399"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "92a45243-2ea9-4da1-984b-287a555a51f4",
+      "artist": "Richard Wright",
+      "set_code": "lcc",
+      "collector_number": "343"
+    },
+    "otepec_huntmaster": {
+      "scryfall_id": "00a87f71-8dbe-44e1-b69b-a03f6ab62055",
+      "artist": "Daarken",
+      "set_code": "lcc",
+      "collector_number": "229"
+    },
+    "pantlaza_sun_favored": {
+      "scryfall_id": "2524645e-b066-4351-885b-10faa8d819d7",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "4"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "f30552a5-db59-4164-bbd2-44bf7ae1e91e",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "346"
+    },
+    "path_to_exile": {
+      "scryfall_id": "7e9c2a58-4a1c-454c-b72d-faecaea105fb",
+      "artist": "Todd Lockwood",
+      "set_code": "lcc",
+      "collector_number": "134"
+    },
+    "plains": {
+      "scryfall_id": "4716a32c-91a6-470a-a686-d5eb3d27f46e",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "lci",
+      "collector_number": "393"
+    },
+    "progenitor_s_icon": {
+      "scryfall_id": "48104961-2090-435a-8d0e-6115e051b05c",
+      "artist": "Stella Spente",
+      "set_code": "lcc",
+      "collector_number": "100"
+    },
+    "quartzwood_crasher": {
+      "scryfall_id": "d39e00aa-9af9-4e53-8540-3fb56009c9b4",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "lcc",
+      "collector_number": "281"
+    },
+    "raging_regisaur": {
+      "scryfall_id": "35e68007-ac45-40a4-91f3-4a1edf00bd0e",
+      "artist": "Bayard Wu",
+      "set_code": "lcc",
+      "collector_number": "282"
+    },
+    "raging_swordtooth": {
+      "scryfall_id": "6bf82a3f-2faf-45b8-95af-32a93880b54c",
+      "artist": "Izzy",
+      "set_code": "lcc",
+      "collector_number": "283"
+    },
+    "rampaging_brontodon": {
+      "scryfall_id": "ea3f71d6-e333-4e50-9545-deb73749413c",
+      "artist": "Lars Grant-West",
+      "set_code": "lcc",
+      "collector_number": "247"
+    },
+    "rampant_growth": {
+      "scryfall_id": "21945dec-25d8-482e-bacb-8bbb92bb9d88",
+      "artist": "Steven Belledin",
+      "set_code": "lcc",
+      "collector_number": "248"
+    },
+    "ranging_raptors": {
+      "scryfall_id": "7d4f04bc-30ee-4948-9905-774f532ac811",
+      "artist": "Simon Dominic",
+      "set_code": "lcc",
+      "collector_number": "249"
+    },
+    "regal_behemoth": {
+      "scryfall_id": "e3a8bdfa-a39c-4ca7-b591-1c6aca4cc5ac",
+      "artist": "Jakub Kasper",
+      "set_code": "lcc",
+      "collector_number": "251"
+    },
+    "regisaur_alpha": {
+      "scryfall_id": "2a3c6780-8ac2-489c-a347-19dbe977df43",
+      "artist": "Jonathan Kuo",
+      "set_code": "lcc",
+      "collector_number": "286"
+    },
+    "return_of_the_wildspeaker": {
+      "scryfall_id": "cf005201-94f3-46d4-9589-ded11f3eb718",
+      "artist": "Chris Rallis",
+      "set_code": "lcc",
+      "collector_number": "252"
+    },
+    "rhythm_of_the_wild": {
+      "scryfall_id": "7305c2e6-b72d-4bbd-8d64-69bc5e4d269c",
+      "artist": "Maxime Minard",
+      "set_code": "lcc",
+      "collector_number": "287"
+    },
+    "ripjaw_raptor": {
+      "scryfall_id": "ec01de20-8f78-47dd-8735-5e3981013708",
+      "artist": "Ryan Pancoast",
+      "set_code": "lcc",
+      "collector_number": "253"
+    },
+    "rishkar_s_expertise": {
+      "scryfall_id": "efa9d2dc-b3b8-4475-bbfc-2db457ee4ffd",
+      "artist": "Magali Villeneuve",
+      "set_code": "lcc",
+      "collector_number": "254"
+    },
+    "rogue_s_passage": {
+      "scryfall_id": "a7dc75a8-c500-4b50-aff9-32ce36566104",
+      "artist": "Christine Choi",
+      "set_code": "lcc",
+      "collector_number": "349"
+    },
+    "runic_armasaur": {
+      "scryfall_id": "17913fb0-ef73-4b20-8625-b84d4e62178a",
+      "artist": "Randy Vargas",
+      "set_code": "lcc",
+      "collector_number": "256"
+    },
+    "savage_stomp": {
+      "scryfall_id": "a0fe1347-7b04-464a-8226-9526a408b955",
+      "artist": "Wayne Reynolds",
+      "set_code": "lcc",
+      "collector_number": "257"
+    },
+    "scion_of_calamity": {
+      "scryfall_id": "75db3c02-7a03-4de5-a70e-220777227dd3",
+      "artist": "Crystal Sully",
+      "set_code": "lcc",
+      "collector_number": "93"
+    },
+    "secluded_courtyard": {
+      "scryfall_id": "26c40b2a-cb27-4fad-a9b2-1fb065d44d77",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "350"
+    },
+    "shifting_ceratops": {
+      "scryfall_id": "8be37115-b4aa-437a-9b72-01af0cf0a0cd",
+      "artist": "Izzy",
+      "set_code": "lcc",
+      "collector_number": "258"
+    },
+    "sol_ring": {
+      "scryfall_id": "2d47121d-8b90-4d28-9ffa-0a640b9dd611",
+      "artist": "Mike Bierek",
+      "set_code": "lcc",
+      "collector_number": "313"
+    },
+    "sunfrill_imitator": {
+      "scryfall_id": "f1ac22a3-6edb-4f3e-b473-8166529eb769",
+      "artist": "Brian Valeza",
+      "set_code": "lcc",
+      "collector_number": "94"
+    },
+    "temple_altisaur": {
+      "scryfall_id": "83c1ba83-c394-4ff1-b2ba-56907403162a",
+      "artist": "Daarken",
+      "set_code": "lcc",
+      "collector_number": "138"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "96a31b2d-ee3f-48e5-b0dd-481a0c3efea2",
+      "artist": "James Zapata",
+      "set_code": "lcc",
+      "collector_number": "359"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "19b72af8-9bb9-4542-9115-09c27ad6e7ad",
+      "artist": "Dan Murayama Scott",
+      "set_code": "lcc",
+      "collector_number": "360"
+    },
+    "thrashing_brontodon": {
+      "scryfall_id": "d52ef7c1-dacb-4204-b64e-5fa3ae3b1ace",
+      "artist": "Randy Vargas",
+      "set_code": "lci",
+      "collector_number": "216"
+    },
+    "thriving_bluff": {
+      "scryfall_id": "0786c046-0cf6-41c8-800a-082997d2fcbf",
+      "artist": "Johannes Voss",
+      "set_code": "lcc",
+      "collector_number": "361"
+    },
+    "thriving_grove": {
+      "scryfall_id": "d40a899f-de35-4345-b6ad-336f63be0b2e",
+      "artist": "Ravenna Tran",
+      "set_code": "lcc",
+      "collector_number": "362"
+    },
+    "thriving_heath": {
+      "scryfall_id": "20336c7d-efff-44ef-942b-24672cbb0c48",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "363"
+    },
+    "thunderherd_migration": {
+      "scryfall_id": "5b71c6bd-db67-46ca-9c96-119e89f8ef69",
+      "artist": "Lars Grant-West",
+      "set_code": "lcc",
+      "collector_number": "259"
+    },
+    "thundering_spineback": {
+      "scryfall_id": "0c65d26e-b529-43ba-9e6e-82aed27cbbfc",
+      "artist": "Brian Valeza",
+      "set_code": "lcc",
+      "collector_number": "260"
+    },
+    "topiary_stomper": {
+      "scryfall_id": "e8b92271-4412-4165-a4a6-e8653e755107",
+      "artist": "Robin Olausson",
+      "set_code": "lcc",
+      "collector_number": "261"
+    },
+    "unclaimed_territory": {
+      "scryfall_id": "e7bd3aaa-864c-4cbb-bbab-68d87c824e3d",
+      "artist": "Dimitar Marinski",
+      "set_code": "lcc",
+      "collector_number": "366"
+    },
+    "verdant_sun_s_avatar": {
+      "scryfall_id": "e8fce06a-56f7-4d0c-b094-ff147fec8256",
+      "artist": "Izzy",
+      "set_code": "lcc",
+      "collector_number": "262"
+    },
+    "wakening_sun_s_avatar": {
+      "scryfall_id": "820b6327-2cbf-4054-bc33-4baf9c26dd70",
+      "artist": "Tyler Jacobson",
+      "set_code": "lcc",
+      "collector_number": "139"
+    },
+    "wayta_trainer_prodigy": {
+      "scryfall_id": "04f2d7ee-43a4-48e8-af64-d9fad4b9c5f1",
+      "artist": "Magali Villeneuve",
+      "set_code": "lcc",
+      "collector_number": "7"
+    },
+    "wayward_swordtooth": {
+      "scryfall_id": "95a5d742-187a-4eba-82e4-7a4cc5c4e6f3",
+      "artist": "Chris Rahn",
+      "set_code": "lcc",
+      "collector_number": "263"
+    },
+    "wrathful_raptors": {
+      "scryfall_id": "49243e92-93e3-4090-b4f7-86fa4ca2fef5",
+      "artist": "April Prime",
+      "set_code": "lcc",
+      "collector_number": "88"
+    },
+    "xenagos_god_of_revels": {
+      "scryfall_id": "6f1bc3bb-46da-492a-850c-f1f588ad8d18",
+      "artist": "Jason Chan",
+      "set_code": "lcc",
+      "collector_number": "295"
+    },
+    "zacama_primal_calamity": {
+      "scryfall_id": "05c5a9a8-badd-43ab-8408-a13e75407681",
+      "artist": "Jaime Jones",
+      "set_code": "lcc",
+      "collector_number": "296"
+    },
+    "zetalpa_primal_dawn": {
+      "scryfall_id": "90eb983c-ba42-45f2-9362-211fe40236e7",
+      "artist": "Chris Rallis",
+      "set_code": "lcc",
+      "collector_number": "141"
+    }
+  },
+  "cards": [
+    {
+      "id": "akroma_s_will"
+    },
+    {
+      "id": "apex_altisaur"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "arch_of_orazca"
+    },
+    {
+      "id": "atzocan_seer"
+    },
+    {
+      "id": "bellowing_aegisaur"
+    },
+    {
+      "id": "bronzebeak_foragers"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "chandra_s_ignition"
+    },
+    {
+      "id": "cinder_glade"
+    },
+    {
+      "id": "clifftop_retreat"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "cultivate"
+    },
+    {
+      "id": "curious_altisaur"
+    },
+    {
+      "id": "deathgorge_scavenger"
+    },
+    {
+      "id": "descendants_path"
+    },
+    {
+      "id": "dinosaur_egg"
+    },
+    {
+      "id": "drover_of_the_mighty"
+    },
+    {
+      "id": "earthshaker_dreadmaw"
+    },
+    {
+      "id": "etali_primal_storm"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "farseek"
+    },
+    {
+      "id": "fiery_confluence"
+    },
+    {
+      "id": "forest",
+      "qty": 8
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "from_the_rubble"
+    },
+    {
+      "id": "furycalm_snarl"
+    },
+    {
+      "id": "game_trail"
+    },
+    {
+      "id": "generous_gift"
+    },
+    {
+      "id": "itzquinth_firstborn_of_gishath"
+    },
+    {
+      "id": "ixalli_s_lorekeeper"
+    },
+    {
+      "id": "jungle_shrine"
+    },
+    {
+      "id": "kessig_wolf_run"
+    },
+    {
+      "id": "kinjalli_s_sunwing"
+    },
+    {
+      "id": "lifecrafter_s_bestiary"
+    },
+    {
+      "id": "majestic_heliopterus"
+    },
+    {
+      "id": "marauding_raptor"
+    },
+    {
+      "id": "migration_path"
+    },
+    {
+      "id": "mosswort_bridge"
+    },
+    {
+      "id": "mountain",
+      "qty": 4
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "otepec_huntmaster"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "path_to_exile"
+    },
+    {
+      "id": "plains",
+      "qty": 4
+    },
+    {
+      "id": "progenitor_s_icon"
+    },
+    {
+      "id": "quartzwood_crasher"
+    },
+    {
+      "id": "raging_regisaur"
+    },
+    {
+      "id": "raging_swordtooth"
+    },
+    {
+      "id": "rampaging_brontodon"
+    },
+    {
+      "id": "rampant_growth"
+    },
+    {
+      "id": "ranging_raptors"
+    },
+    {
+      "id": "regal_behemoth"
+    },
+    {
+      "id": "regisaur_alpha"
+    },
+    {
+      "id": "return_of_the_wildspeaker"
+    },
+    {
+      "id": "rhythm_of_the_wild"
+    },
+    {
+      "id": "ripjaw_raptor"
+    },
+    {
+      "id": "rishkar_s_expertise"
+    },
+    {
+      "id": "rogue_s_passage"
+    },
+    {
+      "id": "runic_armasaur"
+    },
+    {
+      "id": "savage_stomp"
+    },
+    {
+      "id": "scion_of_calamity"
+    },
+    {
+      "id": "secluded_courtyard"
+    },
+    {
+      "id": "shifting_ceratops"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sunfrill_imitator"
+    },
+    {
+      "id": "temple_altisaur"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "thrashing_brontodon"
+    },
+    {
+      "id": "thriving_bluff"
+    },
+    {
+      "id": "thriving_grove"
+    },
+    {
+      "id": "thriving_heath"
+    },
+    {
+      "id": "thunderherd_migration"
+    },
+    {
+      "id": "thundering_spineback"
+    },
+    {
+      "id": "topiary_stomper"
+    },
+    {
+      "id": "unclaimed_territory"
+    },
+    {
+      "id": "verdant_sun_s_avatar"
+    },
+    {
+      "id": "wakening_sun_s_avatar"
+    },
+    {
+      "id": "wayta_trainer_prodigy"
+    },
+    {
+      "id": "wayward_swordtooth"
+    },
+    {
+      "id": "wrathful_raptors"
+    },
+    {
+      "id": "xenagos_god_of_revels"
+    },
+    {
+      "id": "zacama_primal_calamity"
+    },
+    {
+      "id": "zetalpa_primal_dawn"
+    }
+  ]
+}

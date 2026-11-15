@@ -23364,6 +23364,10 @@
   "waveskimmer_aven": {
     "zone": "battlefield"
   },
+  "wayta_trainer_prodigy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wayward_giant": {
     "zone": "battlefield"
   },

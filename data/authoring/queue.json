@@ -312452,12 +312452,12 @@
     },
     "Wayta, Trainer Prodigy": {
       "edhrec_rank": 8292,
-      "gate": "template",
+      "gate": null,
       "name": "Wayta, Trainer Prodigy",
-      "reason": "no template for: {2}{G}, {T}: Target creature you control fights another target creature. This ability cost",
+      "reason": "",
       "scryfall_id": "04f2d7ee-43a4-48e8-af64-d9fad4b9c5f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wayward Angel": {

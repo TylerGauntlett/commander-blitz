@@ -280398,6 +280398,109 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{G}",
+            "mana_reduction": {
+              "amount": 2,
+              "targeting_each": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "mine"
+              },
+              "op": "fight",
+              "other": {
+                "target": "theirs"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "mine",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "id": "theirs",
+              "kind": "permanent",
+              "selector": {
+                "exclude_binding": "mine",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control."
+        },
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "cause_controller": "you",
+          "cause_events": [
+            "dealt_damage"
+          ],
+          "cause_filter": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "double_triggers",
+          "kind": "static",
+          "text": "If a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "wayta_trainer_prodigy",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{R}{G}{W}",
+      "name": "Wayta, Trainer Prodigy",
+      "oracle_text": "Haste\n{2}{G}, {T}: Target creature you control fights another target creature. This ability costs {2} less to activate if it targets two creatures you control.\nIf a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
