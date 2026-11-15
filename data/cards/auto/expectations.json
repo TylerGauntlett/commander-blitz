@@ -15867,6 +15867,10 @@
     "battlefield_count": 33,
     "zone": "exile"
   },
+  "quartzwood_crasher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "queen_mother_ramonda": {
     "battlefield_count": 33,
     "zone": "battlefield"

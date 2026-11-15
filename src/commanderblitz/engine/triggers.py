@@ -2072,9 +2072,30 @@ def _matching_damagers(
     damagers = event.data.get("damagers") or []
     if spec.filter is None:
         return [int(oid) for oid in damagers]
+    # "Whenever one or more creatures you control **with trample** deal combat
+    # damage" (Quartzwood Crasher) asks about the creatures as they deal the
+    # damage, and they are all still on the battlefield then: the batch fires
+    # inside the damage step, before state-based actions. So `keywords` reads
+    # their current keywords, and a creature granted trample counts; the
+    # printed face would leave it out. Every other key still reads the face.
+    filt = dict(spec.filter)
+    wanted = set(filt.pop("keywords", None) or ())
     return [
-        int(oid) for oid in damagers if matches_card_filter(state, int(oid), spec.filter, obj)
+        int(oid)
+        for oid in damagers
+        if matches_card_filter(state, int(oid), filt, obj)
+        and (not wanted or wanted <= set(_live_keywords(state, int(oid))))
     ]
+
+
+def _live_keywords(state: GameState, oid: int) -> frozenset[str]:
+    """A combat damager's keywords now, or its printed ones once it is gone."""
+    obj = state.objects.get(oid)
+    if obj is None:
+        return frozenset()
+    if obj.on_battlefield:
+        return frozenset(chars(state, oid).keywords)
+    return frozenset(state.card_of(obj).keywords)
 
 
 def event_bindings(
@@ -2107,6 +2128,15 @@ def event_bindings(
             bindings[key] = event.data[key]
     if spec.event == "creatures_deal_combat_damage" and spec.filter is not None:
         bindings["damagers"] = _matching_damagers(state, obj, spec, event)
+    if spec.event == "creatures_deal_combat_damage" and spec.per_player:
+        # "…create an X/X token, where X is **the amount of damage those
+        # creatures dealt to that player**" -- Quartzwood Crasher. A
+        # `per_player` copy carries one seat's hit, and `amount` is what the
+        # creatures the filter kept dealt to that seat, summed.
+        hits = event.data.get("hits") or []
+        amounts = dict((int(o), int(n)) for o, n in hits[0].get("amounts", [])) if len(hits) == 1 else {}
+        kept = _matching_damagers(state, obj, spec, event)
+        bindings["amount"] = sum(int(amounts.get(oid, 0)) for oid in kept)
     return bindings
 
 

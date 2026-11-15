@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **345** capabilities.
+**394 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -119,7 +119,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
-| [combat-damage-batch-amount](#combat-damage-batch-amount) | 1 | 1956 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -2356,20 +2355,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## combat-damage-batch-amount
-
-Blocks **1** card.
-
-- **(value)** a value reading the total combat damage that the creatures bound by a batched creatures_deal_combat_damage trigger (narrowed by its filter, per damaged player under per_player) dealt to that player in this damage step, usable as create_token power/toughness
-  <br>Why the existing vocabulary won't do: The CREATURES_DEALT_COMBAT_DAMAGE payload built by combat._fire_damage_batch carries only damagers, damaged, damaged_battles and hits (oid lists), no amounts, so {"binding": "amount"} is unbound on it; damage_dealt_to_this_turn / damage_taken_this_turn count the whole turn and every source, not just the trample creatures in this batch. Secondary: _matching_damagers checks the filter against the printed face, so a creature granted trample would not count as 'with trample'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Quartzwood Crasher** (rank 1956) — `quartzwood_crasher`
-  - Whenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player.
 
 </details>
 

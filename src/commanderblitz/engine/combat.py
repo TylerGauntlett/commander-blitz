@@ -1816,9 +1816,8 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
         if assignment.to_player is not None:
             if assignment.to_player not in batch["damaged"]:
                 batch["damaged"].append(assignment.to_player)
-            hit = batch["hits"].setdefault(assignment.to_player, [])
-            if source.oid not in hit:
-                hit.append(source.oid)
+            hit = batch["hits"].setdefault(assignment.to_player, {})
+            hit[source.oid] = hit.get(source.oid, 0) + assignment.amount
         elif assignment.to_object not in batch["battles"]:
             batch["battles"].append(assignment.to_object)
     for pid in state.turn_order():
@@ -1840,8 +1839,17 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
             # per seat with only the creatures that hit *that* seat: a Dragon
             # that hit one opponent and an Elf that hit another are not "one
             # or more Dragons" for the second.
+            #
+            # `amounts` is how much each of them dealt that seat, which is what
+            # "where X is the amount of damage **those creatures** dealt to that
+            # player" (Quartzwood Crasher) sums once the filter has narrowed
+            # the creatures (`triggers._per_player_events`).
             hits=[
-                {"player": seat, "damagers": sorted(batch["hits"][seat])}
+                {
+                    "player": seat,
+                    "damagers": sorted(batch["hits"][seat]),
+                    "amounts": [[oid, batch["hits"][seat][oid]] for oid in sorted(batch["hits"][seat])],
+                }
                 for seat in sorted(batch["hits"])
             ],
         )

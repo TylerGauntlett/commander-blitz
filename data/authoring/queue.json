@@ -211502,12 +211502,12 @@
     },
     "Quartzwood Crasher": {
       "edhrec_rank": 1956,
-      "gate": "template",
+      "gate": null,
       "name": "Quartzwood Crasher",
-      "reason": "no template for: Whenever one or more creatures you control with trample deal combat damage to a player, cr",
+      "reason": "",
       "scryfall_id": "d39e00aa-9af9-4e53-8540-3fb56009c9b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quarum Trench Gnomes": {

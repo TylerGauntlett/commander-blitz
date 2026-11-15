@@ -3733,7 +3733,16 @@ payload, with three keys narrowed to that seat:
   Dragon's seat -- and "those Dragons" names only them;
 - `defender` is the seat, so `{"binding": "defender"}` is "that player" (the
   same spelling `creatures_attack_player` uses), and `defending: "opponent"` is
-  "to **an opponent**".
+  "to **an opponent**";
+- `amount` is the damage the creatures the `filter` kept dealt to that seat,
+  summed: Quartzwood Crasher's "an X/X … where X is the amount of damage those
+  creatures dealt to that player" is a `create_token` sized by
+  `{"binding": "amount"}`.
+
+The filter's `keywords` reads the damagers' **current** keywords, because they
+are on the battlefield as the damage is dealt, so a creature granted trample is
+one of "creatures you control with trample". Every other filter key reads the
+printed face, as everywhere in trigger filters.
 
 Two Dragons through to the same seat are still one firing: it is "one or more"
 per seat. "Each other opponent" is `{"not": {"binding": "defender"}, "except":

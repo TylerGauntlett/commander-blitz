@@ -190220,6 +190220,64 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "power": {
+                "binding": "amount"
+              },
+              "token": "dinosaur_beast_x_x_g_trample",
+              "toughness": {
+                "binding": "amount"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "keywords": [
+                "trample"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "quartzwood_crasher",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{R}{R}{G}",
+      "name": "Quartzwood Crasher",
+      "oracle_text": "Trample\nWhenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur",
+        "Beast"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": "you"
             }
