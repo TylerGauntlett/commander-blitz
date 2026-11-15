@@ -441,6 +441,7 @@ class TestActivatedAbilities:
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _reach_the_level(game, oid, ability)
+            _make_the_type_choice(game, oid, ability)
             _enchant_something(game, oid, zone)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
@@ -864,6 +865,30 @@ def _provide_the_counter_fodder(game: Game, registry, ability, oid: int) -> None
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
     fodder.counters[PLUS_ONE] = wanted
     game.state.battlefield.append(fodder.oid)
+
+
+def _make_the_type_choice(game: Game, oid: int, ability) -> None:
+    """Name the creature type an "As this enters, choose a creature type" card chose.
+
+    The sandbox puts the card straight onto the battlefield, so the choice it
+    makes as it enters is never made, and an ability that reads "of the chosen
+    type" -- Kindred Boon's counter target, Etchings of the Chosen's sacrifice
+    cost -- matched nothing and reported a working card as unusable. Entering
+    would have asked; this answers with the type of a creature its controller
+    already has, which is what any player choosing for value would name.
+    """
+    if "chosen type" not in (ability.text or "").lower():
+        return
+    obj = game.state.objects[oid]
+    if obj.chosen_type is not None:
+        return
+    for other in game.state.battlefield:
+        if other == oid or game.state.objects[other].controller != obj.controller:
+            continue
+        here = chars(game.state, other)
+        if "Creature" in {str(t) for t in here.types} and here.subtypes:
+            obj.chosen_type = sorted(str(s) for s in here.subtypes)[0]
+            return
 
 
 def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -> None:
