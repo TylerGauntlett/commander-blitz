@@ -1,0 +1,18 @@
+{
+  "card_id": "descendants_path",
+  "name": "Descendants' Path",
+  "oracle_text": "At the beginning of your upkeep, reveal the top card of your library. If it's a creature card that shares a creature type with a creature you control, you may cast it without paying its mana cost. If you don't cast it, put it on the bottom of your library.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, reveal the top card of your library. If it's a creature card that shares a creature type with a creature you control, you may cast it without paying its mana cost. If you don't cast it, put it on the bottom of your library."
+  ],
+  "needs": [
+    {
+      "capability": "shares_a_creature_type_with_a_permanent",
+      "kind": "selector",
+      "what": "a library-card selector clause matching a card that shares a creature type with ANY creature matching a filter (here: a creature you control), e.g. shares_a_creature_type_with: {\"types\": [\"Creature\"], \"controller\": \"you\"}, usable in look_at_top's objects so look_at_top {amount 1, cast_free, rest_to_bottom} with a reveal says the whole sentence",
+      "why_existing_wont_do": "The selector key shares_a_creature_type_with compares against exactly one object -- \"self\" or a single-oid binding (selectors._bound_oid ignores list bindings such as reveal's or look_at_top's `as`) -- so it cannot test against the union of creature types of every creature you control. The only free cast from the library that also bottoms a declined card is look_at_top's cast_free + rest_to_bottom, whose pool is filtered by that selector. Inverting it (if + exists over creatures you control sharing a type with the revealed card) fails because the revealed card's binding is a list, and cast_card pays the mana cost rather than casting free. for_each over your creatures would offer the cast repeatedly and is not the printed sentence."
+    }
+  ],
+  "closest_existing": ["look_at_top", "shares_a_creature_type_with", "cast_card", "exile_until"],
+  "confidence": "high"
+}

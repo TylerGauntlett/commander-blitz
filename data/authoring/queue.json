@@ -69032,12 +69032,12 @@
     },
     "Dinosaur Egg": {
       "edhrec_rank": 5692,
-      "gate": "template",
+      "gate": null,
       "name": "Dinosaur Egg",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "9afdb38b-cdb4-4f64-8fc7-2df666a9db1b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dinosaur Hunter": {
@@ -102462,12 +102462,12 @@
     },
     "From the Rubble": {
       "edhrec_rank": 8750,
-      "gate": "template",
+      "gate": null,
       "name": "From the Rubble",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "84c55b5e-fdc2-4796-8c50-62715b8b15a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frondland Felidar": {
@@ -140742,12 +140742,12 @@
     },
     "Itzquinth, Firstborn of Gishath": {
       "edhrec_rank": 5781,
-      "gate": "template",
+      "gate": null,
       "name": "Itzquinth, Firstborn of Gishath",
-      "reason": "no template for: When Itzquinth enters, you may pay {2}. When you do, target Dinosaur you control deals dam",
+      "reason": "",
       "scryfall_id": "44f2aa6b-a092-4348-a24f-5edf46544eb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ivora, Insatiable Heir": {

@@ -5263,6 +5263,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dinosaur_egg": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "diplomatic_immunity": {
     "zone": [
       "battlefield",
@@ -7749,6 +7753,13 @@
     "zone": "battlefield"
   },
   "frog_squirrels": {
+    "zone": "battlefield"
+  },
+  "from_the_rubble": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "frontier_bivouac": {
@@ -10455,6 +10466,13 @@
   },
   "it_that_betrays": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "itzquinth_firstborn_of_gishath": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "ixalli_s_lorekeeper": {
