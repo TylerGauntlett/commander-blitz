@@ -2401,8 +2401,17 @@ def _covered(card: CardDef, line: str) -> bool:
     # have it, or the card turns up a different size than it prints. A morph
     # cost that is not mana ("Morph—Reveal a white card") will not parse and
     # stays residual.
+    # "Disguise {cost} (…with ward {2}…)" is the same claimant under the word
+    # the card prints: `disguise` decides which word, and a printed "Morph" on
+    # a disguise card (or the reverse) stays residual.
     if card.morph is not None:
-        word = "megamorph " if card.morph_counter else "morph "
+        word = (
+            "disguise "
+            if card.disguise
+            else "megamorph "
+            if card.morph_counter
+            else "morph "
+        )
         if stripped.lower().startswith(word):
             return _declares_printed_cost(stripped[len(word) :], card.morph)
 

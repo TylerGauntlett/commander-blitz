@@ -1,0 +1,19 @@
+{
+  "card_id": "tesak_judith_s_hellhound",
+  "name": "Tesak, Judith's Hellhound",
+  "oracle_text": "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\nOther Dogs you control have unleash.\nCreatures you control with counters on them have haste.\nWhenever Tesak attacks, add {R} for each attacking creature.",
+  "blocked_sentences": [
+    "Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)",
+    "Other Dogs you control have unleash."
+  ],
+  "needs": [
+    {
+      "capability": "unleash",
+      "kind": "keyword",
+      "what": "an unleash keyword: an optional 'may enter with a +1/+1 counter' replacement chosen as the creature enters (614.12, so it applies when granted by another permanent's static to a Dog entering), plus a linked 'can't block as long as it has a +1/+1 counter on it' static; grantable via a grant_keyword static to 'other Dogs you control'",
+      "why_existing_wont_do": "unleash is not in the keyword list. riot is the nearest keyword but offers haste as the alternative and has no can't-block rider. The cant_block static could cover the self rider, and enters_with_additional_counters is not optional, but 'Other Dogs you control have unleash' needs unleash as a grantable keyword whose entry replacement is applied to a permanent that is entering, which neither grant_keyword nor grant_ability (battlefield-only abilities) can carry"
+    }
+  ],
+  "closest_existing": ["riot", "cant_block", "enters_with_additional_counters", "grant_keyword"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "panoptic_projektor",
+  "name": "Panoptic Projektor",
+  "oracle_text": "{T}: The next face-down creature spell you cast this turn costs {3} less to cast.\nIf turning a face-down permanent face up causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+  "blocked_sentences": [
+    "{T}: The next face-down creature spell you cast this turn costs {3} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "face_down_spell_cost_reduction",
+      "kind": "op",
+      "what": "a one-shot next-spell discount restricted to a spell cast face down (morph, disguise, cloak-cast face-down creature spells): next_spell_cost_reduction needs a face_down filter that matches the spell as cast face down (a 2/2 nameless creature spell) rather than the printed card",
+      "why_existing_wont_do": "next_spell_cost_reduction takes only amount, player and types, and temp_effects._discount_covers matches types against the printed CardDef's types, so it cannot tell a face-down cast from a normal one; types: [\"Creature\"] would wrongly discount any creature spell and miss nothing face-down-specific"
+    }
+  ],
+  "closest_existing": ["next_spell_cost_reduction", "morph"],
+  "confidence": "high"
+}

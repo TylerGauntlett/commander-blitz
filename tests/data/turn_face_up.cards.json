@@ -1,0 +1,49 @@
+{
+  "_comment": "Shapes for tests/unit/faces/test_turn_face_up.py. t_tfu_op_flip is Showstopping Surprise's 'Turn it face up if it's face down' on a target creature you control, without the damage half. t_tfu_op_mastery is Ugin's Mastery's 'you may turn a face-down creature you control face up' as a one-shot sorcery. t_tfu_megamorpher is a megamorph creature, so a test can show the counter comes only with paying the megamorph cost.",
+  "cards": [
+    {
+      "id": "t_tfu_op_flip",
+      "name": "Test Face-Up Flip",
+      "oracle_text": "Choose target creature you control. Turn it face up if it's face down.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"controller": "you", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "turn_face_up", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_tfu_op_mastery",
+      "name": "Test Face-Up Mastery",
+      "oracle_text": "You may turn a face-down creature you control face up.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {"op": "turn_face_up",
+         "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"],
+                     "face_down": true, "count": 1, "optional": true}}
+      ]
+    },
+    {
+      "id": "t_tfu_megamorpher",
+      "name": "Test Megamorphing Beast",
+      "oracle_text": "Megamorph {2}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "morph": "{2}{G}",
+      "morph_counter": true
+    }
+  ]
+}

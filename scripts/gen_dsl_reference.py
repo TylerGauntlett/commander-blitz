@@ -143,6 +143,7 @@ H_DREDGE = "Dredge, madness and miracle — replacements that stop to ask"
 H_SECOND_FACE = "A second castable face — adventure, aftermath and split cards"
 H_MELD = "Meld — mutate's merged permanent, with the pair fixed by the card"
 H_MORPH = "Face-down permanents — morph, megamorph and manifest"
+H_DISGUISE = "Disguise — morph whose shell has ward {2}"
 H_ATTACKED = "Which creatures attacked this turn, and how many"
 H_ENTERED = "Which permanents entered the battlefield this turn"
 H_LEDGER = "Counting an event rather than the board"
@@ -180,8 +181,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere.", None),
     "look_at_hand": ("Cards", "Look at a player's hand (private: only you see it).", None),
     "return_to_hand": ("Cards", "Return objects to their owners' hands.", None),
-    "return_from_graveyard": ("Cards", "Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source.",
-                              None),
+    "return_from_graveyard": ("Cards", "Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `\"choose\"`) returns it face down as a 2/2.",
+                              "Returned face down — `face_down` on `return_from_graveyard`"),
     "reveal": ("Cards", "Reveal cards to the table; `as` records them.", None),
     "behold": ("Cards", "Choose a matching permanent you control or reveal a matching card from hand; `effects` is \"if you do\".",
                "behold — choose a permanent or reveal a card"),
@@ -235,7 +236,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                   None),
     "put_onto_battlefield": ("Board", "Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it.",
                              None),
-    "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token.",
+    "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token; `counters` (kind to value) are what each token enters with.",
                      'An X/X token — "create an X/X blue Shark creature token"'),
     "add_counters": ("Board", "Put N counters of a kind on permanents or players; `counter: {\"binding\": \"counter\"}` on a `counter_placed` trigger is the kind that placement put.",
                      None),
@@ -331,6 +332,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  "manifests another player's under yours.", H_MORPH),
     "manifest_dread": ("Board", "Manifest dread: look at the top two cards, manifest one, put the other "
                        "into the graveyard; `as` records the manifest.", "Manifest dread"),
+    "turn_face_up": ("Board", "Turn face-down permanents face up without paying a cost; no megamorph "
+                     "counter, a face-up one untouched.", H_MORPH),
     "meld": ("Board", "Meld the source with its named partner into one permanent.", H_MELD),
     "phase_out": ("Board", "Permanents phase out.", '"Target creature phases out"'),
     "regenerate": ("Board", "Regenerate permanents (a shield for the turn).",
@@ -852,6 +855,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "deals_combat_damage_to_planeswalker": ("A creature deals combat damage to a planeswalker.",
                                             '"…deals combat damage to a player or planeswalker"'),
     "deals_combat_damage_to_player": ("A creature deals combat damage to a player.", None),
+    "deals_damage": ("A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer.",
+                     '"Whenever this creature deals damage" — `deals_damage`'),
     "deals_damage_to_player": ("A source deals any damage to a player.", None),
     "dealt_damage": ("A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total.",
                      H_BATCHED),
@@ -1191,6 +1196,8 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "madness": ("Madness cost.", H_DREDGE),
     "mayhem": ("Mayhem cost: castable from the graveyard if discarded this turn.", "Mayhem"),
     "morph": ("Morph cost.", H_MORPH),
+    "disguise": ("Disguise cost: morph's face-down cast, and the shell has ward {2}; on any permanent card.",
+                 H_DISGUISE),
     "multikicker": ("Multikicker cost.", "Multikicker"),
     "escalate": ("Escalate cost (mana or a full cost), paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),

@@ -10,19 +10,19 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 179 |
+| [Effect ops](#effect-ops) | 180 |
 | [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 74 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 58 |
+| [Trigger events](#trigger-events) | 59 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 98 |
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 43 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 34 |
-| [Card-level costs](#card-level-costs) | 34 |
+| [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -65,7 +65,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_exiled_into_graveyard` | Cards | yes | Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived. | ["Put a card exiled with it into its owner's graveyard" — put_exiled_into_graveyard](card-dsl-cookbook.md#put-a-card-exiled-with-it-into-its-owners-graveyard--put_exiled_into_graveyard) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
-| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source. | [Effect ops](card-dsl.md#effect-ops) |
+| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `"choose"`) returns it face down as a 2/2. | [Returned face down — face_down on return_from_graveyard](card-dsl-cookbook.md#returned-face-down--face_down-on-return_from_graveyard) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
@@ -95,7 +95,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card, free or for a `cost` instead. | [Casting a copy for a printed price](card-dsl-cookbook.md#casting-a-copy-for-a-printed-price) |
 | `combat_damage_by_toughness` | Board |  | Until end of turn, creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
-| `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
+| `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token; `counters` (kind to value) are what each token enters with. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
 | `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |
 | `detain` | Board |  | Detain permanents until your next turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `distribute_control_among_opponents` | Board |  | For each permanent, choose a different opponent; each gains control of theirs. | [Each opponent gains control of the one chosen for them](card-dsl-cookbook.md#each-opponent-gains-control-of-the-one-chosen-for-them) |
@@ -144,6 +144,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `set_turn_flag` | Board |  | Write a word on the source for the turn (exerted, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `skip_untap` | Board |  | It doesn't untap during its controller's next untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
 | `tap` | Board |  | Tap permanents. | [Effect ops](card-dsl.md#effect-ops) |
+| `turn_face_up` | Board |  | Turn face-down permanents face up without paying a cost; no megamorph counter, a face-up one untouched. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `unattach` | Board |  | Unattach the source (reconfigure). | [Reconfigure — taking it off again](card-dsl-cookbook.md#reconfigure--taking-it-off-again) |
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |
 | `ungoad` | Board |  | End every goad on creatures, any goader and any clock; a `goaded` static still applies. | ["…is no longer goaded" — ungoad](card-dsl-cookbook.md#is-no-longer-goaded--ungoad) |
@@ -480,6 +481,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage` | `creature_dealt_combat_damage` | A creature deals combat damage to anything. | ["…deals combat damage", to anything — deals_combat_damage](card-dsl.md#deals-combat-damage-to-anything--deals_combat_damage) |
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
+| `deals_damage` | `damage_dealt` | A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer. | ["Whenever this creature deals damage" — deals_damage](card-dsl.md#whenever-this-creature-deals-damage--deals_damage) |
 | `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
@@ -841,6 +843,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `bestow` | Bestow cost. | [Bestow — the alternative cost that changes what the spell points at](card-dsl-cookbook.md#bestow--the-alternative-cost-that-changes-what-the-spell-points-at) |
 | `buyback` | Buyback cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `cost_reduction` | This spell costs less to cast. | [Cost reduction](card-dsl-cookbook.md#cost-reduction) |
+| `disguise` | Disguise cost: morph's face-down cast, and the shell has ward {2}; on any permanent card. | [Disguise — morph whose shell has ward {2}](card-dsl-cookbook.md#disguise--morph-whose-shell-has-ward-2) |
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `escalate` | Escalate cost (mana or a full cost), paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
@@ -1204,7 +1207,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `creatures_attacked_player` | `creatures_attack_player` |  | [Triggers](card-dsl.md#triggers) |
 | `creatures_dealt_combat_damage` | `creatures_deal_combat_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `cycled` | `cycle` |  | [Triggers](card-dsl.md#triggers) |
-| `damage_dealt` | `dealt_damage` `deals_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
+| `damage_dealt` | `dealt_damage` `deals_damage_to_player` `deals_damage` |  | [Triggers](card-dsl.md#triggers) |
 | `damage_prevented` | `damage_prevented` |  | [Triggers](card-dsl.md#triggers) |
 | `dice_rolled` |  |  | [Triggers](card-dsl.md#triggers) |
 | `dies` | `dies` `creature_dies` |  | [Triggers](card-dsl.md#triggers) |

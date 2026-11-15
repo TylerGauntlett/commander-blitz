@@ -302,6 +302,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ainok_survivalist": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "ajani_s_chosen": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1234,6 +1239,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "ashcloud_phoenix": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "ashcoat_bear": {
     "zone": "battlefield"
@@ -2551,6 +2560,10 @@
   "brambleweft_behemoth": {
     "zone": "battlefield"
   },
+  "branch_of_vitu_ghazi": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "branching_evolution": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2682,6 +2695,10 @@
     "zone": "battlefield"
   },
   "bronze_walrus": {
+    "zone": "battlefield"
+  },
+  "broodhatch_nantuko": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "broodhunter_wurm": {
@@ -4810,6 +4827,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "deathmist_raptor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deathreap_ritual": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6472,6 +6493,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "exalted_angel": {
+    "zone": "battlefield"
+  },
   "exalted_flamer_of_tzeentch": {
     "battlefield_count": 33,
     "life": {
@@ -6594,6 +6618,10 @@
       "0": 3
     },
     "zone": "graveyard"
+  },
+  "experiment_twelve": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "experimental_armor": {
     "zone": "battlefield"
@@ -6914,6 +6942,9 @@
   "felix_five_boots": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "fell_the_mighty": {
+    "zone": "graveyard"
   },
   "fellwar_stone": {
     "zone": "battlefield"
@@ -9436,6 +9467,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hidden_dragonslayer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hidden_grotto": {
     "zone": "battlefield"
   },
@@ -9893,6 +9928,13 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "imperial_hellkite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -11248,6 +11290,20 @@
     },
     "zone": "battlefield"
   },
+  "krosan_cloudscraper": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "krosan_colossus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "krosan_grip": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -11528,6 +11584,13 @@
     "counters": {
       "amount": 20,
       "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
+  "lifecrafter_s_bestiary": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -12526,6 +12589,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "master_of_pearls": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "master_of_the_feast": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12535,6 +12602,10 @@
     "zone": "battlefield"
   },
   "masterwork_of_ingenuity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mastery_of_the_unseen": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13515,6 +13586,11 @@
   "nantuko_elder": {
     "zone": "battlefield"
   },
+  "nantuko_vigilante": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "narset_parter_of_veils": {
     "counters": {
       "amount": 5,
@@ -13609,6 +13685,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "neheb_the_eternal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nema_siltlurker": {
     "zone": "battlefield"
   },
@@ -13624,6 +13704,10 @@
     "zone": "battlefield"
   },
   "neriv_heart_of_the_storm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nervous_gardener": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15224,6 +15308,9 @@
   "princess_lucrezia": {
     "zone": "battlefield"
   },
+  "printlifter_ooze": {
+    "zone": "battlefield"
+  },
   "prismari_campus": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16628,6 +16715,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "root_elemental": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "root_maze": {
     "zone": "battlefield"
   },
@@ -16901,6 +16995,11 @@
   "salt_marsh": {
     "zone": "battlefield"
   },
+  "salt_road_ambushers": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "salvation_colossus": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16955,6 +17054,16 @@
   },
   "sarkhan_soul_aflame": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "saryth_the_viper_s_fang": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
     "zone": "battlefield"
   },
   "satya_aetherflux_genius": {
@@ -17861,6 +17970,9 @@
   },
   "short_sword": {
     "zone": "battlefield"
+  },
+  "showstopping_surprise": {
+    "zone": "graveyard"
   },
   "shriek_raptor": {
     "zone": "battlefield"
@@ -20627,6 +20739,13 @@
   "the_whizzer_classic_speedster": {
     "zone": "battlefield"
   },
+  "thelonite_hermit": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "theoden_king_of_rohan": {
     "battlefield_count": 33,
     "granted": {
@@ -21458,6 +21577,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "true_identity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "trusty_machete": {
     "zone": "battlefield"
   },
@@ -21644,6 +21767,10 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "ugin_s_mastery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "ukkima_stalking_shadow": {
     "battlefield_count": 33,
@@ -23763,6 +23890,10 @@
     "zone": "battlefield"
   },
   "ziatora_the_incinerator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "zimone_mystery_unraveler": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

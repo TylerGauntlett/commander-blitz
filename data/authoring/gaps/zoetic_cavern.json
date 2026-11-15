@@ -1,0 +1,14 @@
+{
+  "card_id": "zoetic_cavern",
+  "name": "Zoetic Cavern",
+  "oracle_text": "{T}: Add {C}.\nMorph {2} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+  "blocked_sentences": ["Morph {2} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)"],
+  "needs": [{
+    "capability": "morph",
+    "kind": "engine",
+    "what": "morph on a noncreature (land) card: cast a Land card face down as a 2/2 creature spell for {3} from hand (a land is otherwise never cast), and turning it face up for {2} yields a noncreature Land permanent that stops being a creature",
+    "why_existing_wont_do": "The card-level 'morph' cost exists, but the loader rejects it on any card without the Creature type ('morph' is only on creature cards), and casting assumes the face-up card is a creature spell; manifest handles noncreature cards face down but they can never be turned up (701.34c), and Zoetic Cavern's whole point is turning up into a land"
+  }],
+  "closest_existing": ["morph", "manifest"],
+  "confidence": "high"
+}

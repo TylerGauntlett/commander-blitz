@@ -2975,6 +2975,31 @@ and regular damage are two steps and two firings. Also takes a delayed trigger's
 `subject` — Tamiyo, Field Researcher's "whenever either of those creatures deals
 combat damage".
 
+### "Whenever this creature deals damage" — `deals_damage`
+
+```jsonc
+// Exalted Angel
+{ "kind": "triggered", "text": "Whenever this creature deals damage, you gain that much life.",
+  "trigger": { "event": "deals_damage", "source": "self" },
+  "effects": [ { "op": "gain_life", "amount": { "binding": "amount" } } ] }
+```
+
+Any damage the dealer deals: combat or noncombat, to a player, a planeswalker, a
+battle or a creature. It listens to both halves of `EventType.DAMAGE_DEALT`, with
+the **dealer** as subject (the permanent half's `oid` is the victim, which is
+`dealt_damage`'s subject). Once per damage **event**: the damage one dealer deals
+in one combat damage step (510.2) or one effect op is one firing whatever it hit,
+and `amount` is the total, after prevention. So a trampler hitting its blocker
+and the player gains once for both, one ability dealing damage to each creature
+and each player gains once, and first strike and regular damage are two steps and
+two firings. Damage dealt *to* the creature fires nothing. The grouping is the
+event's, so the trigger takes no `batched`, and a `delayed_trigger` cannot watch
+it: the loader refuses it there, where the recipients would not be folded.
+
+The near misses: `deals_combat_damage` is combat only; `deals_damage_to_player`
+is the player half only and misses a fight or a blocked creature; lifelink is a
+static that gains as the damage is dealt, not a trigger on the stack.
+
 ### A reduction that counts an *or* of characteristics
 
 ```jsonc

@@ -92,6 +92,13 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     for oid in state.players[pid].hand:
         card = state.card(oid)
         if card.is_land:
+            # A land card is never cast -- except face down with disguise
+            # (702.168a, Branch of Vitu-Ghazi), where what is cast is a 2/2
+            # creature spell and its timing is that spell's (601.3e).
+            if card.morph is not None and _timing_ok(
+                state, pid, _spell_as_cast(card, True, False), sorcery_speed
+            ):
+                out += _cast_variant(state, pid, oid, card, [()], extra_generic=0, face_down=True)
             continue
         # The two faces are offered independently and their timings are asked
         # separately, because they are two different spells: Brazen Borrower is

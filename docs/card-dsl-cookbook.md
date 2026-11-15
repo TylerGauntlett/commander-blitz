@@ -4430,8 +4430,7 @@ The printed "Morph {cost}" line is claimed by the field, not by an ability:
 the residual gate accepts it only when the printed cost parses to the declared
 `morph`, and only under the word `morph_counter` says — "Megamorph" needs the
 counter, "Morph" must not have it. A non-mana morph cost ("Morph—Reveal a white
-card") does not parse and stays residual. Disguise is not this field: it also
-grants ward {2} while face down, which the shell does not model.
+card") does not parse and stays residual. Disguise is its own field, below.
 
 Two choke points carry it: `card_of` is a single choke point, and `chars` is the
 single place derived characteristics are decided.
@@ -4446,8 +4445,8 @@ Morph and manifest are one mechanism from two sides:
 | | morph | manifest |
 |---|---|---|
 | how it arrives | **cast** face down for `{3}`, fixed by 702.37a | put there off the library |
-| price to turn up | the printed **morph cost** | the hidden card's own mana cost |
-| a non-creature card | cannot carry morph at all (load error) | can be manifested, and can never be turned up (701.34c) |
+| price to turn up | the printed **morph cost** | its morph or disguise cost if it has one, else the hidden card's own mana cost |
+| a non-creature card | cannot carry morph at all (load error) | can be manifested, and is never offered the turn-up (701.34c); only an effect turns it up |
 
 **Turning face up reuses `ActionKind.ACTIVATE` with `ability_index` 0**, and
 that is not a shortcut: a face-down permanent has no abilities (707.2), so index
@@ -4465,6 +4464,32 @@ because the shell is *returned* rather than layered over — a real face-down
 creature is still affected by both. And "any time you have priority" is here an
 ordinary activation rather than a special action, which is observable only to
 something that could respond to it, and nothing can.
+
+### Disguise — morph whose shell has ward {2}
+
+```jsonc
+// Nervous Gardener — "Disguise {G} (You may cast this card face down for {3}
+// as a 2/2 creature with ward {2}. Turn it face up any time for its disguise
+// cost.)"
+"disguise": "{G}"
+```
+
+`disguise` (702.168a) is the turn-face-up price, written **instead of**
+`morph`: the loader refuses both on one card. It loads as `morph` holding that
+cost plus `CardDef.disguise`, so the face-down cast for `{3}`, the 2/2 shell and
+the turn-up are morph's. The difference is the ward: a permanent cast face down
+with disguise is marked `disguised` as it resolves, and the rules supply it the
+same `CLOAK_WARD` a cloaked permanent has, until it turns face up. A disguise
+card that is manifested instead has no ward, and turns up for its disguise
+cost.
+
+Disguise is printed on any permanent card, so the loader takes it on a land or
+an enchantment where it refuses `morph`. A land card with disguise is offered a
+face-down cast from hand beside its land play, at the timing of the 2/2
+creature spell it is (601.3e), and turns up into the land. The printed
+"Disguise {cost}" line is claimed by the field when the cost matches, as
+morph's is. Written as `morph`, the card loads without the ward — a cheaper
+card than the printed one.
 
 ### Another player's library — `controller: "you"`
 
@@ -4490,6 +4515,72 @@ the loader accepts.
 Written without the key, `player: {"binding": "event_player"}` hands the 2/2 to
 the opponent whose library it was.
 
+### Returned face down — `face_down` on `return_from_graveyard`
+
+```jsonc
+// Ashcloud Phoenix — "When this creature dies, return it to the battlefield
+// face down under your control."
+{ "op": "return_from_graveyard", "destination": "battlefield",
+  "controller": "you", "face_down": true,
+  "objects": { "binding": "subject", "zone": "graveyard" } }
+
+// Deathmist Raptor — "… you may return this card from your graveyard to the
+// battlefield face up or face down."
+{ "op": "may", "effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield",
+    "face_down": "choose", "objects": { "self_only": true, "zone": "graveyard" } } ] }
+```
+
+`face_down: true` puts the card onto the battlefield as the same 2/2 shell a
+morph cast leaves (708.2), already face down when its enters event fires, so
+"whenever a face-down creature enters" hears it and the hidden card's own
+enters abilities, arrival replacements and riot do not apply (707.2). Its
+controller may look at it (708.5). `"choose"` asks that controller "face up or
+face down" as it returns. The loader takes the key only with `destination:
+"battlefield"`, and refuses it beside `host_named`: a face-down permanent is a
+creature, not an Aura.
+
+It turns face up for its **morph or disguise cost** (702.37e), megamorph's
+counter included. A card without one stays face down until an effect turns it
+up: it was not manifested, and only a manifested creature card turns up for its
+own mana cost (701.34c, `GameObject.manifested`).
+
+`manifest` is the near miss, and takes only the top card of a library;
+`exile_and_return`'s `face` is a double-faced card's front or back.
+
+### An effect turns it face up — `turn_face_up`
+
+```jsonc
+// Showstopping Surprise — "Choose target creature you control. Turn it face
+// up if it's face down."
+{ "op": "turn_face_up", "objects": { "target": "t1" } }
+
+// Ugin's Mastery — "… you may turn a face-down creature you control face up."
+{ "op": "turn_face_up",
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "face_down": true, "count": 1, "optional": true } }
+```
+
+`turn_face_up` turns every permanent `objects` names face up and pays nothing
+(708.8): not the morph or disguise cost, not a manifested card's mana cost. It
+goes through the same `primitives.turn_face_up` the special action ends in, so
+the shell's ward goes and `turned_face_up` fires exactly as it does there.
+`objects` is required — the loader refuses the op without it, since a
+face-down permanent has no abilities and "this" is never what turns.
+
+- **No megamorph counter.** The counter comes with paying the megamorph cost
+  (702.37b), so only the special action puts it on.
+- **Any face-down permanent.** A manifested or cloaked land or other noncreature
+  permanent card turns up into what it is; "if it's a creature card" limits the
+  special action, not the turn. An instant or sorcery card is revealed and stays
+  face down, and nothing hears it turn.
+- **A face-up permanent is left alone**, and nothing fires, which is "turn it
+  face up if it's face down" with no condition. Narrow a choice with
+  `face_down: true` so it offers only what can turn.
+
+`transform` is the near miss: it turns a double-faced card over, which a
+face-down permanent is not.
+
 ## "When this creature is turned face up"
 
 ```jsonc
@@ -4514,11 +4605,12 @@ the opponent whose library it was.
 ```
 
 The `turned_face_up` trigger event fires once each time a face-down permanent is
-turned face up, by morph, megamorph or manifest (702.37e, 701.34a). Its subject
+turned face up, by morph, megamorph, disguise or manifest (702.37e, 701.34a) or by
+a `turn_face_up` effect (708.8). Its subject
 is that permanent **as it is now, face up**: `filter` asks what the card is (a
 `types: ["Creature"]` or `subtypes` filter reads the turned-up card, never the
 2/2 shell), `controller: "you"` asks who controls it, and `{"binding":
-"subject"}` is "it". Only a permanent's controller can turn it face up, so "a
+"subject"}` is "it". The event's player is the permanent's controller, so "a
 permanent you control is turned face up" and "you turn a permanent face up" are
 the same `controller: "you"`.
 
@@ -10356,6 +10448,33 @@ The two X readers: `mana_value_of` a spell **on the stack** counts the X it was
 cast with (202.3e), so Secure the Wastes for X = 3 makes a 4/4; and a `cycle`
 trigger's `{"x": true}` is the X paid in the cycling cost, which the event
 carries because a card cycled from hand was never cast.
+
+## A token that enters with counters — "the token enters with X +1/+1 counters on it"
+
+Printlifter Ooze. `create_token`'s `counters` maps a counter kind to a value
+expression, each evaluated once as the op runs, and hands them to the token's
+own arrival as its `enters_with` (614.1c, one placement under 122.6):
+
+```jsonc
+// "…create a 0/0 green Ooze creature token with trample. The token enters with
+//  X +1/+1 counters on it, where X is the number of other creatures you control."
+{ "op": "create_token", "token": "ooze_0_0_g_trample",
+  "counters": { "+1/+1": { "count": { "zone": "battlefield", "controller": "you",
+                                       "types": ["Creature"] } } } }
+```
+
+The value is read before any token exists, so a count of creatures never counts
+the token itself, which is what "other creatures" means here. Below zero is
+zero; zero creates the bare token, and a 0/0 dies to 704.5f. Every token the op
+makes, doubled ones included, gets the same counters. The loader refuses an
+empty map and an amount that is not a value expression, and checks each kind as
+it checks every `counters` map.
+
+Not `create_token` then `add_counters`: that pair puts a 0/0 on the battlefield
+first, so "whenever a creature with power 3 or greater enters" (Elemental Bond)
+sees a 0/0, and it is a second placement. Not an X/X token's `power` and
+`toughness` either: that is the token's base size, and counters are what
+proliferate, -1/-1 counters and "creatures with counters" see.
 
 ## Making a token that is already attacking
 

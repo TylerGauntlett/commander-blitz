@@ -2252,7 +2252,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'strive' prices the targets of one 'any number of target' "
                 f"spec -- give the card exactly one target spec with count 'any'"
             )
-        if model.overload or model.morph or model.bestow or model.mutate:
+        if model.overload or model.morph or model.disguise or model.bestow or model.mutate:
             # Each of these casts the card with targets the rule supplies (none,
             # or "enchant creature"), so the surcharge would price a list the
             # card never declared. No strive printing has any of them.
@@ -2289,6 +2289,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
     if model.morph_counter and model.morph is None:
         raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
+    if model.disguise is not None and model.morph is not None:
+        # 702.168a is morph with a ward, not a rider on it: one face-down cast,
+        # one turn-up price. Both fields would name two prices for one action.
+        raise DslError(
+            f"{where}: 'disguise' is its own turn-face-up cost -- write it "
+            f"instead of 'morph', never beside it"
+        )
+    if model.disguise is not None and ManaCost.parse(model.disguise).x_count:
+        raise DslError(f"{where}: a disguise cost with X is not implemented")
     if model.morph is not None and "Creature" not in model.types:
         # 702.37a: only a creature card may be cast face down, because what it
         # becomes is a 2/2 *creature*. A non-creature carrying it would be
@@ -2787,8 +2796,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
         plot=ManaCost.parse(model.plot) if model.plot else None,
         epic=model.epic,
-        morph=ManaCost.parse(model.morph) if model.morph else None,
+        # Disguise is morph's machinery under another word (702.168a), so its
+        # cost is the turn-up price `morph` carries; `disguise` adds the ward.
+        morph=(
+            ManaCost.parse(model.morph)
+            if model.morph
+            else ManaCost.parse(model.disguise)
+            if model.disguise
+            else None
+        ),
         morph_counter=model.morph_counter,
+        disguise=model.disguise is not None,
         splice=ManaCost.parse(model.splice) if model.splice else None,
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,

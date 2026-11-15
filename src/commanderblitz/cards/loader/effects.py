@@ -907,6 +907,17 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
             f"{where}: a delayed_trigger watches an event, and {STATE_TRIGGER!r} "
             f"is a printed state trigger's, not one"
         )
+    if event == "deals_damage":
+        # One firing per damage event, its recipients folded together, is done
+        # against the queued trigger of a hosting permanent
+        # (`triggers._joins_damage_dealt`). A delayed subscription is armed
+        # per DAMAGE_DEALT instead, so a trampler would fire it twice and
+        # "that much" would read one recipient's share.
+        raise DslError(
+            f"{where}: 'deals_damage' groups a damage event's recipients into one "
+            f"firing, which only a printed trigger does; a delayed_trigger would "
+            f"fire once per recipient"
+        )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:
         raise DslError(
@@ -1124,6 +1135,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: return_from_graveyard 'link' is a boolean and needs "
             f"destination 'battlefield'"
         )
+
+    # "…return it to the battlefield **face down**" (Ashcloud Phoenix), or
+    # "face up or face down" (Deathmist Raptor). Only `return_from_graveyard`
+    # reads it as a face-down arrival -- elsewhere `face_down` is private exile
+    # or a selector key -- and only onto the battlefield: a card in a hand is
+    # not face down, and a hand's `face_down: true` would load and do nothing.
+    # Not with `host_named`, since a face-down permanent is a creature, never
+    # an Aura with a host to name.
+    if op == "return_from_graveyard" and "face_down" in effect:
+        mode = effect["face_down"]
+        if mode is not True and mode is not False and mode != "choose":
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' is true or "
+                f"'choose' (face up or face down), got {mode!r}"
+            )
+        if mode and effect.get("destination") != "battlefield":
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' needs destination "
+                f"'battlefield'; a card is face down only as a permanent (708.2)"
+            )
+        if mode and "host_named" in effect:
+            raise DslError(
+                f"{where}: return_from_graveyard 'face_down' with 'host_named': a "
+                f"face-down permanent is a 2/2 creature, not an Aura (708.2)"
+            )
 
     if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
@@ -3255,6 +3291,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and "counters" in effect:
+        # "The token enters with X +1/+1 counters on it." Each amount is a value
+        # expression read as the op runs. An empty map, or one whose amount
+        # does not parse, would load and make the bare 0/0 that 704.5f bins --
+        # the printed card with its whole second sentence gone.
+        counters = effect["counters"]
+        if not isinstance(counters, Mapping) or not counters:
+            raise DslError(
+                f"{where}: create_token's 'counters' maps a counter kind to an "
+                f"amount, e.g. {{'+1/+1': {{'count': …}}}}"
+            )
+        for kind, value in counters.items():
+            validate_value(value, f"{where}.counters.{kind}")
     if op == "create_token" and ("power" in effect) != ("toughness" in effect):
         # "Create an X/X …" prints both numbers. One alone would leave the
         # other at the X/X token's written 0, and a 3/0 Shark dies to 704.5f
@@ -3289,6 +3338,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: investigate names its own Clue and takes 'player' for who "
             f"investigates, not create_token's 'token' or 'controller'"
         )
+    if op == "turn_face_up" and "objects" not in effect:
+        # "Turn it face up" always names what. Unlike `transform`, the op has no
+        # "this" default: a face-down permanent has no abilities, so the source
+        # of a turn-face-up effect is never the permanent it turns.
+        raise DslError(f"{where}: turn_face_up needs 'objects', the permanent it turns face up")
     if op == "empower" and "amount" not in effect:
         # "Empower Jace N" always prints its N. Defaulted, a card missing the
         # key would load and empower by one -- Mindseeker Oculus putting one

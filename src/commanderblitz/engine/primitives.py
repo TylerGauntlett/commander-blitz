@@ -438,7 +438,8 @@ def damage_player(
 
     ``batch`` is the simultaneous damage event this damage belongs to, put on
     the `LIFE_LOST` it causes for a ``batched`` `life_lost` trigger to group
-    by, and handed to `damage_permanent` when a redirect moves it. Combat
+    by and on the `DAMAGE_DEALT` for a `deals_damage` trigger to, and handed
+    to `damage_permanent` when a redirect moves it. Combat
     damage passes the step's own (510.2); anything else is part of the effect
     op dealing it, `state.event_batch`.
 
@@ -701,6 +702,9 @@ def damage_player(
         # there -- there is no defending player when a Shock hits a Bear.
         controller=None if src is None else src.controller,
         defender=pid,
+        # The simultaneous damage event, as on the permanent half: what a
+        # `deals_damage` trigger folds one dealer's recipients together by.
+        batch=state.event_batch if batch is None else batch,
     )
     _apply_lifelink(state, source_oid, amount)
 
@@ -2012,6 +2016,54 @@ def transform(state: GameState, oid: int, *, to_back: bool | None = None) -> boo
         source=oid,
         card=state.card_of(obj).id,
         face="back" if want else "front",
+    )
+    return True
+
+
+def turn_face_up(state: GameState, oid: int, *, megamorph: bool = False) -> bool:
+    """Turn a face-down permanent face up (708.8). Returns whether it turned.
+
+    The one place a permanent turns face up, whoever asked: the special action
+    (`Game._turn_face_up`, which pays the morph, disguise or mana cost first)
+    and the `turn_face_up` op (708.8's "an effect turns it face up", no cost
+    at all) both end here, so "when this is turned face up" hears either.
+
+    ``megamorph`` puts the +1/+1 counter on, which only the special action
+    passes and only when the card has megamorph: the counter comes with paying
+    the megamorph cost (702.37b), so a megamorph creature an effect turns up
+    gets none.
+
+    A permanent already face up, or gone, does nothing. A face-down instant or
+    sorcery card -- only manifest and cloak can put one there -- is revealed
+    and stays face down, and nothing hears it turn, as the manifest and cloak
+    rules say.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or not obj.face_down:
+        return False
+    card = state.card_of(obj)
+    if card.is_instant or card.is_sorcery:
+        state.emit("reveal", player=obj.controller, source=oid, cards=[card.id])
+        return False
+    obj.face_down = False
+    # The shell is gone, and the ward went with it: the card underneath is
+    # face up now and has whatever abilities it prints.
+    obj.cloaked = False
+    obj.manifested = False
+    obj.disguised = False
+    obj.revealed_to.clear()
+    state.bump_chars()
+    if megamorph:
+        add_counters(state, oid, PLUS_ONE, 1, source=oid)
+    # `fire`, not `emit`: "When this creature is turned face up" and
+    # "Whenever a permanent you control is turned face up" listen here.
+    fire(
+        state,
+        EventType.TURNED_FACE_UP,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        card=card.id,
     )
     return True
 

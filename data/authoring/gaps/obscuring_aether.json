@@ -1,0 +1,25 @@
+{
+  "card_id": "obscuring_aether",
+  "name": "Obscuring Aether",
+  "oracle_text": "Face-down creature spells you cast cost {1} less to cast.\n{1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)",
+  "blocked_sentences": [
+    "Face-down creature spells you cast cost {1} less to cast.",
+    "{1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)"
+  ],
+  "needs": [
+    {
+      "capability": "turn_face_down",
+      "kind": "op",
+      "what": "an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)",
+      "why_existing_wont_do": "manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place"
+    },
+    {
+      "capability": "face_down_spell_filter",
+      "kind": "selector",
+      "what": "a spell filter key on spell_cost_reduction's affects_spells matching a creature spell being cast face down (morph, disguise, or any other face-down cast)",
+      "why_existing_wont_do": "spell_cost_reduction's affects_spells reads printed characteristics (types, colors, not_from_zone, exclude_self); face_down exists only in battlefield selectors, so a face-down spell on the stack cannot be singled out"
+    }
+  ],
+  "closest_existing": ["manifest", "morph", "spell_cost_reduction"],
+  "confidence": "high"
+}

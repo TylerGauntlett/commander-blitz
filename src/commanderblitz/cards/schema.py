@@ -2020,6 +2020,12 @@ class CardModel(BaseModel):
     morph: str | None = None
     #: Megamorph: the creature turns up with a +1/+1 counter (702.109a).
     morph_counter: bool = False
+    #: **Disguise** (702.168a): morph whose face-down permanent has ward {2}.
+    #: "You may cast this card face down for {3} as a 2/2 creature with ward
+    #: {2}. Turn it face up any time for its disguise cost." Names the
+    #: turn-face-up price, like ``morph``, and never beside it. Unlike morph it
+    #: is printed on non-creature cards too -- a land, an enchantment.
+    disguise: str | None = None
     splice: str | None = None
     splice_onto: str = "Arcane"
     #: ``{"cost": "{G}", "counters": 2}`` -- "Suspend 2—{G}".  Another whole way

@@ -1,0 +1,19 @@
+{
+  "card_id": "kaust_eyes_of_the_glade",
+  "name": "Kaust, Eyes of the Glade",
+  "oracle_text": "Whenever a creature you control that was turned face up this turn deals combat damage to a player, draw a card.\n{T}: Turn target face-down attacking creature you control face up.",
+  "blocked_sentences": [
+    "Whenever a creature you control that was turned face up this turn deals combat damage to a player, draw a card.",
+    "{T}: Turn target face-down attacking creature you control face up."
+  ],
+  "needs": [
+    {
+      "capability": "turned_face_up_this_turn",
+      "kind": "selector",
+      "what": "a selector/trigger-filter key matching a permanent that was turned face up this turn (a per-turn flag set when the permanent turns face up), usable in a deals_combat_damage_to_player trigger's filter with controller: you and types: [Creature]",
+      "why_existing_wont_do": "selector_keys and trigger_filter_keys have face_down (current state) and entered_this_turn / attacked_this_turn / surveilled_this_turn, but nothing recording that a permanent turned face up this turn; face_down: false would match every face-up creature"
+    }
+  ],
+  "closest_existing": ["manifest", "exile_and_return", "turned_face_up"],
+  "confidence": "high"
+}

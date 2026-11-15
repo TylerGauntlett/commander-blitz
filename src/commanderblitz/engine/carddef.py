@@ -1849,6 +1849,9 @@ class CardDef:
     #: arrives with a +1/+1 counter when it does.
     morph: ManaCost | None = None
     morph_counter: bool = False
+    #: Disguise (702.168a): ``morph`` holds the disguise cost, and the
+    #: permanent cast face down this way has cloak's ward {2} (`CLOAK_WARD`).
+    disguise: bool = False
     #: Splice -- the price, and the subtype it may be spliced onto.
     splice: ManaCost | None = None
     splice_onto: str = "Arcane"
@@ -2240,7 +2243,8 @@ def rules_ability(index: int) -> Ability | None:
     return None
 
 
-#: Ward {2} on a **cloaked** permanent (701.61a).
+#: Ward {2} on a **cloaked** permanent (701.61a), and on one cast face down
+#: with **disguise** (702.168a) -- the same ability granted by two rules.
 #:
 #: A rules-supplied ability, like `BESTOW_TARGET` above is a rules-supplied
 #: target. It has to be: rule 707.2 says a face-down permanent has *no*

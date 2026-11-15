@@ -788,8 +788,23 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     move when what it was read from does, and a copy of the token is X/X too.
     Only an X/X token (`variable_pt`) takes the pair, and it always does; the
     loader holds both halves.
+
+    ``counters`` is "**The token enters with X +1/+1 counters on it**"
+    (Printlifter Ooze): a map of counter kind to a value expression, each
+    evaluated once as the op runs -- before any token exists, so "the number of
+    other creatures you control" never counts the token -- below zero read as
+    zero. The counters are `primitives.create_token`'s ``enters_with``, one
+    placement with the token's arrival (122.6, 614.1c): a 0/0 is never on the
+    battlefield without them, so it survives 704.5f, its enters-triggers see the
+    counters, and every counter replacement that applies as it arrives sees them
+    too. Every token the op makes -- doubled ones included -- gets the same.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    enters_with = {
+        str(kind): n
+        for kind, value in (spec.get("counters") or {}).items()
+        if (n := max(0, evaluate_value(ctx, value)))
+    } or None
     token = str(spec["token"])
     size: dict[str, int] | None = None
     if "power" in spec:
@@ -818,6 +833,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 overrides=dict(size) if size else None,
                 source=ctx.source_oid,
                 copies=copies,
+                enters_with=enters_with,
             )
         )
     if host is not None:

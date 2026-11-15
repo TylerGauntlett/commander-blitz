@@ -559,6 +559,11 @@ class GameObject:
     #: Written by `move_object` and cleared as the object next enters the
     #: battlefield, so it can only ever answer for the departure it describes.
     left_with: tuple[TempEffect, ...] = ()
+    #: Whether the departure `left_with` describes was a **face-down**
+    #: permanent's (707.2): one with no abilities, whose hidden card's own
+    #: leave-the-battlefield triggers therefore do not look back at it. Written
+    #: by `move_object` on every move, so it answers only for the last one.
+    left_face_down: bool = False
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False
@@ -635,6 +640,16 @@ class GameObject:
     #: puts on it -- which comes from the rule, not from the card underneath, so
     #: it cannot live on either and has to be a flag the engine reads.
     cloaked: bool = False
+    #: Put face down by **manifest** or cloak (701.34a, 701.61a), the one route
+    #: whose shell turns up for the hidden creature card's own mana cost
+    #: (701.34c). A card cast face down, or returned face down by
+    #: `return_from_graveyard`, turns up only for a morph or disguise cost it
+    #: has (702.37e, 702.168d); without one it stays face down.
+    manifested: bool = False
+    #: Cast face down with disguise (702.168a): the shell has cloak's ward {2}
+    #: for the same reason. Set as the face-down spell resolves, and not by
+    #: manifesting a disguise card, which gets no ward (701.34).
+    disguised: bool = False
     #: Set on the resolving spell and read a moment later by
     #: `_place_after_resolution`, because `reset_permanent_state` clears
     #: `face_down` on the way onto the battlefield. Identity state, like
@@ -1460,6 +1475,8 @@ class GameObject:
         self.paired_with = None
         self.face_down = False
         self.cloaked = False
+        self.manifested = False
+        self.disguised = False
         self.until_eot = []
         self.dies_to = None
         self.leaves_to = None

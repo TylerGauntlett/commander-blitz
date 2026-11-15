@@ -4402,12 +4402,12 @@
     },
     "Ainok Survivalist": {
       "edhrec_rank": 6576,
-      "gate": "template",
+      "gate": null,
       "name": "Ainok Survivalist",
-      "reason": "no template for: Megamorph {1}{G}",
+      "reason": "",
       "scryfall_id": "0f4b5b18-569f-4f61-ad2f-966ba4fbabdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ainok Tracker": {
@@ -14492,12 +14492,12 @@
     },
     "Ashcloud Phoenix": {
       "edhrec_rank": 11622,
-      "gate": "template",
+      "gate": null,
       "name": "Ashcloud Phoenix",
-      "reason": "no template for: When this creature dies, return it to the battlefield face down under your control",
+      "reason": "",
       "scryfall_id": "f628c7de-516b-4907-a3c8-b6361f2bd071",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashcoat Bear": {
@@ -33072,12 +33072,12 @@
     },
     "Branch of Vitu-Ghazi": {
       "edhrec_rank": 7391,
-      "gate": "template",
+      "gate": null,
       "name": "Branch of Vitu-Ghazi",
-      "reason": "no template for: Disguise {3}",
+      "reason": "",
       "scryfall_id": "73a8169f-b858-47a5-9c76-2e7c50ad4ecd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Branchblight Stalker": {
@@ -35312,12 +35312,12 @@
     },
     "Broodhatch Nantuko": {
       "edhrec_rank": 7384,
-      "gate": "template",
+      "gate": null,
       "name": "Broodhatch Nantuko",
-      "reason": "no template for: Whenever this creature is dealt damage, you may create that many 1/1 green Insect creature",
+      "reason": "",
       "scryfall_id": "ffc29f3a-bf26-4db4-ac8e-48be4862dd11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broodheart Engine": {
@@ -64032,12 +64032,12 @@
     },
     "Deathmist Raptor": {
       "edhrec_rank": 6493,
-      "gate": "template",
+      "gate": null,
       "name": "Deathmist Raptor",
-      "reason": "no template for: Whenever a permanent you control is turned face up, you may return this card from your gra",
+      "reason": "",
       "scryfall_id": "ed6e6cf5-8fb7-4ba6-943a-e5aa14a3ee92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathpact Angel": {
@@ -87652,12 +87652,12 @@
     },
     "Exalted Angel": {
       "edhrec_rank": 14896,
-      "gate": "template",
+      "gate": null,
       "name": "Exalted Angel",
-      "reason": "no template for: Whenever this creature deals damage, you gain that much life",
+      "reason": "",
       "scryfall_id": "7a6b087b-a3ac-4c4d-a519-ec5584b4b42d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exalted Dragon": {
@@ -88412,12 +88412,12 @@
     },
     "Experiment Twelve": {
       "edhrec_rank": 7820,
-      "gate": "template",
+      "gate": null,
       "name": "Experiment Twelve",
-      "reason": "no template for: Whenever this creature or another creature you control is turned face up, put +1/+1 counte",
+      "reason": "",
       "scryfall_id": "1c1d66b4-2e40-41fd-afc8-901835108931",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Experimental Armor": {
@@ -93222,12 +93222,12 @@
     },
     "Fell the Mighty": {
       "edhrec_rank": 1465,
-      "gate": "template",
+      "gate": null,
       "name": "Fell the Mighty",
-      "reason": "no template for: Destroy all creatures with power greater than target creature's power",
+      "reason": "",
       "scryfall_id": "0cdf4215-0867-47d8-ae61-0da2af542d7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fell the Pheasant": {
@@ -127262,12 +127262,12 @@
     },
     "Hidden Dragonslayer": {
       "edhrec_rank": 15795,
-      "gate": "template",
+      "gate": null,
       "name": "Hidden Dragonslayer",
-      "reason": "no template for: Megamorph {2}{W}",
+      "reason": "",
       "scryfall_id": "b29a3e7c-4d19-4737-9b58-deb56de26118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hidden Footblade": {
@@ -134622,12 +134622,12 @@
     },
     "Imperial Hellkite": {
       "edhrec_rank": 18423,
-      "gate": "template",
+      "gate": null,
       "name": "Imperial Hellkite",
-      "reason": "no template for: Morph {6}{R}{R}",
+      "reason": "",
       "scryfall_id": "cffb1feb-9368-4d91-bd4b-36a24fe849e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imperial Lancer": {
@@ -152612,22 +152612,22 @@
     },
     "Krosan Cloudscraper": {
       "edhrec_rank": 13411,
-      "gate": "template",
+      "gate": null,
       "name": "Krosan Cloudscraper",
-      "reason": "no template for: At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}",
+      "reason": "",
       "scryfall_id": "c1fab763-4e62-418d-b3a6-77c52bf21f23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Colossus": {
       "edhrec_rank": 15220,
-      "gate": "template",
+      "gate": null,
       "name": "Krosan Colossus",
-      "reason": "no template for: Morph {6}{G}{G}",
+      "reason": "",
       "scryfall_id": "4f3c1e1a-bd75-4bfb-b44b-05b94f64c634",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Constrictor": {
@@ -157822,12 +157822,12 @@
     },
     "Lifecrafter's Bestiary": {
       "edhrec_rank": 1366,
-      "gate": "template",
+      "gate": null,
       "name": "Lifecrafter's Bestiary",
-      "reason": "no template for: At the beginning of your upkeep, scry 1",
+      "reason": "",
       "scryfall_id": "cfb90c0c-50e7-4602-a64b-eeba9ec32e17",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifecrafter's Gift": {
@@ -169192,12 +169192,12 @@
     },
     "Master of Pearls": {
       "edhrec_rank": 19711,
-      "gate": "template",
+      "gate": null,
       "name": "Master of Pearls",
-      "reason": "no template for: Morph {3}{W}{W}",
+      "reason": "",
       "scryfall_id": "5c0267c9-e0a7-4c16-afc9-f05de9fccaba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of Predicaments": {
@@ -169392,12 +169392,12 @@
     },
     "Mastery of the Unseen": {
       "edhrec_rank": 16242,
-      "gate": "template",
+      "gate": null,
       "name": "Mastery of the Unseen",
-      "reason": "no template for: Whenever a permanent you control is turned face up, you gain 1 life for each creature you ",
+      "reason": "",
       "scryfall_id": "b27f4217-881d-401d-860e-d3d8689ca1e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Masticore": {
@@ -183312,12 +183312,12 @@
     },
     "Nantuko Vigilante": {
       "edhrec_rank": 7687,
-      "gate": "template",
+      "gate": null,
       "name": "Nantuko Vigilante",
-      "reason": "no template for: Morph {1}{G}",
+      "reason": "",
       "scryfall_id": "85b0dc2f-7d96-47a6-89f9-8318f0b74f12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naomi, Pillar of Order": {
@@ -184972,12 +184972,12 @@
     },
     "Neheb, the Eternal": {
       "edhrec_rank": 1170,
-      "gate": "template",
+      "gate": null,
       "name": "Neheb, the Eternal",
-      "reason": "no template for: Afflict 3",
+      "reason": "",
       "scryfall_id": "767c5831-2195-4efa-802d-2ea2e6dabb5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neheb, the Worthy": {
@@ -185232,12 +185232,12 @@
     },
     "Nervous Gardener": {
       "edhrec_rank": 11995,
-      "gate": "template",
+      "gate": null,
       "name": "Nervous Gardener",
-      "reason": "no template for: Disguise {G}",
+      "reason": "",
       "scryfall_id": "93b747c7-b342-47f8-a190-16c393b20607",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nessian Asp": {
@@ -207422,12 +207422,12 @@
     },
     "Printlifter Ooze": {
       "edhrec_rank": 8257,
-      "gate": "template",
+      "gate": null,
       "name": "Printlifter Ooze",
-      "reason": "no template for: Whenever this creature or another creature you control is turned face up, create a 0/0 gre",
+      "reason": "",
       "scryfall_id": "db7fbf69-1118-446b-b5cb-02da2de42ce3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prishe's Wanderings": {
@@ -227172,12 +227172,12 @@
     },
     "Root Elemental": {
       "edhrec_rank": 13496,
-      "gate": "template",
+      "gate": null,
       "name": "Root Elemental",
-      "reason": "no template for: Morph {5}{G}{G}",
+      "reason": "",
       "scryfall_id": "e8d6e393-7378-4113-a5ff-44e9518eff76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Root Greevil": {
@@ -231592,12 +231592,12 @@
     },
     "Salt Road Ambushers": {
       "edhrec_rank": 11825,
-      "gate": "template",
+      "gate": null,
       "name": "Salt Road Ambushers",
-      "reason": "no template for: Whenever another permanent you control is turned face up, if it's a creature, put two +1/+",
+      "reason": "",
       "scryfall_id": "741e7d92-1570-4eb2-8195-e48c44672648",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Salt Road Packbeast": {
@@ -233632,12 +233632,12 @@
     },
     "Saryth, the Viper's Fang": {
       "edhrec_rank": 1230,
-      "gate": "template",
+      "gate": null,
       "name": "Saryth, the Viper's Fang",
-      "reason": "no template for: Other tapped creatures you control have deathtouch",
+      "reason": "",
       "scryfall_id": "8050afb7-3c16-4456-aa34-4cc999fac7f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sasaya, Orochi Ascendant // Sasaya's Essence": {
@@ -245322,12 +245322,12 @@
     },
     "Showstopping Surprise": {
       "edhrec_rank": 12318,
-      "gate": "template",
+      "gate": null,
       "name": "Showstopping Surprise",
-      "reason": "no template for: Choose target creature you control. Turn it face up if it's face down. Then it deals damag",
+      "reason": "",
       "scryfall_id": "1ffdad45-0111-4c6a-bfb0-25aeee7aea1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shrapnel Blast": {
@@ -283102,12 +283102,12 @@
     },
     "Thelonite Hermit": {
       "edhrec_rank": 7636,
-      "gate": "template",
+      "gate": null,
       "name": "Thelonite Hermit",
-      "reason": "no template for: All Saprolings get +1/+1",
+      "reason": "",
       "scryfall_id": "4271f5b2-32ca-4349-9a09-afffbdacf636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thelonite Monk": {
@@ -293532,12 +293532,12 @@
     },
     "True Identity": {
       "edhrec_rank": 16768,
-      "gate": "template",
+      "gate": null,
       "name": "True Identity",
-      "reason": "no template for: Whenever this enchantment or another permanent you control is turned face up, scry 1, then",
+      "reason": "",
       "scryfall_id": "69edb35e-6e87-4529-a449-6f635f24466a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "True Love's Kiss": {
@@ -295742,12 +295742,12 @@
     },
     "Ugin's Mastery": {
       "edhrec_rank": 4493,
-      "gate": "template",
+      "gate": null,
       "name": "Ugin's Mastery",
-      "reason": "no template for: Whenever you cast a colorless creature spell, manifest the top card of your library",
+      "reason": "",
       "scryfall_id": "995b5a27-6a95-4208-9d6d-3a3801a6d0ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ugin's Nexus": {
@@ -322812,12 +322812,12 @@
     },
     "Zimone, Mystery Unraveler": {
       "edhrec_rank": 5772,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone, Mystery Unraveler",
-      "reason": "no template for: Landfall — Whenever a land you control enters, manifest dread if this is the first time th",
+      "reason": "",
       "scryfall_id": "30f23588-5064-48d9-a271-039df757f8d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zimone, Paradox Sculptor": {

@@ -22,6 +22,7 @@ from ..primitives import (
     remove_counters,
     tap_permanent,
     transform,
+    turn_face_up,
     untap_permanent,
 )
 from ..structs import StackItem
@@ -1086,6 +1087,7 @@ def _manifest_card(ctx: EffectContext, pid: int, oid: int, *, cloak: bool = Fals
     # which is right for every other permanent and wrong for this one.
     obj.face_down = True
     obj.cloaked = cloak
+    obj.manifested = True
     obj.revealed_to.add(pid)
     ctx.state.bump_chars()
     ctx.state.emit("cloaked" if cloak else "manifested", player=pid, source=oid)
@@ -1147,6 +1149,34 @@ def op_manifest_dread(ctx: EffectContext, spec: Mapping[str, Any]):
                     )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = manifested
+
+
+@register("turn_face_up")
+def op_turn_face_up(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Turn it face up." An effect turning a permanent face up (708.8).
+
+    No cost is paid -- not the morph or disguise cost, not the manifested
+    card's mana cost -- so a megamorph creature turned up this way gets no
+    +1/+1 counter (702.37b), and a manifested or cloaked permanent turns up
+    whatever its card is, a noncreature card included (manifest's "if it's a
+    creature card" limits only the special action, 701.34c). The exception is
+    an instant or sorcery card, which is revealed and stays face down, as the
+    manifest and cloak rules say.
+
+    ``objects`` is required: a target ("turn target face-down attacking
+    creature you control face up", Kaust), a binding ("turn that creature face
+    up"), or a ``choose`` over a ``face_down: true`` selector ("you may turn a
+    face-down creature you control face up", Ugin's Mastery). A permanent
+    already face up is left alone, which is Showstopping Surprise's "turn it
+    face up if it's face down" without a condition. `turned_face_up` fires for
+    each permanent that turns, exactly as it does for the special action.
+
+    Not `transform`: that turns a double-faced card over, which a face-down
+    permanent is not (712.2 versus 708).
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Turn face up")
+    for oid in oids:
+        turn_face_up(ctx.state, oid)
 
 
 @register("encode")

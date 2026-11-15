@@ -749,10 +749,12 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
     """The one thing a face-down permanent can do (707.9a, 701.34c).
 
     Two prices, and which one applies is *how the permanent got there*: a card
-    cast face down for morph turns up for its **morph cost**, and a manifested
-    creature card turns up for its **printed mana cost**. A manifested
-    non-creature card can never be turned up at all, which is the whole reason
-    manifest is not simply morph for free.
+    with morph or disguise turns up for that cost however it came to be face
+    down (702.37e), and a manifested creature card turns up for its **printed
+    mana cost**. A manifested non-creature card can never be turned up at all,
+    which is the whole reason manifest is not simply morph for free; nor can a
+    card without morph that an effect returned face down (`return_from_graveyard`
+    with ``face_down``), which was never manifested (`GameObject.manifested`).
 
     A special action in the rules: no stack, nothing to respond to. Here it is
     an ordinary activation, because the engine's activations already resolve
@@ -764,11 +766,11 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
     if card.morph is not None:
         cost = card.morph
         label = f"Turn {card.name} face up (morph)"
-    elif card.is_creature:
+    elif card.is_creature and obj.manifested:
         cost = card.mana_cost
         label = f"Turn {card.name} face up"
     else:
-        # 701.34c: only a creature card may be turned face up this way.
+        # 701.34c: only a manifested creature card may be turned face up this way.
         return []
     if not can_pay(state, pid, Cost(mana=cost), obj.oid, purpose=OTHER_PAYMENT):
         return []

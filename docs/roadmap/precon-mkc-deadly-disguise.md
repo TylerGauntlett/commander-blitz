@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [changeling-every-type]
 status: proposed
 rank: 52
 ---
@@ -19,6 +19,34 @@ coming-soon shell on the shelf: its row `mkc_deadly_disguise` is in
 `python scripts/sync_precons.py --missing mkc_deadly_disguise` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once, and disguise,
+`turn_face_up`, a face-down `return_from_graveyard`, counters on
+`create_token` and the `deals_damage` trigger are built. Thirteen cards are
+left, and each has a gap record naming what it waits on:
+
+- Mirror Entity is every creature type, which
+  [changeling-every-type](changeling-every-type.md) covers; this item
+  depends on it.
+- Boltbender needs "choose new targets" for spells and abilities already on
+  the stack.
+- Den Protector needs a block restriction comparing a blocker's power with
+  this creature's.
+- Duskana, the Rage Mother needs base power and toughness in a trigger
+  filter.
+- Hooded Hydra needs "as this is turned face up, put five +1/+1 counters on
+  it", a replacement on turning face up.
+- Kaust, Eyes of the Glade needs a "turned face up this turn" filter key.
+- Obscuring Aether needs an op that turns a permanent face down and a
+  face-down filter on spell cost reductions.
+- Panoptic Projektor needs a next-spell discount for a face-down creature
+  spell.
+- Scroll of Fate needs manifest from hand.
+- Tesak, Judith's Hellhound needs unleash.
+- Veiled Ascension needs `face_down` in a static's `affects` filter.
+- Yedora, Grave Gardener needs a face-down permanent that is a Forest land
+  rather than a 2/2 creature.
+- Zoetic Cavern needs morph on a land card.
 
 ## The change
 

@@ -1,0 +1,67 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_deals_damage.py. Each gains its controller that much life whenever it deals damage: t_dd_lifer is a 4/5 without flying so a ground creature can block it, t_dd_trampler a 5/5 trampler that hits two things in one step, t_dd_striker a 2/2 double striker that deals damage in two steps.",
+  "cards": [
+    {
+      "id": "t_dd_lifer",
+      "name": "Test Damage Lifer",
+      "oracle_text": "Whenever this creature deals damage, you gain that much life.",
+      "mana_cost": "{2}{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 4,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage, you gain that much life.",
+          "trigger": {"event": "deals_damage", "source": "self"},
+          "effects": [{"op": "gain_life", "amount": {"binding": "amount"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dd_trampler",
+      "name": "Test Damage Trampler",
+      "oracle_text": "Trample\nWhenever this creature deals damage, you gain that much life.",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 5,
+      "toughness": 5,
+      "keywords": ["trample"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage, you gain that much life.",
+          "trigger": {"event": "deals_damage", "source": "self"},
+          "effects": [{"op": "gain_life", "amount": {"binding": "amount"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dd_striker",
+      "name": "Test Damage Striker",
+      "oracle_text": "Double strike\nWhenever this creature deals damage, you gain that much life.",
+      "mana_cost": "{1}{R}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Knight"],
+      "colors": ["R", "W"],
+      "color_identity": ["R", "W"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["double_strike"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage, you gain that much life.",
+          "trigger": {"event": "deals_damage", "source": "self"},
+          "effects": [{"op": "gain_life", "amount": {"binding": "amount"}}]
+        }
+      ]
+    }
+  ]
+}

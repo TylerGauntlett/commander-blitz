@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**389 cards** blocked by **337** capabilities.
+**397 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,6 +27,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
+| [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [milled-this-turn](#milled-this-turn) | 3 | 4283 | selector |
@@ -37,9 +38,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
+| [block-restriction-relative-power](#block-restriction-relative-power) | 2 | 6335 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
-| [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [devotion](#devotion) | 2 | 2401 | value |
@@ -47,10 +48,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
-| [face-down-filter](#face-down-filter) | 2 | 5772 | selector |
 | [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
 | [goad](#goad) | 2 | 6258 | op |
-| [manifest-dread](#manifest-dread) | 2 | 5772 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
@@ -58,7 +57,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
-| [return-face-down](#return-face-down) | 2 | 3081 | op |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
@@ -66,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspect](#suspect) | 2 | 4851 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [targets-only-self](#targets-only-self) | 2 | 8216 | trigger_event |
-| [turn-face-up](#turn-face-up) | 2 | 5772 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -95,7 +92,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
-| [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -175,8 +171,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
+| [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
+| [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
+| [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
+| [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -233,6 +234,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
+| [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
@@ -244,6 +246,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
@@ -337,11 +340,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
-| [turned-face-up-trigger](#turned-face-up-trigger) | 1 | 6493 | trigger_event |
+| [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
+| [turn-face-down](#turn-face-down) | 1 | 10947 | op |
+| [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
+| [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
+| [unleash](#unleash) | 1 | 12169 | keyword |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
@@ -837,6 +844,28 @@ Blocks **3** cards.
 
 </details>
 
+## choose-new-targets
+
+Blocks **3** cards.
+
+- **(op)** an op that retargets objects already on the stack -- here over 'any number of other spells and/or abilities' (every stack object except this trigger), letting this ability's controller optionally choose new legal targets for each chosen one (115.7), leaving the originals on the stack rather than copying them
+  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell` / `copy_ability`, which retargets a freshly made copy, never the original object; `counter` touches another spell but removes it. No op mutates the target list of an existing stack object. Same capability Deflecting Swat is blocked on, here with a multi-object 'any number of' selection.
+- **(op)** an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it
+  <br>Why the existing vocabulary won't do: The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/commanderblitz/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it.
+- **(op)** an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well
+  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deflecting Swat** (rank 75) — `deflecting_swat`
+  - You may choose new targets for target spell or ability.
+- **Misdirection** (rank 1562) — `misdirection`
+  - Change the target of target spell with a single target.
+- **Boltbender** (rank 10169) — `boltbender`
+  - When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -1046,6 +1075,25 @@ Blocks **2** cards.
 
 </details>
 
+## block-restriction-relative-power
+
+Blocks **2** cards.
+
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (and reads base P/T); Den Protector's power changes with its megamorph +1/+1 counter and any pump, so no constant is correct. Megamorph (`morph` + `morph_counter`) and the `turned_face_up` trigger are expressible; only this line is blocked
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
+
+<details><summary>Cards waiting on this</summary>
+
+- **Den Protector** (rank 6335) — `den_protector`
+  - Creatures with power less than this creature's power can't block it.
+- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
+  - Creatures with power less than this creature's power can't block it.
+  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
+
+</details>
+
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -1080,24 +1128,6 @@ Blocks **2** cards.
   - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 - **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
   - As long as you've cast a spell this turn, you may play cards from the top of your library.
-
-</details>
-
-## choose-new-targets
-
-Blocks **2** cards.
-
-- **(op)** an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it
-  <br>Why the existing vocabulary won't do: The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/commanderblitz/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it.
-- **(op)** an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well
-  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deflecting Swat** (rank 75) — `deflecting_swat`
-  - You may choose new targets for target spell or ability.
-- **Misdirection** (rank 1562) — `misdirection`
-  - Change the target of target spell with a single target.
 
 </details>
 
@@ -1231,24 +1261,6 @@ Blocks **2** cards.
 
 </details>
 
-## face-down-filter
-
-Blocks **2** cards.
-
-- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
-- **(selector)** a selector key matching face-down permanents (`face_down: true`), so 'turn a permanent you control face up' offers only permanents that are face down
-  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` appears only as an option on look_at_top/reveal_until/search_zones for putting cards onto the battlefield, not as a filter on existing permanents
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Primordial Mist** (rank 6544) — `primordial_mist`
-  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
-
-</details>
-
 ## fraction-of-value
 
 Blocks **2** cards.
@@ -1283,26 +1295,6 @@ Blocks **2** cards.
   - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
 - **Immortal Obligation** (rank 7526) — `immortal_obligation`
   - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
-
-</details>
-
-## manifest-dread
-
-Blocks **2** cards.
-
-- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
-  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
-- **(op)** manifest dread (701.62): look at the top two cards of your library, choose one and manifest it (face-down 2/2, turnable face up for its mana cost if a creature card), put the other into your graveyard
-  <br>Why the existing vocabulary won't do: The `manifest` op takes only amount, cloak and player and manifests the top card(s) with no choice; it cannot look at two, pick one and send the rest to the graveyard. `look_at_top` has face_down and rest_to, but its face_down does not make a manifested 2/2 that can be turned up for its mana cost, so composing them would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -1433,24 +1425,6 @@ Blocks **2** cards.
 
 </details>
 
-## return-face-down
-
-Blocks **2** cards.
-
-- **(op)** return_from_graveyard to the battlefield with the controller's choice of face up or face down (a face-down 2/2 that can later be turned face up for its morph cost)
-  <br>Why the existing vocabulary won't do: return_from_graveyard takes controller/counters/destination/tapped but has no face_down option; face_down exists only on look_at_top/reveal_until/search_library, and manifest puts library cards, not this card from the graveyard
-- **(op)** return the dying card from the graveyard to the battlefield face down under its owner's control, with the face-down characteristics overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} via the Forest's intrinsic mana ability) rather than the usual face-down 2/2 creature; e.g. a `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` option on return_from_graveyard / put_onto_battlefield, with the card revealed if it leaves the battlefield
-  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield have no face_down option (face_down exists only on look_at_top/reveal_until/search_library, meaning private exile); manifest only takes library cards and makes a 2/2 creature; returning it face up then `animate` with exact types Land/Forest would keep its name, mana cost, colors and mana value and so is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
-  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
-
-</details>
-
 ## reveal-until-rest-to-graveyard
 
 Blocks **2** cards.
@@ -1578,26 +1552,6 @@ Blocks **2** cards.
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 - **Feather, Radiant Arbiter** (rank 13967) — `feather_radiant_arbiter`
   - Whenever you cast a noncreature spell that targets only Feather, you may choose any number of other creatures that spell could target and pay {2} for each of those creatures. If you do, for each of those creatures, copy that spell. The copy targets that creature.
-
-</details>
-
-## turn-face-up
-
-Blocks **2** cards.
-
-- **(op)** an effect op that turns a face-down permanent (the triggering creature) face up, offered as a choose_mode alternative to putting a +1/+1 counter on it
-  <br>Why the existing vocabulary won't do: turning face up exists only as the special action for face-down permanents; ops has no effect that turns a referenced creature face up
-- **(op)** an effect op that turns a chosen face-down permanent its controller controls face up without paying any cost (optional via `may`), reusing the engine's Game._turn_face_up path so turned-face-up events fire, with the choice limited to face-down permanents you control
-  <br>Why the existing vocabulary won't do: No op in `ops` turns a permanent face up; `transform` flips double-faced cards, not face-down morphs/manifests, and the face-up action exists only as the paid special action, not as an effect a resolving ability can perform
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zimone, Mystery Unraveler** (rank 5772) — `zimone_mystery_unraveler`
-  - Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up
-- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
-  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
 
 </details>
 
@@ -2016,21 +1970,6 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
-
-</details>
-
-## block-restriction-relative-power
-
-Blocks **1** card.
-
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
-  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>
 
@@ -3168,6 +3107,20 @@ Blocks **1** card.
 
 </details>
 
+## face-down-as-land
+
+Blocks **1** card.
+
+- **(engine)** a face-down permanent whose face-down characteristics are overridden to a Forest land (type Land, subtype Forest, no name, no mana cost, colorless, no other types or abilities, so it taps for {G} through the Forest's intrinsic mana ability, 305.6) instead of the 2/2 creature shell; e.g. `face_down: {"types": ["Land"], "subtypes": ["Forest"]}` on return_from_graveyard, carried per object and read everywhere FACE_DOWN_CHARS / face_down_face are (chars, _base_pt, trigger filters, the intrinsic mana ability, legality), with the card revealed if it leaves the battlefield and never offered a turn-face-up special action
+  <br>Why the existing vocabulary won't do: return_from_graveyard's `face_down` (true or "choose") always produces the fixed 2/2 creature shell FACE_DOWN_CHARS (708.2), which is one global constant with no per-object override; returning it face up then `animate` with exact types Land/Forest keeps its name, mana cost, colors and mana value and so is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
+  - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
+
+</details>
+
 ## face-down-counters-pt
 
 Blocks **1** card.
@@ -3193,6 +3146,63 @@ Blocks **1** card.
 
 - **Ugin, the Ineffable** (rank 1073) — `ugin_the_ineffable`
   - +1: Exile the top card of your library face down and look at it. Create a 2/2 colorless Spirit creature token. When that token leaves the battlefield, put the exiled card into your hand.
+
+</details>
+
+## face-down-filter
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching face-down permanents (manifested, cloaked, morphed, disguised), e.g. `{zone: battlefield, controller: you, face_down: true}`, usable in the cost filter
+  <br>Why the existing vocabulary won't do: `selector_keys` has no face-down key; `face_down` exists only as an option on library/exile ops meaning private exile, not as a property a selector can read on a permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primordial Mist** (rank 6544) — `primordial_mist`
+  - Exile a face-down permanent you control face up: You may play that card this turn. (You still pay its costs. Timing rules still apply.)
+
+</details>
+
+## face-down-spell-cost-reduction
+
+Blocks **1** card.
+
+- **(op)** a one-shot next-spell discount restricted to a spell cast face down (morph, disguise, cloak-cast face-down creature spells): next_spell_cost_reduction needs a face_down filter that matches the spell as cast face down (a 2/2 nameless creature spell) rather than the printed card
+  <br>Why the existing vocabulary won't do: next_spell_cost_reduction takes only amount, player and types, and temp_effects._discount_covers matches types against the printed CardDef's types, so it cannot tell a face-down cast from a normal one; types: ["Creature"] would wrongly discount any creature spell and miss nothing face-down-specific
+
+<details><summary>Cards waiting on this</summary>
+
+- **Panoptic Projektor** (rank 8939) — `panoptic_projektor`
+  - {T}: The next face-down creature spell you cast this turn costs {3} less to cast.
+
+</details>
+
+## face-down-spell-filter
+
+Blocks **1** card.
+
+- **(selector)** a spell filter key on spell_cost_reduction's affects_spells matching a creature spell being cast face down (morph, disguise, or any other face-down cast)
+  <br>Why the existing vocabulary won't do: spell_cost_reduction's affects_spells reads printed characteristics (types, colors, not_from_zone, exclude_self); face_down exists only in battlefield selectors, so a face-down spell on the stack cannot be singled out
+
+<details><summary>Cards waiting on this</summary>
+
+- **Obscuring Aether** (rank 10947) — `obscuring_aether`
+  - Face-down creature spells you cast cost {1} less to cast.
+  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
+
+</details>
+
+## face-down-static-filter
+
+Blocks **1** card.
+
+- **(static_effect)** `face_down: true` accepted in a static's `affects` filter (STATIC_AFFECTS_FILTER_KEYS), so the `enters_with_additional_counters` static can be written as {"affects": {"controller": "you", "types": ["Creature"], "face_down": true}, "counter": "flying", "amount": 1}; the arrival must be matched after zones._enter_battlefield marks it face down (708.2), i.e. the static's `_matches` must see obj.face_down set for a morph/manifest/cloak arrival
+  <br>Why the existing vocabulary won't do: `enters_with_additional_counters` is the right static (614.1c arrival counters, a flying counter is a 122.1c keyword counter), but `face_down` is only a selector and trigger-filter key; the loader refuses it in a static `affects` (cards/loader/__init__.py checks STATIC_AFFECTS_FILTER_KEYS, which lacks it). Without it the static would put flying counters on every creature you control. A `permanent_enters` trigger filtered on face_down running add_counters is respondable and lets the creature enter without the counter, so it is a different card. The other two lines are expressible (self_enters add_counters with objects face_down true; upkeep may + manifest with cloak: true)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Veiled Ascension** (rank 15770) — `veiled_ascension`
+  - Face-down creatures you control enter with a flying counter on them.
 
 </details>
 
@@ -3997,6 +4007,22 @@ Blocks **1** card.
 
 </details>
 
+## manifest-dread
+
+Blocks **1** card.
+
+- **(op)** manifest dread (701.62): look at the top two cards of your library, manifest one of them, put the other into your graveyard; then refer to the manifested creature as 'that creature' so following effects can put two +1/+1 counters and a trample counter on it
+  <br>Why the existing vocabulary won't do: manifest takes only amount/cloak/player: no look-at-two-choose-one with the other milled, and no way to reference the manifested object afterwards; no trample keyword counter kind appears in the reference
+
+<details><summary>Cards waiting on this</summary>
+
+- **Experimental Lab // Staff Room** (rank 8930) — `experimental_lab_staff_room`
+  - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
 ## manifest-from-hand
 
 Blocks **1** card.
@@ -4149,6 +4175,20 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
+
+</details>
+
+## morph
+
+Blocks **1** card.
+
+- **(engine)** morph on a noncreature (land) card: cast a Land card face down as a 2/2 creature spell for {3} from hand (a land is otherwise never cast), and turning it face up for {2} yields a noncreature Land permanent that stops being a creature
+  <br>Why the existing vocabulary won't do: The card-level 'morph' cost exists, but the loader rejects it on any card without the Creature type ('morph' is only on creature cards), and casting assumes the face-up card is a creature spell; manifest handles noncreature cards face down but they can never be turned up (701.34c), and Zoetic Cavern's whole point is turning up into a land
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zoetic Cavern** (rank 7536) — `zoetic_cavern`
+  - Morph {2} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)
 
 </details>
 
@@ -5481,17 +5521,61 @@ Blocks **1** card.
 
 </details>
 
-## turned-face-up-trigger
+## trigger-filter-base-pt
 
 Blocks **1** card.
 
-- **(trigger_event)** a trigger event for a permanent being turned face up (filterable by controller: 'a permanent you control'), usable by a triggered ability with active_zones ["graveyard"] on the card itself
-  <br>Why the existing vocabulary won't do: The engine's _turn_face_up emits a 'turned_face_up' event, but it is not in the packet's trigger_events vocabulary, so no card can trigger on it; becomes_untapped/permanent_enters/counter_placed are different events (a megamorph counter would miss plain morphs and manifests)
+- **(selector)** base_power / base_toughness keys in a trigger filter (TRIGGER_FILTER_KEYS / matches_card_filter), read through characteristics._base_pt like the effect-side selector, so an `attacks` trigger can match 'a creature you control with base power and toughness 2/2' at the moment it attacks
+  <br>Why the existing vocabulary won't do: trigger_filter_keys carries `power` and `toughness`, but matches_card_filter reads them off the LIVE characteristics (chars(state, oid)), so a 2/2 under an anthem or with a +1/+1 counter would not trigger and a pumped-down bigger creature would; base_power/base_toughness exist only in the effect-side selector_keys. Triggering on every attacker and narrowing the pump's objects (or an `if`/trigger condition) at resolution would put a trigger on the stack for every attacker and check base P/T at the wrong time, which is not the printed trigger condition
 
 <details><summary>Cards waiting on this</summary>
 
-- **Deathmist Raptor** (rank 6493) — `deathmist_raptor`
-  - Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.
+- **Duskana, the Rage Mother** (rank 10907) — `duskana_the_rage_mother`
+  - Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.
+
+</details>
+
+## turn-face-down
+
+Blocks **1** card.
+
+- **(op)** an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)
+  <br>Why the existing vocabulary won't do: manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place
+
+<details><summary>Cards waiting on this</summary>
+
+- **Obscuring Aether** (rank 10947) — `obscuring_aether`
+  - Face-down creature spells you cast cost {1} less to cast.
+  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
+
+</details>
+
+## turned-face-up-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a selector/trigger-filter key matching a permanent that was turned face up this turn (a per-turn flag set when the permanent turns face up), usable in a deals_combat_damage_to_player trigger's filter with controller: you and types: [Creature]
+  <br>Why the existing vocabulary won't do: selector_keys and trigger_filter_keys have face_down (current state) and entered_this_turn / attacked_this_turn / surveilled_this_turn, but nothing recording that a permanent turned face up this turn; face_down: false would match every face-up creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaust, Eyes of the Glade** (rank 16432) — `kaust_eyes_of_the_glade`
+  - Whenever a creature you control that was turned face up this turn deals combat damage to a player, draw a card.
+  - {T}: Turn target face-down attacking creature you control face up.
+
+</details>
+
+## turned-face-up-with-counters
+
+Blocks **1** card.
+
+- **(replacement)** a self replacement applied as this permanent is turned face up, by any means (special action or a turn_face_up effect), that puts N counters of a kind on it before turned_face_up fires -- 'As this creature is turned face up, put five +1/+1 counters on it' (708.8, 702.37); a counted generalisation of what primitives.turn_face_up's megamorph flag does for one counter
+  <br>Why the existing vocabulary won't do: morph_counter is a boolean for one +1/+1 counter and only applies when the megamorph cost is paid; a turned_face_up trigger with add_counters uses the stack, so the Hydra is a 0/0 face up with the trigger pending and dies to 704.5f before it resolves, and can be responded to. self_enters_with_counters is the X-counters-on-entry line, already expressible. The Snake token the dies trigger names, snake_1_1_g, is now in the pool
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hooded Hydra** (rank 3297) — `hooded_hydra`
+  - As this creature is turned face up, put five +1/+1 counters on it.
 
 </details>
 
@@ -5548,6 +5632,21 @@ Blocks **1** card.
 
 - **Curtains' Call** (rank 3405) — `curtains_call`
   - Undaunted (This spell costs {1} less to cast for each opponent.)
+
+</details>
+
+## unleash
+
+Blocks **1** card.
+
+- **(keyword)** an unleash keyword: an optional 'may enter with a +1/+1 counter' replacement chosen as the creature enters (614.12, so it applies when granted by another permanent's static to a Dog entering), plus a linked 'can't block as long as it has a +1/+1 counter on it' static; grantable via a grant_keyword static to 'other Dogs you control'
+  <br>Why the existing vocabulary won't do: unleash is not in the keyword list. riot is the nearest keyword but offers haste as the alternative and has no can't-block rider. The cant_block static could cover the self rider, and enters_with_additional_counters is not optional, but 'Other Dogs you control have unleash' needs unleash as a grantable keyword whose entry replacement is applied to a permanent that is entering, which neither grant_keyword nor grant_ability (battlefield-only abilities) can carry
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
+  - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
+  - Other Dogs you control have unleash.
 
 </details>
 

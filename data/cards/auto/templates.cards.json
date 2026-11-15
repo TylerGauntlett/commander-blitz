@@ -4134,6 +4134,63 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature is turned face up, destroy target artifact or enchantment an opponent controls.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ainok_survivalist",
+      "mana_cost": "{1}{G}",
+      "morph": "{1}{G}",
+      "morph_counter": true,
+      "name": "Ainok Survivalist",
+      "oracle_text": "Megamorph {1}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)\nWhen this creature is turned face up, destroy target artifact or enchantment an opponent controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -14279,6 +14336,70 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "face_down": true,
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield face down under your control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, it deals 2 damage to each player.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ashcloud_phoenix",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "morph": "{4}{R}{R}",
+      "name": "Ashcloud Phoenix",
+      "oracle_text": "Flying\nWhen this creature dies, return it to the battlefield face down under your control.\nMorph {4}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, it deals 2 damage to each player.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phoenix"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -30435,6 +30556,52 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "any_one_color": true,
+              "op": "add_mana",
+              "persists_until_end_of_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land is turned face up, add two mana of any one color. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "disguise": "{3}",
+      "id": "branch_of_vitu_ghazi",
+      "name": "Branch of Vitu-Ghazi",
+      "oracle_text": "{T}: Add {C}.\nDisguise {3} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this land is turned face up, add two mana of any one color. Until end of turn, you don't lose this mana as steps and phases end.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "types": [
@@ -32370,6 +32537,54 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "op": "create_token",
+                  "token": "insect_1_1_g"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, you may create that many 1/1 green Insect creature tokens.",
+          "trigger": {
+            "batched": true,
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "broodhatch_nantuko",
+      "mana_cost": "{1}{G}",
+      "morph": "{2}{G}",
+      "name": "Broodhatch Nantuko",
+      "oracle_text": "Whenever this creature is dealt damage, you may create that many 1/1 green Insect creature tokens.\nMorph {2}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -57588,6 +57803,63 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "face_down": "choose",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Deathmist Raptor from your graveyard?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deathmist_raptor",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "morph": "{4}{G}",
+      "morph_counter": true,
+      "name": "Deathmist Raptor",
+      "oracle_text": "Deathtouch\nWhenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.\nMegamorph {4}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur",
+        "Beast"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -76730,6 +77002,50 @@
         {
           "effects": [
             {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage, you gain that much life.",
+          "trigger": {
+            "event": "deals_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "exalted_angel",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "morph": "{2}{W}{W}",
+      "name": "Exalted Angel",
+      "oracle_text": "Flying\nWhenever this creature deals damage, you gain that much life.\nMorph {2}{W}{W} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "destination": "hand",
               "objects": {
                 "any_types": [
@@ -77621,6 +77937,63 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control is turned face up, put +1/+1 counters on that creature equal to its power.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "disguise": "{4}{G}",
+      "id": "experiment_twelve",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Experiment Twelve",
+      "oracle_text": "Trample\nWhenever this creature or another creature you control is turned face up, put +1/+1 counters on that creature equal to its power.\nDisguise {4}{G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Lizard",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -81080,6 +81453,56 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "fell_the_mighty",
+      "mana_cost": "{4}{W}",
+      "name": "Fell the Mighty",
+      "oracle_text": "Destroy all creatures with power greater than target creature's power.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": ">",
+              "value": {
+                "power_of": {
+                  "target": "t1"
+                }
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -111189,6 +111612,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature is turned face up, destroy target creature with power 4 or greater an opponent controls.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hidden_dragonslayer",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}",
+      "morph": "{2}{W}",
+      "morph_counter": true,
+      "name": "Hidden Dragonslayer",
+      "oracle_text": "Lifelink\nMegamorph {2}{W} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)\nWhen this creature is turned face up, destroy target creature with power 4 or greater an opponent controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -116729,6 +117217,64 @@
         "Cleric"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "subtypes": [
+                      "Dragon"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Search for a Dragon card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "imperial_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "morph": "{6}{R}{R}",
+      "name": "Imperial Hellkite",
+      "oracle_text": "Flying\nMorph {6}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may search your library for a Dragon card, reveal it, put it into your hand, then shuffle.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -133803,6 +134349,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {G}{G} to keep Krosan Cloudscraper?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "krosan_cloudscraper",
+      "mana_cost": "{7}{G}{G}{G}",
+      "morph": "{7}{G}{G}",
+      "name": "Krosan Cloudscraper",
+      "oracle_text": "At the beginning of your upkeep, sacrifice this creature unless you pay {G}{G}.\nMorph {7}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 13,
+      "source": "auto",
+      "subtypes": [
+        "Beast",
+        "Mutant"
+      ],
+      "toughness": 13,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "krosan_colossus",
+      "mana_cost": "{6}{G}{G}{G}",
+      "morph": "{6}{G}{G}",
+      "name": "Krosan Colossus",
+      "oracle_text": "Morph {6}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -137373,6 +137994,70 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, scry 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{G}"
+              },
+              "prompt": "Pay {G} to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, you may pay {G}. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "lifecrafter_s_bestiary",
+      "mana_cost": "{3}",
+      "name": "Lifecrafter's Bestiary",
+      "oracle_text": "At the beginning of your upkeep, scry 1.\nWhenever you cast a creature spell, you may pay {G}. If you do, draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -149294,6 +149979,58 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, creatures you control get +2/+2 until end of turn.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "master_of_pearls",
+      "mana_cost": "{1}{W}",
+      "morph": "{3}{W}{W}",
+      "name": "Master of Pearls",
+      "oracle_text": "Morph {3}{W}{W} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, creatures you control get +2/+2 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -149424,6 +150161,57 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "creatures_you_control": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a permanent you control is turned face up, you gain 1 life for each creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}: Manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "mastery_of_the_unseen",
+      "mana_cost": "{1}{W}",
+      "name": "Mastery of the Unseen",
+      "oracle_text": "Whenever a permanent you control is turned face up, you gain 1 life for each creature you control.\n{3}{W}: Manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -159874,6 +160662,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature is turned face up, destroy target artifact or enchantment.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nantuko_vigilante",
+      "mana_cost": "{3}{G}",
+      "morph": "{1}{G}",
+      "name": "Nantuko Vigilante",
+      "oracle_text": "Morph {1}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, destroy target artifact or enchantment.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Druid",
+        "Mutant"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "opponent",
           "amount": {
             "const": 1
@@ -161125,6 +161970,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "life_lost_this_turn": "opponent"
+              },
+              "effects": [
+                {
+                  "mana": "{R}",
+                  "op": "add_mana"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each of your postcombat main phases, add {R} for each 1 life your opponents have lost this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "neheb_the_eternal",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Neheb, the Eternal",
+      "oracle_text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nAt the beginning of each of your postcombat main phases, add {R} for each 1 life your opponents have lost this turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Minotaur",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -161294,6 +162209,61 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island",
+                  "Swamp",
+                  "Mountain",
+                  "Forest"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, search your library for a land card with a basic land type, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "disguise": "{G}",
+      "id": "nervous_gardener",
+      "mana_cost": "{1}{G}",
+      "name": "Nervous Gardener",
+      "oracle_text": "Disguise {G} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this creature is turned face up, search your library for a land card with a basic land type, reveal it, put it into your hand, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dryad"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -181584,6 +182554,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "ooze_0_0_g_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "disguise": "{3}{G}",
+      "id": "printlifter_ooze",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Printlifter Ooze",
+      "oracle_text": "Deathtouch\nWhenever this creature or another creature you control is turned face up, create a 0/0 green Ooze creature token with trample. The token enters with X +1/+1 counters on it, where X is the number of other creatures you control.\nDisguise {3}{G}",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -197184,6 +198211,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a creature card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "root_elemental",
+      "mana_cost": "{4}{G}{G}",
+      "morph": "{5}{G}{G}",
+      "name": "Root Elemental",
+      "oracle_text": "Morph {5}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, you may put a creature card from your hand onto the battlefield.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -200908,6 +201986,65 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another permanent you control is turned face up, if it's a creature, put two +1/+1 counters on it.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "turned_face_up",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "salt_road_ambushers",
+      "mana_cost": "{3}{G}",
+      "morph": "{3}{G}{G}",
+      "morph_counter": true,
+      "name": "Salt Road Ambushers",
+      "oracle_text": "Whenever another permanent you control is turned face up, if it's a creature, put two +1/+1 counters on it.\nMegamorph {3}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "duration": "until_end_of_turn",
               "objects": {
                 "controller": "you",
@@ -201725,6 +202862,97 @@
       "subtypes": [
         "Human",
         "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "tapped": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Other tapped creatures you control have deathtouch."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "tapped": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Other untapped creatures you control have hexproof."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "controller": "you",
+                "exclude_self": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Untap another target creature or land you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "saryth_the_viper_s_fang",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Saryth, the Viper's Fang",
+      "oracle_text": "Other tapped creatures you control have deathtouch.\nOther untapped creatures you control have hexproof.\n{1}, {T}: Untap another target creature or land you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
       ],
       "supertypes": [
         "Legendary"
@@ -212485,6 +213713,70 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "showstopping_surprise",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Showstopping Surprise",
+      "oracle_text": "Choose target creature you control. Turn it face up if it's face down. Then it deals damage equal to its power to each other creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "turn_face_up"
+        },
+        {
+          "as": "dealer",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "snapshot"
+        },
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "count": "all",
+            "exclude_binding": "dealer",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -248041,6 +249333,65 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "subtypes": [
+              "Saproling"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "All Saprolings get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, create four 1/1 green Saproling creature tokens.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thelonite_hermit",
+      "mana_cost": "{3}{G}",
+      "morph": "{3}{G}{G}",
+      "name": "Thelonite Hermit",
+      "oracle_text": "All Saprolings get +1/+1.\nMorph {3}{G}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, create four 1/1 green Saproling creature tokens.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "duration": "until_end_of_turn",
@@ -256741,6 +258092,48 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this enchantment or another permanent you control is turned face up, scry 1, then draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "turned_face_up",
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "disguise": "{W}",
+      "id": "true_identity",
+      "mana_cost": "{1}{W}",
+      "name": "True Identity",
+      "oracle_text": "Whenever this enchantment or another permanent you control is turned face up, scry 1, then draw a card. This ability triggers only once each turn.\nDisguise {W} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -259000,6 +260393,75 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "manifest",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless creature spell, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colorless": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "face_down": true,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "turn_face_up"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ugin_s_mastery",
+      "mana_cost": "{4}",
+      "name": "Ugin's Mastery",
+      "oracle_text": "Whenever you cast a colorless creature spell, manifest the top card of your library. (Put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever you attack with creatures with total power 6 or greater, you may turn a face-down creature you control face up.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -283712,6 +285174,79 @@
         "Legendary"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "face_down": true,
+                    "optional": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "turn_face_up"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "op": "manifest_dread"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "zimone_mystery_unraveler",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Zimone, Mystery Unraveler",
+      "oracle_text": "Landfall — Whenever a land you control enters, manifest dread if this is the first time this ability has resolved this turn. Otherwise, you may turn a permanent you control face up. (To manifest dread, look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

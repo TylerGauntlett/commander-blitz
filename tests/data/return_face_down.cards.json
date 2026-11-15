@@ -1,0 +1,100 @@
+{
+  "_comment": "Shapes for tests/unit/faces/test_return_face_down.py. t_rfd_phoenix is Ashcloud Phoenix's 'when this dies, return it to the battlefield face down under your control' on a morph creature. t_rfd_husk is the same trigger on a creature with no morph, so a test can show it never turns up. t_rfd_raptor is Deathmist Raptor's 'whenever a permanent you control is turned face up, you may return this card from your graveyard face up or face down' on a megamorph creature. t_rfd_watcher hears a face-down creature enter.",
+  "cards": [
+    {
+      "id": "t_rfd_phoenix",
+      "name": "Test Rfd Phoenix",
+      "oracle_text": "Flying\nWhen this creature dies, return it to the battlefield face down under your control.\nMorph {R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "mana_cost": "{2}{R}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Phoenix"],
+      "power": 4,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["flying"],
+      "morph": "{R}",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield face down under your control.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [
+            {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+             "face_down": true, "objects": {"binding": "subject", "zone": "graveyard"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rfd_husk",
+      "name": "Test Rfd Husk",
+      "oracle_text": "When this creature dies, return it to the battlefield face down under your control.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Plant"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield face down under your control.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [
+            {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+             "face_down": true, "objects": {"binding": "subject", "zone": "graveyard"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rfd_raptor",
+      "name": "Test Rfd Raptor",
+      "oracle_text": "Deathtouch\nWhenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.\nMegamorph {G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)",
+      "mana_cost": "{1}{G}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Dinosaur"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["deathtouch"],
+      "morph": "{G}",
+      "morph_counter": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "active_zones": ["graveyard"],
+          "text": "Whenever a permanent you control is turned face up, you may return this card from your graveyard to the battlefield face up or face down.",
+          "trigger": {"event": "turned_face_up", "controller": "you"},
+          "effects": [
+            {"op": "may", "effects": [
+              {"op": "return_from_graveyard", "destination": "battlefield",
+               "face_down": "choose", "objects": {"self_only": true, "zone": "graveyard"}}
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rfd_watcher",
+      "name": "Test Rfd Watcher",
+      "oracle_text": "Whenever a face-down creature you control enters, draw a card.",
+      "mana_cost": "{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a face-down creature you control enters, draw a card.",
+          "trigger": {"event": "permanent_enters", "controller": "you",
+                      "filter": {"types": ["Creature"], "face_down": true}},
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}
