@@ -1112,8 +1112,49 @@ def assigns_damage_by_toughness(state: GameState, oid: int) -> bool:
     return False
 
 
+def attacked_player_forbidden(
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
+) -> bool:
+    """Has this creature already attacked ``defender`` this turn, under a static
+    saying it may not do so again?
+
+    Port Razer: "This creature can't attack a player it has already attacked
+    this turn." A continuous prohibition on the creature, read off the turn
+    ledger's per-creature record of the seats it was declared against
+    (`TurnLedger.players_attacked_by`), so the second combat Port Razer itself
+    grants cannot point it at the same opponent twice.
+
+    **Players only.** The ledger records nothing for an attack on a
+    planeswalker or a battle (506.2), and the sentence names a player, so a
+    walker or battle that player controls stays attackable -- the card's own
+    ruling -- and an earlier attack on a walker does not close its controller.
+
+    The record is the creature's, keyed by oid and dropped when it leaves the
+    battlefield (400.7), so a flickered Port Razer has attacked nobody.
+    `affects` reads the attacker as it now is (``derived``), the way every
+    other attack prohibition does.
+    """
+    if permanent is not None:
+        return False
+    seats = state.turn_ledger.players_attacked_by.get(oid)
+    if not seats or defender not in seats:
+        return False
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_attack_attacked_players":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True) and (
+            _static_active(state, source_obj, static, affected=obj)
+        ):
+            return True
+    return False
+
+
 def any_defender_attack_prohibition(state: GameState) -> bool:
-    """Is there a ``cant_attack_you`` static on the battlefield at all?
+    """Is there a ``cant_attack_you`` or ``cant_attack_attacked_players``
+    static on the battlefield at all?
 
     The cheap half of `combat.can_attack`'s guard against a creature with
     nowhere left to attack, beside the `attack_restrictions` list test that
@@ -1123,7 +1164,8 @@ def any_defender_attack_prohibition(state: GameState) -> bool:
     of these cards.
     """
     return any(
-        static.get("effect") == "cant_attack_you" for _, static in _battlefield_statics(state)
+        static.get("effect") in ("cant_attack_you", "cant_attack_attacked_players")
+        for _, static in _battlefield_statics(state)
     )
 
 

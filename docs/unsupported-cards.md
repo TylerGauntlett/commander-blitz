@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**394 cards** blocked by **346** capabilities.
+**393 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -93,7 +93,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
-| [cant-attack-previously-attacked-player](#cant-attack-previously-attacked-player) | 1 | 1908 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -1962,20 +1961,6 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
-
-</details>
-
-## cant-attack-previously-attacked-player
-
-Blocks **1** card.
-
-- **(static_effect)** a static attack restriction on the source creature that forbids declaring it as an attacker against any player (or that player's planeswalkers are still allowed) whom this same creature has already attacked earlier this turn, read from a per-creature, per-turn record of the players it attacked
-  <br>Why the existing vocabulary won't do: The `cant_attack` and `cant_attack_you` statics are filters on the attacking creature or scoped to the static's controller's seat and never consult which defenders a creature attacked this turn; the static filter keys have no `attacked_this_turn`-by-defender reading. The `cant_attack_player` op names a defending player but is a one-shot effect; driving it from an `attacks` trigger would be a triggered emulation of a static (it can be countered or Stifled, and misses attacks while the trigger is pending), so it is not exact.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Port Razer** (rank 1908) — `port_razer`
-  - This creature can't attack a player it has already attacked this turn.
 
 </details>
 

@@ -15497,6 +15497,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "port_razer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "port_town": {
     "zone": "battlefield"
   },

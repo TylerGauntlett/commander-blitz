@@ -949,6 +949,9 @@ STATICS: dict[str, Entry] = {
     "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers "
                         "(`player_only`: you alone).",
                         "Forbidding an attack on you rather than pricing it"),
+    "cant_attack_attacked_players": ("Matching creatures can't attack a player they already "
+                                     "attacked this turn (their planeswalkers stay open).",
+                                     "Not the same player twice in a turn"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
     "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
                                    "toughness rather than their power.",

@@ -205142,12 +205142,12 @@
     },
     "Port Razer": {
       "edhrec_rank": 1908,
-      "gate": "template",
+      "gate": null,
       "name": "Port Razer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, untap each creature you control. A",
+      "reason": "",
       "scryfall_id": "25c13a34-9be3-4ff4-996d-f61c6db2e990",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Port Town": {

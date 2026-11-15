@@ -2315,6 +2315,33 @@ declared, so an anthem lifts a 2/2 over Ramonda's wall and a shrink drops a 6/6
 under it. The `condition` is an ordinary static condition, read live: the wall
 falls the moment the crown moves.
 
+### Not the same player twice in a turn
+
+```jsonc
+// Port Razer
+{ "kind": "static",
+  "text": "This creature can't attack a player it has already attacked this turn.",
+  "effect": "cant_attack_attacked_players",
+  "affects": { "self_only": true } }
+```
+
+A prohibition on each creature `affects` matches, read at declaration through
+`combat.attack_target_forbidden`: the creature may not be declared against a
+**player** it was declared against earlier this turn. The record is the turn
+ledger's `players_attacked_by` — the same one `{"attacked_by": "self"}` reads —
+so it is per creature, dropped when the creature leaves the battlefield (400.7),
+and cleared at cleanup. It joins `cant_attack_you` in the guard that stops a
+creature with nobody left to attack from being offered as an attacker at all.
+
+**Players only.** Attacking a planeswalker or a battle is not attacking its
+controller (506.2): the ledger records nothing for it, and the controller's
+walkers and battles stay attackable after the player has been. `affects` is
+required at load time.
+
+The near miss is the `cant_attack_player` op from an `attacks` trigger: a
+triggered emulation of a static, which can be countered and is not in force
+while the trigger waits on the stack.
+
 ### Which creatures attacked this turn, and how many
 
 Two spellings of one record, and neither is interchangeable with a near miss.

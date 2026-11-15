@@ -5088,6 +5088,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
         )
+    if model.effect == "cant_attack_attacked_players" and model.affects is None:
+        # A missing filter matches nothing, so the prohibition would load and
+        # stop nobody. Port Razer's line is about itself: `{"self_only": true}`.
+        raise DslError(
+            f"{where}: cant_attack_attacked_players needs an 'affects' filter naming "
+            f'the creatures it stops -- e.g. {{"self_only": true}}'
+        )
     if model.effect == "goaded" and model.affects is None:
         # A missing filter matches nothing, so a filterless goad goads nobody:
         # the Aura loads, prints "is goaded" and compels no attack. Every

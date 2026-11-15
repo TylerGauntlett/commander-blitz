@@ -1,0 +1,26 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_cant_attack_attacked_players.py. `t_razer` is Port Razer's last line on a 2/2 with haste, which the tests untap and hand a second combat by hand.",
+  "cards": [
+    {
+      "id": "t_razer",
+      "name": "Test Razer",
+      "oracle_text": "Haste\nThis creature can't attack a player it has already attacked this turn.",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Orc", "Pirate"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["haste"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't attack a player it has already attacked this turn.",
+          "effect": "cant_attack_attacked_players",
+          "affects": {"self_only": true}
+        }
+      ]
+    }
+  ]
+}

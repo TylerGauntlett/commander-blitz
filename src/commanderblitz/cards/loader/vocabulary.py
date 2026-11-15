@@ -578,6 +578,13 @@ STATIC_EFFECTS = frozenset(
         # seats with no creature filter.  Unlike that op, this one **does** reach
         # the defender's planeswalkers, because this sentence names them.
         "cant_attack_you",
+        # Port Razer: "This creature can't attack a player it has already
+        # attacked this turn." Read by `player_statics.attacked_player_forbidden`
+        # through `combat.attack_target_forbidden`, off the turn ledger's
+        # `players_attacked_by`. Not the `cant_attack_player` op driven from an
+        # `attacks` trigger: that is a triggered emulation of a static, which
+        # can be countered and misses an attack while it is pending.
+        "cant_attack_attacked_players",
         # "Equipped creature ... can't be sacrificed" (Assault Suit, 701.17b).
         # The continuous half of the `cant_sacrifice` op, and it has to be a
         # second mechanism for the reason `cant_attack_you` is not the

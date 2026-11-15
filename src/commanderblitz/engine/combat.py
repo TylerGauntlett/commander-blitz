@@ -30,6 +30,7 @@ from .player_statics import (
     attack_defender_forbidden,
     attack_forbidden,
     attack_tax,
+    attacked_player_forbidden,
     block_alone_forbidden,
     block_forbidden,
     block_tax,
@@ -542,7 +543,11 @@ def _attack_prohibited(
     # a battle that cannot be attacked is inert, where one that could be
     # attacked around a printed prohibition is a rules error. A `player_only`
     # wall ("can't attack you", Queen Mother Ramonda) reaches neither.
-    return attack_defender_forbidden(state, oid, defender, permanent=permanent)
+    if attack_defender_forbidden(state, oid, defender, permanent=permanent):
+        return True
+    # Port Razer: "can't attack a player it has already attacked this turn" --
+    # the seat only, off the turn ledger; its planeswalkers stay open.
+    return attacked_player_forbidden(state, oid, defender, permanent=permanent)
 
 
 def required_attack_walkers(state: GameState, oid: int) -> set[int]:

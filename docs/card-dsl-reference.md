@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 59 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 98 |
+| [Static effects](#static-effects) | 99 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 43 |
+| [Grantable statics](#grantable-statics) | 44 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 35 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -587,6 +587,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
+| `cant_attack_attacked_players` |  | yes | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |
 | `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` |  | yes | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` |  | yes | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
@@ -743,6 +744,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
+| `cant_attack_attacked_players` | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |
 | `cant_attack_you` | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
