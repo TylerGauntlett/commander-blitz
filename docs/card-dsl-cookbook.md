@@ -7145,6 +7145,20 @@ normally would. When an Edgar-shaped permission also covers the card, the card's
 own permission is the one used, so the other permission's use for the turn is
 not spent.
 
+The `condition` is any static condition. "If you gained life this turn"
+(Oathsworn Vampire) is a `cmp` over the turn ledger:
+
+```jsonc
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "active_zones": ["graveyard"],
+  "condition": { "cmp": ">", "left": { "life_gained_this_turn": "you" },
+                 "right": { "const": 0 } } }
+```
+
+It asks whether you gained life, not whether you are up on the turn, so a gain
+that was lost again still counts. `min_life_of` compared with
+`starting_life_of` is the near miss.
+
 The loader refuses a second zone in `active_zones`, any `affects_player` other
 than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
 `enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and

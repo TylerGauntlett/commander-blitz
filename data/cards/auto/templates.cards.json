@@ -167680,6 +167680,53 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "life_gained_this_turn": "you"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard if you gained life this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "oathsworn_vampire",
+      "mana_cost": "{1}{B}",
+      "name": "Oathsworn Vampire",
+      "oracle_text": "This creature enters tapped.\nYou may cast this card from your graveyard if you gained life this turn.",
+      "power": 2,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },

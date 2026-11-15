@@ -190282,12 +190282,12 @@
     },
     "Oathsworn Vampire": {
       "edhrec_rank": 6095,
-      "gate": "template",
+      "gate": null,
       "name": "Oathsworn Vampire",
-      "reason": "no template for: You may cast this card from your graveyard if you gained life this turn",
+      "reason": "",
       "scryfall_id": "cde542de-0b87-4eb1-be05-abdb729ada10",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ob Nixilis Reignited": {

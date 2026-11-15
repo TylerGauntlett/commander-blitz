@@ -799,6 +799,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                  "Counting different values rather than objects"),
     "cards_drawn_this_turn": ("Cards a player spec's players have drawn this turn, re-read as each "
                               "card is drawn; the bare player spec only.", None),
+    "life_gained_this_turn": ("Life a player spec's players have gained this turn, re-read as each "
+                              "gain happens; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),

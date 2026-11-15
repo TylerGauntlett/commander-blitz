@@ -1692,6 +1692,14 @@ STATIC_DEATHS_KEYS = frozenset({"creatures_died_this_turn"})
 #: terms, and takes the same bare player specs.
 STATIC_DRAWS_KEYS = frozenset({"cards_drawn_this_turn"})
 
+#: The per-turn life-gain leaf -- Oathsworn Vampire's "you may cast this card
+#: from your graveyard if you gained life this turn", a `cmp` `>` 0.
+#: `TurnLedger.life_gained` is written only by `GameState._tally` folding
+#: LIFE_GAINED and emptied only by the cleanup step, never by a layer, and both
+#: funnels bump `char_version`. So it is a pipeline input on
+#: `creatures_died_this_turn`'s terms, and takes the same bare player specs.
+STATIC_LIFE_GAINED_KEYS = frozenset({"life_gained_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1753,6 +1761,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_SPELLS_CAST_KEYS
     | STATIC_DEATHS_KEYS
     | STATIC_DRAWS_KEYS
+    | STATIC_LIFE_GAINED_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

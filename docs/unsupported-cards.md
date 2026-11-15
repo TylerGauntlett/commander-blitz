@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**396 cards** blocked by **344** capabilities.
+**395 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -317,7 +317,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-object-targets-filter](#stack-object-targets-filter) | 1 | 2461 | selector |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
-| [static-life-gained-this-turn](#static-life-gained-this-turn) | 1 | 6095 | value |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -5190,20 +5189,6 @@ Blocks **1** card.
 
 - **Summary Dismissal** (rank 8784) — `summary_dismissal`
   - Exile all other spells and counter all abilities.
-
-</details>
-
-## static-life-gained-this-turn
-
-Blocks **1** card.
-
-- **(value)** admit the per-turn life-gain ledger value {"life_gained_this_turn": "you"} into STATIC_VALUE_KEYS, so a static's condition can say "if you gained life this turn" as {"cmp": ">", "left": {"life_gained_this_turn": "you"}, "right": {"const": 0}} -- here on the card's own cast_from_graveyard static with active_zones ["graveyard"] and affects_player "you" (the Gravecrawler shape)
-  <br>Why the existing vocabulary won't do: cast_from_graveyard with active_zones ["graveyard"] carries the card's own permission and takes a static condition, but the static condition language's cmp may only read static_value_keys, which has cards_drawn_this_turn, creatures_died_this_turn and spells_cast_this_turn but not life_gained_this_turn; that value exists only for effect-side conditions (trigger intervening-ifs). graveyard_cost is an unconditional alternative price, and flashback/retrace are different permissions.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oathsworn Vampire** (rank 6095) — `oathsworn_vampire`
-  - You may cast this card from your graveyard if you gained life this turn.
 
 </details>
 

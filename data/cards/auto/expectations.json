@@ -14125,6 +14125,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "oathsworn_vampire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ob_nixilis_reignited": {
     "battlefield_count": 33,
     "counters": {

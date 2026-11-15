@@ -723,6 +723,7 @@
    "distinct",
    "extreme_value",
    "greatest_commander_mana_value",
+   "life_gained_this_turn",
    "mana_symbols",
    "max_count_of",
    "max_life_of",

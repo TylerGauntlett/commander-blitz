@@ -880,9 +880,11 @@ def reference() -> dict:
             "\"If you gained life this turn\" is the value"
             " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
             " `{\"const\": 0}` -- on a trigger, as its `condition` (an"
-            " intervening if). It is the turn's ledger, so it counts gains made"
-            " before the permanent entered; never an unprinted `you_gain_life`"
-            " trigger setting a flag.",
+            " intervening if), or on a static, as its `condition` (a"
+            " `cast_from_graveyard` with `active_zones: [\"graveyard\"]` for"
+            " \"you may cast this card from your graveyard if...\"). It is the"
+            " turn's ledger, so it counts gains made before the permanent"
+            " entered; never an unprinted `you_gain_life` trigger setting a flag.",
             "\"If you didn't activate a loyalty ability of a planeswalker this"
             " turn\" is the value `{\"loyalty_activations_this_turn\": \"you\"}`"
             " compared `==` against `{\"const\": 0}`, as the trigger's"
