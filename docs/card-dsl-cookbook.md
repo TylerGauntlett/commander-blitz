@@ -7145,6 +7145,20 @@ normally would. When an Edgar-shaped permission also covers the card, the card's
 own permission is the one used, so the other permission's use for the turn is
 not spent.
 
+The `condition` is any static condition. "If you gained life this turn"
+(Oathsworn Vampire) is a `cmp` over the turn ledger:
+
+```jsonc
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "active_zones": ["graveyard"],
+  "condition": { "cmp": ">", "left": { "life_gained_this_turn": "you" },
+                 "right": { "const": 0 } } }
+```
+
+It asks whether you gained life, not whether you are up on the turn, so a gain
+that was lost again still counts. `min_life_of` compared with
+`starting_life_of` is the near miss.
+
 The loader refuses a second zone in `active_zones`, any `affects_player` other
 than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
 `enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and
@@ -14595,6 +14609,41 @@ control cannot rewrite who cast it.
 Nothing was cast reads `False`. A token, or a permanent an effect put onto the
 battlefield, has no cast at all, and "if you cast this spell" is not true of it.
 
+**A target only the main-phase cast declares** is a target spec's
+`cast_during`, taking the same names:
+
+```jsonc
+// Return to Dust — "Exile target artifact or enchantment. If you cast this
+//   spell during your main phase, you may exile up to one other target
+//   artifact or enchantment."
+"targets": [
+  { "id": "t1", "kind": "permanent",
+    "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" } },
+  { "id": "t2", "kind": "permanent", "optional": true, "cast_during": "your_main",
+    "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" } }
+],
+"spell_effects": [
+  { "op": "exile", "objects": { "target": "t1" } },
+  { "op": "may", "player": "you", "prompt": "…",
+    "effects": [ { "op": "exile", "objects": { "target": "t2" } } ] }
+]
+```
+
+601.2c declares targets as the spell is cast, one step before `push_spell`
+stamps `cast_step`, so `targeting.enumerate_target_tuples` asks
+`conditions.cast_during_now` — the step the game is in and whether the caster is
+the active player, the facts the stamp is written from — and declares the spec
+empty when it says no. The spec stays in `CardDef.targets`; resolution splits
+the stored refs by the full list and finds the second bucket empty. "Other" is
+free: no object fills two targets. The loader requires `optional` ("up to one")
+or `up_to`, so nought is a size, and the last place among the card-level
+targets; it refuses `min_count`, an ability's targets, and `mode`,
+`gift_promised`, `cost_option`, `spree_mode`, `count_if_kicked` or
+`selector_if_kicked` beside it. The near miss is an always-declared second
+target exiled under `if cast_during`: that card points at a second permanent in
+combat or on an opponent's turn, where ward, heroic and "becomes the target"
+see it.
+
 ## "This spell can't be countered"
 
 A flag on the card, not an ability:
@@ -15305,6 +15354,34 @@ granted to — Malakir Rebirth — and two things make that work:
 - The leave-the-battlefield branch of `triggers._candidates` pairs its walk of
   printed abilities with `granted_abilities`, as every other branch does.
 
+### "Gains persist until end of turn" — a granted keyword trigger
+
+Persist and undying are triggered abilities (702.79a, 702.93a), not `Keyword`
+values, so `grant_keyword` cannot name them: a grant of either is `grant_ability`
+handing over the same `dies` trigger a printed persist creature carries.
+
+```jsonc
+// Dusk Legion Sergeant — "{1}{B}, Sacrifice this creature: Each nontoken
+// Vampire creature you control gains persist until end of turn."
+"grantable_abilities": [
+  {"kind": "triggered", "text": "Persist",
+   "trigger": {"event": "dies", "source": "self",
+               "condition": {"cmp": "=", "left": {"counters_had": "-1/-1"}, "right": 0}},
+   "effects": [{"op": "return_from_graveyard", "objects": {"self_only": true},
+                "destination": "battlefield", "counters": {"-1/-1": 1}}]}
+],
+"effects": [{"op": "grant_ability", "ability": 0,
+             "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"],
+                         "subtypes": ["Vampire"], "is_token": false, "count": "all"}}]
+```
+
+The condition is `counters_had`, the counters snapshotted onto the dies event,
+never `counters_on`, which reads the wiped graveyard card and would return a
+creature that already had a -1/-1 counter. The selector is read as the ability
+resolves (611.2c), so a Vampire arriving later never has persist; the grant
+points at the granter's card, so it fires after the Sergeant sacrificed itself
+to pay for it. Undying is the same shape reading `+1/+1`.
+
 ## "…fight Grothama" — `granter`
 
 Grothama, All-Devouring — *Other creatures have "Whenever this creature attacks,
@@ -15599,6 +15676,35 @@ Two details that bite:
 The link is written *after* the move (`move_object` runs
 `reset_permanent_state` on the way, which would wipe it) and cleared by that
 same reset when the card returns, which is right: it is spent once followed.
+
+### "Return the exiled card" from a token — `link_exiled`
+
+Timothar, Baron of Bats exiles a dead Vampire and makes a Bat whose own granted
+ability returns "the exiled card". The asker is the **Bat**, so the card must be
+exiled with the Bat, not with Timothar: `exile`'s `link` names the resolving
+source, and "cards exiled with Timothar" would let one Bat bring back every
+Vampire it ever exiled. `link_exiled` writes the same `exiled_by` record with a
+permanent this resolution bound as the exiler:
+
+```jsonc
+{"op": "exile", "objects": {"binding": "subject", "zone": "graveyard"}, "as": "exiled"},
+{"op": "create_token", "token": "bat_1_1_b_flying", "amount": {"const": 1}, "as": "bat"},
+{"op": "grant_ability", "ability": 0, "duration": "permanent", "objects": {"binding": "bat"}},
+{"op": "link_exiled", "objects": {"binding": "exiled"}, "to": "bat"}
+
+// the granted ability, on the Bat
+{"op": "sacrifice", "objects": {"self_only": true}},
+{"op": "put_onto_battlefield", "controller": "you", "tapped": true,
+ "objects": {"zone": "exile", "controller": "any", "exiled_with": "self", "count": "all"}}
+```
+
+- `objects` is any selector over the cards; only those still in exile are
+  linked. `to` is a binding name, and the loader refuses the op without either.
+- The link is the card's, so it survives the Bat being sacrificed before the
+  return, and a card that leaves exile (400.7) loses it and comes back to
+  nobody.
+- `exiled_by` holds one exiler: a `to` binding several permanents (a token
+  doubler) links the cards to the first.
 
 ## "If you cast it any time a sorcery couldn't have been cast"
 

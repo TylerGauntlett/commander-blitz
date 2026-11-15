@@ -44,7 +44,15 @@ class CostModel(BaseModel):
     #: is a mana ability which never resolves at all. A permanent need be
     #: neither attacking nor a creature to pay it -- Arena of Glory is a land.
     exert: bool = False
-    sacrifice: dict[str, Any] | None = None
+    #: "Sacrifice another creature" -- a selector over the battlefield
+    #: (``controller`` defaults to you) with an optional ``count`` and ``as``.
+    #: **A list of selectors** is a sacrifice of several distinct parts, each
+    #: with its own ``count`` -- Glass-Cast Heart's "Sacrifice this artifact and
+    #: thirteen Blood tokens", Jarad's "Sacrifice a Swamp and a Forest": payable
+    #: only when every part can be met by different permanents, and no
+    #: permanent pays for two parts. Activated abilities only; no ``as`` in a
+    #: part, and at least two parts.
+    sacrifice: dict[str, Any] | list[dict[str, Any]] | None = None
     #: "Return a land you control to its owner's hand" -- Meloku and Trench
     #: Behemoth. A selector over the battlefield, like ``sacrifice``, and
     #: deliberately not that one: sacrificing graveyards the land, which
@@ -425,6 +433,17 @@ class TargetModel(BaseModel):
     #: without ``spree``, on an ability's targets, and beside ``mode``,
     #: ``gift_promised``, ``cost_option`` or ``count_if_kicked``.
     spree_mode: int | None = None
+    #: The phase the spell must be **cast in** for this target to be declared
+    #: -- "If you cast this spell during your main phase, you may exile up to
+    #: one other target artifact or enchantment" (Return to Dust) is
+    #: ``"your_main"``. The names the `cast_during` condition takes. Asked at
+    #: 601.2c of the moment of casting, so a cast outside that phase declares
+    #: no such target. Requires ``optional`` ("up to one") or ``up_to`` and the
+    #: last place among the card's targets; refused with ``min_count``, on an
+    #: ability's targets and
+    #: beside ``mode``, ``gift_promised``, ``cost_option``, ``spree_mode``,
+    #: ``count_if_kicked`` or ``selector_if_kicked``.
+    cast_during: str | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,

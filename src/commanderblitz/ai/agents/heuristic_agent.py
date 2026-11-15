@@ -334,7 +334,7 @@ class HeuristicAgent:
 
         ops = {effect.get("op") for effect in ability.effects}
         if ops and ops <= COMBAT_TRICK_OPS:
-            if cost is not None and cost.sacrifice is not None:
+            if cost is not None and (cost.sacrifice or cost.sacrifice_parts):
                 # A creature on the board is worth more than +2/+2 for a turn.
                 return 0.0
             if state.step is not Step.DECLARE_BLOCKERS or not _in_combat(state, oid):

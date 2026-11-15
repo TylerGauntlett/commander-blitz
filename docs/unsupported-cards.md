@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **344** capabilities.
+**393 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
-| [devotion](#devotion) | 2 | 2401 | value |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
@@ -78,6 +77,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-token](#alien-token) | 1 | 5885 | token |
+| [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -90,7 +90,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
-| [bat-1-1-b-flying](#bat-1-1-b-flying) | 1 | 20382 | token |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -124,12 +123,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
-| [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
+| [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
@@ -206,6 +205,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
+| [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
@@ -298,7 +298,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
-| [sacrifice-multiple-distinct](#sacrifice-multiple-distinct) | 1 | 1918 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
@@ -323,7 +322,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
-| [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
@@ -1168,24 +1166,6 @@ Blocks **2** cards.
 
 </details>
 
-## devotion
-
-Blocks **2** cards.
-
-- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are white OR black, where a hybrid {W/B} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["W", "B"]` that counts each pip at most once if it contains any listed colour
-  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of W plus mana_symbols of B double-counts every {W/B} hybrid pip because Requirement.symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
-- **(value)** a static value for devotion to two colours (rule 700.5a): the number of mana symbols in the mana costs of permanents you control that are black OR red, where a hybrid {B/R} pip counts once, not twice -- e.g. mana_symbols accepting a list `of: ["B", "R"]` that counts each pip at most once if it contains any listed colour
-  <br>Why the existing vocabulary won't do: mana_symbols takes a single colour in `of` (validate_mana_symbols refuses anything else), and summing mana_symbols of B plus mana_symbols of R double-counts every {B/R} hybrid pip because symbols_of in engine/mana.py counts a hybrid pip for each of its colours; no static value subtracts hybrid pips, so the God would become a creature too early
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mogis, God of Slaughter** (rank 2401) — `mogis_god_of_slaughter`
-  - As long as your devotion to black and red is less than seven, Mogis isn't a creature.
-- **Athreos, Shroud-Veiled** (rank 3082) — `athreos_shroud_veiled`
-  - As long as your devotion to white and black is less than seven, Athreos isn't a creature.
-
-</details>
-
 ## divided-damage-any-target
 
 Blocks **2** cards.
@@ -1776,6 +1756,20 @@ Blocks **1** card.
 
 </details>
 
+## angel-warrior-4-4-w-flying-vigilance
+
+Blocks **1** card.
+
+- **(token)** a 4/4 white Angel Warrior creature token with flying and vigilance
+  <br>Why the existing vocabulary won't do: token_ids has angel_warrior_4_4_w_flying (Angel Warrior, flying only, no vigilance) and angel_4_4_w_flying_vigilance (flying and vigilance, but subtype Angel only, no Warrior); neither is the printed token. The rest of the line is expressible: cost {mana: {W}{W}{B}, tap: true, sacrifice: [{self_only: true}, {types: [Creature]}]} with sorcery_speed_only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Great Hall of Starnheim** (rank 15412) — `great_hall_of_starnheim`
+  - {W}{W}{B}, {T}, Sacrifice this land and a creature you control: Create a 4/4 white Angel Warrior creature token with flying and vigilance. Activate only as a sorcery.
+
+</details>
+
 ## annihilator-grant
 
 Blocks **1** card.
@@ -1942,20 +1936,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## bat-1-1-b-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black Bat creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Bat token; the count itself is `mana_spent_from` with {"subtypes": ["Cave"]}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bat Colony** (rank 20382) — `bat_colony`
-  - When this enchantment enters, create a 1/1 black Bat creature token with flying for each mana from a Cave spent to cast it.
 
 </details>
 
@@ -2434,20 +2414,6 @@ Blocks **1** card.
 
 </details>
 
-## convoke
-
-Blocks **1** card.
-
-- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line
-  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys
-
-<details><summary>Cards waiting on this</summary>
-
-- **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
-  - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-
-</details>
-
 ## copy-all-on-stack
 
 Blocks **1** card.
@@ -2515,6 +2481,21 @@ Blocks **1** card.
 
 - **Lumbering Megasloth** (rank 11563) — `lumbering_megasloth`
   - This spell costs {1} less to cast for each counter among players and permanents.
+
+</details>
+
+## cost-reduction-per-life-gained-this-turn
+
+Blocks **1** card.
+
+- **(value)** a card-level cost_reduction head that reduces the generic cost by the amount of life its caster gained this turn (the turn-ledger value life_gained_this_turn, read at pricing time like energy_spent_this_turn)
+  <br>Why the existing vocabulary won't do: cost_reduction_keys offer amount (a flat int only), count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value and total_power; life_gained_this_turn exists as an effect value but reduction_amount has no head that reads it, and a condition-gated flat amount gives a fixed discount rather than X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sproutback Trudge** (rank 15353) — `sproutback_trudge`
+  - This spell costs {X} less to cast, where X is the amount of life you gained this turn.
+  - At the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard.
 
 </details>
 
@@ -3605,6 +3586,21 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
+## graveyard-trigger-cast-self
+
+Blocks **1** card.
+
+- **(op)** a triggered ability that functions while the card is in its owner's graveyard (beginning of your end step, intervening-if you gained life this turn) and on resolution lets its controller cast that card from the graveyard right then, ignoring sorcery timing, paying its cost
+  <br>Why the existing vocabulary won't do: Oathsworn Vampire's static graveyard_cast permission is a standing permission at normal timing, not a one-shot cast during the end-step trigger's resolution; cast_card/grant_playable act on selected objects from a battlefield source and no trigger key makes the end_step trigger function from the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sproutback Trudge** (rank 15353) — `sproutback_trudge`
+  - This spell costs {X} less to cast, where X is the amount of life you gained this turn.
+  - At the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard.
 
 </details>
 
@@ -4924,20 +4920,6 @@ Blocks **1** card.
 
 </details>
 
-## sacrifice-multiple-distinct
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that sacrifices several permanents each matching its own selector (here one Swamp AND one Forest), payable only when every part can be met by a distinct permanent; e.g. `sacrifice` accepting a list of selectors
-  <br>Why the existing vocabulary won't do: The `sacrifice` cost key takes one selector plus `count` (costs.py `_sacrifice_pool`); `count: 2` with `any_of` Swamp/Forest would also accept two Swamps or two Forests, which is a different (looser) cost. The rest of the line is expressible: `active_zones: ["graveyard"]` with a `return_to_hand` of `self_only`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jarad, Golgari Lich Lord** (rank 1918) — `jarad_golgari_lich_lord`
-  - Sacrifice a Swamp and a Forest: Return this card from your graveyard to your hand.
-
-</details>
-
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -5280,20 +5262,6 @@ Blocks **1** card.
 
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
-
-</details>
-
-## target-if-cast-during
-
-Blocks **1** card.
-
-- **(selector)** a target spec that is declared only when the spell is cast during a given phase -- e.g. `cast_during: "your_main"` on a card-level target (count 1, up_to, distinct from the first target), so a second 'up to one other target artifact or enchantment' exists only when the spell is cast in your main phase (601.2c)
-  <br>Why the existing vocabulary won't do: The `cast_during` condition exists but only as an `if` read at resolution. Target specs can be gated by `mode`, `cost_option`, `gift_promised` and `count_if_kicked`, none of which reads the phase the spell was cast in. Declaring an always-available optional second target and exiling it inside `if cast_during` would let the caster target a second permanent at instant speed outside the main phase (triggering ward, becomes_target and heroic-style effects) -- a different card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Return to Dust** (rank 1524) — `return_to_dust`
-  - If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.
 
 </details>
 

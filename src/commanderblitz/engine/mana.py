@@ -257,6 +257,22 @@ class ManaCost:
             return 0
         return self.colored[idx] + sum(1 for pip in self.hybrid if idx in pip.symbols)
 
+    def symbols_of_any(self, colors: str | Iterable[str]) -> int:
+        """How many mana symbols in this cost are any of ``colors`` -- devotion.
+
+        One colour is :meth:`symbols_of`. Several is devotion to more than one
+        colour (rule 700.5a): Athreos counts every symbol that is white **or**
+        black, so a ``{W/B}`` pip is one symbol and counts once. Summing
+        :meth:`symbols_of` per colour would count it twice, because a hybrid
+        pip is a symbol of each of its colours (107.4f).
+        """
+        if isinstance(colors, str):
+            return self.symbols_of(colors)
+        wanted = {SYMBOL_INDEX[c.upper()] for c in colors if c.upper() in SYMBOL_INDEX}
+        return sum(self.colored[i] for i in wanted) + sum(
+            1 for pip in self.hybrid if wanted & pip.symbols
+        )
+
     def with_x(self, x: int) -> Requirement:
         """Flatten to a concrete requirement with ``X`` resolved."""
         return Requirement(

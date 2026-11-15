@@ -583,9 +583,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # input, and no layer can change one.
         spec = expr["mana_symbols"]
 
-        color = str(spec.get("of", ""))
+        # A list in `of` is devotion to several colours (700.5a): a hybrid pip
+        # of two listed colours is one symbol and counts once.
+        colors = spec.get("of", "")
         return sum(
-            ctx.state.card_of(obj).mana_cost.symbols_of(color)
+            ctx.state.card_of(obj).mana_cost.symbols_of_any(colors)
             for oid in resolve_pool(ctx, spec.get("objects") or {})
             if (obj := ctx.state.objects.get(oid)) is not None
         )
@@ -1344,10 +1346,27 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
     if unknown:
         raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
     of = spec.get("of")
-    if not isinstance(of, str) or of.upper() not in ("W", "U", "B", "R", "G"):
+    colours = ("W", "U", "B", "R", "G")
+    if isinstance(of, list):
+        # Devotion to two colours (700.5a, Athreos, Shroud-Veiled): a list of
+        # distinct colours, each symbol counted once if it is any of them. A
+        # list of one is the plain string, and a repeat is a misspelling of a
+        # second colour.
+        if (
+            len(of) < 2
+            or not all(isinstance(c, str) and c.upper() in colours for c in of)
+            or len({c.upper() for c in of}) != len(of)
+        ):
+            raise DslError(
+                f"{where}.of: a list must name two or more distinct colours "
+                f"(W/U/B/R/G), got {of!r}"
+            )
+    elif not isinstance(of, str) or of.upper() not in colours:
         # Defaulted or misspelled it would count nothing and read 0, which on
         # Primalcrux is a 0/0 that dies to state-based actions on arrival.
-        raise DslError(f"{where}.of: must name a colour (W/U/B/R/G), got {of!r}")
+        raise DslError(
+            f"{where}.of: must name a colour (W/U/B/R/G) or a list of them, got {of!r}"
+        )
     if not spec.get("objects"):
         # An empty selector is every permanent in the game, so chroma would
         # count an opponent's board as well as yours.

@@ -8,7 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import Collection, Generator, Mapping, Sequence
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
@@ -1342,6 +1342,12 @@ def can_pay(
         return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
+    if cost.sacrifice_parts is not None and not sacrifice_parts_payable(
+        _sacrifice_part_pools(state, pid, cost, source_oid)
+    ):
+        # Glass-Cast Heart with twelve Blood tokens; Jarad with one Swamp Forest
+        # and nothing else. Every part at once, by distinct permanents (118.3).
+        return False
     if cost.sacrifice_x is not None and x > sacrifice_x_ceiling(state, pid, cost, source_oid):
         # "Sacrifice X Foods" at the announced number; X = 0 is always payable,
         # the `discard_x` floor.
@@ -1545,6 +1551,97 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     count = int(spec.pop("count", 1) or 1)
     pool = _sacrificeable(state, pid, spec, source_oid)
     return pool if len(pool) >= count else []
+
+
+def _sacrifice_part_pools(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[tuple[list[int], int]]:
+    """Each part of a list-form ``sacrifice``: its permitted pool and its count.
+
+    Built through `_sacrificeable`, so a protected permanent (701.17b) is
+    fodder for no part.
+    """
+    pools: list[tuple[list[int], int]] = []
+    for part in cost.sacrifice_parts or ():
+        spec = dict(part)
+        count = int(spec.pop("count", 1) or 1)
+        pools.append((_sacrificeable(state, pid, spec, source_oid), count))
+    return pools
+
+
+def sacrifice_parts_payable(
+    pools: Sequence[tuple[Collection[int], int]], taken: Collection[int] = ()
+) -> bool:
+    """Can every part be met at once by distinct permanents, none of ``taken``?
+
+    "Sacrifice a Swamp and a Forest" is not two counts: a Swamp Forest is one
+    permanent and pays one part, so a board of that dual land alone pays
+    neither the cost nor half of it. Each part is ``count`` slots, and the
+    cost is payable exactly when a matching fills every slot with a different
+    permanent -- Kuhn's augmenting paths, which a counting check per part
+    cannot replace (a Vampire creature asked for by both "a creature" and "a
+    Vampire" is counted twice by one and once by the rules).
+    """
+    excluded = set(taken)
+    slots = [
+        [oid for oid in pool if oid not in excluded]
+        for pool, count in pools
+        for _ in range(count)
+    ]
+    holder: dict[int, int] = {}
+
+    def augment(slot: int, seen: set[int]) -> bool:
+        for oid in slots[slot]:
+            if oid in seen:
+                continue
+            seen.add(oid)
+            if oid not in holder or augment(holder[oid], seen):
+                holder[oid] = slot
+                return True
+        return False
+
+    return all(augment(slot, set()) for slot in range(len(slots)))
+
+
+def _choose_sacrifice_parts(
+    ctx: EffectContext, pools: Sequence[tuple[Sequence[int], int]], pid: int
+) -> Generator[Any, list[int], list[int] | None]:
+    """The payer's picks for each part of a list-form ``sacrifice``, in order.
+
+    Never offers a permanent another part already took, and never one whose
+    choice would leave a later part unpayable: the cost was payable when it was
+    offered (`can_pay`), and a pick that strands the rest would be a cost the
+    player started paying and could not finish. A part whose whole pool can go
+    without hurting the rest -- Glass-Cast Heart's self and its Blood tokens,
+    which no other part can use -- is asked once for its ``count``; otherwise
+    one permanent at a time, each offer filtered by `sacrifice_parts_payable`.
+    ``None`` when a pick falls short.
+    """
+    chosen: list[int] = []
+    for index, (pool, count) in enumerate(pools):
+        rest = pools[index + 1 :]
+        offer = [oid for oid in pool if oid not in chosen]
+        prompt = "Sacrifice" if count == 1 else f"Sacrifice {count}"
+        if sacrifice_parts_payable(rest, {*chosen, *offer}):
+            picked = yield from ask_objects(ctx, prompt, offer, count, count, pid, "sacrifice")
+        else:
+            picked = []
+            for left in range(count - 1, -1, -1):
+                held = {*chosen, *picked}
+                safe = [
+                    oid
+                    for oid in offer
+                    if oid not in held
+                    and sacrifice_parts_payable([(pool, left), *rest], {*held, oid})
+                ]
+                one = yield from ask_objects(ctx, prompt, safe, 1, 1, pid, "sacrifice")
+                if not one:
+                    return None
+                picked.extend(one[:1])
+        if len(picked) < count:
+            return None
+        chosen.extend(picked)
+    return chosen
 
 
 def _sacrificeable(
@@ -2123,6 +2220,19 @@ def pay(
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.
+            sacrifice_object(state, oid, by=source_oid)
+
+    if cost.sacrifice_parts is not None:
+        # "Sacrifice this artifact and thirteen Blood tokens": every part is
+        # chosen before anything moves (601.2h pays the cost as one), so the
+        # source is still there to be chosen and nothing chosen for one part is
+        # offered to the next.
+        chosen = yield from _choose_sacrifice_parts(
+            ctx, _sacrifice_part_pools(state, pid, cost, source_oid), pid
+        )
+        if chosen is None:
+            return False
+        for oid in chosen:
             sacrifice_object(state, oid, by=source_oid)
 
     if cost.sacrifice_x is not None and x > 0:

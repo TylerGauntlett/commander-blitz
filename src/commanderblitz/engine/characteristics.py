@@ -2069,9 +2069,11 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # control". A *printed* mana cost is a pipeline input like a zone count,
         # so reading it here cannot make one static depend on another's output.
         spec = expr["mana_symbols"]
-        color = str(spec.get("of", ""))
+        # A list in `of` is devotion to several colours (700.5a), each pip
+        # counted once however many listed colours it has.
+        colors = spec.get("of", "")
         return sum(
-            state.card_of(obj).mana_cost.symbols_of(color)
+            state.card_of(obj).mana_cost.symbols_of_any(colors)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
         )
     if "greatest_commander_mana_value" in expr:
@@ -2195,6 +2197,15 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # `char_version`, so the anthem grows with each draw as it happens.
         pids = _static_players(state, source, expr["cards_drawn_this_turn"])
         return sum(state.cards_drawn_this_turn.get(p, 0) for p in pids)
+    if "life_gained_this_turn" in expr:
+        # Oathsworn Vampire: "You may cast this card from your graveyard if you
+        # gained life this turn." The effect side's gain tally in its bare
+        # player-spec form. A pipeline input on `creatures_died_this_turn`'s
+        # terms: `_tally` writes it off LIFE_GAINED and bumps `char_version`
+        # after writing (the gain's own bump comes before), and the cleanup
+        # step empties it.
+        pids = _static_players(state, source, expr["life_gained_this_turn"])
+        return sum(state.turn_ledger.life_gained.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

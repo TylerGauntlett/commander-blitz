@@ -128,6 +128,18 @@ class TargetSpec:
     #: every cast. Kept in :attr:`CardDef.spree_targets` and filtered by
     #: :meth:`CardDef.targets_for` against the bought subset.
     spree_mode: int | None = None
+    #: The phase a cast must be made in for this spec to be declared -- a
+    #: `conditions.CAST_DURING_NAMES` entry, or ``None`` for every cast. "If
+    #: you cast this spell during your main phase, you may exile up to one
+    #: other target artifact or enchantment" (Return to Dust). Unlike the
+    #: gates above it is no choice the caster makes at 601.2b but a fact about
+    #: the moment of casting, so it splits no target list: the spec is always
+    #: in :attr:`CardDef.targets`, and `targeting.enumerate_target_tuples`
+    #: declares it empty when `conditions.cast_during_now` says no. The loader
+    #: holds it to the last card-level place and to ``optional`` or ``up_to``,
+    #: so an empty bucket is one `filter_legal` already splits correctly at
+    #: resolution.
+    cast_during: str | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
@@ -318,6 +330,14 @@ class Cost:
     #: never resolves, so the op could not be reached from the only printing.
     exert: bool = False
     sacrifice: Mapping[str, Any] | None = None
+    #: "Sacrifice this artifact and thirteen Blood tokens" -- Glass-Cast Heart;
+    #: "Sacrifice a Swamp and a Forest" -- Jarad. The list form of the DSL's
+    #: ``sacrifice``: one selector per part, each with its own ``count``, paid
+    #: by **distinct** permanents (`costs.sacrifice_parts_payable` is a
+    #: matching, not a count per part). Its own field rather than a second
+    #: shape of ``sacrifice``, so every reader of that one selector keeps
+    #: reading one selector.
+    sacrifice_parts: tuple[Mapping[str, Any], ...] | None = None
     #: "Return a land you control to its owner's hand": a selector over the
     #: battlefield. Distinct from ``sacrifice`` because the permanent comes
     #: back -- Meloku and Trench Behemoth both replay it for landfall.
@@ -518,7 +538,16 @@ class Cost:
             tap=bool(spec.get("tap", False)),
             untap=bool(spec.get("untap", False)),
             exert=bool(spec.get("exert", False)),
-            sacrifice=dict(spec["sacrifice"]) if spec.get("sacrifice") else None,
+            sacrifice=(
+                dict(spec["sacrifice"])
+                if spec.get("sacrifice") and isinstance(spec["sacrifice"], Mapping)
+                else None
+            ),
+            sacrifice_parts=(
+                tuple(dict(part) for part in spec["sacrifice"])
+                if spec.get("sacrifice") and not isinstance(spec["sacrifice"], Mapping)
+                else None
+            ),
             return_to_hand=(
                 dict(spec["return_to_hand"]) if spec.get("return_to_hand") else None
             ),
@@ -629,6 +658,7 @@ class Cost:
             # to. Its `{R}` already disqualifies it; this is the claim itself.
             and not self.exert
             and self.sacrifice is None
+            and self.sacrifice_parts is None
             and self.return_to_hand is None
             and self.tap_permanents is None
             and self.untap_permanents is None
@@ -673,7 +703,7 @@ class Cost:
             parts.append("{Q}")
         if self.exert:
             parts.append("Exert this permanent")
-        if self.sacrifice:
+        if self.sacrifice or self.sacrifice_parts:
             parts.append("Sacrifice")
         if self.sacrifice_x:
             parts.append("Sacrifice X")

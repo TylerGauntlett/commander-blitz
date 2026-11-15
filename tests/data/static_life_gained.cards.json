@@ -1,0 +1,47 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_life_gained_this_turn.py. t_lg_graveyard_vampire is Oathsworn Vampire's graveyard permission on a card the test suite owns; t_lg_anthem reads the same leaf inside the characteristic pipeline, so the char_version bump on a gain is visible as a size.",
+  "cards": [
+    {
+      "id": "t_lg_graveyard_vampire",
+      "name": "Test Life-Gain Graveyard Vampire",
+      "oracle_text": "You may cast this card from your graveyard if you gained life this turn.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast this card from your graveyard if you gained life this turn.",
+          "effect": "cast_from_graveyard",
+          "active_zones": ["graveyard"],
+          "affects_player": "you",
+          "condition": {"cmp": ">", "left": {"life_gained_this_turn": "you"}, "right": {"const": 0}}
+        }
+      ]
+    },
+    {
+      "id": "t_lg_anthem",
+      "name": "Test Life-Gain Anthem",
+      "oracle_text": "As long as you gained life this turn, creatures you control get +1/+1.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you gained life this turn, creatures you control get +1/+1.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": 1,
+          "toughness": 1,
+          "condition": {"cmp": ">", "left": {"life_gained_this_turn": "you"}, "right": {"const": 0}}
+        }
+      ]
+    }
+  ]
+}

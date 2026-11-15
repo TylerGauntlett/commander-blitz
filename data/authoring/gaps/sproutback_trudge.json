@@ -1,0 +1,25 @@
+{
+  "card_id": "sproutback_trudge",
+  "name": "Sproutback Trudge",
+  "oracle_text": "This spell costs {X} less to cast, where X is the amount of life you gained this turn.\nTrample\nAt the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard.",
+  "blocked_sentences": [
+    "This spell costs {X} less to cast, where X is the amount of life you gained this turn.",
+    "At the beginning of your end step, if you gained life this turn, you may cast this creature from your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_per_life_gained_this_turn",
+      "kind": "value",
+      "what": "a card-level cost_reduction head that reduces the generic cost by the amount of life its caster gained this turn (the turn-ledger value life_gained_this_turn, read at pricing time like energy_spent_this_turn)",
+      "why_existing_wont_do": "cost_reduction_keys offer amount (a flat int only), count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value and total_power; life_gained_this_turn exists as an effect value but reduction_amount has no head that reads it, and a condition-gated flat amount gives a fixed discount rather than X"
+    },
+    {
+      "capability": "graveyard_trigger_cast_self",
+      "kind": "op",
+      "what": "a triggered ability that functions while the card is in its owner's graveyard (beginning of your end step, intervening-if you gained life this turn) and on resolution lets its controller cast that card from the graveyard right then, ignoring sorcery timing, paying its cost",
+      "why_existing_wont_do": "Oathsworn Vampire's static graveyard_cast permission is a standing permission at normal timing, not a one-shot cast during the end-step trigger's resolution; cast_card/grant_playable act on selected objects from a battlefield source and no trigger key makes the end_step trigger function from the graveyard"
+    }
+  ],
+  "closest_existing": ["cost_reduction", "graveyard_cast", "cast_card"],
+  "confidence": "high"
+}

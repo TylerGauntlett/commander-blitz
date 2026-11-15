@@ -214,6 +214,7 @@ def _compile_targets(
     _check_gift_targets(specs, where, on_spell=on_spell, has_gift=has_gift)
     _check_tier_targets(specs, where, on_spell=on_spell, cost_options=cost_options)
     _check_spree_targets(specs, where, on_spell=on_spell, spree_modes=spree_modes)
+    _check_cast_during_targets(specs, where, on_spell=on_spell)
     fixed = [spec for spec in specs if spec.mode is None]
     # A gift-gated or tiered card declares one of several lists, and the
     # ordering rule is about the refs one cast stores -- so each list has to
@@ -383,6 +384,72 @@ def _check_gift_targets(
             raise DslError(
                 f"{label}: 'gift_promised' and 'count_if_kicked' on one target "
                 f"are two cast-time choices sizing one spec -- no printing does it"
+            )
+
+
+def _check_cast_during_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool
+) -> None:
+    """Every restriction on a target's ``cast_during``, each a card that would
+    load wrong.
+
+    Legal at all because the phase a spell is cast in is settled as it is cast,
+    when 601.2c declares its targets. Each refusal is a place with no such cast,
+    a phase the turn does not have, or a second gate deciding the same spec.
+    """
+    from commanderblitz.engine.effects.conditions import CAST_DURING_NAMES
+
+    for spec in specs:
+        if spec.cast_during is None:
+            continue
+        label = f"{where}.target[{spec.id}]"
+        if not on_spell:
+            # An ability's targets are declared with no cast behind them, so
+            # the gate would be shut for ever and the card its small half.
+            raise DslError(
+                f"{label}: 'cast_during' is about a cast, and an ability's "
+                f"targets are declared without one"
+            )
+        if spec.cast_during not in CAST_DURING_NAMES:
+            raise DslError(
+                f"{label}.cast_during: must name one of {sorted(CAST_DURING_NAMES)}, "
+                f"got {spec.cast_during!r}"
+            )
+        if not (spec.up_to or spec.optional):
+            # A shut gate declares the spec empty, so nought has to be one of
+            # its sizes: "up to one" is `optional`, "up to N" is `up_to`.
+            raise DslError(
+                f"{label}: a 'cast_during' target needs 'optional' or 'up_to' -- a "
+                f"cast outside the phase declares none of it, so nought has to be "
+                f"a legal size"
+            )
+        card_level = [other for other in specs if other.mode is None]
+        if card_level[-1] is not spec:
+            # `filter_legal` slices the stored refs spec by spec with a fixed
+            # take for an `optional` one, so an empty bucket is unambiguous only
+            # at the end of the list.
+            raise DslError(
+                f"{label}: a 'cast_during' target must be the last target -- a "
+                f"cast that declares none of it would shift the refs after it"
+            )
+        if spec.min_count:
+            raise DslError(
+                f"{label}: a 'cast_during' target takes no 'min_count' -- a cast "
+                f"outside the phase declares none of it"
+            )
+        others = {
+            "mode": spec.mode,
+            "gift_promised": spec.gift_promised,
+            "cost_option": spec.cost_option,
+            "spree_mode": spec.spree_mode,
+            "count_if_kicked": spec.count_if_kicked,
+            "selector_if_kicked": spec.selector_if_kicked,
+        }
+        clash = sorted(key for key, value in others.items() if value is not None)
+        if clash:
+            raise DslError(
+                f"{label}: 'cast_during' beside {clash} puts two gates on one "
+                f"target -- no printing does it"
             )
 
 
@@ -845,6 +912,7 @@ def _compile_target(
         gift_promised=model.gift_promised,
         cost_option=model.cost_option,
         spree_mode=model.spree_mode,
+        cast_during=model.cast_during,
     )
 
 

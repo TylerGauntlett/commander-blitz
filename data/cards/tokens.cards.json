@@ -197,6 +197,29 @@
       "is_token": true
     },
     {
+      "id": "bat_1_1_b_flying",
+      "name": "Bat Token",
+      "oracle_text": "1/1 black Bat creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "beast_3_3_g",
       "name": "Beast Token",
       "oracle_text": "3/3 green Beast creature token.",

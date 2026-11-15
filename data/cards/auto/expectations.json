@@ -1319,6 +1319,14 @@
     },
     "zone": "battlefield"
   },
+  "athreos_god_of_passage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "athreos_shroud_veiled": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "atomize": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -1740,6 +1748,10 @@
     "zone": "battlefield"
   },
   "bastion_protector": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bat_colony": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2281,6 +2293,13 @@
     },
     "zone": "battlefield"
   },
+  "bloodtracker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "bloom_tender": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2508,6 +2527,13 @@
       "id": "ox_2_2_w"
     },
     "zone": "graveyard"
+  },
+  "brackish_trudge": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "brain_freeze": {
     "graveyard_size": {
@@ -2809,6 +2835,10 @@
     "zone": "battlefield"
   },
   "butch_deloria_tunnel_snake": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "butcher_of_malakir": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4288,6 +4318,13 @@
   "crookshank_kobolds": {
     "zone": "battlefield"
   },
+  "crossway_troublemakers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "crowd_s_favor": {
     "graveyard_size": {
       "0": 3
@@ -5704,6 +5741,10 @@
   "dusk_imp": {
     "zone": "battlefield"
   },
+  "dusk_legion_sergeant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dusk_urchins": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5994,6 +6035,10 @@
     "zone": "battlefield"
   },
   "elena_turk_recruit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "elenda_s_hierophant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6387,6 +6432,10 @@
     },
     "zone": "battlefield"
   },
+  "etchings_of_the_chosen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "eternal_skylord": {
     "battlefield_count": 34,
     "tokens": {
@@ -6655,6 +6704,14 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "exquisite_blood": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "exsanguinate": {
     "life": {
@@ -8245,6 +8302,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "glass_cast_heart": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glass_golem": {
@@ -10280,6 +10341,10 @@
   "ior_ruin_expedition": {
     "zone": "battlefield"
   },
+  "iroas_god_of_victory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iroas_s_champion": {
     "zone": "battlefield"
   },
@@ -10453,6 +10518,10 @@
   },
   "jailbreak_scheme": {
     "zone": "graveyard"
+  },
+  "jarad_golgari_lich_lord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "jarvis_earth_s_mightiest_butler": {
     "battlefield_count": 33,
@@ -10760,6 +10829,10 @@
     },
     "zone": "battlefield"
   },
+  "karametra_god_of_harvests": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },
@@ -10996,6 +11069,11 @@
       "0": 2
     }
   },
+  "kindred_boon": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kindred_discovery": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11140,6 +11218,10 @@
     "zone": "battlefield"
   },
   "klaw_master_of_sound": {
+    "zone": "battlefield"
+  },
+  "klothys_god_of_destiny": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "knight_errant": {
@@ -11313,6 +11395,13 @@
     "zone": "battlefield"
   },
   "krovikan_scoundrel": {
+    "zone": "battlefield"
+  },
+  "kruphix_god_of_horizons": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "kulrath_knight": {
@@ -12388,6 +12477,14 @@
   "marble_diamond": {
     "zone": "battlefield"
   },
+  "march_of_the_canonized": {
+    "battlefield_count": 53,
+    "tokens": {
+      "count": 20,
+      "id": "vampire_1_1_w_lifelink"
+    },
+    "zone": "battlefield"
+  },
   "marchesa_s_decree": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13056,6 +13153,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mogis_god_of_slaughter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "moldering_karok": {
     "zone": "battlefield"
   },
@@ -13282,6 +13383,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "mount_doom": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mountain_bandit": {
@@ -14062,6 +14167,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "oathsworn_vampire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ob_nixilis_reignited": {
     "battlefield_count": 33,
     "counters": {
@@ -14389,6 +14498,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "order_of_sacred_dusk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "order_of_the_sacred_bell": {
     "zone": "battlefield"
   },
@@ -14562,6 +14675,9 @@
     "zone": "battlefield"
   },
   "pact_of_negation": {
+    "zone": "graveyard"
+  },
+  "pact_of_the_serpent": {
     "zone": "graveyard"
   },
   "padeem_consul_of_innovation": {
@@ -14854,6 +14970,10 @@
     "zone": "battlefield"
   },
   "pharika_s_chosen": {
+    "zone": "battlefield"
+  },
+  "phenax_god_of_deception": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phenomenon_investigators": {
@@ -15409,6 +15529,10 @@
     },
     "zone": "battlefield"
   },
+  "promise_of_aclazotz_foul_rebirth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "promise_of_loyalty": {
     "battlefield_count": 31,
     "opponent_battlefield_count": 5,
@@ -15704,6 +15828,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "radiant_destiny": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "radiant_fountain": {
@@ -16085,6 +16213,13 @@
   "redemption_arc": {
     "zone": "battlefield"
   },
+  "redemption_choir": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "redoubled_stormsinger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16382,6 +16517,10 @@
     "zone": "battlefield"
   },
   "return_of_the_wildspeaker": {
+    "zone": "graveyard"
+  },
+  "return_to_dust": {
+    "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
   "reunion_of_the_house": {
@@ -18720,6 +18859,14 @@
   "sorin_imperious_bloodlord": {
     "counters": {
       "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "sorin_lord_of_innistrad": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
       "kind": "loyalty"
     },
     "zone": "battlefield"
@@ -21140,6 +21287,10 @@
     },
     "zone": "battlefield"
   },
+  "timothar_baron_of_bats": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tin_street_dodger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21910,6 +22061,13 @@
       "1": 40
     },
     "zone": "battlefield"
+  },
+  "undying_evil": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "undying_malice": {
     "zone": "graveyard"
@@ -22696,6 +22854,14 @@
     "zone": "battlefield"
   },
   "volunteer_militia": {
+    "zone": "battlefield"
+  },
+  "vona_butcher_of_magan": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "voracious_bibliophile": {
@@ -23691,6 +23857,10 @@
     "zone": "battlefield"
   },
   "xander_s_lounge": {
+    "zone": "battlefield"
+  },
+  "xenagos_god_of_revels": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "xenobotanist": {

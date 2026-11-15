@@ -192,6 +192,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "shuffle": ("Cards", "Shuffle a library.", None),
     "put_exiled_into_graveyard": ("Cards", "Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived.",
                                   '"Put a card exiled with it into its owner\'s graveyard" — `put_exiled_into_graveyard`'),
+    "link_exiled": ("Cards", "Link cards in exile to the permanent bound under `to`, so its own `exiled_with: \"self\"` finds them (607.2a).",
+                    '"Return the exiled card" from a token — `link_exiled`'),
     "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth.",
                    None),
     "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),
@@ -693,7 +695,7 @@ VALUES: dict[str, Entry] = {
                       "`mana_spent_of` — what was paid, not what is printed"),
     "mana_spent_from": ("Units of mana spent to cast this whose source matched a `paid_by`-style filter (\"for each mana from a Desert\").",
                         "`mana_spent_from` — how much of the payment came from a kind of permanent"),
-    "mana_symbols": ("Pips of a color among a pool's mana costs (chroma).", "Counting mana symbols"),
+    "mana_symbols": ("Pips of a color, or of any of a list of colors, among a pool's mana costs (chroma, devotion).", "Counting mana symbols"),
     "mana_value_of": ("Mana value of an object (summed over a pool).", None),
     "max": ("The greatest of several values.", None),
     "max_count_of": ("The most objects any one player of a spec has.", H_PER_PLAYER),
@@ -799,6 +801,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                  "Counting different values rather than objects"),
     "cards_drawn_this_turn": ("Cards a player spec's players have drawn this turn, re-read as each "
                               "card is drawn; the bare player spec only.", None),
+    "life_gained_this_turn": ("Life a player spec's players have gained this turn, re-read as each "
+                              "gain happens; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),
@@ -1154,7 +1158,7 @@ ABILITY_COSTS: dict[str, Entry] = {
                                    "`remove_counters_from_among` — counters of any kind, off other permanents"),
     "return_to_hand": ("Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects.",
                        "Ninjutsu — swapping into a combat already under way"),
-    "sacrifice": ("Sacrifice a matching permanent; `as` names it for the effects.",
+    "sacrifice": ("Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents.",
                   "Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed"),
     "sacrifice_x": ("Sacrifice X matching permanents, X announced and bounded by them.",
                     "`sacrifice_x` — sacrifice X permanents, X announced"),

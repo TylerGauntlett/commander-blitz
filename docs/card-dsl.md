@@ -1976,6 +1976,8 @@ Anywhere a number is expected -- the leaf list is
                 "objects": { "controller": "you", "types": ["Land"] } } }
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
                     "objects": { "controller": "you" } } }
+{ "mana_symbols": { "of": ["W", "B"],           // devotion to white and black
+                    "objects": { "controller": "you" } } }
 { "colors_of_mana_spent": true }                // sunburst, converge
 { "rolled": { "binding": "roll" } }             // how many dice a roll_dice threw
 { "rolled": { "binding": "roll",                // …how many came up even
@@ -2620,6 +2622,12 @@ A **hybrid** pip counts for each of its colours (rule 107.4f) — a Kitchen Fink
 adds one to a green count and one to a white one. `ManaCost` stores `hybrid`
 apart from `colored`, deliberately and for unrelated reasons, so this is the case
 that would otherwise count for neither.
+
+**Devotion to two colours** (rule 700.5a) is `of` as a list of distinct colours:
+`["W", "B"]` counts every symbol that is white *or* black, so a `{W/B}` pip
+counts **once**. A `sum` of two single-colour leaves is the near miss — it counts
+that pip twice and turns Athreos, Shroud-Veiled into a creature early. The loader
+refuses a list of fewer than two colours or with a repeat.
 
 It reads the **printed** cost, which is what the keyword says and also what makes
 it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
@@ -4757,6 +4765,38 @@ refuses `count` and `as` inside it (X is the count, and there is no one
 sacrificed permanent to name), the key beside `sacrifice`, beside an `{X}` in
 `mana`, `pay_life_x`, `loyalty_x` or `discard_x` (an ability announces one X),
 and anywhere but an activated ability's cost.
+
+### A sacrifice of several distinct parts — `sacrifice` as a list
+
+"{B}{B}, {T}, Sacrifice this artifact and thirteen Blood tokens: Each opponent
+loses 13 life and you gain 13 life." — Glass-Cast Heart. "Sacrifice a Swamp and
+a Forest: …" — Jarad, Golgari Lich Lord.
+
+```jsonc
+"cost": { "mana": "{B}{B}", "tap": true,
+          "sacrifice": [ { "self_only": true },
+                         { "subtypes": ["Blood"], "is_token": true, "count": 13 } ] }
+
+"cost": { "sacrifice": [ { "types": ["Land"], "subtypes": ["Swamp"] },
+                         { "types": ["Land"], "subtypes": ["Forest"] } ] }
+```
+
+Each entry is a part: a selector over the battlefield (`controller` defaulting
+to you) with its own `count`, default 1. The cost is payable only when every
+part can be met at once by **different** permanents (118.3, 601.2h) —
+`costs.sacrifice_parts_payable` matches permanents to parts rather than counting
+each part, so a Swamp Forest dual pays one part of Jarad's cost and alone pays
+none. As the cost is paid the controller chooses each part's permanents in
+order, never offered one another part already took or one whose loss would
+leave a later part unpayable, and everything chosen is sacrificed together; the
+source, as a `self_only` part, is still there to be chosen.
+
+Not one selector with `any_of` and a summed `count`: that takes two Swamps for
+"a Swamp and a Forest", and fourteen Blood tokens while keeping the Heart. Not
+the `sacrifice` op in the effects, which moves the payment to resolution. The
+loader refuses a list of fewer than two parts, `as` in a part (there is no one
+sacrificed permanent to name), a `count` that is not a positive whole number,
+the list beside `sacrifice_x`, and anywhere but an activated ability's cost.
 
 ### `tap_x` — tap X untapped permanents, X announced
 
@@ -7159,7 +7199,7 @@ smaller than the effect-side `value_keys`:
 | `{"const": n}` | a literal |
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key); on the battlefield the filter may be [a union](#any_of-in-a-count--base-power-or-toughness-1) |
 | `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
-| `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
+| `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs; `of` a list is devotion to several colours |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
@@ -7167,6 +7207,7 @@ smaller than the effect-side `value_keys`:
 | `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"cards_drawn_this_turn": …}` | how many cards the players have drawn this turn, off `GameState.cards_drawn_this_turn`; the bare player spec only, and `primitives.draw_cards` and the untap step's reset both bump `char_version`, so an anthem grows with each draw (Knowledge Is Power) |
+| `{"life_gained_this_turn": …}` | how much life the players have gained this turn, off `TurnLedger.life_gained`; the bare player spec only, and the LIFE_GAINED fold and the cleanup step both bump `char_version`. "If you gained life this turn" is a `cmp` `>` 0 — gained, not up on the turn, so a gain since lost still counts (Oathsworn Vampire's graveyard permission, on Gravecrawler's [`active_zones: ["graveyard"]` shape](card-dsl-cookbook.md)) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -7345,7 +7386,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn`, `creatures_died_this_turn` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn`, `creatures_died_this_turn`, `cards_drawn_this_turn`, `life_gained_this_turn` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |

@@ -45,6 +45,7 @@ from .vocabulary import (
     STATIC_DEATHS_KEYS,
     STATIC_DRAWS_KEYS,
     STATIC_FILTER_KEYS,
+    STATIC_LIFE_GAINED_KEYS,
     STATIC_LIFE_KEYS,
     STATIC_LIFE_PLAYERS,
     STATIC_MANA_POOL_KEYS,
@@ -823,6 +824,7 @@ def _validate_static_value(value: Any, where: str) -> None:
         | STATIC_SPELLS_CAST_KEYS
         | STATIC_DEATHS_KEYS
         | STATIC_DRAWS_KEYS
+        | STATIC_LIFE_GAINED_KEYS
     ) & set(value):
         who = value[key]
         if key in STATIC_SPELLS_CAST_KEYS and isinstance(who, Mapping):

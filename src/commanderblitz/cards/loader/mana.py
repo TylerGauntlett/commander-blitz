@@ -82,7 +82,12 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'x_minimum' bounds an announced X, and 'x_value' "
                 f"defines this one -- nothing is announced"
             )
-    sacrifice_selector = dict(model.sacrifice) if model.sacrifice is not None else None
+    sacrifice_parts = model.sacrifice if isinstance(model.sacrifice, list) else None
+    if sacrifice_parts is not None:
+        _validate_sacrifice_parts(sacrifice_parts, where, defines_x=defines_x)
+    sacrifice_selector = (
+        dict(model.sacrifice) if isinstance(model.sacrifice, Mapping) else None
+    )
     if sacrifice_selector is not None and "as" in sacrifice_selector:
         # "…where X is **the sacrificed creature's** power" (Ghoulcaller Gisa).
         # A name the ability's effects read the sacrificed permanent back
@@ -416,6 +421,45 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     cost = Cost.from_spec(model.model_dump())
     assert cost is not None  # model_dump() is never None
     return cost
+
+
+def _validate_sacrifice_parts(parts: list[Any], where: str, *, defines_x: bool) -> None:
+    """Refuse a list-form ``sacrifice`` that would load and mean something else.
+
+    "Sacrifice this artifact and thirteen Blood tokens": each part a selector
+    with its own ``count``, met by permanents no other part takes
+    (`costs.sacrifice_parts_payable`).
+    """
+    at = f"{where}.cost.sacrifice"
+    if not defines_x:
+        # Only `costs.can_pay`/`pay` read the parts. An additional cost to cast
+        # is also counted by `casting.additional_cost_ceiling`, a ward or tax
+        # price is offered by the opponent's AI, and a mana ability is tapped by
+        # the solver -- none of which reads a list, so the cost would be
+        # under-counted there while the card looked implemented.
+        raise DslError(
+            f"{at}: a list of parts is an activated ability's cost only; "
+            f"nothing else pays a sacrifice of several distinct parts"
+        )
+    if len(parts) < 2:
+        raise DslError(
+            f"{at}: a list names two or more distinct parts; one part is the "
+            f"plain selector form"
+        )
+    for i, part in enumerate(parts):
+        if not isinstance(part, Mapping):
+            raise DslError(f"{at}[{i}]: each part is a selector, got {part!r}")
+        if "as" in part:
+            # `as` names *the* sacrificed permanent; with several parts there
+            # is no one permanent the name would mean.
+            raise DslError(
+                f"{at}[{i}]: 'as' names the one permanent a single sacrifice "
+                f"takes, and a cost of several parts has none"
+            )
+        count = part.get("count", 1)
+        if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+            raise DslError(f"{at}[{i}].count: a positive whole number, got {count!r}")
+        validate_selector(dict(part), f"{at}[{i}]")
 
 
 def _validate_put_counters(spec: Mapping[str, Any], where: str, *, defines_x: bool) -> None:

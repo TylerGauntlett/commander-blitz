@@ -1,0 +1,69 @@
+{
+  "_comment": "Cards for tests/unit/keywords/test_granted_persist.py. `t_gp_sergeant` is Dusk Legion Sergeant's '{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn.' without its menace: the grant is the `grant_ability` op handing over a grantable persist trigger, the same `dies` trigger with a `counters_had` condition a printed persist creature carries. `t_gp_vampire` is a plain nontoken Vampire for it to reach.",
+  "cards": [
+    {
+      "id": "t_gp_sergeant",
+      "name": "Test Granted Persist Sergeant",
+      "oracle_text": "{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn. (When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire", "Soldier"],
+      "power": 2,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn.",
+          "cost": {"mana": "{1}{B}", "sacrifice": {"self_only": true}},
+          "effects": [
+            {
+              "op": "grant_ability",
+              "ability": 0,
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "subtypes": ["Vampire"],
+                "is_token": false,
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "Persist",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "condition": {"cmp": "=", "left": {"counters_had": "-1/-1"}, "right": 0}
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "objects": {"self_only": true},
+              "destination": "battlefield",
+              "counters": {"-1/-1": 1}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gp_vampire",
+      "name": "Test Granted Persist Vampire",
+      "oracle_text": "",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}

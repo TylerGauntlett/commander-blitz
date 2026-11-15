@@ -15652,22 +15652,22 @@
     },
     "Athreos, God of Passage": {
       "edhrec_rank": 2899,
-      "gate": "template",
+      "gate": null,
       "name": "Athreos, God of Passage",
-      "reason": "no template for: As long as your devotion to white and black is less than seven, Athreos isn't a creature",
+      "reason": "",
       "scryfall_id": "3380a687-c96b-4e1a-bfd9-3849d085b803",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Athreos, Shroud-Veiled": {
       "edhrec_rank": 3082,
-      "gate": "template",
+      "gate": null,
       "name": "Athreos, Shroud-Veiled",
-      "reason": "no template for: As long as your devotion to white and black is less than seven, Athreos isn't a creature",
+      "reason": "",
       "scryfall_id": "f50ffa76-f704-4d53-a15c-8316b07c1d12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atla Palani, Nest Tender": {
@@ -21562,12 +21562,12 @@
     },
     "Bat Colony": {
       "edhrec_rank": 20382,
-      "gate": "template",
+      "gate": null,
       "name": "Bat Colony",
-      "reason": "no template for: When this enchantment enters, create a 1/1 black Bat creature token with flying for each m",
+      "reason": "",
       "scryfall_id": "1c02134c-ec9f-4090-820e-8ba7ae4a8c2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bat Whisperer": {
@@ -29222,12 +29222,12 @@
     },
     "Bloodtracker": {
       "edhrec_rank": 6205,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodtracker",
-      "reason": "no template for: {B}, Pay 2 life: Put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "d654462f-5346-454f-9905-41218cf6b29e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodvial Purveyor": {
@@ -32642,12 +32642,12 @@
     },
     "Brackish Trudge": {
       "edhrec_rank": 25216,
-      "gate": "template",
+      "gate": null,
       "name": "Brackish Trudge",
-      "reason": "no template for: {1}{B}: Return this card from your graveyard to your hand. Activate only if you gained lif",
+      "reason": "",
       "scryfall_id": "90ba37ee-159f-421f-8d37-a7b5f1b562f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brackwater Elemental": {
@@ -37022,12 +37022,12 @@
     },
     "Butcher of Malakir": {
       "edhrec_rank": 1299,
-      "gate": "template",
+      "gate": null,
       "name": "Butcher of Malakir",
-      "reason": "no template for: Whenever this creature or another creature you control dies, each opponent sacrifices a cr",
+      "reason": "",
       "scryfall_id": "1a015b68-eb88-4c20-867e-fa61ef046188",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Butcher of the Horde": {
@@ -56492,12 +56492,12 @@
     },
     "Crossway Troublemakers": {
       "edhrec_rank": 3569,
-      "gate": "template",
+      "gate": null,
       "name": "Crossway Troublemakers",
-      "reason": "no template for: Attacking Vampires you control have deathtouch and lifelink",
+      "reason": "",
       "scryfall_id": "03a5e19c-4cb8-4bd7-923c-4db747dc6ca3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crossway Vampire": {
@@ -77082,12 +77082,12 @@
     },
     "Dusk Legion Sergeant": {
       "edhrec_rank": 7523,
-      "gate": "template",
+      "gate": null,
       "name": "Dusk Legion Sergeant",
-      "reason": "no template for: {1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist ",
+      "reason": "",
       "scryfall_id": "5bfc9243-7aec-48e6-9f3b-1bbbb5370063",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dusk Mangler": {
@@ -80812,12 +80812,12 @@
     },
     "Elenda's Hierophant": {
       "edhrec_rank": 1891,
-      "gate": "template",
+      "gate": null,
       "name": "Elenda's Hierophant",
-      "reason": "no template for: Whenever you gain life, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "763ff418-da7e-4d39-97c8-9694f4088132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elenda, Saint of Dusk": {
@@ -86552,12 +86552,12 @@
     },
     "Etchings of the Chosen": {
       "edhrec_rank": 3030,
-      "gate": "template",
+      "gate": null,
       "name": "Etchings of the Chosen",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "496e4759-9d6b-42fa-833c-1fff2c9d03f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eternal Dominion": {
@@ -88782,12 +88782,12 @@
     },
     "Exquisite Blood": {
       "edhrec_rank": 510,
-      "gate": "template",
+      "gate": null,
       "name": "Exquisite Blood",
-      "reason": "no template for: Whenever an opponent loses life, you gain that much life",
+      "reason": "",
       "scryfall_id": "0e8ccfa7-4178-476a-a155-0ca1c98556c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exquisite Firecraft": {
@@ -110392,12 +110392,12 @@
     },
     "Glass-Cast Heart": {
       "edhrec_rank": 4793,
-      "gate": "template",
+      "gate": null,
       "name": "Glass-Cast Heart",
-      "reason": "no template for: Whenever one or more Vampires you control attack, create a Blood token",
+      "reason": "",
       "scryfall_id": "f36a4054-903c-468a-877b-0ba43a403cc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glassblower's Puzzleknot": {
@@ -139692,12 +139692,12 @@
     },
     "Iroas, God of Victory": {
       "edhrec_rank": 1464,
-      "gate": "template",
+      "gate": null,
       "name": "Iroas, God of Victory",
-      "reason": "no template for: As long as your devotion to red and white is less than seven, Iroas isn't a creature",
+      "reason": "",
       "scryfall_id": "5113e135-11b9-4ae7-a26a-1603801bcd8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iroh's Demonstration": {
@@ -142062,12 +142062,12 @@
     },
     "Jarad, Golgari Lich Lord": {
       "edhrec_rank": 1918,
-      "gate": "template",
+      "gate": null,
       "name": "Jarad, Golgari Lich Lord",
-      "reason": "no template for: Jarad gets +1/+1 for each creature card in your graveyard",
+      "reason": "",
       "scryfall_id": "8e3b1844-6fff-40dc-a357-3394f63ea8dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jared Carthalion": {
@@ -145932,12 +145932,12 @@
     },
     "Karametra, God of Harvests": {
       "edhrec_rank": 3075,
-      "gate": "template",
+      "gate": null,
       "name": "Karametra, God of Harvests",
-      "reason": "no template for: As long as your devotion to green and white is less than seven, Karametra isn't a creature",
+      "reason": "",
       "scryfall_id": "21efbf4f-f084-4abb-9f3d-f303f2dd8f97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karazikar, the Eye Tyrant": {
@@ -149042,12 +149042,12 @@
     },
     "Kindred Boon": {
       "edhrec_rank": 7215,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Boon",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "a9d21710-3006-45a0-9af2-275159bb5315",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kindred Charge": {
@@ -150352,12 +150352,12 @@
     },
     "Klothys, God of Destiny": {
       "edhrec_rank": 5018,
-      "gate": "template",
+      "gate": null,
       "name": "Klothys, God of Destiny",
-      "reason": "no template for: As long as your devotion to red and green is less than seven, Klothys isn't a creature",
+      "reason": "",
       "scryfall_id": "f62a5e40-8fad-4efc-81ae-fb3e3b5b6cab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knacksaw Clique": {
@@ -152952,12 +152952,12 @@
     },
     "Kruphix, God of Horizons": {
       "edhrec_rank": 4656,
-      "gate": "template",
+      "gate": null,
       "name": "Kruphix, God of Horizons",
-      "reason": "no template for: As long as your devotion to green and blue is less than seven, Kruphix isn't a creature",
+      "reason": "",
       "scryfall_id": "9bf153db-742a-42c0-bc8c-5093c1d6e734",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kry Shield": {
@@ -167352,12 +167352,12 @@
     },
     "March of the Canonized": {
       "edhrec_rank": 4961,
-      "gate": "template",
+      "gate": null,
       "name": "March of the Canonized",
-      "reason": "no template for: When this enchantment enters, create X 1/1 white Vampire creature tokens with lifelink",
+      "reason": "",
       "scryfall_id": "547581d0-025a-435a-8016-ee7c6b890e53",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "March of the Drowned": {
@@ -177282,12 +177282,12 @@
     },
     "Mogis, God of Slaughter": {
       "edhrec_rank": 2401,
-      "gate": "template",
+      "gate": null,
       "name": "Mogis, God of Slaughter",
-      "reason": "no template for: As long as your devotion to black and red is less than seven, Mogis isn't a creature",
+      "reason": "",
       "scryfall_id": "521911e5-9ce5-4d55-bfc4-fbfeba4047fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moira Brown, Guide Author": {
@@ -179982,12 +179982,12 @@
     },
     "Mount Doom": {
       "edhrec_rank": 1217,
-      "gate": "template",
+      "gate": null,
       "name": "Mount Doom",
-      "reason": "no template for: {T}, Pay 1 life: Add {B} or {R}",
+      "reason": "",
       "scryfall_id": "2bb2e6cf-6e2d-4b0b-83d3-46aff575eee4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mount Velus Manticore": {
@@ -190282,12 +190282,12 @@
     },
     "Oathsworn Vampire": {
       "edhrec_rank": 6095,
-      "gate": "template",
+      "gate": null,
       "name": "Oathsworn Vampire",
-      "reason": "no template for: You may cast this card from your graveyard if you gained life this turn",
+      "reason": "",
       "scryfall_id": "cde542de-0b87-4eb1-be05-abdb729ada10",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ob Nixilis Reignited": {
@@ -194252,12 +194252,12 @@
     },
     "Order of Sacred Dusk": {
       "edhrec_rank": 11110,
-      "gate": "residual",
+      "gate": null,
       "name": "Order of Sacred Dusk",
-      "reason": "printed text not represented: Convoke",
+      "reason": "",
       "scryfall_id": "134fe0d8-4326-43f3-ba0c-95589079164e",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Order of Succession": {
@@ -196742,12 +196742,12 @@
     },
     "Pact of the Serpent": {
       "edhrec_rank": 2183,
-      "gate": "template",
+      "gate": null,
       "name": "Pact of the Serpent",
-      "reason": "no template for: Choose a creature type. Target player draws X cards and loses X life, where X is the numbe",
+      "reason": "",
       "scryfall_id": "481d268a-848c-4ccd-95ff-eed77dc20776",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pact of the Titan": {
@@ -201082,12 +201082,12 @@
     },
     "Phenax, God of Deception": {
       "edhrec_rank": 5011,
-      "gate": "template",
+      "gate": null,
       "name": "Phenax, God of Deception",
-      "reason": "no template for: As long as your devotion to blue and black is less than seven, Phenax isn't a creature",
+      "reason": "",
       "scryfall_id": "87818ace-64fb-4dca-8f9b-1d3402f088ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phenomenon Investigators": {
@@ -208302,12 +208302,12 @@
     },
     "Promise of Aclazotz // Foul Rebirth": {
       "edhrec_rank": 7398,
-      "gate": "template",
+      "gate": null,
       "name": "Promise of Aclazotz // Foul Rebirth",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice a non-Demon creature. If you do, popu",
+      "reason": "",
       "scryfall_id": "a138b213-653d-4f1d-8674-db71e871c8d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Promise of Bunrei": {
@@ -212702,12 +212702,12 @@
     },
     "Radiant Destiny": {
       "edhrec_rank": 5453,
-      "gate": "template",
+      "gate": null,
       "name": "Radiant Destiny",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "d1d03bfb-c3bf-4837-b4df-e6339997dedb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radiant Epicure": {
@@ -218642,12 +218642,12 @@
     },
     "Redemption Choir": {
       "edhrec_rank": 6166,
-      "gate": "template",
+      "gate": null,
       "name": "Redemption Choir",
-      "reason": "no template for: Coven — Whenever this creature enters or attacks, if you control three or more creatures w",
+      "reason": "",
       "scryfall_id": "981dcacb-24a3-43bb-bb64-2b227f31dc3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redemptor Dreadnought": {
@@ -222232,12 +222232,12 @@
     },
     "Return to Dust": {
       "edhrec_rank": 1524,
-      "gate": "template",
+      "gate": null,
       "name": "Return to Dust",
-      "reason": "no template for: Exile target artifact or enchantment. If you cast this spell during your main phase, you m",
+      "reason": "",
       "scryfall_id": "3c3745c2-5509-4d6b-8f49-5cb93374edea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to Nature": {
@@ -255422,12 +255422,12 @@
     },
     "Sorin, Lord of Innistrad": {
       "edhrec_rank": 4879,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Lord of Innistrad",
-      "reason": "no template for: +1: Create a 1/1 black Vampire creature token with lifelink",
+      "reason": "",
       "scryfall_id": "ab98caf7-cc24-4027-ad8a-026150b61858",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sorin, Lord of Innistrad Emblem": {
@@ -287722,12 +287722,12 @@
     },
     "Timothar, Baron of Bats": {
       "edhrec_rank": 9598,
-      "gate": "template",
+      "gate": null,
       "name": "Timothar, Baron of Bats",
-      "reason": "no template for: Ward—Discard a card",
+      "reason": "",
       "scryfall_id": "7b01ecb8-02e2-4da2-8bf3-9c3753b23ba4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tin Street Dodger": {
@@ -297542,12 +297542,12 @@
     },
     "Undying Evil": {
       "edhrec_rank": 4438,
-      "gate": "template",
+      "gate": null,
       "name": "Undying Evil",
-      "reason": "no template for: Target creature gains undying until end of turn",
+      "reason": "",
       "scryfall_id": "325f2243-54fd-484b-a742-166cea7ec179",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Undying Flames": {
@@ -307752,12 +307752,12 @@
     },
     "Vona, Butcher of Magan": {
       "edhrec_rank": 5685,
-      "gate": "template",
+      "gate": null,
       "name": "Vona, Butcher of Magan",
-      "reason": "no template for: {T}, Pay 7 life: Destroy target nonland permanent. Activate only during your turn",
+      "reason": "",
       "scryfall_id": "e1033640-5676-4f19-acea-2a69a549c8b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voodoo Doll": {
@@ -320222,12 +320222,12 @@
     },
     "Xenagos, God of Revels": {
       "edhrec_rank": 1195,
-      "gate": "template",
+      "gate": null,
       "name": "Xenagos, God of Revels",
-      "reason": "no template for: As long as your devotion to red and green is less than seven, Xenagos isn't a creature",
+      "reason": "",
       "scryfall_id": "66581b3b-4e5b-4580-8fec-9684f0168cdb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xenagos, the Reveler": {

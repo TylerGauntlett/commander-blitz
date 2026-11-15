@@ -36,7 +36,7 @@ from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.objects import PLUS_ONE
-from commanderblitz.engine.primitives import add_counters, lose_life, pay_energy
+from commanderblitz.engine.primitives import add_counters, gain_life, lose_life, pay_energy
 from commanderblitz.engine.sandbox import GameBuilder
 from commanderblitz.engine.stack import push_spell
 from commanderblitz.engine.state import new_object
@@ -441,6 +441,7 @@ class TestActivatedAbilities:
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _reach_the_level(game, oid, ability)
+            _make_the_type_choice(game, oid, ability)
             _enchant_something(game, oid, zone)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
@@ -695,9 +696,21 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     board has none -- which reported a working card as unusable.
     """
     cost = ability.cost
-    spec = getattr(cost, "sacrifice", None) if cost else None
-    if not spec:
+    if cost is None:
         return
+    # Glass-Cast Heart sacrifices "this artifact and thirteen Blood tokens":
+    # each part of a list-form cost gets its own fodder, since one permanent
+    # pays for only one part. A `self_only` part is the source, which the
+    # sandbox puts out itself.
+    for spec in getattr(cost, "sacrifice_parts", None) or ():
+        if not spec.get("self_only"):
+            _provide_one_sacrifice(game, registry, spec)
+    if getattr(cost, "sacrifice", None):
+        _provide_one_sacrifice(game, registry, cost.sacrifice)
+
+
+def _provide_one_sacrifice(game: Game, registry, spec) -> None:
+    """Fodder for one sacrifice selector: as many as its ``count``."""
     # As many as the cost asks for, not one. Bolas's Citadel sacrifices **ten**
     # nonland permanents, and a board handed a single creature reported a
     # working card as unusable -- the same false negative this helper exists to
@@ -866,6 +879,30 @@ def _provide_the_counter_fodder(game: Game, registry, ability, oid: int) -> None
     game.state.battlefield.append(fodder.oid)
 
 
+def _make_the_type_choice(game: Game, oid: int, ability) -> None:
+    """Name the creature type an "As this enters, choose a creature type" card chose.
+
+    The sandbox puts the card straight onto the battlefield, so the choice it
+    makes as it enters is never made, and an ability that reads "of the chosen
+    type" -- Kindred Boon's counter target, Etchings of the Chosen's sacrifice
+    cost -- matched nothing and reported a working card as unusable. Entering
+    would have asked; this answers with the type of a creature its controller
+    already has, which is what any player choosing for value would name.
+    """
+    if "chosen type" not in (ability.text or "").lower():
+        return
+    obj = game.state.objects[oid]
+    if obj.chosen_type is not None:
+        return
+    for other in game.state.battlefield:
+        if other == oid or game.state.objects[other].controller != obj.controller:
+            continue
+        here = chars(game.state, other)
+        if "Creature" in {str(t) for t in here.types} and here.subtypes:
+            obj.chosen_type = sorted(str(s) for s in here.subtypes)[0]
+            return
+
+
 def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -> None:
     """Put out whatever an "activate only if..." clause is counting.
 
@@ -923,6 +960,18 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
         for pid in pids:
             lose_life(game.state, pid, int(right["const"]))
+        return
+
+    # "Activate only if you gained life this turn" -- Brackish Trudge. The
+    # mirror of the life-lost branch above: the life is really gained, through
+    # `primitives.gain_life`, so the ledger the condition reads is folded from
+    # the event and a card naming the wrong tally still fails.
+    if "life_gained_this_turn" in left:
+        whose = str(left["life_gained_this_turn"])
+        pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
+        amount = int(right["const"]) + (1 if condition.get("cmp") == ">" else 0)
+        for pid in pids:
+            gain_life(game.state, pid, max(1, amount))
         return
 
     # "Activate only if you've paid or lost four or more {E} this turn" --

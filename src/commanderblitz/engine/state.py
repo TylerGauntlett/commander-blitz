@@ -1116,6 +1116,11 @@ class GameState:
                 # `you_gain_life` trigger with `nth` reads it at queue time.
                 ledger.life_gains[pid] = ledger.life_gains.get(pid, 0) + 1
                 data["nth"] = ledger.life_gains[pid]
+                # The amount is a static's input (`life_gained_this_turn`,
+                # Oathsworn Vampire), and `chars` caches per `char_version`.
+                # `gain_life` bumped it before this event fired, so an answer
+                # read in between would otherwise outlive the gain.
+                self.bump_chars()
         elif event.type == EventType.INVESTIGATED:
             # "Whenever you investigate for the first time each turn." The
             # ordinal goes on the event, as a life gain's does above, so an

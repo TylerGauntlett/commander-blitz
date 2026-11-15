@@ -288,6 +288,31 @@ class TestTheEaglesAreBirdSoldiers:
         assert "Soldier" not in other.subtypes
 
 
+class TestTheBatIsAOneOneBlackFlier:
+    """Timothar, Baron of Bats and Bat Colony: *"create a **1/1 black Bat**
+    creature token with flying."*
+
+    The pool's other 1/1 fliers are the wrong colour and creature type --
+    `bird_1_1_w_flying` is a white Bird -- and the type is the error that costs:
+    in Blood Rites the Bat is a body Vampire lords do not pump, and Timothar's
+    return rides on that one token.
+    """
+
+    def test_it_is_a_one_one_black_bat_with_flying(self, pool):
+        token = pool.get("bat_1_1_b_flying")
+        assert token is not None
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Bat"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_white_bird_is_still_a_separate_token(self, pool):
+        other = pool.get("bird_1_1_w_flying")
+        assert other is not None
+        assert "Bat" not in other.subtypes
+        assert sorted(other.colors) == ["W"]
+
+
 class TestOcelotPridesCatIsAOneOneWhite:
     """Ocelot Pride: *"create a **1/1 white Cat** creature token."*
 
