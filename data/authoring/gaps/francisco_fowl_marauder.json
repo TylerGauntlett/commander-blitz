@@ -1,0 +1,18 @@
+{
+  "card_id": "francisco_fowl_marauder",
+  "name": "Francisco, Fowl Marauder",
+  "oracle_text": "Flying\nFrancisco can't block.\nWhenever one or more Pirates you control deal damage to a player, Francisco explores.\nPartner (You can have two commanders if both have partner.)",
+  "blocked_sentences": [
+    "Whenever one or more Pirates you control deal damage to a player, Francisco explores."
+  ],
+  "needs": [
+    {
+      "capability": "batched_damage_to_players_trigger",
+      "kind": "trigger_event",
+      "what": "a 'whenever one or more <filter> you control deal damage to a player' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch -- e.g. `batched: true` accepted on `deals_damage_to_player` (adding it to `BATCHED_EVENTS`, grouped by the `batch` that `damage_player` stamps), with `filter: {\"subtypes\": [\"Pirate\"]}` and `controller: \"you\"`",
+      "why_existing_wont_do": "`creatures_deal_combat_damage` has the right one-or-more batching and a `filter` over the damagers but is combat damage only, so a Pirate's noncombat damage (a pinger, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates connecting in the same combat damage step would fire twice and make Francisco explore twice, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect (`explore` with `objects: {\"self_only\": true}`) and the 'can't block' static (`cant_block` on self) are expressible; only the trigger is missing"
+    }
+  ],
+  "closest_existing": ["creatures_deal_combat_damage", "deals_damage_to_player"],
+  "confidence": "high"
+}
