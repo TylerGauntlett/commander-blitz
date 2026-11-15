@@ -6682,6 +6682,14 @@
     },
     "zone": "graveyard"
   },
+  "exquisite_blood": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "exsanguinate": {
     "life": {
       "0": 60,
@@ -11022,6 +11030,11 @@
       "0": 2
     }
   },
+  "kindred_boon": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kindred_discovery": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14415,6 +14428,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "order_of_sacred_dusk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "order_of_the_sacred_bell": {
     "zone": "battlefield"
   },
@@ -14588,6 +14605,9 @@
     "zone": "battlefield"
   },
   "pact_of_negation": {
+    "zone": "graveyard"
+  },
+  "pact_of_the_serpent": {
     "zone": "graveyard"
   },
   "padeem_consul_of_innovation": {
@@ -15730,6 +15750,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "radiant_destiny": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "radiant_fountain": {
@@ -22722,6 +22746,14 @@
     "zone": "battlefield"
   },
   "volunteer_militia": {
+    "zone": "battlefield"
+  },
+  "vona_butcher_of_magan": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "voracious_bibliophile": {

@@ -88782,12 +88782,12 @@
     },
     "Exquisite Blood": {
       "edhrec_rank": 510,
-      "gate": "template",
+      "gate": null,
       "name": "Exquisite Blood",
-      "reason": "no template for: Whenever an opponent loses life, you gain that much life",
+      "reason": "",
       "scryfall_id": "0e8ccfa7-4178-476a-a155-0ca1c98556c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exquisite Firecraft": {
@@ -149042,12 +149042,12 @@
     },
     "Kindred Boon": {
       "edhrec_rank": 7215,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Boon",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "a9d21710-3006-45a0-9af2-275159bb5315",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kindred Charge": {
@@ -194252,12 +194252,12 @@
     },
     "Order of Sacred Dusk": {
       "edhrec_rank": 11110,
-      "gate": "template",
+      "gate": null,
       "name": "Order of Sacred Dusk",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "134fe0d8-4326-43f3-ba0c-95589079164e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Order of Succession": {
@@ -196742,12 +196742,12 @@
     },
     "Pact of the Serpent": {
       "edhrec_rank": 2183,
-      "gate": "template",
+      "gate": null,
       "name": "Pact of the Serpent",
-      "reason": "no template for: Choose a creature type. Target player draws X cards and loses X life, where X is the numbe",
+      "reason": "",
       "scryfall_id": "481d268a-848c-4ccd-95ff-eed77dc20776",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pact of the Titan": {
@@ -212702,12 +212702,12 @@
     },
     "Radiant Destiny": {
       "edhrec_rank": 5453,
-      "gate": "template",
+      "gate": null,
       "name": "Radiant Destiny",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "d1d03bfb-c3bf-4837-b4df-e6339997dedb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radiant Epicure": {
@@ -307752,12 +307752,12 @@
     },
     "Vona, Butcher of Magan": {
       "edhrec_rank": 5685,
-      "gate": "template",
+      "gate": null,
       "name": "Vona, Butcher of Magan",
-      "reason": "no template for: {T}, Pay 7 life: Destroy target nonland permanent. Activate only during your turn",
+      "reason": "",
       "scryfall_id": "e1033640-5676-4f19-acea-2a69a549c8b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voodoo Doll": {
