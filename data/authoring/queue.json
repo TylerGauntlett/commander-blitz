@@ -218642,12 +218642,12 @@
     },
     "Redemption Choir": {
       "edhrec_rank": 6166,
-      "gate": "template",
+      "gate": null,
       "name": "Redemption Choir",
-      "reason": "no template for: Coven — Whenever this creature enters or attacks, if you control three or more creatures w",
+      "reason": "",
       "scryfall_id": "981dcacb-24a3-43bb-bb64-2b227f31dc3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redemptor Dreadnought": {
@@ -255422,12 +255422,12 @@
     },
     "Sorin, Lord of Innistrad": {
       "edhrec_rank": 4879,
-      "gate": "template",
+      "gate": null,
       "name": "Sorin, Lord of Innistrad",
-      "reason": "no template for: +1: Create a 1/1 black Vampire creature token with lifelink",
+      "reason": "",
       "scryfall_id": "ab98caf7-cc24-4027-ad8a-026150b61858",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sorin, Lord of Innistrad Emblem": {

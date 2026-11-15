@@ -192136,6 +192136,146 @@
         {
           "effects": [
             {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Coven — Whenever this creature enters or attacks, if you control three or more creatures with different powers, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "of": "power"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Coven — Whenever this creature enters or attacks, if you control three or more creatures with different powers, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "of": "power"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "redemption_choir",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Redemption Choir",
+      "oracle_text": "Lifelink\nCoven — Whenever this creature enters or attacks, if you control three or more creatures with different powers, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "as": "stormsinger_copies",
               "attacking": true,
               "controller": "you",
@@ -222769,6 +222909,129 @@
       "mana_cost": "{2}{B}",
       "name": "Sorin, Imperious Bloodlord",
       "oracle_text": "+1: Target creature you control gains deathtouch and lifelink until end of turn. If it's a Vampire, put a +1/+1 counter on it.\n+1: You may sacrifice a Vampire. When you do, Sorin deals 3 damage to any target and you gain 3 life.\n−3: You may put a Vampire creature card from your hand onto the battlefield.",
+      "source": "auto",
+      "subtypes": [
+        "Sorin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "vampire_1_1_b_lifelink"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 1/1 black Vampire creature token with lifelink."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: You get an emblem with \"Creatures you control get +1/+0.\""
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "as": "destroyed",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "binding": "destroyed",
+                "count": "all",
+                "is_token": false,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "exclude_self": true,
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "−6: Destroy up to three target creatures and/or other planeswalkers. Return each card put into a graveyard this way to the battlefield under your control."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "affects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              "effect": "buff",
+              "kind": "static",
+              "power": {
+                "const": 1
+              },
+              "text": "Creatures you control get +1/+0.",
+              "toughness": {
+                "const": 0
+              }
+            }
+          ]
+        }
+      ],
+      "id": "sorin_lord_of_innistrad",
+      "loyalty": 3,
+      "mana_cost": "{2}{W}{B}",
+      "name": "Sorin, Lord of Innistrad",
+      "oracle_text": "+1: Create a 1/1 black Vampire creature token with lifelink.\n−2: You get an emblem with \"Creatures you control get +1/+0.\"\n−6: Destroy up to three target creatures and/or other planeswalkers. Return each card put into a graveyard this way to the battlefield under your control.",
       "source": "auto",
       "subtypes": [
         "Sorin"
