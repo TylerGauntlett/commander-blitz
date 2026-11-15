@@ -5353,6 +5353,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dire_fleet_ravager": {
+    "life": {
+      "0": 26,
+      "1": 26
+    },
+    "zone": "battlefield"
+  },
   "director_nick_fury": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11759,6 +11766,14 @@
   },
   "leechridden_swamp": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "legate_lanius_caesar_s_ace": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "legion_loyalty": {

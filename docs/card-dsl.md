@@ -1986,6 +1986,7 @@ Anywhere a number is expected -- the leaf list is
 { "rolled": { "binding": "roll", "total": true } } // …the faces added up ("equal to the result")
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 { "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
+{ "fraction": { "of": a, "divisor": 3, "round": "up" } }  // "a third of …, rounded up"; see below
 ```
 
 `player_count` counts the seats a player spec names, never anything about
@@ -2031,8 +2032,8 @@ same name read on the effect side, through the one computation both use,
 `extreme_value` over a selector with `is_commander`: a selector walks one zone,
 and the commander usually sits in the command zone, which none reaches.
 
-`half` is the one division in the language, and it takes its rounding direction
-as a **required** key: 107.1a makes the card say which way a fraction goes, and
+`half` and `fraction` are the language's divisions, and both take their rounding
+direction as a **required** key: 107.1a makes the card say which way a fraction goes, and
 both directions are printed (Peer into the Abyss rounds up, Heartless
 Hidetsugu rounds down), so a default would be wrong for half the cards that use
 it. Peer into the Abyss is two of them, each read as its own instruction runs:
@@ -2045,8 +2046,18 @@ it. Peer into the Abyss is two of them, each read as its own instruction runs:
   "amount": { "half": { "of": { "life_of": { "target": "t1" } }, "round": "up" } } }
 ```
 
-Not a static magnitude (`static_value_keys` does not list it); no static prints a
-halving.
+`fraction` is every other printed divisor: `{"of": v, "divisor": n, "round": …}`
+with `n` a literal integer of at least 3. Dire Fleet Ravager's "each player
+loses a third of their life, rounded up" is a `for_each_player` whose
+`lose_life` amount is `{"fraction": {"of": {"life_of": {"binding":
+"each_player"}}, "divisor": 3, "round": "up"}}`, each seat's third read off its
+own total. A divisor of 2 is refused in favour of `half`, so one quotient has
+one spelling, and a computed divisor is refused because no card prints one. The
+near miss is `times` or `minus` arithmetic, which can approximate a third only
+for one life total.
+
+Neither is a static magnitude (`static_value_keys` lists neither); no static
+prints a division.
 
 `power_had` and `toughness_had` take no argument: they are always "the creature
 this trigger is about", the only object the death event snapshotted. `power_of

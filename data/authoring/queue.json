@@ -69232,12 +69232,12 @@
     },
     "Dire Fleet Ravager": {
       "edhrec_rank": 6297,
-      "gate": "template",
+      "gate": null,
       "name": "Dire Fleet Ravager",
-      "reason": "no template for: When this creature enters, each player loses a third of their life, rounded up",
+      "reason": "",
       "scryfall_id": "0d114e88-c5bd-416d-b9f1-25be1432c98c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dire Fleet Warmonger": {
@@ -156162,12 +156162,12 @@
     },
     "Legate Lanius, Caesar's Ace": {
       "edhrec_rank": 10854,
-      "gate": "template",
+      "gate": null,
       "name": "Legate Lanius, Caesar's Ace",
-      "reason": "no template for: Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures th",
+      "reason": "",
       "scryfall_id": "b522f45b-060b-4a77-9910-3c40e3b2de78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legerdemain": {

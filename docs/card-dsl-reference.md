@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 181 |
 | [Selectors](#selectors) | 77 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 74 |
+| [Values](#values) | 75 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 59 |
 | [Trigger filters](#trigger-filters) | 37 |
@@ -361,6 +361,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `energy_spent_this_turn` | Energy ({E}) the player paid or lost this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
+| `fraction` | A value divided by a literal `divisor` of 3 or more, rounded `up` or `down` (a third, a tenth). | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_commander_mana_value` | The greatest printed mana value among the player's commanders, wherever they are; 0 with none. Read as the effect resolves. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |

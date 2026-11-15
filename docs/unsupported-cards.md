@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**400 cards** blocked by **351** capabilities.
+**398 cards** blocked by **350** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -47,7 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
-| [fraction-of-value](#fraction-of-value) | 2 | 6297 | value |
 | [goad](#goad) | 2 | 6258 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -1237,24 +1236,6 @@ Blocks **2** cards.
 - **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
   - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
   - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
-
-</details>
-
-## fraction-of-value
-
-Blocks **2** cards.
-
-- **(value)** a value that divides another value by an arbitrary integer with a rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, so lose_life inside for_each_player can take ceil(life/3)
-  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({of, round}), which is hard-wired to divide by 2; `times`, `minus`, `sum`, `min` and `max` cannot express an integer division by 3, so a third of a life total rounded up has no spelling
-- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"count": {"zone": "battlefield", "types": ["Creature"], "controller": {"binding": "each_player"}}}, "divisor": 10, "round": "up"}}, used as the count of a sacrifice selector inside a for_each_player over opponents so each opponent sacrifices ceil(their creatures / 10) creatures of their choice
-  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/10) for every creature count, so the sacrifice can only be a fixed number, half or all of their creatures
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dire Fleet Ravager** (rank 6297) — `dire_fleet_ravager`
-  - When this creature enters, each player loses a third of their life, rounded up.
-- **Legate Lanius, Caesar's Ace** (rank 10854) — `legate_lanius_caesar_s_ace`
-  - Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.
 
 </details>
 

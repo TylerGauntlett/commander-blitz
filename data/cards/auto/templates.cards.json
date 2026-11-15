@@ -64342,6 +64342,68 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "fraction": {
+                      "divisor": 3,
+                      "of": {
+                        "life_of": {
+                          "binding": "each_player"
+                        }
+                      },
+                      "round": "up"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player loses a third of their life, rounded up.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dire_fleet_ravager",
+      "keywords": [
+        "menace",
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Dire Fleet Ravager",
+      "oracle_text": "Menace, deathtouch\nWhen this creature enters, each player loses a third of their life, rounded up.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "subtypes": [
@@ -140844,6 +140906,106 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": {
+                      "fraction": {
+                        "divisor": 10,
+                        "of": {
+                          "count": {
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          }
+                        },
+                        "round": "up"
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a creature, put a +1/+1 counter on Legate Lanius.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "legate_lanius_caesar_s_ace",
+      "mana_cost": "{2}{B}{R}",
+      "name": "Legate Lanius, Caesar's Ace",
+      "oracle_text": "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.\nWhenever an opponent sacrifices a creature, put a +1/+1 counter on Legate Lanius.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

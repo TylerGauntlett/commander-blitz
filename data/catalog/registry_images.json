@@ -4635,6 +4635,10 @@
     "artist": "Zoltan Boros",
     "scryfall_id": "9de2ad47-c6d5-4cd8-ae32-66ae167e25a0"
   },
+  "dire_fleet_ravager": {
+    "artist": "Bram Sels",
+    "scryfall_id": "0d114e88-c5bd-416d-b9f1-25be1432c98c"
+  },
   "director_nick_fury": {
     "artist": "Javier Charro",
     "scryfall_id": "7b7e00b4-d2f5-4c89-8a1b-e22b7bba111b"
@@ -10320,6 +10324,10 @@
   "leechridden_swamp": {
     "artist": "Drew Tucker",
     "scryfall_id": "a07a0e31-ace6-40ad-8700-2d58135b5320"
+  },
+  "legate_lanius_caesar_s_ace": {
+    "artist": "Bruno Biazotto",
+    "scryfall_id": "b522f45b-060b-4a77-9910-3c40e3b2de78"
   },
   "legion_lieutenant": {
     "artist": "Zezhou Chen",
