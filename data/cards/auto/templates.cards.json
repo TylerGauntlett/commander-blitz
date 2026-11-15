@@ -68700,6 +68700,90 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "ability": 0,
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "is_token": false,
+                "subtypes": [
+                  "Vampire"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "counters": {
+                "-1/-1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": 0
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "dusk_legion_sergeant",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Dusk Legion Sergeant",
+      "oracle_text": "Menace\n{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn. (When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

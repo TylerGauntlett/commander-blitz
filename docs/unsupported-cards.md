@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**394 cards** blocked by **342** capabilities.
+**393 cards** blocked by **341** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -262,7 +262,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
-| [persist](#persist) | 1 | 7523 | keyword |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -4400,20 +4399,6 @@ Blocks **1** card.
 
 - **Smuggler's Share** (rank 1701) — `smuggler_s_share`
   - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
-
-</details>
-
-## persist
-
-Blocks **1** card.
-
-- **(keyword)** the persist keyword (702.79): a triggered ability 'When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it', grantable until end of turn via grant_keyword to a selector (here nontoken Vampire creatures you control)
-  <br>Why the existing vocabulary won't do: persist is not in the keywords list, so grant_keyword cannot name it. Spelling it as a grant_ability of a granted 'dies' trigger plus put_onto_battlefield with counters would need the intervening-if to read the -1/-1 counters the creature had on the battlefield (last-known information); counters_on would read the graveyard card, and snapshot is not general LKI, so the condition could not be said exactly
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dusk Legion Sergeant** (rank 7523) — `dusk_legion_sergeant`
-  - {1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn. (When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)
 
 </details>
 

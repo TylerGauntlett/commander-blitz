@@ -5726,6 +5726,10 @@
   "dusk_imp": {
     "zone": "battlefield"
   },
+  "dusk_legion_sergeant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dusk_urchins": {
     "battlefield_count": 33,
     "hand_size": {

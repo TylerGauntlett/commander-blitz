@@ -77082,12 +77082,12 @@
     },
     "Dusk Legion Sergeant": {
       "edhrec_rank": 7523,
-      "gate": "template",
+      "gate": null,
       "name": "Dusk Legion Sergeant",
-      "reason": "no template for: {1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist ",
+      "reason": "",
       "scryfall_id": "5bfc9243-7aec-48e6-9f3b-1bbbb5370063",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dusk Mangler": {

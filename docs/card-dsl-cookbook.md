@@ -15354,6 +15354,34 @@ granted to — Malakir Rebirth — and two things make that work:
 - The leave-the-battlefield branch of `triggers._candidates` pairs its walk of
   printed abilities with `granted_abilities`, as every other branch does.
 
+### "Gains persist until end of turn" — a granted keyword trigger
+
+Persist and undying are triggered abilities (702.79a, 702.93a), not `Keyword`
+values, so `grant_keyword` cannot name them: a grant of either is `grant_ability`
+handing over the same `dies` trigger a printed persist creature carries.
+
+```jsonc
+// Dusk Legion Sergeant — "{1}{B}, Sacrifice this creature: Each nontoken
+// Vampire creature you control gains persist until end of turn."
+"grantable_abilities": [
+  {"kind": "triggered", "text": "Persist",
+   "trigger": {"event": "dies", "source": "self",
+               "condition": {"cmp": "=", "left": {"counters_had": "-1/-1"}, "right": 0}},
+   "effects": [{"op": "return_from_graveyard", "objects": {"self_only": true},
+                "destination": "battlefield", "counters": {"-1/-1": 1}}]}
+],
+"effects": [{"op": "grant_ability", "ability": 0,
+             "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"],
+                         "subtypes": ["Vampire"], "is_token": false, "count": "all"}}]
+```
+
+The condition is `counters_had`, the counters snapshotted onto the dies event,
+never `counters_on`, which reads the wiped graveyard card and would return a
+creature that already had a -1/-1 counter. The selector is read as the ability
+resolves (611.2c), so a Vampire arriving later never has persist; the grant
+points at the granter's card, so it fires after the Sergeant sacrificed itself
+to pay for it. Undying is the same shape reading `+1/+1`.
+
 ## "…fight Grothama" — `granter`
 
 Grothama, All-Devouring — *Other creatures have "Whenever this creature attacks,
