@@ -19250,6 +19250,13 @@
   "spectral_rider": {
     "zone": "battlefield"
   },
+  "spectral_sailor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "speed_young_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"

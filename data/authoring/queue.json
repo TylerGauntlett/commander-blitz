@@ -257712,12 +257712,12 @@
     },
     "Spectral Sailor": {
       "edhrec_rank": 1930,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Sailor",
-      "reason": "no template for: {3}{U}: Draw a card",
+      "reason": "",
       "scryfall_id": "5ef30b6c-0806-4bf6-9a84-c2aea8d84cf1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Searchlight": {
