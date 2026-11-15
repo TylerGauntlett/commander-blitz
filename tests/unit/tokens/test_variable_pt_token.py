@@ -139,6 +139,7 @@ class TestTheToken:
         assert flagged == sorted(
             [
                 SHARK,
+                "dinosaur_beast_x_x_g_trample",
                 "dragon_illusion_x_x_r_flying_haste",
                 "hydra_x_x_g",
                 "aetherborn_x_x_b",
