@@ -2926,3 +2926,28 @@ class TestTheGreenDinosaursAreTramplers:
         assert (other.power, other.toughness) == (3, 1)
         assert list(other.colors) == ["R"]
         assert not other.keywords
+
+
+class TestSkeletonCrewsTokenIsAVanillaSkeletonPirate:
+    """Skeleton Crew: *"create a **2/2 black Skeleton Pirate** creature
+    token."*
+
+    The pool's nearest 2/2 black Pirate is `pirate_2_2_b_menace`, which carries
+    menace and is no Skeleton. Both halves matter: Skeleton Crew's own static
+    pumps each other Skeleton *or* Pirate, so the subtypes are what it reads, and
+    a menace token would be an evasive body the card never prints.
+    """
+
+    def test_it_is_a_two_two_black_skeleton_pirate_with_no_keywords(self, pool):
+        token = pool.get("skeleton_pirate_2_2_b")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert list(token.colors) == ["B"]
+        assert sorted(token.subtypes) == ["Pirate", "Skeleton"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_menace_pirate_is_still_a_separate_token(self, pool):
+        other = pool.get("pirate_2_2_b_menace")
+        assert "menace" in other.keywords
+        assert "Skeleton" not in other.subtypes

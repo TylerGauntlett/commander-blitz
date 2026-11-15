@@ -249202,12 +249202,12 @@
     },
     "Skeleton Crew": {
       "edhrec_rank": 5662,
-      "gate": "template",
+      "gate": null,
       "name": "Skeleton Crew",
-      "reason": "no template for: Each other creature you control that's a Skeleton or Pirate gets +1/+1",
+      "reason": "",
       "scryfall_id": "dd9f52d6-da6d-4f68-aafb-6bd3d022f616",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skeleton Key": {

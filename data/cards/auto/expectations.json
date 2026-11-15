@@ -18770,6 +18770,10 @@
   "skeletal_snake": {
     "zone": "battlefield"
   },
+  "skeleton_crew": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skinrender": {
     "zone": "battlefield"
   },

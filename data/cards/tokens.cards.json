@@ -3175,6 +3175,27 @@
       ]
     },
     {
+      "id": "skeleton_pirate_2_2_b",
+      "name": "Skeleton Pirate Token",
+      "oracle_text": "2/2 black Skeleton Pirate creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Skeleton",
+        "Pirate"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "zombie_knight_2_2_b_menace",
       "name": "Zombie Knight Token",
       "oracle_text": "2/2 black Zombie Knight creature token with menace.",

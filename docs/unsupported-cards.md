@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**392 cards** blocked by **344** capabilities.
+**391 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -310,7 +310,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [skeleton-pirate-2-2-b-token](#skeleton-pirate-2-2-b-token) | 1 | 5662 | token |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
@@ -5070,20 +5069,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## skeleton-pirate-2-2-b-token
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Skeleton Pirate creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has pirate_2_2_b_menace (a Pirate with menace, not a Skeleton) and other 2/2 black tokens (zombie_2_2_b, rogue_2_2_b) with the wrong creature types; none is a vanilla 2/2 black Skeleton Pirate
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skeleton Crew** (rank 5662) — `skeleton_crew`
-  - Whenever one or more creature cards leave your graveyard, create a 2/2 black Skeleton Pirate creature token. (This ability triggers only from the battlefield.)
 
 </details>
 
