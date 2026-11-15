@@ -1,0 +1,22 @@
+{
+  "card_id": "quartzwood_crasher",
+  "name": "Quartzwood Crasher",
+  "oracle_text": "Trample\nWhenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player.",
+  "blocked_sentences": [
+    "Whenever one or more creatures you control with trample deal combat damage to a player, create an X/X green Dinosaur Beast creature token with trample, where X is the amount of damage those creatures dealt to that player."
+  ],
+  "needs": [
+    {
+      "capability": "dinosaur_beast_x_x_g_trample",
+      "kind": "token",
+      "what": "an X/X green Dinosaur Beast creature token with trample, its size set at creation from the amount of combat damage the batched trigger's creatures dealt to that player",
+      "why_existing_wont_do": "token_ids is closed and has no Dinosaur Beast token; the nearest are hydra_x_x_g and ooze_x_x_g (wrong subtypes, no trample), ooze_0_0_g_trample (Ooze) and dinosaur_3_1_r (fixed 3/1 red). The trigger itself looks expressible via creatures_deal_combat_damage with batched and a keywords: [trample] filter, but the token is missing"
+    }
+  ],
+  "closest_existing": [
+    "hydra_x_x_g",
+    "ooze_0_0_g_trample",
+    "creatures_deal_combat_damage"
+  ],
+  "confidence": "high"
+}

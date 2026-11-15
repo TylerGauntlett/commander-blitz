@@ -165402,12 +165402,12 @@
     },
     "Majestic Heliopterus": {
       "edhrec_rank": 9427,
-      "gate": "template",
+      "gate": null,
       "name": "Majestic Heliopterus",
-      "reason": "no template for: Whenever this creature attacks, another target Dinosaur you control gains flying until end",
+      "reason": "",
       "scryfall_id": "637741c4-5420-4a54-839e-4fd454d93172",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Majestic Metamorphosis": {
@@ -195302,12 +195302,12 @@
     },
     "Otepec Huntmaster": {
       "edhrec_rank": 3064,
-      "gate": "template",
+      "gate": null,
       "name": "Otepec Huntmaster",
-      "reason": "no template for: Dinosaur spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "00a87f71-8dbe-44e1-b69b-a03f6ab62055",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Otharri, Suns' Glory": {
@@ -213422,12 +213422,12 @@
     },
     "Raging Regisaur": {
       "edhrec_rank": 8918,
-      "gate": "template",
+      "gate": null,
       "name": "Raging Regisaur",
-      "reason": "no template for: Whenever this creature attacks, it deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "35e68007-ac45-40a4-91f3-4a1edf00bd0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raging River": {

@@ -12355,6 +12355,10 @@
     },
     "zone": "graveyard"
   },
+  "majestic_heliopterus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "make_your_move": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -14616,6 +14620,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "otepec_huntmaster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "otherworld_atlas": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15962,6 +15970,10 @@
     "zone": "battlefield"
   },
   "raging_redcap": {
+    "zone": "battlefield"
+  },
+  "raging_regisaur": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "raiding_nightstalker": {
