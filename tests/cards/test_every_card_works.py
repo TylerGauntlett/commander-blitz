@@ -36,7 +36,7 @@ from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.objects import PLUS_ONE
-from commanderblitz.engine.primitives import add_counters, lose_life, pay_energy
+from commanderblitz.engine.primitives import add_counters, gain_life, lose_life, pay_energy
 from commanderblitz.engine.sandbox import GameBuilder
 from commanderblitz.engine.stack import push_spell
 from commanderblitz.engine.state import new_object
@@ -960,6 +960,18 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
         for pid in pids:
             lose_life(game.state, pid, int(right["const"]))
+        return
+
+    # "Activate only if you gained life this turn" -- Brackish Trudge. The
+    # mirror of the life-lost branch above: the life is really gained, through
+    # `primitives.gain_life`, so the ledger the condition reads is folded from
+    # the event and a card naming the wrong tally still fails.
+    if "life_gained_this_turn" in left:
+        whose = str(left["life_gained_this_turn"])
+        pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
+        amount = int(right["const"]) + (1 if condition.get("cmp") == ">" else 0)
+        for pid in pids:
+            gain_life(game.state, pid, max(1, amount))
         return
 
     # "Activate only if you've paid or lost four or more {E} this turn" --
