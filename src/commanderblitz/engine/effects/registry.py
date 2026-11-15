@@ -148,6 +148,11 @@ RECORDING_OPS = frozenset(
         #: arrived, not what was chosen: a commander redirected to the command
         #: zone was not put there. See `ops_cards.op_put_on_top`.
         "put_on_top",
+        #: The permanents actually put onto the battlefield -- Zara, Renegade
+        #: Recruiter's "return **that creature** to its owner's hand at the
+        #: beginning of the next end step". What arrived, not what was chosen.
+        #: See `ops_removal.op_put_onto_battlefield`.
+        "put_onto_battlefield",
         #: The exiled cards actually put into a graveyard -- Foreboding
         #: Steamboat's "if you do, investigate". What arrived, not what was
         #: chosen: one a Rest in Peace sent back to exile is not in it. See

@@ -321972,12 +321972,12 @@
     },
     "Zara, Renegade Recruiter": {
       "edhrec_rank": 4732,
-      "gate": "template",
+      "gate": null,
       "name": "Zara, Renegade Recruiter",
-      "reason": "no template for: Whenever Zara attacks, look at defending player's hand. You may put a creature card from i",
+      "reason": "",
       "scryfall_id": "d8bd1312-2c3a-4591-943c-c1550b506fa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zarda, the Power Princess": {

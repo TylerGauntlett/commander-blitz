@@ -710,6 +710,14 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     if the object is no longer where the return could reach it, no counters go
     anywhere -- and a separate op naming the same binding would happily counter
     a permanent that got back to the battlefield some other way.
+
+    ``as`` records **the objects that actually arrived** -- Zara, Renegade
+    Recruiter's "Return **that creature** to its owner's hand at the beginning
+    of the next end step", read by a `delay` as ``{"binding": …}``. What
+    arrived, not what was chosen: an Aura with nothing to enchant and a Mox
+    Diamond whose discard was declined stayed where they were and are not in
+    it. Written even when nothing arrived, so a declined "you may" leaves an
+    empty record rather than an earlier one.
     """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
@@ -722,6 +730,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     counters = spec.get("counters") or {}
     hosts = named_hosts(ctx, spec)
     arrived: list[int] = []
+    landed: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -767,6 +776,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             # counters would land on a graveyard card and the combat rider would
             # put a non-permanent into `combat.attackers`.
             continue
+        landed.append(oid)
         # Placed immediately after the move rather than as an enters-with
         # replacement -- the same trade `op_return_from_graveyard` documents,
         # observable only by another trigger ordered between the two.
@@ -781,6 +791,8 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     # "…attacking that player or a planeswalker they control" -- asked once
     # every permanent has arrived, so no question interrupts the batch.
     yield from _aim_at_planeswalker(ctx, spec, arrived, attacking)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = landed
 
 
 @register("create_token")

@@ -236,7 +236,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),
-    "put_onto_battlefield": ("Board", "Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it.",
+    "put_onto_battlefield": ("Board", "Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `as` binds what arrived.",
                              None),
     "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token; `counters` (kind to value) are what each token enters with.",
                      'An X/X token — "create an X/X blue Shark creature token"'),

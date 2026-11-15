@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**390 cards** blocked by **342** capabilities.
+**389 cards** blocked by **341** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -284,7 +284,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
-| [put-onto-battlefield-binding](#put-onto-battlefield-binding) | 1 | 4732 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -4694,20 +4693,6 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
-
-</details>
-
-## put-onto-battlefield-binding
-
-Blocks **1** card.
-
-- **(op)** an `as` option on put_onto_battlefield that binds the oids it actually put onto the battlefield, so a later `delay` (step end_step) can `return_to_hand` exactly that creature, as create_token's and copy_permanent's `as` already let Flamerush Rider exile 'the token'
-  <br>Why the existing vocabulary won't do: The first two sentences fit attacks trigger + look_at_hand {binding: defender} + may/put_onto_battlefield from {zone: hand, player: {binding: defender}, types: [Creature], count: 1} with controller you, tapped, attacking {binding: defender}, or_planeswalker. But op_put_onto_battlefield reads no `as` (absent from op_options and from its source), so nothing names 'that creature'. snapshot binds a whole unchosen pool, reveal's `as` would make the hand public (Zara only looks), and a delayed return_to_hand over a selector like {controller: you, owner: {binding: defender}, entered_this_turn: true} is an approximation that could bounce some other stolen creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zara, Renegade Recruiter** (rank 4732) — `zara_renegade_recruiter`
-  - Return that creature to its owner's hand at the beginning of the next end step.
 
 </details>
 

@@ -3457,6 +3457,30 @@ separate op would happily counter a permanent that got back some other way. Only
 these two ops read `counters`; anywhere else it is a load error, because it would
 be accepted, ignored, and — for a keyword counter — invisible on the board.
 
+**`as` on `put_onto_battlefield`** names "that creature" for a later delay:
+
+```jsonc
+// Zara, Renegade Recruiter: "…You may put a creature card from it onto the
+// battlefield under your control tapped and attacking that player or a
+// planeswalker they control. Return that creature to its owner's hand at the
+// beginning of the next end step."
+{ "op": "put_onto_battlefield", "controller": "you", "tapped": true,
+  "attacking": { "binding": "defender" }, "or_planeswalker": true,
+  "objects": { "zone": "hand", "player": { "binding": "defender" },
+               "types": ["Creature"], "count": 1, "chooser": "controller" },
+  "as": "recruited" },
+{ "op": "delay", "step": "end_step",
+  "effects": [ { "op": "return_to_hand",
+                 "objects": { "binding": "recruited", "zone": "battlefield" } } ] }
+```
+
+The binding holds the permanents that **arrived**, not the cards chosen: one
+whose arrival was replaced (Mox Diamond declined, an Aura with nothing to
+enchant) is not in it. It is written even when nothing arrived, so a declined
+`may` returns nothing. The near miss is a selector over the board at end step
+(`{"controller": "you", "owner": {"binding": "defender"}}`), which also bounces
+every other creature borrowed from that player this turn.
+
 ### `end_of_combat` — the one step that is not once a turn
 
 ```jsonc

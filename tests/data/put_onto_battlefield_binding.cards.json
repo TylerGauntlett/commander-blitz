@@ -1,0 +1,44 @@
+{
+  "_comment": "Cards that exist only for tests/unit/effects/test_put_onto_battlefield_binding.py. Never part of a deck list. `t_recruiter` is Zara, Renegade Recruiter's attack trigger: it puts a creature card from the defending player's hand onto the battlefield attacking, binds what arrived with `as`, and returns exactly that creature at the next end step.",
+  "cards": [
+    {
+      "id": "t_recruiter",
+      "name": "Test Recruiter",
+      "oracle_text": "Whenever this creature attacks, look at defending player's hand. You may put a creature card from it onto the battlefield under your control tapped and attacking that player or a planeswalker they control. Return that creature to its owner's hand at the beginning of the next end step.",
+      "mana_cost": "{3}",
+      "types": ["Creature"],
+      "power": 4,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, look at defending player's hand. You may put a creature card from it onto the battlefield under your control tapped and attacking that player or a planeswalker they control. Return that creature to its owner's hand at the beginning of the next end step.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "effects": [
+            {"op": "look_at_hand", "player": {"binding": "defender"}},
+            {
+              "op": "may",
+              "prompt": "Put a creature card from defending player's hand onto the battlefield?",
+              "effects": [
+                {
+                  "op": "put_onto_battlefield",
+                  "controller": "you",
+                  "tapped": true,
+                  "attacking": {"binding": "defender"},
+                  "or_planeswalker": true,
+                  "objects": {"zone": "hand", "player": {"binding": "defender"}, "types": ["Creature"], "count": 1, "chooser": "controller"},
+                  "as": "recruited"
+                }
+              ]
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [{"op": "return_to_hand", "objects": {"binding": "recruited", "zone": "battlefield"}}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
