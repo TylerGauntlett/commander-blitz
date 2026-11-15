@@ -71752,12 +71752,12 @@
     },
     "Don Andres, the Renegade": {
       "edhrec_rank": 5475,
-      "gate": "template",
+      "gate": null,
       "name": "Don Andres, the Renegade",
-      "reason": "no template for: Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pi",
+      "reason": "",
       "scryfall_id": "3cf9f3ae-694d-4d37-9498-4bdd1723a55e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Don't Blink": {
@@ -106362,12 +106362,12 @@
     },
     "Gemcutter Buccaneer": {
       "edhrec_rank": 5560,
-      "gate": "template",
+      "gate": null,
       "name": "Gemcutter Buccaneer",
-      "reason": "no template for: Treasures you control are Equipment in addition to their other types and have \"Equipped cr",
+      "reason": "",
       "scryfall_id": "90a9cab7-fc1a-4311-ae6a-5fd53208c0e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gemhide Sliver": {

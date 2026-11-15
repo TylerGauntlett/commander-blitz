@@ -5502,6 +5502,17 @@
     },
     "zone": "battlefield"
   },
+  "don_andres_the_renegade": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 0,
+      "keywords": [
+        "menace",
+        "deathtouch"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "donatello_mutant_mechanic": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8093,6 +8104,14 @@
     "zone": "battlefield"
   },
   "geist_of_the_moors": {
+    "zone": "battlefield"
+  },
+  "gemcutter_buccaneer": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
     "zone": "battlefield"
   },
   "gempalm_polluter": {
