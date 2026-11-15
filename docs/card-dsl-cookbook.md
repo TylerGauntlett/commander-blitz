@@ -14609,6 +14609,41 @@ control cannot rewrite who cast it.
 Nothing was cast reads `False`. A token, or a permanent an effect put onto the
 battlefield, has no cast at all, and "if you cast this spell" is not true of it.
 
+**A target only the main-phase cast declares** is a target spec's
+`cast_during`, taking the same names:
+
+```jsonc
+// Return to Dust — "Exile target artifact or enchantment. If you cast this
+//   spell during your main phase, you may exile up to one other target
+//   artifact or enchantment."
+"targets": [
+  { "id": "t1", "kind": "permanent",
+    "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" } },
+  { "id": "t2", "kind": "permanent", "optional": true, "cast_during": "your_main",
+    "selector": { "any_types": ["Artifact", "Enchantment"], "zone": "battlefield" } }
+],
+"spell_effects": [
+  { "op": "exile", "objects": { "target": "t1" } },
+  { "op": "may", "player": "you", "prompt": "…",
+    "effects": [ { "op": "exile", "objects": { "target": "t2" } } ] }
+]
+```
+
+601.2c declares targets as the spell is cast, one step before `push_spell`
+stamps `cast_step`, so `targeting.enumerate_target_tuples` asks
+`conditions.cast_during_now` — the step the game is in and whether the caster is
+the active player, the facts the stamp is written from — and declares the spec
+empty when it says no. The spec stays in `CardDef.targets`; resolution splits
+the stored refs by the full list and finds the second bucket empty. "Other" is
+free: no object fills two targets. The loader requires `optional` ("up to one")
+or `up_to`, so nought is a size, and the last place among the card-level
+targets; it refuses `min_count`, an ability's targets, and `mode`,
+`gift_promised`, `cost_option`, `spree_mode`, `count_if_kicked` or
+`selector_if_kicked` beside it. The near miss is an always-declared second
+target exiled under `if cast_during`: that card points at a second permanent in
+combat or on an opponent's turn, where ward, heroic and "becomes the target"
+see it.
+
 ## "This spell can't be countered"
 
 A flag on the card, not an ability:

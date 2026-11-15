@@ -196185,6 +196185,69 @@
       "colors": [
         "W"
       ],
+      "id": "return_to_dust",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Return to Dust",
+      "oracle_text": "Exile target artifact or enchantment. If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "exile"
+            }
+          ],
+          "op": "may",
+          "player": "you",
+          "prompt": "Exile the other target artifact or enchantment?"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "cast_during": "your_main",
+          "id": "t2",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "exiles_itself": true,
       "id": "reunion_of_the_house",
       "mana_cost": "{5}{W}{W}",

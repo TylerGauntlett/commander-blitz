@@ -1712,6 +1712,10 @@ def deferred_target_spec(
     if not specs or card.strive is not None or targets_own_discount(card):
         return None
     spec = specs[-1]
+    if spec.cast_during is not None:
+        # Asked mid-cast it would be asked without the phase gate legality
+        # applies to the line; "up to one other target" reads well as chips.
+        return None
     many = spec.count == "any" or (
         spec.up_to and isinstance(spec.count, int) and spec.count >= 2
     )

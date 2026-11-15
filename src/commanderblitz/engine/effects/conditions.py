@@ -519,14 +519,34 @@ def _cast_during(obj: Any, spec: str) -> bool:
     """
     if obj is None or obj.cast_step is None:
         return False
+    # The other half of "**your** main phase": `is_your_turn` compares the
+    # active player to the controller *now*, which is neither the right moment
+    # nor, after a change of control, the right player.
+    return _phase_matches(obj.cast_step, obj.cast_on_own_turn, spec)
+
+
+def cast_during_now(state: GameState, caster: int, spec: str) -> bool:
+    """Would a spell ``caster`` casts **right now** be cast in the phase ``spec`` names?
+
+    The declaration-time twin of `_cast_during`. "If you cast this spell during
+    your main phase, you may exile up to one other target artifact or
+    enchantment" (Return to Dust) is a target only that cast has, and 601.2c
+    declares targets before `stack.push_spell` stamps `cast_step` -- so the
+    question is asked of the moment the stamp will record: the step the game is
+    in, and whether the caster is the active player. Both are the same facts
+    the stamp is written from, so the declaration and a later `cast_during`
+    condition cannot disagree about one cast.
+    """
+    return _phase_matches(state.step, state.active_player == caster, spec)
+
+
+def _phase_matches(step: Step, own_turn: bool, spec: str) -> bool:
+    """Is ``step`` in the phase ``spec`` names (a `CAST_DURING_NAMES` entry)?"""
     if spec.startswith("your_"):
-        # The other half of "**your** main phase": `is_your_turn` compares the
-        # active player to the controller *now*, which is neither the right
-        # moment nor, after a change of control, the right player.
-        if not obj.cast_on_own_turn:
+        if not own_turn:
             return False
         spec = spec[len("your_") :]
-    phase = STEP_PHASE[obj.cast_step]
+    phase = STEP_PHASE[step]
     if spec == "main":
         return phase in (Phase.PRECOMBAT_MAIN, Phase.POSTCOMBAT_MAIN)
     return phase.value == spec

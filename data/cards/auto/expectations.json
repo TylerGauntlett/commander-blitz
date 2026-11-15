@@ -16473,6 +16473,10 @@
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
+  "return_to_dust": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "reunion_of_the_house": {
     "zone": "exile"
   },

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **343** capabilities.
+**394 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -322,7 +322,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
-| [target-if-cast-during](#target-if-cast-during) | 1 | 1524 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
@@ -5261,20 +5260,6 @@ Blocks **1** card.
 
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
-
-</details>
-
-## target-if-cast-during
-
-Blocks **1** card.
-
-- **(selector)** a target spec that is declared only when the spell is cast during a given phase -- e.g. `cast_during: "your_main"` on a card-level target (count 1, up_to, distinct from the first target), so a second 'up to one other target artifact or enchantment' exists only when the spell is cast in your main phase (601.2c)
-  <br>Why the existing vocabulary won't do: The `cast_during` condition exists but only as an `if` read at resolution. Target specs can be gated by `mode`, `cost_option`, `gift_promised` and `count_if_kicked`, none of which reads the phase the spell was cast in. Declaring an always-available optional second target and exiling it inside `if cast_during` would let the caster target a second permanent at instant speed outside the main phase (triggering ward, becomes_target and heroic-style effects) -- a different card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Return to Dust** (rank 1524) — `return_to_dust`
-  - If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.
 
 </details>
 

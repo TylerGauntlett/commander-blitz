@@ -128,6 +128,18 @@ class TargetSpec:
     #: every cast. Kept in :attr:`CardDef.spree_targets` and filtered by
     #: :meth:`CardDef.targets_for` against the bought subset.
     spree_mode: int | None = None
+    #: The phase a cast must be made in for this spec to be declared -- a
+    #: `conditions.CAST_DURING_NAMES` entry, or ``None`` for every cast. "If
+    #: you cast this spell during your main phase, you may exile up to one
+    #: other target artifact or enchantment" (Return to Dust). Unlike the
+    #: gates above it is no choice the caster makes at 601.2b but a fact about
+    #: the moment of casting, so it splits no target list: the spec is always
+    #: in :attr:`CardDef.targets`, and `targeting.enumerate_target_tuples`
+    #: declares it empty when `conditions.cast_during_now` says no. The loader
+    #: holds it to the last card-level place and to ``optional`` or ``up_to``,
+    #: so an empty bucket is one `filter_legal` already splits correctly at
+    #: resolution.
+    cast_during: str | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is

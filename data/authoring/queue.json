@@ -222232,12 +222232,12 @@
     },
     "Return to Dust": {
       "edhrec_rank": 1524,
-      "gate": "template",
+      "gate": null,
       "name": "Return to Dust",
-      "reason": "no template for: Exile target artifact or enchantment. If you cast this spell during your main phase, you m",
+      "reason": "",
       "scryfall_id": "3c3745c2-5509-4d6b-8f49-5cb93374edea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to Nature": {

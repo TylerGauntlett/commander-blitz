@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_cast_during_targets.py. t_return_to_dust is Return to Dust on a card the test suite owns: a second target declared only when the spell is cast during your main phase.",
+  "cards": [
+    {
+      "id": "t_return_to_dust",
+      "name": "Test Return to Dust",
+      "oracle_text": "Exile target artifact or enchantment. If you cast this spell during your main phase, you may exile up to one other target artifact or enchantment.",
+      "mana_cost": "{2}{W}{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "t1", "kind": "permanent",
+         "selector": {"any_types": ["Artifact", "Enchantment"], "zone": "battlefield"}},
+        {"id": "t2", "kind": "permanent", "optional": true, "cast_during": "your_main",
+         "selector": {"any_types": ["Artifact", "Enchantment"], "zone": "battlefield"}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}},
+        {"op": "may", "player": "you", "prompt": "Exile the other target?",
+         "effects": [{"op": "exile", "objects": {"target": "t2"}}]}
+      ]
+    }
+  ]
+}

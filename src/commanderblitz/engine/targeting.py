@@ -23,6 +23,7 @@ from .characteristics import (
     protected_from,
     protection_from,
 )
+from .effects.conditions import cast_during_now
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
@@ -885,9 +886,16 @@ def enumerate_target_tuples(
             if spec is defer and spec.min_count
             else None
         )
+        # "If you cast this spell during your main phase, … up to one other
+        # target" (Return to Dust): outside that phase the spec is declared
+        # empty, as a deferred one is, and resolution's split finds no refs
+        # for it -- it is last and `optional` or `up_to`, so nought is a size.
+        shut = spec.cast_during is not None and not cast_during_now(
+            state, controller, spec.cast_during
+        )
         shared = (
             [()]
-            if spec is defer
+            if spec is defer or shut
             else None
             if linked
             else _spec_options(
