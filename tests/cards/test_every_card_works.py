@@ -463,6 +463,7 @@ class TestActivatedAbilities:
             game._advance()
             _provide_the_attacker(game, registry, ability)
             _satisfy_the_attack_count(game, registry, ability)
+            _attack_with_the_source(game, ability, oid)
 
             action = next(
                 (
@@ -1836,6 +1837,27 @@ def _satisfy_the_attack_count(game: Game, registry, ability) -> None:
     if _walk_to_declare_attackers(game):
         _declare_them(game, oids)
 
+
+
+def _attack_with_the_source(game: Game, ability, oid: int) -> None:
+    """"Activate only if this creature attacked this turn" -- boast.
+
+    The family's fourth clause satisfied by *doing* the thing: `TurnLedger`
+    records creatures declared as attackers, so the source itself is walked to
+    declare-attackers and declared, exactly as `_satisfy_the_attack_count`
+    declares the creatures it counts. Broadside Bombardiers is the witness.
+
+    Only a bare ``exists`` over ``self_only`` with ``attacked_this_turn`` is
+    read; any other shape is left alone and the ability reports as unusable.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or not isinstance(condition.get("exists"), dict):
+        return
+    spec = condition["exists"]
+    if not (spec.get("self_only") and spec.get("attacked_this_turn") is True):
+        return
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, [oid])
 
 class TestManaAbilities:
     def test_mana_abilities_produce_mana(self, registry, card_id):

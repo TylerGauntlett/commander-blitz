@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **342** capabilities.
+**407 cards** blocked by **353** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,14 +19,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
+| [escape](#escape) | 5 | 388 | engine, op, static_effect |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
-| [escape](#escape) | 4 | 388 | engine, op, static_effect |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
+| [batched-damage-to-players-trigger](#batched-damage-to-players-trigger) | 3 | 3043 | trigger_event |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -95,6 +96,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
+| [cant-attack-previously-attacked-player](#cant-attack-previously-attacked-player) | 1 | 1908 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -134,9 +136,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
+| [dealt-combat-damage-by-count](#dealt-combat-damage-by-count) | 1 | 5946 | value |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
+| [descend](#descend) | 1 | 5224 | value |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
@@ -199,6 +203,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
+| [graveyard-arrival-this-turn](#graveyard-arrival-this-turn) | 1 | 9699 | selector |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
@@ -220,6 +225,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
+| [lose-all-abilities-until-end-of-turn](#lose-all-abilities-until-end-of-turn) | 1 | 6345 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [madness](#madness) | 1 | 3016 | replacement |
@@ -245,6 +251,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
+| [monarch-block-evasion](#monarch-block-evasion) | 1 | 9922 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
@@ -286,6 +293,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
+| [put-onto-battlefield-binding](#put-onto-battlefield-binding) | 1 | 4732 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -311,6 +319,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [skeleton-pirate-2-2-b-token](#skeleton-pirate-2-2-b-token) | 1 | 5662 | token |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
@@ -324,6 +333,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [targets-filter](#targets-filter) | 1 | 1165 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -339,6 +349,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
+| [tuck-self-cost](#tuck-self-cost) | 1 | 5107 | cost |
 | [turn-face-down](#turn-face-down) | 1 | 10947 | op |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
@@ -617,6 +628,38 @@ Blocks **5** cards.
 
 </details>
 
+## escape
+
+Blocks **5** cards.
+
+- **(op)** an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards
+  <br>Why the existing vocabulary won't do: grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card
+- **(op)** a turn-long grant that gives every creature card in your graveyard (including ones that arrive later this turn) an escape cost fixed by the granting card -- an alternative cost of {3}{B} plus exiling four other cards from your graveyard -- castable from the graveyard, with the escaped condition set on the resulting spell
+  <br>Why the existing vocabulary won't do: grant_graveyard_cast carries only affects_spells, any_graveyard, grants_flashback and max_per_turn and lets the card be cast for its own printed mana cost, with no way to substitute a granted cost; escape exists only as a card-level graveyard_cost/graveyard_cast on the escaping card itself; grant_playable marks a snapshot of cards and takes playable_cost_reduction/playable_free but no replacement cost with an exile_from_graveyard component; grant_ability grants abilities to permanents, not a card-level cost to cards in a graveyard
+- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
+- **The Master of Keys** (rank 4992) — `the_master_of_keys`
+  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
+- **The Grim Captain's Locker** (rank 9558) — `the_grim_captain_s_locker`
+  - {T}: Until end of turn, each creature card in your graveyard gains "Escape—{3}{B}, Exile four other cards from your graveyard."
+- **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
+  - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -708,34 +751,6 @@ Blocks **4** cards.
   - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 - **Blaster Hulk** (rank 7367) — `blaster_hulk`
   - Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.
-
-</details>
-
-## escape
-
-Blocks **4** cards.
-
-- **(op)** an op that grants escape until end of turn to one targeted card in a graveyard: the card may be cast from the graveyard this turn for its own mana cost plus an additional cost of exiling N other cards from its owner's graveyard (N=2 here), with the escaped condition readable afterwards
-  <br>Why the existing vocabulary won't do: grant_playable with playable: this_turn lets the card be cast from the graveyard but carries no extra non-mana cost, so the 'exile two other cards from your graveyard' half would be dropped; grant_graveyard_cast is a player-wide permission over affects_spells (flashback-style), not a per-target grant with an exile_from_graveyard additional cost; the card-level graveyard_cost/graveyard_cast riders describe a card's own printed escape, not one granted to another card
-- **(static_effect)** a granted escape permission: a `cast_from_graveyard`-style static (here `affects_spells: {"types": ["Enchantment"]}`) whose granted cast charges an additional cost on top of the card's own mana cost -- `exile_from_graveyard: {"count": 3}` where 'other' excludes the card being escaped, not the granting permanent -- priced and paid when the granted spell is cast, with no per-turn cap (the exile is the brake), and marking the spell as escaped (702.138) rather than exiling it on resolution, so an escaped enchantment returns to the graveyard and can escape again
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` grants the cast at the printed cost only, carries no additional-cost rider, and the loader requires `static_max_per_turn`, which this card does not print. The card-level `graveyard_cost` / `graveyard_additional_cost` slot is escape and can carry `exile_from_graveyard`, but it is set on the escaping card itself at load time; nothing writes a cost onto other cards. `grant_graveyard_cast` only takes `affects_spells`, `any_graveyard` and `grants_flashback` (flashback exiles the card, escape does not). `grant_keyword` has no escape keyword. Same blocker as underworld_breach.
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
-  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
-  - When Uro enters, sacrifice it unless it escaped.
-- **The Master of Keys** (rank 4992) — `the_master_of_keys`
-  - Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)
-- **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
-  - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
 
 </details>
 
@@ -839,6 +854,28 @@ Blocks **3** cards.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each land with an everything counter on it is every land type in addition to its other types.
   - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
+## batched-damage-to-players-trigger
+
+Blocks **3** cards.
+
+- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to your opponents' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch and binding the set of damaged opponents so the effect can iterate 'each of those opponents' (e.g. `batched: true` accepted on `deals_damage_to_player`, with the damaged seats exposed as a player binding usable by `for_each_player`)
+  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` has the right batching, `filter` and `defending: "opponent"` but is combat damage only, so a Pirate's noncombat damage (a pinger, a fight, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates hitting the same opponent would fire twice and exile two cards from that library, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect half is expressible (`exile` of each damaged opponent's top card with `playable: "this_turn"` and `any_color: true`); only the trigger is missing
+- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to a player' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch -- e.g. `batched: true` accepted on `deals_damage_to_player` (adding it to `BATCHED_EVENTS`, grouped by the `batch` that `damage_player` stamps), with `filter: {"subtypes": ["Pirate"]}` and `controller: "you"`
+  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` has the right one-or-more batching and a `filter` over the damagers but is combat damage only, so a Pirate's noncombat damage (a pinger, a burn trigger) would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates connecting in the same combat damage step would fire twice and make Francisco explore twice, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect (`explore` with `objects: {"self_only": true}`) and the 'can't block' static (`cant_block` on self) are expressible; only the trigger is missing
+- **(trigger_event)** a 'whenever one or more <filter> you control deal damage to your opponents' trigger over ANY damage (combat and noncombat), batched across every matching source in one simultaneous damage event (a combat damage step, or one effect op), firing once per batch and exposing the set of damaged opponents -- here as a count ("for each opponent dealt damage") usable as `create_token`'s `amount`, e.g. `batched: true` accepted on `deals_damage_to_player` (added to `BATCHED_EVENTS`, grouped by the `batch` that `damage_player` stamps) with a value reading the number of distinct damaged opponents in the batch
+  <br>Why the existing vocabulary won't do: `creatures_deal_combat_damage` with `per_player` and `defending: "opponent"` gives one Treasure per damaged opponent but is combat damage only, so a Pirate's noncombat damage would be missed -- a narrower card. `deals_damage_to_player` hears noncombat damage but is keyed per source: two Pirates hitting the same opponent would fire twice and make two Treasures, and `batched` is refused there because it is not in `BATCHED_EVENTS`. The effect (`create_token` of `treasure_token`) and Flying/Partner are expressible; only the trigger and its damaged-opponent count are missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Malcolm, Keen-Eyed Navigator** (rank 3043) — `malcolm_keen_eyed_navigator`
+  - Whenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage. (It's an artifact with "{T}, Sacrifice this token: Add one mana of any color.")
+- **Breeches, Brazen Plunderer** (rank 4521) — `breeches_brazen_plunderer`
+  - Whenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.
+- **Francisco, Fowl Marauder** (rank 6731) — `francisco_fowl_marauder`
+  - Whenever one or more Pirates you control deal damage to a player, Francisco explores.
 
 </details>
 
@@ -1245,8 +1282,8 @@ Blocks **2** cards.
 
 Blocks **2** cards.
 
-- **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, read inside a for_each_player so each player's lose_life amount is ceil(their life / 3)
-  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/3) for every life total, so `lose_life` with `life_of` can only take half or all of a life total
+- **(value)** a value that divides another value by an arbitrary integer with a rounding direction, e.g. {"fraction": {"of": {"life_of": {"binding": "each_player"}}, "divisor": 3, "round": "up"}}, so lose_life inside for_each_player can take ceil(life/3)
+  <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({of, round}), which is hard-wired to divide by 2; `times`, `minus`, `sum`, `min` and `max` cannot express an integer division by 3, so a third of a life total rounded up has no spelling
 - **(value)** a value expression that divides another value by an arbitrary printed divisor with a printed rounding direction, e.g. {"fraction": {"of": {"count": {"zone": "battlefield", "types": ["Creature"], "controller": {"binding": "each_player"}}}, "divisor": 10, "round": "up"}}, used as the count of a sacrifice selector inside a for_each_player over opponents so each opponent sacrifices ceil(their creatures / 10) creatures of their choice
   <br>Why the existing vocabulary won't do: The only division in value_keys is `half` ({"half": {"of": v, "round": "up"|"down"}}), fixed at a divisor of 2; `times`, `minus`, `sum`, `min` and `max` cannot compose an exact ceil(n/10) for every creature count, so the sacrifice can only be a fixed number, half or all of their creatures
 
@@ -2010,6 +2047,20 @@ Blocks **1** card.
 
 </details>
 
+## cant-attack-previously-attacked-player
+
+Blocks **1** card.
+
+- **(static_effect)** a static attack restriction on the source creature that forbids declaring it as an attacker against any player (or that player's planeswalkers are still allowed) whom this same creature has already attacked earlier this turn, read from a per-creature, per-turn record of the players it attacked
+  <br>Why the existing vocabulary won't do: The `cant_attack` and `cant_attack_you` statics are filters on the attacking creature or scoped to the static's controller's seat and never consult which defenders a creature attacked this turn; the static filter keys have no `attacked_this_turn`-by-defender reading. The `cant_attack_player` op names a defending player but is a one-shot effect; driving it from an `attacks` trigger would be a triggered emulation of a static (it can be countered or Stifled, and misses attacks while the trigger is pending), so it is not exact.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Port Razer** (rank 1908) — `port_razer`
+  - This creature can't attack a player it has already attacked this turn.
+
+</details>
+
 ## cant-attack-this-turn
 
 Blocks **1** card.
@@ -2570,6 +2621,20 @@ Blocks **1** card.
 
 </details>
 
+## dealt-combat-damage-by-count
+
+Blocks **1** card.
+
+- **(value)** a per-player count of DISTINCT creatures with a given subtype (here Pirate, read as the damage lands) that dealt combat damage to that player this turn, usable as a threshold in a player spec / selector `controller` -- e.g. `{"dealt_combat_damage_by": {"subtypes": ["Pirate"], "at_least": 3}}` -- so a permanent target can be restricted to nonland permanents controlled by a player hit by three or more Pirates
+  <br>Why the existing vocabulary won't do: `dealt_combat_damage_by` with `{"subtypes": ["Pirate"]}` reads `turn_ledger.players_dealt_combat_damage_by_subtype`, which is a set of seats hit by ANY Pirate, with no record of how many distinct Pirates hit each seat; `players_dealt_combat_damage_by` is keyed per source oid but does not remember each source's subtype at damage time; the `combat_damage_by` condition is table-wide and says only that a Pirate got through. Using the subtype set would let one Pirate unlock the steal, a much stronger card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Admiral Beckett Brass** (rank 5946) — `admiral_beckett_brass`
+  - At the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.
+
+</details>
+
 ## delayed-creature-dies
 
 Blocks **1** card.
@@ -2609,6 +2674,20 @@ Blocks **1** card.
 
 - **Demonic Covenant** (rank 7993) — `demonic_covenant`
   - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
+
+</details>
+
+## descend
+
+Blocks **1** card.
+
+- **(value)** a per-player turn-ledger value (or condition) counting permanent cards (artifact, battle, creature, enchantment, land, planeswalker; not tokens) put into that player's own graveyard from any zone this turn, e.g. {"permanent_cards_to_your_graveyard_this_turn": "you"} compared > 0, usable as an end_step trigger's intervening-if condition (rule 702.170, 'you descended this turn')
+  <br>Why the existing vocabulary won't do: permanents_to_graveyard_this_turn counts only permanents leaving the battlefield (tokens included, every controller), missing milled/discarded permanent cards; cards_to_graveyard_this_turn counts every card of any type into every graveyard with no player spec, so an instant milled or a card hitting an opponent's graveyard would wrongly satisfy it; has_turn_flag has no engine-set descend flag
+
+<details><summary>Cards waiting on this</summary>
+
+- **Enterprising Scallywag** (rank 5224) — `enterprising_scallywag`
+  - At the beginning of your end step, if you descended this turn, create a Treasure token. (You descended if a permanent card was put into your graveyard from anywhere.)
 
 </details>
 
@@ -3504,6 +3583,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-arrival-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a per-turn record, on each card in a graveyard, of how it got there this turn -- discarded from hand, or moved from a library (mill, surveil, any library-to-graveyard move) by any source and any player -- exposed as a selector key for graveyard targets, e.g. `put_into_graveyard_this_turn: {"by": ["discard", "from_library"]}`, so the target is `{"kind": "card", "optional": true, "selector": {"zone": "graveyard", "controller": "any", "put_into_graveyard_this_turn": {...}}}` and the effect a return_to_hand of it. The same record would serve the existing `milled_this_turn` gap (Raul, Tato Farmer, The Master, Transcendent) as the from_library half
+  <br>Why the existing vocabulary won't do: selector_keys has drawn_this_turn, entered_this_turn and surveilled_this_turn but nothing that reads how or when a card arrived in a graveyard; the value keys cards_discarded_this_turn and cards_to_graveyard_this_turn are only counts, not per-card filters; the ability key arrived_this_turn_from belongs to the play_lands_from_graveyard static, not to target selectors; discard and mill `as` bindings only cover cards moved by that one resolution, not every card discarded or milled this turn by any source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghost of Ramirez DePietro** (rank 9699) — `ghost_of_ramirez_depietro`
+  - Whenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.
+
+</details>
+
 ## graveyard-cast-dynamic-mana-value-cap
 
 Blocks **1** card.
@@ -3800,6 +3893,20 @@ Blocks **1** card.
 
 - **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
   - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
+
+</details>
+
+## lose-all-abilities-until-end-of-turn
+
+Blocks **1** card.
+
+- **(op)** a duration on the lose_all_abilities op (duration: until_end_of_turn, as a TempEffect) so a targeted permanent loses its printed and earlier-granted abilities only until end of turn, then gets them back
+  <br>Why the existing vocabulary won't do: op lose_all_abilities takes only `objects` and sets the permanent flag obj.lost_all_abilities (its docstring says 'until end of turn' is a different clause left to temp_effects); lose_keyword strips keywords only; lock_abilities only stops activation; the lose_all_abilities static lives on the source's printed face and cannot follow a trigger's target. The base 0/1 half is sayable with animate (power 0, toughness 1, default until-end-of-turn duration), but the card cannot be written without the ability loss
+
+<details><summary>Cards waiting on this</summary>
+
+- **Warkite Marauder** (rank 6345) — `warkite_marauder`
+  - Whenever this creature attacks, target creature defending player controls loses all abilities and has base power and toughness 0/1 until end of turn.
 
 </details>
 
@@ -4156,6 +4263,20 @@ Blocks **1** card.
 
 - **Kodama of the West Tree** (rank 831) — `kodama_of_the_west_tree`
   - Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
+
+</details>
+
+## monarch-block-evasion
+
+Blocks **1** card.
+
+- **(selector)** a blocker-filter controller spec on the block_restriction static's `blockers` that matches creatures controlled by whoever is currently the monarch (e.g. `blockers: {"controller": "monarch"}`), read per blocker at declare-blockers time
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` is a static filter whose `controller` resolves through _static_players to only you/opponent/any; the static condition `is_monarch` only switches the whole static on or off for a fixed player spec (or `affected_controller`, which names the attacker's controller, not the blocker's), so `{is_monarch: opponent}` plus an unfiltered block_restriction would make it unblockable by every opponent's creatures in multiplayer, not just the monarch's
+
+<details><summary>Cards waiting on this</summary>
+
+- **Azure Fleet Admiral** (rank 9922) — `azure_fleet_admiral`
+  - This creature can't be blocked by creatures the monarch controls.
 
 </details>
 
@@ -4746,6 +4867,20 @@ Blocks **1** card.
 
 </details>
 
+## put-onto-battlefield-binding
+
+Blocks **1** card.
+
+- **(op)** an `as` option on put_onto_battlefield that binds the oids it actually put onto the battlefield, so a later `delay` (step end_step) can `return_to_hand` exactly that creature, as create_token's and copy_permanent's `as` already let Flamerush Rider exile 'the token'
+  <br>Why the existing vocabulary won't do: The first two sentences fit attacks trigger + look_at_hand {binding: defender} + may/put_onto_battlefield from {zone: hand, player: {binding: defender}, types: [Creature], count: 1} with controller you, tapped, attacking {binding: defender}, or_planeswalker. But op_put_onto_battlefield reads no `as` (absent from op_options and from its source), so nothing names 'that creature'. snapshot binds a whole unchosen pool, reveal's `as` would make the hand public (Zara only looks), and a delayed return_to_hand over a selector like {controller: you, owner: {binding: defender}, entered_this_turn: true} is an approximation that could bounce some other stolen creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zara, Renegade Recruiter** (rank 4732) — `zara_renegade_recruiter`
+  - Return that creature to its owner's hand at the beginning of the next end step.
+
+</details>
+
 ## random-order-bottom
 
 Blocks **1** card.
@@ -5106,6 +5241,20 @@ Blocks **1** card.
 
 </details>
 
+## skeleton-pirate-2-2-b-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Skeleton Pirate creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has pirate_2_2_b_menace (a Pirate with menace, not a Skeleton) and other 2/2 black tokens (zombie_2_2_b, rogue_2_2_b) with the wrong creature types; none is a vanilla 2/2 black Skeleton Pirate
+
+<details><summary>Cards waiting on this</summary>
+
+- **Skeleton Crew** (rank 5662) — `skeleton_crew`
+  - Whenever one or more creature cards leave your graveyard, create a 2/2 black Skeleton Pirate creature token. (This ability triggers only from the battlefield.)
+
+</details>
+
 ## source-filtered-damage-shield
 
 Blocks **1** card.
@@ -5290,6 +5439,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## targets-filter
+
+Blocks **1** card.
+
+- **(selector)** a target-spec selector clause for a stack object (spell or ability) that matches by what that object itself targets: 'targets you or a creature you control', i.e. one of its chosen targets is the ability's controller or a creature permanent that player controls, honoured by both candidates and still_legal for kind spell_or_ability
+  <br>Why the existing vocabulary won't do: The counter op and the spell_or_ability target kind exist, but no selector key reads a stack object's own targets; the ability matcher (targeting._ability_matches) honours only controller and ability_kind, and the spell matcher reads printed characteristics only, so dropping the restriction would make it a strictly wider counter-anything ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Siren Stormtamer** (rank 1165) — `siren_stormtamer`
+  - {U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.
 
 </details>
 
@@ -5500,6 +5663,20 @@ Blocks **1** card.
 
 - **Duskana, the Rage Mother** (rank 10907) — `duskana_the_rage_mother`
   - Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.
+
+</details>
+
+## tuck-self-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that puts the source permanent on the bottom of its owner's library ("Put this creature on the bottom of its owner's library"), paid at activation alongside mana and {T}, so the ability cannot be activated twice and the creature is gone even if the ability is countered
+  <br>Why the existing vocabulary won't do: cost_keys has exile_self, sacrifice, return_to_hand and discard_self, but nothing that moves the source to its owner's library; sacrifice sends it to the graveyard (wrong zone, triggers dies), and moving it with a put_on_top {bottom: true} effect would shift the payment to resolution, which the packet notes forbid. The rest is expressible: card-level ascend: true, the extra_turn op with player you, and condition {has_city_s_blessing: true} on the activated ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Timestream Navigator** (rank 5107) — `timestream_navigator`
+  - {2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.
 
 </details>
 
