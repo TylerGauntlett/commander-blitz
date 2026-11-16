@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**386 cards** blocked by **339** capabilities.
+**387 cards** blocked by **340** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -155,6 +155,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
+| [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
@@ -2830,6 +2831,20 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
+
+</details>
+
+## enters-as-copy-with-ability
+
+Blocks **1** card.
+
+- **(replacement)** a `self_enters_as_copy` replacement whose `except_` grants a triggered ability (here myriad) as a copiable value -- e.g. `except_.keep_abilities` (indices of the printed card's own abilities, as `become_copy` already supports) or `except_.add_abilities` pointing at `grantable_abilities` -- so the copy has myriad alongside the copied creature's abilities
+  <br>Why the existing vocabulary won't do: `self_enters_as_copy`'s `except_` handles `remove_supertypes` and `add_types` (the other two clauses) but only adds abilities through `add_keywords`, and myriad is not in the keyword list -- it is written as a triggered ability (Herald of the Host, Blade of Selves). `keep_abilities` exists only on the `become_copy` op; the enters-as-copy path in zones.py resets `copying_own_abilities` to None. A `self_enters` trigger running `become_copy` would be a trigger rather than a 614.1b replacement, so the creature would briefly be a 0/0 and die before it resolves.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Auton Soldier** (rank 2009) — `auton_soldier`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it isn't legendary, is an artifact in addition to its other types, and has myriad
 
 </details>
 

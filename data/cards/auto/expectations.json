@@ -3800,6 +3800,10 @@
   "cloaked_siren": {
     "zone": "battlefield"
   },
+  "clockwork_droid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cloud_crusader": {
     "zone": "battlefield"
   },
@@ -4393,6 +4397,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "creeping_tar_pit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "creosote_heath": {
     "battlefield_count": 33,

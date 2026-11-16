@@ -46506,6 +46506,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "skip_untap"
+                },
+                {
+                  "flag": "exerted",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "set_turn_flag"
+                },
+                {
+                  "duration": "this_turn",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "unblockable"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "scry",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exert Clockwork Droid?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may exert this creature as it attacks. When you do, it can't be blocked this turn and you scry 1",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "clockwork_droid",
+      "mana_cost": "{2}",
+      "name": "Clockwork Droid",
+      "oracle_text": "You may exert this creature as it attacks. When you do, it can't be blocked this turn and you scry 1. (An exerted creature won't untap during your next untap step. To scry 1, look at the top card of your library. You may put that card on the bottom.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -53499,6 +53562,98 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}{B}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "U",
+                "B"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 2
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. It's still a land. It can't be blocked this turn"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "creeping_tar_pit",
+      "name": "Creeping Tar Pit",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U} or {B}.\n{1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. It's still a land. It can't be blocked this turn.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

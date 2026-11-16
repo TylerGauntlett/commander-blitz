@@ -48452,12 +48452,12 @@
     },
     "Clockwork Droid": {
       "edhrec_rank": 15828,
-      "gate": "template",
+      "gate": null,
       "name": "Clockwork Droid",
-      "reason": "no template for: You may exert this creature as it attacks. When you do, it can't be blocked this turn and ",
+      "reason": "",
       "scryfall_id": "9b4fa6d0-dc2d-4903-bbba-6cf83be2b187",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clockwork Fox": {
@@ -55832,12 +55832,12 @@
     },
     "Creeping Tar Pit": {
       "edhrec_rank": 2945,
-      "gate": "template",
+      "gate": null,
       "name": "Creeping Tar Pit",
-      "reason": "no template for: {1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. I",
+      "reason": "",
       "scryfall_id": "080edb03-932f-4e0f-a230-5c7794925017",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creeping Trailblazer": {
