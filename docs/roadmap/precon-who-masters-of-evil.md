@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [voting, secret-choices]
+status: proposed
 rank: 57
 ---
 
@@ -18,7 +18,11 @@ coming-soon shell on the shelf: its row `who_masters_of_evil` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_masters_of_evil` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; two wait on
+rules subsystems the engine does not have: The Valeyard on voting
+([voting](voting.md)) and The Toymaker's Trap on secretly chosen numbers
+([secret-choices](secret-choices.md)), so the deck cannot be whole until
+those land.
 
 ## The change
 

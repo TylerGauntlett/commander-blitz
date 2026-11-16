@@ -77,7 +77,7 @@ each heading; this table is generated from them.
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
 | [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | Every creature type means every creature type | 0 |
-| [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | nothing | 0 |
+| [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | nothing | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | nothing | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | nothing | 0 |
@@ -124,14 +124,14 @@ each heading; this table is generated from them.
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
+| [Secret choices](#secret-choices) | M | medium | nothing | 3 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
-| [Secret choices](#secret-choices) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
@@ -153,8 +153,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who).
 
 **Ready now, best first:**
 
@@ -204,14 +202,14 @@ same list, and `/extend-roadmap` starts at the top of it.
 44. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 45. [Why a press is refused](#why-a-press-is-refused) — S, medium
 46. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-47. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-48. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+47. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+48. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 49. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 50. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-51. [Experience counters](#experience-counters) — M, medium
-52. [Outcomes as data](#outcomes-as-data) — M, medium
-53. [Rad counters](#rad-counters) — M, medium
-54. [Secret choices](#secret-choices) — M, medium
+51. [Secret choices](#secret-choices) — M, medium
+52. [Experience counters](#experience-counters) — M, medium
+53. [Outcomes as data](#outcomes-as-data) — M, medium
+54. [Rad counters](#rad-counters) — M, medium
 55. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 56. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 57. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
@@ -254,6 +252,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
 - [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
+- [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -481,71 +480,6 @@ gates pass, and the generated DSL reference lists the new trigger event.
   `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
   implemented" to the implemented table in rules-coverage.md.
 
-### Divided damage that may hit players
-
-Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Divided damage (601.2d) is announced as the spell is cast and dealt on
-resolution, but only among permanents. `cards.loader` refuses a `damage`
-effect with `divided` whose target spec is not `kind: "permanent"`;
-`Game._ask_damage_division` keeps only the declared targets whose kind is
-`"object"` and walks them through `_divide`, which asks one object at a time
-through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
-with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "dividing damage among players or any target" as not implemented.
-
-So every "deals N damage divided as you choose among any number of targets"
-spell is unwritable, because a player is a legal target of it. Magma Opus,
-in the Prismari Artistry precon, is the card that found it; Arc Lightning and
-Fireball's divided mode are the same sentence. Its gap record is
-`data/authoring/gaps/magma_opus.json`.
-
-#### The change
-
-1. The division carries players. `_ask_damage_division` divides over every
-   declared target of the spec, object or player, and the shares on the stack
-   item's `bindings["distribution"]` name which is which, so a player and a
-   permanent with the same number are never confused.
-2. The question asked while dividing offers players beside objects. Placing
-   one more point is one choice among the declared targets; `ask_objects`
-   names objects only, so this is either a target-shaped ask or a decision kind
-   of its own (an open question below).
-3. `_damage_divided` deals a player's share as damage to that player from the
-   source, with everything damage to a player already implies (lifelink,
-   infect, commander damage from a commander source, prevention), and a share
-   for a player who left the game or became an illegal target is lost (608.2b).
-4. The loader accepts `divided` over a spec of `kind: "any"` and
-   `kind: "player"`. The verifier's auto-answer table answers the new question,
-   or `/author-cards` hangs.
-5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
-   cards through the template tier with `--retry` and one `/author-cards` wave.
-
-It does not touch divided combat damage (510.1c) or `distribute_counters`,
-whose objects are always permanents.
-
-#### Gate
-
-A unit test under `tests/unit/` for divided damage over players and
-permanents together: the announcement on casting, each share dealt on
-resolution, a player's share lost when that player is no longer a legal
-target, lifelink and commander damage counted per share, and the loader
-accepting `kind: "any"` while still refusing divided damage on an ability. The
-verifier's auto-answer test covers the new question, and Magma Opus's six
-gates pass.
-
-#### Open questions
-
-- **How the division is asked.** Extend `ask_objects` to accept player
-  targets, or add a decision kind for "one more point to which target"?
-  Recommended: a target-shaped ask built on the existing target references,
-  because the client already renders a player as a target, and a new decision
-  kind would need its frontend label and an e2e path for no new rule.
-- **Is it an ADR.** Recommended: no; it widens an existing announcement
-  (601.2d) without changing what is announced or when, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
-
 ### Voting: will of the council and council's dilemma
 
 Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
@@ -609,6 +543,71 @@ six gates pass.
   answer for now, with the `purpose` tag left for a strategy to read; voting
   well is a CPU item, not a rules one.
 - **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
+### Divided damage that may hit players
+
+Effort **M** · Impact **medium**, every 'divided as you choose among any number of targets' burn spell waits on it, Magma Opus and Arc Lightning among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced as the spell is cast and dealt on
+resolution, but only among permanents. `cards.loader` refuses a `damage`
+effect with `divided` whose target spec is not `kind: "permanent"`;
+`Game._ask_damage_division` keeps only the declared targets whose kind is
+`"object"` and walks them through `_divide`, which asks one object at a time
+through `ask_objects`; and `effects.ops_life._damage_divided` deals each share
+with `damage_permanent`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "dividing damage among players or any target" as not implemented.
+
+So every "deals N damage divided as you choose among any number of targets"
+spell is unwritable, because a player is a legal target of it. Magma Opus,
+in the Prismari Artistry precon, is the card that found it; Arc Lightning and
+Fireball's divided mode are the same sentence. Its gap record is
+`data/authoring/gaps/magma_opus.json`.
+
+#### The change
+
+1. The division carries players. `_ask_damage_division` divides over every
+   declared target of the spec, object or player, and the shares on the stack
+   item's `bindings["distribution"]` name which is which, so a player and a
+   permanent with the same number are never confused.
+2. The question asked while dividing offers players beside objects. Placing
+   one more point is one choice among the declared targets; `ask_objects`
+   names objects only, so this is either a target-shaped ask or a decision kind
+   of its own (an open question below).
+3. `_damage_divided` deals a player's share as damage to that player from the
+   source, with everything damage to a player already implies (lifelink,
+   infect, commander damage from a commander source, prevention), and a share
+   for a player who left the game or became an illegal target is lost (608.2b).
+4. The loader accepts `divided` over a spec of `kind: "any"` and
+   `kind: "player"`. The verifier's auto-answer table answers the new question,
+   or `/author-cards` hangs.
+5. Harvest: Magma Opus, then the catalog's other divided-among-any-targets
+   cards through the template tier with `--retry` and one `/author-cards` wave.
+
+It does not touch divided combat damage (510.1c) or `distribute_counters`,
+whose objects are always permanents.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage over players and
+permanents together: the announcement on casting, each share dealt on
+resolution, a player's share lost when that player is no longer a legal
+target, lifelink and commander damage counted per share, and the loader
+accepting `kind: "any"` while still refusing divided damage on an ability. The
+verifier's auto-answer test covers the new question, and Magma Opus's six
+gates pass.
+
+#### Open questions
+
+- **How the division is asked.** Extend `ask_objects` to accept player
+  targets, or add a decision kind for "one more point to which target"?
+  Recommended: a target-shaped ask built on the existing target references,
+  because the client already renders a player as a target, and a new decision
+  kind would need its frontend label and an e2e path for no new rule.
+- **Is it an ADR.** Recommended: no; it widens an existing announcement
+  (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
 ### Divided damage from a triggered or activated ability
@@ -767,6 +766,98 @@ generated DSL reference lists the new event.
   Pit ships in it? Recommended: plus both, since each is small and the card
   is the gate.
 
+### Secret choices
+
+Effort **M** · Impact **medium**, every card where players secretly choose and then reveal waits on it, Expert-Level Safe in the Science! precon and Menacing Ogre among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Every choice the engine asks is one player's, one at a time. An op asks
+through `ask_mode` in `engine/effects/context.py`, which yields a
+`PendingDecision` (`engine/actions.py`) for a single `player`, and binds the
+answer in the effect context as soon as it comes back. `choose_number` in
+`engine/effects/ops_control.py` asks only `ctx.controller`, and nothing
+asks a second player the same question. Wrap it in `for_each_player` and the
+players answer in turn, each answer bound before the next is asked. The
+view does hide some things: `serialize._pending` puts card faces only on the
+seat that has to answer, `event_log_for` drops object ids from
+`_PRIVATE_EVENTS`, and face-down exile has `hidden_in_exile` and
+`revealed_to`. But no seat can hold an answer the other players must not
+see until everyone has chosen. [rules-coverage.md](rules-coverage.md#not-implemented)
+does not mention secret choices. It lists voting as not implemented, and
+secret council is the secret form of voting.
+
+So "you and target opponent each secretly choose 1, 2, or 3. Then those
+choices are revealed" cannot be written. Neither can "each player secretly
+chooses a number", "secretly choose an opponent", or a secret vote. Asked in
+turn, the later chooser answers after seeing the earlier choice, and that
+changes the card. The Science! precon found it through Expert-Level Safe,
+whose gap record is `data/authoring/gaps/expert_level_safe.json`. The
+catalog has a few dozen cards printing "secretly", among them Menacing Ogre,
+Prisoner's Dilemma, Círdan the Shipwright, Elrond of the White Council,
+Stalking Leonin, The Toymaker's Trap and the secret council cards (Vault 11:
+Voter's Dilemma, Marchesa's Surprise Party, Mob Verdict).
+
+#### The change
+
+1. A secret answer. Each chooser is asked in turn through `ask_mode`, as
+   today, but the answers are held unrevealed until the last chooser has
+   answered. Until then a later chooser's decision context and every other
+   seat's view show only that a choice has been made, never what it is. The
+   reveal is one event carrying every answer.
+2. An op for the shape the cards print: a number, or one of a fixed set of
+   labels, chosen secretly by a named set of players (you and a target
+   opponent, each player, each opponent). Each answer is bound per player,
+   so a later `condition` can compare the answers ("if they match", "the
+   player who chose the highest number").
+3. The CPUs answer through the label path the heuristic agent already uses
+   for `choose_number`. A strategy reads only what its own seat's view
+   shows, so it never sees an unrevealed answer.
+4. The loader's `_validate_effect` refuses the op without choosers or
+   without `as`. The authoring verifier answers it the way it answers
+   `choose_number`.
+5. Harvest: Expert-Level Safe through `/author-cards`, then one wave over the
+   catalog's other secret-choice cards that need nothing else.
+
+It does not build voting. Secret council is
+[voting](voting.md) with its votes cast secretly; once both items land, it
+is the vote op asking through this one's secret answer.
+
+#### Gate
+
+A unit test under `tests/unit/` for the secret choice:
+
+- every named chooser is asked;
+- a later chooser's decision and every other seat's `player_view` and
+  `event_log_for` do not carry an earlier answer before the reveal;
+- the reveal event carries all answers, and each answer is bound per player
+  for a condition to compare;
+- an eliminated player is not asked;
+- the loader refuses the op with no choosers.
+
+Expert-Level Safe passes its six gates, and the generated DSL reference
+(`tests/cards/test_dsl_reference.py`) lists the new op.
+
+#### Open questions
+
+- **How an answer is kept secret.** An unrevealed answer can live in the
+  effect context's bindings, which no view serializes, or in a field on
+  `GameState` that `player_view` redacts per seat. Recommended: the
+  bindings, with the reveal as one event, because nothing serializes them
+  today. That makes "not leaked" a property the test can check, not a
+  redaction someone has to remember.
+- **One decision kind or `ask_mode`.** Recommended: `ask_mode` with
+  `purpose: "secret_choice"`. The client and the CPUs already answer a
+  labelled choice, and a new `DecisionKind` would need its frontend label,
+  its auto-answer and an e2e path, with no new rule to show for it.
+- **What the client shows while others choose.** Recommended: nothing new.
+  Each chooser sees their own prompt, and the reveal is narrated from its
+  event in the log. A surface beyond that would need its story and floor
+  ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
+- **Is it an ADR.** Recommended: no, if the answer stays in the bindings,
+  because it is an additive op. Yes, if it adds per-seat redaction of game
+  state, because that is a rule the views would be built around from then on.
+
 ### Experience counters
 
 Effort **M** · Impact **medium**, every experience-counter commander waits on it, Meren of Clan Nel Toth and Ezuri, Claw of Progress among them · Depends on nothing · Awaiting decisions.
@@ -920,98 +1011,6 @@ reference (`tests/cards/test_dsl_reference.py`) lists the new op.
   an existing rule, and its line goes into the implemented table in
   rules-coverage.md. An ADR only if the stack question is answered with a
   new seam for sourceless triggers.
-
-### Secret choices
-
-Effort **M** · Impact **medium**, every card where players secretly choose and then reveal waits on it, Expert-Level Safe in the Science! precon and Menacing Ogre among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Every choice the engine asks is one player's, one at a time. An op asks
-through `ask_mode` in `engine/effects/context.py`, which yields a
-`PendingDecision` (`engine/actions.py`) for a single `player`, and binds the
-answer in the effect context as soon as it comes back. `choose_number` in
-`engine/effects/ops_control.py` asks only `ctx.controller`, and nothing
-asks a second player the same question. Wrap it in `for_each_player` and the
-players answer in turn, each answer bound before the next is asked. The
-view does hide some things: `serialize._pending` puts card faces only on the
-seat that has to answer, `event_log_for` drops object ids from
-`_PRIVATE_EVENTS`, and face-down exile has `hidden_in_exile` and
-`revealed_to`. But no seat can hold an answer the other players must not
-see until everyone has chosen. [rules-coverage.md](rules-coverage.md#not-implemented)
-does not mention secret choices. It lists voting as not implemented, and
-secret council is the secret form of voting.
-
-So "you and target opponent each secretly choose 1, 2, or 3. Then those
-choices are revealed" cannot be written. Neither can "each player secretly
-chooses a number", "secretly choose an opponent", or a secret vote. Asked in
-turn, the later chooser answers after seeing the earlier choice, and that
-changes the card. The Science! precon found it through Expert-Level Safe,
-whose gap record is `data/authoring/gaps/expert_level_safe.json`. The
-catalog has a few dozen cards printing "secretly", among them Menacing Ogre,
-Prisoner's Dilemma, Círdan the Shipwright, Elrond of the White Council,
-Stalking Leonin, The Toymaker's Trap and the secret council cards (Vault 11:
-Voter's Dilemma, Marchesa's Surprise Party, Mob Verdict).
-
-#### The change
-
-1. A secret answer. Each chooser is asked in turn through `ask_mode`, as
-   today, but the answers are held unrevealed until the last chooser has
-   answered. Until then a later chooser's decision context and every other
-   seat's view show only that a choice has been made, never what it is. The
-   reveal is one event carrying every answer.
-2. An op for the shape the cards print: a number, or one of a fixed set of
-   labels, chosen secretly by a named set of players (you and a target
-   opponent, each player, each opponent). Each answer is bound per player,
-   so a later `condition` can compare the answers ("if they match", "the
-   player who chose the highest number").
-3. The CPUs answer through the label path the heuristic agent already uses
-   for `choose_number`. A strategy reads only what its own seat's view
-   shows, so it never sees an unrevealed answer.
-4. The loader's `_validate_effect` refuses the op without choosers or
-   without `as`. The authoring verifier answers it the way it answers
-   `choose_number`.
-5. Harvest: Expert-Level Safe through `/author-cards`, then one wave over the
-   catalog's other secret-choice cards that need nothing else.
-
-It does not build voting. Secret council is
-[voting](voting.md) with its votes cast secretly; once both items land, it
-is the vote op asking through this one's secret answer.
-
-#### Gate
-
-A unit test under `tests/unit/` for the secret choice:
-
-- every named chooser is asked;
-- a later chooser's decision and every other seat's `player_view` and
-  `event_log_for` do not carry an earlier answer before the reveal;
-- the reveal event carries all answers, and each answer is bound per player
-  for a condition to compare;
-- an eliminated player is not asked;
-- the loader refuses the op with no choosers.
-
-Expert-Level Safe passes its six gates, and the generated DSL reference
-(`tests/cards/test_dsl_reference.py`) lists the new op.
-
-#### Open questions
-
-- **How an answer is kept secret.** An unrevealed answer can live in the
-  effect context's bindings, which no view serializes, or in a field on
-  `GameState` that `player_view` redacts per seat. Recommended: the
-  bindings, with the reveal as one event, because nothing serializes them
-  today. That makes "not leaked" a property the test can check, not a
-  redaction someone has to remember.
-- **One decision kind or `ask_mode`.** Recommended: `ask_mode` with
-  `purpose: "secret_choice"`. The client and the CPUs already answer a
-  labelled choice, and a new `DecisionKind` would need its frontend label,
-  its auto-answer and an e2e path, with no new rule to show for it.
-- **What the client shows while others choose.** Recommended: nothing new.
-  Each chooser sees their own prompt, and the reveal is narrated from its
-  event in the log. A surface beyond that would need its story and floor
-  ([ADR 0013](adr/0013-handheld-floors-are-ci-gates.md)).
-- **Is it an ADR.** Recommended: no, if the answer stays in the bindings,
-  because it is an additive op. Yes, if it adds per-seat redaction of game
-  state, because that is a rule the views would be built around from then on.
 
 ### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
 
@@ -2890,7 +2889,7 @@ whole-game test able to draw the deck.
 
 ### Masters of Evil (Doctor Who)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
 
 #### Today
 
@@ -2900,7 +2899,11 @@ coming-soon shell on the shelf: its row `who_masters_of_evil` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_masters_of_evil` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; two wait on
+rules subsystems the engine does not have: The Valeyard on voting
+([voting](voting.md)) and The Toymaker's Trap on secretly chosen numbers
+([secret-choices](secret-choices.md)), so the deck cannot be whole until
+those land.
 
 #### The change
 
