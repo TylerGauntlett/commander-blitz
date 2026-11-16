@@ -1472,6 +1472,35 @@ class TestNamorsMerfolkIsAOneOneBlueMerfolk:
             assert "Merfolk" not in pool.get(near_miss).subtypes
 
 
+class TestRavenformsBirdIsAOneOneBlueFlier:
+    """Ravenform: *"Exile target artifact or creature. Its controller creates
+    a **1/1 blue Bird** creature token with **flying**."*
+
+    Every near miss is wrong in one characteristic: `bird_1_1_u_flying_vigilance`
+    adds vigilance, `bird_1_1_w_flying` is white, `bird_2_2_u_flying` is bigger
+    and `bird_illusion_1_1_u_flying` is also an Illusion. The token is what the
+    exiled permanent's controller is compensated with, so any of them would
+    change the trade the card offers.
+    """
+
+    def test_it_is_a_one_one_blue_bird_with_flying_only(self, pool):
+        token = pool.get("bird_1_1_u_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Bird"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert "vigilance" in pool.get("bird_1_1_u_flying_vigilance").keywords
+        assert sorted(pool.get("bird_1_1_w_flying").colors) == ["W"]
+        bigger = pool.get("bird_2_2_u_flying")
+        assert (bigger.power, bigger.toughness) == (2, 2)
+        assert "Illusion" in pool.get("bird_illusion_1_1_u_flying").subtypes
+
+
 class TestDeeprootWatersMerfolkHasHexproof:
     """Deeproot Waters: *"Whenever you cast a Merfolk spell, create a 1/1 blue
     Merfolk creature token with **hexproof**."*

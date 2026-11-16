@@ -1771,6 +1771,10 @@
     "artist": "Dan Murayama Scott",
     "scryfall_id": "9894bed2-c5dc-4569-9ed9-1d40df906f58"
   },
+  "bird_1_1_u_flying": {
+    "artist": "David Szabo",
+    "scryfall_id": "456832f6-60b5-46d7-b37e-4fb44e60e792"
+  },
   "bird_1_1_u_flying_vigilance": {
     "artist": "David Szabo",
     "scryfall_id": "456832f6-60b5-46d7-b37e-4fb44e60e792"
@@ -14367,6 +14371,10 @@
   "raul_trouble_shooter": {
     "artist": "Irina Nordsol",
     "scryfall_id": "3b73a314-b197-4954-a242-7d9096a406c1"
+  },
+  "ravenform": {
+    "artist": "Anna Steinbauer",
+    "scryfall_id": "2a2082e3-94b7-448a-ba87-ede5222b6f37"
   },
   "ravenous_chupacabra": {
     "artist": "Ed Repka",

@@ -16444,6 +16444,15 @@
   "raul_trouble_shooter": {
     "zone": "battlefield"
   },
+  "ravenform": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 1,
+      "id": "bird_1_1_u_flying"
+    },
+    "zone": "graveyard"
+  },
   "ravenous_chupacabra": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,

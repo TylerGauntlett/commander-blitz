@@ -197626,6 +197626,60 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "foretell": "{U}",
+      "id": "ravenform",
+      "mana_cost": "{2}{U}",
+      "name": "Ravenform",
+      "oracle_text": "Exile target artifact or creature. Its controller creates a 1/1 blue Bird creature token with flying.\nForetell {U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "bird_1_1_u_flying"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

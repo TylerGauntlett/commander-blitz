@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**396 cards** blocked by **344** capabilities.
+**395 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -93,7 +93,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
-| [bird-1-1-u-flying](#bird-1-1-u-flying) | 1 | 1902 | token |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -1972,20 +1971,6 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
-
-</details>
-
-## bird-1-1-u-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 blue Bird creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has bird_1_1_u_flying_vigilance (extra vigilance), bird_1_1_w_flying (white), bird_2_2_u_flying (2/2), bird_illusion_1_1_u_flying (extra Illusion subtype) and storm_crow_1_2_u_flying (1/2); none is exactly a 1/1 blue Bird with flying only. The rest is expressible: exile on a target spec of Artifact or Creature, create_token with player set to the exiled object's controller (via snapshot/as), and the card-level foretell key for Foretell {U}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ravenform** (rank 1902) — `ravenform`
-  - Exile target artifact or creature. Its controller creates a 1/1 blue Bird creature token with flying.
 
 </details>
 

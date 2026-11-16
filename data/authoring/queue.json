@@ -216132,12 +216132,12 @@
     },
     "Ravenform": {
       "edhrec_rank": 1902,
-      "gate": "template",
+      "gate": null,
       "name": "Ravenform",
-      "reason": "no template for: Exile target artifact or creature. Its controller creates a 1/1 blue Bird creature token w",
+      "reason": "",
       "scryfall_id": "f2d5e87b-1ee8-47db-9bc3-f5becfe79b37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenhill Flock": {
