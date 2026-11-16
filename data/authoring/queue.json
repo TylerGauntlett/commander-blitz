@@ -301432,12 +301432,12 @@
     },
     "Vashta Nerada": {
       "edhrec_rank": 5242,
-      "gate": "template",
+      "gate": null,
       "name": "Vashta Nerada",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, put a +1/+1 coun",
+      "reason": "",
       "scryfall_id": "8abacd86-9e99-4a9a-863c-260596201039",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vassal Soul": {
@@ -319292,12 +319292,12 @@
     },
     "Wound Reflection": {
       "edhrec_rank": 1940,
-      "gate": "template",
+      "gate": null,
       "name": "Wound Reflection",
-      "reason": "no template for: At the beginning of each end step, each opponent loses life equal to the life they lost th",
+      "reason": "",
       "scryfall_id": "0758383e-e70f-477b-a70b-09b2d25a6a92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wowzer, the Aspirational": {

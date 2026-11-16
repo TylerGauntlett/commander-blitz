@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "face_down_with_characteristics",
+      "capability": "face_down_characteristics",
       "kind": "op",
       "what": "put the top N cards of a player's library onto the battlefield face down under your control as face-down permanents with printed-by-effect characteristics (2/2 Artifact Creature \u2014 Cyberman), and with no turn-face-up permission (they are not manifested, so 701.34c does not apply)",
       "why_existing_wont_do": "`manifest` (with controller: you, player bound to the damaged player, amount 2) makes the plain colorless typeless 2/2 shell and marks the cards manifested, so it lacks the Artifact type and Cyberman subtype and wrongly lets creature cards be turned face up for their mana cost; it has no option to set the face-down shell's types/subtypes or forbid turning up"

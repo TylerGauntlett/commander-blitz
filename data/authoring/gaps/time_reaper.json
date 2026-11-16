@@ -1,0 +1,18 @@
+{
+  "card_id": "time_reaper",
+  "name": "Time Reaper",
+  "oracle_text": "Flying, haste\nConsume Anomaly — Whenever this creature deals combat damage to a player, put target face-up card they own in exile on the bottom of their library. If you do, you gain 3 life.",
+  "blocked_sentences": [
+    "Consume Anomaly — Whenever this creature deals combat damage to a player, put target face-up card they own in exile on the bottom of their library. If you do, you gain 3 life."
+  ],
+  "needs": [
+    {
+      "capability": "face_up_exile_filter",
+      "kind": "selector",
+      "what": "a selector key that matches a card in exile by whether it is face up or face down (i.e. reads GameObject.hidden_in_exile), usable in a card_in_exile target's selector: \"target face-up card they own in exile\"",
+      "why_existing_wont_do": "The selector key `face_down` reads only the 708.2 permanent state and the loader refuses it beside any zone other than the battlefield; face-down exile (Necropotence, hideaway, foretell-style, search_zones/exile with face_down) is tracked separately as `hidden_in_exile`, which no selector key reads. Without it a card_in_exile target over {controller: {binding: event_player}} could pick a face-down exiled card, which the printed text forbids. The rest of the line is expressible: trigger deals_combat_damage_to_player, target kind card_in_exile, put_on_top with bottom: true and `as`, then `if` on the bound count > 0 for gain_life 3."
+    }
+  ],
+  "closest_existing": ["face_down", "card_in_exile", "put_on_top"],
+  "confidence": "high"
+}

@@ -23130,6 +23130,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "vashta_nerada": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vassal_soul": {
     "zone": "battlefield"
   },
@@ -24596,6 +24600,13 @@
     "zone": "graveyard"
   },
   "worn_powerstone": {
+    "zone": "battlefield"
+  },
+  "wound_reflection": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "wrathful_raptors": {
