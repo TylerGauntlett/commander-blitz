@@ -13228,6 +13228,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "memory_worm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "meng_huo_s_horde": {
     "zone": "battlefield"
   },
@@ -17090,6 +17094,13 @@
   },
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
+  },
+  "return_the_past": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "return_to_dust": {
     "opponent_battlefield_count": 4,

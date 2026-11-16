@@ -170942,12 +170942,12 @@
     },
     "Memory Worm": {
       "edhrec_rank": 8398,
-      "gate": "template",
+      "gate": null,
       "name": "Memory Worm",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deal",
+      "reason": "",
       "scryfall_id": "3c0f405f-a6f4-4a94-abd3-4a3bdfdaaeb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Memory's Journey": {
@@ -222202,12 +222202,12 @@
     },
     "Return the Past": {
       "edhrec_rank": 9159,
-      "gate": "template",
+      "gate": null,
       "name": "Return the Past",
-      "reason": "no template for: During your turn, each instant and sorcery card in your graveyard has flashback. Its flash",
+      "reason": "",
       "scryfall_id": "2dec322d-f229-489f-8982-5be22ac4e020",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to Action": {

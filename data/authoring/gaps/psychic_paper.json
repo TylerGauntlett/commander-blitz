@@ -1,0 +1,25 @@
+{
+  "card_id": "psychic_paper",
+  "name": "Psychic Paper",
+  "oracle_text": "As this Equipment becomes attached to a creature, choose a creature card name and a creature type.\nEquipped creature has ward {1}, it can't be blocked, and its name and creature type are the last chosen name and creature type.\nEquip {2}",
+  "blocked_sentences": [
+    "As this Equipment becomes attached to a creature, choose a creature card name and a creature type.",
+    "Equipped creature has ward {1}, it can't be blocked, and its name and creature type are the last chosen name and creature type."
+  ],
+  "needs": [
+    {
+      "capability": "as_becomes_attached_choice",
+      "kind": "replacement",
+      "what": "an 'as this Equipment becomes attached to a creature' replacement that runs choices (choose_card_name restricted to creature cards, choose_type of creature types) each time it attaches, storing the chosen values on the Equipment so later attachments overwrite them ('the last chosen')",
+      "why_existing_wont_do": "trigger_events has no becomes-attached event (only self_enters, permanent_enters, etc.), and an 'as' choice must happen as the attachment occurs, not as a trigger; choose_card_name/choose_type only bind for the resolving effect, not as persistent state on the permanent"
+    },
+    {
+      "capability": "set_name_static",
+      "kind": "static_effect",
+      "what": "a static that sets the equipped creature's name and its creature type to values chosen and stored on the source (name and creature-type layer-4/text-changing characteristic override read from the source's remembered choice)",
+      "why_existing_wont_do": "rename is a one-shot op, not a static; set_creature_types exists as a static but cannot read a chosen type remembered on the source, and no static sets a name"
+    }
+  ],
+  "closest_existing": ["rename", "set_creature_types", "choose_card_name", "choose_type", "ward", "unblockable"],
+  "confidence": "high"
+}
