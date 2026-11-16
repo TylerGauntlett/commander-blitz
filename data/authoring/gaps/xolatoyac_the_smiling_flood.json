@@ -7,12 +7,16 @@
   ],
   "needs": [
     {
-      "capability": "add_subtype_while_has_counter",
-      "kind": "op",
-      "what": "a `while_counter` duration (with `counter` naming the kind, here flood) on the `add_subtype` op, so the targeted land is an Island in addition to its other types for as long as it has at least one flood counter on it, independent of whether the source stays on the battlefield, and loses the subtype when the last flood counter is removed, like `{\"op\": \"add_subtype\", \"subtypes\": [\"Island\"], \"objects\": {\"target\": \"t1\"}, \"duration\": \"while_counter\", \"counter\": \"flood\"}`",
-      "why_existing_wont_do": "the `add_subtype` op only takes `permanent`, `until_end_of_turn` or `until_your_next_turn` (`op_add_subtype`); `permanent` would keep the Island type after the counter is removed. The `add_subtype` static with `affects: {types: [Land], has_counters: \"flood\"}` would end when Xolatoyac leaves the battlefield, while the printed effect outlives its source, and it would also make lands flooded by other sources Islands. Same counter-bound duration family as the shield_broker (control) and immortal_obligation (goad) gaps"
+      "capability": "basic_land_type_mana",
+      "kind": "engine",
+      "what": "Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {U} for Island), derived in the characteristics pipeline (characteristics.abilities_of) from the subtypes the land actually has, so that the Island an `add_subtype` op with `duration: \"while_counter\"` writes brings {T}: Add {U} with it for exactly as long as the type lasts, visible to legality, the payment solver and activation.",
+      "why_existing_wont_do": "The type change itself is now sayable exactly: [{\"op\": \"add_counters\", \"counter\": \"flood\", \"objects\": {\"target\": \"t1\"}}, {\"op\": \"add_subtype\", \"subtypes\": [\"Island\"], \"objects\": {\"target\": \"t1\"}, \"duration\": \"while_counter\", \"counter\": \"flood\"}] makes the land an Island that outlives Xolatoyac and stops being one with its last flood counter. But the engine never derives a mana ability from a subtype -- data/cards/basics.cards.json prints {T}: Add {U} on Island as an ordinary ability and abilities_of consults no subtype -- so the flooded land would be an Island in name only and could not tap for {U}, which is most of what the line does. A `grant_ability` of {T}: Add {U} is not what the card says and would not end with the type. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya, Soul of the Wild."
     }
   ],
-  "closest_existing": ["add_subtype", "add_counters", "cant_attack_player"],
+  "closest_existing": [
+    "add_subtype",
+    "add_counters",
+    "grant_ability"
+  ],
   "confidence": "high"
 }

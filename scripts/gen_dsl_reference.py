@@ -367,7 +367,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target narrowed to Vehicles).",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
-                    "for good or for a duration.",
+                    "for good, for a duration, or `while_counter` (with `counter`) for as long "
+                    "as a counter of that kind stays on it.",
                     '"It becomes a Vampire in addition to its other types"'),
     "change_text": ("Modify", "Replace one creature type or color word with another in its text.",
                     '`change_text` — "replacing all instances of one creature type"'),

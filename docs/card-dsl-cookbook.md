@@ -11708,6 +11708,28 @@ Sarkhan for the turn. Two near misses load and are wrong: `animate` sets the
 base power and toughness, and a granted `add_subtype` static is an ability that
 "loses all abilities" strips, where the printed type change survives it.
 
+**For as long as it has a counter** is the third length — "that land is an
+Island in addition to its other types for as long as it has a flood counter on
+it" (Xolatoyac, the Smiling Flood):
+
+```jsonc
+{ "op": "add_counters", "counter": "flood", "objects": { "target": "t1" } },
+{ "op": "add_subtype", "subtypes": ["Island"], "objects": { "target": "t1" },
+  "duration": "while_counter", "counter": "flood" }
+```
+
+`while_counter` writes the `subtype` `TempEffect` on `TempEffect.while_counter`'s
+clock (611.2b): no cleanup or untap step ends it, and neither does its source
+leaving, because the condition is on the permanent it names.
+`GameObject._last_counter_gone` drops it the moment the last counter of that
+kind comes off, so a counter put back later does not revive it, and a permanent
+with no such counter when the op resolves gets nothing. `counter` is required on
+`while_counter`, checked by `validate_counter_kind`, and refused on every other
+duration. The near miss is an `add_subtype` static over `has_counters`, which
+ends when its source leaves and reaches counters any other card put there. A
+basic land type added this way is the subtype alone: the engine does not derive
+305.6's intrinsic mana ability from a subtype.
+
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**387 cards** blocked by **338** capabilities.
+**387 cards** blocked by **337** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,11 +21,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [basic-land-type-mana](#basic-land-type-mana) | 4 | 73 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -71,7 +71,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
-| [add-subtype-while-has-counter](#add-subtype-while-has-counter) | 1 | 4927 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -680,6 +679,33 @@ Blocks **5** cards.
 
 </details>
 
+## basic-land-type-mana
+
+Blocks **4** cards.
+
+- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
+  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
+- **(engine)** Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}), derived in the characteristics pipeline so an `add_subtype` grant of Plains/Island/Swamp/Mountain/Forest brings the mana abilities with it, visible to legality, the payment solver and activation.
+  <br>Why the existing vocabulary won't do: The type change itself is sayable as {"effect": "add_subtype", "affects": {"types": ["Land"], "has_counters": ...}, "subtypes": [every land type in enums.SUBTYPE_CLASS]}, but the engine never derives a mana ability from a granted basic land type, so the land would be every land type in name only and tap for nothing new -- the main effect of the line. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya.
+- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
+  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
+- **(engine)** Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {U} for Island), derived in the characteristics pipeline (characteristics.abilities_of) from the subtypes the land actually has, so that the Island an `add_subtype` op with `duration: "while_counter"` writes brings {T}: Add {U} with it for exactly as long as the type lasts, visible to legality, the payment solver and activation.
+  <br>Why the existing vocabulary won't do: The type change itself is now sayable exactly: [{"op": "add_counters", "counter": "flood", "objects": {"target": "t1"}}, {"op": "add_subtype", "subtypes": ["Island"], "objects": {"target": "t1"}, "duration": "while_counter", "counter": "flood"}] makes the land an Island that outlives Xolatoyac and stops being one with its last flood counter. But the engine never derives a mana ability from a subtype -- data/cards/basics.cards.json prints {T}: Add {U} on Island as an ordinary ability and abilities_of consults no subtype -- so the flooded land would be an Island in name only and could not tap for {U}, which is most of what the line does. A `grant_ability` of {T}: Add {U} is not what the card says and would not end with the type. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya, Soul of the Wild.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
+  - Each land is a Swamp in addition to its other land types.
+- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
+  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
+- **Xolatoyac, the Smiling Flood** (rank 4927) — `xolatoyac_the_smiling_flood`
+  - That land is an Island in addition to its other types for as long as it has a flood counter on it.
+- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
+  - Each land with an everything counter on it is every land type in addition to its other types.
+  - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -783,29 +809,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## basic-land-type-mana
-
-Blocks **3** cards.
-
-- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
-  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
-- **(engine)** Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}), derived in the characteristics pipeline so an `add_subtype` grant of Plains/Island/Swamp/Mountain/Forest brings the mana abilities with it, visible to legality, the payment solver and activation.
-  <br>Why the existing vocabulary won't do: The type change itself is sayable as {"effect": "add_subtype", "affects": {"types": ["Land"], "has_counters": ...}, "subtypes": [every land type in enums.SUBTYPE_CLASS]}, but the engine never derives a mana ability from a granted basic land type, so the land would be every land type in name only and tap for nothing new -- the main effect of the line. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya.
-- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
-  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
-  - Each land is a Swamp in addition to its other land types.
-- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
-  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
-- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
-  - Each land with an everything counter on it is every land type in addition to its other types.
-  - Each nonland creature with an everything counter on it is every creature type.
 
 </details>
 
@@ -1644,20 +1647,6 @@ Blocks **1** card.
 
 - **Fertile Ground** (rank 1052) — `fertile_ground`
   - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
-
-</details>
-
-## add-subtype-while-has-counter
-
-Blocks **1** card.
-
-- **(op)** a `while_counter` duration (with `counter` naming the kind, here flood) on the `add_subtype` op, so the targeted land is an Island in addition to its other types for as long as it has at least one flood counter on it, independent of whether the source stays on the battlefield, and loses the subtype when the last flood counter is removed, like `{"op": "add_subtype", "subtypes": ["Island"], "objects": {"target": "t1"}, "duration": "while_counter", "counter": "flood"}`
-  <br>Why the existing vocabulary won't do: the `add_subtype` op only takes `permanent`, `until_end_of_turn` or `until_your_next_turn` (`op_add_subtype`); `permanent` would keep the Island type after the counter is removed. The `add_subtype` static with `affects: {types: [Land], has_counters: "flood"}` would end when Xolatoyac leaves the battlefield, while the printed effect outlives its source, and it would also make lands flooded by other sources Islands. Same counter-bound duration family as the shield_broker (control) and immortal_obligation (goad) gaps
-
-<details><summary>Cards waiting on this</summary>
-
-- **Xolatoyac, the Smiling Flood** (rank 4927) — `xolatoyac_the_smiling_flood`
-  - That land is an Island in addition to its other types for as long as it has a flood counter on it.
 
 </details>
 

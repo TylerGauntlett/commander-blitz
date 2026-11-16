@@ -23,6 +23,7 @@ from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
+    validate_counter_kind,
     validate_value,
 )
 from commanderblitz.engine.enums import SUBTYPE_CLASS
@@ -3181,11 +3182,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             "permanent",
             "until_end_of_turn",
             "until_your_next_turn",
+            "while_counter",
         ):
             raise DslError(
                 f"{where}: unknown add_subtype duration {effect['duration']!r} "
-                f"(use 'until_end_of_turn', 'until_your_next_turn', or omit it for "
-                f"a type change with no duration)"
+                f"(use 'until_end_of_turn', 'until_your_next_turn', 'while_counter' "
+                f"with 'counter', or omit it for a type change with no duration)"
+            )
+        # "…for as long as it has a flood counter on it." The kind is the
+        # clock, so it is required on that duration and refused on every other:
+        # a `counter` beside a turn clock is a sentence nobody printed, and one
+        # dropped silently would be a card that reads as counter-bound and isn't.
+        if effect.get("duration") == "while_counter":
+            if "counter" not in effect:
+                raise DslError(
+                    f"{where}: add_subtype 'while_counter' needs 'counter' naming "
+                    f"the counter kind (\"for as long as it has a <kind> counter on it\")"
+                )
+            validate_counter_kind(effect["counter"], f"{where}.counter")
+        elif "counter" in effect:
+            raise DslError(
+                f"{where}: add_subtype's 'counter' is the 'while_counter' duration's "
+                f"kind and means nothing on {effect.get('duration', 'permanent')!r}"
             )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
