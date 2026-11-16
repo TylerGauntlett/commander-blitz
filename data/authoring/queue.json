@@ -299402,12 +299402,12 @@
     },
     "Urborg, Tomb of Yawgmoth": {
       "edhrec_rank": 73,
-      "gate": "template",
+      "gate": null,
       "name": "Urborg, Tomb of Yawgmoth",
-      "reason": "no template for: Each land is a Swamp in addition to its other land types",
+      "reason": "",
       "scryfall_id": "cc4be3ef-547e-41bb-855f-9c779f434919",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urdnan, Dromoka Warrior": {
@@ -320322,12 +320322,12 @@
     },
     "Xolatoyac, the Smiling Flood": {
       "edhrec_rank": 4927,
-      "gate": "template",
+      "gate": null,
       "name": "Xolatoyac, the Smiling Flood",
-      "reason": "no template for: Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an ",
+      "reason": "",
       "scryfall_id": "1444a798-4e94-4bcc-b16a-0f20334f2550",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xorn": {

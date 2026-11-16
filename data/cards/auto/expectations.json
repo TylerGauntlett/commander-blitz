@@ -22815,6 +22815,13 @@
   "urborg_elf": {
     "zone": "battlefield"
   },
+  "urborg_tomb_of_yawgmoth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "urborg_volcano": {
     "zone": "battlefield"
   },
@@ -24500,6 +24507,10 @@
     "zone": "battlefield"
   },
   "xenobotanist": {
+    "zone": "battlefield"
+  },
+  "xolatoyac_the_smiling_flood": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "y_shtola_night_s_blessed": {

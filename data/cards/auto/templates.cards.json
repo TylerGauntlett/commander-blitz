@@ -274784,6 +274784,36 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Swamp"
+          ],
+          "text": "Each land is a Swamp in addition to its other land types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "urborg_tomb_of_yawgmoth",
+      "name": "Urborg, Tomb of Yawgmoth",
+      "oracle_text": "Each land is a Swamp in addition to its other land types.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -294294,6 +294324,142 @@
         "Scientist"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flood",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "counter": "flood",
+              "duration": "while_counter",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Island"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flood",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "counter": "flood",
+              "duration": "while_counter",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Island"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "has_counters": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, untap each permanent you control with a counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "xolatoyac_the_smiling_flood",
+      "mana_cost": "{4}{G}{U}",
+      "name": "Xolatoyac, the Smiling Flood",
+      "oracle_text": "Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it.\nAt the beginning of your end step, untap each permanent you control with a counter on it.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Salamander",
+        "Serpent"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

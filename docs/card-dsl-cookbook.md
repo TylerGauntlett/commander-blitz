@@ -21,6 +21,46 @@ contain only `add_mana`. The loader enforces this, and it is why a dual land nev
 to ask which colour: the payment solver picks the mode, records the option index, and
 the engine adds exactly that mana without running the effect interpreter at all.
 
+### A basic land type is a mana ability
+
+Rule 305.6: a land with a basic land type has "{T}: Add [its mana]" whether or
+not its text box says so. Nothing writes that ability. `characteristics.abilities_of`
+appends `carddef.BASIC_LAND_MANA_ABILITIES[type]` for each Plains, Island,
+Swamp, Mountain or Forest in the permanent's **derived** subtypes, while it is a
+land on the battlefield. So the type is the whole card text:
+
+```jsonc
+// Urborg, Tomb of Yawgmoth: "Each land is a Swamp in addition to its other land types."
+{ "kind": "static", "effect": "add_subtype",
+  "affects": { "controller": "any", "types": ["Land"] }, "subtypes": ["Swamp"] }
+```
+
+Every land then taps for {B}, Urborg included. Every reader of `abilities_of`
+sees the ability: legality, the payment solver, activation, the client's mana
+row and the AI. It goes when the type goes, whether the type came from a
+granter leaving or from the last flood counter on a land Xolatoyac flooded. A
+creature that is also a land still waits out summoning sickness (302.6), and a
+"loses all abilities" effect takes the derived ability with the printed ones.
+
+**A printed copy is not doubled.** A basic or a dual prints the same ability as
+reminder text, "({T}: Add {U} or {B}.)". When a printed ability adds that type's
+colour with a bare `{T}` cost and no rider, restriction, condition or variable
+amount, the type adds nothing (`characteristics._prints_intrinsic`). Write basic
+lands and duals the way `data/cards/basics.cards.json` does. Do not write a
+separate `grant_ability` of "{T}: Add {B}." beside a type grant, because the
+granted ability would be a second ability that nothing printed.
+
+The derived abilities sit **after** every printed and granted ability, so a land
+gaining a type moves no other ability's index. `_battlefield_statics` reads
+`abilities_of(..., intrinsic=False)`. It runs inside `_compute`, so it cannot
+ask `chars` for subtypes, and a mana ability is not a static anyway.
+
+Not modelled: 305.7's *setting* of a land's subtype, which would also strip
+the abilities its old land types and its rules text gave it. No op or static
+sets a land subtype. Song of the Dryads is a `set_types`, a `lose_all_abilities`
+and a granted "{T}: Add {G}.", and that loss also takes the derived Forest
+ability, so the land taps for {G} once.
+
 ### "Add {G} for each …"
 
 The one part of a mana ability that is not a constant. `add_mana` takes an
@@ -11727,8 +11767,8 @@ with no such counter when the op resolves gets nothing. `counter` is required on
 `while_counter`, checked by `validate_counter_kind`, and refused on every other
 duration. The near miss is an `add_subtype` static over `has_counters`, which
 ends when its source leaves and reaches counters any other card put there. A
-basic land type added this way is the subtype alone: the engine does not derive
-305.6's intrinsic mana ability from a subtype.
+basic land type added this way brings its mana ability for exactly as long as
+it lasts — see [A basic land type is a mana ability](#a-basic-land-type-is-a-mana-ability).
 
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the

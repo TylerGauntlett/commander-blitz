@@ -2298,6 +2298,57 @@ def annihilator_ability(n: int) -> Ability:
     return ability
 
 
+#: The five basic land types and the colour of mana each one's intrinsic
+#: ability adds (305.6), in `COLOR_ORDER`.
+BASIC_LAND_TYPE_COLORS: Mapping[str, str] = {
+    "Plains": "W",
+    "Island": "U",
+    "Swamp": "B",
+    "Mountain": "R",
+    "Forest": "G",
+}
+
+
+def _basic_land_mana_ability(color: str) -> Ability:
+    """"{T}: Add <color>." -- the ability 305.6 gives a land of one basic type.
+
+    Built to equal the ability a basic land's JSON compiles to, field for
+    field but the index, so `characteristics.intrinsic_mana_abilities` can tell
+    a printed copy of it apart from anything with a rider by comparison alone.
+
+    Not interned in `_RULES_ABILITIES`: a mana ability never uses the stack, so
+    nothing looks it up by a negative index, and `abilities_of` numbers it by
+    where it sits on the permanent.
+    """
+    one_hot = tuple(1 if c == color else 0 for c in "WUBRGC")
+    return Ability(
+        kind=AbilityKind.ACTIVATED,
+        index=0,
+        text=f"{{T}}: Add {{{color}}}.",
+        cost=Cost(tap=True),
+        is_mana_ability=True,
+        mana_options=(one_hot,),
+        effects=({"op": "add_mana", "mana": f"{{{color}}}"},),
+        active_zones=(Zone.BATTLEFIELD,),
+    )
+
+
+#: Rule 305.6: an object with the land card type and a basic land type has the
+#: intrinsic ability "{T}: Add [mana symbol]," even if its text box does not
+#: contain that text -- {W} for Plains, {U} Island, {B} Swamp, {R} Mountain and
+#: {G} Forest.
+#:
+#: Rules-supplied for ward's reason: the sentence is the rules', and the land
+#: that has it need not print it -- Urborg, Tomb of Yawgmoth makes every land a
+#: Swamp, and a land Xolatoyac floods is an Island for as long as the counter
+#: stays. `characteristics.abilities_of` appends one for each basic land type
+#: in a land's *derived* subtypes that its printed abilities do not already
+#: produce; built once, so every Island's derived ability is the same object.
+BASIC_LAND_MANA_ABILITIES: Mapping[str, Ability] = {
+    subtype: _basic_land_mana_ability(color) for subtype, color in BASIC_LAND_TYPE_COLORS.items()
+}
+
+
 def rules_ability(index: int) -> Ability | None:
     """The rules-supplied ability a negative ``ability_index`` names.
 
