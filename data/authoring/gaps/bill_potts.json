@@ -1,0 +1,23 @@
+{
+  "card_id": "bill_potts",
+  "name": "Bill Potts",
+  "oracle_text": "Whenever you cast an instant or sorcery spell that targets only Bill Potts or activate an ability that targets only Bill Potts, copy that spell or ability. You may choose new targets for the copy. This ability triggers only once each turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Whenever you cast an instant or sorcery spell that targets only Bill Potts or activate an ability that targets only Bill Potts, copy that spell or ability. You may choose new targets for the copy. This ability triggers only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "targets_only_self",
+      "kind": "trigger_event",
+      "what": "a spell_cast trigger filter (instant or sorcery spell you cast) and an ability_activated trigger filter (ability you activate) that match only when every target of that spell or ability is this permanent, binding the spell or ability as the trigger's subject so copy_spell / copy_ability can copy it with new_targets",
+      "why_existing_wont_do": "spell_cast and ability_activated trigger_filter_keys read the spell's or source's own characteristics, not its targets; becomes_target with targeted_by fires when this creature is one target among several and also for copies, so it cannot say 'cast ... or activate ... that targets only Bill Potts'"
+    }
+  ],
+  "closest_existing": [
+    "copy_spell",
+    "copy_ability",
+    "becomes_target",
+    "partner"
+  ],
+  "confidence": "high"
+}

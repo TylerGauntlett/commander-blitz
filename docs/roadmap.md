@@ -78,7 +78,7 @@ each heading; this table is generated from them.
 | [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | Every creature type means every creature type | 0 |
 | [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
-| [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | nothing | 0 |
+| [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | nothing | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | nothing | 0 |
 | [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) | L | high | nothing | 0 |
@@ -123,12 +123,12 @@ each heading; this table is generated from them.
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 7 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
-| [Secret choices](#secret-choices) | M | medium | nothing | 3 |
+| [Secret choices](#secret-choices) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
@@ -157,72 +157,71 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-3. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-4. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-5. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-6. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-7. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-8. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-9. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-10. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-11. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-12. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-13. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-14. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-15. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-16. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-17. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-18. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-19. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-20. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-21. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-22. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-23. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-24. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-25. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-26. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-27. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-28. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-29. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-30. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-31. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-32. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-33. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-34. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-35. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-36. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-37. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-38. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-39. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-40. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-41. [Difficulty](#difficulty) — S, medium
-42. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-43. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-44. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-45. [Why a press is refused](#why-a-press-is-refused) — S, medium
+2. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+3. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+4. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+5. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+6. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+7. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+8. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+9. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+10. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+11. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+12. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+13. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+14. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+15. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+16. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+17. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+18. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+19. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+20. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+21. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+22. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+23. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+24. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+25. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+26. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+27. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+28. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+29. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+30. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+31. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+32. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+33. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+34. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+35. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+36. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+37. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+38. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+39. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+40. [Difficulty](#difficulty) — S, medium
+41. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+42. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+43. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+44. [Why a press is refused](#why-a-press-is-refused) — S, medium
+45. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
 46. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-47. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-48. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-49. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-50. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-51. [Secret choices](#secret-choices) — M, medium
-52. [Experience counters](#experience-counters) — M, medium
-53. [Outcomes as data](#outcomes-as-data) — M, medium
-54. [Rad counters](#rad-counters) — M, medium
-55. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-56. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-57. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-58. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-59. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-60. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-61. [Replays and sharing](#replays-and-sharing) — M, medium
-62. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-63. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-64. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-65. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-66. [Archidekt import](#archidekt-import) — S, low
-67. [Sound](#sound) — S, low
+47. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+48. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+49. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+50. [Secret choices](#secret-choices) — M, medium
+51. [Experience counters](#experience-counters) — M, medium
+52. [Outcomes as data](#outcomes-as-data) — M, medium
+53. [Rad counters](#rad-counters) — M, medium
+54. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+55. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+56. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+57. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+58. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+59. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+60. [Replays and sharing](#replays-and-sharing) — M, medium
+61. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+62. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+63. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+64. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+65. [Archidekt import](#archidekt-import) — S, low
+66. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -253,6 +252,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
 - [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
+- [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -408,6 +408,71 @@ and the mute setting's e2e assertion still passes.
 
 ## Cards
 
+### Voting: will of the council and council's dilemma
+
+Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "Voting — will of the council, council's dilemma" as not implemented, and
+the shipped decks avoid it. The nearest shapes in
+`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
+every player in turn order starting with the controller, which is the order a
+vote is cast in, but it adds up mana paid rather than tallying named choices;
+`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
+pick among labelled options, but bind no per-option count a later effect can
+read. `for_each_player` around `choose_mode` asks the right people and keeps
+nothing.
+
+So every "each player votes for A or B" card is unwritable. Fateful Tempest,
+in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
+Tivit, Seller of Secrets and the Conspiracy council cards are the same
+sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
+
+#### The change
+
+1. A `vote` op in `engine/effects/ops_control.py`: starting with the
+   controller and in turn order (`GameState.turn_order`, as `join_forces`
+   walks it), each player in the game chooses one of the spec's named options
+   through `ask_mode`, with the votes so far in the decision's `context` so a
+   later voter sees them (701.38a). It binds the tally under `as`, one count
+   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
+   (the options with the most votes, all of them on a tie) for will of the
+   council's "if X gets more votes or the vote is tied".
+2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
+   event to name later, without adding that trigger now.
+3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
+   options or a missing `as`; the verifier's auto-answer table already answers
+   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
+4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
+   template tier with `--retry` and one `/author-cards` wave.
+
+It does not add extra votes (Brago's Representative, Grudge Keeper's
+"whenever a player votes") or vote-changing effects; those are additions on
+the `vote_cast` event once the op exists.
+
+#### Gate
+
+A unit test under `tests/unit/` for `vote`: players asked in turn order from
+the controller, each later voter's decision carrying the earlier votes, the
+tally bound per option, the tie reported as every leading option, an eliminated
+player not asked, and the loader refusing a one-option vote. Fateful Tempest's
+six gates pass.
+
+#### Open questions
+
+- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
+  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
+  client and the CPUs already answer a labelled choice and a new decision kind
+  would need its frontend label, its auto-answer and an e2e path for no new
+  rule.
+- **How the CPUs vote.** Recommended: the heuristic agent's existing label
+  answer for now, with the `purpose` tag left for a strategy to read; voting
+  well is a CPU item, not a rules one.
+- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ### A trigger for cards put into a graveyard
 
 Effort **M** · Impact **medium**, every 'whenever one or more cards are put into your graveyard from your library, or from anywhere' card waits on it, The Gitrog Monster and Sidisi among them · Depends on nothing · Awaiting decisions.
@@ -479,71 +544,6 @@ gates pass, and the generated DSL reference lists the new trigger event.
 - **Is it an ADR.** Recommended: no; it is a second narrow departure from
   `ZONE_CHANGE` beside `LEAVES_GRAVEYARD`, and the mill line moves from "not
   implemented" to the implemented table in rules-coverage.md.
-
-### Voting: will of the council and council's dilemma
-
-Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "Voting — will of the council, council's dilemma" as not implemented, and
-the shipped decks avoid it. The nearest shapes in
-`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
-every player in turn order starting with the controller, which is the order a
-vote is cast in, but it adds up mana paid rather than tallying named choices;
-`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
-pick among labelled options, but bind no per-option count a later effect can
-read. `for_each_player` around `choose_mode` asks the right people and keeps
-nothing.
-
-So every "each player votes for A or B" card is unwritable. Fateful Tempest,
-in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
-Tivit, Seller of Secrets and the Conspiracy council cards are the same
-sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
-
-#### The change
-
-1. A `vote` op in `engine/effects/ops_control.py`: starting with the
-   controller and in turn order (`GameState.turn_order`, as `join_forces`
-   walks it), each player in the game chooses one of the spec's named options
-   through `ask_mode`, with the votes so far in the decision's `context` so a
-   later voter sees them (701.38a). It binds the tally under `as`, one count
-   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
-   (the options with the most votes, all of them on a tie) for will of the
-   council's "if X gets more votes or the vote is tied".
-2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
-   event to name later, without adding that trigger now.
-3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
-   options or a missing `as`; the verifier's auto-answer table already answers
-   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
-4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
-   template tier with `--retry` and one `/author-cards` wave.
-
-It does not add extra votes (Brago's Representative, Grudge Keeper's
-"whenever a player votes") or vote-changing effects; those are additions on
-the `vote_cast` event once the op exists.
-
-#### Gate
-
-A unit test under `tests/unit/` for `vote`: players asked in turn order from
-the controller, each later voter's decision carrying the earlier votes, the
-tally bound per option, the tie reported as every leading option, an eliminated
-player not asked, and the loader refusing a one-option vote. Fateful Tempest's
-six gates pass.
-
-#### Open questions
-
-- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
-  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
-  client and the CPUs already answer a labelled choice and a new decision kind
-  would need its frontend label, its auto-answer and an e2e path for no new
-  rule.
-- **How the CPUs vote.** Recommended: the heuristic agent's existing label
-  answer for now, with the `purpose` tag left for a strategy to read; voting
-  well is a CPU item, not a rules one.
-- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
-  rules-coverage.md moves from "not implemented" to the implemented table.
 
 ### Divided damage that may hit players
 
@@ -2942,7 +2942,7 @@ whole-game test able to draw the deck.
 
 ### Paradox Power (Doctor Who)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
 
 #### Today
 
@@ -2952,7 +2952,10 @@ coming-soon shell on the shelf: its row `who_paradox_power` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_paradox_power` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; Truth or
+Consequences waits on a secret council vote, rules subsystems the engine does
+not have ([voting](voting.md) and [secret-choices](secret-choices.md)), so the
+deck cannot be whole until those land.
 
 #### The change
 

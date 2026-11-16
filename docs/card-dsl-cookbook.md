@@ -5208,10 +5208,13 @@ they say why *this* card is shaped the way it is, which is what the residual
 gate needs, but none of them
 generalises on its own.
 
-## The inert keywords — partner, and choose a Background
+## The inert keywords — partner, choose a Background and Doctor's companion
 
     Ganax, Astral Hunter — "Choose a Background (You can have a Background as
     a second commander.)"
+
+    Yasmin Khan — "Doctor's companion (You can have two commanders if the
+    other is the Doctor.)"
 
 The census's first routing row, and the only one whose answer is "the engine does
 nothing": a deck-construction permission (702.124) is spent before the first
@@ -5230,13 +5233,18 @@ the line like any other bare keyword line:
 "keywords": ["flying", "choose_a_background"]
 ```
 
-Two words rather than one, and that is the decision worth recording. *Partner*
+Doctor's companion is written `doctors_companion`; the printed apostrophe folds
+onto it through `KEYWORD_ALIASES`, so the line lifts like any other.
+
+Three words rather than one, and that is the decision worth recording. *Partner*
 and *choose a Background* both read as "you may have a second commander" and they
 are not the same rule: a partner pair is two commanders each printing the word,
 this is one commander plus a Background enchantment that prints nothing. Folding
 `choose_a_background` onto `partner` through `KEYWORD_ALIASES` would make Ganax
 claim its line by asserting a rule it does not have, and would hand
-`validate_deck` the wrong answer the first time it checks either.
+`validate_deck` the wrong answer the first time it checks either. *Doctor's
+companion* is the third deck of the same family — the other commander is a Time
+Lord Doctor, which prints nothing — and stays its own word for the same reason.
 
 "Inert" is load-bearing in exactly one place besides that. `KEYWORD_COUNTERS` is
 derived from `Keyword`, so every word added here would otherwise become a counter
@@ -11862,8 +11870,8 @@ an ability, the other is a size.
 Any keyword the engine implements works, `enums.KEYWORD_COUNTERS` being derived
 from `Keyword` rather than listed — 122.1c names no subset, and a hand-kept list
 would be a second place to forget the next card. The one exclusion is
-`INERT_KEYWORDS`: partner and choose a Background are deck-construction words, so
-a counter of either kind could grant nothing.
+`INERT_KEYWORDS`: partner, choose a Background and Doctor's companion are
+deck-construction words, so a counter of any of them could grant nothing.
 
 **The spelling is exact, and the loader enforces that.** A `counter` kind is an
 open vocabulary — charge, quest, slumber, lore, age — so there is nothing to

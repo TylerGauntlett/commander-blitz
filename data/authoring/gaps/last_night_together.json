@@ -1,0 +1,18 @@
+{
+  "card_id": "last_night_together",
+  "name": "Last Night Together",
+  "oracle_text": "Choose two target creatures. Untap them. Put two +1/+1 counters on each of them. They gain vigilance, indestructible, and haste until end of turn. After this main phase, there is an additional combat phase. Only the chosen creatures can attack during that combat phase.",
+  "blocked_sentences": [
+    "Only the chosen creatures can attack during that combat phase."
+  ],
+  "needs": [
+    {
+      "capability": "extra_combat_attacker_restriction",
+      "kind": "op",
+      "what": "an option on extra_combat (e.g. `only_attackers: <selector>`) that, for the additional combat phase it queues, lets only the given objects (here the spell's targets t1) be declared as attackers; every other creature can't attack during that specific combat phase, while the normal combat and later combats are unaffected",
+      "why_existing_wont_do": "extra_combat takes only `amount` and `extra_main` and queues an unrestricted combat phase; the cant_attack static and cant_attack_player op have no way to scope themselves to one queued combat phase or to exempt the chosen targets, and a delayed_trigger has no event for 'beginning of that additional combat' to hang a this_combat restriction on"
+    }
+  ],
+  "closest_existing": ["extra_combat", "cant_attack", "delayed_trigger"],
+  "confidence": "high"
+}

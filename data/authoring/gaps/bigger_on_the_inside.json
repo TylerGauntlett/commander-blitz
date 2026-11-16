@@ -1,0 +1,18 @@
+{
+  "card_id": "bigger_on_the_inside",
+  "name": "Bigger on the Inside",
+  "oracle_text": "Enchant artifact or land\nEnchanted permanent has \"{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade.\" (When they cast their next spell, they exile cards from the top of their library until they exile a nonland card that costs less. They may cast it without paying its mana cost. They put the exiled cards on the bottom in a random order.)",
+  "blocked_sentences": [
+    "Enchanted permanent has \"{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade.\""
+  ],
+  "needs": [
+    {
+      "capability": "next_spell_gains_cascade",
+      "kind": "op",
+      "what": "an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell",
+      "why_existing_wont_do": "`cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts."
+    }
+  ],
+  "closest_existing": ["cascade", "delayed_trigger", "grant_ability", "add_mana"],
+  "confidence": "high"
+}

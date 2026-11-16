@@ -38360,6 +38360,174 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "controller": {
+                          "target": "t1"
+                        },
+                        "subtypes": [
+                          "Island"
+                        ],
+                        "zone": "battlefield"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "count": {
+                          "controller": {
+                            "target": "t1"
+                          },
+                          "subtypes": [
+                            "Island"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "any_one_color": true,
+                      "op": "add_mana"
+                    },
+                    {
+                      "flag": "carpet_of_flowers_added",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Add mana for each Island target opponent controls?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_turn_flag": "carpet_of_flowers_added"
+              }
+            },
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "controller": {
+                          "target": "t1"
+                        },
+                        "subtypes": [
+                          "Island"
+                        ],
+                        "zone": "battlefield"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "count": {
+                          "controller": {
+                            "target": "t1"
+                          },
+                          "subtypes": [
+                            "Island"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "any_one_color": true,
+                      "op": "add_mana"
+                    },
+                    {
+                      "flag": "carpet_of_flowers_added",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Add mana for each Island target opponent controls?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_turn_flag": "carpet_of_flowers_added"
+              }
+            },
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "carpet_of_flowers",
+      "mana_cost": "{G}",
+      "name": "Carpet of Flowers",
+      "oracle_text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -57690,6 +57858,138 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "not_subtypes": [
+              "Equipment"
+            ],
+            "not_types": [
+              "Creature"
+            ],
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Equipment"
+          ],
+          "text": "Noncreature, non-Equipment artifacts you control are Equipment in addition to their other types and have \"Equipped creature gets +1/+0\" and equip {1}"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "not_subtypes": [
+              "Equipment"
+            ],
+            "not_types": [
+              "Creature"
+            ],
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Noncreature, non-Equipment artifacts you control are Equipment in addition to their other types and have \"Equipped creature gets +1/+0\" and equip {1}"
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "controller": "you",
+            "not_subtypes": [
+              "Equipment"
+            ],
+            "not_types": [
+              "Creature"
+            ],
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Noncreature, non-Equipment artifacts you control are Equipment in addition to their other types and have \"Equipped creature gets +1/+0\" and equip {1}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "id": "dan_lewis",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Dan Lewis",
+      "oracle_text": "Noncreature, non-Equipment artifacts you control are Equipment in addition to their other types and have \"Equipped creature gets +1/+0\" and equip {1}.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "controller": "you",
@@ -58097,6 +58397,108 @@
       "toughness": 5,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Mentor",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Creatures you control have \"Whenever one or more counters are put on this creature for the first time each turn, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more counters are put on this creature for the first time each turn, draw a card.",
+          "trigger": {
+            "event": "counter_placed",
+            "max_per_turn": 1,
+            "source": "self"
+          }
+        }
+      ],
+      "id": "danny_pink",
+      "mana_cost": "{3}{U}",
+      "name": "Danny Pink",
+      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nCreatures you control have \"Whenever one or more counters are put on this creature for the first time each turn, draw a card.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -61198,6 +61600,40 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "decaying_time_loop",
+      "mana_cost": "{3}{R}",
+      "name": "Decaying Time Loop",
+      "oracle_text": "Discard all the cards in your hand, then draw that many cards.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "pitched",
+          "op": "discard",
+          "player": "you",
+          "whole_hand": true
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "pitched"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -89954,6 +90390,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flaming_tyrannosaurus",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Flaming Tyrannosaurus",
+      "oracle_text": "Menace\nParadox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.\nWhen this creature dies, it deals damage equal to its power to each opponent.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "alternative_cost": {
         "sacrifice": {
           "colors": [
@@ -89990,6 +90509,45 @@
           "id": "t1",
           "kind": "spell",
           "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flatline",
+      "mana_cost": "{2}{U}",
+      "name": "Flatline",
+      "oracle_text": "Creatures your opponents control have base power and toughness 0/1 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "power": {
+            "const": 0
+          },
+          "toughness": {
+            "const": 1
+          },
+          "types": [
+            "Creature"
+          ]
         }
       ],
       "types": [
@@ -94515,6 +95073,87 @@
         "Wizard"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "fish_1_1_u"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 1/1 blue Fish creature tokens and create two tapped Treasure tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Fish"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Fish you control have haste and can't be blocked by Humans."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Fish"
+            ]
+          },
+          "blockers": {
+            "subtypes": [
+              "Human"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Fish you control have haste and can't be blocked by Humans."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "foretell": "{3}{U}{R}",
+      "id": "frost_fair_lure_fish",
+      "mana_cost": "{5}{U}{R}",
+      "name": "Frost Fair Lure Fish",
+      "oracle_text": "When this creature enters, create two 1/1 blue Fish creature tokens and create two tapped Treasure tokens.\nFish you control have haste and can't be blocked by Humans.\nForetell {3}{U}{R}",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Fish"
+      ],
+      "toughness": 7,
       "types": [
         "Creature"
       ]
@@ -106434,6 +107073,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "graham_o_brien",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Graham O'Brien",
+      "oracle_text": "Paradox — Whenever you cast a spell from anywhere other than your hand, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -114328,6 +115020,94 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Investigate."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Investigate."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "min_life_of": "each_opponent"
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "exile",
+                  "playable_cast_only": true,
+                  "playable_this_turn": true
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 7
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — This Saga deals 1 damage to each opponent. Then if an opponent has 0 or less life, draw seven cards. Otherwise, exile this Saga and you may cast it this turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "heaven_sent",
+      "mana_cost": "{U}{R}",
+      "name": "Heaven Sent",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Investigate.\nIII — This Saga deals 1 damage to each opponent. Then if an opponent has 0 or less life, draw seven cards. Otherwise, exile this Saga and you may cast it this turn.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -158624,6 +159404,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deals 2 damage to target player. That player discards a card, then draws a card. Put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "memory_worm",
+      "mana_cost": "{1}{R}",
+      "name": "Memory Worm",
+      "oracle_text": "Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deals 2 damage to target player. That player discards a card, then draws a card. Put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Worm"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -169113,6 +169975,95 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "any",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": [
+            [
+              {
+                "not": "creature"
+              }
+            ]
+          ],
+          "text": "{T}: Add {U} for each counter on Nardole. Spend this mana only to cast noncreature spells."
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nardole_resourceful_cyborg",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Nardole, Resourceful Cyborg",
+      "oracle_text": "{T}: Add {U} for each counter on Nardole. Spend this mana only to cast noncreature spells.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -180542,6 +181493,109 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "remove_supertypes": [
+                  "Legendary"
+                ]
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, create a token that's a copy of it, except it isn't legendary.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "artifact"
+              ]
+            ],
+            "cast": [
+              [
+                "artifact"
+              ]
+            ]
+          },
+          "text": "{T}: Add {C}. Spend this mana only to cast an artifact spell or activate an ability of an artifact."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "investigate",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "osgood_operation_double",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Osgood, Operation Double",
+      "oracle_text": "When you cast this spell, create a token that's a copy of it, except it isn't legendary.\n{T}: Add {C}. Spend this mana only to cast an artifact spell or activate an ability of an artifact.\nParadox — Whenever you cast a spell from anywhere other than your hand, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Alien",
+        "Shapeshifter"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -204968,6 +206022,41 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cast_from_graveyard",
+          "grants_flashback": true,
+          "kind": "static",
+          "text": "During your turn, each instant and sorcery card in your graveyard has flashback. Its flashback cost is equal to its mana cost."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "return_the_past",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Return the Past",
+      "oracle_text": "During your turn, each instant and sorcery card in your graveyard has flashback. Its flashback cost is equal to its mana cost.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -207589,6 +208678,91 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "exile_spell_on_resolution"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "from_zones": [
+              "hand"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "diary_pick",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "random": true,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose an exiled card at random"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "diary_pick"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast that card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "any",
+                  "exiled_with": "self",
+                  "zone": "exile"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "river_song_s_diary",
+      "mana_cost": "{3}",
+      "name": "River Song's Diary",
+      "oracle_text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves.\nAt the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -211077,6 +212251,65 @@
       "subtypes": [
         "Vampire",
         "Assassin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "cast_free_if": {
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                }
+              },
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Ryan attacks, exile cards from the top of your library until you exile a nonland card. You may cast the exiled card without paying its mana cost if it's a spell with mana value less than or equal to Ryan's power. Put the exiled cards not cast this way on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ryan_sinclair",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Ryan Sinclair",
+      "oracle_text": "Whenever Ryan attacks, exile cards from the top of your library until you exile a nonland card. You may cast the exiled card without paying its mana cost if it's a spell with mana value less than or equal to Ryan's power. Put the exiled cards not cast this way on the bottom of your library in a random order.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 2,
       "types": [
@@ -228161,6 +229394,67 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, double the number of +1/+1 counters on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sisterhood_of_karn",
+      "mana_cost": "{1}{G}",
+      "name": "Sisterhood of Karn",
+      "oracle_text": "This creature enters with a +1/+1 counter on it.\nParadox — Whenever you cast a spell from anywhere other than your hand, double the number of +1/+1 counters on this creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Cleric"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -232830,6 +234124,154 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Untap another target artifact"
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Scry 1"
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Target creature can't be blocked this turn"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sonic_screwdriver",
+      "mana_cost": "{3}",
+      "name": "Sonic Screwdriver",
+      "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Untap another target artifact.\n{2}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{3}, {T}: Target creature can't be blocked this turn.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -258428,6 +259870,145 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — This Saga deals 4 damage to target creature an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 5,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 6,
+          "effects": [
+            {
+              "mana": "{R}{R}{R}{R}{R}{R}",
+              "op": "add_mana",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "VI — Add six {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_flux",
+      "mana_cost": "{2}{R}{R}",
+      "name": "The Flux",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after VI.)\nI — This Saga deals 4 damage to target creature an opponent controls.\nII, III, IV, V — Exile the top card of your library. You may play that card this turn.\nVI — Add six {R}.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -261395,6 +262976,98 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, put a +1/+1 counter on target creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "has_counters": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Team TARDIS — At the beginning of your end step, untap each creature you control with a counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "the_thirteenth_doctor",
+      "mana_cost": "{1}{G}{U}",
+      "name": "The Thirteenth Doctor",
+      "oracle_text": "Paradox — Whenever you cast a spell from anywhere other than your hand, put a +1/+1 counter on target creature.\nTeam TARDIS — At the beginning of your end step, untap each creature you control with a counter on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -297441,6 +299114,57 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "your_next_end_step",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Exile the top card of your library. Until your next end step, you may play it."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "yasmin_khan",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Yasmin Khan",
+      "oracle_text": "{T}: Exile the top card of your library. Until your next end step, you may play it.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

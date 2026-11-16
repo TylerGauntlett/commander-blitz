@@ -1,0 +1,18 @@
+{
+  "card_id": "jenny_flint",
+  "name": "Jenny Flint",
+  "oracle_text": "Partner with Madame Vastra\nFirst strike\nTraining (Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature.)\nWhenever you sacrifice a Clue or Food, put a +1/+1 counter on another target creature you control.",
+  "blocked_sentences": [
+    "Training (Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature.)"
+  ],
+  "needs": [
+    {
+      "capability": "training",
+      "kind": "keyword",
+      "what": "the Training keyword (702.149): a triggered ability 'Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature', present as a keyword so cards that check for or grant training can see it",
+      "why_existing_wont_do": "training is not in the keyword list. Hand-writing it as an 'attacks' trigger with an exists condition over other attacking creatures whose power exceeds power_of self relies on a selector power clause relative to the source, which the static/printed filter path (compare_pt) only accepts as a plain integer; the effect-selector path is unverified for this use, and it would still leave the creature without the keyword itself"
+    }
+  ],
+  "closest_existing": ["attacks", "exists", "power_of"],
+  "confidence": "high"
+}

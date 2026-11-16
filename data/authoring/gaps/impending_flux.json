@@ -1,0 +1,16 @@
+{
+  "card_id": "impending_flux",
+  "name": "Impending Flux",
+  "oracle_text": "Paradox — Impending Flux deals X damage to each opponent and each creature they control, where X is 1 plus the number of spells you've cast from anywhere other than your hand this turn.\nForetell {1}{R}{R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "Paradox — Impending Flux deals X damage to each opponent and each creature they control, where X is 1 plus the number of spells you've cast from anywhere other than your hand this turn."
+  ],
+  "needs": [{
+    "capability": "paradox",
+    "kind": "value",
+    "what": "a value counting the spells a player has cast this turn from a zone other than their hand (Paradox): `spells_cast_this_turn` with a cast-zone filter, e.g. {\"player\": \"you\", \"not_from_zone\": [\"hand\"]}, which needs the turn ledger's SPELL_CAST fold to record each cast's `cast_from_zone` beside `spells_cast_ids`",
+    "why_existing_wont_do": "`spells_cast_this_turn` counts either all casts or those whose printed face matches a selector filter (`_matches_printed`); the ledger records only the cast card id, not the zone it was cast from. `GameObject.cast_from_zone` and the `from_zone`/`not_from_zone` keys exist only on spell filters for player statics (`cast_zone_matches`), not on the turn-ledger value. Counting all spells would overcount every hand-cast spell, including Impending Flux itself when cast from hand"
+  }],
+  "closest_existing": ["spells_cast_this_turn", "not_from_zone", "foretell"],
+  "confidence": "high"
+}

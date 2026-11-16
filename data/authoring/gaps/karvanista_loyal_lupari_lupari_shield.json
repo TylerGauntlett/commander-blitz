@@ -1,0 +1,18 @@
+{
+  "card_id": "karvanista_loyal_lupari_lupari_shield",
+  "name": "Karvanista, Loyal Lupari // Lupari Shield",
+  "oracle_text": "Vigilance, trample, haste\nWhenever Karvanista attacks, put a +1/+1 counter on each Human you control.",
+  "blocked_sentences": [
+    "Lupari Shield {1}{G} (Sorcery — Adventure): printed text absent from the packet and from the local catalog"
+  ],
+  "needs": [
+    {
+      "capability": "adventure",
+      "kind": "engine",
+      "what": "the packet and the catalog row (data/catalog/cards.sqlite, layout 'adventure', type line 'Legendary Creature — Alien Dog Soldier // Sorcery — Adventure', mana cost '{4}{G} // {1}{G}') carry no text for the Adventure half Lupari Shield: back_oracle_text and back_name are empty, back_face is {}, oracle_text holds only the creature half, and the local MTGJSON deck file (ParadoxPower_WHO) lists only side 'a'. The packet builder needs to fill the Adventure face (name, cost, type line, text) from card_faces so the card can be written as a front plus a second_face with adventure: true and second_face_zone 'hand'",
+      "why_existing_wont_do": "The front is fully expressible (keywords vigilance, trample, haste; an 'attacks' trigger with source self whose effect is add_counters +1/+1 over {zone: battlefield, controller: you, types: [Creature], subtypes: [Human]}), and second_face + adventure: true is the right chassis for the half, as Beanstalk Giant // Fertile Footsteps uses. But the Adventure half's sentences cannot be written from the packet without inventing them, and an answer with the front alone would be a creature that can never be cast as Lupari Shield -- the same invisibility recorded on james_wandering_dad_follow_him"
+    }
+  ],
+  "closest_existing": ["second_face", "second_face_zone", "adventure", "add_counters"],
+  "confidence": "high"
+}

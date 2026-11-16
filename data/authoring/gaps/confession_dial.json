@@ -1,0 +1,16 @@
+{
+  "card_id": "confession_dial",
+  "name": "Confession Dial",
+  "oracle_text": "When this artifact enters, surveil 3.\n{T}: Target legendary creature card in your graveyard gains escape until end of turn. The escape cost is equal to its mana cost plus exile three other cards from your graveyard. (You may cast it from your graveyard for its escape cost this turn.)",
+  "blocked_sentences": [
+    "{T}: Target legendary creature card in your graveyard gains escape until end of turn. The escape cost is equal to its mana cost plus exile three other cards from your graveyard."
+  ],
+  "needs": [{
+    "capability": "escape",
+    "kind": "op",
+    "what": "a way to grant escape until end of turn to ONE targeted card in a graveyard (target spec card_in_graveyard, legendary creature, yours), with escape cost = that card's own mana cost plus exiling N other cards from your graveyard -- e.g. an `objects`/`target` key on `grant_graveyard_cast`, or an `escape` rider on `grant_playable` with playable: this_turn",
+    "why_existing_wont_do": "grant_graveyard_cast already carries the escape rider ({exile_from_graveyard: 3}, mana omitted = the card's own mana cost) but it is a filter-wide permission matched by `_matches_printed` on `affects_spells`, which has no key naming a targeted object -- writing it as affects_spells {types: Creature, supertypes: Legendary} would give escape to every legendary creature card in the graveyard, not the one target. grant_playable binds to the targeted card but has no escape cost (only free/pay-life/flashback/adventure prices)."
+  }],
+  "closest_existing": ["grant_graveyard_cast", "grant_playable"],
+  "confidence": "high"
+}

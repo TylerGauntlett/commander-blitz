@@ -1,0 +1,19 @@
+{
+  "card_id": "twice_upon_a_time_unlikely_meeting",
+  "name": "Twice Upon a Time // Unlikely Meeting",
+  "oracle_text": "Cast this spell only if you control two or more Doctors.\nTake an extra turn after this one. Exile Twice Upon a Time.",
+  "blocked_sentences": [
+    "Cast this spell only if you control two or more Doctors."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_if",
+      "kind": "engine",
+      "what": "a card-level cast restriction carrying a condition (condition_keys, e.g. a cmp of {count: {controller: you, subtypes: [Doctor]}} >= 2) checked when the spell is proposed for casting, so the spell cannot be cast at all unless it holds (601.3)",
+      "why_existing_wont_do": "cast_only_during (CastWindowModel) takes only turn/steps/phase, not a board condition; alternative_cost's condition gates a price, not legality; an `if` in spell_effects would let the spell be cast and merely do nothing, which is a different card"
+    }
+  ],
+  "closest_existing": ["cast_only_during", "alternative_cost"],
+  "confidence": "high",
+  "notes": "The packet also omits the Adventure half Unlikely Meeting ({2}{U} Instant — Adventure: search your library for a Doctor card, reveal it, put it into your hand, then shuffle); its oracle text was not joined into oracle_text, so it will need authoring as a second_face with adventure once the front is expressible."
+}

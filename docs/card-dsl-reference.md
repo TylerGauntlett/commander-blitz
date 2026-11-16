@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
-| [Keywords](#keywords) | 46 |
+| [Keywords](#keywords) | 47 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -888,13 +888,13 @@ The alternative and additional costs that live on the *card* rather than inside 
 
 ## Keywords
 
-Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Aliases the loader accepts: `umbra_armor` → `totem_armor`. The full census of printed keywords, shipped or not, is [keywords.md](keywords.md). Defined under [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on).
+Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Aliases the loader accepts: `doctor's_companion` → `doctors_companion`, `umbra_armor` → `totem_armor`. The full census of printed keywords, shipped or not, is [keywords.md](keywords.md). Defined under [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on).
 
 | Name | Description | Defined in |
 |---|---|---|
 | `annihilator` | Annihilator; N is the card-level `annihilator` field, or a `grant_keyword` static's `annihilator` key. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `banding` | Banding. | [Banding](card-dsl-cookbook.md#banding) |
-| `choose_a_background` | Choose a Background (inert; deck-building only). | [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background) |
+| `choose_a_background` | Choose a Background (inert; deck-building only). | [The inert keywords — partner, choose a Background and Doctor's companion](card-dsl-cookbook.md#the-inert-keywords--partner-choose-a-background-and-doctors-companion) |
 | `compleated` | Compleated. | [compleated — the keyword](card-dsl-cookbook.md#compleated--the-keyword) |
 | `daybound` | Daybound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
@@ -902,6 +902,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `desertwalk` | Desertwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `dethrone` | Dethrone. | [Dethrone](card-dsl-cookbook.md#dethrone) |
+| `doctors_companion` | Doctor's companion (inert; deck-building only). | [The inert keywords — partner, choose a Background and Doctor's companion](card-dsl-cookbook.md#the-inert-keywords--partner-choose-a-background-and-doctors-companion) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
 | `fear` | Fear. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
@@ -923,7 +924,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `mountainwalk` | Mountainwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `nightbound` | Nightbound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |
 | `nonbasic_landwalk` | Nonbasic landwalk. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
-| `partner` | Partner (inert; deck-building only). | [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background) |
+| `partner` | Partner (inert; deck-building only). | [The inert keywords — partner, choose a Background and Doctor's companion](card-dsl-cookbook.md#the-inert-keywords--partner-choose-a-background-and-doctors-companion) |
 | `phasing` | Phasing. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `plainswalk` | Plainswalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `reach` | Reach. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |

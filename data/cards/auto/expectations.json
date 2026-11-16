@@ -3168,6 +3168,10 @@
   "carnivorous_plant": {
     "zone": "battlefield"
   },
+  "carpet_of_flowers": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "carrion_crow": {
     "zone": "battlefield"
   },
@@ -4751,6 +4755,10 @@
   "damocles_base_sword_of_kang": {
     "zone": "battlefield"
   },
+  "dan_lewis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dance_of_the_dead": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -4782,6 +4790,10 @@
     "zone": "battlefield"
   },
   "dancing_scimitar": {
+    "zone": "battlefield"
+  },
+  "danny_pink": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "daring_buccaneer": {
@@ -5063,6 +5075,18 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "decaying_time_loop": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "deceptive_frostkite": {
     "battlefield_count": 33,
@@ -7596,6 +7620,10 @@
       "graveyard"
     ]
   },
+  "flaming_tyrannosaurus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flare_of_denial": {
     "hand_size": {
       "0": 1
@@ -7603,6 +7631,10 @@
     "life": {
       "0": 40
     },
+    "zone": "graveyard"
+  },
+  "flatline": {
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "flawless_maneuver": {
@@ -8008,6 +8040,14 @@
   },
   "frontline_sage": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "frost_fair_lure_fish": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 2,
+      "id": "fish_1_1_u"
+    },
     "zone": "battlefield"
   },
   "frost_marsh": {
@@ -8967,6 +9007,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "graham_o_brien": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grand_coliseum": {
     "zone": "battlefield"
   },
@@ -9639,6 +9683,18 @@
   "heaven_earth": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "heaven_sent": {
+    "battlefield_count": 34,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
   },
   "hedge_maze": {
     "zone": "battlefield"
@@ -13180,6 +13236,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "memory_worm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "meng_huo_s_horde": {
     "zone": "battlefield"
   },
@@ -14132,6 +14192,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "nardole_resourceful_cyborg": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "narset_parter_of_veils": {
     "counters": {
       "amount": 5,
@@ -14996,6 +15060,10 @@
     "zone": "battlefield"
   },
   "orzhov_signet": {
+    "zone": "battlefield"
+  },
+  "osgood_operation_double": {
+    "battlefield_count": 34,
     "zone": "battlefield"
   },
   "otawara_soaring_city": {
@@ -17043,6 +17111,13 @@
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
+  "return_the_past": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "return_to_dust": {
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
@@ -17301,6 +17376,10 @@
     "zone": "battlefield"
   },
   "river_of_tears": {
+    "zone": "battlefield"
+  },
+  "river_song_s_diary": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "riverglide_pathway_lavaglide_pathway": {
@@ -17584,6 +17663,10 @@
     "graveyard_size": {
       "0": 4
     },
+    "zone": "battlefield"
+  },
+  "ryan_sinclair": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sabertooth_wyvern": {
@@ -19024,6 +19107,14 @@
   "sisay_s_ring": {
     "zone": "battlefield"
   },
+  "sisterhood_of_karn": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "sisters_of_the_flame": {
     "zone": "battlefield"
   },
@@ -19426,6 +19517,13 @@
     "zone": "battlefield"
   },
   "songbirds_blessing": {
+    "zone": "battlefield"
+  },
+  "sonic_screwdriver": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sontaran_general": {
@@ -21354,6 +21452,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_flux": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "the_frightful_four": {
     "battlefield_count": 33,
     "life": {
@@ -21523,6 +21631,10 @@
     "zone": "battlefield"
   },
   "the_thing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_thirteenth_doctor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -24684,6 +24796,10 @@
     "zone": "battlefield"
   },
   "yarok_the_desecrated": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "yasmin_khan": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -69,7 +69,7 @@ matches. The right-hand column is the mistake that row exists to prevent.
 
 | If the printed quality… | it is | witness | why not the neighbour |
 |---|---|---|---|
-| is deck-construction only | an **inert** `Keyword` | partner, choose a Background | it must still be listed, or the residual gate has an unclaimed line |
+| is deck-construction only | an **inert** `Keyword` | partner, choose a Background, Doctor's companion | it must still be listed, or the residual gate has an unclaimed line |
 | takes a parameter — a colour, a type, a cost | a **static** with fields | protection, `block_restriction` | `Keyword` is a bare string; a parameter has nowhere to live on it |
 | must read **derived** characteristics | a `Keyword`, compared inside the rule | skulk | static filters read *printed* characteristics only, which is what keeps the characteristics pipeline acyclic — so a static cannot ask this at all |
 | takes no parameter, and some rule reads it | a `Keyword` enum member | flying, shroud | — |
@@ -254,6 +254,7 @@ This is the long tail, and where the build order comes from.
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
 | Disguise | shipped | the `disguise` card field: morph's face-down cast and turn-up, plus cloak's `CLOAK_WARD` on the shell while it is down | `disguise` |
 | Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |
+| Doctor's companion † | shipped | an **inert** `Keyword`, partner's shape — deck construction only. Kept apart from `partner` and `choose_a_background` because it builds a third deck: the other commander is a Time Lord Doctor, which prints nothing. The printed apostrophe folds onto the word through `KEYWORD_ALIASES` | `doctors_companion` |
 | Dredge | shipped | the `dredge` card field, offered by `replacements.draw` -- it replaces the draw rather than adding to it | `dredge` |
 | Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |

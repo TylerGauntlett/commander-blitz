@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [voting, secret-choices]
 status: proposed
 rank: 58
 ---
@@ -18,7 +18,10 @@ coming-soon shell on the shelf: its row `who_paradox_power` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_paradox_power` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; Truth or
+Consequences waits on a secret council vote, rules subsystems the engine does
+not have ([voting](voting.md) and [secret-choices](secret-choices.md)), so the
+deck cannot be whole until those land.
 
 ## The change
 

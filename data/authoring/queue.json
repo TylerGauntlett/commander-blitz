@@ -40152,12 +40152,12 @@
     },
     "Carpet of Flowers": {
       "edhrec_rank": 1234,
-      "gate": "template",
+      "gate": null,
       "name": "Carpet of Flowers",
-      "reason": "no template for: At the beginning of each of your main phases, if you haven't added mana with this ability ",
+      "reason": "",
       "scryfall_id": "dd28c05c-9473-4df8-9bb3-70593f2c5a50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carrier Pigeons": {
@@ -60322,12 +60322,12 @@
     },
     "Dan Lewis": {
       "edhrec_rank": 18177,
-      "gate": "template",
+      "gate": null,
       "name": "Dan Lewis",
-      "reason": "no template for: Noncreature, non-Equipment artifacts you control are Equipment in addition to their other ",
+      "reason": "",
       "scryfall_id": "184bf6c2-c7c2-48f5-a1a5-0aac4a08e567",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dance of Many": {
@@ -60522,12 +60522,12 @@
     },
     "Danny Pink": {
       "edhrec_rank": 2763,
-      "gate": "template",
+      "gate": null,
       "name": "Danny Pink",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "141a12bf-0078-446e-9471-01d43ec099d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Danse Macabre": {
@@ -64222,12 +64222,12 @@
     },
     "Decaying Time Loop": {
       "edhrec_rank": 7074,
-      "gate": "template",
+      "gate": null,
       "name": "Decaying Time Loop",
-      "reason": "no template for: Discard all the cards in your hand, then draw that many cards",
+      "reason": "",
       "scryfall_id": "6d63dfcc-49c2-49df-8542-649f659ccf0d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deceit": {
@@ -97262,12 +97262,12 @@
     },
     "Flaming Tyrannosaurus": {
       "edhrec_rank": 3147,
-      "gate": "template",
+      "gate": null,
       "name": "Flaming Tyrannosaurus",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deal",
+      "reason": "",
       "scryfall_id": "0bc8ecfd-7388-4725-8c58-bed2cc61400f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flanking Licid": {
@@ -97512,12 +97512,12 @@
     },
     "Flatline": {
       "edhrec_rank": 7197,
-      "gate": "template",
+      "gate": null,
       "name": "Flatline",
-      "reason": "no template for: Creatures your opponents control have base power and toughness 0/1 until end of turn",
+      "reason": "",
       "scryfall_id": "0541308b-0ff0-4c88-8d11-4bd324047b06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flatman": {
@@ -102662,12 +102662,12 @@
     },
     "Frost Fair Lure Fish": {
       "edhrec_rank": 20341,
-      "gate": "template",
+      "gate": null,
       "name": "Frost Fair Lure Fish",
-      "reason": "no template for: Fish you control have haste and can't be blocked by Humans",
+      "reason": "",
       "scryfall_id": "0d85d8c7-07b2-4577-8c62-7a34dca73ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frost Giant": {
@@ -115812,12 +115812,12 @@
     },
     "Graham O'Brien": {
       "edhrec_rank": 13980,
-      "gate": "template",
+      "gate": null,
       "name": "Graham O'Brien",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, create a Food toke",
+      "reason": "",
       "scryfall_id": "2a0410cb-e202-4bad-a6a5-e3e58e574157",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grakk the Pacifist": {
@@ -124962,12 +124962,12 @@
     },
     "Heaven Sent": {
       "edhrec_rank": 11871,
-      "gate": "template",
+      "gate": null,
       "name": "Heaven Sent",
-      "reason": "no template for: I, II — Investigate",
+      "reason": "",
       "scryfall_id": "47239168-df82-4b54-8400-7a4b6e9cc40f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heaven's Gate": {
@@ -170942,12 +170942,12 @@
     },
     "Memory Worm": {
       "edhrec_rank": 8398,
-      "gate": "template",
+      "gate": null,
       "name": "Memory Worm",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deal",
+      "reason": "",
       "scryfall_id": "3c0f405f-a6f4-4a94-abd3-4a3bdfdaaeb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Memory's Journey": {
@@ -183372,12 +183372,12 @@
     },
     "Nardole, Resourceful Cyborg": {
       "edhrec_rank": 15546,
-      "gate": "template",
+      "gate": null,
       "name": "Nardole, Resourceful Cyborg",
-      "reason": "no template for: {T}: Add {U} for each counter on Nardole. Spend this mana only to cast noncreature spells",
+      "reason": "",
       "scryfall_id": "03a5c463-6b5c-49c9-84c9-666aa8c19fbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Narfi, Betrayer King": {
@@ -195162,12 +195162,12 @@
     },
     "Osgood, Operation Double": {
       "edhrec_rank": 13067,
-      "gate": "template",
+      "gate": null,
       "name": "Osgood, Operation Double",
-      "reason": "no template for: When you cast this spell, create a token that's a copy of it, except it isn't legendary",
+      "reason": "",
       "scryfall_id": "88ce4ff5-7b9e-4ef8-9a7e-9d148983b04e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oskar, Rubbish Reclaimer": {
@@ -222202,12 +222202,12 @@
     },
     "Return the Past": {
       "edhrec_rank": 9159,
-      "gate": "template",
+      "gate": null,
       "name": "Return the Past",
-      "reason": "no template for: During your turn, each instant and sorcery card in your graveyard has flashback. Its flash",
+      "reason": "",
       "scryfall_id": "2dec322d-f229-489f-8982-5be22ac4e020",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to Action": {
@@ -225622,12 +225622,12 @@
     },
     "River Song's Diary": {
       "edhrec_rank": 6020,
-      "gate": "template",
+      "gate": null,
       "name": "River Song's Diary",
-      "reason": "no template for: Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it in",
+      "reason": "",
       "scryfall_id": "96476a30-72b0-4f91-9d2d-85fc196f89c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "River of Tears": {
@@ -230222,12 +230222,12 @@
     },
     "Ryan Sinclair": {
       "edhrec_rank": 12520,
-      "gate": "template",
+      "gate": null,
       "name": "Ryan Sinclair",
-      "reason": "no template for: Whenever Ryan attacks, exile cards from the top of your library until you exile a nonland ",
+      "reason": "",
       "scryfall_id": "038c8271-f814-4d00-b719-984120dd18b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rydia's Return": {
@@ -248812,12 +248812,12 @@
     },
     "Sisterhood of Karn": {
       "edhrec_rank": 11934,
-      "gate": "template",
+      "gate": null,
       "name": "Sisterhood of Karn",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "0b7a8297-5612-4f87-9d14-e8c1ee4c1d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sisters of Stone Death": {
@@ -254972,12 +254972,12 @@
     },
     "Sonic Screwdriver": {
       "edhrec_rank": 1890,
-      "gate": "template",
+      "gate": null,
       "name": "Sonic Screwdriver",
-      "reason": "no template for: {1}, {T}: Untap another target artifact",
+      "reason": "",
       "scryfall_id": "7d3b2b9f-623f-4993-ad45-099ec3b570c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sonic Seizure": {
@@ -280892,12 +280892,12 @@
     },
     "The Flux": {
       "edhrec_rank": 8708,
-      "gate": "template",
+      "gate": null,
       "name": "The Flux",
-      "reason": "no template for: I — This Saga deals 4 damage to target creature an opponent controls",
+      "reason": "",
       "scryfall_id": "026611f8-ae07-464f-afe5-6e94bcfac05e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Foretold Soldier": {
@@ -282612,12 +282612,12 @@
     },
     "The Thirteenth Doctor": {
       "edhrec_rank": 4986,
-      "gate": "template",
+      "gate": null,
       "name": "The Thirteenth Doctor",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, put a +1/+1 counte",
+      "reason": "",
       "scryfall_id": "0d087c16-33f5-44a3-b036-cc6322c7e578",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Three Seasons": {
@@ -285592,12 +285592,12 @@
     },
     "Throes of Chaos": {
       "edhrec_rank": 5451,
-      "gate": "template",
+      "gate": "residual",
       "name": "Throes of Chaos",
-      "reason": "no template for: Cascade",
+      "reason": "printed text not represented: Retrace",
       "scryfall_id": "d5623bcd-abc8-40fb-a6cf-d517fcb3dd4f",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Thromok the Insatiable": {
@@ -320552,12 +320552,12 @@
     },
     "Yasmin Khan": {
       "edhrec_rank": 15267,
-      "gate": "template",
+      "gate": null,
       "name": "Yasmin Khan",
-      "reason": "no template for: {T}: Exile the top card of your library. Until your next end step, you may play it",
+      "reason": "",
       "scryfall_id": "12b09a4f-bb62-4766-8115-cae4d5cc4c12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yasova Dragonclaw": {
