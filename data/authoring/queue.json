@@ -117172,12 +117172,12 @@
     },
     "Great Intelligence's Plan": {
       "edhrec_rank": 6689,
-      "gate": "template",
+      "gate": null,
       "name": "Great Intelligence's Plan",
-      "reason": "no template for: Draw three cards. Then target opponent faces a villainous choice — They discard three card",
+      "reason": "",
       "scryfall_id": "280c4d2c-6832-4ba5-958a-0527ba3cbc71",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Great Oak Guardian": {
@@ -131742,12 +131742,12 @@
     },
     "Hunted by The Family": {
       "edhrec_rank": 9672,
-      "gate": "template",
+      "gate": null,
       "name": "Hunted by The Family",
-      "reason": "no template for: Choose up to four target creatures you don't control. For each of them, that creature's co",
+      "reason": "",
       "scryfall_id": "04b0a2a9-ba95-4330-a8ab-9cb530eb4257",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hunter Sliver": {
@@ -154552,12 +154552,12 @@
     },
     "Laser Screwdriver": {
       "edhrec_rank": 6530,
-      "gate": "template",
+      "gate": null,
       "name": "Laser Screwdriver",
-      "reason": "no template for: {1}, {T}: Tap target artifact",
+      "reason": "",
       "scryfall_id": "431a6798-2a82-44b8-bd2e-3e3a425d3473",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lash Out": {
@@ -155242,12 +155242,12 @@
     },
     "Lavaclaw Reaches": {
       "edhrec_rank": 7616,
-      "gate": "template",
+      "gate": null,
       "name": "Lavaclaw Reaches",
-      "reason": "no template for: {1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature wit",
+      "reason": "",
       "scryfall_id": "5766b7ed-eb92-4c53-a5ad-577b5466ff6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lavacore Elemental": {

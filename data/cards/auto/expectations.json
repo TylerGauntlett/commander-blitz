@@ -9081,6 +9081,12 @@
   "great_horn_krushok": {
     "zone": "battlefield"
   },
+  "great_intelligence_s_plan": {
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "greataxe": {
     "zone": "battlefield"
   },
@@ -10136,6 +10142,10 @@
       "kind": "+1/+1"
     },
     "zone": "battlefield"
+  },
+  "hunted_by_the_family": {
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "hunter_s_insight": {
     "hand_size": {
@@ -11822,6 +11832,10 @@
   "large_bear": {
     "zone": "battlefield"
   },
+  "laser_screwdriver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "last_march_of_the_ents": {
     "hand_size": {
       "0": 3
@@ -11871,6 +11885,10 @@
     "zone": "battlefield"
   },
   "lava_serpent": {
+    "zone": "battlefield"
+  },
+  "lavaclaw_reaches": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lavaspur_boots": {

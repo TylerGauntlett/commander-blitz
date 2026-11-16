@@ -1,0 +1,16 @@
+{
+  "card_id": "midnight_crusader_shuttle",
+  "name": "Midnight Crusader Shuttle",
+  "oracle_text": "Midnight Entity — Whenever this Vehicle attacks, defending player faces a villainous choice — That player sacrifices a creature of their choice, or you gain control of a creature of your choice that player controls until end of turn. If you gain control of a creature this way, tap it, and it's attacking that player.\nCrew 2",
+  "blocked_sentences": [
+    "Midnight Entity — Whenever this Vehicle attacks, defending player faces a villainous choice — That player sacrifices a creature of their choice, or you gain control of a creature of your choice that player controls until end of turn. If you gain control of a creature this way, tap it, and it's attacking that player."
+  ],
+  "needs": [{
+    "capability": "put_into_combat_attacking",
+    "kind": "op",
+    "what": "an effect that makes a creature ALREADY on the battlefield (here one just stolen with gain_control) become an attacking creature attacking a named player (the trigger's defending player) without being declared (508.4-style: no attack triggers, no declare restrictions/costs), e.g. an `attacking` player-spec option on gain_control or a standalone op over an objects binding",
+    "why_existing_wont_do": "The `attacking` key (board_helpers._attacking_player) exists only on create_token, copy_permanent and put_onto_battlefield, i.e. for permanents arriving on the battlefield; gain_control takes only as/duration/objects/player, and redirect_attack only re-aims a creature that is already attacking. The villainous choice itself fits (choose_mode with chooser = the defending player, sacrifice with chooser, gain_control with duration until end of turn, then tap), and Crew 2 is tap_permanents total_power 2 -- only the 'it's attacking that player' clause is missing"
+  }],
+  "closest_existing": ["put_onto_battlefield", "redirect_attack", "gain_control"],
+  "confidence": "high"
+}

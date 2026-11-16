@@ -107498,6 +107498,74 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "great_intelligence_s_plan",
+      "mana_cost": "{4}{U}{B}",
+      "name": "Great Intelligence's Plan",
+      "oracle_text": "Draw three cards. Then target opponent faces a villainous choice — They discard three cards, or you may cast a spell from your hand without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "chooser": {
+            "target": "t1"
+          },
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "discard",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "label": "They discard three cards."
+            },
+            {
+              "effects": [
+                {
+                  "op": "cast_from_hand",
+                  "player": "you"
+                }
+              ],
+              "label": "You may cast a spell from your hand without paying its mana cost."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -120721,6 +120789,102 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hunted_by_the_family",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Hunted by The Family",
+      "oracle_text": "Choose up to four target creatures you don't control. For each of them, that creature's controller faces a villainous choice — That creature becomes a 1/1 white Human creature and loses all abilities, or you create a token that's a copy of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": {
+                "controller_of": "each"
+              },
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "lose_all_abilities"
+                    },
+                    {
+                      "colors": [
+                        "W"
+                      ],
+                      "duration": "permanent",
+                      "exact": true,
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "animate",
+                      "power": {
+                        "const": 1
+                      },
+                      "subtypes": [
+                        "Human"
+                      ],
+                      "toughness": {
+                        "const": 1
+                      },
+                      "types": [
+                        "Creature"
+                      ]
+                    }
+                  ],
+                  "label": "That creature becomes a 1/1 white Human creature and loses all abilities."
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "copy_permanent"
+                    }
+                  ],
+                  "label": "You create a token that's a copy of it."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": 4,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -141887,6 +142051,148 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Tap target artifact."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Surveil 1."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Goad target creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "laser_screwdriver",
+      "mana_cost": "{3}",
+      "name": "Laser Screwdriver",
+      "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Tap target artifact.\n{2}, {T}: Surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)\n{3}, {T}: Goad target creature. (Until your next turn, it attacks each combat if able and attacks a player other than you if able.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -142310,6 +142616,117 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{R}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "B",
+                "R"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "ability": 0,
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "x": true
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}: This creature gets +X/+0 until end of turn."
+        }
+      ],
+      "id": "lavaclaw_reaches",
+      "mana_cost": "",
+      "name": "Lavaclaw Reaches",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B} or {R}.\n{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

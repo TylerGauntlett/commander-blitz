@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **344** capabilities.
+**397 cards** blocked by **347** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -111,6 +111,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [casualty](#casualty) | 1 | 12943 | static_effect |
+| [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
@@ -174,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
+| [face-down-characteristics](#face-down-characteristics) | 1 | 9707 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
@@ -288,6 +290,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
+| [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -2228,6 +2231,21 @@ Blocks **1** card.
 
 </details>
 
+## chaos-ensues
+
+Blocks **1** card.
+
+- **(op)** an op that makes chaos ensue (Planechase 311.7/901.9): fires a chaos_ensues event that 'whenever chaos ensues' triggered abilities (on planes and on permanents such as Doctor Who cards) listen to
+  <br>Why the existing vocabulary won't do: there is no chaos op and no chaos_ensues trigger event in trigger_events; drawing a card alone would silently drop the clause, which matters as soon as any permanent with a 'whenever chaos ensues' trigger is on the battlefield. The villainous choice itself looks expressible as for_each_player over opponents with a choose_mode whose chooser is that player (the Damocles Base shape)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Missy** (rank 9707) — `missy`
+  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
+  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
+
+</details>
+
 ## characteristics-outside-battlefield
 
 Blocks **1** card.
@@ -3129,6 +3147,21 @@ Blocks **1** card.
 
 - **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
+
+</details>
+
+## face-down-characteristics
+
+Blocks **1** card.
+
+- **(op)** a face-down characteristics override (708.2a) on the effect that puts a card onto the battlefield face down: return_from_graveyard with face_down true plus printed types/subtypes for the shell, so the returned card is a nameless colorless 2/2 face-down permanent that is an artifact creature with subtype Cyberman (the same override Cyber Conversion needs for turn_face_down)
+  <br>Why the existing vocabulary won't do: return_from_graveyard already takes face_down, tapped and controller, but its face-down shell is the plain 708.2 2/2 creature with no types or subtypes beyond Creature; animate or add_subtype after the return would layer effects on top rather than define the face-down characteristics, and would leave nothing for the face_down selector / turn_face_up to read consistently
+
+<details><summary>Cards waiting on this</summary>
+
+- **Missy** (rank 9707) — `missy`
+  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
+  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
 
 </details>
 
@@ -4760,6 +4793,20 @@ Blocks **1** card.
 
 - **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
   - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
+
+</details>
+
+## put-into-combat-attacking
+
+Blocks **1** card.
+
+- **(op)** an effect that makes a creature ALREADY on the battlefield (here one just stolen with gain_control) become an attacking creature attacking a named player (the trigger's defending player) without being declared (508.4-style: no attack triggers, no declare restrictions/costs), e.g. an `attacking` player-spec option on gain_control or a standalone op over an objects binding
+  <br>Why the existing vocabulary won't do: The `attacking` key (board_helpers._attacking_player) exists only on create_token, copy_permanent and put_onto_battlefield, i.e. for permanents arriving on the battlefield; gain_control takes only as/duration/objects/player, and redirect_attack only re-aims a creature that is already attacking. The villainous choice itself fits (choose_mode with chooser = the defending player, sacrifice with chooser, gain_control with duration until end of turn, then tap), and Crew 2 is tap_permanents total_power 2 -- only the 'it's attacking that player' clause is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Midnight Crusader Shuttle** (rank 8091) — `midnight_crusader_shuttle`
+  - Midnight Entity — Whenever this Vehicle attacks, defending player faces a villainous choice — That player sacrifices a creature of their choice, or you gain control of a creature of your choice that player controls until end of turn. If you gain control of a creature this way, tap it, and it's attacking that player.
 
 </details>
 
