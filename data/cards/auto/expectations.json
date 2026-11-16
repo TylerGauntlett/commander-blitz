@@ -13132,6 +13132,9 @@
     },
     "zone": "graveyard"
   },
+  "merfolk_cave_diver": {
+    "zone": "battlefield"
+  },
   "merfolk_mistbinder": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14238,6 +14241,9 @@
     "zone": "battlefield"
   },
   "niblis_of_dusk": {
+    "zone": "battlefield"
+  },
+  "nicanzil_current_conductor": {
     "zone": "battlefield"
   },
   "nick_fury_spymaster": {

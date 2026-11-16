@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **343** capabilities.
+**391 cards** blocked by **342** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -46,7 +46,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
-| [explore](#explore) | 2 | 5350 | trigger_event |
 | [goad](#goad) | 2 | 6258 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -1208,25 +1207,6 @@ Blocks **2** cards.
 - **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
   - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
   - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
-
-</details>
-
-## explore
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event fired when a permanent explores (701.44), carrying the exploring creature as subject so a trigger can filter it with controller: you
-  <br>Why the existing vocabulary won't do: The explore op exists but trigger_events has no explores event; the nearest are connives, investigates and surveils, each a different keyword action, and permanent_enters or counter_placed would misfire on non-explore events and miss an explore that reveals a land
-- **(trigger_event)** a trigger event fired when a creature explores (701.44), with the exploring creature as subject and its controller filterable, carrying the revealed card so a filter can distinguish a land card from a nonland card (e.g. event 'explores' with a 'revealed' filter on types / not_types)
-  <br>Why the existing vocabulary won't do: The explore op exists, but trigger_events has no explores event; the nearest are 'surveils' and 'connives', which fire for different keyword actions, and 'permanent_enters'/'counter_placed' would not distinguish the revealed card's land-ness nor fire on a land explore that adds no counter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nicanzil, Current Conductor** (rank 5350) — `nicanzil_current_conductor`
-  - Whenever a creature you control explores a land card, you may put a land card from your hand onto the battlefield tapped.
-  - Whenever a creature you control explores a nonland card, put a +1/+1 counter on Nicanzil.
-- **Merfolk Cave-Diver** (rank 9689) — `merfolk_cave_diver`
-  - Whenever a creature you control explores, this creature gets +1/+0 until end of turn and can't be blocked this turn.
 
 </details>
 

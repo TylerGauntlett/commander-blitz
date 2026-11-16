@@ -171522,12 +171522,12 @@
     },
     "Merfolk Cave-Diver": {
       "edhrec_rank": 9689,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Cave-Diver",
-      "reason": "no template for: Whenever a creature you control explores, this creature gets +1/+0 until end of turn and c",
+      "reason": "",
       "scryfall_id": "6e0fe81c-b8ef-49ff-8743-f03d0220cb9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Coralsmith": {
@@ -186292,12 +186292,12 @@
     },
     "Nicanzil, Current Conductor": {
       "edhrec_rank": 5350,
-      "gate": "template",
+      "gate": null,
       "name": "Nicanzil, Current Conductor",
-      "reason": "no template for: Whenever a creature you control explores a land card, you may put a land card from your ha",
+      "reason": "",
       "scryfall_id": "5e6f4aba-3500-4fb7-ab78-02f63c03778a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nick Fury, Agent of S.H.I.E.L.D.": {

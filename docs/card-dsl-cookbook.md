@@ -16625,6 +16625,47 @@ draw and discard at the table, so connive 2 would pay twice and a cleanup-step
 discard would pay too. Neither one names the creature, so "that creature" has
 nothing to point at.
 
+## "Whenever a creature you control explores"
+
+```jsonc
+// Merfolk Cave-Diver — "Whenever a creature you control explores, this creature
+// gets +1/+0 until end of turn and can't be blocked this turn."
+{ "kind": "triggered",
+  "trigger": { "event": "explores", "controller": "you",
+               "filter": { "types": ["Creature"] } },
+  "effects": [
+    { "op": "pump", "power": { "const": 1 }, "toughness": { "const": 0 },
+      "objects": { "zone": "battlefield", "self_only": true } },
+    { "op": "unblockable", "duration": "this_turn",
+      "objects": { "zone": "battlefield", "self_only": true } } ] }
+
+// Nicanzil, Current Conductor — "…explores a land card, …" and
+// "…explores a nonland card, put a +1/+1 counter on Nicanzil."
+{ "trigger": { "event": "explores_land", "controller": "you",
+               "filter": { "types": ["Creature"] } } }
+{ "trigger": { "event": "explores_nonland", "controller": "you",
+               "filter": { "types": ["Creature"] } } }
+```
+
+Three trigger events, all heard off the one event the `explore` op fires for
+each permanent that explores, after the revealed card is placed and the counter
+is on. Their subject is the permanent that explored: `filter` asks what it is,
+`controller: "you"` asks who controls it, and `{"binding": "subject"}` is "that
+creature". `source: "self"` means this permanent explored, never that this
+permanent's ability made something else explore.
+
+- `explores` hears every explore, including one of an empty library: 701.40b
+  says the permanent has explored even if some or all of the actions were
+  impossible.
+- `explores_land` hears only an explore that revealed a land card, and
+  `explores_nonland` only one that revealed a nonland card. An explore of an
+  empty library revealed no card, so it is neither.
+
+`counter_placed` is the near miss. It never fires on a land explore, so
+Cave-Diver would miss half its triggers, and it fires on every other +1/+1
+counter at the table. A `zone_change` of the revealed card fires only for a land
+or a binned nonland, and misses a nonland kept on top.
+
 ## Clash
 
 ```jsonc

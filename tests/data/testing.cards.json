@@ -14760,6 +14760,156 @@
       ]
     },
     {
+      "id": "t_explore_watcher",
+      "name": "Test Explore Watcher",
+      "oracle_text": "Whenever a creature you control explores, you gain 1 life.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control explores, you gain 1 life.",
+          "trigger": {
+            "event": "explores",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_explore_sorter",
+      "name": "Test Explore Sorter",
+      "oracle_text": "Whenever a creature you control explores a land card, you gain 1 life.\nWhenever a creature you control explores a nonland card, put a +1/+1 counter on this creature.",
+      "mana_cost": "{2}{G}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control explores a land card, you gain 1 life.",
+          "trigger": {
+            "event": "explores_land",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control explores a nonland card, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "explores_nonland",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_self_explorer",
+      "name": "Test Self Explorer",
+      "oracle_text": "Whenever this creature explores, you gain 1 life.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature explores, you gain 1 life.",
+          "trigger": {
+            "event": "explores",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_life_floor_emblem",
       "name": "Test Life Floor Emblem",
       "oracle_text": "You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",

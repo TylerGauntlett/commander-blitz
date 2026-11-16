@@ -135,6 +135,25 @@ describe("describeEvent", () => {
     );
   });
 
+  it("names the creature that explored, and what it revealed", () => {
+    // A nonland kept on top moves no card, so this line is the only place the
+    // revealed card shows, and it is what Merfolk Cave-Diver's trigger waits for.
+    expect(
+      describeEvent(
+        event({
+          type: "explored",
+          player: 0,
+          data: { card: "ultron_unlimited", revealed: "forest", land: true },
+        }),
+        names,
+        0,
+      ),
+    ).toBe("Ultron Unlimited explores, revealing Forest");
+    expect(
+      describeEvent(event({ type: "explored", player: 1, data: { revealed: null } }), names, 0),
+    ).toBe("A creature explores");
+  });
+
   it("says who investigated", () => {
     // The Clue's own line says a token arrived; this one says it was an
     // investigation, which is what "whenever you investigate" waits for.

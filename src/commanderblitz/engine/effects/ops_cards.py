@@ -1694,6 +1694,14 @@ def op_explore(ctx: EffectContext, spec: Mapping[str, Any]):
     op is printed on sorceries as often as on creatures and a defaulted
     ``self_only`` on a sorcery resolves to the spell — which is on the stack, is
     not the exploring permanent, and would make the card reveal nothing at all.
+
+    Each permanent that explores fires one `EventType.EXPLORED` once the
+    revealed card is placed -- the `explores`, `explores_land` and
+    `explores_nonland` trigger events, with that permanent as the subject and
+    the revealed card's land-ness as ``land``. An empty library reveals
+    nothing and is still an explore (701.40b), so it fires with ``land`` of
+    ``None``: "whenever a creature you control explores" hears it, and
+    neither "…a land card" nor "…a nonland card" does.
     """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Explore", "explore")
     for oid in oids:
@@ -1702,14 +1710,24 @@ def op_explore(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         pid = obj.controller
         library = ctx.state.players[pid].library
-        if not library:
-            # An empty library reveals nothing, so neither half happens -- not
-            # even the counter, which 701.40b makes conditional on a card.
-            continue
-        top = library[0]
-        revealed = ctx.state.objects.get(top)
+        revealed = ctx.state.objects.get(library[0]) if library else None
         if revealed is None:
+            # An empty library reveals nothing, so neither half happens -- not
+            # even the counter, which 701.40b makes conditional on a card. The
+            # permanent has still explored.
+            fire(
+                ctx.state,
+                EventType.EXPLORED,
+                player=pid,
+                source=ctx.source_oid,
+                oid=oid,
+                card=obj.def_id,
+                revealed=None,
+                land=None,
+                binned=False,
+            )
             continue
+        top = revealed.oid
         card = ctx.state.card_of(revealed)
         ctx.state.emit("reveal", player=pid, source=ctx.source_oid, cards=[card.id])
         if card.is_land:
@@ -1722,12 +1740,19 @@ def op_explore(ctx: EffectContext, spec: Mapping[str, Any]):
             )
             if binned:
                 move_object(ctx.state, top, Zone.GRAVEYARD, to_player=pid, cause="explore")
-        ctx.state.emit(
-            "explore",
+        # Fired, not emitted: "whenever a creature you control explores"
+        # listens for it. After the card is placed and the counter is on, so
+        # the trigger sees the explore finished (701.40b) and "that creature"
+        # is ``oid``; ``card`` is the explorer, as on CONNIVED, and the
+        # revealed card is ``revealed``.
+        fire(
+            ctx.state,
+            EventType.EXPLORED,
             player=pid,
             source=ctx.source_oid,
             oid=oid,
-            card=card.id,
+            card=obj.def_id,
+            revealed=card.id,
             land=card.is_land,
             binned=binned,
         )

@@ -11454,6 +11454,10 @@
     "artist": "Eilene Cherie",
     "scryfall_id": "7f7a4f95-f12b-4c28-a6f7-f3c64364abba"
   },
+  "merfolk_cave_diver": {
+    "artist": "Fesbra",
+    "scryfall_id": "6e0fe81c-b8ef-49ff-8743-f03d0220cb9e"
+  },
   "merfolk_mistbinder": {
     "artist": "Clint Cearley",
     "scryfall_id": "f5c2c19b-2cac-4073-8d02-277cf42ae1ce"
@@ -12389,6 +12393,10 @@
   "niblis_of_dusk": {
     "artist": "Nils Hamm",
     "scryfall_id": "228cd341-f46a-41be-a2a3-3108105c572b"
+  },
+  "nicanzil_current_conductor": {
+    "artist": "Fariba Khamseh",
+    "scryfall_id": "5e6f4aba-3500-4fb7-ab78-02f63c03778a"
   },
   "nick_fury_spymaster": {
     "artist": "Michael MacRae",
