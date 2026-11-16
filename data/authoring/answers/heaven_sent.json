@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "heaven_sent",
+    "name": "Heaven Sent",
+    "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Investigate.\nIII — This Saga deals 1 damage to each opponent. Then if an opponent has 0 or less life, draw seven cards. Otherwise, exile this Saga and you may cast it this turn.",
+    "mana_cost": "{U}{R}",
+    "types": ["Enchantment"],
+    "subtypes": ["Saga"],
+    "colors": ["R", "U"],
+    "color_identity": ["R", "U"],
+    "abilities": [
+      {
+        "kind": "chapter",
+        "chapter": 1,
+        "text": "I, II — Investigate.",
+        "effects": [{"op": "investigate"}]
+      },
+      {
+        "kind": "chapter",
+        "chapter": 2,
+        "text": "I, II — Investigate.",
+        "effects": [{"op": "investigate"}]
+      },
+      {
+        "kind": "chapter",
+        "chapter": 3,
+        "text": "III — This Saga deals 1 damage to each opponent. Then if an opponent has 0 or less life, draw seven cards. Otherwise, exile this Saga and you may cast it this turn.",
+        "effects": [
+          {"op": "damage", "amount": {"const": 1}, "player": "each_opponent"},
+          {
+            "op": "if",
+            "condition": {"cmp": "<=", "left": {"min_life_of": "each_opponent"}, "right": {"const": 0}},
+            "then": [{"op": "draw", "player": "you", "amount": {"const": 7}}],
+            "else": [
+              {
+                "op": "exile",
+                "objects": {"self_only": true},
+                "playable_this_turn": true,
+                "playable_cast_only": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "lore", "amount": 1},
+    "tokens": {"id": "clue_token", "count": 1},
+    "battlefield_count": 34
+  }
+}

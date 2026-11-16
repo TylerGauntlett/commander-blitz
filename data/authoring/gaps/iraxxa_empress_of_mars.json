@@ -1,0 +1,18 @@
+{
+  "card_id": "iraxxa_empress_of_mars",
+  "name": "Iraxxa, Empress of Mars",
+  "oracle_text": "Trample\nBattle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nParadox — Whenever you cast a spell from anywhere other than your hand, create a 2/2 red Alien Warrior creature token.",
+  "blocked_sentences": [
+    "Paradox — Whenever you cast a spell from anywhere other than your hand, create a 2/2 red Alien Warrior creature token."
+  ],
+  "needs": [
+    {
+      "capability": "alien_warrior_token",
+      "kind": "token",
+      "what": "a 2/2 red Alien Warrior creature token",
+      "why_existing_wont_do": "token_ids has no Alien Warrior token; the nearest are warrior_1_1_r (1/1 red Warrior) and other X Warrior tokens of the wrong size, colour or creature types. Battle cry (attacks trigger + pump of other attackers, as Hero of Bladehold) and the Paradox spell_cast trigger are otherwise expressible"
+    }
+  ],
+  "closest_existing": ["warrior_1_1_r"],
+  "confidence": "high"
+}

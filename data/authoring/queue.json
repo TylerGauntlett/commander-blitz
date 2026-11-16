@@ -60522,12 +60522,12 @@
     },
     "Danny Pink": {
       "edhrec_rank": 2763,
-      "gate": "compile",
+      "gate": null,
       "name": "Danny Pink",
-      "reason": "danny_pink.grantable.abilities[0]: 'batched' groups the events of one simultaneous batch and only ['attacks_unblocked', 'deals_damage_to_player', 'dealt_damage', 'discard', 'leaves_graveyard', 'life_lost', 'permanent_enters', 'put_into_graveyard', 'token_created'] carry one, not 'counter_placed'",
+      "reason": "",
       "scryfall_id": "141a12bf-0078-446e-9471-01d43ec099d1",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Danse Macabre": {

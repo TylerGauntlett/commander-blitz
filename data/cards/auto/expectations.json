@@ -4788,6 +4788,10 @@
   "dancing_scimitar": {
     "zone": "battlefield"
   },
+  "danny_pink": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "daring_buccaneer": {
     "battlefield_count": 33,
     "hand_size": {
