@@ -56611,6 +56611,204 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Artifact creatures you control have afflict 3."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "cyberman_patrol",
+      "mana_cost": "{2}",
+      "name": "Cyberman Patrol",
+      "oracle_text": "Artifact creatures you control have afflict 3. (Whenever a creature with afflict 3 becomes blocked, defending player loses 3 life.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cyberman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X is the number of attacking artifact creatures.",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cybermat",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{2}",
+      "name": "Cybermat",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nWhenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X is the number of attacking artifact creatures.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "not_supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Nonlegendary artifact creatures you control have myriad."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "cybermen_squadron",
+      "mana_cost": "{7}",
+      "name": "Cybermen Squadron",
+      "oracle_text": "Nonlegendary artifact creatures you control have myriad. (Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Cyberman"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -56967,6 +57165,78 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "victim"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Exterminate! — When this creature enters, destroy target creature an opponent controls. That player loses 3 life",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dalek_drone",
+      "keywords": [
+        "flying",
+        "menace"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Dalek Drone",
+      "oracle_text": "Flying, menace\nExterminate! — When this creature enters, destroy target creature an opponent controls. That player loses 3 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

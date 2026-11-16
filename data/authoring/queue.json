@@ -59432,32 +59432,32 @@
     },
     "Cyberman Patrol": {
       "edhrec_rank": 2746,
-      "gate": "template",
+      "gate": null,
       "name": "Cyberman Patrol",
-      "reason": "no template for: Artifact creatures you control have afflict 3",
+      "reason": "",
       "scryfall_id": "1fe32187-ce41-48b8-9bb9-ddca2ca0bab6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybermat": {
       "edhrec_rank": 12172,
-      "gate": "template",
+      "gate": null,
       "name": "Cybermat",
-      "reason": "no template for: Whenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X",
+      "reason": "",
       "scryfall_id": "04debb05-5303-4b0a-8224-d00f3512639e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybermen Squadron": {
       "edhrec_rank": 2036,
-      "gate": "template",
+      "gate": null,
       "name": "Cybermen Squadron",
-      "reason": "no template for: Nonlegendary artifact creatures you control have myriad",
+      "reason": "",
       "scryfall_id": "08bdf8ea-e3a7-4121-805a-417361c8d58d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybernetic Specialist": {
@@ -60152,12 +60152,12 @@
     },
     "Dalek Drone": {
       "edhrec_rank": 7458,
-      "gate": "template",
+      "gate": null,
       "name": "Dalek Drone",
-      "reason": "no template for: Exterminate! — When this creature enters, destroy target creature an opponent controls. Th",
+      "reason": "",
       "scryfall_id": "0829742d-7268-46a3-a8f3-172559b1315f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dalek Squadron": {

@@ -4636,6 +4636,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cyberman_patrol": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cybermat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cybermen_squadron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cyclonic_rift": {
     "graveyard_size": {
       "0": 3
@@ -4693,6 +4705,15 @@
     "zone": "battlefield"
   },
   "dakmor_scorpion": {
+    "zone": "battlefield"
+  },
+  "dalek_drone": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "damn": {

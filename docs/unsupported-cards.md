@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**387 cards** blocked by **340** capabilities.
+**389 cards** blocked by **341** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspect](#suspect) | 2 | 4851 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [targets-only-self](#targets-only-self) | 2 | 8216 | trigger_event |
+| [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -177,6 +178,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
+| [face-down-with-characteristics](#face-down-with-characteristics) | 1 | 5733 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -337,7 +339,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
-| [turn-face-down](#turn-face-down) | 1 | 10947 | op |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
@@ -1439,6 +1440,25 @@ Blocks **2** cards.
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 - **Feather, Radiant Arbiter** (rank 13967) — `feather_radiant_arbiter`
   - Whenever you cast a noncreature spell that targets only Feather, you may choose any number of other creatures that spell could target and pay {2} for each of those creatures. If you do, for each of those creatures, copy that spell. The copy targets that creature.
+
+</details>
+
+## turn-face-down
+
+Blocks **2** cards.
+
+- **(op)** an op that turns a permanent already on the battlefield face down (708.2), so it loses its name, mana cost, colors, abilities, subtypes and printed P/T and becomes a nameless, colorless 2/2 face-down permanent with a characteristics override (here: artifact creature, subtype Cyberman); it stays face down indefinitely and may be turned face up only if it has morph/disguise/a face-up cost (708.8)
+  <br>Why the existing vocabulary won't do: turn_face_up exists only in the other direction; manifest, manifest_dread and cloak (manifest's flag) put cards from the library face down, not a permanent already on the battlefield; face_down on look_at_top/return_from_graveyard only puts cards onto the battlefield face down from another zone; animate or set_pt plus lose_all_abilities and add_subtype would approximate the result but leave the name, colors, mana value and face-up status intact and would not make it a face-down permanent the face_down selector or turn_face_up reads
+- **(op)** an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)
+  <br>Why the existing vocabulary won't do: manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyber Conversion** (rank 4820) — `cyber_conversion`
+  - Turn target creature face down. It's a 2/2 Cyberman artifact creature.
+- **Obscuring Aether** (rank 10947) — `obscuring_aether`
+  - Face-down creature spells you cast cost {1} less to cast.
+  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
 
 </details>
 
@@ -3146,6 +3166,20 @@ Blocks **1** card.
 
 - **Veiled Ascension** (rank 15770) — `veiled_ascension`
   - Face-down creatures you control enter with a flying counter on them.
+
+</details>
+
+## face-down-with-characteristics
+
+Blocks **1** card.
+
+- **(op)** put the top N cards of a player's library onto the battlefield face down under your control as face-down permanents with printed-by-effect characteristics (2/2 Artifact Creature — Cyberman), and with no turn-face-up permission (they are not manifested, so 701.34c does not apply)
+  <br>Why the existing vocabulary won't do: `manifest` (with controller: you, player bound to the damaged player, amount 2) makes the plain colorless typeless 2/2 shell and marks the cards manifested, so it lacks the Artifact type and Cyberman subtype and wrongly lets creature cards be turned face up for their mana cost; it has no option to set the face-down shell's types/subtypes or forbid turning up
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cybership** (rank 5733) — `cybership`
+  - Whenever this Vehicle deals combat damage to a player, put the top two cards of that player's library onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
 
 </details>
 
@@ -5434,21 +5468,6 @@ Blocks **1** card.
 
 - **Duskana, the Rage Mother** (rank 10907) — `duskana_the_rage_mother`
   - Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.
-
-</details>
-
-## turn-face-down
-
-Blocks **1** card.
-
-- **(op)** an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)
-  <br>Why the existing vocabulary won't do: manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place
-
-<details><summary>Cards waiting on this</summary>
-
-- **Obscuring Aether** (rank 10947) — `obscuring_aether`
-  - Face-down creature spells you cast cost {1} less to cast.
-  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
 
 </details>
 
