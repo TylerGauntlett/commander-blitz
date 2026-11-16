@@ -1,0 +1,25 @@
+{
+  "card_id": "the_valeyard",
+  "name": "The Valeyard",
+  "oracle_text": "If an opponent would face a villainous choice, they face that choice an additional time. (They can make the same or different choices.)\nWhile voting, you may vote an additional time.",
+  "blocked_sentences": [
+    "If an opponent would face a villainous choice, they face that choice an additional time",
+    "While voting, you may vote an additional time"
+  ],
+  "needs": [
+    {
+      "capability": "villainous_choice",
+      "kind": "op",
+      "what": "a villainous choice op (701.56: a player chooses one of two printed outcomes) plus a player-wide replacement static that makes an opponent face each villainous choice an additional time (repeating the choice, same or different answer)",
+      "why_existing_wont_do": "No villainous choice op or event exists; choose_mode with chooser is the nearest but has no 'face a villainous choice' identity a static could replace, and no static_effect repeats a choice"
+    },
+    {
+      "capability": "voting",
+      "kind": "op",
+      "what": "a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting",
+      "why_existing_wont_do": "No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes"
+    }
+  ],
+  "closest_existing": ["choose_mode", "join_forces"],
+  "confidence": "high"
+}

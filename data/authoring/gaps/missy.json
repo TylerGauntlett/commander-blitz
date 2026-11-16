@@ -1,0 +1,25 @@
+{
+  "card_id": "missy",
+  "name": "Missy",
+  "oracle_text": "Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature.\nAt the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues.",
+  "blocked_sentences": [
+    "Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature",
+    "At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues"
+  ],
+  "needs": [
+    {
+      "capability": "face_down_characteristics",
+      "kind": "op",
+      "what": "a face-down characteristics override (708.2a) on the effect that puts a card onto the battlefield face down: return_from_graveyard with face_down true plus printed types/subtypes for the shell, so the returned card is a nameless colorless 2/2 face-down permanent that is an artifact creature with subtype Cyberman (the same override Cyber Conversion needs for turn_face_down)",
+      "why_existing_wont_do": "return_from_graveyard already takes face_down, tapped and controller, but its face-down shell is the plain 708.2 2/2 creature with no types or subtypes beyond Creature; animate or add_subtype after the return would layer effects on top rather than define the face-down characteristics, and would leave nothing for the face_down selector / turn_face_up to read consistently"
+    },
+    {
+      "capability": "chaos_ensues",
+      "kind": "op",
+      "what": "an op that makes chaos ensue (Planechase 311.7/901.9): fires a chaos_ensues event that 'whenever chaos ensues' triggered abilities (on planes and on permanents such as Doctor Who cards) listen to",
+      "why_existing_wont_do": "there is no chaos op and no chaos_ensues trigger event in trigger_events; drawing a card alone would silently drop the clause, which matters as soon as any permanent with a 'whenever chaos ensues' trigger is on the battlefield. The villainous choice itself looks expressible as for_each_player over opponents with a choose_mode whose chooser is that player (the Damocles Base shape)"
+    }
+  ],
+  "closest_existing": ["return_from_graveyard", "turn_face_up", "manifest", "choose_mode"],
+  "confidence": "high"
+}

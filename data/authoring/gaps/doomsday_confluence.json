@@ -1,0 +1,18 @@
+{
+  "card_id": "doomsday_confluence",
+  "name": "Doomsday Confluence",
+  "oracle_text": "Choose X. You may choose the same mode more than once.\n• Each player sacrifices a nonartifact creature of their choice.\n• Create a 3/3 black Dalek artifact creature token with menace.\n• Each opponent discards a card.",
+  "blocked_sentences": [
+    "Choose X. You may choose the same mode more than once."
+  ],
+  "needs": [
+    {
+      "capability": "choose_x_modes",
+      "kind": "engine",
+      "what": "a repeatable top-level choose_mode whose count is the spell's announced X ({\"x\": true}), asked at 601.2b after X is announced, choosing exactly X mode instances (zero when X is 0)",
+      "why_existing_wont_do": "choose_mode takes `repeatable` beside a literal `count` only. `count` is run through evaluate_value, but Game._ask_modes builds its EffectContext without the announced X (ctx.x defaults to 0), so {\"x\": true} would evaluate to 0 and modal_bounds then raises the floor to max(1, count), so the spell would always choose exactly one mode whatever X was paid. The three bullets are expressible on their own (sacrifice, create_token dalek_3_3_b_artifact_menace, discard); only the X-sized mode count is missing."
+    }
+  ],
+  "closest_existing": ["choose_mode.repeatable", "choose_mode.count", "escalate"],
+  "confidence": "high"
+}

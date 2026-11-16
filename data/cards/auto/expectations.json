@@ -3800,6 +3800,10 @@
   "cloaked_siren": {
     "zone": "battlefield"
   },
+  "clockwork_droid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cloud_crusader": {
     "zone": "battlefield"
   },
@@ -4394,6 +4398,10 @@
     },
     "zone": "graveyard"
   },
+  "creeping_tar_pit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "creosote_heath": {
     "battlefield_count": 33,
     "life": {
@@ -4536,6 +4544,10 @@
     },
     "zone": "graveyard"
   },
+  "cult_of_skaro": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cultist_s_staff": {
     "zone": "battlefield"
   },
@@ -4628,6 +4640,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cyberman_patrol": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cybermat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cybermen_squadron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cyclonic_rift": {
     "graveyard_size": {
       "0": 3
@@ -4685,6 +4709,19 @@
     "zone": "battlefield"
   },
   "dakmor_scorpion": {
+    "zone": "battlefield"
+  },
+  "dalek_drone": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "dalek_squadron": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "damn": {
@@ -4854,6 +4891,10 @@
     "zone": "battlefield"
   },
   "dauthi_marauder": {
+    "zone": "battlefield"
+  },
+  "davros_dalek_creator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dawn_gryff": {
@@ -5160,6 +5201,14 @@
     "life": {
       "0": 40,
       "1": 38
+    },
+    "zone": "graveyard"
+  },
+  "delete": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 20,
+      "1": 20
     },
     "zone": "graveyard"
   },
@@ -6467,6 +6516,9 @@
   "enraged_revolutionary": {
     "zone": "battlefield"
   },
+  "ensnared_by_the_mara": {
+    "zone": "graveyard"
+  },
   "enterprising_scallywag": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6921,6 +6973,17 @@
     },
     "zone": "graveyard"
   },
+  "exterminate": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "life": {
+      "0": 37,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "extract_brain": {
     "hand_size": {
       "0": 1
@@ -7308,6 +7371,10 @@
       "1": 40
     },
     "zone": "graveyard"
+  },
+  "fiery_islet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "fight_for_the_throne": {
     "zone": "graveyard"
@@ -8058,6 +8125,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "gallifrey_council_chamber": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "gallifrey_falls_no_more": {
     "battlefield_count": 30,
@@ -9017,6 +9088,12 @@
   },
   "great_horn_krushok": {
     "zone": "battlefield"
+  },
+  "great_intelligence_s_plan": {
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
   },
   "greataxe": {
     "zone": "battlefield"
@@ -10073,6 +10150,10 @@
       "kind": "+1/+1"
     },
     "zone": "battlefield"
+  },
+  "hunted_by_the_family": {
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "hunter_s_insight": {
     "hand_size": {
@@ -11759,6 +11840,10 @@
   "large_bear": {
     "zone": "battlefield"
   },
+  "laser_screwdriver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "last_march_of_the_ents": {
     "hand_size": {
       "0": 3
@@ -11808,6 +11893,10 @@
     "zone": "battlefield"
   },
   "lava_serpent": {
+    "zone": "battlefield"
+  },
+  "lavaclaw_reaches": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lavaspur_boots": {
@@ -14735,6 +14824,10 @@
   "omen_hawker": {
     "zone": "battlefield"
   },
+  "ominous_cemetery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ominous_harvest": {
     "hand_size": {
       "0": 2
@@ -16777,6 +16870,10 @@
     "zone": "battlefield"
   },
   "renegade_demon": {
+    "zone": "battlefield"
+  },
+  "renegade_silent": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "renegade_troops": {
@@ -19331,6 +19428,10 @@
   "songbirds_blessing": {
     "zone": "battlefield"
   },
+  "sontaran_general": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sophia_dogged_detective": {
     "battlefield_count": 34,
     "tokens": {
@@ -20488,6 +20589,9 @@
   "sworn_guardian": {
     "zone": "battlefield"
   },
+  "sycorax_commander": {
+    "zone": "battlefield"
+  },
   "sylvan_brushstrider": {
     "life": {
       "0": 42
@@ -21201,6 +21305,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_dalek_emperor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_eagles_are_coming": {
     "battlefield_count": 30,
     "hand_size": {
@@ -21239,6 +21347,10 @@
     "zone": "battlefield"
   },
   "the_fantasticar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_flood_of_mars": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21293,6 +21405,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "the_master_mesmerist": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_master_of_keys": {
@@ -21367,6 +21483,13 @@
     "zone": "battlefield"
   },
   "the_scorpion_god": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "the_sound_of_drums": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -21534,6 +21657,9 @@
     "library_size": {
       "0": 37
     },
+    "zone": "graveyard"
+  },
+  "this_is_how_it_ends": {
     "zone": "graveyard"
   },
   "thopter_engineer": {
@@ -23016,6 +23142,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "vashta_nerada": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vassal_soul": {
     "zone": "battlefield"
   },
@@ -24482,6 +24612,13 @@
     "zone": "graveyard"
   },
   "worn_powerstone": {
+    "zone": "battlefield"
+  },
+  "wound_reflection": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "wrathful_raptors": {

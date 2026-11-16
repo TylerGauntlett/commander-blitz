@@ -1,0 +1,18 @@
+{
+  "card_id": "ashad_the_lone_cyberman",
+  "name": "Ashad, the Lone Cyberman",
+  "oracle_text": "The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)\nWhenever you sacrifice another creature, put a +1/+1 counter on Ashad.",
+  "blocked_sentences": [
+    "The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)"
+  ],
+  "needs": [
+    {
+      "capability": "casualty",
+      "kind": "static_effect",
+      "what": "a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: nonlegendary artifact spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost on that spell's cast and, when paid, copies the spell (a permanent spell's copy becoming a token)",
+      "why_existing_wont_do": "Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. There is also no static per-turn 'first matching spell' limiter on such a grant"
+    }
+  ],
+  "closest_existing": ["additional_cost", "additional_optional", "copy_spell", "granted_alternative_cost", "spell_cost_reduction"],
+  "confidence": "high"
+}

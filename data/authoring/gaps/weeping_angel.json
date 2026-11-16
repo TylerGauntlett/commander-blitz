@@ -1,0 +1,23 @@
+{
+  "card_id": "weeping_angel",
+  "name": "Weeping Angel",
+  "oracle_text": "Flash\nFirst strike, vigilance\nWhenever an opponent casts a creature spell, this creature isn't a creature until end of turn.\nIf this creature would deal combat damage to a creature, prevent that damage and that creature's owner shuffles it into their library.",
+  "blocked_sentences": [
+    "If this creature would deal combat damage to a creature, prevent that damage and that creature's owner shuffles it into their library."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "replacement",
+      "what": "a prevent_damage static keyed on the DEALER (damage_source: {self_only: true}, prevent_all, combat_only) and narrowed to creature recipients, carrying a 615.5 rider that runs as part of the same replacement with the would-be-damaged creature bound (e.g. {\"binding\": \"damaged\"}), so its effects can be put_on_top-and-shuffle / shuffle-into-library by that creature's owner",
+      "why_existing_wont_do": "The prevent_damage static matches only the recipient through `affects` (damage_source is read only on the seat-side form with affects_player), and its only rider is `counter` on the shielded permanent itself (Panther Habit). prevent_damage_permanent with dealt: \"by\" is a resolving op with a this_turn/until_your_next_turn duration, not a continuous static, and its damage_prevented rider binds only the shielded source (\"shielded\"), not the creature that would have been dealt the damage. replace_damage only scales the amount (damage_multiplier/addend) and cannot prevent and move the recipient"
+    }
+  ],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_damage_permanent",
+    "replace_damage",
+    "damage_prevented"
+  ],
+  "confidence": "high"
+}

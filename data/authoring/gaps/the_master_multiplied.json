@@ -1,0 +1,18 @@
+{
+  "card_id": "the_master_multiplied",
+  "name": "The Master, Multiplied",
+  "oracle_text": "Myriad\nThe \"legend rule\" doesn't apply to creature tokens you control.\nTriggered abilities you control can't cause you to sacrifice or exile creature tokens you control.",
+  "blocked_sentences": [
+    "Triggered abilities you control can't cause you to sacrifice or exile creature tokens you control."
+  ],
+  "needs": [
+    {
+      "capability": "triggered_abilities_cant_sacrifice_or_exile",
+      "kind": "static_effect",
+      "what": "a player-wide static keyed on the CAUSE being a triggered ability its controller controls, which bars that cause from making the player sacrifice, and from exiling, permanents matching an `affects` filter (here creature tokens you control: `{\"controller\": \"you\", \"types\": [\"Creature\"], \"is_token\": true}`). It must be read by `op_sacrifice` and by `op_exile`/`delay`-driven exiles (myriad's and Mimic Vat-style \"exile the token at end of combat/end step\" delayed triggers) when the resolving object is a triggered ability controlled by that player; spells, activated abilities and costs (an Altar's sacrifice) must still sacrifice and exile them",
+      "why_existing_wont_do": "`cant_sacrifice` (static or op) protects a permanent from every sacrifice, costs and activated abilities included, and says nothing of exile. `opponents_cant_force_discard_or_sacrifice` is keyed on the cause's controller being an OPPONENT, not on the cause being a triggered ability you control, and also omits exile. `replace_leaves_battlefield` replaces the destination of any departure rather than forbidding one particular cause. No static reads whether the resolving cause is a triggered ability."
+    }
+  ],
+  "closest_existing": ["cant_sacrifice", "opponents_cant_force_discard_or_sacrifice", "legend_rule_exemption"],
+  "confidence": "high"
+}

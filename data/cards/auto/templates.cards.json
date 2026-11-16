@@ -46506,6 +46506,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "skip_untap"
+                },
+                {
+                  "flag": "exerted",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "set_turn_flag"
+                },
+                {
+                  "duration": "this_turn",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "unblockable"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "scry",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exert Clockwork Droid?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may exert this creature as it attacks. When you do, it can't be blocked this turn and you scry 1",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "clockwork_droid",
+      "mana_cost": "{2}",
+      "name": "Clockwork Droid",
+      "oracle_text": "You may exert this creature as it attacks. When you do, it can't be blocked this turn and you scry 1. (An exerted creature won't untap during your next untap step. To scry 1, look at the top card of your library. You may put that card on the bottom.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -53504,6 +53567,98 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}{B}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "U",
+                "B"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 2
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. It's still a land. It can't be blocked this turn"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "creeping_tar_pit",
+      "name": "Creeping Tar Pit",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U} or {B}.\n{1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. It's still a land. It can't be blocked this turn.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -55399,6 +55554,113 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "types": [
+                          "Artifact",
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Thay"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Caan"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "dalek_3_3_b_artifact_menace"
+                    }
+                  ],
+                  "label": "Sec"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "lose_life",
+                      "player": "each_opponent"
+                    }
+                  ],
+                  "label": "Jast"
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Cult of Skaro attacks, choose one at random —\n• Thay — Put a +1/+1 counter on each artifact creature you control.\n• Caan — Draw two cards.\n• Sec — Create a 3/3 black Dalek artifact creature token with menace.\n• Jast — Each opponent loses 4 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "cult_of_skaro",
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Cult of Skaro",
+      "oracle_text": "Whenever Cult of Skaro attacks, choose one at random —\n• Thay — Put a +1/+1 counter on each artifact creature you control.\n• Caan — Draw two cards.\n• Sec — Create a 3/3 black Dalek artifact creature token with menace.\n• Jast — Each opponent loses 4 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -56456,6 +56718,204 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Artifact creatures you control have afflict 3."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afflict 3",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "cyberman_patrol",
+      "mana_cost": "{2}",
+      "name": "Cyberman Patrol",
+      "oracle_text": "Artifact creatures you control have afflict 3. (Whenever a creature with afflict 3 becomes blocked, defending player loses 3 life.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cyberman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X is the number of attacking artifact creatures.",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cybermat",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{2}",
+      "name": "Cybermat",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nWhenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X is the number of attacking artifact creatures.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "not_supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Nonlegendary artifact creatures you control have myriad."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "cybermen_squadron",
+      "mana_cost": "{7}",
+      "name": "Cybermen Squadron",
+      "oracle_text": "Nonlegendary artifact creatures you control have myriad. (Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Cyberman"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -56812,6 +57272,156 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "victim"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Exterminate! — When this creature enters, destroy target creature an opponent controls. That player loses 3 life",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dalek_drone",
+      "keywords": [
+        "flying",
+        "menace"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Dalek Drone",
+      "oracle_text": "Flying, menace\nExterminate! — When this creature enters, destroy target creature an opponent controls. That player loses 3 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Myriad",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dalek_squadron",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dalek Squadron",
+      "oracle_text": "Menace\nMyriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -58619,6 +59229,129 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "max_life_lost_this_turn": "each_opponent"
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "dalek_3_3_b_artifact_menace"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 3
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "chooser": {
+                        "binding": "each_player"
+                      },
+                      "count": 1,
+                      "modes": [
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "op": "draw",
+                              "player": "you"
+                            }
+                          ],
+                          "label": "You draw a card."
+                        },
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "op": "discard",
+                              "player": {
+                                "binding": "each_player"
+                              }
+                            }
+                          ],
+                          "label": "That player discards a card."
+                        }
+                      ],
+                      "op": "choose_mode"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "davros_dalek_creator",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Davros, Dalek Creator",
+      "oracle_text": "Menace\nAt the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -62009,6 +62742,42 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "delete",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Delete",
+      "oracle_text": "Delete deals X damage to each nonartifact creature and each player.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_types": [
+              "Artifact"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -77353,6 +78122,88 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ensnared_by_the_mara",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Ensnared by the Mara",
+      "oracle_text": "Each opponent faces a villainous choice — They exile cards from the top of their library until they exile a nonland card, then you may cast that card without paying its mana cost, or that player exiles the top four cards of their library and Ensnared by the Mara deals damage equal to the total mana value of those exiled cards to that player.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": {
+                "binding": "each_player"
+              },
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "cast_free": true,
+                      "objects": {
+                        "not_types": [
+                          "Land"
+                        ]
+                      },
+                      "op": "exile_until",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "label": "They exile cards from the top of their library until they exile a nonland card, then you may cast that card without paying its mana cost."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "as": "mara_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "mana_value_of": {
+                          "objects": {
+                            "binding": "mara_exiled"
+                          }
+                        }
+                      },
+                      "op": "damage",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "label": "They exile the top four cards of their library and Ensnared by the Mara deals damage equal to the total mana value of those exiled cards to them."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -82100,6 +82951,100 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Replicate—Tap an untapped Dalek you control. (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "tap_permanents": {
+          "controller": "you",
+          "count": 1,
+          "subtypes": [
+            "Dalek"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "exterminate",
+      "mana_cost": "{2}{B}",
+      "name": "Exterminate!",
+      "oracle_text": "Replicate—Tap an untapped Dalek you control. (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)\nDestroy target creature. Its controller loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": {
+            "controller_of": "victim"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "U"
@@ -86559,6 +87504,79 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {U} or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "fiery_islet",
+      "name": "Fiery Islet",
+      "oracle_text": "{T}, Pay 1 life: Add {U} or {R}.\n{1}, {T}, Sacrifice this land: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -95004,6 +96022,132 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Gallifrey Council Chamber enters, surveil 1.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "Time Lord"
+              ],
+              [
+                "Alien"
+              ]
+            ],
+            "cast": [
+              [
+                "Time Lord"
+              ],
+              [
+                "Alien"
+              ]
+            ]
+          },
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast a Time Lord or Alien spell or activate an ability of a Time Lord or Alien."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gallifrey_council_chamber",
+      "mana_cost": "",
+      "name": "Gallifrey Council Chamber",
+      "oracle_text": "When Gallifrey Council Chamber enters, surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a Time Lord or Alien spell or activate an ability of a Time Lord or Alien.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -106581,6 +107725,74 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "great_intelligence_s_plan",
+      "mana_cost": "{4}{U}{B}",
+      "name": "Great Intelligence's Plan",
+      "oracle_text": "Draw three cards. Then target opponent faces a villainous choice — They discard three cards, or you may cast a spell from your hand without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "chooser": {
+            "target": "t1"
+          },
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "discard",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "label": "They discard three cards."
+            },
+            {
+              "effects": [
+                {
+                  "op": "cast_from_hand",
+                  "player": "you"
+                }
+              ],
+              "label": "You may cast a spell from your hand without paying its mana cost."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -119807,6 +121019,102 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hunted_by_the_family",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Hunted by The Family",
+      "oracle_text": "Choose up to four target creatures you don't control. For each of them, that creature's controller faces a villainous choice — That creature becomes a 1/1 white Human creature and loses all abilities, or you create a token that's a copy of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": {
+                "controller_of": "each"
+              },
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "lose_all_abilities"
+                    },
+                    {
+                      "colors": [
+                        "W"
+                      ],
+                      "duration": "permanent",
+                      "exact": true,
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "animate",
+                      "power": {
+                        "const": 1
+                      },
+                      "subtypes": [
+                        "Human"
+                      ],
+                      "toughness": {
+                        "const": 1
+                      },
+                      "types": [
+                        "Creature"
+                      ]
+                    }
+                  ],
+                  "label": "That creature becomes a 1/1 white Human creature and loses all abilities."
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "copy_permanent"
+                    }
+                  ],
+                  "label": "You create a token that's a copy of it."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": 4,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -140973,6 +142281,148 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Tap target artifact."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Surveil 1."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Goad target creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "laser_screwdriver",
+      "mana_cost": "{3}",
+      "name": "Laser Screwdriver",
+      "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Tap target artifact.\n{2}, {T}: Surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)\n{3}, {T}: Goad target creature. (Until your next turn, it attacks each combat if able and attacks a player other than you if able.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -141396,6 +142846,117 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{R}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "B",
+                "R"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "ability": 0,
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{X}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "x": true
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}: This creature gets +X/+0 until end of turn."
+        }
+      ],
+      "id": "lavaclaw_reaches",
+      "mana_cost": "",
+      "name": "Lavaclaw Reaches",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B} or {R}.\n{1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature with \"{X}: This creature gets +X/+0 until end of turn.\" It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -176948,6 +178509,74 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "tucked",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "owner_of": "tucked"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{5}, {T}, Exile this land: Target creature's owner shuffles it into their library."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ominous_cemetery",
+      "name": "Ominous Cemetery",
+      "oracle_text": "{T}: Add {C}.\n{5}, {T}, Exile this land: Target creature's owner shuffles it into their library.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -201353,6 +202982,77 @@
       "source": "auto",
       "subtypes": [
         "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "phase_out"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, goad up to one target creature you don't control and put a +1/+1 counter on this creature. This creature phases out",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "renegade_silent",
+      "mana_cost": "{3}{U}",
+      "name": "Renegade Silent",
+      "oracle_text": "At the beginning of your end step, goad up to one target creature you don't control and put a +1/+1 counter on this creature. This creature phases out. (Treat it and anything attached to it as though they don't exist until your next turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Horror"
       ],
       "toughness": 3,
       "types": [
@@ -231137,6 +232837,89 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cant_block"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Battalion — Whenever this creature and at least two other creatures attack, for each opponent, goad up to one target creature that player controls. Those creatures can't block this turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sontaran_general",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Sontaran General",
+      "oracle_text": "Trample, haste\nBattalion — Whenever this creature and at least two other creatures attack, for each opponent, goad up to one target creature that player controls. Those creatures can't block this turn. (Until your next turn, they attack each combat if able and attack a player other than you if able.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Soldier"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -246144,6 +247927,111 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "chooser": {
+                    "binding": "each_player"
+                  },
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "as": "pitched",
+                          "op": "discard",
+                          "player": {
+                            "binding": "each_player"
+                          },
+                          "whole_hand": true
+                        },
+                        {
+                          "amount": {
+                            "minus": [
+                              {
+                                "count": {
+                                  "binding": "pitched",
+                                  "controller": {
+                                    "binding": "each_player"
+                                  }
+                                }
+                              },
+                              {
+                                "const": 1
+                              }
+                            ]
+                          },
+                          "op": "draw",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "label": "That opponent discards all the cards in their hand, then draws that many cards minus one."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "cards_in_hand": {
+                              "binding": "each_player"
+                            }
+                          },
+                          "op": "damage",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "label": "This creature deals damage to that player equal to the number of cards in their hand."
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sanctified Rules of Combat — When this creature enters, each opponent faces a villainous choice — That opponent discards all the cards in their hand, then draws that many cards minus one, or this creature deals damage to that player equal to the number of cards in their hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "sycorax_commander",
+      "keywords": [
+        "first_strike",
+        "haste"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Sycorax Commander",
+      "oracle_text": "First strike, haste\nSanctified Rules of Combat — When this creature enters, each opponent faces a villainous choice — That opponent discards all the cards in their hand, then draws that many cards minus one, or this creature deals damage to that player equal to the number of cards in their hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -255683,6 +257571,118 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Dalek"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Daleks you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "chooser": {
+                    "binding": "each_player"
+                  },
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": {
+                              "binding": "each_player"
+                            },
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "count": 1,
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "label": "That player sacrifices a creature of their choice."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "dalek_3_3_b_artifact_menace"
+                        }
+                      ],
+                      "label": "You create a 3/3 black Dalek artifact creature token with menace."
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "subtypes": [
+            "Dalek"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "the_dalek_emperor",
+      "mana_cost": "{5}{B}{R}",
+      "name": "The Dalek Emperor",
+      "oracle_text": "Affinity for Daleks (This spell costs {1} less to cast for each Dalek you control.)\nOther Daleks you control have haste.\nAt the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -256312,6 +258312,117 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flood",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "copying": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "duration": "permanent",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "become_copy"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_subtype",
+                  "subtypes": [
+                    "Island"
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Land"
+                ],
+                "exclude_self": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Water Always Wins — Whenever this creature attacks, put a flood counter on another target creature or land. If it's a creature, it becomes a copy of this creature. If it's a land, it becomes an Island in addition to its other types.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "the_flood_of_mars",
+      "keywords": [
+        "islandwalk"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "The Flood of Mars",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nWater Always Wins — Whenever this creature attacks, put a flood counter on another target creature or land. If it's a creature, it becomes a copy of this creature. If it's a land, it becomes an Island in addition to its other types.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -257187,6 +259298,141 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "skulk"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Target creature an opponent controls with power less than or equal to The Master's power gains skulk until end of turn. Goad it. (A creature with skulk can't be blocked by creatures with greater power.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with skulk deals combat damage to one of your opponents, put a +1/+1 counter on The Master and draw a card.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cmp": "<",
+                  "left": {
+                    "player_count": {
+                      "except": "you",
+                      "not": {
+                        "binding": "defender"
+                      }
+                    }
+                  },
+                  "right": {
+                    "player_count": "each_opponent"
+                  }
+                },
+                {
+                  "exists": {
+                    "binding": "subject",
+                    "keywords": [
+                      "skulk"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            },
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "the_master_mesmerist",
+      "mana_cost": "{2}{U}{B}",
+      "name": "The Master, Mesmerist",
+      "oracle_text": "{T}: Target creature an opponent controls with power less than or equal to The Master's power gains skulk until end of turn. Goad it. (A creature with skulk can't be blocked by creatures with greater power.)\nWhenever a creature with skulk deals combat damage to one of your opponents, put a +1/+1 counter on The Master and draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -258559,6 +260805,77 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature is goaded."
+        },
+        {
+          "combat_only": true,
+          "damage_multiplier": 2,
+          "damage_source": {
+            "attached": true
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If enchanted creature would deal combat damage to a permanent or player, it deals double that damage instead."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_sound_of_drums",
+      "mana_cost": "{2}{R}",
+      "name": "The Sound of Drums",
+      "oracle_text": "Enchant creature\nEnchanted creature is goaded.\nIf enchanted creature would deal combat damage to a permanent or player, it deals double that damage instead.\n{2}{R}: Return this card from your graveyard to your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -260604,6 +262921,105 @@
           },
           "player": "you",
           "prompt": "Discard an enchantment card instead of discarding two cards?"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "this_is_how_it_ends",
+      "mana_cost": "{3}{B}",
+      "name": "This Is How It Ends",
+      "oracle_text": "Target creature's owner shuffles it into their library, then faces a villainous choice — They lose 5 life, or they shuffle another creature they own into their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "tucked",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "owner_of": "tucked"
+          }
+        },
+        {
+          "chooser": {
+            "owner_of": "tucked"
+          },
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "owner_of": "tucked"
+                  }
+                }
+              ],
+              "label": "They lose 5 life."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "owner_of": "tucked"
+                    },
+                    "controller": "any",
+                    "count": 1,
+                    "owner": {
+                      "owner_of": "tucked"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "put_on_top"
+                },
+                {
+                  "op": "shuffle",
+                  "player": {
+                    "owner_of": "tucked"
+                  }
+                }
+              ],
+              "label": "They shuffle another creature they own into their library."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
         }
       ],
       "types": [
@@ -277122,6 +279538,63 @@
         "Knight"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Morbid — At the beginning of each end step, if a creature died this turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vashta_nerada",
+      "keywords": [
+        "indestructible",
+        "shadow"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Vashta Nerada",
+      "oracle_text": "Indestructible\nShadow (This creature can block or be blocked by only creatures with shadow.)\nMorbid — At the beginning of each end step, if a creature died this turn, put a +1/+1 counter on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Horror"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -293835,6 +296308,51 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "life_lost_this_turn": {
+                      "binding": "each_player"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, each opponent loses life equal to the life they lost this turn. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wound_reflection",
+      "mana_cost": "{5}{B}",
+      "name": "Wound Reflection",
+      "oracle_text": "At the beginning of each end step, each opponent loses life equal to the life they lost this turn. (Damage causes loss of life.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

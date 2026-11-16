@@ -10,18 +10,19 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**383 cards** blocked by **336** capabilities.
+**408 cards** blocked by **359** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
-| [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
+| [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
@@ -59,6 +60,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspect](#suspect) | 2 | 4851 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [targets-only-self](#targets-only-self) | 2 | 8216 | trigger_event |
+| [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -72,6 +74,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
@@ -106,21 +109,29 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
+| [casualty](#casualty) | 1 | 12943 | static_effect |
+| [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
+| [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
+| [choose-x-modes](#choose-x-modes) | 1 | 8838 | engine |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
+| [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [combat-damage-to-own-owner](#combat-damage-to-own-owner) | 1 | 10812 | trigger_event |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
+| [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
@@ -140,6 +151,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
+| [doctors-companion](#doctors-companion) | 1 | 12342 | keyword |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -152,6 +164,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
+| [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
+| [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
@@ -173,6 +187,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
+| [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -186,6 +201,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [goad-while-controlled](#goad-while-controlled) | 1 | 12342 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
@@ -232,6 +248,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
+| [mark-of-the-rani-token](#mark-of-the-rani-token) | 1 | 13009 | token |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
@@ -270,6 +287,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
+| [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
@@ -280,6 +298,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
+| [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -287,6 +306,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
+| [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
@@ -300,6 +320,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
@@ -333,7 +354,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
-| [turn-face-down](#turn-face-down) | 1 | 10947 | op |
+| [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
@@ -341,6 +362,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
 | [unleash](#unleash) | 1 | 12169 | keyword |
+| [villainous-choice](#villainous-choice) | 1 | 8294 | op |
+| [voting](#voting) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
@@ -489,7 +512,7 @@ Blocks **15** cards.
 
 ## prevent-damage-by-source
 
-Blocks **8** cards.
+Blocks **9** cards.
 
 - **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
@@ -507,11 +530,15 @@ Blocks **8** cards.
   <br>Why the existing vocabulary won't do: The prevent_damage static (with combat_only and prevent_all) only prevents damage dealt TO what its affects matches, so it covers half the sentence; damage_source names a dealer but is accepted only on replace_damage, which requires damage_multiplier >= 2 and cannot prevent; the prevent_damage_permanent op has dealt: to_and_by but is a one-shot with a this_turn/until_your_next_turn duration, covers all damage rather than combat only, and cannot be continuous while the Aura is attached
 - **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by creatures you control' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {controller: you, types: [Creature]}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players, planeswalkers and creatures alike)
   <br>Why the existing vocabulary won't do: The prevent_damage static with prevent_all + combat_only covers the 'dealt to' half via affects: {controller: you, types: [Creature]}, but its affects is the recipient only and prevents_all_damage never reads a dealer; damage_source exists only on replace_damage, which the loader refuses with a damage_multiplier below 2 (0 would be prevention). The prevent_damage_permanent op has a 'dealt' option but is a one-shot with a duration, not a static that lasts while the enchantment is on the battlefield. Writing only the 'dealt to' half would let your creatures still deal combat damage, a different card
+- **(replacement)** a prevent_damage static keyed on the DEALER (damage_source: {self_only: true}, prevent_all, combat_only) and narrowed to creature recipients, carrying a 615.5 rider that runs as part of the same replacement with the would-be-damaged creature bound (e.g. {"binding": "damaged"}), so its effects can be put_on_top-and-shuffle / shuffle-into-library by that creature's owner
+  <br>Why the existing vocabulary won't do: The prevent_damage static matches only the recipient through `affects` (damage_source is read only on the seat-side form with affects_player), and its only rider is `counter` on the shielded permanent itself (Panther Habit). prevent_damage_permanent with dealt: "by" is a resolving op with a this_turn/until_your_next_turn duration, not a continuous static, and its damage_prevented rider binds only the shielded source ("shielded"), not the creature that would have been dealt the damage. replace_damage only scales the amount (damage_multiplier/addend) and cannot prevent and move the recipient
 
 <details><summary>Cards waiting on this</summary>
 
 - **Fog Bank** (rank 2713) — `fog_bank`
   - Prevent all combat damage that would be dealt to and dealt by this creature.
+- **Weeping Angel** (rank 9247) — `weeping_angel`
+  - If this creature would deal combat damage to a creature, prevent that damage and that creature's owner shuffles it into their library.
 - **Statecraft** (rank 14038) — `statecraft`
   - Prevent all combat damage that would be dealt to and dealt by creatures you control.
 - **Armored Transport** (rank 22151) — `armored_transport`
@@ -701,6 +728,33 @@ Blocks **4** cards.
   - When Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.
 - **Blaster Hulk** (rank 7367) — `blaster_hulk`
   - Whenever this creature attacks, you get {E}{E}, then you may pay eight {E}. When you do, this creature deals 8 damage divided as you choose among up to eight targets.
+
+</details>
+
+## face-down-characteristics
+
+Blocks **4** cards.
+
+- **(op)** put the top N cards of a player's library onto the battlefield face down under your control as face-down permanents with printed-by-effect characteristics (2/2 Artifact Creature — Cyberman), and with no turn-face-up permission (they are not manifested, so 701.34c does not apply)
+  <br>Why the existing vocabulary won't do: `manifest` (with controller: you, player bound to the damaged player, amount 2) makes the plain colorless typeless 2/2 shell and marks the cards manifested, so it lacks the Artifact type and Cyberman subtype and wrongly lets creature cards be turned face up for their mana cost; it has no option to set the face-down shell's types/subtypes or forbid turning up
+- **(op)** put cards from exile (selector: creature cards exiled_with self) onto the battlefield face down under your control as face-down permanents whose face-down characteristics are set by the effect (2/2 Artifact Creature — Cyberman, nameless, colorless, no abilities) rather than the plain 708.2 shell, with no turn-face-up permission (they are not manifested)
+  <br>Why the existing vocabulary won't do: search_zones / return_from_graveyard / look_at_top accept face_down, but that yields only the fixed FACE_DOWN_CHARS shell (typeless-subtype colorless 2/2 Creature) with no way to add the Artifact type and Cyberman subtype; put_onto_battlefield has no face_down; following up with animate or add_subtype is a layer-4 effect on top of the shell rather than the face-down characteristics themselves, so it is an approximation. Chapters I and II (player-targeted mill then exile op over their graveyard with link to self) look expressible.
+- **(op)** a face-down characteristics override (708.2a) on the effect that puts a card onto the battlefield face down: return_from_graveyard with face_down true plus printed types/subtypes for the shell, so the returned card is a nameless colorless 2/2 face-down permanent that is an artifact creature with subtype Cyberman (the same override Cyber Conversion needs for turn_face_down)
+  <br>Why the existing vocabulary won't do: return_from_graveyard already takes face_down, tapped and controller, but its face-down shell is the plain 708.2 2/2 creature with no types or subtypes beyond Creature; animate or add_subtype after the return would layer effects on top rather than define the face-down characteristics, and would leave nothing for the face_down selector / turn_face_up to read consistently
+- **(op)** a way to put cards onto the battlefield face down with overridden face-down characteristics (708.2a-style: here a 2/2 Cyberman artifact creature with no name or abilities instead of the plain 2/2 colorless Creature shell), e.g. a `face_down_as: {types: [Artifact, Creature], subtypes: [Cyberman]}` option on return_from_graveyard/put_onto_battlefield/manifest that replaces FACE_DOWN_CHARS for those objects only while they stay face down
+  <br>Why the existing vocabulary won't do: return_from_graveyard with face_down: true (over the cards bound by mill's `as`, controller: you) puts them down as the fixed FACE_DOWN_CHARS shell, a plain 2/2 Creature with no Artifact type or Cyberman subtype, so the card's own anthem would not even pump them. Following it with a permanent `animate` adding Artifact/Cyberman is an approximation: it is a layer-4 effect that survives the card being turned face up (a milled morph/disguise creature), whereas the printed text only defines the face-down characteristics
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cybership** (rank 5733) — `cybership`
+  - Whenever this Vehicle deals combat damage to a player, put the top two cards of that player's library onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
+- **The Cyber-Controller** (rank 8110) — `the_cyber_controller`
+  - When The Cyber-Controller enters, each opponent mills X cards. Put all creature cards milled this way onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
+- **Death in Heaven** (rank 9163) — `death_in_heaven`
+  - III — Put all creature cards exiled with this enchantment onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
+- **Missy** (rank 9707) — `missy`
+  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
+  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
 
 </details>
 
@@ -1438,6 +1492,25 @@ Blocks **2** cards.
 
 </details>
 
+## turn-face-down
+
+Blocks **2** cards.
+
+- **(op)** an op that turns a permanent already on the battlefield face down (708.2), so it loses its name, mana cost, colors, abilities, subtypes and printed P/T and becomes a nameless, colorless 2/2 face-down permanent with a characteristics override (here: artifact creature, subtype Cyberman); it stays face down indefinitely and may be turned face up only if it has morph/disguise/a face-up cost (708.8)
+  <br>Why the existing vocabulary won't do: turn_face_up exists only in the other direction; manifest, manifest_dread and cloak (manifest's flag) put cards from the library face down, not a permanent already on the battlefield; face_down on look_at_top/return_from_graveyard only puts cards onto the battlefield face down from another zone; animate or set_pt plus lose_all_abilities and add_subtype would approximate the result but leave the name, colors, mana value and face-up status intact and would not make it a face-down permanent the face_down selector or turn_face_up reads
+- **(op)** an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)
+  <br>Why the existing vocabulary won't do: manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyber Conversion** (rank 4820) — `cyber_conversion`
+  - Turn target creature face down. It's a 2/2 Cyberman artifact creature.
+- **Obscuring Aether** (rank 10947) — `obscuring_aether`
+  - Face-down creature spells you cast cost {1} less to cast.
+  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
+
+</details>
+
 ## venture
 
 Blocks **2** cards.
@@ -1642,6 +1715,20 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
+
+</details>
+
+## alien-angel-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and "Whenever an opponent casts a creature spell, this token isn't a creature until end of turn."
+  <br>Why the existing vocabulary won't do: token_ids has no Alien Angel; the nearest 2/2 black tokens (zombie_2_2_b, rogue_2_2_b, vampire_2_2_b_flying) are not artifacts, lack first strike and vigilance, and carry no spell_cast trigger that removes the Creature type until end of turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blink** (rank 13679) — `blink`
+  - II, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and "Whenever an opponent casts a creature spell, this token isn't a creature until end of turn."
 
 </details>
 
@@ -2128,6 +2215,35 @@ Blocks **1** card.
 
 </details>
 
+## casualty
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: nonlegendary artifact spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost on that spell's cast and, when paid, copies the spell (a permanent spell's copy becoming a token)
+  <br>Why the existing vocabulary won't do: Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. There is also no static per-turn 'first matching spell' limiter on such a grant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
+  - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
+
+</details>
+
+## chaos-ensues
+
+Blocks **1** card.
+
+- **(op)** an op that makes chaos ensue (Planechase 311.7/901.9): fires a chaos_ensues event that 'whenever chaos ensues' triggered abilities (on planes and on permanents such as Doctor Who cards) listen to
+  <br>Why the existing vocabulary won't do: there is no chaos op and no chaos_ensues trigger event in trigger_events; drawing a card alone would silently drop the clause, which matters as soon as any permanent with a 'whenever chaos ensues' trigger is on the battlefield. The villainous choice itself looks expressible as for_each_player over opponents with a choose_mode whose chooser is that player (the Damocles Base shape)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Missy** (rank 9707) — `missy`
+  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
+  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
+
+</details>
+
 ## characteristics-outside-battlefield
 
 Blocks **1** card.
@@ -2186,6 +2302,34 @@ Blocks **1** card.
 
 </details>
 
+## choose-opponent-with-most-life
+
+Blocks **1** card.
+
+- **(selector)** a player spec naming the opponents whose life total is at least every other opponent's (e.g. "opponent_most_life", the same set the attacks_if_able static's `defending: "opponent_most_life"` computes), usable as `choose_player`'s `players` pool so the controller picks one among tied leaders and binds it with `as`
+  <br>Why the existing vocabulary won't do: `choose_player` takes a `players` pool but `select_players` / PLAYER_SPEC_NAMES have no life-based spec: only you/each_opponent/each_player/active_player/monarch/target/binding/except/not and similar. `max_life_of` is a value, not a player set, and `opponent_most_life` exists only as the `defending` field of the attacks_if_able static, not as an effect player spec. Choosing from all opponents (`each_opponent`) would let the controller pick a lower-life opponent, which is a different card in multiplayer. The rest of the line is expressible (creature_dies trigger with is_token:false + types Artifact, a `may` exiling the subject as Nightmare Shepherd does, choose_mode with chooser the bound player for the villainous choice, lose_life 4, copy_permanent of the exiled subject).
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Master, Gallifrey's End** (rank 12040) — `the_master_gallifrey_s_end`
+  - If you do, choose an opponent with the most life among your opponents.
+
+</details>
+
+## choose-x-modes
+
+Blocks **1** card.
+
+- **(engine)** a repeatable top-level choose_mode whose count is the spell's announced X ({"x": true}), asked at 601.2b after X is announced, choosing exactly X mode instances (zero when X is 0)
+  <br>Why the existing vocabulary won't do: choose_mode takes `repeatable` beside a literal `count` only. `count` is run through evaluate_value, but Game._ask_modes builds its EffectContext without the announced X (ctx.x defaults to 0), so {"x": true} would evaluate to 0 and modal_bounds then raises the floor to max(1, count), so the spell would always choose exactly one mode whatever X was paid. The three bullets are expressible on their own (sacrifice, create_token dalek_3_3_b_artifact_menace, discard); only the X-sized mode count is missing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
+  - Choose X. You may choose the same mode more than once.
+
+</details>
+
 ## chosen-card-type-cost-reduction
 
 Blocks **1** card.
@@ -2198,6 +2342,20 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## chosen-names-on-permanent
+
+Blocks **1** card.
+
+- **(engine)** A card name chosen by an ability that is remembered on the source permanent and accumulates across resolutions (chapter II goads creatures named at I or II; chapter III all three), readable by a selector such as {"name": {"chosen_for": "self"}} matching any name in that set; and a name pool for the choice that includes creature names on the battlefield the chooser does not own (the opponents' creatures are the point of goading)
+  <br>Why the existing vocabulary won't do: choose_card_name binds the name only in the resolving ability's ctx.bindings, so each chapter forgets earlier chapters' names, and it offers only names of cards the chooser owns plus 'Another card name' (matching nothing), so an opponent's creature name cannot be chosen. goad with a {name: {binding}} selector would therefore goad only the controller's own creatures named this chapter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Day of the Moon** (rank 13799) — `day_of_the_moon`
+  - I, II, III — Choose a creature card name, then goad all creatures with a name chosen for this enchantment
 
 </details>
 
@@ -2259,6 +2417,20 @@ Blocks **1** card.
 
 </details>
 
+## combat-damage-to-own-owner
+
+Blocks **1** card.
+
+- **(trigger_event)** a `deals_combat_damage_to_player` trigger clause that matches only when the damaged player is the OWNER of the creature dealing the damage (any creature, any controller) -- e.g. `defending: "subject_owner"`, comparing the event's defender seat with the dealing creature's owner
+  <br>Why the existing vocabulary won't do: `defending` (via `_defender_matches`) only compares the damaged seat with the trigger source's controller (`you`/`opponent`), an enchanted player, the monarch or most-life; the trigger filter's `owner` key only takes `you`/`opponent`/`any`, relative to the trigger's controller, so neither can relate the damaged player to the dealing creature's own owner (a stolen creature hitting the player who owns it)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Beast, Deathless Prince** (rank 10812) — `the_beast_deathless_prince`
+  - Whenever a creature deals combat damage to its owner, untap The Beast and draw a card.
+
+</details>
+
 ## companion
 
 Blocks **1** card.
@@ -2303,6 +2475,20 @@ Blocks **1** card.
 
 </details>
 
+## conspire
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants conspire to spells you cast matching a filter and a cast zone (noncreature, cast from exile): an optional additional cost paid as the spell is cast, tapping two untapped creatures you control that share a color with that spell, which when paid triggers a copy_spell of it with new_targets
+  <br>Why the existing vocabulary won't do: conspire is not in keywords, and no static_effect grants another spell an optional additional cost: grant_warp, grant_miracle, granted_alternative_cost and spell_cost_reduction alter price but add no tap-creatures cost with a copy rider; tap_permanents exists only as an activated-ability cost and cannot be filtered by sharing a color with the spell being cast; a spell_cast trigger that taps two creatures and copies would move the payment off the cast onto the stack, changing timing (the creatures could be tapped in response), so it would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rassilon, the War President** (rank 17639) — `rassilon_the_war_president`
+  - Each noncreature spell you cast from exile has conspire. (As you cast that spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy.)
+
+</details>
+
 ## control-while-has-counter
 
 Blocks **1** card.
@@ -2342,6 +2528,20 @@ Blocks **1** card.
 
 - **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
   - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
+
+</details>
+
+## copy-while-other-tapped
+
+Blocks **1** card.
+
+- **(engine)** a `become_copy` duration that lasts for as long as ANOTHER object (the copied target) remains tapped -- e.g. duration "while_tapped" with a selector/binding naming the watched permanent; the copy effect ends the moment that permanent untaps or leaves the battlefield
+  <br>Why the existing vocabulary won't do: op_become_copy honours only `end_of_turn` (cleared by clear_until_eot) and `permanent`; neither ends when the target untaps. `while_counter` exists on animate/cant_attack but watches counters on the affected object itself, not the tapped state of a different object, and `as_long_as_you_control_source` watches control of the source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zygon Infiltrator** (rank 15174) — `zygon_infiltrator`
+  - Body-print — {2}{U}: Tap another target creature and put a stun counter on it. This creature becomes a copy of that creature for as long as that creature remains tapped. Activate only as a sorcery
 
 </details>
 
@@ -2616,6 +2816,21 @@ Blocks **1** card.
 
 </details>
 
+## doctors-companion
+
+Blocks **1** card.
+
+- **(keyword)** the Doctor's companion deckbuilding keyword (702.xxx): a legendary creature with it may be a second commander when the other commander is a Time Lord Doctor creature
+  <br>Why the existing vocabulary won't do: The keyword list carries only `partner` and `choose_a_background` as two-commander permissions; partner pairs any two partners, and choose_a_background pairs with a Background enchantment, neither of which is the Doctor/companion pairing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vislor Turlough** (rank 12342) — `vislor_turlough`
+  - Doctor's companion (You can have two commanders if the other is the Doctor.)
+  - Deal with the Black Guardian — When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.
+
+</details>
+
 ## double-x
 
 Blocks **1** card.
@@ -2785,6 +3000,34 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
+
+</details>
+
+## enters-as-copy-of-exiled-card
+
+Blocks **1** card.
+
+- **(replacement)** An optional `self_enters_as_copy` replacement whose `copying` pool is a standing selector over cards in exile (`{"zone": "exile", "controller": "any", "types": ["Creature"], "has_counters": "takeover"}`) with no `as_enters` effects, offered as a 'you may' like Clone, and accepted by the residual gate as claiming its printed line
+  <br>Why the existing vocabulary won't do: The engine's `ask_enters_copy` already resolves a non-`as_enters` `copying` pool and asks yes/no, and `has_counters` reads counters on an exiled card, so a card written that way loads -- but the residual claimant in `cards/authoring/verify.py` (`self_enters_as_copy` branch) refuses any line containing the word 'exile' unless the replacement carries `as_enters` (it assumes The Mimeoplasm's 'As ... enters, you may exile ...' shape). Adding a dummy `as_enters` would route through `offer_as_enters_effects`, which picks from the pool with no 'you may', so it is not the printed card. The front line (the stack-zone `spell_cast` trigger with `may` -> `exile` as a binding -> `add_counters` 'takeover') is expressible as-is
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Master, Formed Anew** (rank 19072) — `the_master_formed_anew`
+  - You may have The Master enter as a copy of a creature card in exile with a takeover counter on it.
+
+</details>
+
+## enters-as-copy-with-ability
+
+Blocks **1** card.
+
+- **(replacement)** a `self_enters_as_copy` replacement whose `except_` grants a triggered ability (here myriad) as a copiable value -- e.g. `except_.keep_abilities` (indices of the printed card's own abilities, as `become_copy` already supports) or `except_.add_abilities` pointing at `grantable_abilities` -- so the copy has myriad alongside the copied creature's abilities
+  <br>Why the existing vocabulary won't do: `self_enters_as_copy`'s `except_` handles `remove_supertypes` and `add_types` (the other two clauses) but only adds abilities through `add_keywords`, and myriad is not in the keyword list -- it is written as a triggered ability (Herald of the Host, Blade of Selves). `keep_abilities` exists only on the `become_copy` op; the enters-as-copy path in zones.py resets `copying_own_abilities` to None. A `self_enters` trigger running `become_copy` would be a trigger rather than a 614.1b replacement, so the creature would briefly be a 0/0 and die before it resolves.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Auton Soldier** (rank 2009) — `auton_soldier`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it isn't legendary, is an artifact in addition to its other types, and has myriad
 
 </details>
 
@@ -3089,6 +3332,20 @@ Blocks **1** card.
 
 </details>
 
+## face-up-exile-filter
+
+Blocks **1** card.
+
+- **(selector)** a selector key that matches a card in exile by whether it is face up or face down (i.e. reads GameObject.hidden_in_exile), usable in a card_in_exile target's selector: "target face-up card they own in exile"
+  <br>Why the existing vocabulary won't do: The selector key `face_down` reads only the 708.2 permanent state and the loader refuses it beside any zone other than the battlefield; face-down exile (Necropotence, hideaway, foretell-style, search_zones/exile with face_down) is tracked separately as `hidden_in_exile`, which no selector key reads. Without it a card_in_exile target over {controller: {binding: event_player}} could pick a face-down exiled card, which the printed text forbids. The rest of the line is expressible: trigger deals_combat_damage_to_player, target kind card_in_exile, put_on_top with bottom: true and `as`, then `if` on the bound count > 0 for gain_life 3.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Time Reaper** (rank 21122) — `time_reaper`
+  - Consume Anomaly — Whenever this creature deals combat damage to a player, put target face-up card they own in exile on the bottom of their library. If you do, you gain 3 life.
+
+</details>
+
 ## faerie-rogue-1-1-b-flying-token
 
 Blocks **1** card.
@@ -3277,6 +3534,21 @@ Blocks **1** card.
 - **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
   - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
   - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
+
+</details>
+
+## goad-while-controlled
+
+Blocks **1** card.
+
+- **(op)** a goad duration "for as long as <player> controls it": the goad mark (by the original controller) ends when control of the creature changes away from the player who gained it, not at the goader's next turn and not for the rest of the game
+  <br>Why the existing vocabulary won't do: The `goad` op's `duration` offers only the default (until the goader's next turn) and `permanent` (rest of the game, Dack Fayden), which keeps the creature goaded after control returns; `gain_control` can hand the creature over but nothing ties the goad's lifetime to that control effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vislor Turlough** (rank 12342) — `vislor_turlough`
+  - Doctor's companion (You can have two commanders if the other is the Doctor.)
+  - Deal with the Black Guardian — When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.
 
 </details>
 
@@ -3935,6 +4207,20 @@ Blocks **1** card.
 
 </details>
 
+## mark-of-the-rani-token
+
+Blocks **1** card.
+
+- **(token)** a red Aura enchantment token named Mark of the Rani with enchant creature and "Enchanted creature gets +2/+2 and is goaded." (a static buff +2/+2 plus a goaded static on the enchanted creature), created with create_token's attached_to
+  <br>Why the existing vocabulary won't do: token_ids holds only two Aura tokens: wicked_role (colorless Role, +1/+1, no goad) and contract (white, an attack trigger); neither is red, +2/+2 or goads. create_token with attached_to would express the creation once the token exists; the second sentence (deals_combat_damage_to_player filtered goaded, opponent, investigate with clue_token) looks expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Rani** (rank 13009) — `the_rani`
+  - Whenever The Rani enters or attacks, create a red Aura enchantment token named Mark of the Rani attached to another target creature. That token has enchant creature and "Enchanted creature gets +2/+2 and is goaded."
+
+</details>
+
 ## maximum-hand-size-modifier
 
 Blocks **1** card.
@@ -4477,6 +4763,21 @@ Blocks **1** card.
 
 </details>
 
+## power-of-creatures-died-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value summing the last-known power of every creature with a given subtype (Dalek) that died this turn, by any controller, read after a destroy in the same resolution
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are counts, not power totals, and take no subtype filter; power_had and power_of read a single object, and snapshot covers only a target that left, not every Dalek that died this turn. The villainous choice shape (choose_mode with the target opponent as chooser) and the two destroy-all selectors look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
+  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
+  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
+
+</details>
+
 ## prevent-damage-from-source-to-permanent
 
 Blocks **1** card.
@@ -4620,6 +4921,20 @@ Blocks **1** card.
 
 </details>
 
+## put-into-combat-attacking
+
+Blocks **1** card.
+
+- **(op)** an effect that makes a creature ALREADY on the battlefield (here one just stolen with gain_control) become an attacking creature attacking a named player (the trigger's defending player) without being declared (508.4-style: no attack triggers, no declare restrictions/costs), e.g. an `attacking` player-spec option on gain_control or a standalone op over an objects binding
+  <br>Why the existing vocabulary won't do: The `attacking` key (board_helpers._attacking_player) exists only on create_token, copy_permanent and put_onto_battlefield, i.e. for permanents arriving on the battlefield; gain_control takes only as/duration/objects/player, and redirect_attack only re-aims a creature that is already attacking. The villainous choice itself fits (choose_mode with chooser = the defending player, sacrifice with chooser, gain_control with duration until end of turn, then tap), and Crew 2 is tap_permanents total_power 2 -- only the 'it's attacking that player' clause is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Midnight Crusader Shuttle** (rank 8091) — `midnight_crusader_shuttle`
+  - Midnight Entity — Whenever this Vehicle attacks, defending player faces a villainous choice — That player sacrifices a creature of their choice, or you gain control of a creature of your choice that player controls until end of turn. If you gain control of a creature this way, tap it, and it's attacking that player.
+
+</details>
+
 ## random-order-bottom
 
 Blocks **1** card.
@@ -4719,6 +5034,20 @@ Blocks **1** card.
 - **Gisa, Glorious Resurrector** (rank 2740) — `gisa_glorious_resurrector`
   - If a creature an opponent controls would die, exile it instead.
   - At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed.
+
+</details>
+
+## replace-enters-battlefield
+
+Blocks **1** card.
+
+- **(replacement)** a timed (until end of turn) replacement op on a spell for battlefield entry: if a creature would enter the battlefield from exile, or would enter as a resolving permanent spell that was cast from exile, it is instead shuffled into its owner's library; filtered by object type (Creature) and origin (exile zone or cast-from-exile), applying to all players
+  <br>Why the existing vocabulary won't do: The replacement vocabulary covers deaths (replace_deaths, replace_dies), leaving the battlefield (replace_leaves_battlefield), graveyard moves (replace_graveyard), draws, damage, counters, tokens and mill, but nothing replaces a permanent's entry to the battlefield with a different destination, and no selector or condition reads the zone a creature is entering from or whether its spell was cast from exile at the moment of entry; a permanent_enters delayed_trigger that shuffles afterward would let enters triggers and static effects happen, which the replacement prevents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Don't Blink** (rank 18834) — `don_t_blink`
+  - Until end of turn, if one or more creatures would enter from exile or after being cast from exile, their owners shuffle them into their libraries instead.
 
 </details>
 
@@ -4907,6 +5236,23 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## secret-number-guess
+
+Blocks **1** card.
+
+- **(decision)** a hidden number choice by the controller (1..5) drawn from a per-permanent pool that excludes every number this object has already chosen, followed by an opponent's number guess (a choose_number made by another player), with both numbers bound so an `if` can compare them and lose_life can read the guessed number; plus a 'did you choose' outcome when the pool is empty
+  <br>Why the existing vocabulary won't do: choose_number takes only as/min/max/prompt: it is always made by the controller, is public, and has no exclusion set, so it cannot remember numbers chosen on earlier upkeeps or hand the guess to an opponent; choose_mode has a chooser but no per-mode availability memory and no hidden choice; set_flag/has_flag can mark booleans but nothing restricts a choice by them
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Toymaker's Trap** (rank 13375) — `the_toymaker_s_trap`
+  - At the beginning of your upkeep, secretly choose a number between 1 and 5 that hasn't been chosen.
+  - If you do, an opponent guesses which number you chose, then you reveal the number you chose.
+  - If they guessed wrong, they lose life equal to the number they guessed and you draw a card.
+  - If they guessed right, sacrifice this enchantment.
 
 </details>
 
@@ -5377,18 +5723,17 @@ Blocks **1** card.
 
 </details>
 
-## turn-face-down
+## triggered-abilities-cant-sacrifice-or-exile
 
 Blocks **1** card.
 
-- **(op)** an op that turns a permanent already on the battlefield face down (708.2), making it a nameless, typeless 2/2 colorless creature with no abilities that its controller may turn face up only if it has a morph/disguise cost (or, for a noncreature card, never)
-  <br>Why the existing vocabulary won't do: manifest, manifest_dread and the face_down option on look_at_top/search_library/reveal_until only put cards onto the battlefield face down from a library; nothing flips a permanent that is already on the battlefield, and animate/set_pt would leave its name, types and abilities in place
+- **(static_effect)** a player-wide static keyed on the CAUSE being a triggered ability its controller controls, which bars that cause from making the player sacrifice, and from exiling, permanents matching an `affects` filter (here creature tokens you control: `{"controller": "you", "types": ["Creature"], "is_token": true}`). It must be read by `op_sacrifice` and by `op_exile`/`delay`-driven exiles (myriad's and Mimic Vat-style "exile the token at end of combat/end step" delayed triggers) when the resolving object is a triggered ability controlled by that player; spells, activated abilities and costs (an Altar's sacrifice) must still sacrifice and exile them
+  <br>Why the existing vocabulary won't do: `cant_sacrifice` (static or op) protects a permanent from every sacrifice, costs and activated abilities included, and says nothing of exile. `opponents_cant_force_discard_or_sacrifice` is keyed on the cause's controller being an OPPONENT, not on the cause being a triggered ability you control, and also omits exile. `replace_leaves_battlefield` replaces the destination of any departure rather than forbidding one particular cause. No static reads whether the resolving cause is a triggered ability.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Obscuring Aether** (rank 10947) — `obscuring_aether`
-  - Face-down creature spells you cast cost {1} less to cast.
-  - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
+- **The Master, Multiplied** (rank 3624) — `the_master_multiplied`
+  - Triggered abilities you control can't cause you to sacrifice or exile creature tokens you control.
 
 </details>
 
@@ -5489,6 +5834,36 @@ Blocks **1** card.
 - **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
   - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
   - Other Dogs you control have unleash.
+
+</details>
+
+## villainous-choice
+
+Blocks **1** card.
+
+- **(op)** a villainous choice op (701.56: a player chooses one of two printed outcomes) plus a player-wide replacement static that makes an opponent face each villainous choice an additional time (repeating the choice, same or different answer)
+  <br>Why the existing vocabulary won't do: No villainous choice op or event exists; choose_mode with chooser is the nearest but has no 'face a villainous choice' identity a static could replace, and no static_effect repeats a choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+
+</details>
+
+## voting
+
+Blocks **1** card.
+
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
 
 </details>
 

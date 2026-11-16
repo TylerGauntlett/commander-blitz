@@ -1,0 +1,18 @@
+{
+  "card_id": "the_master_gallifrey_s_end",
+  "name": "The Master, Gallifrey's End",
+  "oracle_text": "Make Them Pay — Whenever a nontoken artifact creature you control dies, you may exile it. If you do, choose an opponent with the most life among your opponents. That player faces a villainous choice — They lose 4 life, or you create a token that's a copy of that card.",
+  "blocked_sentences": [
+    "If you do, choose an opponent with the most life among your opponents."
+  ],
+  "needs": [
+    {
+      "capability": "choose_opponent_with_most_life",
+      "kind": "selector",
+      "what": "a player spec naming the opponents whose life total is at least every other opponent's (e.g. \"opponent_most_life\", the same set the attacks_if_able static's `defending: \"opponent_most_life\"` computes), usable as `choose_player`'s `players` pool so the controller picks one among tied leaders and binds it with `as`",
+      "why_existing_wont_do": "`choose_player` takes a `players` pool but `select_players` / PLAYER_SPEC_NAMES have no life-based spec: only you/each_opponent/each_player/active_player/monarch/target/binding/except/not and similar. `max_life_of` is a value, not a player set, and `opponent_most_life` exists only as the `defending` field of the attacks_if_able static, not as an effect player spec. Choosing from all opponents (`each_opponent`) would let the controller pick a lower-life opponent, which is a different card in multiplayer. The rest of the line is expressible (creature_dies trigger with is_token:false + types Artifact, a `may` exiling the subject as Nightmare Shepherd does, choose_mode with chooser the bound player for the villainous choice, lose_life 4, copy_permanent of the exiled subject)."
+    }
+  ],
+  "closest_existing": ["choose_player", "max_life_of", "attacks_if_able defending opponent_most_life"],
+  "confidence": "high"
+}

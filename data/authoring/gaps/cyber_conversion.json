@@ -1,0 +1,16 @@
+{
+  "card_id": "cyber_conversion",
+  "name": "Cyber Conversion",
+  "oracle_text": "Turn target creature face down. It's a 2/2 Cyberman artifact creature.",
+  "blocked_sentences": [
+    "Turn target creature face down. It's a 2/2 Cyberman artifact creature."
+  ],
+  "needs": [{
+    "capability": "turn_face_down",
+    "kind": "op",
+    "what": "an op that turns a permanent already on the battlefield face down (708.2), so it loses its name, mana cost, colors, abilities, subtypes and printed P/T and becomes a nameless, colorless 2/2 face-down permanent with a characteristics override (here: artifact creature, subtype Cyberman); it stays face down indefinitely and may be turned face up only if it has morph/disguise/a face-up cost (708.8)",
+    "why_existing_wont_do": "turn_face_up exists only in the other direction; manifest, manifest_dread and cloak (manifest's flag) put cards from the library face down, not a permanent already on the battlefield; face_down on look_at_top/return_from_graveyard only puts cards onto the battlefield face down from another zone; animate or set_pt plus lose_all_abilities and add_subtype would approximate the result but leave the name, colors, mana value and face-up status intact and would not make it a face-down permanent the face_down selector or turn_face_up reads"
+  }],
+  "closest_existing": ["turn_face_up", "manifest", "animate", "lose_all_abilities"],
+  "confidence": "high"
+}

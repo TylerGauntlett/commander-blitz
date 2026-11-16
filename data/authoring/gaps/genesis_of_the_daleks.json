@@ -1,0 +1,23 @@
+{
+  "card_id": "genesis_of_the_daleks",
+  "name": "Genesis of the Daleks",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.\nIV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.",
+  "blocked_sentences": [
+    "I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.",
+    "IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures."
+  ],
+  "needs": [
+    {
+      "capability": "power_of_creatures_died_this_turn",
+      "kind": "value",
+      "what": "a value summing the last-known power of every creature with a given subtype (Dalek) that died this turn, by any controller, read after a destroy in the same resolution",
+      "why_existing_wont_do": "creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are counts, not power totals, and take no subtype filter; power_had and power_of read a single object, and snapshot covers only a target that left, not every Dalek that died this turn. The villainous choice shape (choose_mode with the target opponent as chooser) and the two destroy-all selectors look expressible"
+    }
+  ],
+  "closest_existing": [
+    "creatures_died_this_turn",
+    "power_had",
+    "golem_3_3_c_artifact"
+  ],
+  "confidence": "high"
+}

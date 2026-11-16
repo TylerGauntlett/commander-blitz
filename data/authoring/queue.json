@@ -48452,12 +48452,12 @@
     },
     "Clockwork Droid": {
       "edhrec_rank": 15828,
-      "gate": "template",
+      "gate": null,
       "name": "Clockwork Droid",
-      "reason": "no template for: You may exert this creature as it attacks. When you do, it can't be blocked this turn and ",
+      "reason": "",
       "scryfall_id": "9b4fa6d0-dc2d-4903-bbba-6cf83be2b187",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clockwork Fox": {
@@ -55832,12 +55832,12 @@
     },
     "Creeping Tar Pit": {
       "edhrec_rank": 2945,
-      "gate": "template",
+      "gate": null,
       "name": "Creeping Tar Pit",
-      "reason": "no template for: {1}{U}{B}: Until end of turn, this land becomes a 3/2 blue and black Elemental creature. I",
+      "reason": "",
       "scryfall_id": "080edb03-932f-4e0f-a230-5c7794925017",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creeping Trailblazer": {
@@ -58072,12 +58072,12 @@
     },
     "Cult of Skaro": {
       "edhrec_rank": 11215,
-      "gate": "template",
+      "gate": null,
       "name": "Cult of Skaro",
-      "reason": "no template for: Whenever attacks, choose one at random —",
+      "reason": "",
       "scryfall_id": "0ff4a0b3-89b2-4db5-a8c5-a5d8d1c1ed1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cult of the Waxing Moon": {
@@ -59432,32 +59432,32 @@
     },
     "Cyberman Patrol": {
       "edhrec_rank": 2746,
-      "gate": "template",
+      "gate": null,
       "name": "Cyberman Patrol",
-      "reason": "no template for: Artifact creatures you control have afflict 3",
+      "reason": "",
       "scryfall_id": "1fe32187-ce41-48b8-9bb9-ddca2ca0bab6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybermat": {
       "edhrec_rank": 12172,
-      "gate": "template",
+      "gate": null,
       "name": "Cybermat",
-      "reason": "no template for: Whenever this creature attacks and isn't blocked, it gets +X/+0 until end of turn, where X",
+      "reason": "",
       "scryfall_id": "04debb05-5303-4b0a-8224-d00f3512639e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybermen Squadron": {
       "edhrec_rank": 2036,
-      "gate": "template",
+      "gate": null,
       "name": "Cybermen Squadron",
-      "reason": "no template for: Nonlegendary artifact creatures you control have myriad",
+      "reason": "",
       "scryfall_id": "08bdf8ea-e3a7-4121-805a-417361c8d58d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybernetic Specialist": {
@@ -60152,22 +60152,22 @@
     },
     "Dalek Drone": {
       "edhrec_rank": 7458,
-      "gate": "template",
+      "gate": null,
       "name": "Dalek Drone",
-      "reason": "no template for: Exterminate! — When this creature enters, destroy target creature an opponent controls. Th",
+      "reason": "",
       "scryfall_id": "0829742d-7268-46a3-a8f3-172559b1315f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dalek Squadron": {
       "edhrec_rank": 5437,
-      "gate": "template",
+      "gate": null,
       "name": "Dalek Squadron",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "40a5f1c9-8164-43c6-96f1-894d6981a2ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dalkovan Encampment": {
@@ -62092,12 +62092,12 @@
     },
     "Davros, Dalek Creator": {
       "edhrec_rank": 7527,
-      "gate": "template",
+      "gate": null,
       "name": "Davros, Dalek Creator",
-      "reason": "no template for: At the beginning of your end step, create a 3/3 black Dalek artifact creature token with m",
+      "reason": "",
       "scryfall_id": "16bb0761-820f-43b6-bedc-e6103faf45ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Davvol, Evincar of Rath": {
@@ -65682,12 +65682,12 @@
     },
     "Delete": {
       "edhrec_rank": 5211,
-      "gate": "template",
+      "gate": null,
       "name": "Delete",
-      "reason": "no template for: deals X damage to each nonartifact creature and each player",
+      "reason": "",
       "scryfall_id": "875c7337-78af-4e13-89e5-3255ba2d4053",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deliberate": {
@@ -84562,12 +84562,12 @@
     },
     "Ensnared by the Mara": {
       "edhrec_rank": 3402,
-      "gate": "template",
+      "gate": null,
       "name": "Ensnared by the Mara",
-      "reason": "no template for: Each opponent faces a villainous choice — They exile cards from the top of their library u",
+      "reason": "",
       "scryfall_id": "11454c82-3f1d-4456-8857-0dcb01d34298",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ensnaring Bridge": {
@@ -88842,12 +88842,12 @@
     },
     "Exterminate!": {
       "edhrec_rank": 9601,
-      "gate": "template",
+      "gate": null,
       "name": "Exterminate!",
-      "reason": "no template for: Replicate—Tap an untapped Dalek you control",
+      "reason": "",
       "scryfall_id": "da54bbfd-48d8-4b1f-9336-e45be7e0b0e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exterminator Magmarch": {
@@ -94682,12 +94682,12 @@
     },
     "Fiery Islet": {
       "edhrec_rank": 834,
-      "gate": "template",
+      "gate": null,
       "name": "Fiery Islet",
-      "reason": "no template for: {T}, Pay 1 life: Add {U} or {R}",
+      "reason": "",
       "scryfall_id": "3e73be68-aec6-4033-9cdd-bc473d7db93a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiery Justice": {
@@ -104592,12 +104592,12 @@
     },
     "Gallifrey Council Chamber": {
       "edhrec_rank": 5525,
-      "gate": "template",
+      "gate": null,
       "name": "Gallifrey Council Chamber",
-      "reason": "no template for: When enters, surveil 1",
+      "reason": "",
       "scryfall_id": "0e03370a-05a7-4f84-aadd-9eba459e2696",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gallifrey Falls // No More": {
@@ -117172,12 +117172,12 @@
     },
     "Great Intelligence's Plan": {
       "edhrec_rank": 6689,
-      "gate": "template",
+      "gate": null,
       "name": "Great Intelligence's Plan",
-      "reason": "no template for: Draw three cards. Then target opponent faces a villainous choice — They discard three card",
+      "reason": "",
       "scryfall_id": "280c4d2c-6832-4ba5-958a-0527ba3cbc71",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Great Oak Guardian": {
@@ -131742,12 +131742,12 @@
     },
     "Hunted by The Family": {
       "edhrec_rank": 9672,
-      "gate": "template",
+      "gate": null,
       "name": "Hunted by The Family",
-      "reason": "no template for: Choose up to four target creatures you don't control. For each of them, that creature's co",
+      "reason": "",
       "scryfall_id": "04b0a2a9-ba95-4330-a8ab-9cb530eb4257",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hunter Sliver": {
@@ -154552,12 +154552,12 @@
     },
     "Laser Screwdriver": {
       "edhrec_rank": 6530,
-      "gate": "template",
+      "gate": null,
       "name": "Laser Screwdriver",
-      "reason": "no template for: {1}, {T}: Tap target artifact",
+      "reason": "",
       "scryfall_id": "431a6798-2a82-44b8-bd2e-3e3a425d3473",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lash Out": {
@@ -155242,12 +155242,12 @@
     },
     "Lavaclaw Reaches": {
       "edhrec_rank": 7616,
-      "gate": "template",
+      "gate": null,
       "name": "Lavaclaw Reaches",
-      "reason": "no template for: {1}{B}{R}: Until end of turn, this land becomes a 2/2 black and red Elemental creature wit",
+      "reason": "",
       "scryfall_id": "5766b7ed-eb92-4c53-a5ad-577b5466ff6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lavacore Elemental": {
@@ -192442,12 +192442,12 @@
     },
     "Ominous Cemetery": {
       "edhrec_rank": 5950,
-      "gate": "template",
+      "gate": null,
       "name": "Ominous Cemetery",
-      "reason": "no template for: {5}, {T}, Exile this land: Target creature's owner shuffles it into their library",
+      "reason": "",
       "scryfall_id": "2e843c57-fae3-4127-94e7-cad8c8bb9486",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ominous Harvest": {
@@ -220342,12 +220342,12 @@
     },
     "Renegade Silent": {
       "edhrec_rank": 11191,
-      "gate": "template",
+      "gate": null,
       "name": "Renegade Silent",
-      "reason": "no template for: At the beginning of your end step, goad up to one target creature you don't control and pu",
+      "reason": "",
       "scryfall_id": "0984a09f-91e5-4566-9f8e-e8e12e4dcb5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Renegade Tactics": {
@@ -255022,12 +255022,12 @@
     },
     "Sontaran General": {
       "edhrec_rank": 15392,
-      "gate": "template",
+      "gate": null,
       "name": "Sontaran General",
-      "reason": "no template for: Battalion — Whenever this creature and at least two other creatures attack, for each oppon",
+      "reason": "",
       "scryfall_id": "010e983d-e84c-4fb1-82c1-fab0885934f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soot Imp": {
@@ -272472,12 +272472,12 @@
     },
     "Sycorax Commander": {
       "edhrec_rank": 10316,
-      "gate": "template",
+      "gate": null,
       "name": "Sycorax Commander",
-      "reason": "no template for: Sanctified Rules of Combat — When this creature enters, each opponent faces a villainous c",
+      "reason": "",
       "scryfall_id": "0c12a66b-3a89-49a5-8a2f-7d260f4d68d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sydri, Galvanic Genius": {
@@ -280312,12 +280312,12 @@
     },
     "The Dalek Emperor": {
       "edhrec_rank": 9328,
-      "gate": "template",
+      "gate": null,
       "name": "The Dalek Emperor",
-      "reason": "no template for: Affinity for Daleks",
+      "reason": "",
       "scryfall_id": "be18bf54-88b0-46a4-a2c7-fded41e524cb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Darkness Crystal": {
@@ -280882,12 +280882,12 @@
     },
     "The Flood of Mars": {
       "edhrec_rank": 8334,
-      "gate": "template",
+      "gate": null,
       "name": "The Flood of Mars",
-      "reason": "no template for: Water Always Wins — Whenever this creature attacks, put a flood counter on another target ",
+      "reason": "",
       "scryfall_id": "07c6b33d-c1c7-442b-91ac-d7ef56ce8fdd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Flux": {
@@ -281562,12 +281562,12 @@
     },
     "The Master, Mesmerist": {
       "edhrec_rank": 12937,
-      "gate": "template",
+      "gate": null,
       "name": "The Master, Mesmerist",
-      "reason": "no template for: {T}: Target creature an opponent controls with power less than or equal to The Master's po",
+      "reason": "",
       "scryfall_id": "55b202ad-3aca-4d50-a235-caf5ddcf99ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Master, Multiplied": {
@@ -282352,12 +282352,12 @@
     },
     "The Sound of Drums": {
       "edhrec_rank": 3626,
-      "gate": "template",
+      "gate": null,
       "name": "The Sound of Drums",
-      "reason": "no template for: Enchanted creature is goaded",
+      "reason": "",
       "scryfall_id": "0ff3fbe7-1c11-4cce-a43b-b6b4cb4d1594",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Spear of Bashenga": {
@@ -283702,12 +283702,12 @@
     },
     "This Is How It Ends": {
       "edhrec_rank": 8395,
-      "gate": "template",
+      "gate": null,
       "name": "This Is How It Ends",
-      "reason": "no template for: Target creature's owner shuffles it into their library, then faces a villainous choice — T",
+      "reason": "",
       "scryfall_id": "0686d1c6-bebe-45ac-b82e-78cf420b5e33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "This Town Ain't Big Enough": {
@@ -301432,12 +301432,12 @@
     },
     "Vashta Nerada": {
       "edhrec_rank": 5242,
-      "gate": "template",
+      "gate": null,
       "name": "Vashta Nerada",
-      "reason": "no template for: Morbid — At the beginning of each end step, if a creature died this turn, put a +1/+1 coun",
+      "reason": "",
       "scryfall_id": "8abacd86-9e99-4a9a-863c-260596201039",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vassal Soul": {
@@ -319292,12 +319292,12 @@
     },
     "Wound Reflection": {
       "edhrec_rank": 1940,
-      "gate": "template",
+      "gate": null,
       "name": "Wound Reflection",
-      "reason": "no template for: At the beginning of each end step, each opponent loses life equal to the life they lost th",
+      "reason": "",
       "scryfall_id": "0758383e-e70f-477b-a70b-09b2d25a6a92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wowzer, the Aspirational": {

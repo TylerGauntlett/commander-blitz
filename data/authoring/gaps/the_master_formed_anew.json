@@ -1,0 +1,18 @@
+{
+  "card_id": "the_master_formed_anew",
+  "name": "The Master, Formed Anew",
+  "oracle_text": "Body Thief — When you cast this spell, you may exile a creature you control and put a takeover counter on it.\nYou may have The Master enter as a copy of a creature card in exile with a takeover counter on it.",
+  "blocked_sentences": [
+    "You may have The Master enter as a copy of a creature card in exile with a takeover counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "enters_as_copy_of_exiled_card",
+      "kind": "replacement",
+      "what": "An optional `self_enters_as_copy` replacement whose `copying` pool is a standing selector over cards in exile (`{\"zone\": \"exile\", \"controller\": \"any\", \"types\": [\"Creature\"], \"has_counters\": \"takeover\"}`) with no `as_enters` effects, offered as a 'you may' like Clone, and accepted by the residual gate as claiming its printed line",
+      "why_existing_wont_do": "The engine's `ask_enters_copy` already resolves a non-`as_enters` `copying` pool and asks yes/no, and `has_counters` reads counters on an exiled card, so a card written that way loads -- but the residual claimant in `cards/authoring/verify.py` (`self_enters_as_copy` branch) refuses any line containing the word 'exile' unless the replacement carries `as_enters` (it assumes The Mimeoplasm's 'As ... enters, you may exile ...' shape). Adding a dummy `as_enters` would route through `offer_as_enters_effects`, which picks from the pool with no 'you may', so it is not the printed card. The front line (the stack-zone `spell_cast` trigger with `may` -> `exile` as a binding -> `add_counters` 'takeover') is expressible as-is"
+    }
+  ],
+  "closest_existing": ["the_mimeoplasm"],
+  "confidence": "high"
+}
