@@ -191,6 +191,7 @@
    "stack"
   ],
   "KEYWORD_ALIASES": {
+   "doctor's_companion": "doctors_companion",
    "umbra_armor": "totem_armor"
   },
   "KNOWN_COLORS": [
@@ -211,6 +212,7 @@
    "defender",
    "desertwalk",
    "dethrone",
+   "doctors_companion",
    "double_strike",
    "exalted",
    "fear",
