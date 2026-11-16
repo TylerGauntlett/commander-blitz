@@ -3221,6 +3221,30 @@
       ]
     },
     {
+      "id": "dalek_3_3_b_artifact_menace",
+      "name": "Dalek Token",
+      "oracle_text": "3/3 black Dalek artifact creature token with menace.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Dalek"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "menace"
+      ]
+    },
+    {
       "id": "skeleton_pirate_2_2_b",
       "name": "Skeleton Pirate Token",
       "oracle_text": "2/2 black Skeleton Pirate creature token.",

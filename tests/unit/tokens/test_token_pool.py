@@ -3005,3 +3005,30 @@ class TestSkeletonCrewsTokenIsAVanillaSkeletonPirate:
         other = pool.get("pirate_2_2_b_menace")
         assert "menace" in other.keywords
         assert "Skeleton" not in other.subtypes
+
+
+class TestTheDaleksAreBlackArtifactsWithMenace:
+    """Cult of Skaro, Davros, Doomsday Confluence, Genesis of the Daleks and The
+    Dalek Emperor: *"create a **3/3 black Dalek artifact creature** token with
+    menace."*
+
+    The artifact type is load-bearing: the Masters of Evil deck grants afflict
+    and myriad to artifact creatures you control and counts attacking artifact
+    creatures. `golem_3_3_c_artifact_flying` is the right body with the wrong
+    colour, type and keyword; `pirate_2_2_b_menace` has the colour and keyword
+    on a smaller, non-artifact body.
+    """
+
+    def test_it_is_a_three_three_black_dalek_artifact_creature_with_menace(self, pool):
+        token = pool.get("dalek_3_3_b_artifact_menace")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert list(token.colors) == ["B"]
+        assert set(token.types) == {"Artifact", "Creature"}
+        assert list(token.subtypes) == ["Dalek"]
+        assert list(token.keywords) == ["menace"]
+
+    def test_the_menace_pirate_is_still_a_separate_token(self, pool):
+        other = pool.get("pirate_2_2_b_menace")
+        assert "Artifact" not in other.types
+        assert "Dalek" not in other.subtypes

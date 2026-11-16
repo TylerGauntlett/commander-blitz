@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**411 cards** blocked by **359** capabilities.
+**407 cards** blocked by **358** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
-| [dalek-token](#dalek-token) | 5 | 7527 | token |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -634,37 +633,6 @@ Blocks **5** cards.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## dalek-token
-
-Blocks **5** cards.
-
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
-- **(token)** a 3/3 black Dalek artifact creature token with menace
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Dalek; the nearest are beast_3_3_b_deathtouch (Beast, deathtouch, not an artifact) and pirate_2_2_b_menace / villain_2_1_b_menace (wrong size, not artifacts). The other modes and 'Choose X, same mode more than once' fit choose_mode with count x and repeatable.
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace) are smaller non-artifact creatures of other subtypes, and golem_3_3_c_artifact is colorless without menace. The count itself looks expressible via counters_on the source for kind lore
-- **(token)** a 3/3 black Dalek artifact creature token with menace
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no Dalek token; the nearest 3/3 black token is beast_3_3_b_deathtouch (a non-artifact Beast with deathtouch, not menace). The rest of the card looks expressible: Affinity is cost_reduction with count {controller: you, subtypes: [Dalek]}, the haste line is a grant_keyword static with exclude_self, and the villainous choice is a begin_combat trigger with for_each_player over opponents into a choose_mode whose chooser is that opponent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
-  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
-- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
-  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
-  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
-- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
-  - • Create a 3/3 black Dalek artifact creature token with menace.
-- **The Dalek Emperor** (rank 9328) — `the_dalek_emperor`
-  - At the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.
-- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
-  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
 
 </details>
 
