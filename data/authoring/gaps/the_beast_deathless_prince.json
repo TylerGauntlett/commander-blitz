@@ -1,0 +1,18 @@
+{
+  "card_id": "the_beast_deathless_prince",
+  "name": "The Beast, Deathless Prince",
+  "oracle_text": "When you cast this spell, gain control of target creature until end of turn. Untap it. It gains menace and haste until end of turn.\nThe Beast enters tapped with six stun counters on it. (If it would become untapped, remove a stun counter from it instead.)\nWhenever a creature deals combat damage to its owner, untap The Beast and draw a card.",
+  "blocked_sentences": [
+    "Whenever a creature deals combat damage to its owner, untap The Beast and draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "combat_damage_to_own_owner",
+      "kind": "trigger_event",
+      "what": "a `deals_combat_damage_to_player` trigger clause that matches only when the damaged player is the OWNER of the creature dealing the damage (any creature, any controller) -- e.g. `defending: \"subject_owner\"`, comparing the event's defender seat with the dealing creature's owner",
+      "why_existing_wont_do": "`defending` (via `_defender_matches`) only compares the damaged seat with the trigger source's controller (`you`/`opponent`), an enchanted player, the monarch or most-life; the trigger filter's `owner` key only takes `you`/`opponent`/`any`, relative to the trigger's controller, so neither can relate the damaged player to the dealing creature's own owner (a stolen creature hitting the player who owns it)"
+    }
+  ],
+  "closest_existing": ["deals_combat_damage_to_player", "defending", "owner"],
+  "confidence": "high"
+}

@@ -14816,6 +14816,10 @@
   "omen_hawker": {
     "zone": "battlefield"
   },
+  "ominous_cemetery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ominous_harvest": {
     "hand_size": {
       "0": 2
@@ -16858,6 +16862,10 @@
     "zone": "battlefield"
   },
   "renegade_demon": {
+    "zone": "battlefield"
+  },
+  "renegade_silent": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "renegade_troops": {
@@ -19412,6 +19420,10 @@
   "songbirds_blessing": {
     "zone": "battlefield"
   },
+  "sontaran_general": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sophia_dogged_detective": {
     "battlefield_count": 34,
     "tokens": {
@@ -20567,6 +20579,9 @@
     "zone": "battlefield"
   },
   "sworn_guardian": {
+    "zone": "battlefield"
+  },
+  "sycorax_commander": {
     "zone": "battlefield"
   },
   "sylvan_brushstrider": {

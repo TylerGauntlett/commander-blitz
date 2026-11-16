@@ -178279,6 +178279,74 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "tucked",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "owner_of": "tucked"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{5}, {T}, Exile this land: Target creature's owner shuffles it into their library."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ominous_cemetery",
+      "name": "Ominous Cemetery",
+      "oracle_text": "{T}: Add {C}.\n{5}, {T}, Exile this land: Target creature's owner shuffles it into their library.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -202684,6 +202752,77 @@
       "source": "auto",
       "subtypes": [
         "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "phase_out"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, goad up to one target creature you don't control and put a +1/+1 counter on this creature. This creature phases out",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "renegade_silent",
+      "mana_cost": "{3}{U}",
+      "name": "Renegade Silent",
+      "oracle_text": "At the beginning of your end step, goad up to one target creature you don't control and put a +1/+1 counter on this creature. This creature phases out. (Treat it and anything attached to it as though they don't exist until your next turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Horror"
       ],
       "toughness": 3,
       "types": [
@@ -232468,6 +232607,89 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cant_block"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Battalion — Whenever this creature and at least two other creatures attack, for each opponent, goad up to one target creature that player controls. Those creatures can't block this turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sontaran_general",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Sontaran General",
+      "oracle_text": "Trample, haste\nBattalion — Whenever this creature and at least two other creatures attack, for each opponent, goad up to one target creature that player controls. Those creatures can't block this turn. (Until your next turn, they attack each combat if able and attack a player other than you if able.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Soldier"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -247466,6 +247688,111 @@
         "Warrior"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "chooser": {
+                    "binding": "each_player"
+                  },
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "as": "pitched",
+                          "op": "discard",
+                          "player": {
+                            "binding": "each_player"
+                          },
+                          "whole_hand": true
+                        },
+                        {
+                          "amount": {
+                            "minus": [
+                              {
+                                "count": {
+                                  "binding": "pitched",
+                                  "controller": {
+                                    "binding": "each_player"
+                                  }
+                                }
+                              },
+                              {
+                                "const": 1
+                              }
+                            ]
+                          },
+                          "op": "draw",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "label": "That opponent discards all the cards in their hand, then draws that many cards minus one."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "cards_in_hand": {
+                              "binding": "each_player"
+                            }
+                          },
+                          "op": "damage",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "label": "This creature deals damage to that player equal to the number of cards in their hand."
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sanctified Rules of Combat — When this creature enters, each opponent faces a villainous choice — That opponent discards all the cards in their hand, then draws that many cards minus one, or this creature deals damage to that player equal to the number of cards in their hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "sycorax_commander",
+      "keywords": [
+        "first_strike",
+        "haste"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Sycorax Commander",
+      "oracle_text": "First strike, haste\nSanctified Rules of Combat — When this creature enters, each opponent faces a villainous choice — That opponent discards all the cards in their hand, then draws that many cards minus one, or this creature deals damage to that player equal to the number of cards in their hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

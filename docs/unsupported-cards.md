@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **347** capabilities.
+**399 cards** blocked by **349** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -122,9 +122,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [combat-damage-to-own-owner](#combat-damage-to-own-owner) | 1 | 10812 | trigger_event |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -2391,6 +2393,20 @@ Blocks **1** card.
 
 </details>
 
+## combat-damage-to-own-owner
+
+Blocks **1** card.
+
+- **(trigger_event)** a `deals_combat_damage_to_player` trigger clause that matches only when the damaged player is the OWNER of the creature dealing the damage (any creature, any controller) -- e.g. `defending: "subject_owner"`, comparing the event's defender seat with the dealing creature's owner
+  <br>Why the existing vocabulary won't do: `defending` (via `_defender_matches`) only compares the damaged seat with the trigger source's controller (`you`/`opponent`), an enchanted player, the monarch or most-life; the trigger filter's `owner` key only takes `you`/`opponent`/`any`, relative to the trigger's controller, so neither can relate the damaged player to the dealing creature's own owner (a stolen creature hitting the player who owns it)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Beast, Deathless Prince** (rank 10812) — `the_beast_deathless_prince`
+  - Whenever a creature deals combat damage to its owner, untap The Beast and draw a card.
+
+</details>
+
 ## companion
 
 Blocks **1** card.
@@ -2432,6 +2448,20 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
+## conspire
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants conspire to spells you cast matching a filter and a cast zone (noncreature, cast from exile): an optional additional cost paid as the spell is cast, tapping two untapped creatures you control that share a color with that spell, which when paid triggers a copy_spell of it with new_targets
+  <br>Why the existing vocabulary won't do: conspire is not in keywords, and no static_effect grants another spell an optional additional cost: grant_warp, grant_miracle, granted_alternative_cost and spell_cost_reduction alter price but add no tap-creatures cost with a copy rider; tap_permanents exists only as an activated-ability cost and cannot be filtered by sharing a color with the spell being cast; a spell_cast trigger that taps two creatures and copies would move the payment off the cast onto the stack, changing timing (the creatures could be tapped in response), so it would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rassilon, the War President** (rank 17639) — `rassilon_the_war_president`
+  - Each noncreature spell you cast from exile has conspire. (As you cast that spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy.)
 
 </details>
 

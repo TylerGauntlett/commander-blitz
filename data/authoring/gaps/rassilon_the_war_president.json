@@ -1,0 +1,16 @@
+{
+  "card_id": "rassilon_the_war_president",
+  "name": "Rassilon, the War President",
+  "oracle_text": "At the beginning of your upkeep, you lose 2 life and exile the top card of your library. You may play that card for as long as it remains exiled.\nEach noncreature spell you cast from exile has conspire. (As you cast that spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy.)",
+  "blocked_sentences": [
+    "Each noncreature spell you cast from exile has conspire. (As you cast that spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy.)"
+  ],
+  "needs": [{
+    "capability": "conspire",
+    "kind": "static_effect",
+    "what": "a static that grants conspire to spells you cast matching a filter and a cast zone (noncreature, cast from exile): an optional additional cost paid as the spell is cast, tapping two untapped creatures you control that share a color with that spell, which when paid triggers a copy_spell of it with new_targets",
+    "why_existing_wont_do": "conspire is not in keywords, and no static_effect grants another spell an optional additional cost: grant_warp, grant_miracle, granted_alternative_cost and spell_cost_reduction alter price but add no tap-creatures cost with a copy rider; tap_permanents exists only as an activated-ability cost and cannot be filtered by sharing a color with the spell being cast; a spell_cast trigger that taps two creatures and copies would move the payment off the cast onto the stack, changing timing (the creatures could be tapped in response), so it would be an approximation"
+  }],
+  "closest_existing": ["copy_spell", "tap_permanents", "additional_optional", "granted_alternative_cost"],
+  "confidence": "high"
+}

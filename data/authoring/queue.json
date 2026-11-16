@@ -192442,12 +192442,12 @@
     },
     "Ominous Cemetery": {
       "edhrec_rank": 5950,
-      "gate": "template",
+      "gate": null,
       "name": "Ominous Cemetery",
-      "reason": "no template for: {5}, {T}, Exile this land: Target creature's owner shuffles it into their library",
+      "reason": "",
       "scryfall_id": "2e843c57-fae3-4127-94e7-cad8c8bb9486",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ominous Harvest": {
@@ -220342,12 +220342,12 @@
     },
     "Renegade Silent": {
       "edhrec_rank": 11191,
-      "gate": "template",
+      "gate": null,
       "name": "Renegade Silent",
-      "reason": "no template for: At the beginning of your end step, goad up to one target creature you don't control and pu",
+      "reason": "",
       "scryfall_id": "0984a09f-91e5-4566-9f8e-e8e12e4dcb5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Renegade Tactics": {
@@ -255022,12 +255022,12 @@
     },
     "Sontaran General": {
       "edhrec_rank": 15392,
-      "gate": "template",
+      "gate": null,
       "name": "Sontaran General",
-      "reason": "no template for: Battalion — Whenever this creature and at least two other creatures attack, for each oppon",
+      "reason": "",
       "scryfall_id": "010e983d-e84c-4fb1-82c1-fab0885934f7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soot Imp": {
@@ -272472,12 +272472,12 @@
     },
     "Sycorax Commander": {
       "edhrec_rank": 10316,
-      "gate": "template",
+      "gate": null,
       "name": "Sycorax Commander",
-      "reason": "no template for: Sanctified Rules of Combat — When this creature enters, each opponent faces a villainous c",
+      "reason": "",
       "scryfall_id": "0c12a66b-3a89-49a5-8a2f-7d260f4d68d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sydri, Galvanic Genius": {
