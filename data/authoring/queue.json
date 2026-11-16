@@ -64862,12 +64862,12 @@
     },
     "Deeproot Historian": {
       "edhrec_rank": 7218,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Historian",
-      "reason": "no template for: Merfolk and Druid cards in your graveyard have retrace",
+      "reason": "",
       "scryfall_id": "ac3dd116-7918-441d-9c05-5e5cb8c43cd6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Pilgrimage": {

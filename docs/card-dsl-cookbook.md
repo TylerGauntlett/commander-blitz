@@ -7328,6 +7328,41 @@ The near misses are a card's own `graveyard_cost`, which is printed escape
 permission without `escape`, which casts at the printed cost and is the Edgar
 line, a much stronger card.
 
+#### Granted retrace
+
+```jsonc
+// Deeproot Historian -- "Merfolk and Druid cards in your graveyard have retrace."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "subtypes": ["Merfolk", "Druid"] },
+  "grants_retrace": true }
+```
+
+`grants_retrace` on a `cast_from_graveyard` static makes the permission retrace
+(702.81a) given to the cards it covers. It is the permission's only price: a
+covered nonland card gets a line at its printed costs plus a land card
+discarded, and no line at the printed costs alone. `affects_spells` reads the
+printed face, so `subtypes` is either subtype on any card type, a Kindred
+instant included.
+
+`casting._granted_retrace_lines` offers every printed-price line the card has,
+each with the discard on top and marked `Action.retrace`, so `Game._cast`
+charges retrace's own land discard (`casting.RETRACE_COST`) after the mana,
+whatever graveyard cost the card prints. A card that prints `retrace: true`
+already has the identical line and gets no second one; a card whose own
+`graveyard_additional_cost` is another discard (Dragon Man) keeps that line
+beside the granted one. An Edgar-shaped permission over the same card is a
+second line at the printed price. The spell was cast from a graveyard and goes
+where it normally would: a retraced instant comes back to be retraced again.
+
+The discard is the rate limit, so the permission is unmetered without a
+`max_per_turn`. The loader refuses `grants_retrace` beside `grants_flashback`,
+`pay_life_instead` or `escape` (a second price for the same cast), on a card's
+own `active_zones: ["graveyard"]` permission, and on any other static.
+
+The near misses are the card-level `retrace: true`, which is retrace printed on
+the card being cast, and the same permission without `grants_retrace`, which
+casts at the printed cost and is the Edgar line, a much stronger card.
+
 #### Mayhem
 
 "Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you

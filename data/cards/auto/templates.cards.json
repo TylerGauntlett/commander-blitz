@@ -61448,6 +61448,43 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Merfolk",
+              "Druid"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "grants_retrace": true,
+          "kind": "static",
+          "text": "Merfolk and Druid cards in your graveyard have retrace."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deeproot_historian",
+      "mana_cost": "{3}{G}",
+      "name": "Deeproot Historian",
+      "oracle_text": "Merfolk and Druid cards in your graveyard have retrace. (You may cast cards with retrace from your graveyard by discarding a land card in addition to paying their other costs.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Druid"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

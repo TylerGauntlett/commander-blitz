@@ -5141,6 +5141,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'escape' prices a cast_from_graveyard permission; nothing "
             f"reads it on {model.effect!r}"
         )
+    if model.grants_retrace and model.effect != "cast_from_graveyard":
+        raise DslError(
+            f"{where}: 'grants_retrace' makes a cast_from_graveyard permission "
+            f"retrace; nothing reads it on {model.effect!r}"
+        )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
             f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
@@ -5181,6 +5186,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("graveyard_arrival_this_turn", model.graveyard_arrival_this_turn is not None),
                 ("pay_life_instead", model.pay_life_instead),
                 ("escape", model.escape is not None),
+                ("grants_retrace", model.grants_retrace),
             )
             if present
         ]
@@ -5225,11 +5231,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             for key, present in (
                 ("grants_flashback", model.grants_flashback),
                 ("pay_life_instead", model.pay_life_instead),
+                ("grants_retrace", model.grants_retrace),
             ):
                 if present:
                     raise DslError(
                         f"{where}: '{key}' beside 'escape' is a second price for "
                         f"the same cast"
+                    )
+        elif model.grants_retrace:
+            # Deeproot Historian. Retrace is its own price and its own brake:
+            # each cast discards a land card, so no per-turn cap is printed and
+            # none is needed, and it is neither flashback (the card comes back)
+            # nor a life price.
+            for key, present in (
+                ("grants_flashback", model.grants_flashback),
+                ("pay_life_instead", model.pay_life_instead),
+            ):
+                if present:
+                    raise DslError(
+                        f"{where}: '{key}' beside 'grants_retrace' is a second "
+                        f"price for the same cast"
                     )
         elif (
             not model.static_max_per_turn
@@ -7370,7 +7391,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # as no limit at all.
         if model.static_max_per_turn:
             static["max_per_turn"] = int(model.static_max_per_turn)
-        elif model.escape is not None or (
+        elif model.escape is not None or model.grants_retrace or (
             model.surveilled_this_turn and not model.grants_flashback
         ):
             # Unmetered, and written as an explicit None so the reader cannot
@@ -7385,6 +7406,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # Read by `casting.escape_price`: the line it offers and the price
             # `Game._cast` charges.
             static["escape"] = dict(model.escape)
+        if model.grants_retrace:
+            # Read by `casting.granted_retrace_permission`: the line it offers
+            # and the land discard `Game._cast` charges.
+            static["grants_retrace"] = True
         if model.grants_flashback:
             # Read by `Game._cast`, which stamps flashback's exile onto the
             # stack item: a permission that is not flashback exiles nothing.

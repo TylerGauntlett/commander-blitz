@@ -129,6 +129,14 @@ class Action:
     #: card's own printed escape, which is `flashback`'s slot.
     escape: str | None = None
     escape_exile: int = 0
+    #: Cast from a graveyard under a **retrace a permission granted** --
+    #: Deeproot Historian's "Merfolk and Druid cards in your graveyard have
+    #: retrace". Part of the identity for `flashback`'s reason: the same card
+    #: may be castable from the graveyard at its printed price under an Edgar
+    #: and with a land discarded under the grant, and those are two prices.
+    #: ``False`` for every other cast, including a card's own printed retrace,
+    #: which `CardDef.retrace` already prices.
+    retrace: bool = False
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a
@@ -291,6 +299,9 @@ class Action:
             # permission-bearing board share everything else.
             "" if self.escape is None else self.escape,
             self.escape_exile,
+            # A granted retrace line and the printed-price line under an Edgar
+            # share everything else.
+            self.retrace,
             # A shock land's two drops share everything else.
             -1 if self.enters_paid is None else int(self.enters_paid),
         )

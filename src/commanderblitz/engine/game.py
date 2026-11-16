@@ -26,6 +26,7 @@ from .carddef import Cost, is_repeatable, mode_instances, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
+    RETRACE_COST,
     _escape_exile_cost,
     _graveyard_cast_permission,
     _spell_as_cast,
@@ -34,6 +35,7 @@ from .casting import (
     convoke_pips,
     deferred_target_spec,
     granted_escape_permission,
+    granted_retrace_permission,
     life_x_ceiling,
     pay_generic_colors,
     pay_generic_currencies,
@@ -877,7 +879,13 @@ class Game:
         # the spell goes on the stack -- and after the mana, which is the order
         # rule 601.2g gives and the order that lets a land be discarded to a
         # spell it just helped pay for.
-        if card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
+        # A granted retrace (`action.retrace`) charges retrace's own land
+        # discard, whatever graveyard cost the card prints.
+        if action.retrace:
+            ok = yield from pay(state, pid, RETRACE_COST, None)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+        elif card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
             ok = yield from pay(state, pid, card.retrace_cost, None)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
@@ -1005,6 +1013,15 @@ class Game:
             granting = granted_escape_permission(
                 state, pid, card, oid, (action.escape, action.escape_exile)
             )
+            if granting is not None:
+                permission = granting.oid
+                state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
+        elif action.retrace:
+            # Billed to the grant that offered the line. Retrace exiles nothing
+            # (702.81a), so the card goes where it normally would; the
+            # permission on the stack item is what makes it a spell cast from a
+            # graveyard.
+            granting = granted_retrace_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)

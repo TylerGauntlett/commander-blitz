@@ -931,6 +931,14 @@ class AbilityModel(BaseModel):
     #: back to the graveyard afterwards. The exile is the rate limit, so the
     #: permission needs no `max_per_turn`.
     escape: dict[str, Any] | None = None
+    #: ``cast_from_graveyard``: this permission is **retrace** -- Deeproot
+    #: Historian's "Merfolk and Druid cards in your graveyard have retrace".
+    #:
+    #: The cards it covers are castable from the graveyard **only** by paying
+    #: their printed costs and discarding a land card (702.81a), never at the
+    #: printed price alone; the spell goes where it normally would afterwards.
+    #: The discard is the rate limit, so the permission needs no `max_per_turn`.
+    grants_retrace: bool = False
     #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
     #: casting or copying an instant or sorcery spell** causes a triggered
     #: ability ... to trigger" -- a clause about what happened, not about whose
