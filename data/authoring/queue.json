@@ -171662,12 +171662,12 @@
     },
     "Merfolk Sovereign": {
       "edhrec_rank": 4115,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Sovereign",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "ac545978-ad30-4c6b-8add-3edd6c0eb7f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Spy": {
@@ -171842,12 +171842,12 @@
     },
     "Merrow Reejerey": {
       "edhrec_rank": 3984,
-      "gate": "template",
+      "gate": null,
       "name": "Merrow Reejerey",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "6ae8ea86-46c3-4855-92e9-7906e554becb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merrow Skyswimmer": {
@@ -175982,12 +175982,12 @@
     },
     "Mist Dancer": {
       "edhrec_rank": 5357,
-      "gate": "template",
+      "gate": null,
       "name": "Mist Dancer",
-      "reason": "no template for: Other Merfolk you control get +1/+0 and have flying",
+      "reason": "",
       "scryfall_id": "5fa09033-2b7a-4f13-99ef-7c5a347b3d84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mist Dragon": {
@@ -207172,12 +207172,12 @@
     },
     "Prime Speaker Zegana": {
       "edhrec_rank": 2775,
-      "gate": "template",
+      "gate": null,
       "name": "Prime Speaker Zegana",
-      "reason": "no template for: enters with X +1/+1 counters on it, where X is the greatest power among other creatures yo",
+      "reason": "",
       "scryfall_id": "d2f007b0-b578-44f8-be65-cd9e2ac56e09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Bounty": {

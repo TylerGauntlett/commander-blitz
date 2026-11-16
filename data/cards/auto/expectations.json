@@ -13144,6 +13144,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "merfolk_sovereign": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "merrow_reejerey": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mesa_cavalier": {
     "life": {
       "0": 42
@@ -13400,6 +13408,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "mist_dancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "mist_leopard": {
     "zone": "battlefield"
@@ -15714,6 +15726,10 @@
     "graveyard_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "prime_speaker_zegana": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "primeval_bounty": {

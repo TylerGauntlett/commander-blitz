@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**392 cards** blocked by **342** capabilities.
+**394 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -46,6 +46,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [explore](#explore) | 2 | 5350 | trigger_event |
 | [goad](#goad) | 2 | 6258 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -91,6 +92,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
+| [bird-1-1-u-flying](#bird-1-1-u-flying) | 1 | 1902 | token |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -169,7 +171,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
-| [explore](#explore) | 1 | 9689 | trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
@@ -1210,6 +1211,25 @@ Blocks **2** cards.
 
 </details>
 
+## explore
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event fired when a permanent explores (701.44), carrying the exploring creature as subject so a trigger can filter it with controller: you
+  <br>Why the existing vocabulary won't do: The explore op exists but trigger_events has no explores event; the nearest are connives, investigates and surveils, each a different keyword action, and permanent_enters or counter_placed would misfire on non-explore events and miss an explore that reveals a land
+- **(trigger_event)** a trigger event fired when a creature explores (701.44), with the exploring creature as subject and its controller filterable, carrying the revealed card so a filter can distinguish a land card from a nonland card (e.g. event 'explores' with a 'revealed' filter on types / not_types)
+  <br>Why the existing vocabulary won't do: The explore op exists, but trigger_events has no explores event; the nearest are 'surveils' and 'connives', which fire for different keyword actions, and 'permanent_enters'/'counter_placed' would not distinguish the revealed card's land-ness nor fire on a land explore that adds no counter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nicanzil, Current Conductor** (rank 5350) — `nicanzil_current_conductor`
+  - Whenever a creature you control explores a land card, you may put a land card from your hand onto the battlefield tapped.
+  - Whenever a creature you control explores a nonland card, put a +1/+1 counter on Nicanzil.
+- **Merfolk Cave-Diver** (rank 9689) — `merfolk_cave_diver`
+  - Whenever a creature you control explores, this creature gets +1/+0 until end of turn and can't be blocked this turn.
+
+</details>
+
 ## goad
 
 Blocks **2** cards.
@@ -1933,6 +1953,20 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
+
+</details>
+
+## bird-1-1-u-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue Bird creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has bird_1_1_u_flying_vigilance (extra vigilance), bird_1_1_w_flying (white), bird_2_2_u_flying (2/2), bird_illusion_1_1_u_flying (extra Illusion subtype) and storm_crow_1_2_u_flying (1/2); none is exactly a 1/1 blue Bird with flying only. The rest is expressible: exile on a target spec of Artifact or Creature, create_token with player set to the exiled object's controller (via snapshot/as), and the card-level foretell key for Foretell {U}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ravenform** (rank 1902) — `ravenform`
+  - Exile target artifact or creature. Its controller creates a 1/1 blue Bird creature token with flying.
 
 </details>
 
@@ -3052,20 +3086,6 @@ Blocks **1** card.
   - Exploit (When this creature enters, you may sacrifice a creature.)
   - Other legendary creatures you control have exploit.
   - Whenever a creature you control exploits a creature, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## explore
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when a permanent explores (701.44), carrying the exploring creature as subject so a trigger can filter it with controller: you
-  <br>Why the existing vocabulary won't do: The explore op exists but trigger_events has no explores event; the nearest are connives, investigates and surveils, each a different keyword action, and permanent_enters or counter_placed would misfire on non-explore events and miss an explore that reveals a land
-
-<details><summary>Cards waiting on this</summary>
-
-- **Merfolk Cave-Diver** (rank 9689) — `merfolk_cave_diver`
-  - Whenever a creature you control explores, this creature gets +1/+0 until end of turn and can't be blocked this turn.
 
 </details>
 
