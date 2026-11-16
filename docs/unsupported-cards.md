@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**397 cards** blocked by **345** capabilities.
+**396 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -242,7 +242,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
-| [merfolk-1-1-u-hexproof](#merfolk-1-1-u-hexproof) | 1 | 4340 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -4108,20 +4107,6 @@ Blocks **1** card.
 
 - **Unfortunate Accident** (rank 18634) — `unfortunate_accident`
   - + {1} — Create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
-
-</details>
-
-## merfolk-1-1-u-hexproof
-
-Blocks **1** card.
-
-- **(token)** a 1/1 blue Merfolk creature token with hexproof
-  <br>Why the existing vocabulary won't do: token_ids has only merfolk_1_1_u, a vanilla 1/1 blue Merfolk with no keywords; create_token takes no keywords option, and a follow-up grant_keyword would be an effect on the token rather than a printed characteristic (copies of the token would lack hexproof). The trigger itself is expressible as spell_cast with controller you and filter subtypes [Merfolk]
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deeproot Waters** (rank 4340) — `deeproot_waters`
-  - Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof.
 
 </details>
 

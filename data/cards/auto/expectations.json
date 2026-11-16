@@ -5098,6 +5098,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "deeproot_waters": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deer_dog": {
     "zone": "battlefield"
   },

@@ -4383,6 +4383,10 @@
     "artist": "Winona Nelson",
     "scryfall_id": "991e24e5-8b37-4034-9be7-2fab5983ee7b"
   },
+  "deeproot_waters": {
+    "artist": "Zezhou Chen",
+    "scryfall_id": "a624ef59-69e6-4a41-b41a-3d19e287fe08"
+  },
   "deer_dog": {
     "artist": "Ionomycin",
     "scryfall_id": "54ec5233-6b27-4655-b68c-4c1aaf64d89b"
@@ -11435,6 +11439,10 @@
     "scryfall_id": "54da929a-ac0c-4d3a-b35f-51b9263a7dcb"
   },
   "merfolk_1_1_u": {
+    "artist": "Eilene Cherie",
+    "scryfall_id": "7f7a4f95-f12b-4c28-a6f7-f3c64364abba"
+  },
+  "merfolk_1_1_u_hexproof": {
     "artist": "Eilene Cherie",
     "scryfall_id": "7f7a4f95-f12b-4c28-a6f7-f3c64364abba"
   },

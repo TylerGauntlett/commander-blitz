@@ -2846,6 +2846,29 @@
       "is_token": true
     },
     {
+      "id": "merfolk_1_1_u_hexproof",
+      "name": "Merfolk Token",
+      "oracle_text": "1/1 blue Merfolk creature token with hexproof.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    {
       "id": "lander_token",
       "name": "Lander",
       "oracle_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",

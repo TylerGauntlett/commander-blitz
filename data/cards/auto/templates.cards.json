@@ -61446,6 +61446,47 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "merfolk_1_1_u_hexproof"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "deeproot_waters",
+      "mana_cost": "{2}{U}",
+      "name": "Deeproot Waters",
+      "oracle_text": "Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof. (A creature with hexproof can't be the target of spells or abilities your opponents control.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

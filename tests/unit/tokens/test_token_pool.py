@@ -1472,6 +1472,31 @@ class TestNamorsMerfolkIsAOneOneBlueMerfolk:
             assert "Merfolk" not in pool.get(near_miss).subtypes
 
 
+class TestDeeprootWatersMerfolkHasHexproof:
+    """Deeproot Waters: *"Whenever you cast a Merfolk spell, create a 1/1 blue
+    Merfolk creature token with **hexproof**."*
+
+    `merfolk_1_1_u` is the same body without the keyword. Granting hexproof
+    afterwards would be an effect on the token rather than a printed
+    characteristic, so a copy of the token would come out targetable.
+    """
+
+    def test_it_is_a_one_one_blue_merfolk_with_hexproof(self, pool):
+        token = pool.get("merfolk_1_1_u_hexproof")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Merfolk"]
+        assert list(token.keywords) == ["hexproof"]
+        assert not token.abilities
+
+    def test_the_vanilla_merfolk_is_still_a_separate_token(self, pool):
+        other = pool.get("merfolk_1_1_u")
+        assert list(other.subtypes) == ["Merfolk"]
+        assert not other.keywords
+
+
 class TestTheFantasticarsConstructsAreFourFourHastyFliers:
     """The Fantasticar: *"…create four 4/4 colorless Construct artifact
     creature tokens with flying and haste."*

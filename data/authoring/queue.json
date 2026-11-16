@@ -64892,12 +64892,12 @@
     },
     "Deeproot Waters": {
       "edhrec_rank": 4340,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Waters",
-      "reason": "no template for: Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof",
+      "reason": "",
       "scryfall_id": "a624ef59-69e6-4a41-b41a-3d19e287fe08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Wayfinder": {
