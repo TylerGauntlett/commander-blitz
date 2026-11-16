@@ -278,6 +278,19 @@ class Keyword(str, Enum):
     #: validated against the wrong rule the moment `validate_deck` grows an
     #: opinion about either.
     CHOOSE_A_BACKGROUND = "choose_a_background"
+    #: Deck construction only, the third of its kind -- "Doctor's companion
+    #: (You can have two commanders if the other is the Doctor.)", one of 702.124's
+    #: partner variants.
+    #: Inert for partner's reason: the engine is handed a finished deck, so the
+    #: word has nothing left to do once a game starts, and it exists so a card
+    #: printing the line can claim it from the authoring verifier's residual
+    #: gate.
+    #:
+    #: Kept apart from `PARTNER` and `CHOOSE_A_BACKGROUND` because it builds a
+    #: third kind of deck: the other commander is a Time Lord Doctor, which
+    #: prints no keyword at all.  The printed apostrophe folds onto this value
+    #: through `cards.loader.vocabulary.KEYWORD_ALIASES`.
+    DOCTORS_COMPANION = "doctors_companion"
     #: Riot (702.113): "this creature enters with your choice of a +1/+1
     #: counter or haste."  The first keyword whose whole content is a **614.1c
     #: replacement**, and it is a `Keyword` rather than a `ReplacementModel`
@@ -426,7 +439,9 @@ EVASION_KEYWORDS = frozenset(
 #: Keywords with no in-game effect, kept so a card can represent its own text.
 #: `docs/rules-coverage.md` names them; anything added here must genuinely do
 #: nothing during a game, or it belongs in the engine instead.
-INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
+INERT_KEYWORDS = frozenset(
+    {Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND, Keyword.DOCTORS_COMPANION}
+)
 
 #: Keywords whose printed quality carries a number that lives on the card
 #: rather than on the keyword -- toxic's N is `CardDef.toxic`, annihilator's
@@ -456,8 +471,8 @@ NUMBER_CARRYING_GRANTS = frozenset({Keyword.ANNIHILATOR})
 #: inert tally and load clean, which is the failure the authoring gates exist to
 #: refuse.
 #:
-#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner and choose a
-#: Background are deck-construction words and the engine is handed a finished
+#: `INERT_KEYWORDS` is excluded for the reason it exists. Partner, choose a
+#: Background and Doctor's companion are deck-construction words and the engine is handed a finished
 #: deck, so neither counter could mean anything mid-game; a counter kind that
 #: grants nothing is the inert tally in a costume.
 #:

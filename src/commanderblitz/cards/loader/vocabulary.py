@@ -89,7 +89,14 @@ KNOWN_COLORS = frozenset(c.value for c in Color)
 #: An alias, deliberately, rather than a second ``Keyword`` member: two enum
 #: values for one ability would need every reader to check both, and the one
 #: that forgot would be a card that quietly loses its totem armor.
-KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
+#:
+#: Doctor's companion is the other entry, for punctuation rather than a second
+#: name: the printed line folds to ``doctor's_companion``, and the engine's word
+#: carries no apostrophe.
+KEYWORD_ALIASES = {
+    "umbra_armor": Keyword.TOTEM_ARMOR.value,
+    "doctor's_companion": Keyword.DOCTORS_COMPANION.value,
+}
 
 
 #: The keywords a card may print with their number but nothing may grant --

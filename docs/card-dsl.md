@@ -8137,7 +8137,7 @@ The cookbook's subsystem chapters, one line each:
 - [Investigate — the `investigate` op and the `investigates` trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger)
 - [Surveil — the `surveil` op and the `surveils` trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger)
 - [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on)
-- [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background)
+- [The inert keywords — partner, choose a Background and Doctor's companion](card-dsl-cookbook.md#the-inert-keywords--partner-choose-a-background-and-doctors-companion)
 - [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions)
 - [Attack requirements](card-dsl-cookbook.md#attack-requirements)
 - ["That player can't attack you"](card-dsl-cookbook.md#that-player-cant-attack-you)
