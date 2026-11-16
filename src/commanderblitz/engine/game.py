@@ -85,6 +85,7 @@ from .legality import _targets_read_x
 from .mana import N_SYMBOLS, OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .player import PlayerState
 from .player_statics import (
+    ability_mana_tax,
     any_color_added_on_tap,
     cast_lock_min_x,
     graveyard_cast_permissions,
@@ -1293,7 +1294,10 @@ class Game:
                 # the cheapest this cost can get; `pay` then asks for at least
                 # the pips the chosen X needs.
                 most_life_for_mana(state, pid, ability.cost, oid),
-                0,
+                # Kopala's "cost {2} more" on an activation aimed at a Merfolk:
+                # read off the targets already declared, so the largest X
+                # offered is one `pay` can meet with the surcharge on top.
+                ability_mana_tax(state, pid, ability, oid, action.targets),
                 purpose,
                 exclude_oid=oid if ability.cost.tap else None,
                 # The whole cost node, not just its mana half: an ability that

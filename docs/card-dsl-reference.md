@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 62 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 100 |
+| [Static effects](#static-effects) | 101 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 45 |
+| [Grantable statics](#grantable-statics) | 46 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -576,6 +576,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 
 | Name | Player-wide | Grantable | Description | Defined in |
 |---|---|---|---|---|
+| `ability_cost_increase` |  | yes | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost more generic mana (`cost.mana`); `activated_by` names the activator, `targeting` is read against the chosen targets. | […and on activated abilities](card-dsl-cookbook.md#and-on-activated-abilities) |
 | `ability_cost_reduction` |  | yes | Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
@@ -738,6 +739,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 
 | Name | Description | Defined in |
 |---|---|---|
+| `ability_cost_increase` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost more generic mana (`cost.mana`); `activated_by` names the activator, `targeting` is read against the chosen targets. | […and on activated abilities](card-dsl-cookbook.md#and-on-activated-abilities) |
 | `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype; a printed one with `off_battlefield` also reaches matching spells you control and cards you own in every other zone. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |

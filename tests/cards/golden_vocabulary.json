@@ -135,6 +135,7 @@
    "types"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
+   "ability_cost_increase",
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
@@ -537,6 +538,7 @@
    "cast_as_though_flash"
   ],
   "STATIC_EFFECTS": [
+   "ability_cost_increase",
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",

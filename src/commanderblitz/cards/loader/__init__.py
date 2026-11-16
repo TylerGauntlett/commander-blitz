@@ -5715,10 +5715,46 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{sorted(stray)}"
                 )
 
+    elif model.effect == "ability_cost_increase":
+        # Kopala, Warden of Waves. The reduction's class and activator, refused
+        # on the reduction's grounds -- a tax naming no class prices every
+        # activated ability on the table -- and priced by a `cost` node, checked
+        # with the other priced statics below, as `spell_cost_increase` is.
+        if not model.affects_abilities:
+            raise DslError(
+                f"{where}: ability_cost_increase needs 'affects_abilities' -- "
+                f"the class of ability it taxes, e.g. {{'any': true}}"
+            )
+        unknown = set(model.affects_abilities) - ABILITY_CLASS_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_abilities: unknown ability classes "
+                f"{sorted(unknown)} (implemented: {sorted(ABILITY_CLASS_KEYS)})"
+            )
+        who = model.activated_by or "you"
+        if who not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
+            )
+        if model.affects_abilities.get("any") and model.targeting is None:
+            # The payment solver activates a tap-only mana ability without
+            # reaching this static, so "every activated ability" with nothing
+            # else said would tax some of them and not others. A `targeting`
+            # clause makes the gap moot: a mana ability has no targets (605.1a).
+            raise DslError(
+                f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
+                f"mana abilities are priced where this static is not read"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: ability_cost_increase is priced by its 'cost', not by an "
+                f"'amount' -- an 'amount' here would be read by nothing"
+            )
     elif model.activated_by is not None or model.affects_abilities is not None:
         raise DslError(
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
-            f"ability_cost_reduction static, not on {model.effect!r}"
+            f"ability_cost_reduction or ability_cost_increase static, not on "
+            f"{model.effect!r}"
         )
     if model.first_each_turn and model.effect != "ability_cost_reduction":
         raise DslError(
@@ -5753,12 +5789,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # same clause pointing the other way, read against the same refs by
             # `player_statics.spell_life_tax`.
             "spell_cost_increase",
+            # Kopala's "abilities your opponents activate **that target a
+            # Merfolk you control**", read by `player_statics.ability_mana_tax`.
+            "ability_cost_increase",
         ):
             raise DslError(
                 f"{where}: 'targeting' asks what a spell or ability being priced "
                 f"is aimed at, so it only means anything on an "
-                f"ability_cost_reduction, spell_cost_reduction or "
-                f"spell_cost_increase static, not on {model.effect!r}"
+                f"ability_cost_reduction, ability_cost_increase, "
+                f"spell_cost_reduction or spell_cost_increase static, not on "
+                f"{model.effect!r}"
             )
         unknown = set(model.targeting) - STATIC_FILTER_KEYS
         if unknown:
@@ -6454,6 +6494,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # nothing about whose Equipment it is, so requiring one would refuse the
         # printed card.
         "ability_cost_reduction",
+        # Its tax, Kopala's line, which takes the same optional `affects`.
+        "ability_cost_increase",
         "replace_token_creation",
         # "Spells can't be countered" names no permanent either -- it is about
         # spells on the stack, and its optional `affects_spells` is the only
@@ -6581,6 +6623,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"number of life, 1 or more, got {priced.get('pay_life')!r}"
             )
         _compile_cost(model.cost, where)
+    elif model.effect == "ability_cost_increase":
+        # Kopala's "cost {2} more to activate": generic mana, one or more, and
+        # nothing else, for `spell_cost_increase`'s mana reason -- it is netted
+        # into `costs.ability_mana` as a negative discount, which is generic
+        # arithmetic, so a coloured surcharge would silently become a generic
+        # one. Life and everything else would be a second payment no printed
+        # card asks for.
+        if model.cost is None:
+            raise DslError(
+                f"{where}: ability_cost_increase needs a 'cost' -- "
+                f"'costs {{0}} more to activate' is not a card"
+            )
+        priced = prune_cost(model.cost.model_dump())
+        if set(priced) != {"mana"}:
+            raise DslError(
+                f"{where}: ability_cost_increase is paid in generic mana; give its "
+                f"'cost' a 'mana' and nothing else, not {sorted(priced) or 'nothing'}"
+            )
+        surcharge = ManaCost.parse(str(priced["mana"]))
+        if surcharge.generic < 1 or surcharge.mana_value() != surcharge.generic:
+            raise DslError(
+                f"{where}.cost.mana: ability_cost_increase's mana is generic "
+                f"only, one or more, got {priced['mana']!r}"
+            )
+        _compile_cost(model.cost, where)
     elif model.effect == "granted_alternative_cost":
         # The price that replaces the mana cost, so a grant without one is
         # `free_cast_permission` under another name. Energy or life, a whole
@@ -6611,8 +6678,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: a static ability has no cost to pay; 'cost' means "
             f"something only on 'ward', 'attack_tax', 'block_tax', "
-            f"'spell_cost_increase' and 'granted_alternative_cost' (and on "
-            f"activated abilities)"
+            f"'spell_cost_increase', 'ability_cost_increase' and "
+            f"'granted_alternative_cost' (and on activated abilities)"
         )
     if model.x_per_attacker is not None and model.effect != "attack_tax":
         # The X of a per-attacker price; on any other static it would load,
@@ -7388,7 +7455,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["player_only"] = True
     if model.defending is not None:
         static["defending"] = model.defending
-    if model.effect in ("spell_cost_increase", "granted_alternative_cost"):
+    if model.effect in ("spell_cost_increase", "ability_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # and `player_statics.granted_alternative_cost` read carries nothing the
         # card did not write.

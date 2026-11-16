@@ -138822,6 +138822,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "spell_cost_increase",
+          "kind": "static",
+          "targeting": {
+            "controller": "you",
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "text": "Spells your opponents cast that target a Merfolk you control cost {2} more to cast."
+        },
+        {
+          "activated_by": "opponent",
+          "affects_abilities": {
+            "any": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ability_cost_increase",
+          "kind": "static",
+          "targeting": {
+            "controller": "you",
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "text": "Abilities your opponents activate that target a Merfolk you control cost {2} more to activate."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kopala_warden_of_waves",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Kopala, Warden of Waves",
+      "oracle_text": "Spells your opponents cast that target a Merfolk you control cost {2} more to cast.\nAbilities your opponents activate that target a Merfolk you control cost {2} more to activate.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**390 cards** blocked by **341** capabilities.
+**389 cards** blocked by **340** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -66,7 +66,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
-| [ability-cost-increase](#ability-cost-increase) | 1 | 4135 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -1574,20 +1573,6 @@ Blocks **2** cards.
   - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
 - **Wizened Mentor** (rank 7822) — `wizened_mentor`
   - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
-
-</details>
-
-## ability-cost-increase
-
-Blocks **1** card.
-
-- **(static_effect)** a static that makes activated abilities cost more generic mana to activate, keyed on the activating player (activated_by: opponent) and on the activation's chosen targets (targeting: {subtypes: [Merfolk], controller: you}); the mirror of ability_cost_reduction in the way spell_cost_increase mirrors spell_cost_reduction, with the targeting clause read meanly (tax left out) at the pre-target gate and charged exactly per target tuple
-  <br>Why the existing vocabulary won't do: ability_cost_reduction has activated_by, affects_abilities {any} and targeting, but it only subtracts a discount and reads its targeting clause generously at the gate (as though it applied), which is the wrong convention for a tax; a negative amount would be an unsanctioned hack. spell_cost_increase covers the first sentence (Kasmina's shape) but is read only on the cast path, never for activations
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kopala, Warden of Waves** (rank 4135) — `kopala_warden_of_waves`
-  - Abilities your opponents activate that target a Merfolk you control cost {2} more to activate.
 
 </details>
 

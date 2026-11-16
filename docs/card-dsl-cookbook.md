@@ -3067,6 +3067,41 @@ discount does. The gate reads it meanly, as the life tax does. Generic only,
 because the discount arithmetic is generic only. A coloured surcharge would
 silently turn generic, so it is refused.
 
+### …and on activated abilities
+
+```jsonc
+// Kopala, Warden of Waves — "Abilities your opponents activate that target a
+// Merfolk you control cost {2} more to activate."
+{ "kind": "static", "effect": "ability_cost_increase",
+  "affects_abilities": { "any": true },
+  "activated_by": "opponent",
+  "targeting": { "controller": "you", "subtypes": ["Merfolk"] },
+  "cost": { "mana": "{2}" } }
+```
+
+`ability_cost_reduction`'s mirror, as `spell_cost_increase` is
+`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, or `any`
+beside a `targeting` clause), `activated_by` for the activating player (default
+`"you"`) and optional `affects` for the permanent that prints the ability, with
+the price in a `cost` node held to generic mana of {1} or more. Read by
+`player_statics.ability_mana_tax` and netted into `costs.ability_mana` as a
+negative discount, the one number legality, `can_pay` and `pay` share, so
+601.2f's order holds there as it does for a spell.
+
+`targeting` is read **meanly** at the gate, as the spell tax reads it: before
+any target exists the tax is left out, and every tuple `legality._ability_aims`
+enumerates — per X and per mode included — is then priced at its own targets,
+which are the targets `Game._activate` charges and sizes an announced X
+against. A mana ability is never taxed this way, because it has no targets
+(605.1a); `any` without `targeting` is refused, since the payment solver
+activates tap-only mana abilities without reading the static. An `amount`, a
+coloured surcharge, life or anything else in the `cost` is refused.
+
+**Not `ability_cost_reduction` with a negative `amount`**: that total is a
+discount, read generously at the gate, and a tax read that way would offer
+activations the payment then refuses. **Not `ward`** either: ward is a trigger
+that counters the ability unless paid, and it fires on spells too.
+
 ## Kicker
 
 An additional cost the caster may choose to pay. Two fields, and they only mean

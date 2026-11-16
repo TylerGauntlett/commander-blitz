@@ -11576,6 +11576,10 @@
   "komodo_rhino": {
     "zone": "battlefield"
   },
+  "kopala_warden_of_waves": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kor_cartographer": {
     "zone": "battlefield"
   },

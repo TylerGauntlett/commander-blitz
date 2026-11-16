@@ -151472,12 +151472,12 @@
     },
     "Kopala, Warden of Waves": {
       "edhrec_rank": 4135,
-      "gate": "template",
+      "gate": null,
       "name": "Kopala, Warden of Waves",
-      "reason": "no template for: Spells your opponents cast that target a Merfolk you control cost {2} more to cast",
+      "reason": "",
       "scryfall_id": "0b018020-73e0-437c-a130-298b2f738c6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kor Aeronaut": {

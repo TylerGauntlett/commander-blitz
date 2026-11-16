@@ -53,6 +53,7 @@ from .mana import (
 from .objects import MINUS_ONE
 from .player_statics import (
     ability_cost_reduction,
+    ability_mana_tax,
     any_color_added_on_tap,
     counters_prohibited,
     mana_added_on_tap,
@@ -1084,6 +1085,11 @@ def ability_mana(
     # `mana_reduction` rather than replacing it: two cards may both be talking
     # about the same activation, and the printed answer is that both apply.
     less += ability_cost_reduction(state, pid, ability, source_oid, targets)
+    # "Abilities your opponents activate that target a Merfolk you control
+    # cost {2} more" -- Kopala. Netted in as a negative discount, so 601.2f's
+    # order (increases, then reductions, generic never below zero) is the one
+    # clamp below; see `player_statics.ability_mana_tax`.
+    less -= ability_mana_tax(state, pid, ability, source_oid, targets)
     if less:
         req = req.with_generic(req.generic - less)
     # Chromatic Orrery, **after** the discount: "you may spend mana as though it

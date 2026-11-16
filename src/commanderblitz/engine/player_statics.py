@@ -1743,6 +1743,94 @@ def spell_life_tax_on_board(state: GameState) -> bool:
     )
 
 
+def ability_mana_tax(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None = None,
+) -> int:
+    """How much more **generic mana** ``pid`` pays to activate ``ability`` (602.2b, 601.2f).
+
+    "Abilities your opponents activate that target a Merfolk you control cost
+    {2} more to activate." Kopala, Warden of Waves. The `ability_cost_increase`
+    static, and the mirror of `ability_cost_reduction` in the way
+    `spell_mana_tax` mirrors `spell_cost_reduction`: the same three filters
+    picking the activation out, pointing the other way, and priced in a
+    ``cost.mana`` node the loader holds to generic mana.
+
+    ``affects_abilities`` is the class (``equip``, or ``any`` beside a
+    `targeting` clause), ``activated_by`` the activating player (default
+    ``"you"``), and ``affects`` the permanent the ability is printed on.
+    ``targeting`` is matched against the refs the activation chose, and read
+    **meanly** while ``targets`` is ``None``: at the gate, before any target
+    tuple exists, the tax is left out -- `spell_mana_tax`'s convention, the
+    opposite of a reduction's and the same principle, generous to the activator
+    at a gate and exact per tuple. `legality._ability_aims` then prices every
+    tuple with it, and `Game._activate` charges the action's own targets.
+
+    A mana ability is never taxed by a `targeting` clause, because it has no
+    targets (605.1a); the loader refuses ``any`` without one, since the payment
+    solver activates tap-only mana abilities without reaching this function.
+
+    Netted into `costs.ability_mana` as a negative discount -- the one function
+    legality, `can_pay` and `pay` all reach -- so the offer and the charge
+    cannot disagree, and 601.2f's order (increases, then reductions, generic
+    never below zero) is the clamp `Requirement.with_generic` already applies.
+    """
+    if ability is None:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "ability_cost_increase":
+            continue
+        mana = (static.get("cost") or {}).get("mana")
+        if not mana:
+            continue
+        classes = static.get("affects_abilities") or {}
+        if not classes:
+            # Required by the loader: an empty class would tax every activated
+            # ability on the table, so a compile bug reads as none.
+            continue
+        if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        who = str(static.get("activated_by", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        if (filt := static.get("affects")) is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, filt):
+                continue
+        if (aimed := static.get("targeting")) is not None:
+            if targets is None:
+                continue
+            if not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            ):
+                continue
+        total += ManaCost.parse(str(mana)).generic
+    return total
+
+
+def ability_mana_tax_targeted(state: GameState) -> bool:
+    """Is an `ability_cost_increase` with a `targeting` clause active?
+
+    Such a tax changes an activation's price per target tuple, so every path in
+    `legality._ability_aims` that enumerates tuples has to price each one on
+    its own -- the question `spell_mana_tax_targeted` answers for a cast.
+    """
+    return any(
+        static.get("effect") == "ability_cost_increase"
+        and static.get("targeting") is not None
+        for _, static in _battlefield_statics(state)
+    )
+
+
 def ability_cost_reduction(
     state: GameState,
     pid: int,
