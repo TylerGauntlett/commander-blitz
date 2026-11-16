@@ -1,0 +1,25 @@
+{
+  "card_id": "become_the_pilot",
+  "name": "Become the Pilot",
+  "oracle_text": "Enchant noncommander creature\nYou control enchanted creature.\nEnchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.",
+  "blocked_sentences": [
+    "You control enchanted creature.",
+    "Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls."
+  ],
+  "needs": [
+    {
+      "capability": "aura_control",
+      "kind": "static_effect",
+      "what": "a static control-changing effect (Control Magic) whose affects is the attached permanent: the Aura's controller controls the enchanted creature for as long as the Aura is attached to it, and control reverts when the Aura leaves or moves",
+      "why_existing_wont_do": "static_effects has no control-changing effect; the gain_control op is one-shot and its durations (permanent, until_end_of_turn, as_long_as_you_control_source) do not end when the Aura becomes unattached, and an enters trigger would miss a later re-attach and leave control behind when the Aura moves"
+    },
+    {
+      "capability": "unblockable_unless_attacking_owner",
+      "kind": "static_effect",
+      "what": "a static evasion grant on the enchanted creature: it can't be blocked unless the player or planeswalker/battle it is attacking is its owner or a permanent its owner controls",
+      "why_existing_wont_do": "the unblockable op is one-shot with except_blockers filtering blockers, not the attacked seat; block_restriction / cant_block statics have no key comparing the defending player to the creature's owner"
+    }
+  ],
+  "closest_existing": ["gain_control", "unblockable", "block_restriction", "buff"],
+  "confidence": "high"
+}

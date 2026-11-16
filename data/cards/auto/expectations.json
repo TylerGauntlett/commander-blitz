@@ -3168,6 +3168,10 @@
   "carnivorous_plant": {
     "zone": "battlefield"
   },
+  "carpet_of_flowers": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "carrion_crow": {
     "zone": "battlefield"
   },
@@ -5063,6 +5067,18 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "decaying_time_loop": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "deceptive_frostkite": {
     "battlefield_count": 33,
@@ -7603,6 +7619,10 @@
     "life": {
       "0": 40
     },
+    "zone": "graveyard"
+  },
+  "flatline": {
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "flawless_maneuver": {

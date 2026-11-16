@@ -40152,12 +40152,12 @@
     },
     "Carpet of Flowers": {
       "edhrec_rank": 1234,
-      "gate": "template",
+      "gate": null,
       "name": "Carpet of Flowers",
-      "reason": "no template for: At the beginning of each of your main phases, if you haven't added mana with this ability ",
+      "reason": "",
       "scryfall_id": "dd28c05c-9473-4df8-9bb3-70593f2c5a50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carrier Pigeons": {
@@ -64222,12 +64222,12 @@
     },
     "Decaying Time Loop": {
       "edhrec_rank": 7074,
-      "gate": "template",
+      "gate": null,
       "name": "Decaying Time Loop",
-      "reason": "no template for: Discard all the cards in your hand, then draw that many cards",
+      "reason": "",
       "scryfall_id": "6d63dfcc-49c2-49df-8542-649f659ccf0d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deceit": {
@@ -97512,12 +97512,12 @@
     },
     "Flatline": {
       "edhrec_rank": 7197,
-      "gate": "template",
+      "gate": null,
       "name": "Flatline",
-      "reason": "no template for: Creatures your opponents control have base power and toughness 0/1 until end of turn",
+      "reason": "",
       "scryfall_id": "0541308b-0ff0-4c88-8d11-4bd324047b06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flatman": {

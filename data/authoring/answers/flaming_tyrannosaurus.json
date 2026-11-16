@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "flaming_tyrannosaurus",
+    "name": "Flaming Tyrannosaurus",
+    "oracle_text": "Menace\nParadox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.\nWhen this creature dies, it deals damage equal to its power to each opponent.",
+    "mana_cost": "{5}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Dinosaur"],
+    "power": 5,
+    "toughness": 5,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["menace"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "from_zones": ["library", "graveyard", "exile", "command"]
+        },
+        "targets": [{"id": "t1", "kind": "any", "count": 1}],
+        "effects": [
+          {"op": "damage", "amount": {"const": 3}, "target": "t1"},
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, it deals damage equal to its power to each opponent.",
+        "trigger": {"event": "dies", "source": "self"},
+        "effects": [
+          {"op": "damage", "amount": {"power_had": true}, "player": "each_opponent"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

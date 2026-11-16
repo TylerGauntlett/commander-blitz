@@ -1,0 +1,24 @@
+{
+  "card_id": "fugitive_of_the_judoon",
+  "name": "Fugitive of the Judoon",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 1/1 white Human creature token with ward {2} and a 4/4 white Alien Rhino creature token.\nII — Investigate.\nIII — You may exile a Human you control and an artifact you control. If you do, search your library for a Doctor card, put it onto the battlefield, then shuffle.",
+  "blocked_sentences": [
+    "I — Create a 1/1 white Human creature token with ward {2} and a 4/4 white Alien Rhino creature token."
+  ],
+  "needs": [
+    {
+      "capability": "human_1_1_w_ward2_token",
+      "kind": "token",
+      "what": "a 1/1 white Human creature token with ward {2}",
+      "why_existing_wont_do": "token_ids has human_1_1_w (no ward) and human_soldier_1_1_w (wrong subtype, no ward); none carries ward {2}"
+    },
+    {
+      "capability": "alien_rhino_4_4_w_token",
+      "kind": "token",
+      "what": "a 4/4 white Alien Rhino creature token",
+      "why_existing_wont_do": "token_ids has rhino_4_4_g_trample and rhino_warrior_4_4_g (green, wrong subtypes, one with trample) and white 4/4s of other subtypes (beast_4_4_w_alone, angel_4_4_w_flying); none is a vanilla white Alien Rhino"
+    }
+  ],
+  "closest_existing": ["human_1_1_w", "rhino_warrior_4_4_g"],
+  "confidence": "high"
+}

@@ -38360,6 +38360,174 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "controller": {
+                          "target": "t1"
+                        },
+                        "subtypes": [
+                          "Island"
+                        ],
+                        "zone": "battlefield"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "count": {
+                          "controller": {
+                            "target": "t1"
+                          },
+                          "subtypes": [
+                            "Island"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "any_one_color": true,
+                      "op": "add_mana"
+                    },
+                    {
+                      "flag": "carpet_of_flowers_added",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Add mana for each Island target opponent controls?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_turn_flag": "carpet_of_flowers_added"
+              }
+            },
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "controller": {
+                          "target": "t1"
+                        },
+                        "subtypes": [
+                          "Island"
+                        ],
+                        "zone": "battlefield"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "count": {
+                          "controller": {
+                            "target": "t1"
+                          },
+                          "subtypes": [
+                            "Island"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "any_one_color": true,
+                      "op": "add_mana"
+                    },
+                    {
+                      "flag": "carpet_of_flowers_added",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Add mana for each Island target opponent controls?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_turn_flag": "carpet_of_flowers_added"
+              }
+            },
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "carpet_of_flowers",
+      "mana_cost": "{G}",
+      "name": "Carpet of Flowers",
+      "oracle_text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -61198,6 +61366,40 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "decaying_time_loop",
+      "mana_cost": "{3}{R}",
+      "name": "Decaying Time Loop",
+      "oracle_text": "Discard all the cards in your hand, then draw that many cards.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "pitched",
+          "op": "discard",
+          "player": "you",
+          "whole_hand": true
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "pitched"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -89990,6 +90192,45 @@
           "id": "t1",
           "kind": "spell",
           "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flatline",
+      "mana_cost": "{2}{U}",
+      "name": "Flatline",
+      "oracle_text": "Creatures your opponents control have base power and toughness 0/1 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "power": {
+            "const": 0
+          },
+          "toughness": {
+            "const": 1
+          },
+          "types": [
+            "Creature"
+          ]
         }
       ],
       "types": [
