@@ -220,7 +220,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '"You may play the exiled card this turn" — impulse draw'),
     "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
                        H_PLAYABLE),
-    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
+    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `escape` grants them escape instead, at that cost only.",
                              "Casting out of every graveyard, until end of turn"),
     "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
                        None),
@@ -236,7 +236,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),
-    "put_onto_battlefield": ("Board", "Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it.",
+    "put_onto_battlefield": ("Board", "Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `as` binds what arrived.",
                              None),
     "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token; `counters` (kind to value) are what each token enters with.",
                      'An X/X token — "create an X/X blue Shark creature token"'),
@@ -375,7 +375,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "become_level": ("Modify", "A Class becomes level N.", H_CLASSES),
     "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
               H_CASES),
-    "lose_all_abilities": ("Modify", "Permanents lose all abilities for a duration.",
+    "lose_all_abilities": ("Modify", "Permanents lose all abilities: for good, or with "
+                           "`duration` until end of turn or your next turn.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",
@@ -505,6 +506,8 @@ SELECTORS: dict[str, Entry] = {
     "any_types": ("Any one of these card types is enough.", None),
     "ability_kind": ("On an `ability_on_stack` target only: `triggered` or `activated`.",
                      "Copying an ability on the stack"),
+    "that_targets": ("On a `spell`, `ability_on_stack` or `spell_or_ability` target only: the object targets a `player` spec or a `permanent` matching a selector.",
+                     "`that_targets` — a spell or ability by what it targets"),
     "attached": ("Attached to the named object (\"self\", a binding, a target).", None),
     "attached_to": ("Attached to a permanent matching this filter (`{\"self_only\": true}`: to the source).",
                     '"Attached to a creature" — `attached_to`'),
@@ -534,6 +537,8 @@ SELECTORS: dict[str, Entry] = {
     "drawn_this_turn": ("Cards drawn this turn (hand only).", "Cards in a hand drawn this turn"),
     "surveilled_this_turn": ("Cards a surveil put into a graveyard this turn, as the same object.",
                              "Cards in a graveyard surveilled this turn"),
+    "graveyard_arrival_this_turn": ("Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`.",
+                                    "Cards in a graveyard by how they arrived this turn"),
     "enchanted_by": ("Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`.",
                      '"Enchanted creatures" — `enchanted_by`'),
     "equipped": ("Has one or more Equipment attached, anybody's (`true`/`false`).",
@@ -635,6 +640,8 @@ PLAYER_SPECS: dict[str, Entry] = {
     "active_player": ("Whose turn it is.", None),
     "enchanted_player": ("The player the source Aura is attached to.", "An Aura that enchants a player"),
     "gift_recipient": ("The opponent promised a gift as this spell was cast.", H_GIFT),
+    "monarch": ("Whoever holds the crown now (nobody while unclaimed); also a selector's "
+                "`controller`/`owner`.", H_MONARCH),
 }
 
 VALUES: dict[str, Entry] = {
@@ -652,6 +659,7 @@ VALUES: dict[str, Entry] = {
     "cards_discarded_this_turn": ("Cards the player discarded this turn, wherever they went after.", H_LEDGER),
     "energy_spent_this_turn": ("Energy ({E}) the player paid or lost this turn.", H_LEDGER),
     "cards_from_graveyard_this_turn": ("Cards that left the player's graveyard this turn.", H_LEDGER),
+    "descended_this_turn": ("Permanent cards put into the player's own graveyard from anywhere this turn: how many times they descended.", H_LEDGER),
     "cards_in_hand": ("Cards in the player's hand.", None),
     "cards_to_graveyard_this_turn": ("Cards put into any graveyard from anywhere this turn; tokens excluded.", H_LEDGER),
     "colors_of_mana_spent": ("Colors of mana spent to cast this (sunburst, converge).",
@@ -684,6 +692,7 @@ VALUES: dict[str, Entry] = {
     "greatest_discarded_by_a_player": ("The greatest number of cards one player discarded this way.",
                                        "Discarding a whole hand, and reading the greatest that went"),
     "half": ("Half of a value, rounded `up` or `down`.", None),
+    "fraction": ("A value divided by a literal `divisor` of 3 or more, rounded `up` or `down` (a third, a tenth).", None),
     "lands_you_control": ("Lands the player controls.", None),
     "life_gained_this_turn": ("Life the player gained this turn.", H_LEDGER),
     "counters_put_this_turn": ("Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`).", H_LEDGER),
@@ -861,7 +870,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "deals_combat_damage_to_player": ("A creature deals combat damage to a player.", None),
     "deals_damage": ("A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer.",
                      '"Whenever this creature deals damage" — `deals_damage`'),
-    "deals_damage_to_player": ("A source deals any damage to a player.", None),
+    "deals_damage_to_player": ("A source deals any damage to a player; `batched` fires once per combat damage step or effect op, with `damaged_players` the seats it hit.",
+                               H_BATCHED),
     "dealt_damage": ("A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total.",
                      H_BATCHED),
     "dies": ("A permanent dies.", None),
@@ -942,6 +952,9 @@ STATICS: dict[str, Entry] = {
     "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers "
                         "(`player_only`: you alone).",
                         "Forbidding an attack on you rather than pricing it"),
+    "cant_attack_attacked_players": ("Matching creatures can't attack a player they already "
+                                     "attacked this turn (their planeswalkers stay open).",
+                                     "Not the same player twice in a turn"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
     "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
                                    "toughness rather than their power.",
@@ -965,7 +978,8 @@ STATICS: dict[str, Entry] = {
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
                             "cards surveilled this turn by `surveilled_this_turn`, for life equal "
-                            "to their mana value with `pay_life_instead`; with "
+                            "to their mana value with `pay_life_instead`, or for an escape "
+                            "cost with `escape`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "
@@ -1139,6 +1153,8 @@ ABILITY_COSTS: dict[str, Entry] = {
                          "behold — choose a permanent or reveal a card"),
     "exile_self": ("Exile the source.", None),
     "exile_self_from_hand": ("Exile this card from your hand.", None),
+    "tuck_self": ("Put the source on the bottom of its owner's library.",
+                  "`tuck_self` — the source to the bottom of its owner's library"),
     "loyalty": ("A loyalty cost (+N / -N).", "Planeswalkers"),
     # The heading prints a real minus sign (U+2212), and the slug keeps the
     # difference from a hyphen, so the glyph is load-bearing.

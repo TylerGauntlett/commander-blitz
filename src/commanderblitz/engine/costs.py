@@ -1343,6 +1343,12 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.on_battlefield:
             return False
+    if cost.tuck_self:
+        # "Put this creature on the bottom of its owner's library" -- the same
+        # battlefield check as `exile_self`, for the same reason.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
+            return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
         # is activated from. Checked rather than assumed because legality offers
@@ -2179,6 +2185,17 @@ def pay(
         # nothing. Paid here, as the ability goes on the stack, so the source is
         # gone before it can be responded to or feed its own effects.
         exile_object(state, source_oid, cause="cost")
+
+    if cost.tuck_self and source_oid is not None:
+        # `exile_self`'s shape with the library as the destination: no choice,
+        # paid as the ability goes on the stack. Always the **owner's**
+        # library (a stolen creature goes home), and `to_index=None` appends,
+        # which is the bottom. A commander may still go to the command zone
+        # instead (903.9b), which `move_object` offers.
+        owner = state.objects[source_oid].owner
+        move_object(
+            state, source_oid, Zone.LIBRARY, to_player=owner, to_index=None, cause="cost"
+        )
 
     if cost.exile_self_from_hand and source_oid is not None:
         # "Exile this card from your hand" -- `discard_self`'s shape with the

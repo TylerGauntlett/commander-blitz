@@ -146,6 +146,7 @@
    "buff",
    "cant_attack",
    "cant_attack_alone",
+   "cant_attack_attacked_players",
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",
@@ -311,6 +312,7 @@
    "sacrifice_x",
    "tap",
    "tap_x",
+   "tuck_self",
    "untap",
    "x_minimum",
    "x_value"
@@ -549,6 +551,7 @@
    "cant_activate_abilities",
    "cant_attack",
    "cant_attack_alone",
+   "cant_attack_attacked_players",
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",

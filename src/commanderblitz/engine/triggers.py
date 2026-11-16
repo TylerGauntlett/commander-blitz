@@ -583,6 +583,19 @@ STATE_TRIGGER = "state"
 #: opponent's cannot use up the firing. Unlike `dealt_damage` nothing is
 #: summed: the batch spans players, so the bindings (`amount`, `event_player`)
 #: are the first matching loss's.
+#:
+#: `deals_damage_to_player` takes it from `primitives.damage_player`: one combat
+#: damage step (510.2) or one effect op, the batch `deals_damage` already groups
+#: by. Batched, it is "whenever **one or more** Pirates you control deal damage
+#: to your opponents" (Breeches, Brazen Plunderer): every matching dealer and
+#: every seat it hit in the batch is one firing, combat or not. Each later event
+#: of the batch is folded into that firing (`_joins_batched_player_damage`):
+#: ``amount`` is summed, the seat is added to ``damaged_players`` and the dealer
+#: to ``damagers``, so "each of those opponents" is ``{"binding":
+#: "damaged_players"}`` and "for each opponent dealt damage" its `player_count`.
+#: `filter`, `controller` and `defending` are asked of each event before the
+#: batch is spent, so a Pirate hitting you (or a non-Pirate hitting an
+#: opponent) neither fires it nor joins it.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -593,6 +606,7 @@ BATCHED_EVENTS = frozenset(
         "dealt_damage",
         "discard",
         "life_lost",
+        "deals_damage_to_player",
     }
 )
 
@@ -1010,6 +1024,8 @@ def _collect_one(
     if not _matches(state, obj, spec, event):
         return
     if _joins_batched_damage(state, obj, ability, event):
+        return
+    if _joins_batched_player_damage(state, obj, ability, event):
         return
     if _joins_damage_dealt(state, obj, ability, event):
         return
@@ -3088,6 +3104,13 @@ def _queue(
     if batched_key is not None and spec.event == "dealt_damage":
         # What `_joins_batched_damage` finds this firing by.
         bindings["batch"] = batched_key[2]
+    if batched_key is not None and spec.event == "deals_damage_to_player":
+        # What `_joins_batched_player_damage` finds this firing by, and the
+        # first of the seats and dealers it gathers.
+        bindings["batch"] = batched_key[2]
+        defender = event.data.get("defender")
+        bindings["damaged_players"] = [] if defender is None else [int(defender)]
+        bindings["damagers"] = [] if event.source is None else [int(event.source)]
     if spec.event == "deals_damage" and (group := _damage_dealt_key(obj, ability, event)):
         # The firing this damage event's later recipients fold into. Marked
         # here, where every queued copy (a doubler's included) is written, and
@@ -3167,6 +3190,51 @@ def _joins_batched_damage(
             and (not subject or pending.bindings.get("subject") == subject[0])
         ):
             pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+    return True
+
+
+def _joins_batched_player_damage(
+    state: GameState, obj: GameObject, ability: Ability, event: GameEvent
+) -> bool:
+    """Fold a later hit into the batched `deals_damage_to_player` firing it joins.
+
+    "…exile the top card of **each of those opponents'** libraries" (Breeches,
+    Brazen Plunderer), "…a Treasure token **for each opponent dealt damage**"
+    (Malcolm, Keen-Eyed Navigator). One combat damage step or one effect op is
+    one simultaneous damage event (510.2, 603.2c), so the firing queued on its
+    first matching hit reads every later one: the seat joins
+    ``damaged_players`` (once, however many Pirates hit it), the dealer joins
+    ``damagers`` and the damage is added to ``amount``. True when the event
+    belonged to a batch that already fired this ability, so `_collect_one`
+    queues nothing more for it. Here rather than in `_queue` for
+    `_joins_batched_damage`'s reason: a trigger doubler calls `_queue` again for
+    the same event.
+    """
+    spec = ability.trigger
+    if spec is None or not spec.batched or spec.event != "deals_damage_to_player":
+        return False
+    batch = event.data.get("batch")
+    if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
+        return False
+    granted_by, ability_index = _granter_of(state, obj, ability)
+    amount = int(event.data.get("amount", 0))
+    defender = event.data.get("defender")
+    for pending in state.pending_triggers:
+        if (
+            pending.source_oid == obj.oid
+            and pending.ability_index == ability_index
+            and pending.granted_by == granted_by
+            and pending.bindings.get("batch") == batch
+        ):
+            pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+            seats = list(pending.bindings.get("damaged_players") or ())
+            if defender is not None and int(defender) not in seats:
+                seats.append(int(defender))
+            pending.bindings["damaged_players"] = seats
+            dealers = list(pending.bindings.get("damagers") or ())
+            if event.source is not None and int(event.source) not in dealers:
+                dealers.append(int(event.source))
+            pending.bindings["damagers"] = dealers
     return True
 
 

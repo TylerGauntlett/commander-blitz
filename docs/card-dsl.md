@@ -498,6 +498,33 @@ captured, the announced `x` and its ability kind, and goes on top of the stack.
 `new_targets` is offered from the **ability's** own target specs, not the
 card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
+### `that_targets` — a spell or ability by what it targets
+
+"Sacrifice this creature: Counter target spell or ability **that targets you or a
+creature you control**." — Siren Stormtamer.
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_ability", "count": 1,
+  "selector": { "that_targets": {
+    "player": "you",                                          // "targets you"
+    "permanent": { "controller": "you", "types": ["Creature"] } } } }  // "or a creature you control"
+```
+
+A selector key for a stack object, read by both stack matchers
+(`targeting._spell_matches` and `targeting._ability_matches`), so a `spell`,
+`ability_on_stack` or `spell_or_ability` target may carry it and every other
+selector refuses it at load time. It is met when **any** of the object's chosen
+targets is a player the `player` spec names (a named spec: `"you"`, `"opponent"`,
+…) or a battlefield permanent matching the `permanent` selector; give either half
+or both, never neither. "You" is the countering ability's controller. The
+targets' current state is read, both as the candidates are offered and when the
+target is re-checked on resolution (608.2b), so a creature that changed
+controller in between makes the counter fizzle. A target that is itself on the
+stack matches neither half.
+
+The near miss is the bare `spell_or_ability` target, which is a strictly wider
+counter-anything ability.
+
 ### Proliferate — a choice over permanents and players
 
 ```jsonc
@@ -566,8 +593,8 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
 }
 ```
 
-`owner` is `controller`'s ownership twin — the same four words (`you`,
-`opponent`, `any`, `enchanted_player`) and the same player-spec mapping, read
+`owner` is `controller`'s ownership twin — the same five words (`you`,
+`opponent`, `any`, `enchanted_player`, `monarch`) and the same player-spec mapping, read
 off `GameObject.owner` instead. Ownership is written once, when the object is
 made, and `change_control` leaves it alone, so it is the one relation on a
 permanent that gaining control cannot move.
@@ -1958,6 +1985,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
 { "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
+{ "descended_this_turn": "you" }                // descend: PERMANENT cards into YOUR graveyard, from anywhere
 { "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
                      "objects": { … } } }                      //   where `mana_value_of` sums
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
@@ -1986,6 +2014,7 @@ Anywhere a number is expected -- the leaf list is
 { "rolled": { "binding": "roll", "total": true } } // …the faces added up ("equal to the result")
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 { "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
+{ "fraction": { "of": a, "divisor": 3, "round": "up" } }  // "a third of …, rounded up"; see below
 ```
 
 `player_count` counts the seats a player spec names, never anything about
@@ -2031,8 +2060,8 @@ same name read on the effect side, through the one computation both use,
 `extreme_value` over a selector with `is_commander`: a selector walks one zone,
 and the commander usually sits in the command zone, which none reaches.
 
-`half` is the one division in the language, and it takes its rounding direction
-as a **required** key: 107.1a makes the card say which way a fraction goes, and
+`half` and `fraction` are the language's divisions, and both take their rounding
+direction as a **required** key: 107.1a makes the card say which way a fraction goes, and
 both directions are printed (Peer into the Abyss rounds up, Heartless
 Hidetsugu rounds down), so a default would be wrong for half the cards that use
 it. Peer into the Abyss is two of them, each read as its own instruction runs:
@@ -2045,8 +2074,18 @@ it. Peer into the Abyss is two of them, each read as its own instruction runs:
   "amount": { "half": { "of": { "life_of": { "target": "t1" } }, "round": "up" } } }
 ```
 
-Not a static magnitude (`static_value_keys` does not list it); no static prints a
-halving.
+`fraction` is every other printed divisor: `{"of": v, "divisor": n, "round": …}`
+with `n` a literal integer of at least 3. Dire Fleet Ravager's "each player
+loses a third of their life, rounded up" is a `for_each_player` whose
+`lose_life` amount is `{"fraction": {"of": {"life_of": {"binding":
+"each_player"}}, "divisor": 3, "round": "up"}}`, each seat's third read off its
+own total. A divisor of 2 is refused in favour of `half`, so one quotient has
+one spelling, and a computed divisor is refused because no card prints one. The
+near miss is `times` or `minus` arithmetic, which can approximate a third only
+for one life total.
+
+Neither is a static magnitude (`static_value_keys` lists neither); no static
+prints a division.
 
 `power_had` and `toughness_had` take no argument: they are always "the creature
 this trigger is about", the only object the death event snapshotted. `power_of
@@ -2302,6 +2341,33 @@ layer (613). "Creatures with power 2 or less" is checked when the attack is
 declared, so an anthem lifts a 2/2 over Ramonda's wall and a shrink drops a 6/6
 under it. The `condition` is an ordinary static condition, read live: the wall
 falls the moment the crown moves.
+
+### Not the same player twice in a turn
+
+```jsonc
+// Port Razer
+{ "kind": "static",
+  "text": "This creature can't attack a player it has already attacked this turn.",
+  "effect": "cant_attack_attacked_players",
+  "affects": { "self_only": true } }
+```
+
+A prohibition on each creature `affects` matches, read at declaration through
+`combat.attack_target_forbidden`: the creature may not be declared against a
+**player** it was declared against earlier this turn. The record is the turn
+ledger's `players_attacked_by` — the same one `{"attacked_by": "self"}` reads —
+so it is per creature, dropped when the creature leaves the battlefield (400.7),
+and cleared at cleanup. It joins `cant_attack_you` in the guard that stops a
+creature with nobody left to attack from being offered as an attacker at all.
+
+**Players only.** Attacking a planeswalker or a battle is not attacking its
+controller (506.2): the ledger records nothing for it, and the controller's
+walkers and battles stay attackable after the player has been. `affects` is
+required at load time.
+
+The near miss is the `cant_attack_player` op from an `attacks` trigger: a
+triggered emulation of a static, which can be countered and is not in force
+while the trigger waits on the stack.
 
 ### Which creatures attacked this turn, and how many
 
@@ -2673,8 +2739,7 @@ gate it.
 So the fact goes on the object and is read by `_derived_abilities` beside the
 static — the one place that decides what abilities a permanent has. The two mean
 the same thing about the printed list and differ only in who is saying it and for
-how long. ("Loses all abilities **until end of turn**" is `temp_effects`' job and
-a different clause.)
+how long.
 
 Two other readers honour it: `abilities_of`'s fast path, which returns the
 printed list outright when no static and no op grant is in sight, and
@@ -2683,6 +2748,28 @@ printed list outright when no static and no op grant is in sight, and
 **Other** abilities: a grant applied in the same breath survives, because
 `_derived_abilities` drops the *printed* list and appends the granted ones after
 — which is what "loses all other abilities and gains …" says.
+
+**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`
+or `"until_your_next_turn"` for the timed one:
+
+```jsonc
+// Warkite Marauder: "…target creature defending player controls loses all
+// abilities and has base power and toughness 0/1 until end of turn."
+{ "op": "lose_all_abilities", "objects": { "target": "t1" },
+  "duration": "until_end_of_turn" },
+{ "op": "animate", "objects": { "target": "t1" },
+  "power": { "const": 0 }, "toughness": { "const": 1 } }
+```
+
+The timed loss is a `TempEffect(kind="lose_all_abilities")` on the permanent,
+stamped with the resolution's start. While it stands the printed abilities are
+gone and every keyword, protection and ability *granted* before it is read past
+(613.7); one granted after it survives. Nothing is deleted, which is the
+difference from the permanent loss: a grant that lasts as long as the permanent
+does (riot's haste, a `"permanent"` `grant_keyword`) is back when cleanup — or,
+for `until_your_next_turn`, that seat's untap step — ends the loss. Any other
+spelling is a load error, since a misspelt clock would otherwise read as the
+permanent loss, the strictly stronger card.
 
 ### Changing a permanent's name
 
@@ -4072,6 +4159,42 @@ refuses it on any other static, and on a card's own `active_zones:
 ["graveyard"]` permission. The near miss is `arrived_this_turn_from:
 ["library"]`, which a milled card also passes.
 
+### Cards in a graveyard by how they arrived this turn
+
+```jsonc
+// Ghost of Ramirez DePietro: "…target card in a graveyard that was discarded
+// or put there from a library this turn"
+{ "zone": "graveyard", "controller": "any",
+  "graveyard_arrival_this_turn": ["discarded", "from_library"] }
+
+// Raul, Trouble Shooter: "Once during each of your turns, you may cast a spell
+// from among cards in your graveyard that were milled this turn."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] }, "static_max_per_turn": 1,
+  "condition": { "is_your_turn": true },
+  "graveyard_arrival_this_turn": ["milled"] }
+```
+
+`graveyard_arrival_this_turn` is a non-empty list of ways, any one enough,
+asked of the card's own record of its latest arrival — the `graveyard_turn`,
+`graveyard_from` and `graveyard_cause` that `zones.move_object` writes — by
+`GameObject.arrived_in_graveyard_this_turn`. The ways are
+`objects.GRAVEYARD_ARRIVAL_WAYS`: `discarded` (the discard action, 701.9, by an
+effect or a cost), `milled` (the mill action, 701.13, by any source) and
+`from_<zone>` (from that zone by any route). `from_library` is wider than
+`milled`: a surveil or a look-at-the-top that bins a card put it there from a
+library and milled nothing, which is the difference between Ghost's sentence
+and Raul's. A card that left and came back is a new object (400.7) and answers
+for its new arrival only.
+
+On a selector it is effect-side and needs no `zone` beyond `graveyard`; another
+`zone` is refused. On a static it narrows `cast_from_graveyard` and
+`play_lands_from_graveyard` exactly where `surveilled_this_turn` does, and the
+loader refuses it on any other static. The near misses: `surveilled_this_turn`
+is the surveil-only case, `arrived_this_turn_from` (Banon) knows the zone but
+not the action, and a `mill` or `discard` op's `as` binding holds only the
+cards that one resolution moved.
+
 ### A search whose destination depends on what it found
 
 ```jsonc
@@ -4648,6 +4771,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
+  "tuck_self": true,                              // Timestream Navigator: the source to its owner's library bottom
   "exile_from_hand": { "colors": ["U"] },         // Force of Will: a selector over *your* hand
   "exile_self_from_hand": true,                   // Simian Spirit Guide: *this* card, out of hand
   "mill": 1,                                      // Millikin: off *your* library's top
@@ -5026,6 +5150,29 @@ the battlefield, so this one reaches the player through
 `legality._activate_zones`, which already walks their own hand. That is the right
 answer as well as the only one — the solver exiling cards out of a hand it was
 never asked about is not a thing anybody wants.
+
+### `tuck_self` — the source to the bottom of its owner's library
+
+"{2}{U}{U}, {T}, **Put this creature on the bottom of its owner's library**: Take
+an extra turn after this one." — Timestream Navigator.
+
+```jsonc
+"cost": { "mana": "{2}{U}{U}", "tap": true, "tuck_self": true }
+```
+
+A boolean, the library twin of `exile_self`: no choice and no selector, because
+the permanent that goes is *this* one. `costs.can_pay` requires the source on the
+battlefield, and the payment moves it to the bottom of its **owner's** library —
+a stolen creature goes home, and a commander may go to the command zone instead
+(903.9b). It is not a cast-time cost (`vocabulary.NOT_A_CAST_TIME_COST`), and
+giving it beside `exile_self`, `exile_self_from_hand` or `discard_self` is a load
+error: one card cannot leave for two zones.
+
+The near miss is the `put_on_top` op with `bottom: true` in the effects. That
+moves the creature at resolution, so the ability could be activated twice in
+response, and the creature would stay on the battlefield if the ability were
+countered; 601.2h pays the cost first. `sacrifice` is the other near miss, and it
+puts the creature in the graveyard, which is the wrong zone and fires `dies`.
 
 ### `x_minimum` — X can't be 0
 
@@ -5459,11 +5606,11 @@ The list with a line each is
 [card-dsl-reference.md#player-specs](card-dsl-reference.md#player-specs).
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
-`"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
+`"enchanted_player"` · `"gift_recipient"` · `"monarch"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ] } | { "any_of": [ … ] } }`
+`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -5472,9 +5619,14 @@ demonstrate needs, since its copy is not targeted.
 
 `"enchanted_player"` is the seat the ability's **own source** is attached to —
 "enchanted opponent", "that player", "enchanted player". It is refused at load
-time on any card that is not an Aura, and it is the only named spec that is also
-legal as a selector's `controller`: see
+time on any card that is not an Aura, and it is one of the two named specs that
+are also legal as a selector's `controller` and `owner`: see
 [An Aura that enchants a player](card-dsl-cookbook.md#an-aura-that-enchants-a-player).
+
+`"monarch"` is whoever holds the crown as the spec is read, and nobody while it
+is unclaimed. It is the other named spec legal as a `controller` or `owner`, in
+effect selectors and static filters alike — "creatures the monarch controls":
+see [The monarch](card-dsl-cookbook.md#creatures-the-monarch-controls--monarch-as-a-seat).
 
 `"gift_recipient"` is the one opponent the caster promised a gift as this spell
 was cast — the only string here naming a seat the **caster chose**, rather than
@@ -5544,6 +5696,7 @@ The subject is one of three shapes, and anything else is a load error:
 |---|---|
 | `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
 | `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
+| `{ "subtypes": ["Pirate"], "at_least": 3 }` | the seats dealt combat damage by at least that many **distinct** such creatures |
 | `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
 
 ```jsonc
@@ -5566,6 +5719,24 @@ the damage as a Dragon, and a creature made a Dragon after combat did not.
 `except: "you"` is what makes it "your opponents": an opponent's Dragon that hit
 you put your seat in the set. The `combat_damage_by` condition (prowl) is the
 near miss — it says a Dragon got through, not to whom, so it cannot count.
+
+`at_least` counts creatures rather than seats, off
+`TurnLedger.combat_damagers_by_subtype` (subtype → seat → dealers): one Pirate
+hitting three times, or in two combats, is one Pirate, and three Pirates split
+across two players reach neither. A Pirate that hit and then re-entered the
+battlefield is a new object (400.7), so its old hit still counts and a new one
+counts again. The loader refuses it without `subtypes` and anything but a
+positive whole number. Without it, `subtypes` alone is "one or more".
+
+```jsonc
+// Admiral Beckett Brass: "At the beginning of your end step, gain control of
+// target nonland permanent controlled by a player who was dealt combat damage by
+// three or more Pirates this turn."
+"targets": [ { "id": "t1", "kind": "permanent",
+               "selector": { "zone": "battlefield", "not_types": ["Land"],
+                             "controller": { "dealt_combat_damage_by":
+                               { "subtypes": ["Pirate"], "at_least": 3 } } } } ]
+```
 
 ### `not` — the player a card *excludes*
 
@@ -6688,7 +6859,9 @@ Curiosity, Ophidian Eye and Tandem Lookout. Its subject is the permanent that
 **dealt** the damage, so `filter: {"attached": true}` is how an Aura says
 "enchanted creature" and `source: "self"` is how a granted copy says "this
 creature"; `defending` says who took it, and `controller` whose creature dealt
-it.
+it. `batched: true` is "whenever **one or more** … deal damage to a player":
+once per combat damage step or effect op, with the seats it hit bound as
+`damaged_players` (see [the cookbook](card-dsl-cookbook.md#whenever-one-or-more---batched)).
 
 The other half of the same event `dealt_damage` takes, and the pair is worth
 reading together: DAMAGE_DEALT covers damage to a permanent and damage to a

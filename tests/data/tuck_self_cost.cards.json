@@ -1,0 +1,42 @@
+{
+  "_comment": "Cards that exist only for the tuck-self cost test (tests/unit/costs/test_tuck_self_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tuck_navigator` pays by putting itself on the bottom of its owner's library; `t_tuck_on_resolution` is the near miss that tucks itself with the put_on_top op, at resolution.",
+  "cards": [
+    {
+      "id": "t_tuck_navigator",
+      "name": "Test Tuck Navigator",
+      "oracle_text": "{1}, {T}, Put this creature on the bottom of its owner's library: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Put this creature on the bottom of its owner's library: Draw a card.",
+          "cost": {"mana": "{1}", "tap": true, "tuck_self": true},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_tuck_on_resolution",
+      "name": "Test Tuck On Resolution",
+      "oracle_text": "{1}, {T}: Draw a card, then put this creature on the bottom of its owner's library.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Draw a card, then put this creature on the bottom of its owner's library.",
+          "cost": {"mana": "{1}", "tap": true},
+          "effects": [
+            {"op": "draw", "player": "you", "amount": {"const": 1}},
+            {"op": "put_on_top", "bottom": true, "objects": {"self_only": true, "zone": "battlefield"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -82,6 +82,17 @@ def pt_counter(kind: str) -> tuple[int, int] | None:
     )
 
 
+#: The ways `GameObject.arrived_in_graveyard_this_turn` can ask a card reached
+#: a graveyard: by the discard action (701.9; `primitives.discard_cards`, a cost
+#: or an effect alike), by the mill action (701.13; `primitives.mill_cards`,
+#: every mill and dredge's), or from a named zone by any route -- `from_library`
+#: is Ghost of Ramirez DePietro's "put there from a library", which a surveil or
+#: a discover's leftovers satisfy and the mill-only `milled` does not.
+GRAVEYARD_ARRIVAL_WAYS = frozenset(
+    {"discarded", "milled"} | {f"from_{zone.value}" for zone in Zone if zone is not Zone.GRAVEYARD}
+)
+
+
 @dataclass
 class GameObject:
     """A single card, token, or copy, wherever it currently is."""
@@ -1402,6 +1413,28 @@ class GameObject:
             # card leaves exile by being cast.
             return turn > self.playable_turn
         return True
+
+    def arrived_in_graveyard_this_turn(self, turn: int, ways: Any) -> bool:
+        """Did this card reach its graveyard this turn in one of ``ways``?
+
+        "…target card in a graveyard that was **discarded or put there from a
+        library** this turn" (Ghost of Ramirez DePietro); "…cards in your
+        graveyard that were **milled** this turn" (Raul, Trouble Shooter). Any
+        one way is enough; see `GRAVEYARD_ARRIVAL_WAYS`. Read off the three
+        `graveyard_*` fields its arrival wrote, against the turn, so nothing
+        clears it, and a card that left and came back answers for its latest
+        arrival alone (400.7).
+        """
+        if self.zone is not Zone.GRAVEYARD or self.graveyard_turn != turn:
+            return False
+        for way in ways:
+            if way == "discarded" and self.graveyard_cause == "discard":
+                return True
+            if way == "milled" and self.graveyard_cause == "mill":
+                return True
+            if way.startswith("from_") and self.graveyard_from == way[len("from_") :]:
+                return True
+        return False
 
     def surveilled_this_turn(self, turn: int) -> bool:
         """Is this a card in a graveyard that a surveil put there this turn?

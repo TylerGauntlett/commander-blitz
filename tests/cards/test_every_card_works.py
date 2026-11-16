@@ -199,6 +199,32 @@ def add_dummy_spell(game: Game, seat: int = 1) -> None:
         push_spell(game.state, obj.oid, seat)
 
 
+def _aim_the_dummies(game: Game, clause, start: int) -> None:
+    """Point the dummy spells pushed from ``start`` on at what ``that_targets`` names.
+
+    Siren Stormtamer -- "Counter target spell or ability **that targets you or
+    a creature you control**." The dummies are targetless, so without this the
+    ability reported as unusable on a stack holding nothing it may point at.
+    As dumb as the other fodder helpers: "you" is seat 0, and a permanent half
+    takes seat 0's first creature; `enumerate_target_tuples` still decides.
+    """
+    from dataclasses import replace
+
+    from commanderblitz.engine.structs import TargetRef
+
+    if clause.get("player") == "you":
+        ref = TargetRef.player(0)
+    else:
+        creature = next(
+            o
+            for o in game.state.battlefield
+            if game.state.objects[o].controller == 0 and game.state.card(o).is_creature
+        )
+        ref = TargetRef.obj(creature)
+    for i in range(start, len(game.state.stack)):
+        game.state.stack[i] = replace(game.state.stack[i], targets=(ref,))
+
+
 def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = None) -> None:
     """Put an **ability** on the stack for an `ability_on_stack` target to find.
 
@@ -463,6 +489,7 @@ class TestActivatedAbilities:
             game._advance()
             _provide_the_attacker(game, registry, ability)
             _satisfy_the_attack_count(game, registry, ability)
+            _attack_with_the_source(game, ability, oid)
 
             action = next(
                 (
@@ -1407,9 +1434,13 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # second stack item changes what else is legal, and every card in the
         # pool but this one wants the opponent's.
         for spec in ability.targets:
-            if spec.kind != "spell":
+            if spec.kind not in ("spell", "spell_or_ability"):
                 continue
-            add_dummy_spell(game, 0 if spec.selector.get("controller") == "you" else 1)
+            seat = 0 if spec.selector.get("controller") == "you" else 1
+            before = len(game.state.stack)
+            add_dummy_spell(game, seat)
+            if clause := spec.selector.get("that_targets"):
+                _aim_the_dummies(game, clause, before)
         return
     if any(spec.kind == "ability_on_stack" for spec in ability.targets):
         # Peter Parker's Camera -- "Copy target activated or triggered ability you
@@ -1836,6 +1867,27 @@ def _satisfy_the_attack_count(game: Game, registry, ability) -> None:
     if _walk_to_declare_attackers(game):
         _declare_them(game, oids)
 
+
+
+def _attack_with_the_source(game: Game, ability, oid: int) -> None:
+    """"Activate only if this creature attacked this turn" -- boast.
+
+    The family's fourth clause satisfied by *doing* the thing: `TurnLedger`
+    records creatures declared as attackers, so the source itself is walked to
+    declare-attackers and declared, exactly as `_satisfy_the_attack_count`
+    declares the creatures it counts. Broadside Bombardiers is the witness.
+
+    Only a bare ``exists`` over ``self_only`` with ``attacked_this_turn`` is
+    read; any other shape is left alone and the ability reports as unusable.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or not isinstance(condition.get("exists"), dict):
+        return
+    spec = condition["exists"]
+    if not (spec.get("self_only") and spec.get("attacked_this_turn") is True):
+        return
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, [oid])
 
 class TestManaAbilities:
     def test_mana_abilities_produce_mana(self, registry, card_id):

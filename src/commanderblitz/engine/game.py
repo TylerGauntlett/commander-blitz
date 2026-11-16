@@ -26,12 +26,14 @@ from .carddef import Cost, is_repeatable, mode_instances, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
+    _escape_exile_cost,
     _graveyard_cast_permission,
     _spell_as_cast,
     chosen_additional,
     convoke_payments,
     convoke_pips,
     deferred_target_spec,
+    granted_escape_permission,
     life_x_ceiling,
     pay_generic_colors,
     pay_generic_currencies,
@@ -585,6 +587,10 @@ class Game:
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
             extra -= state.card(action.emerge_oid).mana_value
+        elif action.escape is not None:
+            # A granted escape's mana half, read off the action for `warp`'s
+            # reason: Underworld Breach may be gone by the time this is paid.
+            cost = ManaCost.parse(action.escape)
         elif action.flashback and card.flashback is not None:
             cost = card.flashback.mana
             # "…costs {X} less to cast **this way**". Netted into `extra` on this
@@ -871,7 +877,7 @@ class Game:
         # the spell goes on the stack -- and after the mana, which is the order
         # rule 601.2g gives and the order that lets a land be discarded to a
         # spell it just helped pay for.
-        if card.retrace and obj.zone is Zone.GRAVEYARD:
+        if card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
             ok = yield from pay(state, pid, card.retrace_cost, None)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
@@ -881,6 +887,13 @@ class Game:
         # the same reason and in the same order retrace's discard is.
         if action.flashback and card.flashback is not None:
             ok = yield from pay(state, pid, card.flashback.without_mana(), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+        # A granted escape's other half: "exile N other cards from your
+        # graveyard", with the escaping card as the cost's source so it is the
+        # card "other" excludes. Paid after the mana, flashback's order.
+        if action.escape is not None:
+            ok = yield from pay(state, pid, _escape_exile_cost(action.escape_exile), oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
@@ -985,7 +998,17 @@ class Game:
         permission = None
         enters_tapped = False
         graveyard_flashback = False
-        if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
+        if action.escape is not None:
+            # Billed to the grant that offered this price. Escape exiles
+            # nothing on resolution (702.138), and the stack item's `escaped`
+            # is what "if it escaped" reads.
+            granting = granted_escape_permission(
+                state, pid, card, oid, (action.escape, action.escape_exile)
+            )
+            if granting is not None:
+                permission = granting.oid
+                state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
+        elif obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
             # Gravecrawler's own permission, when it holds, is the one used: it
             # costs nothing to spend, and billing an Edgar for a cast the card
             # could make by itself would take that turn's use away for nothing.
@@ -1085,6 +1108,7 @@ class Game:
             warped=action.warp is not None,
             impending=action.impending,
             flashback=action.flashback,
+            granted_escape=action.escape is not None,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,
             # Spree (702.166a). The prices themselves were folded into the

@@ -299,6 +299,13 @@ VALUE_KEYS = frozenset(
         # misses every noncreature permanent.
         "permanents_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
+        # Descend: "if you **descended** this turn" (Enterprising Scallywag),
+        # "the number of times you descended this turn". A permanent card put
+        # into the player's own graveyard from anywhere, one descent per card,
+        # off `TurnLedger.graveyard_arrivals`. Not `cards_to_graveyard_this_turn`
+        # (any card, any graveyard) nor `permanents_to_graveyard_this_turn`
+        # (the battlefield only, tokens too, any graveyard).
+        "descended_this_turn",
         "extreme_value",
         # "…if this is the second time this ability has resolved this turn."
         # Keyed by ability rather than by player, and counting the resolution in
@@ -315,6 +322,11 @@ VALUE_KEYS = frozenset(
         # the Abyss. Rule 107.1a: a fractional result is rounded the way the
         # card says, so the direction is part of the node and not a default.
         "half",
+        # "…each player loses **a third** of their life, **rounded up**" --
+        # Dire Fleet Ravager; "…sacrifices **a tenth** of the creatures they
+        # control …, rounded up" -- Legate Lanius. `half` with any printed
+        # divisor above 2, the direction required for the same 107.1a reason.
+        "fraction",
         "max",
         "min",
         "loop_value",
@@ -1059,6 +1071,20 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             # artifacts is +0/+0, not an error.
             return 0
         return max(values) if pick == "greatest" else min(values)
+    if "descended_this_turn" in expr:
+        # Each arrival is a card (tokens never fire PUT_INTO_GRAVEYARD) in its
+        # owner's graveyard, so the owner is who descended. The printed face is
+        # what a graveyard card is (the card may have left again since, and
+        # the descent still happened).
+        pids = set(_players(ctx, expr["descended_this_turn"]))
+        registry = ctx.state.registry
+        return sum(
+            1
+            for arrival in ledger.graveyard_arrivals
+            if arrival.owner in pids
+            and arrival.card in registry
+            and registry.get(arrival.card).is_permanent
+        )
     if "cards_from_graveyard_this_turn" in expr:
         # The mirror, and it *does* take a player spec: Gau asks about "**your**
         # graveyard", and the one number the engine already kept counts the
@@ -1087,14 +1113,25 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # op reading it (a loss of a negative amount) does nothing, which is
         # 107.1b.
         spec = expr["half"]
-        n = evaluate_value(ctx, spec.get("of"))
-        return -(-n // 2) if spec.get("round") == "up" else n // 2
+        return _divided(evaluate_value(ctx, spec.get("of")), 2, spec.get("round"))
+    if "fraction" in expr:
+        spec = expr["fraction"]
+        return _divided(evaluate_value(ctx, spec.get("of")), int(spec["divisor"]), spec.get("round"))
     if "max" in expr:
         return max((evaluate_value(ctx, e) for e in expr["max"]), default=0)
     if "min" in expr:
         return min((evaluate_value(ctx, e) for e in expr["min"]), default=0)
 
     raise DslError(f"unknown value expression {sorted(expr)}")
+
+
+def _divided(n: int, divisor: int, direction: Any) -> int:
+    """``n / divisor`` rounded the printed way (107.1a), for `half` and `fraction`.
+
+    Floor division, negated around for the ceiling, so a remainder rounds the
+    printed way and an exact quotient is exact either way.
+    """
+    return -(-n // divisor) if direction == "up" else n // divisor
 
 
 def _rolled(ctx: EffectContext, spec: Any) -> int:
@@ -1809,6 +1846,35 @@ def validate_half(spec: Any, where: str) -> None:
     validate_value(spec["of"], f"{where}.of")
 
 
+def validate_fraction(spec: Any, where: str) -> None:
+    """``{"fraction": {"of": <value>, "divisor": <int>, "round": "up" | "down"}}``.
+
+    "A third of their life, rounded up" is ``divisor`` 3. The divisor is a
+    literal integer of at least 3: no card divides by a computed number, and 2
+    is `half`, so a fraction of 2 is refused rather than giving the one quotient
+    two spellings. The direction is required for `half`'s reason (107.1a).
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: fraction takes an object with 'of', 'divisor' and 'round'")
+    if unknown := set(spec) - {"of", "divisor", "round"}:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} (fraction takes 'of', 'divisor' and 'round')"
+        )
+    if "of" not in spec:
+        raise DslError(f"{where}.of: a fraction of what -- a value expression is required")
+    divisor = spec.get("divisor")
+    if divisor == 2 and not isinstance(divisor, bool):
+        raise DslError(f"{where}.divisor: a divisor of 2 is `half` -- write {{\"half\": {{...}}}}")
+    if not isinstance(divisor, int) or isinstance(divisor, bool) or divisor < 3:
+        raise DslError(f"{where}.divisor: must be a literal integer of at least 3, got {divisor!r}")
+    if spec.get("round") not in HALF_ROUNDING:
+        raise DslError(
+            f"{where}.round: must be one of {list(HALF_ROUNDING)} -- the card says which "
+            f"way to round (107.1a), got {spec.get('round')!r}"
+        )
+    validate_value(spec["of"], f"{where}.of")
+
+
 #: The player specs that can name more than one seat. A starting life total is
 #: one player's (103.4), so ``starting_life_of`` refuses these: summed over the
 #: table it is 160 at a pod and 80 in a duel, which no printed sentence means.
@@ -1963,6 +2029,15 @@ def validate_value(expr: Any, where: str) -> None:
                 validate_value(sub, f"{where}.{key}[{i}]")
     if "half" in expr:
         validate_half(expr["half"], f"{where}.half")
+    if "descended_this_turn" in expr:
+        who = expr["descended_this_turn"]
+        if not (isinstance(who, Mapping) or (isinstance(who, str) and who in PLAYER_SPEC_NAMES)):
+            raise DslError(
+                f"{where}.descended_this_turn: takes a player spec (\"you\" for "
+                f"\"you descended\"), got {who!r}"
+            )
+    if "fraction" in expr:
+        validate_fraction(expr["fraction"], f"{where}.fraction")
     if "mana_spent_from" in expr:
         validate_mana_spent_from(expr["mana_spent_from"], f"{where}.mana_spent_from")
     for key in CHARACTERISTIC_OF_KEYS:

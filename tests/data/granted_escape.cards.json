@@ -1,0 +1,66 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_granted_escape.py. t_breach is Underworld Breach's static without the end-step sacrifice: every nonland card in your graveyard has escape at its own mana cost plus three other cards. t_locker_grant is The Grim Captain's Locker's grant as a sorcery that exiles itself, so the permission outlives its source and names its own {3}{B}.",
+  "cards": [
+    {
+      "id": "t_breach",
+      "name": "Test Underworld Breach",
+      "oracle_text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "escape": {
+            "exile_from_graveyard": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_locker_grant",
+      "name": "Test Locker's Grant",
+      "oracle_text": "Until end of turn, each creature card in your graveyard gains \"Escape—{3}{B}, Exile four other cards from your graveyard.\" Exile Test Locker's Grant.",
+      "mana_cost": "{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "spell_effects": [
+        {
+          "op": "grant_graveyard_cast",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "escape": {
+            "mana": "{3}{B}",
+            "exile_from_graveyard": 4
+          }
+        }
+      ]
+    }
+  ]
+}

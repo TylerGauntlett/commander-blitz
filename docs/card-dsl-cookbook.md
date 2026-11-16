@@ -891,6 +891,31 @@ Two near misses, each wrong quietly. `cards_to_graveyard_this_turn` counts
 is missing from it. `creatures_died_this_turn` misses every noncreature
 permanent — a sacrificed Treasure, a destroyed enchantment.
 
+### Descend — "if you descended this turn"
+
+```jsonc
+{ "kind": "triggered",
+  "text": "At the beginning of your end step, if you descended this turn, create a Treasure token.",
+  "trigger": { "event": "end_step", "controller": "you",
+               "condition": { "cmp": ">", "left": { "descended_this_turn": "you" },
+                              "right": { "const": 0 } } },
+  "effects": [ { "op": "create_token", "token": "treasure_token", "amount": { "const": 1 } } ] }
+```
+
+"You descended if a permanent card was put into your graveyard from anywhere"
+(Enterprising Scallywag). `descended_this_turn` takes a player spec and counts
+`TurnLedger.graveyard_arrivals` in that player's own graveyard whose printed card
+is a permanent card, so it is also "the number of times you descended this
+turn": two creature cards milled together are two descents. The arrival is kept
+after the card leaves again, and a token never arrives (111.1). "Descend 4" on
+its own is the board, not the ledger: a `count` of permanent cards in your
+graveyard.
+
+The near misses are the two gravestorm reads above, each wrong on a different
+clause: `cards_to_graveyard_this_turn` counts a milled instant and every
+opponent's graveyard, and `permanents_to_graveyard_this_turn` sees only the
+battlefield, so a milled or discarded creature card is no descent there.
+
 ### Casting out of every graveyard, until end of turn
 
 ```jsonc
@@ -910,8 +935,9 @@ and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
 flashback's exile, are all shared with the static — so the second printed
 sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
-graveyard) and either a cap or `grants_flashback` (a permission that neither
-meters nor exiles is an engine, not a printed line).
+graveyard) and either a cap, `grants_flashback` or `escape` (a permission that
+neither meters nor exiles nor charges an exile is an engine, not a printed line;
+[Granted escape](#granted-escape) is the last).
 
 The difference is where the permission *lives*. `cast_from_graveyard` is read off a
 permanent on the battlefield, and this chapter exiles the Saga in the same breath
@@ -3430,6 +3456,30 @@ ops after the move are a different card: the printed clause is about the
 separate op would happily counter a permanent that got back some other way. Only
 these two ops read `counters`; anywhere else it is a load error, because it would
 be accepted, ignored, and — for a keyword counter — invisible on the board.
+
+**`as` on `put_onto_battlefield`** names "that creature" for a later delay:
+
+```jsonc
+// Zara, Renegade Recruiter: "…You may put a creature card from it onto the
+// battlefield under your control tapped and attacking that player or a
+// planeswalker they control. Return that creature to its owner's hand at the
+// beginning of the next end step."
+{ "op": "put_onto_battlefield", "controller": "you", "tapped": true,
+  "attacking": { "binding": "defender" }, "or_planeswalker": true,
+  "objects": { "zone": "hand", "player": { "binding": "defender" },
+               "types": ["Creature"], "count": 1, "chooser": "controller" },
+  "as": "recruited" },
+{ "op": "delay", "step": "end_step",
+  "effects": [ { "op": "return_to_hand",
+                 "objects": { "binding": "recruited", "zone": "battlefield" } } ] }
+```
+
+The binding holds the permanents that **arrived**, not the cards chosen: one
+whose arrival was replaced (Mox Diamond declined, an Aura with nothing to
+enchant) is not in it. It is written even when nothing arrived, so a declined
+`may` returns nothing. The near miss is a selector over the board at end step
+(`{"controller": "you", "owner": {"binding": "defender"}}`), which also bounces
+every other creature borrowed from that player this turn.
 
 ### `end_of_combat` — the one step that is not once a turn
 
@@ -7233,6 +7283,51 @@ flashback (Lier, Urabrask's grant): `Game._cast` stamps that as
 countered. Eye's sorcery goes back to the graveyard, a new object that is not
 surveilled.
 
+#### Granted escape
+
+```jsonc
+// Underworld Breach -- "Each nonland card in your graveyard has escape. The
+//  escape cost is equal to the card's mana cost plus exile three other cards
+//  from your graveyard."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "not_types": ["Land"] },
+  "escape": { "exile_from_graveyard": 3 } }
+
+// The Grim Captain's Locker -- "{T}: Until end of turn, each creature card in
+//  your graveyard gains 'Escape--{3}{B}, Exile four other cards from your
+//  graveyard.'"
+{ "op": "grant_graveyard_cast", "affects_spells": { "types": ["Creature"] },
+  "escape": { "mana": "{3}{B}", "exile_from_graveyard": 4 } }
+```
+
+`escape` on a `cast_from_graveyard` permission, static or granted by the op,
+makes the permission escape (702.138a) given to the cards it covers. It is the
+permission's only price. A covered card gets a line at the escape cost and no
+line at its printed cost. `mana` is that cost's mana half, and when it is left
+out the cost is the card's own mana cost. A card with no mana cost then gets no
+line (118.6). `exile_from_graveyard` counts the **other** cards exiled from the
+caster's graveyard. The card being cast is the cost's source, so "other" means
+it and not the permanent granting escape.
+
+`casting._granted_escape_lines` offers one line per distinct price. The Locker
+beside a Breach is two lines for one creature card. Additional costs are owed on
+top (601.2f), as on a flashback line. The line carries its price on the action
+(`Action.escape`, `Action.escape_exile`), so `Game._cast` charges what was
+offered even if the granting permanent has left. The spell escaped
+(`StackItem.granted_escape`, so `escaped` reads true of it and of the permanent
+it becomes), and it goes where it normally would. An escaped instant comes back
+to the graveyard to be escaped again.
+
+The exile is the rate limit, so the permission needs no `max_per_turn` and is
+unmetered without one. The loader validates the rider and refuses it beside
+`grants_flashback` or `pay_life_instead` (a second price for the same cast), on a
+card's own `active_zones: ["graveyard"]` permission, and on any other static.
+
+The near misses are a card's own `graveyard_cost`, which is printed escape
+(Woe Strider) and is set on the escaping card at load time, and the same
+permission without `escape`, which casts at the printed cost and is the Edgar
+line, a much stronger card.
+
 #### Mayhem
 
 "Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you
@@ -7966,6 +8061,28 @@ finds nobody and every "there is no monarch" reads False for the rest of the gam
 *Divergences*: both inherent abilities resolve **inline** rather than going on the
 stack, so nothing can respond between the damage and the crown moving, or between
 the end step and the draw. The same trade `delay` and the day/night switch record.
+
+#### "Creatures the monarch controls" — `monarch` as a seat
+
+```jsonc
+// Azure Fleet Admiral: "This creature can't be blocked by creatures the monarch controls."
+{ "kind": "static", "text": "…", "effect": "block_restriction",
+  "affects": { "self_only": true },
+  "blockers": { "types": ["Creature"], "controller": "monarch" } }
+```
+
+`"monarch"` is a player spec naming whoever holds `GameState.monarch` **as the
+spec is read**, and nobody while the crown is unclaimed. It is also legal as a
+selector's or a static filter's `controller` and `owner`, beside
+`enchanted_player`: both are seats the words `you`/`opponent`/`any` cannot name.
+In `blockers` it is asked per blocker at declaration, so the crown changing hands
+mid-turn changes who may block, and a 2-player game where you hold the crown lets
+the opponent block freely.
+
+The near miss is `condition: {"is_monarch": "opponent"}` on an unfiltered
+`block_restriction`: that switches the whole static on while *any* opponent is
+the monarch, so at a pod it would refuse blocks from every opponent rather than
+the one wearing the crown.
 
 `is_monarch` is deliberately **not** in the static condition language, unlike
 `has_city_s_blessing`. It would be safe there — the designation is a pipeline
@@ -11274,6 +11391,32 @@ opponent. `controller` is asked of each loss first, so your own loss in an
 even in one resolution. Nothing is summed, since the group spans players:
 `amount` and `event_player` are the first opponent's, so a card that pays out
 "that much" per opponent wants the unbatched trigger.
+
+"Whenever one or more Pirates you control deal damage to your opponents, you
+create a Treasure token for each opponent dealt damage." (Malcolm, Keen-Eyed
+Navigator)
+
+```jsonc
+"trigger": {"event": "deals_damage_to_player", "controller": "you",
+            "filter": {"subtypes": ["Pirate"]}, "defending": "opponent",
+            "batched": true},
+"effects": [{"op": "create_token", "token": "treasure_token",
+             "amount": {"player_count": {"binding": "damaged_players"}}}]
+```
+
+`deals_damage_to_player` groups by the damage event `primitives.damage_player`
+stamps: one combat damage step (510.2) or one effect op, combat or not. Every
+later hit of the group joins the first firing: its seat is added to
+`damaged_players` once however many matching sources hit it, its dealer to
+`damagers`, and its damage to `amount`. So "each of those opponents" is the
+player spec `{"binding": "damaged_players"}` (Breeches, Brazen Plunderer exiles
+the top of each of those libraries) and "for each opponent dealt damage" is its
+`player_count`. `filter`, `controller` and `defending` are asked of each hit
+first, so a non-Pirate beside the Pirates, or a Pirate hitting you, neither
+fires nor joins it; "to a player" (Francisco, Fowl Marauder) leaves `defending`
+off. `creatures_deal_combat_damage` is the near miss and is combat only, so a
+Pirate's ping would be missed; unbatched `deals_damage_to_player` fires once per
+Pirate per seat.
 
 ## "…put into your graveyard from anywhere" — `put_into_graveyard`
 

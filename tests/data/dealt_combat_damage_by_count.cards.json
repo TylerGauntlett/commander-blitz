@@ -1,0 +1,63 @@
+{
+  "_comment": "Cards that exist only for the dealt-combat-damage-by-count test (tests/unit/combat/test_dealt_combat_damage_by_count.py). Never part of a deck list. `t_dcc_admiral` is Admiral Beckett Brass's end-step steal on an enchantment, so the anthem does not muddy the combat; its Pirates are `t_bpd_pirate`.",
+  "cards": [
+    {
+      "id": "t_dcc_admiral",
+      "name": "Test Brass Admiral",
+      "oracle_text": "At the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.",
+      "mana_cost": "{2}{U}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "not_types": [
+                  "Land"
+                ],
+                "controller": {
+                  "dealt_combat_damage_by": {
+                    "subtypes": [
+                      "Pirate"
+                    ],
+                    "at_least": 3
+                  }
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "gain_control",
+              "objects": {
+                "target": "t1"
+              },
+              "player": "you",
+              "duration": "permanent"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

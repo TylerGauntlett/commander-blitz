@@ -1021,6 +1021,10 @@ class GameState:
             # `TurnLedger.players_dealt_combat_damage_by` for the
             # last-known-information case that ordering keeps.
             ledger.players_dealt_combat_damage_by.pop(data.get("oid"), None)
+            # The same 400.7 line for the per-subtype dealers, which keep the
+            # old object's damage under an id of its own rather than dropping it.
+            if data.get("oid") is not None:
+                ledger.retire_combat_damager(int(data["oid"]))
             # Nothing has damaged a new object either.
             ledger.damage_to_permanents.pop(data.get("oid"), None)
             if obj is not None:
@@ -1086,6 +1090,10 @@ class GameState:
                         ledger.players_dealt_combat_damage_by_subtype.setdefault(
                             subtype, set()
                         ).add(pid)
+                        # "…by three or more Pirates": which ones, per seat.
+                        ledger.combat_damagers_by_subtype.setdefault(subtype, {}).setdefault(
+                            pid, set()
+                        ).add(int(attacker))
             # Steel Hellkite's "whose controller was dealt combat damage by this
             # creature this turn": which seat, by which object. `player` is the
             # seat that was dealt it.

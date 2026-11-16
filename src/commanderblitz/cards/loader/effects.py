@@ -776,8 +776,9 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
 def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
     """Check whom a ``dealt_combat_damage_by`` spec asks about.
 
-    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names) or
-    ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
+    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names,
+    optionally with ``"at_least": N``, a positive count of distinct creatures)
+    or ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
     reads the ledger under a key nothing writes, so it counts nobody -- on
     Estinien Varlineau that is a card that silently never draws.
     """
@@ -786,6 +787,17 @@ def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
         f'{{"any_of": ["self", {{"subtypes": ["Dragon"]}}]}}, got {subject!r}'
     )
     if subject == "self":
+        return
+    if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
+        # "…by **three or more** Pirates": a count of distinct creatures per
+        # seat. A positive integer, since 0 would name every player and a bool
+        # would read as 1.
+        need = subject["at_least"]
+        if isinstance(need, bool) or not isinstance(need, int) or need < 1:
+            raise DslError(f"{where}.at_least: needs a positive whole number, got {need!r}")
+        if len(subject) != 2:
+            raise DslError(shape)
+        _validate_dealt_combat_damage_subject({"subtypes": subject["subtypes"]}, where)
         return
     if not isinstance(subject, Mapping) or len(subject) != 1:
         raise DslError(shape)
@@ -1253,7 +1265,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: grant_graveyard_cast needs 'affects_spells' -- "
                 f"without it the permission names no cards"
             )
-        if not effect.get("max_per_turn") and not effect.get("grants_flashback"):
+        if effect.get("escape") is not None:
+            validate_escape_rider(effect["escape"], f"{where}.escape")
+            if effect.get("grants_flashback"):
+                raise DslError(
+                    f"{where}: 'escape' beside 'grants_flashback' is two keywords "
+                    f"for one cast -- escape returns the card to the graveyard"
+                )
+        elif not effect.get("max_per_turn") and not effect.get("grants_flashback"):
             # A permission that neither meters nor exiles recasts one card every
             # turn for ever. `grants_flashback` IS the rate limit for the cards
             # that print no cap -- the spent card is the brake -- which is the
@@ -3569,6 +3588,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: unknown {op} duration {effect['duration']!r} "
             f"(use 'until_end_of_turn' or 'until_your_next_turn')"
         )
+    if op == "lose_all_abilities" and effect.get("duration", "permanent") not in (
+        "permanent",
+        "until_end_of_turn",
+        "until_your_next_turn",
+    ):
+        # No duration is The Irencrag's permanent loss, so a misspelt clock
+        # would otherwise load as the strictly stronger card that never ends.
+        raise DslError(
+            f"{where}: unknown lose_all_abilities duration {effect['duration']!r} "
+            f"(omit it for a permanent loss, or use 'until_end_of_turn' or "
+            f"'until_your_next_turn')"
+        )
     if op == "lose_keyword":
         # "…lose hexproof and shroud **and can't have** hexproof or shroud."
         # The op is that prohibition and nothing weaker, so the clause is
@@ -5086,3 +5117,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}.modes[{i}]: must be an object")
         for j, sub in enumerate(mode.get("effects", []) or []):
             _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_kinds)
+
+
+def validate_escape_rider(rider: Any, where: str) -> None:
+    """A granted escape cost: ``{"exile_from_graveyard": N}`` and, optionally, ``"mana"``.
+
+    Shared by the `cast_from_graveyard` static (Underworld Breach) and the
+    `grant_graveyard_cast` op (The Grim Captain's Locker). The count is of
+    *other* cards, which is the only kind of exile escape prints; ``mana``
+    absent means the covered card's own mana cost.
+    """
+    if not isinstance(rider, Mapping):
+        raise DslError(f"{where}: must be an object like {{'exile_from_graveyard': 3}}")
+    unknown = set(rider) - {"mana", "exile_from_graveyard"}
+    if unknown:
+        raise DslError(
+            f"{where}: unknown keys {sorted(unknown)} -- a granted escape cost is "
+            f"'mana' (omitted for the card's own mana cost) and "
+            f"'exile_from_graveyard'"
+        )
+    count = rider.get("exile_from_graveyard")
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise DslError(
+            f"{where}.exile_from_graveyard: the number of other graveyard cards "
+            f"escape exiles, a positive integer -- escape without it is the "
+            f"printed-price permission"
+        )
+    mana = rider.get("mana")
+    if mana is not None:
+        if not isinstance(mana, str) or not mana.strip():
+            raise DslError(f"{where}.mana: a mana cost string like '{{3}}{{B}}'")
+        ManaCost.parse(mana)  # raises DslError on an unparsable cost

@@ -1690,6 +1690,209 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Pirate"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Pirates you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "dealt_combat_damage_by": {
+                    "at_least": 3,
+                    "subtypes": [
+                      "Pirate"
+                    ]
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "admiral_beckett_brass",
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Admiral Beckett Brass",
+      "oracle_text": "Other Pirates you control get +1/+1.\nAt the beginning of your end step, gain control of target nonland permanent controlled by a player who was dealt combat damage by three or more Pirates this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Admiral Brass enters, mill four cards",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "counters": {
+                "finality": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Pirate"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may return target Pirate creature card from your graveyard to the battlefield with a finality counter on it. It has base power and toughness 4/4. It gains haste until end of turn",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "admiral_brass_unsinkable",
+      "mana_cost": "{2}{U}{B}{R}",
+      "name": "Admiral Brass, Unsinkable",
+      "oracle_text": "When Admiral Brass enters, mill four cards.\nAt the beginning of combat on your turn, you may return target Pirate creature card from your graveyard to the battlefield with a finality counter on it. It has base power and toughness 4/4. It gains haste until end of turn. (If a creature with a finality counter on it would die, exile it instead.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "cost": {
@@ -13582,6 +13785,137 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has menace",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has menace"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "op": "noop"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1,
+                "discard_selector": {
+                  "subtypes": [
+                    "Pirate"
+                  ]
+                }
+              },
+              "player": "you",
+              "prompt": "Discard a Pirate card instead of discarding two cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, draw two cards. Then discard two cards unless you discard a Pirate card",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "mana_reduction": {
+              "amount": 2,
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "cards_in_hand": "you"
+                },
+                "right": {
+                  "const": 1
+                }
+              }
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}. This ability costs {2} less to activate if you have one or fewer cards in hand"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "arm_mounted_anchor",
+      "mana_cost": "{3}",
+      "name": "Arm-Mounted Anchor",
+      "oracle_text": "Equipped creature gets +2/+2 and has menace.\nWhenever equipped creature deals combat damage to a player, draw two cards. Then discard two cards unless you discard a Pirate card.\nEquip {2}. This ability costs {2} less to activate if you have one or fewer cards in hand.",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -18462,6 +18796,58 @@
         "Drake"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "monarch",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked by creatures the monarch controls."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "azure_fleet_admiral",
+      "mana_cost": "{3}{U}",
+      "name": "Azure Fleet Admiral",
+      "oracle_text": "When this creature enters, you become the monarch.\nThis creature can't be blocked by creatures the monarch controls.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -26731,6 +27117,48 @@
       "colors": [
         "B"
       ],
+      "id": "blood_money",
+      "mana_cost": "{5}{B}{B}",
+      "name": "Blood Money",
+      "oracle_text": "Destroy all creatures. For each nontoken creature destroyed this way, you create a tapped Treasure token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "destroyed",
+              "is_token": false
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "tapped": true,
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "id": "blood_pact",
       "mana_cost": "{2}{B}",
       "name": "Blood Pact",
@@ -32184,6 +32612,77 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_color": true,
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable": "this_turn",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "binding": "damaged_players"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "breeches_brazen_plunderer",
+      "keywords": [
+        "menace",
+        "partner"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Breeches, Brazen Plunderer",
+      "oracle_text": "Menace\nWhenever one or more Pirates you control deal damage to your opponents, exile the top card of each of those opponents' libraries. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.\nPartner (You can have two commanders if both have partner.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "modes": [
                 {
@@ -32928,6 +33427,91 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "sacrifice": {
+              "any_types": [
+                "Creature",
+                "Artifact"
+              ],
+              "as": "sacrificed",
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "mana_value_of": {
+                      "binding": "sacrificed"
+                    }
+                  }
+                ]
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Boast — Sacrifice another creature or artifact: This creature deals damage equal to 2 plus the sacrificed permanent's mana value to any target. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "broadside_bombardiers",
+      "keywords": [
+        "menace",
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Broadside Bombardiers",
+      "oracle_text": "Menace, haste\nBoast — Sacrifice another creature or artifact: This creature deals damage equal to 2 plus the sacrificed permanent's mana value to any target. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -46591,6 +47175,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "coercive_recruiter",
+      "mana_cost": "{4}{R}",
+      "name": "Coercive Recruiter",
+      "oracle_text": "Whenever this creature or another Pirate you control enters, gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and becomes a Pirate in addition to its other types.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "coiled_tinviper",
@@ -50779,6 +51447,68 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Pirate"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Pirates you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "corsair_captain",
+      "mana_cost": "{2}{U}",
+      "name": "Corsair Captain",
+      "oracle_text": "When this creature enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nOther Pirates you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -56361,6 +57091,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}: This creature can't be blocked this turn."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "daring_saboteur",
+      "mana_cost": "{1}{U}",
+      "name": "Daring Saboteur",
+      "oracle_text": "{2}{U}: This creature can't be blocked this turn.\nWhenever this creature deals combat damage to a player, you may draw a card. If you do, discard a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -61057,6 +61858,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature becomes the target of a spell, sacrifice it.",
+          "trigger": {
+            "controller": "any",
+            "event": "becomes_target",
+            "source": "self",
+            "targeted_by": "spell"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "not_subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked except by Spirits."
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "except_blockers": {
+                "subtypes": [
+                  "Spirit"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{U}: Another target creature you control can't be blocked this turn except by Spirits."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "departed_deckhand",
+      "mana_cost": "{1}{U}",
+      "name": "Departed Deckhand",
+      "oracle_text": "When this creature becomes the target of a spell, sacrifice it.\nThis creature can't be blocked except by Spirits.\n{3}{U}: Another target creature you control can't be blocked this turn except by Spirits.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -61952,6 +62844,58 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}{R}, {T}: Draw a card, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "desolate_lighthouse",
+      "name": "Desolate Lighthouse",
+      "oracle_text": "{T}: Add {C}.\n{1}{U}{R}, {T}: Draw a card, then discard a card.",
       "source": "auto",
       "types": [
         "Land"
@@ -63443,6 +64387,68 @@
         "Pirate"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "fraction": {
+                      "divisor": 3,
+                      "of": {
+                        "life_of": {
+                          "binding": "each_player"
+                        }
+                      },
+                      "round": "up"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player loses a third of their life, rounded up.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dire_fleet_ravager",
+      "keywords": [
+        "menace",
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Dire Fleet Ravager",
+      "oracle_text": "Menace, deathtouch\nWhen this creature enters, each player loses a third of their life, rounded up.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate",
+        "Wizard"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -65237,6 +66243,110 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "owner": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "owner": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace",
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "owner": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Pirate"
+          ],
+          "text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell you don't own, create two tapped Treasure tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ],
+              "owner": "opponent"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "don_andres_the_renegade",
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Don Andres, the Renegade",
+      "oracle_text": "Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pirate in addition to its other types.\nWhenever you cast a noncreature spell you don't own, create two tapped Treasure tokens.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -75527,6 +76637,56 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you descended this turn, create a Treasure token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "descended_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "enterprising_scallywag",
+      "mana_cost": "{1}{R}",
+      "name": "Enterprising Scallywag",
+      "oracle_text": "At the beginning of your end step, if you descended this turn, create a Treasure token. (You descended if a permanent card was put into your graveyard from anywhere.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "types": [
@@ -82467,6 +83627,71 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "pirate_2_2_b_menace"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to create a 2/2 black Pirate creature token with menace?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. If you do, create a 2/2 black Pirate creature token with menace.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "exclude_self": true,
+                "is_token": false,
+                "subtypes": [
+                  "Pirate"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "fathom_fleet_captain",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Fathom Fleet Captain",
+      "oracle_text": "Menace\nWhenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. If you do, create a 2/2 black Pirate creature token with menace.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -90692,6 +91917,68 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Francisco can't block."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "explore"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to a player, Francisco explores.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "francisco_fowl_marauder",
+      "keywords": [
+        "flying",
+        "partner"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Francisco, Fowl Marauder",
+      "oracle_text": "Flying\nFrancisco can't block.\nWhenever one or more Pirates you control deal damage to a player, Francisco explores.\nPartner (You can have two commanders if both have partner.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -94461,6 +95748,185 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another Pirate you control enters, create a tapped Treasure token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Equipment"
+          ],
+          "text": "Treasures you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0,\" equip Pirate {1}, and equip {3}."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Treasures you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0,\" equip Pirate {1}, and equip {3}."
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Treasures you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0,\" equip Pirate {1}, and equip {3}."
+        },
+        {
+          "ability": 2,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Treasures you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0,\" equip Pirate {1}, and equip {3}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Pirate"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "equip Pirate {1}"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "equip {3}"
+        }
+      ],
+      "id": "gemcutter_buccaneer",
+      "mana_cost": "{3}{R}",
+      "name": "Gemcutter Buccaneer",
+      "oracle_text": "Whenever this creature or another Pirate you control enters, create a tapped Treasure token.\nTreasures you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0,\" equip Pirate {1}, and equip {3}.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -95561,6 +97027,81 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "toughness": {
+              "op": ">=",
+              "value": 3
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Ghost of Ramirez DePietro can't be blocked by creatures with toughness 3 or greater."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "graveyard_arrival_this_turn": [
+                  "discarded",
+                  "from_library"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ghost_of_ramirez_depietro",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Ghost of Ramirez DePietro",
+      "oracle_text": "Ghost of Ramirez DePietro can't be blocked by creatures with toughness 3 or greater.\nWhenever Ghost of Ramirez DePietro deals combat damage to a player, choose up to one target card in a graveyard that was discarded or put there from a library this turn. Put that card into its owner's hand.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -118270,6 +119811,87 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "choose_type",
+              "prompt": "Choose a creature type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control of the chosen type get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  {
+                    "chosen_type_of": "self"
+                  }
+                ],
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Look at the top three cards of your library. You may reveal a creature card of the chosen type from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "icon_of_ancestry",
+      "mana_cost": "{3}",
+      "name": "Icon of Ancestry",
+      "oracle_text": "As this artifact enters, choose a creature type.\nCreatures you control of the chosen type get +1/+1.\n{3}, {T}: Look at the top three cards of your library. You may reveal a creature card of the chosen type from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "cmp": ">=",
             "left": {
@@ -133813,6 +135435,103 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "each_player"
+            },
+            {
+              "effects": [
+                {
+                  "link": true,
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "count": 1,
+                    "optional": true,
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Each player mills four cards. Then you may exile a creature or planeswalker card from each graveyard."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "any_color": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Until end of turn, you may cast spells from among cards exiled with this Saga, and you may spend mana as though it were mana of any color to cast those spells."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "any_color": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Until end of turn, you may cast spells from among cards exiled with this Saga, and you may spend mana as though it were mana of any color to cast those spells."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "king_narfi_s_betrayal",
+      "mana_cost": "{1}{U}{B}",
+      "name": "King Narfi's Betrayal",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Each player mills four cards. Then you may exile a creature or planeswalker card from each graveyard.\nII, III — Until end of turn, you may cast spells from among cards exiled with this Saga, and you may spend mana as though it were mana of any color to cast those spells.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "as": "frogs_exiled",
@@ -139364,6 +141083,106 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": {
+                      "fraction": {
+                        "divisor": 10,
+                        "of": {
+                          "count": {
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          }
+                        },
+                        "round": "up"
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a creature, put a +1/+1 counter on Legate Lanius.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "legate_lanius_caesar_s_ace",
+      "mana_cost": "{2}{B}{R}",
+      "name": "Legate Lanius, Caesar's Ace",
+      "oracle_text": "Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures they control of their choice, rounded up.\nWhenever an opponent sacrifices a creature, put a +1/+1 counter on Legate Lanius.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -149171,6 +150990,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "binding": "damaged_players"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "malcolm_keen_eyed_navigator",
+      "keywords": [
+        "flying",
+        "partner"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Malcolm, Keen-Eyed Navigator",
+      "oracle_text": "Flying\nWhenever one or more Pirates you control deal damage to your opponents, you create a Treasure token for each opponent dealt damage. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -154188,6 +156065,71 @@
         "Warlock"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "freeze"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another Pirate you control enters, tap up to one target creature. That creature doesn't untap during its controller's untap step for as long as you control this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "merchant_raiders",
+      "mana_cost": "{3}{U}",
+      "name": "Merchant Raiders",
+      "oracle_text": "Whenever this creature or another Pirate you control enters, tap up to one target creature. That creature doesn't untap during its controller's untap step for as long as you control this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -165252,6 +167194,65 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "{1}{U}{B}, {T}: Target player mills three cards."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "nephalia_drownyard",
+      "name": "Nephalia Drownyard",
+      "oracle_text": "{T}: Add {C}.\n{1}{U}{B}, {T}: Target player mills three cards.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -183971,6 +185972,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, untap each creature you control. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_attack_attacked_players",
+          "kind": "static",
+          "text": "This creature can't attack a player it has already attacked this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "port_razer",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Port Razer",
+      "oracle_text": "Whenever this creature deals combat damage to a player, untap each creature you control. After this phase, there is an additional combat phase.\nThis creature can't attack a player it has already attacked this turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -193958,6 +196015,70 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cast_from_graveyard",
+          "graveyard_arrival_this_turn": [
+            "milled"
+          ],
+          "kind": "static",
+          "static_max_per_turn": 1,
+          "text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "raul_trouble_shooter",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Raul, Trouble Shooter",
+      "oracle_text": "Once during each of your turns, you may cast a spell from among cards in your graveyard that were milled this turn.\n{T}: Each player mills a card. (They each put the top card of their library into their graveyard.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Mutant",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -221773,6 +223894,68 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{U}",
+            "sacrifice": {
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell_or_ability",
+              "selector": {
+                "that_targets": {
+                  "permanent": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              }
+            }
+          ],
+          "text": "{U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "siren_stormtamer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Siren Stormtamer",
+      "oracle_text": "Flying\n{U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -222008,6 +224191,104 @@
         "Skeleton"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "any_of": [
+              {
+                "subtypes": [
+                  "Skeleton"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Pirate"
+                ]
+              }
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Each other creature you control that's a Skeleton or Pirate gets +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "skeleton_pirate_2_2_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards leave your graveyard, create a 2/2 black Skeleton Pirate creature token. (This ability triggers only from the battlefield.)",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{5}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{B}: Return this card from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "skeleton_crew",
+      "mana_cost": "{3}{B}",
+      "name": "Skeleton Crew",
+      "oracle_text": "Each other creature you control that's a Skeleton or Pirate gets +1/+1.\nWhenever one or more creature cards leave your graveyard, create a 2/2 black Skeleton Pirate creature token. (This ability triggers only from the battlefield.)\n{5}{B}: Return this card from your graveyard to the battlefield tapped.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Skeleton",
+        "Pirate"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -228442,6 +230723,50 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spectral_sailor",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Spectral Sailor",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nFlying\n{3}{U}: Draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -233784,6 +236109,94 @@
       "source": "auto",
       "subtypes": [
         "Bird"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "parley_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "not_types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "map_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a Map token. Then each player draws a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "storm_fleet_negotiator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Storm Fleet Negotiator",
+      "oracle_text": "Flying\nParley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a Map token. Then each player draws a card. (A Map token is an artifact with \"{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate"
       ],
       "toughness": 2,
       "types": [
@@ -251552,6 +253965,175 @@
           },
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Surveil 1"
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "escape": {
+                "exile_from_graveyard": 4,
+                "mana": "{3}{B}"
+              },
+              "op": "grant_graveyard_cast"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Until end of turn, each creature card in your graveyard gains \"Escape—{3}{B}, Exile four other cards from your graveyard.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "the_grim_captain_s_locker",
+      "mana_cost": "{3}{B}",
+      "name": "The Grim Captain's Locker",
+      "oracle_text": "{T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{T}: Until end of turn, each creature card in your graveyard gains \"Escape—{3}{B}, Exile four other cards from your graveyard.\" (You may cast a card with escape from your graveyard for its escape cost.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Pirate"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "tapped": true,
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "the_indomitable",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "The Indomitable",
+      "oracle_text": "Trample\nWhenever a creature you control deals combat damage to a player, draw a card.\nCrew 3\nYou may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -251838,6 +254420,88 @@
       ],
       "toughness": 5,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "x": true
+                  }
+                ]
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "escape": {
+            "exile_from_graveyard": 3
+          },
+          "kind": "static",
+          "text": "Each enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "the_master_of_keys",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{X}{W}{U}{B}",
+      "name": "The Master of Keys",
+      "oracle_text": "Flying\nWhen The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards.\nEach enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -258437,6 +261101,50 @@
       "subtypes": [
         "Human",
         "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "has_city_s_blessing": "you"
+          },
+          "cost": {
+            "mana": "{2}{U}{U}",
+            "tap": true,
+            "tuck_self": true
+          },
+          "effects": [
+            {
+              "op": "extra_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing."
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "timestream_navigator",
+      "mana_cost": "{1}{U}",
+      "name": "Timestream Navigator",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\n{2}{U}{U}, {T}, Put this creature on the bottom of its owner's library: Take an extra turn after this one. Activate only if you have the city's blessing.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate",
+        "Wizard"
       ],
       "toughness": 1,
       "types": [
@@ -267598,6 +270306,54 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "effect": "cast_from_graveyard",
+          "escape": {
+            "exile_from_graveyard": 3
+          },
+          "kind": "static",
+          "text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of the end step, sacrifice this enchantment",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "underworld_breach",
+      "mana_cost": "{1}{R}",
+      "name": "Underworld Breach",
+      "oracle_text": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)\nAt the beginning of the end step, sacrifice this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -279593,6 +282349,84 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "lose_all_abilities"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, target creature defending player controls loses all abilities and has base power and toughness 0/1 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "warkite_marauder",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Warkite Marauder",
+      "oracle_text": "Flying\nWhenever this creature attacks, target creature defending player controls loses all abilities and has base power and toughness 0/1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -290528,6 +293362,95 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "look_at_hand",
+              "player": {
+                "binding": "defender"
+              }
+            },
+            {
+              "effects": [
+                {
+                  "as": "recruited",
+                  "attacking": {
+                    "binding": "defender"
+                  },
+                  "controller": "you",
+                  "objects": {
+                    "chooser": "controller",
+                    "count": 1,
+                    "player": {
+                      "binding": "defender"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "or_planeswalker": true,
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a creature card from defending player's hand onto the battlefield?"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "recruited",
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return that creature to its owner's hand at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Zara attacks, look at defending player's hand. You may put a creature card from it onto the battlefield under your control tapped and attacking that player or a planeswalker they control. Return that creature to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "zara_renegade_recruiter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{R}",
+      "name": "Zara, Renegade Recruiter",
+      "oracle_text": "Flying\nWhenever Zara attacks, look at defending player's hand. You may put a creature card from it onto the battlefield under your control tapped and attacking that player or a planeswalker they control. Return that creature to its owner's hand at the beginning of the next end step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

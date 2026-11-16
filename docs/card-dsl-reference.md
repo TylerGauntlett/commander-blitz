@@ -11,17 +11,17 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 181 |
-| [Selectors](#selectors) | 77 |
-| [Player specs](#player-specs) | 9 |
-| [Values](#values) | 74 |
+| [Selectors](#selectors) | 79 |
+| [Player specs](#player-specs) | 10 |
+| [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 59 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 98 |
+| [Static effects](#static-effects) | 99 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 43 |
+| [Grantable statics](#grantable-statics) | 44 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 35 |
+| [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 46 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -56,7 +56,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `draw` | Cards | yes | A player draws N cards; `as` records who drew. | [draw's as — "each opponent who drew a card this way"](card-dsl-cookbook.md#draws-as--each-opponent-who-drew-a-card-this-way) |
 | `exile_until` | Cards | yes | Exile from the top of a player's library until a card matches; the rest stay exiled or, with `rest_to_bottom`, go to that library's bottom in a random order; the hit may be cast free by you, a creature with a `creature_cast_gains` rider. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
 | `explore` | Cards |  | Explore: reveal the top card, land to hand or a +1/+1 counter. | [Explore](card-dsl-cookbook.md#explore) |
-| `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |
+| `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn; `escape` grants them escape instead, at that cost only. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |
 | `grant_playable` | Cards |  | Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
 | `hideaway` | Cards |  | Hideaway: look at the top N, exile one face down, the rest to the bottom. | [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there) |
 | `link_exiled` | Cards |  | Link cards in exile to the permanent bound under `to`, so its own `exiled_with: "self"` finds them (607.2a). | ["Return the exiled card" from a token — link_exiled](card-dsl-cookbook.md#return-the-exiled-card-from-a-token--link_exiled) |
@@ -131,7 +131,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
-| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_onto_battlefield` | Board | yes | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters, or enters on the host `host_named` names if it can enchant it; `as` binds what arrived. | [Effect ops](card-dsl.md#effect-ops) |
 | `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board | yes | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
@@ -156,7 +156,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
-| `lose_all_abilities` | Modify |  | Permanents lose all abilities for a duration. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
+| `lose_all_abilities` | Modify |  | Permanents lose all abilities: for good, or with `duration` until end of turn or your next turn. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
 | `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
 | `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
@@ -267,6 +267,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `face_down` | A permanent that is face down (`true`) or face up (`false`), 708.2; not in a static's filters, nor on a departure trigger. | ["Face-down creatures" — face_down](card-dsl-cookbook.md#face-down-creatures--face_down) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `granter` | The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects. | ["…fight Grothama" — granter](card-dsl-cookbook.md#fight-grothama--granter) |
+| `graveyard_arrival_this_turn` | Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`. | [Cards in a graveyard by how they arrived this turn](card-dsl.md#cards-in-a-graveyard-by-how-they-arrived-this-turn) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -304,6 +305,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `surveilled_this_turn` | Cards a surveil put into a graveyard this turn, as the same object. | [Cards in a graveyard surveilled this turn](card-dsl.md#cards-in-a-graveyard-surveilled-this-turn) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `that_targets` | On a `spell`, `ability_on_stack` or `spell_or_ability` target only: the object targets a `player` spec or a `permanent` matching a selector. | [that_targets — a spell or ability by what it targets](card-dsl.md#that_targets--a-spell-or-ability-by-what-it-targets) |
 | `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |
@@ -324,6 +326,7 @@ The named player specs. The structured forms -- `{"target": …}`, `{"controller
 | `each_player` | Every player. | [Player specs](card-dsl.md#player-specs) |
 | `enchanted_player` | The player the source Aura is attached to. | [An Aura that enchants a player](card-dsl-cookbook.md#an-aura-that-enchants-a-player) |
 | `gift_recipient` | The opponent promised a gift as this spell was cast. | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
+| `monarch` | Whoever holds the crown now (nobody while unclaimed); also a selector's `controller`/`owner`. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `opponent` | An opponent (each of them, at a pod). | [Player specs](card-dsl.md#player-specs) |
 | `you` | The ability's controller. | [Player specs](card-dsl.md#player-specs) |
 
@@ -358,9 +361,11 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `descended_this_turn` | Permanent cards put into the player's own graveyard from anywhere this turn: how many times they descended. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `energy_spent_this_turn` | Energy ({E}) the player paid or lost this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
+| `fraction` | A value divided by a literal `divisor` of 3 or more, rounded `up` or `down` (a third, a tenth). | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_commander_mana_value` | The greatest printed mana value among the player's commanders, wherever they are; 0 with none. Read as the effect resolves. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |
@@ -483,7 +488,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `deals_damage` | `damage_dealt` | A source deals any damage to anything, combat or noncombat; once per damage event (a combat damage step or one effect), `amount` its total; the subject is the dealer. | ["Whenever this creature deals damage" — deals_damage](card-dsl.md#whenever-this-creature-deals-damage--deals_damage) |
-| `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
+| `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player; `batched` fires once per combat damage step or effect op, with `damaged_players` the seats it hit. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
 | `discard` | `discard` | A player discards a card; `batched` fires once per discard, however many cards it takes. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
@@ -583,6 +588,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
+| `cant_attack_attacked_players` |  | yes | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |
 | `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` |  | yes | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` |  | yes | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
@@ -595,7 +601,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_search_library` | yes |  | The player can't search libraries. | ["Can't cause their controller to search their library"](card-dsl-cookbook.md#cant-cause-their-controller-to-search-their-library) |
 | `cant_win_the_game` | yes |  | The player can't win the game. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_as_though_flash` | yes |  | The player may cast matching spells as though they had flash. | [Static abilities](card-dsl.md#static-abilities) |
-| `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
+| `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`, or for an escape cost with `escape`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
 | `combat_damage_by_toughness` |  | yes | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
@@ -683,7 +689,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `cant_search_library` | The player can't search libraries. | ["Can't cause their controller to search their library"](card-dsl-cookbook.md#cant-cause-their-controller-to-search-their-library) |
 | `cant_win_the_game` | The player can't win the game. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_as_though_flash` | The player may cast matching spells as though they had flash. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
-| `cast_from_graveyard` | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
+| `cast_from_graveyard` | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`, or for an escape cost with `escape`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_only_at_sorcery_speed` | The player may cast matching spells only at sorcery speed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `damage_life_floor` | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
@@ -739,6 +745,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
+| `cant_attack_attacked_players` | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |
 | `cant_attack_you` | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
@@ -824,6 +831,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |
 | `tap_x` | Tap X matching untapped permanents, X announced and bounded by them. | [tap_x — tap X untapped permanents, X announced](card-dsl.md#tap_x--tap-x-untapped-permanents-x-announced) |
 | `times` | Pay the whole cost that many times (cumulative upkeep). | [Costs](card-dsl.md#costs) |
+| `tuck_self` | Put the source on the bottom of its owner's library. | [tuck_self — the source to the bottom of its owner's library](card-dsl.md#tuck_self--the-source-to-the-bottom-of-its-owners-library) |
 | `untap` | {Q}: untap the source. | [Costs](card-dsl.md#costs) |
 | `untap_permanents` | Untap N other permanents. | [Costs](card-dsl.md#costs) |
 | `x_minimum` | The least X an activated ability may announce ("X can't be 0"). | [x_minimum — X can't be 0](card-dsl.md#x_minimum--x-cant-be-0) |

@@ -84,6 +84,7 @@ def push_spell(
     warped: bool = False,
     impending: bool = False,
     flashback: bool = False,
+    granted_escape: bool = False,
     graveyard_permission: int | None = None,
     exiles_instead: bool = False,
     enters_tapped: bool = False,
@@ -182,6 +183,7 @@ def push_spell(
         bestowed=bestowed,
         mutated=mutated,
         flashback=flashback,
+        granted_escape=granted_escape,
         graveyard_permission=graveyard_permission,
         exiles_instead=exiles_instead,
         enters_tapped=enters_tapped,
@@ -933,8 +935,12 @@ def escaped(item: StackItem, card: CardDef | None) -> bool:
     cast must have taken that slot (`item.flashback`) on a card whose slot is
     escape and not flashback, jump-start or mayhem. `item.graveyard_permission`
     is deliberately not read: a card cast from a graveyard under a permanent's
-    permission paid its mana cost, not its escape cost (702.138c).
+    permission paid its mana cost, not its escape cost (702.138c) -- unless that
+    permission granted escape (Underworld Breach), which `item.granted_escape`
+    records: a card with granted escape escapes when cast with it.
     """
+    if item.granted_escape:
+        return True
     return bool(
         item.flashback
         and card is not None

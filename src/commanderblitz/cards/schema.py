@@ -138,6 +138,11 @@ class CostModel(BaseModel):
     #: could be activated and responded to with the source still on the
     #: battlefield, and 601.2h pays costs before any of that.
     exile_self: bool = False
+    #: "**Put this creature on the bottom of its owner's library**" --
+    #: Timestream Navigator. The library twin of ``exile_self``: the source
+    #: must be on the battlefield, and it goes to the bottom of its owner's
+    #: library as the ability is activated, not as it resolves.
+    tuck_self: bool = False
     #: "**Exile a blue card from your hand**" -- Force of Will's pitch. A
     #: selector over the payer's own hand with an optional ``count``, and the
     #: exile twin of ``discard`` + ``discard_selector``.
@@ -913,6 +918,18 @@ class AbilityModel(BaseModel):
     #: the loader refuses an uncapped permission, correctly -- one that neither
     #: meters nor exiles recasts the same card every turn for ever.
     grants_flashback: bool = False
+    #: ``cast_from_graveyard``: this permission is **escape** -- Underworld
+    #: Breach's "each nonland card in your graveyard has escape. The escape cost
+    #: is equal to the card's mana cost plus exile three other cards from your
+    #: graveyard". ``{"exile_from_graveyard": 3}``, with ``"mana": "{3}{B}"``
+    #: when the grant prints its own mana (The Grim Captain's Locker) rather
+    #: than the card's mana cost.
+    #:
+    #: The cards it covers are castable from the graveyard **only** at that
+    #: price, never at the printed one; the spell escaped (702.138c) and goes
+    #: back to the graveyard afterwards. The exile is the rate limit, so the
+    #: permission needs no `max_per_turn`.
+    escape: dict[str, Any] | None = None
     #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
     #: casting or copying an instant or sorcery spell** causes a triggered
     #: ability ... to trigger" -- a clause about what happened, not about whose
@@ -971,6 +988,11 @@ class AbilityModel(BaseModel):
     #: graveyard is a fact about this copy, read off
     #: `GameObject.surveilled_this_turn`.
     surveilled_this_turn: bool = False
+    #: "…from among cards in your graveyard that were **milled this turn**."
+    #: Raul, Trouble Shooter. The selector key of the same name on a
+    #: `cast_from_graveyard` or `play_lands_from_graveyard` static: a list of
+    #: `objects.GRAVEYARD_ARRIVAL_WAYS`, any one enough, asked of the object.
+    graveyard_arrival_this_turn: list[str] | None = None
     #: ``cant_cast_spells_from_zones``: the zones the named players can't cast
     #: spells **from** -- or, as ``except_zones``, the ones they still can.
     #: Drannith Magistrate's "from anywhere other than their hands" is

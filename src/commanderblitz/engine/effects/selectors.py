@@ -31,6 +31,7 @@ from ..characteristics import (
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
+from ..objects import GRAVEYARD_ARRIVAL_WAYS
 from ..player_statics import commander_subtypes, goaders
 from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
@@ -104,6 +105,12 @@ SELECTOR_KEYS = frozenset(
         #: left and came back is a new object (400.7) and has been surveilled
         #: by nobody.
         "surveilled_this_turn",
+        #: "…target card in a graveyard that was **discarded or put there from
+        #: a library this turn**" -- Ghost of Ramirez DePietro. A list of
+        #: `objects.GRAVEYARD_ARRIVAL_WAYS`, any one enough, asked of the card's
+        #: own record of its arrival (`GameObject.arrived_in_graveyard_this_turn`).
+        #: `surveilled_this_turn` is the surveil-only sibling.
+        "graveyard_arrival_this_turn",
         #: "Each creature **that convoked this spell** connives" -- Lethal
         #: Scheme. The creatures tapped to pay for the resolving spell (702.51c),
         #: recorded on its stack item by the cast that tapped them; `true` only,
@@ -419,6 +426,14 @@ SELECTOR_KEYS = frozenset(
         #: selector: `validate_selector` refuses it anywhere else, where no
         #: matcher would read it.
         "ability_kind",
+        #: "Counter target spell or ability **that targets you or a creature
+        #: you control**" -- Siren Stormtamer. ``{"player": <player spec>}``
+        #: and/or ``{"permanent": <selector>}``, met when any of the stack
+        #: object's own targets is such a player or permanent; read by
+        #: `targeting._targets_clause_met` from both stack matchers, so only a
+        #: `spell`, `ability_on_stack` or `spell_or_ability` target's selector
+        #: may carry it (`validate_selector` refuses it anywhere else).
+        "that_targets",
         "name",
         #: "…search your library for up to five Dragon cards **not named
         #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
@@ -784,7 +799,7 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     # objects, and a name this function did not know fell through to
     # `alive()` -- every seat at the table, which for a hand or a graveyard is
     # the widest possible reading of a sentence naming one player.
-    if controller == "enchanted_player":
+    if controller in SEAT_FILTER_WORDS:
         return select_players(ctx, controller)
     return ctx.state.alive()
 
@@ -960,6 +975,10 @@ def matches(
         return False
     if selector.get("surveilled_this_turn") and not obj.surveilled_this_turn(state.turn):
         return False
+    if (ways := selector.get("graveyard_arrival_this_turn")) is not None and not (
+        obj.arrived_in_graveyard_this_turn(state.turn, ways)
+    ):
+        return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
         # a `snapshot`, and a **list** for an op that recorded what it produced.
@@ -1063,7 +1082,7 @@ def matches(
     # miss and is exact only at two players -- at a pod it counts the whole
     # table's artifacts, so the enchanted player's toll goes up because somebody
     # else built a Signet.
-    if (isinstance(controller, Mapping) or controller == "enchanted_player") and (
+    if (isinstance(controller, Mapping) or controller in SEAT_FILTER_WORDS) and (
         obj.controller not in select_players(ctx, controller)
     ):
         return False
@@ -1084,7 +1103,7 @@ def matches(
         return False
     if owner == "opponent" and obj.owner == ctx.controller:
         return False
-    if (isinstance(owner, Mapping) or owner == "enchanted_player") and (
+    if (isinstance(owner, Mapping) or owner in SEAT_FILTER_WORDS) and (
         obj.owner not in select_players(ctx, owner)
     ):
         return False
@@ -1589,6 +1608,15 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
     raise DslError(f"{where}: unknown chooser {who!r}")
 
 
+#: The named player specs a selector's ``controller`` and ``owner`` also take,
+#: beside the three words ``you``/``opponent``/``any``: each names one seat that
+#: no combination of those three can. ``enchanted_player`` is the seat an Aura
+#: is attached to; ``monarch`` is whoever holds the crown as the selector is
+#: read (721), and matches nothing while nobody does. Both resolve through
+#: :func:`select_players`, so the selector and the player spec cannot disagree.
+SEAT_FILTER_WORDS = ("enchanted_player", "monarch")
+
+
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
@@ -1618,6 +1646,10 @@ PLAYER_SPEC_NAMES = frozenset(
         # "they create a token" handing one to every opponent is three times the
         # printed card. See `select_players`.
         "gift_recipient",
+        # "…creatures **the monarch** controls" (Azure Fleet Admiral). The seat
+        # holding `GameState.monarch` as the spec is read, and nobody while
+        # the crown is unclaimed (721.2). See `select_players`.
+        "monarch",
     }
 )
 
@@ -1627,13 +1659,25 @@ def _seats_dealt_combat_damage_by(ctx: EffectContext, subject: Any) -> set[int]:
 
     ``"self"`` is the ability's source, by oid; ``{"subtypes": [...]}`` is any
     creature that had one of those subtypes as the damage was dealt, whoever
-    controlled it; ``{"any_of": [...]}`` is the union of its subjects. The
+    controlled it, and with ``"at_least": N`` the seats N or more distinct such
+    creatures dealt it to; ``{"any_of": [...]}`` is the union of its subjects. The
     loader (`loader.effects._validate_dealt_combat_damage_subject`) refuses
     every other shape, so nothing here guesses.
     """
     ledger = ctx.state.turn_ledger
     if subject == "self":
         return set(ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set()))
+    if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
+        # "…a player who was dealt combat damage by **three or more** Pirates
+        # this turn" -- Admiral Beckett Brass. Distinct creatures per seat,
+        # off `TurnLedger.combat_damagers_by_subtype`: the plain seat set says
+        # only that one Pirate got through.
+        need = int(subject["at_least"])
+        return {
+            pid
+            for pid in ctx.state.alive()
+            if len(ledger.combat_damagers_of(subject["subtypes"], pid)) >= need
+        }
     if isinstance(subject, Mapping) and "subtypes" in subject:
         seats: set[int] = set()
         for name in subject["subtypes"]:
@@ -1679,6 +1723,15 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
                 obj = state.objects.get(ctx.source_oid)
                 promisee = obj.cast_gift_to if obj is not None else None
             return [promisee] if promisee is not None and state.is_alive(promisee) else []
+        if spec == "monarch":
+            # "…creatures **the monarch** controls" (721). Read as the spec is
+            # asked, never remembered: the crown changes hands mid-turn (a
+            # combat-damage steal, a `become_monarch`), and the sentence always
+            # names whoever wears it now. `[]` while nobody is the monarch, so
+            # the sentence then reaches nothing -- not the controller, and not
+            # the table.
+            pid = state.monarch
+            return [pid] if pid is not None and state.is_alive(pid) else []
         if spec == "enchanted_player":
             # "Enchanted opponent creates a Clue token." The seat this Aura is
             # attached to, read off the **ability's own source** -- the same
@@ -1945,6 +1998,7 @@ ATTACHED_TO_REFUSED_KEYS = frozenset(
         "extreme",
         "player",
         "ability_kind",
+        "that_targets",
         "object_kind",
         "encoded_by",
         "haunted_by",
@@ -2014,6 +2068,19 @@ def validate_parity_clauses(selector: Any, where: str) -> None:
             )
 
 
+def validate_graveyard_arrival_ways(ways: Any, where: str) -> None:
+    """A non-empty list of `GRAVEYARD_ARRIVAL_WAYS`: how a card reached a graveyard."""
+    if not isinstance(ways, list) or not ways:
+        raise DslError(
+            f"{where}: a non-empty list of {sorted(GRAVEYARD_ARRIVAL_WAYS)}, got {ways!r}"
+        )
+    unknown = [w for w in ways if w not in GRAVEYARD_ARRIVAL_WAYS]
+    if unknown:
+        raise DslError(
+            f"{where}: unknown way(s) {unknown}; one of {sorted(GRAVEYARD_ARRIVAL_WAYS)}"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -2031,9 +2098,25 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{where}: 'ability_kind' narrows an 'ability_on_stack' target and "
             f"means nothing on any other selector"
         )
+    if "that_targets" in selector:
+        # Lifted off a stack target's selector by `_compile_target`, like
+        # `ability_kind`; on anything else no matcher reads it.
+        raise DslError(
+            f"{where}: 'that_targets' narrows a 'spell', 'ability_on_stack' or "
+            f"'spell_or_ability' target and means nothing on any other selector"
+        )
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    if "graveyard_arrival_this_turn" in selector:
+        validate_graveyard_arrival_ways(
+            selector["graveyard_arrival_this_turn"], f"{where}.graveyard_arrival_this_turn"
+        )
+        if zone not in (None, "graveyard"):
+            raise DslError(
+                f"{where}.graveyard_arrival_this_turn: asks how a card reached a "
+                f"graveyard, so it means nothing on a {zone!r} selector"
+            )
     # `paid_by` takes either "self"/an oid ("when **that mana** is spent") or a
     # selector over what the mana's source *was* ("if mana from a **Treasure**
     # was spent to cast it"). The selector half is validated against its own
@@ -2105,14 +2188,14 @@ def validate_selector(selector: Any, where: str) -> None:
     if (
         controller is not None
         and not isinstance(controller, Mapping)
-        and controller not in ("you", "opponent", "any", "enchanted_player")
+        and controller not in ("you", "opponent", "any", *SEAT_FILTER_WORDS)
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
     owner = selector.get("owner")
     if (
         owner is not None
         and not isinstance(owner, Mapping)
-        and owner not in ("you", "opponent", "any", "enchanted_player")
+        and owner not in ("you", "opponent", "any", *SEAT_FILTER_WORDS)
     ):
         # Refused for the reason `controller` is, and the stakes are higher: an
         # unrecognised word here matches *everything*, so a selector meaning "a
@@ -2328,3 +2411,42 @@ def validate_selector(selector: Any, where: str) -> None:
             validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
+
+
+#: The clauses a `that_targets` selector key may carry.
+THAT_TARGETS_KEYS = frozenset({"player", "permanent"})
+
+
+def validate_that_targets(clause: Any, where: str) -> None:
+    """Load-time shape of a stack target's ``that_targets`` clause.
+
+    ``player`` is one of the named player specs (``"you"``, ``"opponent"``,
+    ...); ``permanent`` is a selector over the battlefield. At least one is
+    required: an empty clause would read "that targets anything", which is a
+    different card from "that targets nothing in particular".
+    """
+    if not isinstance(clause, Mapping) or not clause:
+        raise DslError(
+            f"{where}.that_targets: give 'player' and/or 'permanent', got {clause!r}"
+        )
+    if unknown := set(clause) - THAT_TARGETS_KEYS:
+        raise DslError(
+            f"{where}.that_targets: {sorted(unknown)} are not read; only "
+            f"{sorted(THAT_TARGETS_KEYS)}"
+        )
+    if "player" in clause and not (
+        isinstance(clause["player"], str) and clause["player"] in PLAYER_SPEC_NAMES
+    ):
+        raise DslError(
+            f"{where}.that_targets.player: a named player spec, got {clause['player']!r}"
+        )
+    if "permanent" in clause:
+        permanent = clause["permanent"]
+        if not isinstance(permanent, Mapping):
+            raise DslError(f"{where}.that_targets.permanent: must be a selector")
+        if permanent.get("zone", "battlefield") != "battlefield":
+            raise DslError(
+                f"{where}.that_targets.permanent: a target permanent is on the "
+                f"battlefield, so 'zone' may only be 'battlefield'"
+            )
+        validate_selector(permanent, f"{where}.that_targets.permanent")

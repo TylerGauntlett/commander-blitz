@@ -2434,6 +2434,46 @@ def grant_keyword(
     _stats_changed(state, obj, keyword=keyword)
 
 
+def lose_all_abilities_timed(
+    state: GameState,
+    oid: int,
+    *,
+    cutoff: int,
+    source: int | None = None,
+    until_player: int | None = None,
+) -> None:
+    """ "Target creature **loses all abilities** … until end of turn" (Warkite
+    Marauder), as a `TempEffect(kind="lose_all_abilities")` on the permanent.
+
+    The timed twin of the `lose_all_abilities` op's permanent flag, and it has
+    to be **non-destructive** where that one is not: the permanent op deletes
+    the grants older than itself (`_drop_earlier_grants`) because they are gone
+    for good, but a grant for as long as the permanent lasts -- riot's haste, a
+    one-shot `grant_ability` -- has to come back when this wears off. So
+    nothing is removed here; ``timestamp`` records the cutoff and `chars`,
+    `abilities_of` and `protection_from` ignore every ability grant older than
+    it while the entry stands (613.7). A grant made later survives, and one
+    made earlier in the same resolution does too (``cutoff`` is the
+    resolution's `EffectContext.began_at`, as for the permanent op).
+
+    It rides `until_eot`, so cleanup -- or, with ``until_player``, that seat's
+    next untap step -- ends it, and a zone change (400.7) drops it with the
+    old object. It is not itself an ability, so a second loss does not end it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="lose_all_abilities",
+            source=source,
+            timestamp=cutoff,
+            until_player=until_player,
+        )
+    )
+    state.bump_chars()
+
+
 def forbid_keyword(
     state: GameState,
     oid: int,

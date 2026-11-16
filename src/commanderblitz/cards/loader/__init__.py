@@ -47,6 +47,7 @@ from commanderblitz.engine.effects.selectors import (
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_graveyard_arrival_ways,
     validate_has_counters_key,
     validate_selector,
 )
@@ -95,6 +96,7 @@ from .effects import (
     _validate_effect,
     _validate_enchanted_player,
     _validate_was_cast_placement,
+    validate_escape_rider,
 )
 from .linking import _derive_color_identity, _walk_effects
 from .mana import (
@@ -5086,6 +5088,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
         )
+    if model.effect == "cant_attack_attacked_players" and model.affects is None:
+        # A missing filter matches nothing, so the prohibition would load and
+        # stop nobody. Port Razer's line is about itself: `{"self_only": true}`.
+        raise DslError(
+            f"{where}: cant_attack_attacked_players needs an 'affects' filter naming "
+            f'the creatures it stops -- e.g. {{"self_only": true}}'
+        )
     if model.effect == "goaded" and model.affects is None:
         # A missing filter matches nothing, so a filterless goad goads nobody:
         # the Aura loads, prints "is goaded" and compels no attack. Every
@@ -5127,6 +5136,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'pay_life_instead' prices a cast_from_library_top or "
             f"cast_from_graveyard permission; nothing reads it on {model.effect!r}"
         )
+    if model.escape is not None and model.effect != "cast_from_graveyard":
+        raise DslError(
+            f"{where}: 'escape' prices a cast_from_graveyard permission; nothing "
+            f"reads it on {model.effect!r}"
+        )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
             f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
@@ -5164,7 +5178,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 ("enters_tapped", model.enters_tapped),
                 ("arrived_this_turn_from", model.arrived_this_turn_from is not None),
                 ("surveilled_this_turn", model.surveilled_this_turn),
+                ("graveyard_arrival_this_turn", model.graveyard_arrival_this_turn is not None),
                 ("pay_life_instead", model.pay_life_instead),
+                ("escape", model.escape is not None),
             )
             if present
         ]
@@ -5200,7 +5216,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: 'pay_life_instead' beside 'grants_flashback' is a second "
                 f"price for the same cast -- flashback's cost is the mana cost"
             )
-        if (
+        if model.escape is not None:
+            # Underworld Breach. Escape is its own price and its own brake:
+            # each cast exiles other cards, so no per-turn cap is printed and
+            # none is needed, and it is neither flashback (the card comes back)
+            # nor a life price.
+            validate_escape_rider(model.escape, f"{where}.escape")
+            for key, present in (
+                ("grants_flashback", model.grants_flashback),
+                ("pay_life_instead", model.pay_life_instead),
+            ):
+                if present:
+                    raise DslError(
+                        f"{where}: '{key}' beside 'escape' is a second price for "
+                        f"the same cast"
+                    )
+        elif (
             not model.static_max_per_turn
             and not model.grants_flashback
             and not model.surveilled_this_turn
@@ -7339,7 +7370,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # as no limit at all.
         if model.static_max_per_turn:
             static["max_per_turn"] = int(model.static_max_per_turn)
-        elif model.surveilled_this_turn and not model.grants_flashback:
+        elif model.escape is not None or (
+            model.surveilled_this_turn and not model.grants_flashback
+        ):
             # Unmetered, and written as an explicit None so the reader cannot
             # mistake it for a grant that left the key out. The surveil clause
             # is the bound (see the refusal above).
@@ -7348,6 +7381,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             static["max_per_turn"] = 1
         if model.pay_life_instead:
             static["pay_life_instead"] = True
+        if model.escape is not None:
+            # Read by `casting.escape_price`: the line it offers and the price
+            # `Game._cast` charges.
+            static["escape"] = dict(model.escape)
         if model.grants_flashback:
             # Read by `Game._cast`, which stamps flashback's exile onto the
             # stack item: a permission that is not flashback exiles nothing.
@@ -7366,6 +7403,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if known:
                 raise DslError(f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}")
             static["arrived_this_turn_from"] = zones
+    if model.graveyard_arrival_this_turn is not None:
+        # Read where `surveilled_this_turn` is read, and refused elsewhere for
+        # its reason below.
+        if model.effect not in ("cast_from_graveyard", "play_lands_from_graveyard"):
+            raise DslError(
+                f"{where}: 'graveyard_arrival_this_turn' narrows a cast_from_graveyard "
+                f"or play_lands_from_graveyard permission; nothing reads it on "
+                f"{model.effect!r}"
+            )
+        validate_graveyard_arrival_ways(
+            model.graveyard_arrival_this_turn, f"{where}.graveyard_arrival_this_turn"
+        )
+        static["graveyard_arrival_this_turn"] = list(model.graveyard_arrival_this_turn)
     if model.surveilled_this_turn:
         # Read by the two graveyard permissions' per-object checks and by
         # nothing else, so anywhere else it would be a clause silently dropped.

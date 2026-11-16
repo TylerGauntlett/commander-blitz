@@ -2142,22 +2142,22 @@
     },
     "Admiral Beckett Brass": {
       "edhrec_rank": 5946,
-      "gate": "template",
+      "gate": null,
       "name": "Admiral Beckett Brass",
-      "reason": "no template for: Other Pirates you control get +1/+1",
+      "reason": "",
       "scryfall_id": "22d69040-2065-4975-88d3-60bd32731771",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Admiral Brass, Unsinkable": {
       "edhrec_rank": 7430,
-      "gate": "template",
+      "gate": null,
       "name": "Admiral Brass, Unsinkable",
-      "reason": "no template for: When Admiral Brass enters, mill four cards",
+      "reason": "",
       "scryfall_id": "4d6c2d5c-b3ce-4c38-9af2-7c61f322923b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Admiral's Order": {
@@ -13162,12 +13162,12 @@
     },
     "Arm-Mounted Anchor": {
       "edhrec_rank": 12227,
-      "gate": "template",
+      "gate": null,
       "name": "Arm-Mounted Anchor",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, draw two cards. Then discard t",
+      "reason": "",
       "scryfall_id": "15bcbfae-89cd-4fa4-978c-ad1332e81e18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armada Wurm": {
@@ -18652,12 +18652,12 @@
     },
     "Azure Fleet Admiral": {
       "edhrec_rank": 9922,
-      "gate": "template",
+      "gate": null,
       "name": "Azure Fleet Admiral",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "adb04bab-a10a-40da-813e-6afa68956efc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Azure Mage": {
@@ -28082,12 +28082,12 @@
     },
     "Blood Money": {
       "edhrec_rank": 1656,
-      "gate": "template",
+      "gate": null,
       "name": "Blood Money",
-      "reason": "no template for: Destroy all creatures. For each nontoken creature destroyed this way, you create a tapped ",
+      "reason": "",
       "scryfall_id": "65bd6ec3-7597-499b-8b69-fe7d50ece069",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blood Moon": {
@@ -33912,12 +33912,12 @@
     },
     "Breeches, Brazen Plunderer": {
       "edhrec_rank": 4521,
-      "gate": "template",
+      "gate": null,
       "name": "Breeches, Brazen Plunderer",
-      "reason": "no template for: Whenever one or more Pirates you control deal damage to your opponents, exile the top card",
+      "reason": "",
       "scryfall_id": "fb6dc94e-9b57-4161-a835-15e46c3bb13a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breeches, Eager Pillager": {
@@ -34932,12 +34932,12 @@
     },
     "Broadside Bombardiers": {
       "edhrec_rank": 5183,
-      "gate": "template",
+      "gate": null,
       "name": "Broadside Bombardiers",
-      "reason": "no template for: Boast — Sacrifice another creature or artifact: This creature deals damage equal to 2 plus",
+      "reason": "",
       "scryfall_id": "e74176a0-52bb-407e-9cce-f26bf1eceb41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Broken Ambitions": {
@@ -49582,12 +49582,12 @@
     },
     "Coercive Recruiter": {
       "edhrec_rank": 3550,
-      "gate": "template",
+      "gate": null,
       "name": "Coercive Recruiter",
-      "reason": "no template for: Whenever this creature or another Pirate you control enters, gain control of target creatu",
+      "reason": "",
       "scryfall_id": "16a1d084-34f1-4278-ae54-d0dac288b1da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coeurl": {
@@ -53912,12 +53912,12 @@
     },
     "Corsair Captain": {
       "edhrec_rank": 5091,
-      "gate": "template",
+      "gate": null,
       "name": "Corsair Captain",
-      "reason": "no template for: When this creature enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "d5017dbc-07fd-45ea-9629-7c584144e8be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corsairs of Umbar": {
@@ -60822,12 +60822,12 @@
     },
     "Daring Saboteur": {
       "edhrec_rank": 10832,
-      "gate": "template",
+      "gate": null,
       "name": "Daring Saboteur",
-      "reason": "no template for: {2}{U}: This creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "93a78e9a-33ff-44d2-91d7-1f190996ceb9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Daring Skyjek": {
@@ -66612,12 +66612,12 @@
     },
     "Departed Deckhand": {
       "edhrec_rank": 9220,
-      "gate": "template",
+      "gate": null,
       "name": "Departed Deckhand",
-      "reason": "no template for: When this creature becomes the target of a spell, sacrifice it",
+      "reason": "",
       "scryfall_id": "985cfee6-97b7-4f42-8bfe-5e1e44bb54d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dependable Quinjet": {
@@ -67262,12 +67262,12 @@
     },
     "Desolate Lighthouse": {
       "edhrec_rank": 2161,
-      "gate": "template",
+      "gate": null,
       "name": "Desolate Lighthouse",
-      "reason": "no template for: {1}{U}{R}, {T}: Draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "c155cc10-09f4-424b-b366-142adf9c1712",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Desolate Mire": {
@@ -69232,12 +69232,12 @@
     },
     "Dire Fleet Ravager": {
       "edhrec_rank": 6297,
-      "gate": "template",
+      "gate": null,
       "name": "Dire Fleet Ravager",
-      "reason": "no template for: When this creature enters, each player loses a third of their life, rounded up",
+      "reason": "",
       "scryfall_id": "0d114e88-c5bd-416d-b9f1-25be1432c98c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dire Fleet Warmonger": {
@@ -71752,12 +71752,12 @@
     },
     "Don Andres, the Renegade": {
       "edhrec_rank": 5475,
-      "gate": "template",
+      "gate": null,
       "name": "Don Andres, the Renegade",
-      "reason": "no template for: Each creature you control but don't own gets +2/+2, has menace and deathtouch, and is a Pi",
+      "reason": "",
       "scryfall_id": "3cf9f3ae-694d-4d37-9498-4bdd1723a55e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Don't Blink": {
@@ -84702,12 +84702,12 @@
     },
     "Enterprising Scallywag": {
       "edhrec_rank": 5224,
-      "gate": "template",
+      "gate": null,
       "name": "Enterprising Scallywag",
-      "reason": "no template for: At the beginning of your end step, if you descended this turn, create a Treasure token",
+      "reason": "",
       "scryfall_id": "44420f52-2ed8-4f81-93e4-5decc77bed01",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enthralling Hold": {
@@ -92042,12 +92042,12 @@
     },
     "Fathom Fleet Captain": {
       "edhrec_rank": 9414,
-      "gate": "template",
+      "gate": null,
       "name": "Fathom Fleet Captain",
-      "reason": "no template for: Whenever this creature attacks, if you control another nontoken Pirate, you may pay {2}. I",
+      "reason": "",
       "scryfall_id": "7374d12c-6a0a-457a-b7b8-5aaf3c11e009",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fathom Fleet Cutthroat": {
@@ -101582,12 +101582,12 @@
     },
     "Francisco, Fowl Marauder": {
       "edhrec_rank": 6731,
-      "gate": "template",
+      "gate": null,
       "name": "Francisco, Fowl Marauder",
-      "reason": "no template for: Francisco can't block",
+      "reason": "",
       "scryfall_id": "5182b527-739e-4523-8611-01244ced26ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frankenstein's Monster": {
@@ -106362,12 +106362,12 @@
     },
     "Gemcutter Buccaneer": {
       "edhrec_rank": 5560,
-      "gate": "template",
+      "gate": null,
       "name": "Gemcutter Buccaneer",
-      "reason": "no template for: Treasures you control are Equipment in addition to their other types and have \"Equipped cr",
+      "reason": "",
       "scryfall_id": "90a9cab7-fc1a-4311-ae6a-5fd53208c0e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gemhide Sliver": {
@@ -107872,12 +107872,12 @@
     },
     "Ghost of Ramirez DePietro": {
       "edhrec_rank": 9699,
-      "gate": "template",
+      "gate": null,
       "name": "Ghost of Ramirez DePietro",
-      "reason": "no template for: can't be blocked by creatures with toughness 3 or greater",
+      "reason": "",
       "scryfall_id": "15e649e1-dcb3-41d9-8055-cf3c98e25b1e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghost, Spectral Saboteur": {
@@ -133242,12 +133242,12 @@
     },
     "Icon of Ancestry": {
       "edhrec_rank": 2348,
-      "gate": "template",
+      "gate": null,
       "name": "Icon of Ancestry",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "f6cdbdf3-f8bd-48a9-8a47-6b0b9d5de0db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iconic Shield": {
@@ -149172,12 +149172,12 @@
     },
     "King Narfi's Betrayal": {
       "edhrec_rank": 8768,
-      "gate": "template",
+      "gate": null,
       "name": "King Narfi's Betrayal",
-      "reason": "no template for: I — Each player mills four cards. Then you may exile a creature or planeswalker card from ",
+      "reason": "",
       "scryfall_id": "4c4edeef-7582-4027-8087-e643601d5161",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "King Solomon's Frogs": {
@@ -156162,12 +156162,12 @@
     },
     "Legate Lanius, Caesar's Ace": {
       "edhrec_rank": 10854,
-      "gate": "template",
+      "gate": null,
       "name": "Legate Lanius, Caesar's Ace",
-      "reason": "no template for: Decimate — When Legate Lanius enters, each opponent sacrifices a tenth of the creatures th",
+      "reason": "",
       "scryfall_id": "b522f45b-060b-4a77-9910-3c40e3b2de78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legerdemain": {
@@ -165842,12 +165842,12 @@
     },
     "Malcolm, Keen-Eyed Navigator": {
       "edhrec_rank": 3043,
-      "gate": "template",
+      "gate": null,
       "name": "Malcolm, Keen-Eyed Navigator",
-      "reason": "no template for: Whenever one or more Pirates you control deal damage to your opponents, you create a Treas",
+      "reason": "",
       "scryfall_id": "51187cdb-85ee-4f68-9e29-d84d296f0825",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malcolm, the Eyes": {
@@ -171252,12 +171252,12 @@
     },
     "Merchant Raiders": {
       "edhrec_rank": 6899,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant Raiders",
-      "reason": "no template for: Whenever this creature or another Pirate you control enters, tap up to one target creature",
+      "reason": "",
       "scryfall_id": "f6236b1e-2e3e-4088-87e0-9cdf1fc8db66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant Scroll": {
@@ -185152,12 +185152,12 @@
     },
     "Nephalia Drownyard": {
       "edhrec_rank": 3256,
-      "gate": "template",
+      "gate": null,
       "name": "Nephalia Drownyard",
-      "reason": "no template for: {1}{U}{B}, {T}: Target player mills three cards",
+      "reason": "",
       "scryfall_id": "fe2e25b7-f950-482b-9e35-266b1278a71a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nephalia Moondrakes": {
@@ -205142,12 +205142,12 @@
     },
     "Port Razer": {
       "edhrec_rank": 1908,
-      "gate": "template",
+      "gate": null,
       "name": "Port Razer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, untap each creature you control. A",
+      "reason": "",
       "scryfall_id": "25c13a34-9be3-4ff4-996d-f61c6db2e990",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Port Town": {
@@ -215952,12 +215952,12 @@
     },
     "Raul, Trouble Shooter": {
       "edhrec_rank": 5441,
-      "gate": "template",
+      "gate": null,
       "name": "Raul, Trouble Shooter",
-      "reason": "no template for: Once during each of your turns, you may cast a spell from among cards in your graveyard th",
+      "reason": "",
       "scryfall_id": "3b73a314-b197-4954-a242-7d9096a406c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravaged Highlands": {
@@ -248692,12 +248692,12 @@
     },
     "Siren Stormtamer": {
       "edhrec_rank": 1165,
-      "gate": "template",
+      "gate": null,
       "name": "Siren Stormtamer",
-      "reason": "no template for: {U}, Sacrifice this creature: Counter target spell or ability that targets you or a creatu",
+      "reason": "",
       "scryfall_id": "909a4eeb-2b5b-4b79-be32-26810ea7bc5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siren of the Fanged Coast": {
@@ -249202,12 +249202,12 @@
     },
     "Skeleton Crew": {
       "edhrec_rank": 5662,
-      "gate": "template",
+      "gate": null,
       "name": "Skeleton Crew",
-      "reason": "no template for: Each other creature you control that's a Skeleton or Pirate gets +1/+1",
+      "reason": "",
       "scryfall_id": "dd9f52d6-da6d-4f68-aafb-6bd3d022f616",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skeleton Key": {
@@ -257712,12 +257712,12 @@
     },
     "Spectral Sailor": {
       "edhrec_rank": 1930,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Sailor",
-      "reason": "no template for: {3}{U}: Draw a card",
+      "reason": "",
       "scryfall_id": "5ef30b6c-0806-4bf6-9a84-c2aea8d84cf1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Searchlight": {
@@ -265812,12 +265812,12 @@
     },
     "Storm Fleet Negotiator": {
       "edhrec_rank": 8996,
-      "gate": "template",
+      "gate": null,
       "name": "Storm Fleet Negotiator",
-      "reason": "no template for: Parley — Whenever this creature attacks, each player reveals the top card of their library",
+      "reason": "",
       "scryfall_id": "2ce69f1b-c4a5-4e44-9dfc-4fb65c22e3c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm Fleet Pyromancer": {
@@ -281082,12 +281082,12 @@
     },
     "The Grim Captain's Locker": {
       "edhrec_rank": 9558,
-      "gate": "template",
+      "gate": null,
       "name": "The Grim Captain's Locker",
-      "reason": "no template for: {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "20feab19-d4b3-45f4-a7b9-fdfbedc83c72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Haunt of Hightower": {
@@ -281202,12 +281202,12 @@
     },
     "The Indomitable": {
       "edhrec_rank": 2326,
-      "gate": "template",
+      "gate": null,
       "name": "The Indomitable",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "736cabaf-1387-4035-8751-3976eb835c8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Infamous Cruelclaw": {
@@ -281522,12 +281522,12 @@
     },
     "The Master of Keys": {
       "edhrec_rank": 4992,
-      "gate": "template",
+      "gate": null,
       "name": "The Master of Keys",
-      "reason": "no template for: When enters, put X +1/+1 counters on it and mill twice X cards",
+      "reason": "",
       "scryfall_id": "3545341b-dacc-4ac8-976e-39754a62bbc3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Master of Lake-town": {
@@ -287662,12 +287662,12 @@
     },
     "Timestream Navigator": {
       "edhrec_rank": 5107,
-      "gate": "template",
+      "gate": null,
       "name": "Timestream Navigator",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "086afafe-6b6c-4a54-8ce7-0040295d309c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timetwister": {
@@ -297402,12 +297402,12 @@
     },
     "Underworld Breach": {
       "edhrec_rank": 388,
-      "gate": "template",
+      "gate": null,
       "name": "Underworld Breach",
-      "reason": "no template for: Each nonland card in your graveyard has escape. The escape cost is equal to the card's man",
+      "reason": "",
       "scryfall_id": "49c8b2ed-95bf-4a85-a0d7-6d7c01fc086d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Underworld Cerberus": {
@@ -310902,12 +310902,12 @@
     },
     "Warkite Marauder": {
       "edhrec_rank": 6345,
-      "gate": "template",
+      "gate": null,
       "name": "Warkite Marauder",
-      "reason": "no template for: Whenever this creature attacks, target creature defending player controls loses all abilit",
+      "reason": "",
       "scryfall_id": "be9c4e92-7a20-4070-96b2-57f310d27c12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Warleader's Call": {
@@ -321972,12 +321972,12 @@
     },
     "Zara, Renegade Recruiter": {
       "edhrec_rank": 4732,
-      "gate": "template",
+      "gate": null,
       "name": "Zara, Renegade Recruiter",
-      "reason": "no template for: Whenever Zara attacks, look at defending player's hand. You may put a creature card from i",
+      "reason": "",
       "scryfall_id": "d8bd1312-2c3a-4591-943c-c1550b506fa4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zarda, the Power Princess": {

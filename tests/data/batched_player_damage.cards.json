@@ -1,0 +1,212 @@
+{
+  "_comment": "Cards that exist only for the batched player-damage trigger test (tests/unit/triggers/test_batched_player_damage.py). Never part of a deck list. `t_bpd_tally` is Breeches/Malcolm's trigger, 'whenever one or more Pirates you control deal damage to your opponents', counting the damaged opponents as charge counters and draining each of them; `t_bpd_greedy_tally` is the same trigger WITHOUT `batched`, the counterfactual that fires per hit.",
+  "cards": [
+    {
+      "id": "t_bpd_tally",
+      "name": "Test Plunder Tally",
+      "oracle_text": "Whenever one or more Pirates you control deal damage to your opponents, put a charge counter on this enchantment for each opponent dealt damage. Each of those opponents loses 1 life.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Pirates you control deal damage to your opponents, put a charge counter on this enchantment for each opponent dealt damage. Each of those opponents loses 1 life.",
+          "trigger": {
+            "event": "deals_damage_to_player",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            },
+            "defending": "opponent",
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {
+                "player_count": {
+                  "binding": "damaged_players"
+                }
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": {
+                "binding": "damaged_players"
+              },
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bpd_greedy_tally",
+      "name": "Test Greedy Plunder Tally",
+      "oracle_text": "Whenever a Pirate you control deals damage to an opponent, put a charge counter on this enchantment. That player loses 1 life.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Pirate you control deals damage to an opponent, put a charge counter on this enchantment. That player loses 1 life.",
+          "trigger": {
+            "event": "deals_damage_to_player",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Pirate"
+              ]
+            },
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              },
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bpd_pirate",
+      "name": "Test Deckhand Pirate",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_bpd_pinger",
+      "name": "Test Powder Pirate",
+      "oracle_text": "{T}: Test Powder Pirate deals 1 damage to each opponent.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin",
+        "Pirate"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Test Powder Pirate deals 1 damage to each opponent.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bpd_self_pinger",
+      "name": "Test Self-Scorching Pirate",
+      "oracle_text": "{T}: Test Self-Scorching Pirate deals 1 damage to you.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pirate"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Test Self-Scorching Pirate deals 1 damage to you.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

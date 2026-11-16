@@ -188,6 +188,13 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             f"{where}.cost: give 'exile_self' or 'exile_self_from_hand', not both -- "
             f"they are the same card leaving two different zones"
         )
+    if model.tuck_self and (model.exile_self or model.exile_self_from_hand or model.discard_self):
+        # One source, one destination: whichever move ran second would find the
+        # card gone and the other half of the cost would be dead text.
+        raise DslError(
+            f"{where}.cost: 'tuck_self' moves the source to its owner's library, "
+            f"so it cannot also exile or discard it"
+        )
     if model.exile_self_from_hand and model.discard_self:
         # The same card cannot go to two destinations, and which one it reached
         # is the whole difference between cycling and a pitch.

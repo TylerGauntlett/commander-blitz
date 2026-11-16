@@ -121,6 +121,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "admiral_beckett_brass": {
+    "zone": "battlefield"
+  },
+  "admiral_brass_unsinkable": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "battlefield"
+  },
   "adrix_and_nev_twincasters": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1162,6 +1175,13 @@
     },
     "zone": "battlefield"
   },
+  "arm_mounted_anchor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "armageddon": {
     "battlefield_count": 2,
     "graveyard_size": {
@@ -1545,6 +1565,10 @@
     "zone": "battlefield"
   },
   "azure_drake": {
+    "zone": "battlefield"
+  },
+  "azure_fleet_admiral": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "back_in_town": {
@@ -2210,6 +2234,15 @@
   "blood_glutton": {
     "zone": "battlefield"
   },
+  "blood_money": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 4,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "blood_pact": {
     "hand_size": {
       "0": 3
@@ -2677,6 +2710,9 @@
     },
     "zone": "battlefield"
   },
+  "breeches_brazen_plunderer": {
+    "zone": "battlefield"
+  },
   "breeches_eager_pillager": {
     "zone": "battlefield"
   },
@@ -2721,6 +2757,10 @@
       "0": 40,
       "1": 39
     },
+    "zone": "battlefield"
+  },
+  "broadside_bombardiers": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "broken_wings": {
@@ -3808,6 +3848,15 @@
     },
     "zone": "battlefield"
   },
+  "coercive_recruiter": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "coiled_tinviper": {
     "zone": "battlefield"
   },
@@ -4158,6 +4207,14 @@
     "hand_size": {
       "0": 3
     }
+  },
+  "corsair_captain": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
   },
   "cosmic_crucible": {
     "battlefield_count": 33,
@@ -4665,6 +4722,10 @@
     },
     "zone": "battlefield"
   },
+  "daring_saboteur": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "daring_thunder_thief": {
     "zone": "battlefield"
   },
@@ -5091,6 +5152,10 @@
     },
     "zone": "graveyard"
   },
+  "departed_deckhand": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deploy_the_gatewatch": {
     "battlefield_count": 32,
     "hand_size": {
@@ -5155,6 +5220,10 @@
     "zone": "battlefield"
   },
   "deserted_beach": {
+    "zone": "battlefield"
+  },
+  "desolate_lighthouse": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "desolate_mire": {
@@ -5286,6 +5355,13 @@
   },
   "dire_fleet_daredevil": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dire_fleet_ravager": {
+    "life": {
+      "0": 26,
+      "1": 26
+    },
     "zone": "battlefield"
   },
   "director_nick_fury": {
@@ -5440,6 +5516,17 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "don_andres_the_renegade": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 0,
+      "keywords": [
+        "menace",
+        "deathtouch"
+      ]
     },
     "zone": "battlefield"
   },
@@ -6328,6 +6415,10 @@
   "enraged_revolutionary": {
     "zone": "battlefield"
   },
+  "enterprising_scallywag": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "enthusiastic_mechanaut": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6994,6 +7085,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "fathom_fleet_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "fathom_mage": {
     "battlefield_count": 33,
@@ -7729,6 +7824,9 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "francisco_fowl_marauder": {
+    "zone": "battlefield"
+  },
   "franklin_richards_ascendant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8032,6 +8130,14 @@
   "geist_of_the_moors": {
     "zone": "battlefield"
   },
+  "gemcutter_buccaneer": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "gempalm_polluter": {
     "battlefield_count": 33,
     "hand_size": {
@@ -8134,6 +8240,9 @@
     "zone": "battlefield"
   },
   "ghitu_encampment": {
+    "zone": "battlefield"
+  },
+  "ghost_of_ramirez_depietro": {
     "zone": "battlefield"
   },
   "ghost_quarter": {
@@ -9986,6 +10095,10 @@
     },
     "zone": "battlefield"
   },
+  "icon_of_ancestry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "idol_of_oblivion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11205,6 +11318,16 @@
   "king_cheetah": {
     "zone": "battlefield"
   },
+  "king_narfi_s_betrayal": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "library_size": {
+      "0": 36
+    },
+    "zone": "battlefield"
+  },
   "king_solomon_s_frogs": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11654,6 +11777,14 @@
   },
   "leechridden_swamp": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "legate_lanius_caesar_s_ace": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "legion_loyalty": {
@@ -12431,6 +12562,9 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "malcolm_keen_eyed_navigator": {
+    "zone": "battlefield"
+  },
   "mammoth_spider": {
     "zone": "battlefield"
   },
@@ -12895,6 +13029,10 @@
       "kind": "+1/+1"
     },
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "merchant_raiders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "merchant_scroll": {
@@ -13885,6 +14023,10 @@
     "zone": "battlefield"
   },
   "nema_siltlurker": {
+    "zone": "battlefield"
+  },
+  "nephalia_drownyard": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "nephalia_seakite": {
@@ -15355,6 +15497,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "port_razer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "port_town": {
     "zone": "battlefield"
   },
@@ -16185,6 +16331,9 @@
     "zone": "battlefield"
   },
   "raugrin_triome": {
+    "zone": "battlefield"
+  },
+  "raul_trouble_shooter": {
     "zone": "battlefield"
   },
   "ravenous_chupacabra": {
@@ -18595,6 +18744,10 @@
     },
     "zone": "battlefield"
   },
+  "siren_stormtamer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sisay_s_ring": {
     "zone": "battlefield"
   },
@@ -18619,6 +18772,10 @@
     "zone": "battlefield"
   },
   "skeletal_snake": {
+    "zone": "battlefield"
+  },
+  "skeleton_crew": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "skinrender": {
@@ -19146,6 +19303,13 @@
   "spectral_rider": {
     "zone": "battlefield"
   },
+  "spectral_sailor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "speed_young_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19609,6 +19773,10 @@
     "zone": "battlefield"
   },
   "storm_crow": {
+    "zone": "battlefield"
+  },
+  "storm_fleet_negotiator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "storm_kiln_artist": {
@@ -20907,6 +21075,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_grim_captain_s_locker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_indomitable": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_irencrag": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20919,6 +21098,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "the_master_of_keys": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_mending_of_dominaria": {
@@ -21480,6 +21663,10 @@
     "hand_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "timestream_navigator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "timothar_baron_of_bats": {
@@ -22258,6 +22445,10 @@
     "zone": "battlefield"
   },
   "undersea_invader": {
+    "zone": "battlefield"
+  },
+  "underworld_breach": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "underworld_dreams": {
@@ -23316,6 +23507,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "warkite_marauder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "warlord_s_axe": {
     "zone": "battlefield"
   },
@@ -24237,6 +24432,10 @@
     "zone": "battlefield"
   },
   "zagoth_triome": {
+    "zone": "battlefield"
+  },
+  "zara_renegade_recruiter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zarda_the_power_princess": {

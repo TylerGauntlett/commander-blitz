@@ -46,6 +46,7 @@ PRECONS = {
     "fic_revival_trance_final_fantasy_vi",
     "fic_scions_spellcraft_final_fantasy_xiv",
     "frc_multiverse_reforged",
+    "lcc_ahoy_mateys",
     "lcc_blood_rites",
     "lcc_veloci_ramp_tor",
     "mkc_deep_clue_sea",

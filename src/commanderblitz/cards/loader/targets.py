@@ -10,7 +10,7 @@ from commanderblitz.engine.carddef import (
     Ability,
     TargetSpec,
 )
-from commanderblitz.engine.effects.selectors import validate_selector
+from commanderblitz.engine.effects.selectors import validate_selector, validate_that_targets
 from commanderblitz.engine.effects.values import (
     validate_value,
 )
@@ -698,37 +698,53 @@ def _compile_target(
         # An ability on the stack has no face (113.7a): `_ability_matches`
         # answers `controller` and `ability_kind` and nothing else, so any
         # other clause would load and narrow nothing.
-        extra = set(model.selector) - {"controller", "ability_kind"}
+        extra = set(model.selector) - {"controller", "ability_kind", "that_targets"}
         if extra:
             raise DslError(
-                f"{label}: an 'ability_on_stack' target reads only 'controller' "
-                f"and 'ability_kind', not {sorted(extra)}"
+                f"{label}: an 'ability_on_stack' target reads only 'controller', "
+                f"'ability_kind' and 'that_targets', not {sorted(extra)}"
             )
+        if "that_targets" in model.selector:
+            validate_that_targets(model.selector["that_targets"], label)
         kind = model.selector.get("ability_kind")
         if kind is not None and kind not in ("triggered", "activated"):
             raise DslError(
                 f"{label}.ability_kind: 'triggered' or 'activated', got {kind!r}"
             )
         validate_selector(
-            {k: v for k, v in model.selector.items() if k != "ability_kind"}, label
+            {
+                k: v
+                for k, v in model.selector.items()
+                if k not in ("ability_kind", "that_targets")
+            },
+            label,
         )
     elif model.kind == "spell_or_ability":
         # Two pools with one selector: a spell answers through `matches`, an
         # ability through `_ability_matches`, which reads `controller` as
         # "you" or "opponent" and nothing else. Any other clause would narrow
         # the spell half alone, or be read as the ability's source's face.
-        extra = set(model.selector) - {"controller"}
+        extra = set(model.selector) - {"controller", "that_targets"}
         if extra:
             raise DslError(
-                f"{label}: a 'spell_or_ability' target reads only 'controller', "
-                f"not {sorted(extra)}"
+                f"{label}: a 'spell_or_ability' target reads only 'controller' "
+                f"and 'that_targets', not {sorted(extra)}"
             )
+        if "that_targets" in model.selector:
+            validate_that_targets(model.selector["that_targets"], label)
         who = model.selector.get("controller")
         if who is not None and who not in ("you", "opponent"):
             raise DslError(
                 f"{label}.controller: a 'spell_or_ability' target takes "
                 f"'you' or 'opponent', got {who!r}"
             )
+    elif model.kind == "spell" and "that_targets" in model.selector:
+        # Read off the stack item by `targeting._spell_matches`, beside the
+        # printed-characteristics clauses `matches` reads.
+        validate_that_targets(model.selector["that_targets"], label)
+        validate_selector(
+            {k: v for k, v in model.selector.items() if k != "that_targets"}, label
+        )
     else:
         validate_selector(model.selector, label)
     controller_clause = model.selector.get("controller")
