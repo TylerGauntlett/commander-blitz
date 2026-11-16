@@ -271432,12 +271432,12 @@
     },
     "Svyelun of Sea and Sky": {
       "edhrec_rank": 3815,
-      "gate": "template",
+      "gate": null,
       "name": "Svyelun of Sea and Sky",
-      "reason": "no template for: Svyelun has indestructible as long as you control at least two other Merfolk",
+      "reason": "",
       "scryfall_id": "01f5ab00-5305-4ac4-915d-feeb591f9389",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Svyelunite Priest": {
@@ -279612,12 +279612,12 @@
     },
     "Thassa, God of the Sea": {
       "edhrec_rank": 1966,
-      "gate": "template",
+      "gate": null,
       "name": "Thassa, God of the Sea",
-      "reason": "no template for: As long as your devotion to blue is less than five, Thassa isn't a creature",
+      "reason": "",
       "scryfall_id": "9f9db424-e668-48b4-b275-7b35be4e1bf8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "That Which Was Taken": {
@@ -287972,12 +287972,12 @@
     },
     "Tishana, Voice of Thunder": {
       "edhrec_rank": 5422,
-      "gate": "template",
+      "gate": null,
       "name": "Tishana, Voice of Thunder",
-      "reason": "no template for: Tishana's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "e522b695-859e-4fba-bf8c-c415fbce13e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan Forge": {
@@ -292662,12 +292662,12 @@
     },
     "Tributary Instructor": {
       "edhrec_rank": 8204,
-      "gate": "template",
+      "gate": null,
       "name": "Tributary Instructor",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "af57728e-6f64-4df1-bdf8-55137b8d129e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tributary Vaulter": {
@@ -312122,12 +312122,12 @@
     },
     "Wave Goodbye": {
       "edhrec_rank": 1523,
-      "gate": "template",
+      "gate": null,
       "name": "Wave Goodbye",
-      "reason": "no template for: Return each creature without a +1/+1 counter on it to its owner's hand",
+      "reason": "",
       "scryfall_id": "8fb141d9-addd-47ad-bfc1-b5b376d4c950",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wave of Indifference": {

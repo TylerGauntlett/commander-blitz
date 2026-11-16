@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **344** capabilities.
+**396 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -297,6 +297,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
+| [replace-explore](#replace-explore) | 1 | 6151 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
@@ -4890,6 +4891,20 @@ Blocks **1** card.
 - **Gisa, Glorious Resurrector** (rank 2740) — `gisa_glorious_resurrector`
   - If a creature an opponent controls would die, exile it instead.
   - At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed.
+
+</details>
+
+## replace-explore
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement effect, scoped by an `affects` filter (creatures you control), that replaces each explore event (701.44) performed by a matching creature with that creature exploring twice in sequence -- read wherever explore happens (the explore op, Map tokens, other cards' triggers), with an explore_multiplier-style magnitude
+  <br>Why the existing vocabulary won't do: static_effects has replace_draw, replace_mill, replace_surveil, replace_proliferate, replace_counters and replace_token_creation, but nothing replaces an explore; the `explore` op only takes `objects`, and no `explores` trigger_event exists to fake it (a trigger would also not be a replacement and would recurse)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Topography Tracker** (rank 6151) — `topography_tracker`
+  - If a creature you control would explore, instead it explores, then it explores again.
 
 </details>
 

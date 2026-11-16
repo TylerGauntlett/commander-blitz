@@ -20355,6 +20355,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "svyelun_of_sea_and_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "swab_goblin": {
     "zone": "battlefield"
   },
@@ -21118,6 +21122,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thassa_god_of_the_sea": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thassa_s_oracle": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21828,6 +21836,16 @@
     },
     "zone": "battlefield"
   },
+  "tishana_voice_of_thunder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
   "titan_forge": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22189,6 +22207,13 @@
   },
   "tri_sentinel_act_of_vengeance": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tributary_instructor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "triplicate_titan": {
@@ -23719,6 +23744,14 @@
   },
   "watery_grave": {
     "zone": "battlefield"
+  },
+  "wave_goodbye": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "wave_of_reckoning": {
     "zone": "graveyard"

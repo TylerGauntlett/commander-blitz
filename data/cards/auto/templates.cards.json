@@ -244158,6 +244158,92 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Merfolk"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Svyelun has indestructible as long as you control at least two other Merfolk."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Svyelun attacks, draw a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Other Merfolk you control have ward {1}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "svyelun_of_sea_and_sky",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Svyelun of Sea and Sky",
+      "oracle_text": "Svyelun has indestructible as long as you control at least two other Merfolk.\nWhenever Svyelun attacks, draw a card.\nOther Merfolk you control have ward {1}. (Whenever another Merfolk you control becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -254460,6 +254546,107 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you"
+                },
+                "of": "U"
+              }
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to blue is less than five, Thassa isn't a creature. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, scry 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "{1}{U}: Target creature you control can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thassa_god_of_the_sea",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Thassa, God of the Sea",
+      "oracle_text": "Indestructible\nAs long as your devotion to blue is less than five, Thassa isn't a creature. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)\nAt the beginning of your upkeep, scry 1.\n{1}{U}: Target creature you control can't be blocked this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -263356,6 +263543,84 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          },
+          "text": "Tishana's power and toughness are each equal to the number of cards in your hand.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          }
+        },
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Tishana enters, draw a card for each creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "tishana_voice_of_thunder",
+      "mana_cost": "{5}{G}{U}",
+      "name": "Tishana, Voice of Thunder",
+      "oracle_text": "Tishana's power and toughness are each equal to the number of cards in your hand.\nYou have no maximum hand size.\nWhen Tishana enters, draw a card for each creature you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{3}",
             "tap": true
@@ -267320,6 +267585,100 @@
       "toughness": 7,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Mentor",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tributary_instructor",
+      "mana_cost": "{3}{G}",
+      "name": "Tributary Instructor",
+      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -285135,6 +285494,49 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wave_goodbye",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Wave Goodbye",
+      "oracle_text": "Return each creature without a +1/+1 counter on it to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "has_counters": "+1/+1",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "countered",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
