@@ -1,0 +1,16 @@
+{
+  "card_id": "deeproot_historian",
+  "name": "Deeproot Historian",
+  "oracle_text": "Merfolk and Druid cards in your graveyard have retrace. (You may cast cards with retrace from your graveyard by discarding a land card in addition to paying their other costs.)",
+  "blocked_sentences": [
+    "Merfolk and Druid cards in your graveyard have retrace"
+  ],
+  "needs": [{
+    "capability": "retrace",
+    "kind": "static_effect",
+    "what": "a static ability on a permanent that grants retrace to other cards in its controller's graveyard matching a filter (here subtypes Merfolk or Druid, any card type): those cards may be cast from the graveyard by paying their printed cost plus discarding a land card as an additional cost",
+    "why_existing_wont_do": "retrace exists only as a card-level field on the card being cast (CardDef.retrace / retrace_cost), so it cannot be conferred on other cards. The static cast_from_graveyard frees cards at their printed price with no additional land discard, and grant_graveyard_cast (op and its grants_flashback/escape options) offers flashback or escape but no retrace mode; neither filters the granted cards by subtype in a static"
+  }],
+  "closest_existing": ["retrace", "cast_from_graveyard", "grant_graveyard_cast", "graveyard_additional_cost"],
+  "confidence": "high"
+}

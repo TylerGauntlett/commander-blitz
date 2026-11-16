@@ -1967,6 +1967,13 @@
   "benthic_behemoth": {
     "zone": "battlefield"
   },
+  "benthic_biomancer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "benthic_giant": {
     "zone": "battlefield"
   },
@@ -2926,6 +2933,15 @@
   },
   "bygone_bishop": {
     "zone": "battlefield"
+  },
+  "bygone_marvels": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "exile"
   },
   "cabal_coffers": {
     "zone": "battlefield"
@@ -4003,6 +4019,15 @@
   "commercial_district": {
     "zone": "battlefield"
   },
+  "commit_memory": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "communal_brewing": {
     "counters": {
       "amount": 2,
@@ -4178,6 +4203,13 @@
     "zone": "battlefield"
   },
   "coral_merfolk": {
+    "zone": "battlefield"
+  },
+  "coralhelm_commander": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "cordial_vampire": {
@@ -5059,6 +5091,10 @@
     "zone": "battlefield"
   },
   "deepglow_skate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "deeproot_elite": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -23943,6 +23943,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more +1/+1 counters are put on this creature, draw a card, then discard a card.",
+          "trigger": {
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "benthic_biomancer",
+      "mana_cost": "{U}",
+      "name": "Benthic Biomancer",
+      "oracle_text": "{1}{U}: Adapt 1. (If this creature has no +1/+1 counters on it, put a +1/+1 counter on it.)\nWhenever one or more +1/+1 counters are put on this creature, draw a card, then discard a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard",
+        "Mutant"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -35619,6 +35707,92 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Descend 8 — When you cast this spell, if there are eight or more permanent cards in your graveyard, copy this spell twice. You may choose new targets for the copies.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "any_types": [
+                    "Artifact",
+                    "Creature",
+                    "Enchantment",
+                    "Land",
+                    "Planeswalker",
+                    "Battle"
+                  ],
+                  "controller": "you",
+                  "zone": "graveyard"
+                }
+              },
+              "right": {
+                "const": 8
+              }
+            },
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "exiles_itself": true,
+      "id": "bygone_marvels",
+      "mana_cost": "{G}{G}",
+      "name": "Bygone Marvels",
+      "oracle_text": "Descend 8 — When you cast this spell, if there are eight or more permanent cards in your graveyard, copy this spell twice. You may choose new targets for the copies.\nReturn target permanent card from your graveyard to your hand. Exile Bygone Marvels.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -48896,6 +49070,93 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "commit_memory",
+      "mana_cost": "{3}{U}",
+      "name": "Commit // Memory",
+      "oracle_text": "Put target spell or nonland permanent into its owner's library second from the top.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their hand and graveyard into their library, then draws seven cards.",
+      "second_face": "commit_memory_memory",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "from_top": {
+            "const": 2
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell_or_permanent",
+          "selector": {
+            "controller": "any",
+            "not_types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "commit_memory_memory",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Memory",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their hand and graveyard into their library, then draws seven cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "player": "each_player",
+            "zone": "hand"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "objects": {
+            "count": "all",
+            "player": "each_player",
+            "zone": "graveyard"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": "each_player"
+        },
+        {
+          "amount": {
+            "const": 7
+          },
+          "op": "draw",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -51109,6 +51370,179 @@
         "Merfolk"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "level",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Level up {1}"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "all": [
+              {
+                "counters": {
+                  "amount": 2,
+                  "counter": "level",
+                  "op": ">="
+                }
+              },
+              {
+                "counters": {
+                  "amount": 3,
+                  "counter": "level",
+                  "op": "<="
+                }
+              }
+            ]
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "LEVEL 2-3 -- 3/3",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "all": [
+              {
+                "counters": {
+                  "amount": 2,
+                  "counter": "level",
+                  "op": ">="
+                }
+              },
+              {
+                "counters": {
+                  "amount": 3,
+                  "counter": "level",
+                  "op": "<="
+                }
+              }
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "LEVEL 2-3 -- Flying"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "counters": {
+              "amount": 4,
+              "counter": "level",
+              "op": ">="
+            }
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "LEVEL 4+ -- 4/4",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "counters": {
+              "amount": 4,
+              "counter": "level",
+              "op": ">="
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "LEVEL 4+ -- Flying"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Merfolk"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "counters": {
+              "amount": 4,
+              "counter": "level",
+              "op": ">="
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "LEVEL 4+ -- Other Merfolk creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "coralhelm_commander",
+      "mana_cost": "{U}{U}",
+      "name": "Coralhelm Commander",
+      "oracle_text": "Level up {1} ({1}: Put a level counter on this. Level up only as a sorcery.)\nLEVEL 2-3\n3/3\nFlying\nLEVEL 4+\n4/4\nFlying\nOther Merfolk creatures you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -60943,6 +61377,70 @@
         "Fish"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Merfolk"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever another Merfolk you control enters, put a +1/+1 counter on target Merfolk you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "deeproot_elite",
+      "mana_cost": "{1}{G}",
+      "name": "Deeproot Elite",
+      "oracle_text": "Whenever another Merfolk you control enters, put a +1/+1 counter on target Merfolk you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Warrior"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

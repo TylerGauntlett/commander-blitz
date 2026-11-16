@@ -23932,12 +23932,12 @@
     },
     "Benthic Biomancer": {
       "edhrec_rank": 5214,
-      "gate": "template",
+      "gate": null,
       "name": "Benthic Biomancer",
-      "reason": "no template for: {1}{U}: Adapt 1",
+      "reason": "",
       "scryfall_id": "b83dd3a5-d9cc-470d-a9d0-bf9d270e9eb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benthic Criminologists": {
@@ -37142,12 +37142,12 @@
     },
     "Bygone Marvels": {
       "edhrec_rank": 9238,
-      "gate": "template",
+      "gate": null,
       "name": "Bygone Marvels",
-      "reason": "no template for: Descend 8 — When you cast this spell, if there are eight or more permanent cards in your g",
+      "reason": "",
       "scryfall_id": "23f083f9-d6cd-4076-b926-e29d083bcb8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Byrke, Long Ear of the Law": {
@@ -50872,12 +50872,12 @@
     },
     "Commit // Memory": {
       "edhrec_rank": 3246,
-      "gate": "template",
+      "gate": null,
       "name": "Commit // Memory",
-      "reason": "no template for: Put target spell or nonland permanent into its owner's library second from the top",
+      "reason": "",
       "scryfall_id": "855af9a8-31fc-4290-8204-04ee026f8853",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commodore Guff": {
@@ -53352,12 +53352,12 @@
     },
     "Coralhelm Commander": {
       "edhrec_rank": 10950,
-      "gate": "template",
+      "gate": null,
       "name": "Coralhelm Commander",
-      "reason": "no template for: Level up {1}",
+      "reason": "",
       "scryfall_id": "46246d37-dfce-4977-854e-ee79d47cea05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coralhelm Guide": {
@@ -64852,12 +64852,12 @@
     },
     "Deeproot Elite": {
       "edhrec_rank": 5808,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Elite",
-      "reason": "no template for: Whenever another Merfolk you control enters, put a +1/+1 counter on target Merfolk you con",
+      "reason": "",
       "scryfall_id": "991e24e5-8b37-4034-9be7-2fab5983ee7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Historian": {

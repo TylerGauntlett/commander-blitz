@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**388 cards** blocked by **339** capabilities.
+**389 cards** blocked by **339** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -54,6 +54,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
+| [retrace](#retrace) | 2 | 5451 | engine, static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
@@ -292,7 +293,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
-| [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
@@ -1350,6 +1350,24 @@ Blocks **2** cards.
   - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
 - **Hourglass of the Lost** (rank 5928) — `hourglass_of_the_lost`
   - {T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.
+
+</details>
+
+## retrace
+
+Blocks **2** cards.
+
+- **(static_effect)** a static ability on a permanent that grants retrace to other cards in its controller's graveyard matching a filter (here subtypes Merfolk or Druid, any card type): those cards may be cast from the graveyard by paying their printed cost plus discarding a land card as an additional cost
+  <br>Why the existing vocabulary won't do: retrace exists only as a card-level field on the card being cast (CardDef.retrace / retrace_cost), so it cannot be conferred on other cards. The static cast_from_graveyard frees cards at their printed price with no additional land discard, and grant_graveyard_cast (op and its grants_flashback/escape options) offers flashback or escape but no retrace mode; neither filters the granted cards by subtype in a static
+- **(engine)** the residual gate (authoring/verify.py `_covered`) must claim a printed keyword line 'Retrace (<reminder>)' when the card has `retrace: true` with its land-discard retrace_cost. Today it only claims Dragon Man's bare sentence via `_GRAVEYARD_ADDITIONAL_LINE` (a fullmatch, so the 'retrace (' prefix and ')' suffix defeat it). The engine side already works: the card {cascade triggered ability on the stack + retrace: true, no spell_effects} passes gates 1-4 and 6 and fails only at residual with 'printed text not represented: Retrace'
+  <br>Why the existing vocabulary won't do: `retrace: true` is the right field and loads, but no ability can claim the line (retrace is a card-level cost, not an ability, and not a loadable keyword). Spitting Image passes only because its non-empty `spell_effects` claims every line of an instant/sorcery; Throes of Chaos has no spell effect, and padding `spell_effects` with `noop` to dodge the gate would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Throes of Chaos** (rank 5451) — `throes_of_chaos`
+  - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
+- **Deeproot Historian** (rank 7218) — `deeproot_historian`
+  - Merfolk and Druid cards in your graveyard have retrace
 
 </details>
 
@@ -4806,20 +4824,6 @@ Blocks **1** card.
 
 - **Dauthi Voidwalker** (rank 386) — `dauthi_voidwalker`
   - If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.
-
-</details>
-
-## retrace
-
-Blocks **1** card.
-
-- **(engine)** the residual gate (authoring/verify.py `_covered`) must claim a printed keyword line 'Retrace (<reminder>)' when the card has `retrace: true` with its land-discard retrace_cost. Today it only claims Dragon Man's bare sentence via `_GRAVEYARD_ADDITIONAL_LINE` (a fullmatch, so the 'retrace (' prefix and ')' suffix defeat it). The engine side already works: the card {cascade triggered ability on the stack + retrace: true, no spell_effects} passes gates 1-4 and 6 and fails only at residual with 'printed text not represented: Retrace'
-  <br>Why the existing vocabulary won't do: `retrace: true` is the right field and loads, but no ability can claim the line (retrace is a card-level cost, not an ability, and not a loadable keyword). Spitting Image passes only because its non-empty `spell_effects` claims every line of an instant/sorcery; Throes of Chaos has no spell effect, and padding `spell_effects` with `noop` to dodge the gate would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Throes of Chaos** (rank 5451) — `throes_of_chaos`
-  - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
 
 </details>
 
