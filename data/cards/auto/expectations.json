@@ -17366,6 +17366,10 @@
   "river_of_tears": {
     "zone": "battlefield"
   },
+  "river_song_s_diary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "riverglide_pathway_lavaglide_pathway": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21430,6 +21434,16 @@
   },
   "the_flood_of_mars": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_flux": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "the_frightful_four": {

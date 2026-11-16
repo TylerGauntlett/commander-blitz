@@ -225622,12 +225622,12 @@
     },
     "River Song's Diary": {
       "edhrec_rank": 6020,
-      "gate": "template",
+      "gate": null,
       "name": "River Song's Diary",
-      "reason": "no template for: Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it in",
+      "reason": "",
       "scryfall_id": "96476a30-72b0-4f91-9d2d-85fc196f89c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "River of Tears": {
@@ -280892,12 +280892,12 @@
     },
     "The Flux": {
       "edhrec_rank": 8708,
-      "gate": "template",
+      "gate": null,
       "name": "The Flux",
-      "reason": "no template for: I — This Saga deals 4 damage to target creature an opponent controls",
+      "reason": "",
       "scryfall_id": "026611f8-ae07-464f-afe5-6e94bcfac05e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Foretold Soldier": {

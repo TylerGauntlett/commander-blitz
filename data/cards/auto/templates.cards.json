@@ -208409,6 +208409,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "exile_spell_on_resolution"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "from_zones": [
+              "hand"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "diary_pick",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "random": true,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose an exiled card at random"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "diary_pick"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast that card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "any",
+                  "exiled_with": "self",
+                  "zone": "exile"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "river_song_s_diary",
+      "mana_cost": "{3}",
+      "name": "River Song's Diary",
+      "oracle_text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves.\nAt the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -259447,6 +259532,145 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — This Saga deals 4 damage to target creature an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 5,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III, IV, V — Exile the top card of your library. You may play that card this turn."
+        },
+        {
+          "chapter": 6,
+          "effects": [
+            {
+              "mana": "{R}{R}{R}{R}{R}{R}",
+              "op": "add_mana",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "VI — Add six {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_flux",
+      "mana_cost": "{2}{R}{R}",
+      "name": "The Flux",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after VI.)\nI — This Saga deals 4 damage to target creature an opponent controls.\nII, III, IV, V — Exile the top card of your library. You may play that card this turn.\nVI — Add six {R}.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
