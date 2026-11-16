@@ -5880,6 +5880,10 @@
   "dryad_sophisticate": {
     "zone": "battlefield"
   },
+  "duchess_wayward_tavernkeep": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "duelist_s_heritage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15006,6 +15010,14 @@
     "zone": "graveyard"
   },
   "overseer_of_the_damned": {
+    "zone": "battlefield"
+  },
+  "overseer_of_vault_76": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "quest"
+    },
     "zone": "battlefield"
   },
   "oversold_cemetery": {

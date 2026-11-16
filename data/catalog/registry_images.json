@@ -5139,6 +5139,10 @@
     "artist": "Ron Spears",
     "scryfall_id": "0b5bf5ce-f7f8-47cb-abb8-f14ce5f1af67"
   },
+  "duchess_wayward_tavernkeep": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "16c339fe-47cf-4a93-93b8-2fa00b6dfacc"
+  },
   "duelist_s_heritage": {
     "artist": "Robin Har",
     "scryfall_id": "45834bc6-be8d-4064-930d-efc73cf3c64d"
@@ -13097,6 +13101,10 @@
   "overseer_of_the_damned": {
     "artist": "rk post",
     "scryfall_id": "0a1a06a4-af73-43e3-a2cd-3a2f0f9b18f0"
+  },
+  "overseer_of_vault_76": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "35848917-d658-4c3b-b675-4f0185f76dc4"
   },
   "oversold_cemetery": {
     "artist": "Thomas M. Baxa",

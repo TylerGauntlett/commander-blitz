@@ -71001,6 +71001,73 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "quest",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hunters for Hire — Whenever a creature you control deals combat damage to a player, put a quest counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters_from_among": {
+              "count": 1,
+              "counter": "quest"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "duchess_wayward_tavernkeep",
+      "mana_cost": "{3}{R}",
+      "name": "Duchess, Wayward Tavernkeep",
+      "oracle_text": "Hunters for Hire — Whenever a creature you control deals combat damage to a player, put a quest counter on it.\n{1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "duration": "until_end_of_turn",
@@ -180106,6 +180173,134 @@
         "Demon"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "quest",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "First Contact — Whenever Overseer of Vault 76 or another creature you control with power 3 or less enters, put a quest counter on Overseer of Vault 76.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "self_only": true
+                },
+                {
+                  "exclude_self": true,
+                  "power": {
+                    "op": "<=",
+                    "value": 3
+                  }
+                }
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "overseer_rally",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "remove_counters_from_among": {
+                  "count": 3,
+                  "counter": "quest"
+                }
+              },
+              "player": "you",
+              "prompt": "Remove three quest counters from among permanents you control to put a +1/+1 counter on each creature you control and give them vigilance?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may remove three quest counters from among permanents you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "id": "overseer_rally",
+          "kind": "reflexive",
+          "text": "When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "overseer_of_vault_76",
+      "mana_cost": "{2}{W}",
+      "name": "Overseer of Vault 76",
+      "oracle_text": "First Contact — Whenever Overseer of Vault 76 or another creature you control with power 3 or less enters, put a quest counter on Overseer of Vault 76.\nAt the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

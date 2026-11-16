@@ -76492,12 +76492,12 @@
     },
     "Duchess, Wayward Tavernkeep": {
       "edhrec_rank": 14635,
-      "gate": "template",
+      "gate": null,
       "name": "Duchess, Wayward Tavernkeep",
-      "reason": "no template for: Hunters for Hire — Whenever a creature you control deals combat damage to a player, put a ",
+      "reason": "",
       "scryfall_id": "16c339fe-47cf-4a93-93b8-2fa00b6dfacc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duct Crawler": {
@@ -196132,12 +196132,12 @@
     },
     "Overseer of Vault 76": {
       "edhrec_rank": 10375,
-      "gate": "template",
+      "gate": null,
       "name": "Overseer of Vault 76",
-      "reason": "no template for: First Contact — Whenever or another creature you control with power 3 or less enters, put ",
+      "reason": "",
       "scryfall_id": "35848917-d658-4c3b-b675-4f0185f76dc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overseer of the Damned": {
@@ -313994,7 +313994,7 @@
       "edhrec_rank": 1305,
       "gate": "template",
       "name": "Whir of Invention",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: Search your library for an artifact card with mana value X or less, put it onto the battle",
       "scryfall_id": "16086247-1878-4e21-b2ba-da4aac84c02b",
       "source": "",
       "status": "pending",
