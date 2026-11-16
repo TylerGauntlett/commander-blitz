@@ -353,6 +353,21 @@ describe("a non-standard pad", () => {
  * loop was alive made `wake()` -- the one route back -- return early, and the
  * controller stayed dead until a reload.
  */
+describe("an idle timer that outlives requestAnimationFrame", () => {
+  it("does not throw when rAF is gone by the time it fires", () => {
+    startPad();
+    vi.advanceTimersByTime(50);
+    const g = globalThis as unknown as Record<string, unknown>;
+    const saved = g.requestAnimationFrame;
+    delete g.requestAnimationFrame;
+    try {
+      expect(() => vi.advanceTimersByTime(500)).not.toThrow();
+    } finally {
+      g.requestAnimationFrame = saved;
+    }
+  });
+});
+
 describe("recovering a stalled loop", () => {
   it("re-arms on focus after rAF stopped running", () => {
     const hits: string[] = [];

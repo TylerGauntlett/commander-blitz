@@ -289,6 +289,10 @@ function frame(now: number): void {
     raf = 0;
     idle = setTimeout(() => {
       idle = null;
+      // The same guard `wake()` keeps: a timer can outlive the environment
+      // that armed it (a test's jsdom torn down mid-idle), and a missing rAF
+      // there is an uncaught ReferenceError rather than a stopped loop.
+      if (typeof requestAnimationFrame !== "function") return;
       raf = requestAnimationFrame(frame);
     }, IDLE_MS);
   }
