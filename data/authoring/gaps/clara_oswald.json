@@ -1,0 +1,25 @@
+{
+  "card_id": "clara_oswald",
+  "name": "Clara Oswald",
+  "oracle_text": "Impossible Girl — If Clara Oswald is your commander, choose a color before the game begins. Clara Oswald is the chosen color.\nIf a triggered ability of a Doctor you control triggers, that ability triggers an additional time.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Impossible Girl — If Clara Oswald is your commander, choose a color before the game begins. Clara Oswald is the chosen color.",
+    "Doctor's companion (You can have two commanders if the other is the Doctor.)"
+  ],
+  "needs": [
+    {
+      "capability": "pregame_commander_color_choice",
+      "kind": "engine",
+      "what": "a pregame decision for a card that is its owner's commander: before the game begins its owner chooses a color, and the card is that color in every zone for the rest of the game (a characteristic-defining color set from a game-start choice, conditional on being a commander)",
+      "why_existing_wont_do": "`choose_color` is an op that runs only when an ability or spell resolves, and `set_colors` is a static whose colors are printed; nothing runs before the game begins, nothing records a per-card chosen color the static could read, and `is_commander` only filters, it does not trigger a choice"
+    },
+    {
+      "capability": "doctors_companion",
+      "kind": "keyword",
+      "what": "the Doctor's companion deckbuilding keyword: a legendary creature with it may be a second commander when the other commander is a Time Lord Doctor creature",
+      "why_existing_wont_do": "The keyword list carries only `partner` and `choose_a_background` as two-commander permissions; partner pairs any two partners and choose_a_background pairs with a Background, neither of which is the Doctor/companion pairing"
+    }
+  ],
+  "closest_existing": ["choose_color", "set_colors", "partner", "double_triggers"],
+  "confidence": "high"
+}
