@@ -209219,6 +209219,70 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Wizard"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": 1,
+          "counter": "+1/+1",
+          "effect": "enters_with_additional_counters",
+          "kind": "static",
+          "text": "Each other Wizard creature you control enters with an additional +1/+1 counter on it."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "remove_counters_from_among": {
+              "count": 1,
+              "counter": "+1/+1",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Remove a +1/+1 counter from a creature you control: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sage_of_fables",
+      "mana_cost": "{2}{U}",
+      "name": "Sage of Fables",
+      "oracle_text": "Each other Wizard creature you control enters with an additional +1/+1 counter on it.\n{2}, Remove a +1/+1 counter from a creature you control: Draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "not_from_zone": "hand"

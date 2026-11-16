@@ -205,9 +205,10 @@ class TestTheLoaderGuardsIt:
         with pytest.raises(DslError, match="needs 'objects'"):
             compile_card(self._with(objects=None))
 
-    def test_a_named_kind_is_refused(self):
-        with pytest.raises(DslError, match="any kind"):
-            compile_card(self._with(counter="+1/+1"))
+    def test_a_named_kind_loads(self):
+        """Overseer of Vault 76's "three **quest** counters" -- see
+        `test_remove_named_counters_from_among.py`."""
+        compile_card(self._with(counter="quest"))
 
     def test_a_selector_count_is_refused(self):
         with pytest.raises(DslError, match="'amount', not"):

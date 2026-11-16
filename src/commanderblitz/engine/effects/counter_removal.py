@@ -1,4 +1,4 @@
-"""Taking counters of any kind off permanents, one counter at a time.
+"""Taking counters off permanents, one counter at a time.
 
 The one question behind every sentence that removes or moves counters without
 naming their kind: the `remove_counters_from_among` cost (Tekuthal), the
@@ -9,7 +9,9 @@ counters" lets the chooser take them in any mix -- two -1/-1 and a loyalty, or
 all three off one permanent -- so the counters are asked for one at a time:
 which permanent, then which kind when it carries more than one. That single
 question can say every split without a distribution decision the engine does
-not have.
+not have. A sentence that does name the kind but not the permanent -- "remove
+three quest counters from among permanents you control" -- asks the same
+question with the kind fixed, so only the permanent is chosen.
 
 A leaf the costs module and the op modules both import: a cost that asked the
 question one way and an effect that asked it another would drift on the
@@ -30,16 +32,18 @@ from .context import EffectContext, ask_mode, ask_objects
 HARMFUL_COUNTERS = ("-1/-1", "stun")
 
 
-def counters_on(ctx: EffectContext, oid: int) -> int:
-    """How many counters of every kind ``oid`` carries -- 0 off the battlefield.
+def counters_on(ctx: EffectContext, oid: int, kind: str | None = None) -> int:
+    """How many counters ``oid`` carries -- of every kind, or of ``kind`` alone.
 
-    A target that left before the effect got to it (or a planeswalker the last
-    removal killed) has nothing left to give, and asking about it would remove
-    counters from a card in a graveyard.
+    0 off the battlefield: a target that left before the effect got to it (or a
+    planeswalker the last removal killed) has nothing left to give, and asking
+    about it would remove counters from a card in a graveyard.
     """
     obj = ctx.state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return 0
+    if kind is not None:
+        return max(0, obj.counter(kind))
     return sum(n for n in obj.counters.values() if n > 0)
 
 
@@ -80,8 +84,14 @@ def remove_counters_one_at_a_time(
     least: int,
     chooser: int,
     purpose: str,
+    kind: str | None = None,
 ) -> Generator[Any, Any, int]:
     """Remove between ``least`` and ``most`` counters off ``pool()``; the number removed.
+
+    ``kind`` names the one kind that may come off -- Sage of Fables' "Remove a
+    **+1/+1** counter from a creature you control" -- so only permanents
+    carrying it are offered and the kind is never asked. Left out, any kind
+    may, and the chooser picks it per counter.
 
     ``pool`` is re-read before every counter, because the last removal may have
     emptied a permanent (or killed it: a planeswalker at no loyalty). ``most``
@@ -93,7 +103,7 @@ def remove_counters_one_at_a_time(
     """
     removed = 0
     while most is None or removed < most:
-        candidates = [oid for oid in pool() if counters_on(ctx, oid) > 0]
+        candidates = [oid for oid in pool() if counters_on(ctx, oid, kind) > 0]
         if not candidates:
             break
         prompt = (
@@ -106,8 +116,10 @@ def remove_counters_one_at_a_time(
         )
         if not picked:
             break
-        kind = yield from ask_counter_kind(ctx, picked[0], chooser)
-        if kind is None:
+        taken = kind
+        if taken is None:
+            taken = yield from ask_counter_kind(ctx, picked[0], chooser)
+        if taken is None:
             break
-        removed += remove_counters(ctx.state, picked[0], kind, 1, by=chooser)
+        removed += remove_counters(ctx.state, picked[0], taken, 1, by=chooser)
     return removed

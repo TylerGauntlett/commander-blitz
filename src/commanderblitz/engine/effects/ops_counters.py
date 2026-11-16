@@ -446,7 +446,7 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("remove_counters_from_among")
 def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
-    """Remove counters of any kinds from among the permanents ``objects`` names.
+    """Remove counters from among the permanents ``objects`` names.
 
     Eventide's Shadow -- "Remove any number of counters from among permanents
     on the battlefield. You draw cards and lose life equal to the number of
@@ -461,10 +461,15 @@ def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
     actually removed, an int read back with ``{"binding": ...}`` -- the only
     place "the number of counters removed this way" survives, since the
     permanents no longer carry them.
+
+    ``counter`` names the one kind that may come off -- Overseer of Vault 76's
+    "remove three **quest** counters from among permanents you control" -- so
+    only permanents carrying it are offered and the kind is not asked.
     """
     most = max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
     least = 0 if most is None or spec.get("up_to") else most
     selector = spec.get("objects")
+    kind = spec.get("counter")
     removed = yield from remove_counters_one_at_a_time(
         ctx,
         lambda: resolve_pool(ctx, selector),
@@ -472,6 +477,7 @@ def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
         least=least,
         chooser=ctx.controller,
         purpose="remove_counter",
+        kind=None if kind is None else str(kind),
     )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = removed

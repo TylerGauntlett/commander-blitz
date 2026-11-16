@@ -230942,12 +230942,12 @@
     },
     "Sage of Fables": {
       "edhrec_rank": 8078,
-      "gate": "template",
+      "gate": null,
       "name": "Sage of Fables",
-      "reason": "no template for: Each other Wizard creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "36d22296-8eb6-4367-bb21-47b20ad700d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage of Hours": {

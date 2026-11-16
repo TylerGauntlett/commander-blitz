@@ -422,12 +422,16 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"'count', got {count!r}"
             )
         if "counter" in among:
-            # A named kind is `remove_counters`' sentence; "counters" here means
-            # any kinds, and a filter nothing reads would print as honoured.
-            raise DslError(
-                f"{where}.cost.remove_counters_from_among: removes counters of any "
-                f"kind; a named 'counter' kind is not read"
-            )
+            # "Remove a +1/+1 counter from a creature you control": one named
+            # kind, off whichever permanent the payer picks. Left out, any
+            # kinds. `remove_counters` is the named kind off the source alone.
+            kind = among.pop("counter")
+            if not isinstance(kind, str) or not kind:
+                raise DslError(
+                    f"{where}.cost.remove_counters_from_among.counter: a counter "
+                    f"kind, got {kind!r}"
+                )
+            validate_counter_kind(kind, f"{where}.cost.remove_counters_from_among.counter")
         validate_selector(among, f"{where}.cost.remove_counters_from_among")
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.

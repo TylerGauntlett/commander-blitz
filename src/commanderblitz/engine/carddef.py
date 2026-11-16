@@ -356,7 +356,8 @@ class Cost:
     #: permanents.
     untap_permanents: Mapping[str, Any] | None = None
     #: "Remove N counters from among <permanents> you control" -- see
-    #: `CostModel.remove_counters_from_among`. Any kinds, any split.
+    #: `CostModel.remove_counters_from_among`. Any kinds, or the one a
+    #: ``counter`` key names; any split.
     remove_counters_from_among: Mapping[str, Any] | None = None
     #: "Mill a card" as a cost -- see `CostModel.mill`. No selector: the cards
     #: come off the top of the activating player's own library.
@@ -782,7 +783,9 @@ class Cost:
             parts.append(f"Blight {self.blight}")
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
-            parts.append(f"Remove {count} counters from among permanents")
+            kind = self.remove_counters_from_among.get("counter")
+            named = f" {kind}" if kind else ""
+            parts.append(f"Remove {count}{named} counters from among permanents")
         if self.loyalty_x:
             parts.append("-X")
         elif self.loyalty is not None:

@@ -81,8 +81,9 @@ class CostModel(BaseModel):
     #: planeswalkers you control" -- Tekuthal, Inquiry Dominus. A selector over
     #: the battlefield (controller defaults to you) with a ``count``: that many
     #: counters of **any** kinds, split among the matching permanents however
-    #: the payer likes. Not ``remove_counters``, which takes one named kind off
-    #: the source itself.
+    #: the payer likes. A ``counter`` key names the one kind that may come off
+    #: (Sage of Fables: "Remove a +1/+1 counter from a creature you control").
+    #: Not ``remove_counters``, which takes one named kind off the source itself.
     remove_counters_from_among: dict[str, Any] | None = None
     #: "**Mill a card**" as part of an activation cost -- Millikin, Deranged
     #: Assistant, The Warring Triad. Cards come off the top of the *activating*

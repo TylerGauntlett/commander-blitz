@@ -223,9 +223,11 @@ class TestTheLoaderGuardsIt:
         with pytest.raises(DslError, match="positive integer 'count'"):
             compile_card(self._with({"types": ["Creature"]}))
 
-    def test_a_named_kind_is_refused(self):
-        with pytest.raises(DslError, match="any kind"):
-            compile_card(self._with({"count": 1, "counter": "+1/+1"}))
+    def test_a_named_kind_loads(self):
+        """Sage of Fables' "a **+1/+1** counter" -- see
+        `test_remove_named_counters_from_among.py`."""
+        card = compile_card(self._with({"count": 1, "counter": "+1/+1", "types": ["Creature"]}))
+        assert "Remove 1 +1/+1 counters" in card.abilities[0].cost.describe()
 
     def test_a_bad_selector_key_is_refused(self):
         with pytest.raises(DslError, match="unknown selector keys"):

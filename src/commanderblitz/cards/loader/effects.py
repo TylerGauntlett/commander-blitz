@@ -218,13 +218,9 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
     if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
         return
     if op == "remove_counters_from_among":
-        # Always any kinds, so it takes neither spelling of a kind; and the
+        # Any kinds unless a `counter` names one (the kind is checked with
+        # every op's above); `any_kind` is implied, so it is not spelled. The
         # number is `amount`, where the cost of the same name says `count`.
-        if "counter" in effect:
-            raise DslError(
-                f"{where}: remove_counters_from_among removes counters of any kind; "
-                f"a named 'counter' kind is not read"
-            )
         objects = effect.get("objects")
         if not isinstance(objects, Mapping) or not objects:
             raise DslError(
@@ -237,7 +233,7 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"from one counter at a time; the number is the op's 'amount', not "
                 f"a selector 'count' or 'chooser'"
             )
-        any_kind = True
+        any_kind = "counter" not in effect
     if any_kind and "counter" in effect:
         # One says "this kind", the other "whichever kinds the chooser likes";
         # the op would read `any_kind` and the printed kind would be ignored.
@@ -282,7 +278,7 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"{where}: 'up_to' needs an 'amount' to be a ceiling of; with no "
                 f"'amount' the removal is already \"any number\""
             )
-    if any_kind or effect.get("up_to"):
+    if any_kind or effect.get("up_to") or op == "remove_counters_from_among":
         amount = effect.get("amount")
         if isinstance(amount, Mapping) and set(amount) == {"const"}:
             amount = amount["const"]

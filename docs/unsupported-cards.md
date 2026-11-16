@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**395 cards** blocked by **343** capabilities.
+**394 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
-| [remove-named-counters-from-among](#remove-named-counters-from-among) | 3 | 8078 | cost |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -54,6 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [retrace](#retrace) | 2 | 5451 | engine, static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
@@ -928,28 +928,6 @@ Blocks **3** cards.
 
 </details>
 
-## remove-named-counters-from-among
-
-Blocks **3** cards.
-
-- **(cost)** a counter kind on the `remove_counters_from_among` cost, e.g. {"mana": "{1}", "remove_counters_from_among": {"count": 1, "counter": "quest"}}, so the payer removes a counter of THAT kind from a permanent they control, with payability checked against counters of that kind only
-  <br>Why the existing vocabulary won't do: The `remove_counters_from_among` cost (costs._counter_removal_pool / counter_removal.remove_counters_one_at_a_time) removes a counter of any kind, so a permanent carrying a quest and a +1/+1 counter could pay with the +1/+1; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; the `remove_counters` cost names a kind but reads only the source. The trigger line (deals_combat_damage_to_player, controller you, add_counters quest on subject) and junk_token are both expressible
-- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
-  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
-- **(cost)** an activated-ability cost that removes N counters of a NAMED kind (here one +1/+1 counter) from a permanent the payer chooses among a selector (here 'a creature you control'), not just from the source -- e.g. remove_counters_from_among accepting a 'counter' kind, or remove_counters accepting an 'objects' selector
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes a named kind but only ever removes from the source; cost.remove_counters_from_among chooses among other permanents but removes counters of any kind, and the loader explicitly refuses a 'counter' key on it. Filtering its pool with has_counters: '+1/+1' still lets the payer remove a different kind (e.g. -1/-1) from a creature carrying both, so it would be a strictly cheaper card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sage of Fables** (rank 8078) — `sage_of_fables`
-  - {2}, Remove a +1/+1 counter from a creature you control: Draw a card.
-- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
-  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
-- **Duchess, Wayward Tavernkeep** (rank 14635) — `duchess_wayward_tavernkeep`
-  - {1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
-
-</details>
-
 ## secret-choice
 
 Blocks **3** cards.
@@ -1359,6 +1337,24 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+
+</details>
+
+## remove-named-counters-from-among
+
+Blocks **2** cards.
+
+- **(cost)** a counter kind on the `remove_counters_from_among` cost, e.g. {"mana": "{1}", "remove_counters_from_among": {"count": 1, "counter": "quest"}}, so the payer removes a counter of THAT kind from a permanent they control, with payability checked against counters of that kind only
+  <br>Why the existing vocabulary won't do: The `remove_counters_from_among` cost (costs._counter_removal_pool / counter_removal.remove_counters_one_at_a_time) removes a counter of any kind, so a permanent carrying a quest and a +1/+1 counter could pay with the +1/+1; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; the `remove_counters` cost names a kind but reads only the source. The trigger line (deals_combat_damage_to_player, controller you, add_counters quest on subject) and junk_token are both expressible
+- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
+  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
+  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
+- **Duchess, Wayward Tavernkeep** (rank 14635) — `duchess_wayward_tavernkeep`
+  - {1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
 
 </details>
 

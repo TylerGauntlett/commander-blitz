@@ -1405,8 +1405,9 @@ def can_pay(
         return False
     if cost.remove_counters_from_among is not None:
         needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
+        kind = cost.remove_counters_from_among.get("counter")
         pool = _counter_removal_pool(state, pid, cost, source_oid)
-        if sum(_counters_on(state, oid) for oid in pool) < needed:
+        if sum(_counters_on(state, oid, kind) for oid in pool) < needed:
             return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
@@ -1996,20 +1997,28 @@ def _counter_removal_pool(
     Tekuthal: "Remove three counters from among **other** artifacts, creatures,
     and planeswalkers you control" -- the selector says which permanents
     (``exclude_self`` for "other"), and only those that carry a counter are in
-    the pool, since one without has nothing to give.
+    the pool, since one without has nothing to give. A named ``counter`` kind --
+    Sage of Fables' "Remove a +1/+1 counter from a creature you control" --
+    narrows that to permanents carrying a counter of that kind.
     """
 
     spec = dict(cost.remove_counters_from_among or {})
     spec.pop("count", None)
+    kind = spec.pop("counter", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
-    return [oid for oid in resolve_pool(ctx, spec) if _counters_on(state, oid) > 0]
+    return [oid for oid in resolve_pool(ctx, spec) if _counters_on(state, oid, kind) > 0]
 
 
-def _counters_on(state: GameState, oid: int) -> int:
+def _counters_on(state: GameState, oid: int, kind: str | None = None) -> int:
+    """Counters on ``oid`` -- of every kind, or of ``kind`` alone."""
     obj = state.objects.get(oid)
-    return sum(n for n in obj.counters.values() if n > 0) if obj is not None else 0
+    if obj is None:
+        return 0
+    if kind is not None:
+        return max(0, obj.counter(kind))
+    return sum(n for n in obj.counters.values() if n > 0)
 
 
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -2388,7 +2397,8 @@ def pay(
         # than one kind -- which kind. "From among" lets the payer split the
         # removal however they like (all three off one permanent, or one off
         # each); see `effects.counter_removal`. A cost is paid in full, so the
-        # payer may not stop short: `least` is the whole count.
+        # payer may not stop short: `least` is the whole count. A named
+        # `counter` kind fixes the kind, leaving only the permanent to choose.
         needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
         yield from remove_counters_one_at_a_time(
             ctx,
@@ -2397,6 +2407,7 @@ def pay(
             least=needed,
             chooser=pid,
             purpose="remove_counter_cost",
+            kind=cost.remove_counters_from_among.get("counter"),
         )
 
     if cost.remove_counters is not None and source_oid is not None:
