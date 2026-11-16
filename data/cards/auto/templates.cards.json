@@ -139855,6 +139855,109 @@
       "abilities": [
         {
           "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "exclude_self": true,
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap another untapped Merfolk you control: Kumena can't be blocked this turn."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 3,
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap three untapped Merfolk you control: Draw a card."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Merfolk"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap five untapped Merfolk you control: Put a +1/+1 counter on each Merfolk you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "kumena_tyrant_of_orazca",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Kumena, Tyrant of Orazca",
+      "oracle_text": "Tap another untapped Merfolk you control: Kumena can't be blocked this turn.\nTap three untapped Merfolk you control: Draw a card.\nTap five untapped Merfolk you control: Put a +1/+1 counter on each Merfolk you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -145341,6 +145444,92 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "move_counters"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Move a +1/+1 counter from Llanowar Reborn onto that creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Graft 1 (This land enters with a +1/+1 counter on it. Whenever a creature enters, you may move a +1/+1 counter from this land onto it.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "llanowar_reborn",
+      "mana_cost": "",
+      "name": "Llanowar Reborn",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\nGraft 1 (This land enters with a +1/+1 counter on it. Whenever a creature enters, you may move a +1/+1 counter from this land onto it.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -155690,6 +155879,68 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Merfolk"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Merfolk creatures you control get +1/+1 and have islandwalk.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Merfolk"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "islandwalk"
+          ],
+          "kind": "static",
+          "text": "Other Merfolk creatures you control get +1/+1 and have islandwalk."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "master_of_the_pearl_trident",
+      "mana_cost": "{U}{U}",
+      "name": "Master of the Pearl Trident",
+      "oracle_text": "Other Merfolk creatures you control get +1/+1 and have islandwalk. (They can't be blocked as long as defending player controls an Island.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{U}",
             "return_to_hand": {
@@ -156931,6 +157182,50 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Merfolk you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "merfolk_mistbinder",
+      "mana_cost": "{G}{U}",
+      "name": "Merfolk Mistbinder",
+      "oracle_text": "Other Merfolk you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -156999,6 +157294,81 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}{U}"
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "merfolk_skydiver",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{G}{U}",
+      "name": "Merfolk Skydiver",
+      "oracle_text": "Flying\nWhen this creature enters, put a +1/+1 counter on target creature you control.\n{3}{G}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Mutant"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

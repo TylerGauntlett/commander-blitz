@@ -153192,12 +153192,12 @@
     },
     "Kumena, Tyrant of Orazca": {
       "edhrec_rank": 5134,
-      "gate": "template",
+      "gate": null,
       "name": "Kumena, Tyrant of Orazca",
-      "reason": "no template for: Tap another untapped Merfolk you control: Kumena can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "9bd6ae71-29de-45d6-97bb-f60e6f821d6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kunoros, Hound of Athreos": {
@@ -160082,12 +160082,12 @@
     },
     "Llanowar Reborn": {
       "edhrec_rank": 2323,
-      "gate": "template",
+      "gate": null,
       "name": "Llanowar Reborn",
-      "reason": "no template for: Graft 1",
+      "reason": "",
       "scryfall_id": "284e165e-9ab6-47fc-9685-0fb03de237df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Llanowar Scout": {
@@ -169252,12 +169252,12 @@
     },
     "Master of the Pearl Trident": {
       "edhrec_rank": 3491,
-      "gate": "template",
+      "gate": null,
       "name": "Master of the Pearl Trident",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1 and have islandwalk",
+      "reason": "",
       "scryfall_id": "6b48dc56-667c-4fde-8175-952463e233cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of the Veil": {
@@ -171572,12 +171572,12 @@
     },
     "Merfolk Mistbinder": {
       "edhrec_rank": 6207,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Mistbinder",
-      "reason": "no template for: Other Merfolk you control get +1/+1",
+      "reason": "",
       "scryfall_id": "f5c2c19b-2cac-4073-8d02-277cf42ae1ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Observer": {
@@ -171642,12 +171642,12 @@
     },
     "Merfolk Skydiver": {
       "edhrec_rank": 6508,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Skydiver",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "bb8fcaa7-3430-4de1-854a-77b7bef59864",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Skyscout": {

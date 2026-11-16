@@ -11675,6 +11675,13 @@
     },
     "zone": "battlefield"
   },
+  "kumena_tyrant_of_orazca": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kwain_itinerant_meddler": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12102,6 +12109,14 @@
   },
   "llanowar_loamspeaker": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "llanowar_reborn": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "llanowar_tribe": {
@@ -12976,6 +12991,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "master_of_the_pearl_trident": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "master_transmuter": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13105,6 +13124,13 @@
     },
     "zone": "graveyard"
   },
+  "merfolk_mistbinder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "merfolk_of_the_depths": {
     "zone": "battlefield"
   },
@@ -13112,6 +13138,10 @@
     "zone": "battlefield"
   },
   "merfolk_raiders": {
+    "zone": "battlefield"
+  },
+  "merfolk_skydiver": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mesa_cavalier": {
