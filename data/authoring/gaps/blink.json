@@ -1,0 +1,21 @@
+{
+  "card_id": "blink",
+  "name": "Blink",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, III — Choose target creature. Its owner shuffles it into their library, then investigates. (They create a Clue token.)\nII, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and \"Whenever an opponent casts a creature spell, this token isn't a creature until end of turn.\"",
+  "blocked_sentences": [
+    "II, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and \"Whenever an opponent casts a creature spell, this token isn't a creature until end of turn.\""
+  ],
+  "needs": [
+    {
+      "capability": "alien_angel_token",
+      "kind": "token",
+      "what": "a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and \"Whenever an opponent casts a creature spell, this token isn't a creature until end of turn.\"",
+      "why_existing_wont_do": "token_ids has no Alien Angel; the nearest 2/2 black tokens (zombie_2_2_b, rogue_2_2_b, vampire_2_2_b_flying) are not artifacts, lack first strike and vigilance, and carry no spell_cast trigger that removes the Creature type until end of turn"
+    }
+  ],
+  "closest_existing": [
+    "zombie_2_2_b",
+    "create_token"
+  ],
+  "confidence": "high"
+}

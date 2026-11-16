@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**383 cards** blocked by **336** capabilities.
+**386 cards** blocked by **339** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -72,6 +72,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
@@ -106,6 +107,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
+| [casualty](#casualty) | 1 | 12943 | static_effect |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
@@ -129,6 +131,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
+| [dalek-token](#dalek-token) | 1 | 11215 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -1645,6 +1648,20 @@ Blocks **1** card.
 
 </details>
 
+## alien-angel-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and "Whenever an opponent casts a creature spell, this token isn't a creature until end of turn."
+  <br>Why the existing vocabulary won't do: token_ids has no Alien Angel; the nearest 2/2 black tokens (zombie_2_2_b, rogue_2_2_b, vampire_2_2_b_flying) are not artifacts, lack first strike and vigilance, and carry no spell_cast trigger that removes the Creature type until end of turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blink** (rank 13679) — `blink`
+  - II, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and "Whenever an opponent casts a creature spell, this token isn't a creature until end of turn."
+
+</details>
+
 ## alien-token
 
 Blocks **1** card.
@@ -2128,6 +2145,20 @@ Blocks **1** card.
 
 </details>
 
+## casualty
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: nonlegendary artifact spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost on that spell's cast and, when paid, copies the spell (a permanent spell's copy becoming a token)
+  <br>Why the existing vocabulary won't do: Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. There is also no static per-turn 'first matching spell' limiter on such a grant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
+  - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
+
+</details>
+
 ## characteristics-outside-battlefield
 
 Blocks **1** card.
@@ -2455,6 +2486,20 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
+
+</details>
+
+## dalek-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
+  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
 
 </details>
 
