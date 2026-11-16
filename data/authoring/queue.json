@@ -84562,12 +84562,12 @@
     },
     "Ensnared by the Mara": {
       "edhrec_rank": 3402,
-      "gate": "template",
+      "gate": null,
       "name": "Ensnared by the Mara",
-      "reason": "no template for: Each opponent faces a villainous choice — They exile cards from the top of their library u",
+      "reason": "",
       "scryfall_id": "11454c82-3f1d-4456-8857-0dcb01d34298",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ensnaring Bridge": {
@@ -88842,12 +88842,12 @@
     },
     "Exterminate!": {
       "edhrec_rank": 9601,
-      "gate": "template",
+      "gate": null,
       "name": "Exterminate!",
-      "reason": "no template for: Replicate—Tap an untapped Dalek you control",
+      "reason": "",
       "scryfall_id": "da54bbfd-48d8-4b1f-9336-e45be7e0b0e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exterminator Magmarch": {
@@ -94682,12 +94682,12 @@
     },
     "Fiery Islet": {
       "edhrec_rank": 834,
-      "gate": "template",
+      "gate": null,
       "name": "Fiery Islet",
-      "reason": "no template for: {T}, Pay 1 life: Add {U} or {R}",
+      "reason": "",
       "scryfall_id": "3e73be68-aec6-4033-9cdd-bc473d7db93a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiery Justice": {
@@ -104592,12 +104592,12 @@
     },
     "Gallifrey Council Chamber": {
       "edhrec_rank": 5525,
-      "gate": "template",
+      "gate": null,
       "name": "Gallifrey Council Chamber",
-      "reason": "no template for: When enters, surveil 1",
+      "reason": "",
       "scryfall_id": "0e03370a-05a7-4f84-aadd-9eba459e2696",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gallifrey Falls // No More": {

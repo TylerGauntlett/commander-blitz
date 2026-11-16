@@ -6508,6 +6508,9 @@
   "enraged_revolutionary": {
     "zone": "battlefield"
   },
+  "ensnared_by_the_mara": {
+    "zone": "graveyard"
+  },
   "enterprising_scallywag": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6962,6 +6965,17 @@
     },
     "zone": "graveyard"
   },
+  "exterminate": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "life": {
+      "0": 37,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "extract_brain": {
     "hand_size": {
       "0": 1
@@ -7349,6 +7363,10 @@
       "1": 40
     },
     "zone": "graveyard"
+  },
+  "fiery_islet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "fight_for_the_throne": {
     "zone": "graveyard"
@@ -8099,6 +8117,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "gallifrey_council_chamber": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "gallifrey_falls_no_more": {
     "battlefield_count": 30,

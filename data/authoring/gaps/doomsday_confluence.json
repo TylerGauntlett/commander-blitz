@@ -1,0 +1,21 @@
+{
+  "card_id": "doomsday_confluence",
+  "name": "Doomsday Confluence",
+  "oracle_text": "Choose X. You may choose the same mode more than once.\n• Each player sacrifices a nonartifact creature of their choice.\n• Create a 3/3 black Dalek artifact creature token with menace.\n• Each opponent discards a card.",
+  "blocked_sentences": [
+    "• Create a 3/3 black Dalek artifact creature token with menace."
+  ],
+  "needs": [
+    {
+      "capability": "dalek_token",
+      "kind": "token",
+      "what": "a 3/3 black Dalek artifact creature token with menace",
+      "why_existing_wont_do": "token_ids is closed and has no Dalek; the nearest are beast_3_3_b_deathtouch (Beast, deathtouch, not an artifact) and pirate_2_2_b_menace / villain_2_1_b_menace (wrong size, not artifacts). The other modes and 'Choose X, same mode more than once' fit choose_mode with count x and repeatable."
+    }
+  ],
+  "closest_existing": [
+    "beast_3_3_b_deathtouch",
+    "pirate_2_2_b_menace"
+  ],
+  "confidence": "high"
+}

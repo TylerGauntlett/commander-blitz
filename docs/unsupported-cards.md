@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**393 cards** blocked by **343** capabilities.
+**395 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,6 +21,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [dalek-token](#dalek-token) | 4 | 7527 | token |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
@@ -39,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
-| [dalek-token](#dalek-token) | 2 | 7527 | token |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [escape](#escape) | 2 | 1514 | engine, op |
@@ -277,6 +277,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
+| [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
@@ -685,6 +686,33 @@ Blocks **5** cards.
 
 </details>
 
+## dalek-token
+
+Blocks **4** cards.
+
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
+- **(token)** a 3/3 black Dalek artifact creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Dalek; the nearest are beast_3_3_b_deathtouch (Beast, deathtouch, not an artifact) and pirate_2_2_b_menace / villain_2_1_b_menace (wrong size, not artifacts). The other modes and 'Choose X, same mode more than once' fit choose_mode with count x and repeatable.
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace) are smaller non-artifact creatures of other subtypes, and golem_3_3_c_artifact is colorless without menace. The count itself looks expressible via counters_on the source for kind lore
+
+<details><summary>Cards waiting on this</summary>
+
+- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
+  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
+- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
+  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
+  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
+- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
+  - • Create a 3/3 black Dalek artifact creature token with menace.
+- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
+  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -1072,24 +1100,6 @@ Blocks **2** cards.
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 - **Feather, Radiant Arbiter** (rank 13967) — `feather_radiant_arbiter`
   - Whenever you cast a noncreature spell that targets only Feather, you may choose any number of other creatures that spell could target and pay {2} for each of those creatures. If you do, for each of those creatures, copy that spell. The copy targets that creature.
-
-</details>
-
-## dalek-token
-
-Blocks **2** cards.
-
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
-  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
-- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
-  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
 
 </details>
 
@@ -4592,6 +4602,21 @@ Blocks **1** card.
 
 - **Rampant Frogantua** (rank 4941) — `rampant_frogantua`
   - This creature gets +10/+10 for each player who has lost the game.
+
+</details>
+
+## power-of-creatures-died-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value summing the last-known power of every creature with a given subtype (Dalek) that died this turn, by any controller, read after a destroy in the same resolution
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are counts, not power totals, and take no subtype filter; power_had and power_of read a single object, and snapshot covers only a target that left, not every Dalek that died this turn. The villainous choice shape (choose_mode with the target opponent as chooser) and the two destroy-all selectors look expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
+  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
+  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
 
 </details>
 
