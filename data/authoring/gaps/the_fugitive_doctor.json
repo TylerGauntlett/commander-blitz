@@ -1,0 +1,16 @@
+{
+  "card_id": "the_fugitive_doctor",
+  "name": "The Fugitive Doctor",
+  "oracle_text": "When The Fugitive Doctor enters, investigate.\nWhenever The Fugitive Doctor attacks, you may sacrifice a Clue. When you do, target instant or sorcery card in your graveyard gains flashback {2}{R}{G} until end of turn. (You may cast that card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Whenever The Fugitive Doctor attacks, you may sacrifice a Clue. When you do, target instant or sorcery card in your graveyard gains flashback {2}{R}{G} until end of turn. (You may cast that card from your graveyard for its flashback cost. Then exile it.)"
+  ],
+  "needs": [{
+    "capability": "flashback",
+    "kind": "op",
+    "what": "a way to grant one targeted instant or sorcery card in a graveyard flashback with a FIXED printed flashback cost ({2}{R}{G}) until end of turn: the card may be cast from the graveyard this turn by paying that cost instead of its own mana cost, and is exiled when it leaves the stack -- e.g. a `cost` (mana string) option on grant_playable beside `as_flashback`",
+    "why_existing_wont_do": "grant_playable with as_flashback and playable_this_turn is the right shape (per-card, until end of turn, exiles the spell) but the cast is priced at the card's own mana cost (Will of the Jeskai's 'flashback cost equal to its mana cost'); it has no key to set a different alternative cost, and playable_cost_reduction/playable_free/playable_pay_life_instead cannot reach an arbitrary fixed price. grant_graveyard_cast with grants_flashback is a player-wide permission over affects_spells, also at printed cost, not a per-target grant. The card-level `flashback` cost key describes a card's own printed flashback, not one granted to another card. The rest (investigate on enter; may with pay sacrifice of a Clue then reflexive_trigger) is expressible"
+  }],
+  "closest_existing": ["grant_playable", "grant_graveyard_cast", "flashback"],
+  "confidence": "high"
+}

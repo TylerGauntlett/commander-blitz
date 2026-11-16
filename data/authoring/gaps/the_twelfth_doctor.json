@@ -1,0 +1,18 @@
+{
+  "card_id": "the_twelfth_doctor",
+  "name": "The Twelfth Doctor",
+  "oracle_text": "The first spell you cast from anywhere other than your hand each turn has demonstrate. (When you cast that spell, you may copy it. If you do, choose an opponent to also copy it. A copy of a permanent spell becomes a token.)\nWhenever you copy a spell, put a +1/+1 counter on The Twelfth Doctor.",
+  "blocked_sentences": [
+    "The first spell you cast from anywhere other than your hand each turn has demonstrate. (When you cast that spell, you may copy it. If you do, choose an opponent to also copy it. A copy of a permanent spell becomes a token.)"
+  ],
+  "needs": [
+    {
+      "capability": "first_spell_cast_from_zone_each_turn",
+      "kind": "engine",
+      "what": "A spell_cast trigger ordinal counted over the caster's spells cast this turn from a given set of zones: 'the first spell you cast from anywhere other than your hand each turn' is nth: 1 counted over casts whose cast_from_zone is not hand, from the start of the turn. Needs TurnLedger to record each cast's origin zone (beside spells_cast_ids) and _spell_ordinal to count the run by from_zones (or a filter key such as cast_from_zones admitted to ORDINAL_FILTER_KEYS). The demonstrate itself is then the existing shape: may { copy_spell; choose_player each_opponent as demonstrated; copy_spell controller {binding: demonstrated} } off the triggering spell's sid.",
+      "why_existing_wont_do": "nth on spell_cast with a filter counts via _spell_ordinal over printed characteristics only (ORDINAL_FILTER_KEYS); from_zones is checked against this spell alone and not used to count the run, and the ledger keeps no cast origin. So nth: 1 + from_zones fires only when the turn's first spell overall was cast from outside the hand. max_per_turn: 1 + from_zones is a per-permanent cap, which the engine's own docstrings call wrong for 'first ... each turn': a non-hand cast made before The Twelfth Doctor arrived would still let a later one gain demonstrate."
+    }
+  ],
+  "closest_existing": ["spell_cast trigger with from_zones and max_per_turn", "nth", "copy_spell controller (demonstrate)", "spell_copied trigger"],
+  "confidence": "high"
+}
