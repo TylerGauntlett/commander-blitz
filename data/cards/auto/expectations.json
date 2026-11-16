@@ -9676,6 +9676,18 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "heaven_sent": {
+    "battlefield_count": 34,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "hedge_maze": {
     "zone": "battlefield"
   },

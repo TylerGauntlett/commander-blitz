@@ -124962,12 +124962,12 @@
     },
     "Heaven Sent": {
       "edhrec_rank": 11871,
-      "gate": "template",
+      "gate": null,
       "name": "Heaven Sent",
-      "reason": "no template for: I, II — Investigate",
+      "reason": "",
       "scryfall_id": "47239168-df82-4b54-8400-7a4b6e9cc40f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heaven's Gate": {

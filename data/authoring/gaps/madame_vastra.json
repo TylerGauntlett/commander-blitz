@@ -1,0 +1,22 @@
+{
+  "card_id": "madame_vastra",
+  "name": "Madame Vastra",
+  "oracle_text": "Partner with Jenny Flint (When this creature enters, target player may put Jenny Flint into their hand from their library, then shuffle.)\nMadame Vastra must be blocked if able.\nWhenever a creature dealt damage by Madame Vastra this turn dies, create a Clue token and a Food token.",
+  "blocked_sentences": [
+    "Madame Vastra must be blocked if able."
+  ],
+  "needs": [
+    {
+      "capability": "must_be_blocked",
+      "kind": "static_effect",
+      "what": "a static block requirement on the source attacker (509.1c): while this creature is attacking, the defending player must block it with at least one creature if any creature they control is able to (one blocker satisfies it; unlike lure, not every able creature must block). Shape: a static such as `{\"effect\": \"must_be_blocked\", \"affects\": {\"self_only\": true}}` checked by combat's block-requirement maximisation",
+      "why_existing_wont_do": "`block_restriction` (with `blockers`, `max_blockers`, `require_all`) only restricts who MAY block, never requires a block; `must_block` / `must_block_any` are one-shot ops that set a requirement on a chosen defending creature on resolution, with no trigger here to hang them on and no way to say 'some creature must block this attacker'; no static_effect imposes a block requirement"
+    }
+  ],
+  "closest_existing": [
+    "block_restriction",
+    "must_block",
+    "must_block_any"
+  ],
+  "confidence": "high"
+}

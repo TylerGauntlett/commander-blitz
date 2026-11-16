@@ -1,0 +1,18 @@
+{
+  "card_id": "lunar_hatchling",
+  "name": "Lunar Hatchling",
+  "oracle_text": "Flying, trample\nBasic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)\nEscape—{4}{G}{U}, Exile a land you control, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+  "blocked_sentences": [
+    "Escape—{4}{G}{U}, Exile a land you control, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "exile_permanent_cost",
+      "kind": "cost",
+      "what": "a cost key that exiles a permanent you control from the battlefield, chosen by selector as the cost is paid (here {\"types\": [\"Land\"]}), usable inside a card-level `graveyard_cost` so escape can charge \"{4}{G}{U}, Exile a land you control, Exile five other cards from your graveyard\" with `graveyard_cast: \"graveyard\"`",
+      "why_existing_wont_do": "graveyard_cost + graveyard_cast: graveyard already expresses escape's mana and exile_from_graveyard parts, but cost_keys has only exile_self (the source itself), exile_from_hand and exile_from_graveyard; sacrifice puts the land in the graveyard (where it could even feed the five-card exile) rather than exile, so it would be a different, cheaper card"
+    }
+  ],
+  "closest_existing": ["graveyard_cost", "exile_from_graveyard", "sacrifice", "exile_self"],
+  "confidence": "high"
+}
