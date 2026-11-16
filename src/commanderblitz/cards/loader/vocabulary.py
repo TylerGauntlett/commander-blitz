@@ -667,6 +667,17 @@ STATIC_EFFECTS = frozenset(
         # after anything else that read the count, and its own `add_counters`
         # fires `counter_placed` again, so it retriggers itself.
         "replace_counters",
+        # Topography Tracker.  "If a creature you control would explore,
+        # instead it explores, then it explores again."  A replacement of an
+        # *action*, as `replace_proliferate` is, but about the exploring
+        # **object** rather than a player, so it takes `affects` (required) and
+        # no `affects_player`.  Read by the `explore` op through
+        # `player_statics.explore_times`, the one place every explore passes:
+        # each repetition is a whole explore with its own reveal and its own
+        # EXPLORED.  Two compound to four (616.1).  An `explores` trigger is the
+        # near miss: it would explore again *after* the first resolved, on the
+        # stack, and hear its own explore.
+        "replace_explore",
         # Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
         # Emancipation. "If equipped creature would deal combat damage, it deals
         # double that damage instead." Read by `primitives.damage_permanent` and

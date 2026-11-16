@@ -499,6 +499,30 @@ def proliferate_times(state: GameState, pid: int) -> int:
     return times
 
 
+def explore_times(state: GameState, oid: int) -> int:
+    """How many explores one "explores" by ``oid`` becomes (`replace_explore`).
+
+    Topography Tracker: "If a creature you control would explore, instead it
+    explores, then it explores again." Explore (701.40a) is an action with no
+    number in it, so -- as for `proliferate_times` -- the replacement is to
+    *perform it again*: each repetition reveals its own card and fires its own
+    EXPLORED. Unlike Tekuthal it is about an **object**, the exploring
+    permanent, so it is matched through ``affects`` against the explorer as it
+    is when the explore would happen. Two Trackers compound to four (616.1),
+    each applying once (614.5) to the events the other produced: the product.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return 1
+    times = 1
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_explore":
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            times *= 2
+    return times
+
+
 def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
     """Would the card ``pid`` is about to draw be the first of *their* draw step?
 

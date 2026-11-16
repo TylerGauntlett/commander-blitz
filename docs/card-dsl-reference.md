@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 62 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 99 |
+| [Static effects](#static-effects) | 100 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 44 |
+| [Grantable statics](#grantable-statics) | 45 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -653,6 +653,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_dies` |  | yes | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_draw` | yes |  | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | yes |  | If the player would draw from an empty library, something else happens. | [Static abilities](card-dsl.md#static-abilities) |
+| `replace_explore` |  | yes | If a matching permanent would explore, it explores, then explores again. | [Exploring twice](card-dsl-cookbook.md#exploring-twice) |
 | `replace_graveyard` |  | yes | If a matching card would go to a graveyard, it goes elsewhere. | [Static abilities](card-dsl.md#static-abilities) |
 | `replace_life_gain` | yes |  | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
@@ -770,6 +771,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `replace_counters` | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
 | `replace_damage` | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
 | `replace_dies` | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
+| `replace_explore` | If a matching permanent would explore, it explores, then explores again. | [Exploring twice](card-dsl-cookbook.md#exploring-twice) |
 | `replace_graveyard` | If a matching card would go to a graveyard, it goes elsewhere. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `set_colors` | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
 | `set_creature_types` | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |

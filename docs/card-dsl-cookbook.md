@@ -9134,6 +9134,28 @@ proliferate has no number in it, so each repetition is a whole proliferate with
 its own choice, asked after the one before it resolved. Two of them compound to
 four (616.1), each applying once (614.5).
 
+## Exploring twice
+
+    Topography Tracker — "If a creature you control would explore, instead it
+    explores, then it explores again."
+
+```jsonc
+{ "kind": "static", "effect": "replace_explore",
+  "affects": { "types": ["Creature"], "controller": "you" } }
+```
+
+`replace_proliferate`'s shape about an object: the static names the exploring
+permanent, so it takes `affects`, required, and no `affects_player`; the loader
+refuses `amount` too, since "again" is the whole printed size. Read by the
+`explore` op through `player_statics.explore_times`, matched against the explorer
+as it is when the explore would happen, so a Map token's "target creature you
+control explores" and a creature's own "it explores" are both doubled. Each
+repetition is a whole explore (701.40a): its own reveal, its own counter or land,
+its own choice, its own `EXPLORED`, so "whenever a creature you control explores"
+hears both. Two of them compound to four (616.1). An `explores` trigger is the
+near miss: it would explore again on the stack, after the first, and hear its
+own explore.
+
 ## "Can't draw more than one card each turn"
 
     Narset, Parter of Veils — "Each opponent can't draw more than one card each

@@ -6197,6 +6197,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: replace_proliferate takes 'affects_player' and an "
             f"optional 'condition', and no 'affects' or 'amount'"
         )
+    if model.effect == "replace_explore" and (
+        model.affects is None
+        or model.affects_player is not None
+        or model.amount is not None
+    ):
+        # "If a creature you control would explore, instead it explores, then
+        # it explores again" names the explorer and has no size but "again";
+        # no filter would double every explore on the table, and a seat or an
+        # amount would load clean and change nothing.
+        raise DslError(
+            f"{where}: replace_explore needs 'affects' -- the permanents whose "
+            f"explores are doubled -- and takes an optional 'condition', and no "
+            f"'affects_player' or 'amount'"
+        )
     if model.effect == "cant_search_library" and (
         model.affects is not None or model.amount is not None
     ):

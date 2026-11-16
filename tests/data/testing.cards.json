@@ -15458,6 +15458,34 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_explore_doubler",
+      "name": "Test Explore Doubler",
+      "oracle_text": "If a creature you control would explore, instead it explores, then it explores again.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature you control would explore, instead it explores, then it explores again.",
+          "effect": "replace_explore",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "you"
+          }
+        }
+      ]
     }
   ]
 }

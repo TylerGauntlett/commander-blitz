@@ -22001,6 +22001,14 @@
     },
     "zone": "battlefield"
   },
+  "topography_tracker": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "map_token"
+    },
+    "zone": "battlefield"
+  },
   "tor_giant": {
     "zone": "battlefield"
   },

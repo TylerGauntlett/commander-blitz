@@ -289352,12 +289352,12 @@
     },
     "Topography Tracker": {
       "edhrec_rank": 6151,
-      "gate": "template",
+      "gate": null,
       "name": "Topography Tracker",
-      "reason": "no template for: When this creature enters, create a Map token",
+      "reason": "",
       "scryfall_id": "04e04291-ed8c-4f1e-8d68-df8587968b13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Topple": {
