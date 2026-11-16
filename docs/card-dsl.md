@@ -529,10 +529,11 @@ counter-anything ability.
 
 ```jsonc
 { "op": "proliferate" }
+{ "op": "proliferate", "as": "proliferated" }   // and bind what received a counter
 ```
 
 "Choose any number of permanents and/or players, then give each another counter
-of each kind already there" (701.27a). The op takes no keys: as it resolves, the
+of each kind already there" (701.27a). The choice is not a key: as it resolves, the
 controller is asked one `ask_targets` decision (purpose `"proliferate"`, minimum
 0, maximum everything offered) over every permanent **any** player controls that
 has a counter and every player with a counter — `PlayerState.poison`, the only
@@ -543,6 +544,24 @@ stop it.
 The loader refuses `objects`: a selector decides for the player what the printed
 word lets them choose, and an infect card's proliferate is worthless if it cannot
 reach an opponent's poison.
+
+`as` binds the permanents that **received** a counter from it — "permanents you
+control that had a counter put on them this way" (Ripples of Potential) — each
+once, across every repetition a `replace_proliferate` adds. It is not the
+choice: a permanent whose every placement was prohibited or replaced to nothing
+is not in it, and players never are. The binding is written even when nothing
+received a counter. Read it back as a pool, narrowed like any other:
+
+```jsonc
+{ "op": "proliferate", "as": "proliferated" },
+{ "op": "choose_permanents", "as": "chosen",
+  "objects": { "binding": "proliferated", "zone": "battlefield", "controller": "you",
+               "count": "any", "chooser": "controller" } },
+{ "op": "phase_out", "objects": { "binding": "chosen", "zone": "battlefield" } }
+```
+
+The near miss is a `has_counters` selector after the proliferate, which also
+offers every permanent you control that carried a counter and was not chosen.
 
 ## Selectors — "which objects"
 

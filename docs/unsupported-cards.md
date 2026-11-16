@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**389 cards** blocked by **340** capabilities.
+**388 cards** blocked by **339** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -281,7 +281,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
@@ -4649,20 +4648,6 @@ Blocks **1** card.
 
 - **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
   - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
-
-</details>
-
-## proliferate-binding
-
-Blocks **1** card.
-
-- **(op)** an `as` option on the `proliferate` op that binds the permanents which actually received a counter from that proliferate (across every repetition under replace_proliferate), so a following `choose_permanents` with objects {binding: <as>, controller: you} can pick any number of them and a `phase_out` can act on the choice
-  <br>Why the existing vocabulary won't do: `proliferate` takes no options at all (op_options is empty) and its implementation picks refs through ask_targets without recording them anywhere; no selector key (has_counters, modified, binding) or value reads 'had a counter put on them this way', and has_counters would wrongly offer every permanent you control carrying a counter, including ones you declined to proliferate
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ripples of Potential** (rank 957) — `ripples_of_potential`
-  - Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out
 
 </details>
 

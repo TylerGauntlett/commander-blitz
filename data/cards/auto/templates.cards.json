@@ -204781,6 +204781,47 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ripples_of_potential",
+      "mana_cost": "{1}{U}",
+      "name": "Ripples of Potential",
+      "oracle_text": "Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there. Treat phased-out permanents and anything attached to them as though they don't exist until their controller's next turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "proliferated",
+          "op": "proliferate"
+        },
+        {
+          "as": "chosen",
+          "objects": {
+            "binding": "proliferated",
+            "chooser": "controller",
+            "controller": "you",
+            "count": "any",
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose any number of permanents to phase out"
+        },
+        {
+          "objects": {
+            "binding": "chosen",
+            "zone": "battlefield"
+          },
+          "op": "phase_out"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [

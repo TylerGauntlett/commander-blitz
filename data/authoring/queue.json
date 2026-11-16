@@ -224512,12 +224512,12 @@
     },
     "Ripples of Potential": {
       "edhrec_rank": 957,
-      "gate": "template",
+      "gate": null,
       "name": "Ripples of Potential",
-      "reason": "no template for: Proliferate, then choose any number of permanents you control that had a counter put on th",
+      "reason": "",
       "scryfall_id": "a28f7323-f2a2-4c19-b3c0-a7479ea4de19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ripples of Undeath": {

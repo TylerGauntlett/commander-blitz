@@ -305,7 +305,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses.",
                       "Moving a counter of any kind — `move_counters` with `any_kind`"),
     "set_flag": ("Board", "Write a word on the source for the game (renowned, …).", H_EXERTED),
-    "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter.",
+    "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter; `as` binds the permanents that received one.",
                     "Proliferate — a choice over permanents and players"),
     "double_counters": ("Board", "Double the counters of a kind on a permanent.",
                         "Doubling the counters on a permanent"),

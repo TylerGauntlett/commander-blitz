@@ -17094,6 +17094,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ripples_of_potential": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "ripscale_predator": {
     "zone": "battlefield"
   },
