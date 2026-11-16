@@ -6358,6 +6358,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "emperor_mihail_ii": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "emrakul_s_messenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9259,6 +9263,16 @@
   "h_e_r_b_i_e_scout_unit": {
     "zone": "battlefield"
   },
+  "hakbal_of_the_surging_soul": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "halberdier": {
     "zone": "battlefield"
   },
@@ -9648,6 +9662,10 @@
     "zone": "battlefield"
   },
   "herald_of_eternal_dawn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "herald_of_secret_streams": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11396,6 +11414,10 @@
       "amount": 4,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "kiora_s_follower": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kiora_the_crashing_wave": {

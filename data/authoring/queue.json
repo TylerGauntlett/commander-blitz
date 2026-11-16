@@ -83102,12 +83102,12 @@
     },
     "Emperor Mihail II": {
       "edhrec_rank": 4185,
-      "gate": "template",
+      "gate": null,
       "name": "Emperor Mihail II",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "444ccd33-e88f-4d37-8a99-e10096eef5d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emperor of Bones": {
@@ -121282,12 +121282,12 @@
     },
     "Hakbal of the Surging Soul": {
       "edhrec_rank": 3747,
-      "gate": "template",
+      "gate": null,
       "name": "Hakbal of the Surging Soul",
-      "reason": "no template for: At the beginning of combat on your turn, each Merfolk creature you control explores",
+      "reason": "",
       "scryfall_id": "2ac81f0e-b5d0-4baa-9c5a-749bf1c5e6a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hakim, Loreweaver": {
@@ -126252,12 +126252,12 @@
     },
     "Herald of Secret Streams": {
       "edhrec_rank": 1054,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Secret Streams",
-      "reason": "no template for: Creatures you control with +1/+1 counters on them can't be blocked",
+      "reason": "",
       "scryfall_id": "d18870fa-624d-4291-a711-9743e504711f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Serra": {
@@ -149462,12 +149462,12 @@
     },
     "Kiora's Follower": {
       "edhrec_rank": 1559,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora's Follower",
-      "reason": "no template for: {T}: Untap another target permanent",
+      "reason": "",
       "scryfall_id": "3666d3eb-fc62-4966-9149-aa3435650c29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kiora, Behemoth Beckoner": {

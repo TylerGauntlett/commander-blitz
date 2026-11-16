@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**389 cards** blocked by **339** capabilities.
+**391 cards** blocked by **341** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -67,6 +67,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
+| [ability-cost-increase](#ability-cost-increase) | 1 | 4135 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -238,6 +239,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
+| [merfolk-1-1-u-hexproof](#merfolk-1-1-u-hexproof) | 1 | 4340 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -1590,6 +1592,20 @@ Blocks **2** cards.
   - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
 - **Wizened Mentor** (rank 7822) — `wizened_mentor`
   - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
+
+</details>
+
+## ability-cost-increase
+
+Blocks **1** card.
+
+- **(static_effect)** a static that makes activated abilities cost more generic mana to activate, keyed on the activating player (activated_by: opponent) and on the activation's chosen targets (targeting: {subtypes: [Merfolk], controller: you}); the mirror of ability_cost_reduction in the way spell_cost_increase mirrors spell_cost_reduction, with the targeting clause read meanly (tax left out) at the pre-target gate and charged exactly per target tuple
+  <br>Why the existing vocabulary won't do: ability_cost_reduction has activated_by, affects_abilities {any} and targeting, but it only subtracts a discount and reads its targeting clause generously at the gate (as though it applied), which is the wrong convention for a tax; a negative amount would be an unsanctioned hack. spell_cost_increase covers the first sentence (Kasmina's shape) but is read only on the cast path, never for activations
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kopala, Warden of Waves** (rank 4135) — `kopala_warden_of_waves`
+  - Abilities your opponents activate that target a Merfolk you control cost {2} more to activate.
 
 </details>
 
@@ -4037,6 +4053,20 @@ Blocks **1** card.
 
 - **Unfortunate Accident** (rank 18634) — `unfortunate_accident`
   - + {1} — Create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
+## merfolk-1-1-u-hexproof
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue Merfolk creature token with hexproof
+  <br>Why the existing vocabulary won't do: token_ids has only merfolk_1_1_u, a vanilla 1/1 blue Merfolk with no keywords; create_token takes no keywords option, and a follow-up grant_keyword would be an effect on the token rather than a printed characteristic (copies of the token would lack hexproof). The trigger itself is expressible as spell_cast with controller you and filter subtypes [Merfolk]
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deeproot Waters** (rank 4340) — `deeproot_waters`
+  - Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof.
 
 </details>
 
