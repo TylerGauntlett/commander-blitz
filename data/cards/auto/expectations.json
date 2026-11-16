@@ -4544,6 +4544,10 @@
     },
     "zone": "graveyard"
   },
+  "cult_of_skaro": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cultist_s_staff": {
     "zone": "battlefield"
   },
@@ -4887,6 +4891,10 @@
     "zone": "battlefield"
   },
   "dauthi_marauder": {
+    "zone": "battlefield"
+  },
+  "davros_dalek_creator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dawn_gryff": {
@@ -21294,6 +21302,10 @@
     "zone": "battlefield"
   },
   "the_council_of_four": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_dalek_emperor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

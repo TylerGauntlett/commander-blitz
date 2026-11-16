@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**407 cards** blocked by **358** capabilities.
+**408 cards** blocked by **359** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -116,6 +116,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
+| [choose-x-modes](#choose-x-modes) | 1 | 8838 | engine |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
@@ -2312,6 +2313,20 @@ Blocks **1** card.
 
 - **The Master, Gallifrey's End** (rank 12040) — `the_master_gallifrey_s_end`
   - If you do, choose an opponent with the most life among your opponents.
+
+</details>
+
+## choose-x-modes
+
+Blocks **1** card.
+
+- **(engine)** a repeatable top-level choose_mode whose count is the spell's announced X ({"x": true}), asked at 601.2b after X is announced, choosing exactly X mode instances (zero when X is 0)
+  <br>Why the existing vocabulary won't do: choose_mode takes `repeatable` beside a literal `count` only. `count` is run through evaluate_value, but Game._ask_modes builds its EffectContext without the announced X (ctx.x defaults to 0), so {"x": true} would evaluate to 0 and modal_bounds then raises the floor to max(1, count), so the spell would always choose exactly one mode whatever X was paid. The three bullets are expressible on their own (sacrifice, create_token dalek_3_3_b_artifact_menace, discard); only the X-sized mode count is missing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
+  - Choose X. You may choose the same mode more than once.
 
 </details>
 

@@ -55554,6 +55554,113 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "types": [
+                          "Artifact",
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Thay"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Caan"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "dalek_3_3_b_artifact_menace"
+                    }
+                  ],
+                  "label": "Sec"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "lose_life",
+                      "player": "each_opponent"
+                    }
+                  ],
+                  "label": "Jast"
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Cult of Skaro attacks, choose one at random —\n• Thay — Put a +1/+1 counter on each artifact creature you control.\n• Caan — Draw two cards.\n• Sec — Create a 3/3 black Dalek artifact creature token with menace.\n• Jast — Each opponent loses 4 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "cult_of_skaro",
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Cult of Skaro",
+      "oracle_text": "Whenever Cult of Skaro attacks, choose one at random —\n• Thay — Put a +1/+1 counter on each artifact creature you control.\n• Caan — Draw two cards.\n• Sec — Create a 3/3 black Dalek artifact creature token with menace.\n• Jast — Each opponent loses 4 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -59122,6 +59229,129 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "max_life_lost_this_turn": "each_opponent"
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "dalek_3_3_b_artifact_menace"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 3
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "chooser": {
+                        "binding": "each_player"
+                      },
+                      "count": 1,
+                      "modes": [
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "op": "draw",
+                              "player": "you"
+                            }
+                          ],
+                          "label": "You draw a card."
+                        },
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "op": "discard",
+                              "player": {
+                                "binding": "each_player"
+                              }
+                            }
+                          ],
+                          "label": "That player discards a card."
+                        }
+                      ],
+                      "op": "choose_mode"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "davros_dalek_creator",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Davros, Dalek Creator",
+      "oracle_text": "Menace\nAt the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -257337,6 +257567,118 @@
       ],
       "toughness": 8,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Dalek"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Daleks you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "chooser": {
+                    "binding": "each_player"
+                  },
+                  "count": 1,
+                  "modes": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": {
+                              "binding": "each_player"
+                            },
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "count": 1,
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "label": "That player sacrifices a creature of their choice."
+                    },
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "dalek_3_3_b_artifact_menace"
+                        }
+                      ],
+                      "label": "You create a 3/3 black Dalek artifact creature token with menace."
+                    }
+                  ],
+                  "op": "choose_mode"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "subtypes": [
+            "Dalek"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "the_dalek_emperor",
+      "mana_cost": "{5}{B}{R}",
+      "name": "The Dalek Emperor",
+      "oracle_text": "Affinity for Daleks (This spell costs {1} less to cast for each Dalek you control.)\nOther Daleks you control have haste.\nAt the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dalek"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

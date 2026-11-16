@@ -58072,12 +58072,12 @@
     },
     "Cult of Skaro": {
       "edhrec_rank": 11215,
-      "gate": "template",
+      "gate": null,
       "name": "Cult of Skaro",
-      "reason": "no template for: Whenever attacks, choose one at random —",
+      "reason": "",
       "scryfall_id": "0ff4a0b3-89b2-4db5-a8c5-a5d8d1c1ed1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cult of the Waxing Moon": {
@@ -62092,12 +62092,12 @@
     },
     "Davros, Dalek Creator": {
       "edhrec_rank": 7527,
-      "gate": "template",
+      "gate": null,
       "name": "Davros, Dalek Creator",
-      "reason": "no template for: At the beginning of your end step, create a 3/3 black Dalek artifact creature token with m",
+      "reason": "",
       "scryfall_id": "16bb0761-820f-43b6-bedc-e6103faf45ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Davvol, Evincar of Rath": {
@@ -280312,12 +280312,12 @@
     },
     "The Dalek Emperor": {
       "edhrec_rank": 9328,
-      "gate": "template",
+      "gate": null,
       "name": "The Dalek Emperor",
-      "reason": "no template for: Affinity for Daleks",
+      "reason": "",
       "scryfall_id": "be18bf54-88b0-46a4-a2c7-fded41e524cb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Darkness Crystal": {
