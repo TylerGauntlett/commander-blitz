@@ -1,0 +1,21 @@
+{
+  "card_id": "the_toymaker_s_trap",
+  "name": "The Toymaker's Trap",
+  "oracle_text": "At the beginning of your upkeep, secretly choose a number between 1 and 5 that hasn't been chosen. If you do, an opponent guesses which number you chose, then you reveal the number you chose. If they guessed wrong, they lose life equal to the number they guessed and you draw a card. If they guessed right, sacrifice this enchantment.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, secretly choose a number between 1 and 5 that hasn't been chosen.",
+    "If you do, an opponent guesses which number you chose, then you reveal the number you chose.",
+    "If they guessed wrong, they lose life equal to the number they guessed and you draw a card.",
+    "If they guessed right, sacrifice this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "secret_number_guess",
+      "kind": "decision",
+      "what": "a hidden number choice by the controller (1..5) drawn from a per-permanent pool that excludes every number this object has already chosen, followed by an opponent's number guess (a choose_number made by another player), with both numbers bound so an `if` can compare them and lose_life can read the guessed number; plus a 'did you choose' outcome when the pool is empty",
+      "why_existing_wont_do": "choose_number takes only as/min/max/prompt: it is always made by the controller, is public, and has no exclusion set, so it cannot remember numbers chosen on earlier upkeeps or hand the guess to an opponent; choose_mode has a chooser but no per-mode availability memory and no hidden choice; set_flag/has_flag can mark booleans but nothing restricts a choice by them"
+    }
+  ],
+  "closest_existing": ["choose_number", "choose_mode", "set_flag"],
+  "confidence": "high"
+}

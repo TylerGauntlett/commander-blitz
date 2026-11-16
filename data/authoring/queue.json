@@ -282352,12 +282352,12 @@
     },
     "The Sound of Drums": {
       "edhrec_rank": 3626,
-      "gate": "template",
+      "gate": null,
       "name": "The Sound of Drums",
-      "reason": "no template for: Enchanted creature is goaded",
+      "reason": "",
       "scryfall_id": "0ff3fbe7-1c11-4cce-a43b-b6b4cb4d1594",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Spear of Bashenga": {
@@ -283702,12 +283702,12 @@
     },
     "This Is How It Ends": {
       "edhrec_rank": 8395,
-      "gate": "template",
+      "gate": null,
       "name": "This Is How It Ends",
-      "reason": "no template for: Target creature's owner shuffles it into their library, then faces a villainous choice — T",
+      "reason": "",
       "scryfall_id": "0686d1c6-bebe-45ac-b82e-78cf420b5e33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "This Town Ain't Big Enough": {

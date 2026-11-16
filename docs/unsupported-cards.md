@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**403 cards** blocked by **351** capabilities.
+**407 cards** blocked by **356** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -245,6 +245,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
 | [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
+| [mark-of-the-rani-token](#mark-of-the-rani-token) | 1 | 13009 | token |
 | [maximum-hand-size-modifier](#maximum-hand-size-modifier) | 1 | 1712 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
@@ -316,6 +317,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
@@ -349,6 +351,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [training](#training) | 1 | 8710 | keyword |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
+| [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
@@ -356,6 +359,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [undaunted](#undaunted) | 1 | 3405 | value |
 | [unleash](#unleash) | 1 | 12169 | keyword |
+| [villainous-choice](#villainous-choice) | 1 | 8294 | op |
+| [voting](#voting) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
@@ -4164,6 +4169,20 @@ Blocks **1** card.
 
 </details>
 
+## mark-of-the-rani-token
+
+Blocks **1** card.
+
+- **(token)** a red Aura enchantment token named Mark of the Rani with enchant creature and "Enchanted creature gets +2/+2 and is goaded." (a static buff +2/+2 plus a goaded static on the enchanted creature), created with create_token's attached_to
+  <br>Why the existing vocabulary won't do: token_ids holds only two Aura tokens: wicked_role (colorless Role, +1/+1, no goad) and contract (white, an attack trigger); neither is red, +2/+2 or goads. create_token with attached_to would express the creation once the token exists; the second sentence (deals_combat_damage_to_player filtered goaded, opponent, investigate with clue_token) looks expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Rani** (rank 13009) — `the_rani`
+  - Whenever The Rani enters or attacks, create a red Aura enchantment token named Mark of the Rani attached to another target creature. That token has enchant creature and "Enchanted creature gets +2/+2 and is goaded."
+
+</details>
+
 ## maximum-hand-size-modifier
 
 Blocks **1** card.
@@ -5182,6 +5201,23 @@ Blocks **1** card.
 
 </details>
 
+## secret-number-guess
+
+Blocks **1** card.
+
+- **(decision)** a hidden number choice by the controller (1..5) drawn from a per-permanent pool that excludes every number this object has already chosen, followed by an opponent's number guess (a choose_number made by another player), with both numbers bound so an `if` can compare them and lose_life can read the guessed number; plus a 'did you choose' outcome when the pool is empty
+  <br>Why the existing vocabulary won't do: choose_number takes only as/min/max/prompt: it is always made by the controller, is public, and has no exclusion set, so it cannot remember numbers chosen on earlier upkeeps or hand the guess to an opponent; choose_mode has a chooser but no per-mode availability memory and no hidden choice; set_flag/has_flag can mark booleans but nothing restricts a choice by them
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Toymaker's Trap** (rank 13375) — `the_toymaker_s_trap`
+  - At the beginning of your upkeep, secretly choose a number between 1 and 5 that hasn't been chosen.
+  - If you do, an opponent guesses which number you chose, then you reveal the number you chose.
+  - If they guessed wrong, they lose life equal to the number they guessed and you draw a card.
+  - If they guessed right, sacrifice this enchantment.
+
+</details>
+
 ## self-bounce-playable-gate
 
 Blocks **1** card.
@@ -5649,6 +5685,20 @@ Blocks **1** card.
 
 </details>
 
+## triggered-abilities-cant-sacrifice-or-exile
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static keyed on the CAUSE being a triggered ability its controller controls, which bars that cause from making the player sacrifice, and from exiling, permanents matching an `affects` filter (here creature tokens you control: `{"controller": "you", "types": ["Creature"], "is_token": true}`). It must be read by `op_sacrifice` and by `op_exile`/`delay`-driven exiles (myriad's and Mimic Vat-style "exile the token at end of combat/end step" delayed triggers) when the resolving object is a triggered ability controlled by that player; spells, activated abilities and costs (an Altar's sacrifice) must still sacrifice and exile them
+  <br>Why the existing vocabulary won't do: `cant_sacrifice` (static or op) protects a permanent from every sacrifice, costs and activated abilities included, and says nothing of exile. `opponents_cant_force_discard_or_sacrifice` is keyed on the cause's controller being an OPPONENT, not on the cause being a triggered ability you control, and also omits exile. `replace_leaves_battlefield` replaces the destination of any departure rather than forbidding one particular cause. No static reads whether the resolving cause is a triggered ability.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Master, Multiplied** (rank 3624) — `the_master_multiplied`
+  - Triggered abilities you control can't cause you to sacrifice or exile creature tokens you control.
+
+</details>
+
 ## turned-face-up-this-turn
 
 Blocks **1** card.
@@ -5746,6 +5796,36 @@ Blocks **1** card.
 - **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
   - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
   - Other Dogs you control have unleash.
+
+</details>
+
+## villainous-choice
+
+Blocks **1** card.
+
+- **(op)** a villainous choice op (701.56: a player chooses one of two printed outcomes) plus a player-wide replacement static that makes an opponent face each villainous choice an additional time (repeating the choice, same or different answer)
+  <br>Why the existing vocabulary won't do: No villainous choice op or event exists; choose_mode with chooser is the nearest but has no 'face a villainous choice' identity a static could replace, and no static_effect repeats a choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+
+</details>
+
+## voting
+
+Blocks **1** card.
+
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
 
 </details>
 

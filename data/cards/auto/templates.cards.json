@@ -260468,6 +260468,77 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature is goaded."
+        },
+        {
+          "combat_only": true,
+          "damage_multiplier": 2,
+          "damage_source": {
+            "attached": true
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If enchanted creature would deal combat damage to a permanent or player, it deals double that damage instead."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_sound_of_drums",
+      "mana_cost": "{2}{R}",
+      "name": "The Sound of Drums",
+      "oracle_text": "Enchant creature\nEnchanted creature is goaded.\nIf enchanted creature would deal combat damage to a permanent or player, it deals double that damage instead.\n{2}{R}: Return this card from your graveyard to your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "become_monarch",
@@ -262508,6 +262579,105 @@
           },
           "player": "you",
           "prompt": "Discard an enchantment card instead of discarding two cards?"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "this_is_how_it_ends",
+      "mana_cost": "{3}{B}",
+      "name": "This Is How It Ends",
+      "oracle_text": "Target creature's owner shuffles it into their library, then faces a villainous choice — They lose 5 life, or they shuffle another creature they own into their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "tucked",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "owner_of": "tucked"
+          }
+        },
+        {
+          "chooser": {
+            "owner_of": "tucked"
+          },
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "owner_of": "tucked"
+                  }
+                }
+              ],
+              "label": "They lose 5 life."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "owner_of": "tucked"
+                    },
+                    "controller": "any",
+                    "count": 1,
+                    "owner": {
+                      "owner_of": "tucked"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "put_on_top"
+                },
+                {
+                  "op": "shuffle",
+                  "player": {
+                    "owner_of": "tucked"
+                  }
+                }
+              ],
+              "label": "They shuffle another creature they own into their library."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
         }
       ],
       "types": [

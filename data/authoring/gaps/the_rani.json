@@ -1,0 +1,18 @@
+{
+  "card_id": "the_rani",
+  "name": "The Rani",
+  "oracle_text": "Whenever The Rani enters or attacks, create a red Aura enchantment token named Mark of the Rani attached to another target creature. That token has enchant creature and \"Enchanted creature gets +2/+2 and is goaded.\"\nWhenever a goaded creature deals combat damage to one of your opponents, investigate.",
+  "blocked_sentences": [
+    "Whenever The Rani enters or attacks, create a red Aura enchantment token named Mark of the Rani attached to another target creature. That token has enchant creature and \"Enchanted creature gets +2/+2 and is goaded.\""
+  ],
+  "needs": [
+    {
+      "capability": "mark_of_the_rani_token",
+      "kind": "token",
+      "what": "a red Aura enchantment token named Mark of the Rani with enchant creature and \"Enchanted creature gets +2/+2 and is goaded.\" (a static buff +2/+2 plus a goaded static on the enchanted creature), created with create_token's attached_to",
+      "why_existing_wont_do": "token_ids holds only two Aura tokens: wicked_role (colorless Role, +1/+1, no goad) and contract (white, an attack trigger); neither is red, +2/+2 or goads. create_token with attached_to would express the creation once the token exists; the second sentence (deals_combat_damage_to_player filtered goaded, opponent, investigate with clue_token) looks expressible"
+    }
+  ],
+  "closest_existing": ["wicked_role", "contract"],
+  "confidence": "high"
+}
