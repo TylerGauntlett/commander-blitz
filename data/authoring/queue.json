@@ -280882,12 +280882,12 @@
     },
     "The Flood of Mars": {
       "edhrec_rank": 8334,
-      "gate": "template",
+      "gate": null,
       "name": "The Flood of Mars",
-      "reason": "no template for: Water Always Wins — Whenever this creature attacks, put a flood counter on another target ",
+      "reason": "",
       "scryfall_id": "07c6b33d-c1c7-442b-91ac-d7ef56ce8fdd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Flux": {
@@ -281562,12 +281562,12 @@
     },
     "The Master, Mesmerist": {
       "edhrec_rank": 12937,
-      "gate": "template",
+      "gate": null,
       "name": "The Master, Mesmerist",
-      "reason": "no template for: {T}: Target creature an opponent controls with power less than or equal to The Master's po",
+      "reason": "",
       "scryfall_id": "55b202ad-3aca-4d50-a235-caf5ddcf99ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Master, Multiplied": {

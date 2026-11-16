@@ -1,0 +1,18 @@
+{
+  "card_id": "the_dalek_emperor",
+  "name": "The Dalek Emperor",
+  "oracle_text": "Affinity for Daleks (This spell costs {1} less to cast for each Dalek you control.)\nOther Daleks you control have haste.\nAt the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace."
+  ],
+  "needs": [
+    {
+      "capability": "dalek_token",
+      "kind": "token",
+      "what": "a 3/3 black Dalek artifact creature token with menace",
+      "why_existing_wont_do": "token_ids is a closed list and holds no Dalek token; the nearest 3/3 black token is beast_3_3_b_deathtouch (a non-artifact Beast with deathtouch, not menace). The rest of the card looks expressible: Affinity is cost_reduction with count {controller: you, subtypes: [Dalek]}, the haste line is a grant_keyword static with exclude_self, and the villainous choice is a begin_combat trigger with for_each_player over opponents into a choose_mode whose chooser is that opponent"
+    }
+  ],
+  "closest_existing": ["beast_3_3_b_deathtouch"],
+  "confidence": "high"
+}

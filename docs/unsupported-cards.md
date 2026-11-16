@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**399 cards** blocked by **349** capabilities.
+**403 cards** blocked by **351** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,9 +19,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 5 | 3539 | decision, op |
+| [dalek-token](#dalek-token) | 5 | 7527 | token |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [dalek-token](#dalek-token) | 4 | 7527 | token |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
@@ -46,6 +46,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [face-down-characteristics](#face-down-characteristics) | 2 | 8110 | op |
 | [face-down-with-characteristics](#face-down-with-characteristics) | 2 | 5733 | op |
 | [goad](#goad) | 2 | 6258 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
@@ -116,6 +117,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
+| [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
@@ -161,6 +163,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
+| [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
@@ -177,7 +180,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
-| [face-down-characteristics](#face-down-characteristics) | 1 | 9707 | op |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
@@ -623,6 +625,37 @@ Blocks **5** cards.
 
 </details>
 
+## dalek-token
+
+Blocks **5** cards.
+
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
+- **(token)** a 3/3 black Dalek artifact creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Dalek; the nearest are beast_3_3_b_deathtouch (Beast, deathtouch, not an artifact) and pirate_2_2_b_menace / villain_2_1_b_menace (wrong size, not artifacts). The other modes and 'Choose X, same mode more than once' fit choose_mode with count x and repeatable.
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace) are smaller non-artifact creatures of other subtypes, and golem_3_3_c_artifact is colorless without menace. The count itself looks expressible via counters_on the source for kind lore
+- **(token)** a 3/3 black Dalek artifact creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and holds no Dalek token; the nearest 3/3 black token is beast_3_3_b_deathtouch (a non-artifact Beast with deathtouch, not menace). The rest of the card looks expressible: Affinity is cost_reduction with count {controller: you, subtypes: [Dalek]}, the haste line is a grant_keyword static with exclude_self, and the villainous choice is a begin_combat trigger with for_each_player over opponents into a choose_mode whose chooser is that opponent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
+  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
+- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
+  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
+  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
+- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
+  - • Create a 3/3 black Dalek artifact creature token with menace.
+- **The Dalek Emperor** (rank 9328) — `the_dalek_emperor`
+  - At the beginning of combat on your turn, each opponent faces a villainous choice — That player sacrifices a creature of their choice, or you create a 3/3 black Dalek artifact creature token with menace.
+- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
+  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -688,33 +721,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## dalek-token
-
-Blocks **4** cards.
-
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
-- **(token)** a 3/3 black Dalek artifact creature token with menace
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Dalek; the nearest are beast_3_3_b_deathtouch (Beast, deathtouch, not an artifact) and pirate_2_2_b_menace / villain_2_1_b_menace (wrong size, not artifacts). The other modes and 'Choose X, same mode more than once' fit choose_mode with count x and repeatable.
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace) are smaller non-artifact creatures of other subtypes, and golem_3_3_c_artifact is colorless without menace. The count itself looks expressible via counters_on the source for kind lore
-
-<details><summary>Cards waiting on this</summary>
-
-- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
-  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
-- **Genesis of the Daleks** (rank 7739) — `genesis_of_the_daleks`
-  - I, II, III — Create a 3/3 black Dalek artifact creature token with menace for each lore counter on Genesis of the Daleks.
-  - IV — Target opponent faces a villainous choice — Destroy all Dalek creatures and each of your opponents loses life equal to the total power of Daleks that died this turn, or destroy all non-Dalek creatures.
-- **Doomsday Confluence** (rank 8838) — `doomsday_confluence`
-  - • Create a 3/3 black Dalek artifact creature token with menace.
-- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
-  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
 
 </details>
 
@@ -1217,6 +1223,25 @@ Blocks **2** cards.
 - **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
   - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
   - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
+
+</details>
+
+## face-down-characteristics
+
+Blocks **2** cards.
+
+- **(op)** a face-down characteristics override (708.2a) on the effect that puts a card onto the battlefield face down: return_from_graveyard with face_down true plus printed types/subtypes for the shell, so the returned card is a nameless colorless 2/2 face-down permanent that is an artifact creature with subtype Cyberman (the same override Cyber Conversion needs for turn_face_down)
+  <br>Why the existing vocabulary won't do: return_from_graveyard already takes face_down, tapped and controller, but its face-down shell is the plain 708.2 2/2 creature with no types or subtypes beyond Creature; animate or add_subtype after the return would layer effects on top rather than define the face-down characteristics, and would leave nothing for the face_down selector / turn_face_up to read consistently
+- **(op)** a way to put cards onto the battlefield face down with overridden face-down characteristics (708.2a-style: here a 2/2 Cyberman artifact creature with no name or abilities instead of the plain 2/2 colorless Creature shell), e.g. a `face_down_as: {types: [Artifact, Creature], subtypes: [Cyberman]}` option on return_from_graveyard/put_onto_battlefield/manifest that replaces FACE_DOWN_CHARS for those objects only while they stay face down
+  <br>Why the existing vocabulary won't do: return_from_graveyard with face_down: true (over the cards bound by mill's `as`, controller: you) puts them down as the fixed FACE_DOWN_CHARS shell, a plain 2/2 Creature with no Artifact type or Cyberman subtype, so the card's own anthem would not even pump them. Following it with a permanent `animate` adding Artifact/Cyberman is an approximation: it is a layer-4 effect that survives the card being turned face up (a milled morph/disguise creature), whereas the printed text only defines the face-down characteristics
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Cyber-Controller** (rank 8110) — `the_cyber_controller`
+  - When The Cyber-Controller enters, each opponent mills X cards. Put all creature cards milled this way onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
+- **Missy** (rank 9707) — `missy`
+  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
+  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
 
 </details>
 
@@ -2306,6 +2331,20 @@ Blocks **1** card.
 
 </details>
 
+## choose-opponent-with-most-life
+
+Blocks **1** card.
+
+- **(selector)** a player spec naming the opponents whose life total is at least every other opponent's (e.g. "opponent_most_life", the same set the attacks_if_able static's `defending: "opponent_most_life"` computes), usable as `choose_player`'s `players` pool so the controller picks one among tied leaders and binds it with `as`
+  <br>Why the existing vocabulary won't do: `choose_player` takes a `players` pool but `select_players` / PLAYER_SPEC_NAMES have no life-based spec: only you/each_opponent/each_player/active_player/monarch/target/binding/except/not and similar. `max_life_of` is a value, not a player set, and `opponent_most_life` exists only as the `defending` field of the attacks_if_able static, not as an effect player spec. Choosing from all opponents (`each_opponent`) would let the controller pick a lower-life opponent, which is a different card in multiplayer. The rest of the line is expressible (creature_dies trigger with is_token:false + types Artifact, a `may` exiling the subject as Nightmare Shepherd does, choose_mode with chooser the bound player for the villainous choice, lose_life 4, copy_permanent of the exiled subject).
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Master, Gallifrey's End** (rank 12040) — `the_master_gallifrey_s_end`
+  - If you do, choose an opponent with the most life among your opponents.
+
+</details>
+
 ## chosen-card-type-cost-reduction
 
 Blocks **1** card.
@@ -2950,6 +2989,20 @@ Blocks **1** card.
 
 </details>
 
+## enters-as-copy-of-exiled-card
+
+Blocks **1** card.
+
+- **(replacement)** An optional `self_enters_as_copy` replacement whose `copying` pool is a standing selector over cards in exile (`{"zone": "exile", "controller": "any", "types": ["Creature"], "has_counters": "takeover"}`) with no `as_enters` effects, offered as a 'you may' like Clone, and accepted by the residual gate as claiming its printed line
+  <br>Why the existing vocabulary won't do: The engine's `ask_enters_copy` already resolves a non-`as_enters` `copying` pool and asks yes/no, and `has_counters` reads counters on an exiled card, so a card written that way loads -- but the residual claimant in `cards/authoring/verify.py` (`self_enters_as_copy` branch) refuses any line containing the word 'exile' unless the replacement carries `as_enters` (it assumes The Mimeoplasm's 'As ... enters, you may exile ...' shape). Adding a dummy `as_enters` would route through `offer_as_enters_effects`, which picks from the pool with no 'you may', so it is not the printed card. The front line (the stack-zone `spell_cast` trigger with `may` -> `exile` as a binding -> `add_counters` 'takeover') is expressible as-is
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Master, Formed Anew** (rank 19072) — `the_master_formed_anew`
+  - You may have The Master enter as a copy of a creature card in exile with a takeover counter on it.
+
+</details>
+
 ## enters-as-copy-with-ability
 
 Blocks **1** card.
@@ -3177,21 +3230,6 @@ Blocks **1** card.
 
 - **Yedora, Grave Gardener** (rank 3081) — `yedora_grave_gardener`
   - Whenever another nontoken creature you control dies, you may return it to the battlefield face down under its owner's control. It's a Forest land.
-
-</details>
-
-## face-down-characteristics
-
-Blocks **1** card.
-
-- **(op)** a face-down characteristics override (708.2a) on the effect that puts a card onto the battlefield face down: return_from_graveyard with face_down true plus printed types/subtypes for the shell, so the returned card is a nameless colorless 2/2 face-down permanent that is an artifact creature with subtype Cyberman (the same override Cyber Conversion needs for turn_face_down)
-  <br>Why the existing vocabulary won't do: return_from_graveyard already takes face_down, tapped and controller, but its face-down shell is the plain 708.2 2/2 creature with no types or subtypes beyond Creature; animate or add_subtype after the return would layer effects on top rather than define the face-down characteristics, and would leave nothing for the face_down selector / turn_face_up to read consistently
-
-<details><summary>Cards waiting on this</summary>
-
-- **Missy** (rank 9707) — `missy`
-  - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
-  - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
 
 </details>
 

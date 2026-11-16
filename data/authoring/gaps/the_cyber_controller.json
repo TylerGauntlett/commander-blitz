@@ -1,0 +1,16 @@
+{
+  "card_id": "the_cyber_controller",
+  "name": "The Cyber-Controller",
+  "oracle_text": "When The Cyber-Controller enters, each opponent mills X cards. Put all creature cards milled this way onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.\nOther artifact creatures you control get +1/+1.",
+  "blocked_sentences": [
+    "When The Cyber-Controller enters, each opponent mills X cards. Put all creature cards milled this way onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures."
+  ],
+  "needs": [{
+    "capability": "face_down_characteristics",
+    "kind": "op",
+    "what": "a way to put cards onto the battlefield face down with overridden face-down characteristics (708.2a-style: here a 2/2 Cyberman artifact creature with no name or abilities instead of the plain 2/2 colorless Creature shell), e.g. a `face_down_as: {types: [Artifact, Creature], subtypes: [Cyberman]}` option on return_from_graveyard/put_onto_battlefield/manifest that replaces FACE_DOWN_CHARS for those objects only while they stay face down",
+    "why_existing_wont_do": "return_from_graveyard with face_down: true (over the cards bound by mill's `as`, controller: you) puts them down as the fixed FACE_DOWN_CHARS shell, a plain 2/2 Creature with no Artifact type or Cyberman subtype, so the card's own anthem would not even pump them. Following it with a permanent `animate` adding Artifact/Cyberman is an approximation: it is a layer-4 effect that survives the card being turned face up (a milled morph/disguise creature), whereas the printed text only defines the face-down characteristics"
+  }],
+  "closest_existing": ["return_from_graveyard", "manifest", "animate"],
+  "confidence": "high"
+}

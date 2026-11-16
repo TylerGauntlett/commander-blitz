@@ -21338,6 +21338,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_flood_of_mars": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_frightful_four": {
     "battlefield_count": 33,
     "life": {
@@ -21389,6 +21393,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "the_master_mesmerist": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_master_of_keys": {
