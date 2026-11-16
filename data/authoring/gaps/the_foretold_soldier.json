@@ -1,0 +1,27 @@
+{
+  "card_id": "the_foretold_soldier",
+  "name": "The Foretold Soldier",
+  "oracle_text": "This creature must be blocked if able.\nThis creature can't be blocked by more than one creature.\nWhenever this creature deals damage, exile it face down. It becomes foretold.\nForetell {1}{G} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "Whenever this creature deals damage, exile it face down. It becomes foretold.",
+    "This creature must be blocked if able."
+  ],
+  "needs": [
+    {
+      "capability": "foretell",
+      "kind": "op",
+      "what": "an op that exiles a permanent (here the source itself) face down from the battlefield and marks it foretold for its owner, so the engine's foretold-card casting path (suspend.foretold_cards / casting with foretold=True) later offers it for its foretell cost on a later turn",
+      "why_existing_wont_do": "The `exile` op has no face_down or foretold option, and the card-level `foretell` key only covers the hand-paid {2} special action; nothing in `ops` puts a card into the foretold exile state as an effect",
+      "confidence_note": "high"
+    },
+    {
+      "capability": "lure",
+      "kind": "static_effect",
+      "what": "a static on the creature itself requiring the defending player to block it with at least one creature if able (\"must be blocked if able\"), combined with the existing max_blockers 1",
+      "why_existing_wont_do": "`attacks_if_able` is the attacker-side requirement; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks",
+      "confidence_note": "low"
+    }
+  ],
+  "closest_existing": ["exile", "foretell", "must_block", "max_blockers"],
+  "confidence": "high"
+}

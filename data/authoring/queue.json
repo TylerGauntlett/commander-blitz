@@ -195162,12 +195162,12 @@
     },
     "Osgood, Operation Double": {
       "edhrec_rank": 13067,
-      "gate": "template",
+      "gate": null,
       "name": "Osgood, Operation Double",
-      "reason": "no template for: When you cast this spell, create a token that's a copy of it, except it isn't legendary",
+      "reason": "",
       "scryfall_id": "88ce4ff5-7b9e-4ef8-9a7e-9d148983b04e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oskar, Rubbish Reclaimer": {
@@ -248812,12 +248812,12 @@
     },
     "Sisterhood of Karn": {
       "edhrec_rank": 11934,
-      "gate": "template",
+      "gate": null,
       "name": "Sisterhood of Karn",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "0b7a8297-5612-4f87-9d14-e8c1ee4c1d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sisters of Stone Death": {
@@ -254972,12 +254972,12 @@
     },
     "Sonic Screwdriver": {
       "edhrec_rank": 1890,
-      "gate": "template",
+      "gate": null,
       "name": "Sonic Screwdriver",
-      "reason": "no template for: {1}, {T}: Untap another target artifact",
+      "reason": "",
       "scryfall_id": "7d3b2b9f-623f-4993-ad45-099ec3b570c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sonic Seizure": {

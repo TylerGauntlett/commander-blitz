@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "river_song_s_diary",
+    "name": "River Song's Diary",
+    "oracle_text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves.\nAt the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost.",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "subtypes": ["Book"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Imprint — Whenever a player casts an instant or sorcery spell from their hand, exile it instead of putting it into a graveyard as it resolves",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "any",
+          "from_zones": ["hand"],
+          "filter": {"any_types": ["Instant", "Sorcery"]}
+        },
+        "effects": [{"op": "exile_spell_on_resolution"}]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, if there are four or more cards exiled with this artifact, choose one of them at random. You may cast it without paying its mana cost",
+        "trigger": {
+          "event": "upkeep",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"zone": "exile", "controller": "any", "exiled_with": "self"}},
+            "right": {"const": 4}
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_permanents",
+            "as": "diary_pick",
+            "prompt": "Choose an exiled card at random",
+            "objects": {"zone": "exile", "controller": "any", "exiled_with": "self", "count": 1, "random": true}
+          },
+          {
+            "op": "may",
+            "prompt": "Cast that card without paying its mana cost?",
+            "effects": [
+              {"op": "play_exiled", "objects": {"binding": "diary_pick"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

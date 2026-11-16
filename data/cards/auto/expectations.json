@@ -15050,6 +15050,10 @@
   "orzhov_signet": {
     "zone": "battlefield"
   },
+  "osgood_operation_double": {
+    "battlefield_count": 34,
+    "zone": "battlefield"
+  },
   "otawara_soaring_city": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19083,6 +19087,14 @@
   "sisay_s_ring": {
     "zone": "battlefield"
   },
+  "sisterhood_of_karn": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "sisters_of_the_flame": {
     "zone": "battlefield"
   },
@@ -19485,6 +19497,13 @@
     "zone": "battlefield"
   },
   "songbirds_blessing": {
+    "zone": "battlefield"
+  },
+  "sonic_screwdriver": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sontaran_general": {

@@ -1,0 +1,16 @@
+{
+  "card_id": "surge_of_brilliance",
+  "name": "Surge of Brilliance",
+  "oracle_text": "Paradox — Draw a card for each spell you've cast this turn from anywhere other than your hand.\nForetell {1}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "Paradox — Draw a card for each spell you've cast this turn from anywhere other than your hand."
+  ],
+  "needs": [{
+    "capability": "paradox",
+    "kind": "value",
+    "what": "a value counting the spells a player has cast this turn from a zone other than their hand (Paradox): `spells_cast_this_turn` with a cast-zone filter, e.g. {\"player\": \"you\", \"not_from_zone\": [\"hand\"]}, which needs the turn ledger's SPELL_CAST fold to record each cast's origin zone beside `spells_cast_ids`",
+    "why_existing_wont_do": "`spells_cast_this_turn` counts either all casts or those whose printed face matches a filter (`_matches_printed`); the turn ledger records only the cast card id, not the zone it was cast from. Counting all spells would overcount every hand-cast spell, including Surge of Brilliance itself when cast from hand. Foretell {1}{U} itself is expressible via the card-level `foretell` key"
+  }],
+  "closest_existing": ["spells_cast_this_turn", "foretell"],
+  "confidence": "high"
+}
