@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**394 cards** blocked by **343** capabilities.
+**395 cards** blocked by **344** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -291,6 +291,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-named-counter-from-permanent-you-control](#remove-named-counter-from-permanent-you-control) | 1 | 8078 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
@@ -4801,6 +4802,20 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
+
+</details>
+
+## remove-named-counter-from-permanent-you-control
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that removes N counters of a NAMED kind (here one +1/+1 counter) from a permanent the payer chooses among a selector (here 'a creature you control'), not just from the source -- e.g. remove_counters_from_among accepting a 'counter' kind, or remove_counters accepting an 'objects' selector
+  <br>Why the existing vocabulary won't do: cost.remove_counters takes a named kind but only ever removes from the source; cost.remove_counters_from_among chooses among other permanents but removes counters of any kind, and the loader explicitly refuses a 'counter' key on it. Filtering its pool with has_counters: '+1/+1' still lets the payer remove a different kind (e.g. -1/-1) from a creature carrying both, so it would be a strictly cheaper card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sage of Fables** (rank 8078) — `sage_of_fables`
+  - {2}, Remove a +1/+1 counter from a creature you control: Draw a card.
 
 </details>
 

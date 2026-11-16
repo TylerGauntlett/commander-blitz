@@ -228772,12 +228772,12 @@
     },
     "Ruinous Intrusion": {
       "edhrec_rank": 5111,
-      "gate": "template",
+      "gate": null,
       "name": "Ruinous Intrusion",
-      "reason": "no template for: Exile target artifact or enchantment. Put X +1/+1 counters on target creature you control,",
+      "reason": "",
       "scryfall_id": "47f8c11f-8171-416a-a4a3-6530ca3ba7a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruinous Minotaur": {
@@ -237622,12 +237622,12 @@
     },
     "Seafloor Oracle": {
       "edhrec_rank": 4509,
-      "gate": "template",
+      "gate": null,
       "name": "Seafloor Oracle",
-      "reason": "no template for: Whenever a Merfolk you control deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "a746c2ff-60f3-41c4-853d-e5159d005bea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seafloor Stalker": {
@@ -248322,12 +248322,12 @@
     },
     "Singer of Swift Rivers": {
       "edhrec_rank": 5952,
-      "gate": "template",
+      "gate": null,
       "name": "Singer of Swift Rivers",
-      "reason": "no template for: When this creature enters, put a shield counter on another target creature you control",
+      "reason": "",
       "scryfall_id": "43208437-9341-4bea-a1e0-556d9a5cb25b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Singing Bell Strike": {
@@ -265692,12 +265692,12 @@
     },
     "Stonybrook Banneret": {
       "edhrec_rank": 3041,
-      "gate": "template",
+      "gate": null,
       "name": "Stonybrook Banneret",
-      "reason": "no template for: Merfolk spells and Wizard spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "1b3bc8fd-97bd-4383-9ce4-8cfe7a6c1e62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stonybrook Schoolmaster": {
@@ -270812,12 +270812,12 @@
     },
     "Surgespanner": {
       "edhrec_rank": 8920,
-      "gate": "template",
+      "gate": null,
       "name": "Surgespanner",
-      "reason": "no template for: Whenever this creature becomes tapped, you may pay {1}{U}. If you do, return target perman",
+      "reason": "",
       "scryfall_id": "3303c5cb-0064-47c0-bc91-228acd82348e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surgical Extraction": {

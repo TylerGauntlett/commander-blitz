@@ -17360,6 +17360,10 @@
   "ruination_wurm": {
     "zone": "battlefield"
   },
+  "ruinous_intrusion": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "ruinous_ultimatum": {
     "battlefield_count": 32,
     "hand_size": {
@@ -17890,6 +17894,13 @@
     "zone": "battlefield"
   },
   "seacoast_drake": {
+    "zone": "battlefield"
+  },
+  "seafloor_oracle": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "seagraf_skaab": {
@@ -18811,6 +18822,13 @@
     "zone": "battlefield"
   },
   "sin_unending_cataclysm": {
+    "zone": "battlefield"
+  },
+  "singer_of_swift_rivers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sinister_gnarlbark": {
@@ -19876,6 +19894,13 @@
   "stonework_puma": {
     "zone": "battlefield"
   },
+  "stonybrook_banneret": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "storm_crow": {
     "zone": "battlefield"
   },
@@ -20290,6 +20315,10 @@
       "1": 0
     },
     "zone": "graveyard"
+  },
+  "surgespanner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "surrak_and_goreclaw": {
     "battlefield_count": 33,

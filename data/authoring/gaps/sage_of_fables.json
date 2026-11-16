@@ -1,0 +1,18 @@
+{
+  "card_id": "sage_of_fables",
+  "name": "Sage of Fables",
+  "oracle_text": "Each other Wizard creature you control enters with an additional +1/+1 counter on it.\n{2}, Remove a +1/+1 counter from a creature you control: Draw a card.",
+  "blocked_sentences": [
+    "{2}, Remove a +1/+1 counter from a creature you control: Draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "remove_named_counter_from_permanent_you_control",
+      "kind": "cost",
+      "what": "an activated-ability cost that removes N counters of a NAMED kind (here one +1/+1 counter) from a permanent the payer chooses among a selector (here 'a creature you control'), not just from the source -- e.g. remove_counters_from_among accepting a 'counter' kind, or remove_counters accepting an 'objects' selector",
+      "why_existing_wont_do": "cost.remove_counters takes a named kind but only ever removes from the source; cost.remove_counters_from_among chooses among other permanents but removes counters of any kind, and the loader explicitly refuses a 'counter' key on it. Filtering its pool with has_counters: '+1/+1' still lets the payer remove a different kind (e.g. -1/-1) from a creature carrying both, so it would be a strictly cheaper card"
+    }
+  ],
+  "closest_existing": ["remove_counters_from_among", "remove_counters"],
+  "confidence": "high"
+}

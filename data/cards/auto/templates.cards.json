@@ -207661,6 +207661,71 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ruinous_intrusion",
+      "mana_cost": "{3}{G}",
+      "name": "Ruinous Intrusion",
+      "oracle_text": "Exile target artifact or enchantment. Put X +1/+1 counters on target creature you control, where X is the mana value of the permanent exiled this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "var": "exiled"
+            }
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t2"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "R",
         "W"
@@ -214669,6 +214734,52 @@
       "source": "auto",
       "subtypes": [
         "Drake"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Merfolk you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Merfolk"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "seafloor_oracle",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Seafloor Oracle",
+      "oracle_text": "Whenever a Merfolk you control deals combat damage to a player, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
       ],
       "toughness": 3,
       "types": [
@@ -225116,6 +225227,81 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "shield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a shield counter on another target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast Merfolk spells as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "singer_of_swift_rivers",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{G}{U}",
+      "name": "Singer of Swift Rivers",
+      "oracle_text": "Flash\nWhen this creature enters, put a shield counter on another target creature you control. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\nYou may cast Merfolk spells as though they had flash.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Shaman"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -237595,6 +237781,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Merfolk",
+              "Wizard"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Merfolk spells and Wizard spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stonybrook_banneret",
+      "keywords": [
+        "islandwalk"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Stonybrook Banneret",
+      "oracle_text": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nMerfolk spells and Wizard spells you cast cost {1} less to cast.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -243406,6 +243634,67 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{U}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{U} to return target permanent to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature becomes tapped, you may pay {1}{U}. If you do, return target permanent to its owner's hand.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "surgespanner",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Surgespanner",
+      "oracle_text": "Whenever this creature becomes tapped, you may pay {1}{U}. If you do, return target permanent to its owner's hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
