@@ -4755,6 +4755,10 @@
   "damocles_base_sword_of_kang": {
     "zone": "battlefield"
   },
+  "dan_lewis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dance_of_the_dead": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -9000,6 +9004,10 @@
     "zone": "graveyard"
   },
   "graf_mole": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "graham_o_brien": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14184,6 +14192,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "nardole_resourceful_cyborg": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "narset_parter_of_veils": {
     "counters": {
       "amount": 5,
@@ -17651,6 +17663,10 @@
     "graveyard_size": {
       "0": 4
     },
+    "zone": "battlefield"
+  },
+  "ryan_sinclair": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sabertooth_wyvern": {
@@ -24780,6 +24796,10 @@
     "zone": "battlefield"
   },
   "yarok_the_desecrated": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "yasmin_khan": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

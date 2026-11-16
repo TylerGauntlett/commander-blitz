@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**433 cards** blocked by **380** capabilities.
+**434 cards** blocked by **380** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,6 +31,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [escape](#escape) | 3 | 1514 | engine, op |
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
+| [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
@@ -48,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
-| [goad](#goad) | 2 | 6258 | op |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -976,6 +976,29 @@ Blocks **3** cards.
 
 </details>
 
+## goad
+
+Blocks **3** cards.
+
+- **(op)** goad that lasts as long as the source permanent remains on the battlefield (a duration tied to the source leaving, not to the goading player's next turn)
+  <br>Why the existing vocabulary won't do: The `goad` op takes a `duration`, but no listed duration expresses "as long as this enchantment remains on the battlefield"; a permanent goad plus a leaves-battlefield trigger running `ungoad` is not printed and the target binding is not available to that later trigger
+- **(op)** a `while_counter` duration (with `counter` naming the kind) on the `goad` op, so the creature stays goaded by the spell's controller for as long as it has a duty counter on it, and stops being goaded when the last one is removed
+  <br>Why the existing vocabulary won't do: `goad` takes only `duration: "permanent"` (rest of the game) or the default until-the-goader's-next-turn clock; neither ends when a counter is removed. Only `cant_attack_player` with `objects` has a `while_counter` mark (`structs.AttackMark`)
+- **(op)** a duration on the `goad` op tied to control: the creature stays goaded by the effect's controller (the player who gave it away) for as long as the player who gained control of it keeps controlling it, ending when control changes again (e.g. `duration: "while_controlled_by"` with `player` naming the new controller binding from `gain_control`'s `as`)
+  <br>Why the existing vocabulary won't do: `goad` offers only the default clock (until the goader's next turn, cleared in its untap step) and `duration: "permanent"` (rest of the game, which would outlast a later control change); the `goaded` static is goaded by the static's controller, which after the handoff is the opponent rather than the original owner, so it would let the creature attack the wrong player. The control half is expressible (`may` + `gain_control` with `player` an opponent chosen via `choose_player`, `duration: "permanent"`), and the end-step line is `draw` then `lose_life` of `cards_in_hand`, but the goad clock is not
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hot Pursuit** (rank 6258) — `hot_pursuit`
+  - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
+  - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+- **Immortal Obligation** (rank 7526) — `immortal_obligation`
+  - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
+- **Vislor Turlough** (rank 12342) — `vislor_turlough`
+  - Deal with the Black Guardian — When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -1306,25 +1329,6 @@ Blocks **2** cards.
 - **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
   - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
   - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
-
-</details>
-
-## goad
-
-Blocks **2** cards.
-
-- **(op)** goad that lasts as long as the source permanent remains on the battlefield (a duration tied to the source leaving, not to the goading player's next turn)
-  <br>Why the existing vocabulary won't do: The `goad` op takes a `duration`, but no listed duration expresses "as long as this enchantment remains on the battlefield"; a permanent goad plus a leaves-battlefield trigger running `ungoad` is not printed and the target binding is not available to that later trigger
-- **(op)** a `while_counter` duration (with `counter` naming the kind) on the `goad` op, so the creature stays goaded by the spell's controller for as long as it has a duty counter on it, and stops being goaded when the last one is removed
-  <br>Why the existing vocabulary won't do: `goad` takes only `duration: "permanent"` (rest of the game) or the default until-the-goader's-next-turn clock; neither ends when a counter is removed. Only `cant_attack_player` with `objects` has a `while_counter` mark (`structs.AttackMark`)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hot Pursuit** (rank 6258) — `hot_pursuit`
-  - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
-  - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
-- **Immortal Obligation** (rank 7526) — `immortal_obligation`
-  - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
 
 </details>
 

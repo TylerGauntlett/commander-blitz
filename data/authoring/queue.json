@@ -60322,12 +60322,12 @@
     },
     "Dan Lewis": {
       "edhrec_rank": 18177,
-      "gate": "template",
+      "gate": null,
       "name": "Dan Lewis",
-      "reason": "no template for: Noncreature, non-Equipment artifacts you control are Equipment in addition to their other ",
+      "reason": "",
       "scryfall_id": "184bf6c2-c7c2-48f5-a1a5-0aac4a08e567",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dance of Many": {
@@ -115812,12 +115812,12 @@
     },
     "Graham O'Brien": {
       "edhrec_rank": 13980,
-      "gate": "template",
+      "gate": null,
       "name": "Graham O'Brien",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, create a Food toke",
+      "reason": "",
       "scryfall_id": "2a0410cb-e202-4bad-a6a5-e3e58e574157",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grakk the Pacifist": {
@@ -183372,12 +183372,12 @@
     },
     "Nardole, Resourceful Cyborg": {
       "edhrec_rank": 15546,
-      "gate": "template",
+      "gate": null,
       "name": "Nardole, Resourceful Cyborg",
-      "reason": "no template for: {T}: Add {U} for each counter on Nardole. Spend this mana only to cast noncreature spells",
+      "reason": "",
       "scryfall_id": "03a5c463-6b5c-49c9-84c9-666aa8c19fbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Narfi, Betrayer King": {
@@ -230222,12 +230222,12 @@
     },
     "Ryan Sinclair": {
       "edhrec_rank": 12520,
-      "gate": "template",
+      "gate": null,
       "name": "Ryan Sinclair",
-      "reason": "no template for: Whenever Ryan attacks, exile cards from the top of your library until you exile a nonland ",
+      "reason": "",
       "scryfall_id": "038c8271-f814-4d00-b719-984120dd18b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rydia's Return": {
@@ -320552,12 +320552,12 @@
     },
     "Yasmin Khan": {
       "edhrec_rank": 15267,
-      "gate": "template",
+      "gate": null,
       "name": "Yasmin Khan",
-      "reason": "no template for: {T}: Exile the top card of your library. Until your next end step, you may play it",
+      "reason": "",
       "scryfall_id": "12b09a4f-bb62-4766-8115-cae4d5cc4c12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yasova Dragonclaw": {
