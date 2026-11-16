@@ -631,6 +631,14 @@ STATIC_EFFECTS = frozenset(
         # the ability could discount it. Strong Back is an Aura discounting
         # somebody else's Equipment.
         "ability_cost_reduction",
+        # Kopala, Warden of Waves. "Abilities your opponents activate that
+        # target a Merfolk you control cost {2} more to activate." The line
+        # above pointing the other way, as `spell_cost_increase` is the
+        # reduction's: a `cost` node held to generic mana, netted into
+        # `costs.ability_mana` as a negative discount by
+        # `player_statics.ability_mana_tax`, its `targeting` read meanly at the
+        # pre-target gate and exactly per tuple.
+        "ability_cost_increase",
         # Doc Aurlock, Grizzled Genius. "Plotting cards from your hand costs
         # {2} less." The third member of the family, for the one price neither
         # line above reaches: plot (702.171a) is a special action (116.2k),
@@ -667,6 +675,17 @@ STATIC_EFFECTS = frozenset(
         # after anything else that read the count, and its own `add_counters`
         # fires `counter_placed` again, so it retriggers itself.
         "replace_counters",
+        # Topography Tracker.  "If a creature you control would explore,
+        # instead it explores, then it explores again."  A replacement of an
+        # *action*, as `replace_proliferate` is, but about the exploring
+        # **object** rather than a player, so it takes `affects` (required) and
+        # no `affects_player`.  Read by the `explore` op through
+        # `player_statics.explore_times`, the one place every explore passes:
+        # each repetition is a whole explore with its own reveal and its own
+        # EXPLORED.  Two compound to four (616.1).  An `explores` trigger is the
+        # near miss: it would explore again *after* the first resolved, on the
+        # stack, and hear its own explore.
+        "replace_explore",
         # Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
         # Emancipation. "If equipped creature would deal combat damage, it deals
         # double that damage instead." Read by `primitives.damage_permanent` and

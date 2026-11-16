@@ -1,0 +1,179 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_granted_retrace.py. t_historian is Deeproot Historian's static: Merfolk and Druid cards in your graveyard have retrace. t_retrace_merfolk and t_retrace_druid are a creature card of each subtype, t_retrace_rite a Kindred instant that is a Merfolk without being a creature, and t_retrace_dragon a Merfolk whose own graveyard cost is Dragon Man's discard of any card. t_retrace_golem is a Merfolk artifact, which an Edgar-shaped permission also lets out at its printed price. t_retrace_printed is a Merfolk instant that prints retrace itself.",
+  "cards": [
+    {
+      "id": "t_historian",
+      "name": "Test Historian",
+      "oracle_text": "Merfolk and Druid cards in your graveyard have retrace. (You may cast cards with retrace from your graveyard by discarding a land card in addition to paying their other costs.)",
+      "mana_cost": "{4}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk",
+        "Druid"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Merfolk and Druid cards in your graveyard have retrace.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Merfolk",
+              "Druid"
+            ]
+          },
+          "grants_retrace": true
+        }
+      ]
+    },
+    {
+      "id": "t_retrace_merfolk",
+      "name": "Test Retrace Merfolk",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_retrace_druid",
+      "name": "Test Retrace Druid",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_retrace_rite",
+      "name": "Test Retrace Rite",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{G}",
+      "types": [
+        "Kindred",
+        "Instant"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_retrace_dragon",
+      "name": "Test Retrace Robot",
+      "oracle_text": "You may cast this card from your graveyard by discarding a card in addition to paying its other costs.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "graveyard_additional_cost": {
+        "discard": 1
+      }
+    },
+    {
+      "id": "t_retrace_golem",
+      "name": "Test Retrace Golem",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_retrace_printed",
+      "name": "Test Printed Retrace",
+      "oracle_text": "You gain 2 life.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "mana_cost": "{G}",
+      "types": [
+        "Kindred",
+        "Instant"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "retrace": true,
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -513,6 +513,18 @@ export function describeEvent(
     case "connived":
       return `${card ?? "A creature"} connives`;
     /*
+     * A permanent explored (701.40). Nothing else in the log says what was
+     * revealed -- a nonland kept on top moves no card -- so this line names
+     * it, and it is the moment "whenever a creature you control explores"
+     * triggers off. An empty library revealed nothing and is still an explore.
+     */
+    case "explored": {
+      const revealed = typeof event.data.revealed === "string" ? event.data.revealed : null;
+      const subject = card ?? "A creature";
+      if (!revealed) return `${subject} explores`;
+      return `${subject} explores, revealing ${lookup?.(revealed) ?? prettyCardName(revealed)}`;
+    }
+    /*
      * A player investigated (701.16). The Clue has its own `token_created`
      * line; this one says it was an investigation, which is what "whenever
      * you investigate" triggers off -- a Clue made any other way gets none.

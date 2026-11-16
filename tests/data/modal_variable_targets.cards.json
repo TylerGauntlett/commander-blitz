@@ -1,0 +1,141 @@
+{
+  "_comment": "Test-only cards for tests/unit/modes/test_modal_variable_targets.py -- a caster-sized ('up to three') mode-owned target linked to a sibling player target of the same mode ('target player shuffles up to three target cards from their graveyard'), beside three single-target modes. Shaped on Quandrix Command.",
+  "cards": [
+    {
+      "id": "t_quandrix_command",
+      "name": "Test Quandrix Command",
+      "oracle_text": "Choose two —\n• Return target creature or planeswalker to its owner's hand.\n• Counter target artifact or enchantment spell.\n• Put two +1/+1 counters on target creature.\n• Target player shuffles up to three target cards from their graveyard into their library.",
+      "mana_cost": "{1}{G}{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "bounced",
+          "kind": "permanent",
+          "mode": 0,
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ]
+          }
+        },
+        {
+          "id": "countered",
+          "kind": "spell",
+          "mode": 1,
+          "count": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ]
+          }
+        },
+        {
+          "id": "grown",
+          "kind": "permanent",
+          "mode": 2,
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "id": "shuffler",
+          "kind": "player",
+          "mode": 3,
+          "count": 1,
+          "selector": {}
+        },
+        {
+          "id": "tucked",
+          "kind": "card_in_graveyard",
+          "mode": 3,
+          "count": 3,
+          "up_to": true,
+          "selector": {
+            "zone": "graveyard",
+            "controller": {
+              "target": "shuffler"
+            }
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 2,
+          "modes": [
+            {
+              "label": "Return target creature or planeswalker to its owner's hand.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": {
+                    "target": "bounced"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Counter target artifact or enchantment spell.",
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ]
+            },
+            {
+              "label": "Put two +1/+1 counters on target creature.",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "target": "grown"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Target player shuffles up to three target cards from their graveyard into their library.",
+              "effects": [
+                {
+                  "op": "put_on_top",
+                  "objects": {
+                    "target": "tucked"
+                  }
+                },
+                {
+                  "op": "shuffle",
+                  "player": {
+                    "target": "shuffler"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

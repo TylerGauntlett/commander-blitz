@@ -1631,15 +1631,20 @@ class GameObject:
         return taken
 
     def _last_counter_gone(self, kind: str) -> None:
-        """End the "for as long as it has a <kind> counter" attack marks.
+        """End the "for as long as it has a <kind> counter" effects: the attack
+        marks (Promise of Loyalty) and the `TempEffect` entries (Xolatoyac, the
+        Smiling Flood's Island).
 
         Here, where every road to removing a counter meets, rather than in one
         primitive: the duration ends when the last counter goes (611.2b), and a
         counter put on again later must not revive it -- which a live "has the
-        counter?" read alone would do.
+        counter?" read alone would do. Every caller that removes counters bumps
+        `char_version` after, so a characteristic dropped here is re-read.
         """
         if self.attack_marks:
             self.attack_marks = [m for m in self.attack_marks if m.while_counter != kind]
+        if self.until_eot:
+            self.until_eot = [t for t in self.until_eot if t.while_counter != kind]
 
     # -- convenience ----------------------------------------------------------
 

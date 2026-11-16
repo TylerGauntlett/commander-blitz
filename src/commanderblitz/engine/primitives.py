@@ -1939,6 +1939,7 @@ def add_subtypes(
     timed: bool = False,
     source: int | None = None,
     until_player: int | None = None,
+    while_counter: str | None = None,
 ) -> tuple[str, ...]:
     """ "It becomes a Vampire in addition to its other types." Captivating Vampire.
 
@@ -1956,6 +1957,15 @@ def add_subtypes(
     and toughness, and not a granted static, which is an ability that a
     "loses all abilities" would strip where the printed effect survives.
 
+    ``while_counter`` names a counter kind: "that land is an Island in addition
+    to its other types **for as long as it has a flood counter on it**"
+    (Xolatoyac, the Smiling Flood). The same ``subtype`` `TempEffect`, on
+    `TempEffect.while_counter`'s clock: no cleanup or untap step ends it, nor
+    ``source`` leaving, and `GameObject._last_counter_gone` drops it as the
+    last counter of that kind goes. A permanent with no such counter gets
+    nothing, because its duration is already over (611.2b) --
+    `temp_effects.forbid_attack_while_counter`'s refusal, for the same words.
+
     "In addition to its other types" is the only reading offered, because it is
     what every printed line of this shape says.  Wholesale type *replacement* is
     what `animate` and the `set_types` static are for.
@@ -1963,6 +1973,23 @@ def add_subtypes(
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return ()
+    if while_counter is not None:
+        if obj.counter(while_counter) <= 0:
+            return ()
+        added = tuple(dict.fromkeys(subtypes))
+        if not added:
+            return ()
+        obj.until_eot.append(
+            TempEffect(
+                kind="subtype",
+                subtypes=added,
+                source=source,
+                timestamp=state.alloc_timestamp(),
+                while_counter=while_counter,
+            )
+        )
+        state.bump_chars()
+        return added
     if timed:
         added = tuple(dict.fromkeys(subtypes))
         if not added:
@@ -2703,8 +2730,9 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
 
     "Until end of turn" ends in every cleanup.  "Until your next turn" ends in
     none of them -- in its player's untap step instead -- and neither does "for
-    as long as you control" its source (`temp_effects.end_source_bound`).
-    "Until the end of your
+    as long as you control" its source (`temp_effects.end_source_bound`), nor
+    "for as long as it has a <kind> counter on it"
+    (`GameObject._last_counter_gone`). "Until the end of your
     next turn" ends in the cleanup of the first of its seat's turns to *begin*
     after it was made, so the turn check is strict: made during that seat's own
     turn, this cleanup ends the turn it was made in, which is not "your next
@@ -2712,7 +2740,11 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     the same words.  Reading the active player rather than a stored turn number
     is what lets an extra turn, or a seat leaving, move the end with it.
     """
-    if temp.until_player is not None or temp.while_controller is not None:
+    if (
+        temp.until_player is not None
+        or temp.while_controller is not None
+        or temp.while_counter is not None
+    ):
         return False
     if temp.until_end_of_turn_of is None:
         return True

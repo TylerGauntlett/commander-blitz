@@ -335,6 +335,10 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # Breach -- and the Locker's turn-long grant: an escape cost a
         # permission hands the card, offered as its own line at that price.
         out.extend(_granted_escape_lines(state, pid, oid, card))
+        # "Merfolk and Druid cards in your graveyard have retrace" -- Deeproot
+        # Historian: retrace a permission hands the card, its own line at the
+        # printed price plus a land discarded.
+        out.extend(_granted_retrace_lines(state, pid, oid, card))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         # Flashback is the same widening with a different price: an alternative
@@ -1183,6 +1187,10 @@ def _graveyard_cast_permission(
         # Underworld Breach is not an Edgar beside it.
         if static.get("escape"):
             continue
+        # Granted retrace likewise: the land discard is part of the price, so
+        # the card is never let out at the printed cost alone.
+        if static.get("grants_retrace"):
+            continue
         if pay_life is not None and bool(static.get("pay_life_instead")) != pay_life:
             continue
         if _permission_reaches(state, pid, card, subject, source_obj, static):
@@ -1217,7 +1225,10 @@ def _permission_reaches(
     # is a new object (400.7) -- or, for escape, the exiled cards are the
     # brake. A missing key is one a turn, which a resolving grant
     # (`grant_graveyard_cast`) relies on, unless it grants escape.
-    cap = static.get("max_per_turn", None if static.get("escape") else 1)
+    cap = static.get(
+        "max_per_turn",
+        None if static.get("escape") or static.get("grants_retrace") else 1,
+    )
     # Billed against the granting permanent through the ordinary activation
     # ledger, keyed on a sentinel index no real ability can occupy, so a
     # permanent that also has activated abilities does not share a counter
@@ -1334,6 +1345,62 @@ def granted_escape_permission(
         if offered == price:
             return source_obj
     return None
+
+
+#: Retrace's additional cost (702.81a): "discarding a land card". The price a
+#: granted retrace charges on top of the printed one, whatever the card's own
+#: `retrace_cost` is.
+RETRACE_COST = Cost(discard=1, discard_selector={"types": ["Land"]})
+
+
+def granted_retrace_permission(
+    state: GameState, pid: int, card: CardDef, oid: int
+) -> GameObject | None:
+    """The permission granting the card in ``oid`` retrace, if any.
+
+    Granted retrace (702.81a on a card that does not print it): the card may be
+    cast from its owner's graveyard for its printed costs plus a land card
+    discarded, and never for the printed costs alone. The discard is the brake,
+    so the permission is unmetered unless it says otherwise. Both `legality`
+    and `Game._cast` go through here, so the permission a line was offered
+    under is the one its use is billed to.
+    """
+    subject = state.objects.get(oid)
+    for source_obj, static in graveyard_cast_permissions(state, pid):
+        if not static.get("grants_retrace"):
+            continue
+        if _permission_reaches(state, pid, card, subject, source_obj, static):
+            return source_obj
+    return None
+
+
+def _granted_retrace_lines(state: GameState, pid: int, oid: int, card: CardDef) -> list[Action]:
+    """The cast lines granted retrace offers the card in ``oid``.
+
+    Every way the card could be cast from hand at its printed price, each with
+    the land discard on top and marked `Action.retrace` so `Game._cast` charges
+    it. A land is never cast (305.9), and a card that prints retrace already
+    has the identical line from `CardDef.retrace` at the identical price, so
+    the grant adds nothing to it. A card whose own graveyard cost is some other
+    discard (Dragon Man's "discarding a card") keeps that line and gains this
+    one beside it.
+    """
+    if card.is_land:
+        return []
+    if card.retrace and card.retrace_cost == RETRACE_COST:
+        return []
+    if granted_retrace_permission(state, pid, card, oid) is None:
+        return []
+    if not can_pay(state, pid, RETRACE_COST, oid):
+        return []
+    out: list[Action] = []
+    for line in _cast_options(state, pid, oid, card, extra_generic=0):
+        # The client groups rows by `base_label`, so the word goes there and
+        # the targets stay after it.
+        base = line.base_label + " (retrace)"
+        rest = line.label.removeprefix(line.base_label)
+        out.append(dataclasses.replace(line, retrace=True, base_label=base, label=base + rest))
+    return out
 
 
 #: The `ability_index` a graveyard-cast permission's per-turn count is filed

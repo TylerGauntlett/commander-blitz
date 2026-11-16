@@ -110,13 +110,28 @@ def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
     `replace_proliferate` static) is read here, once, before the first: each
     repetition is a whole proliferate with its own choice, asked after the one
     before it resolved. See `player_statics.proliferate_times`.
+
+    ``as`` binds the permanents that **actually received a counter** from this
+    proliferate, across every repetition, each once -- Ripples of Potential's
+    "permanents you control that had a counter put on them this way". Not what
+    was chosen: a permanent whose every placement was prohibited or replaced
+    to nothing received none. Players are never in it; the binding is a pool
+    of objects. Written even when nothing received a counter, so a later read
+    finds an empty pool rather than an older one.
     """
+    received: list[int] = []
     for _ in range(proliferate_times(ctx.state, ctx.controller)):
-        yield from _proliferate_once(ctx)
+        yield from _proliferate_once(ctx, received)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = received
 
 
-def _proliferate_once(ctx: EffectContext):
-    """One 701.27a proliferate: the choice, then one of each kind on each."""
+def _proliferate_once(ctx: EffectContext, received: list[int]):
+    """One 701.27a proliferate: the choice, then one of each kind on each.
+
+    Appends to ``received`` each permanent that got at least one counter and
+    is not already in it.
+    """
     state = ctx.state
     refs: list[tuple[str, TargetRef]] = []
     for oid in state.battlefield:
@@ -165,7 +180,9 @@ def _proliferate_once(ctx: EffectContext):
             continue
         for kind, amount in kinds:
             if amount > 0:
-                add_counters(state, ref.id, kind, 1, source=ctx.source_oid)
+                got = add_counters(state, ref.id, kind, 1, source=ctx.source_oid)
+                if got > 0 and ref.id not in received:
+                    received.append(ref.id)
 
 
 @register("set_flag")

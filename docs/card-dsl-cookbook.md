@@ -21,6 +21,46 @@ contain only `add_mana`. The loader enforces this, and it is why a dual land nev
 to ask which colour: the payment solver picks the mode, records the option index, and
 the engine adds exactly that mana without running the effect interpreter at all.
 
+### A basic land type is a mana ability
+
+Rule 305.6: a land with a basic land type has "{T}: Add [its mana]" whether or
+not its text box says so. Nothing writes that ability. `characteristics.abilities_of`
+appends `carddef.BASIC_LAND_MANA_ABILITIES[type]` for each Plains, Island,
+Swamp, Mountain or Forest in the permanent's **derived** subtypes, while it is a
+land on the battlefield. So the type is the whole card text:
+
+```jsonc
+// Urborg, Tomb of Yawgmoth: "Each land is a Swamp in addition to its other land types."
+{ "kind": "static", "effect": "add_subtype",
+  "affects": { "controller": "any", "types": ["Land"] }, "subtypes": ["Swamp"] }
+```
+
+Every land then taps for {B}, Urborg included. Every reader of `abilities_of`
+sees the ability: legality, the payment solver, activation, the client's mana
+row and the AI. It goes when the type goes, whether the type came from a
+granter leaving or from the last flood counter on a land Xolatoyac flooded. A
+creature that is also a land still waits out summoning sickness (302.6), and a
+"loses all abilities" effect takes the derived ability with the printed ones.
+
+**A printed copy is not doubled.** A basic or a dual prints the same ability as
+reminder text, "({T}: Add {U} or {B}.)". When a printed ability adds that type's
+colour with a bare `{T}` cost and no rider, restriction, condition or variable
+amount, the type adds nothing (`characteristics._prints_intrinsic`). Write basic
+lands and duals the way `data/cards/basics.cards.json` does. Do not write a
+separate `grant_ability` of "{T}: Add {B}." beside a type grant, because the
+granted ability would be a second ability that nothing printed.
+
+The derived abilities sit **after** every printed and granted ability, so a land
+gaining a type moves no other ability's index. `_battlefield_statics` reads
+`abilities_of(..., intrinsic=False)`. It runs inside `_compute`, so it cannot
+ask `chars` for subtypes, and a mana ability is not a static anyway.
+
+Not modelled: 305.7's *setting* of a land's subtype, which would also strip
+the abilities its old land types and its rules text gave it. No op or static
+sets a land subtype. Song of the Dryads is a `set_types`, a `lose_all_abilities`
+and a granted "{T}: Add {G}.", and that loss also takes the derived Forest
+ability, so the land taps for {G} once.
+
 ### "Add {G} for each …"
 
 The one part of a mana ability that is not a constant. `add_mana` takes an
@@ -3066,6 +3106,41 @@ target tuple, so its presence turns on the same per-tuple pricing a targeted
 discount does. The gate reads it meanly, as the life tax does. Generic only,
 because the discount arithmetic is generic only. A coloured surcharge would
 silently turn generic, so it is refused.
+
+### …and on activated abilities
+
+```jsonc
+// Kopala, Warden of Waves — "Abilities your opponents activate that target a
+// Merfolk you control cost {2} more to activate."
+{ "kind": "static", "effect": "ability_cost_increase",
+  "affects_abilities": { "any": true },
+  "activated_by": "opponent",
+  "targeting": { "controller": "you", "subtypes": ["Merfolk"] },
+  "cost": { "mana": "{2}" } }
+```
+
+`ability_cost_reduction`'s mirror, as `spell_cost_increase` is
+`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, or `any`
+beside a `targeting` clause), `activated_by` for the activating player (default
+`"you"`) and optional `affects` for the permanent that prints the ability, with
+the price in a `cost` node held to generic mana of {1} or more. Read by
+`player_statics.ability_mana_tax` and netted into `costs.ability_mana` as a
+negative discount, the one number legality, `can_pay` and `pay` share, so
+601.2f's order holds there as it does for a spell.
+
+`targeting` is read **meanly** at the gate, as the spell tax reads it: before
+any target exists the tax is left out, and every tuple `legality._ability_aims`
+enumerates — per X and per mode included — is then priced at its own targets,
+which are the targets `Game._activate` charges and sizes an announced X
+against. A mana ability is never taxed this way, because it has no targets
+(605.1a); `any` without `targeting` is refused, since the payment solver
+activates tap-only mana abilities without reading the static. An `amount`, a
+coloured surcharge, life or anything else in the `cost` is refused.
+
+**Not `ability_cost_reduction` with a negative `amount`**: that total is a
+discount, read generously at the gate, and a tax read that way would offer
+activations the payment then refuses. **Not `ward`** either: ward is a trigger
+that counters the ability unless paid, and it fires on spells too.
 
 ## Kicker
 
@@ -7328,6 +7403,41 @@ The near misses are a card's own `graveyard_cost`, which is printed escape
 permission without `escape`, which casts at the printed cost and is the Edgar
 line, a much stronger card.
 
+#### Granted retrace
+
+```jsonc
+// Deeproot Historian -- "Merfolk and Druid cards in your graveyard have retrace."
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+  "affects_spells": { "subtypes": ["Merfolk", "Druid"] },
+  "grants_retrace": true }
+```
+
+`grants_retrace` on a `cast_from_graveyard` static makes the permission retrace
+(702.81a) given to the cards it covers. It is the permission's only price: a
+covered nonland card gets a line at its printed costs plus a land card
+discarded, and no line at the printed costs alone. `affects_spells` reads the
+printed face, so `subtypes` is either subtype on any card type, a Kindred
+instant included.
+
+`casting._granted_retrace_lines` offers every printed-price line the card has,
+each with the discard on top and marked `Action.retrace`, so `Game._cast`
+charges retrace's own land discard (`casting.RETRACE_COST`) after the mana,
+whatever graveyard cost the card prints. A card that prints `retrace: true`
+already has the identical line and gets no second one; a card whose own
+`graveyard_additional_cost` is another discard (Dragon Man) keeps that line
+beside the granted one. An Edgar-shaped permission over the same card is a
+second line at the printed price. The spell was cast from a graveyard and goes
+where it normally would: a retraced instant comes back to be retraced again.
+
+The discard is the rate limit, so the permission is unmetered without a
+`max_per_turn`. The loader refuses `grants_retrace` beside `grants_flashback`,
+`pay_life_instead` or `escape` (a second price for the same cast), on a card's
+own `active_zones: ["graveyard"]` permission, and on any other static.
+
+The near misses are the card-level `retrace: true`, which is retrace printed on
+the card being cast, and the same permission without `grants_retrace`, which
+casts at the printed cost and is the Edgar line, a much stronger card.
+
 #### Mayhem
 
 "Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you
@@ -9098,6 +9208,28 @@ loader refuses `affects` and `amount`. Read by the `proliferate` op through
 proliferate has no number in it, so each repetition is a whole proliferate with
 its own choice, asked after the one before it resolved. Two of them compound to
 four (616.1), each applying once (614.5).
+
+## Exploring twice
+
+    Topography Tracker — "If a creature you control would explore, instead it
+    explores, then it explores again."
+
+```jsonc
+{ "kind": "static", "effect": "replace_explore",
+  "affects": { "types": ["Creature"], "controller": "you" } }
+```
+
+`replace_proliferate`'s shape about an object: the static names the exploring
+permanent, so it takes `affects`, required, and no `affects_player`; the loader
+refuses `amount` too, since "again" is the whole printed size. Read by the
+`explore` op through `player_statics.explore_times`, matched against the explorer
+as it is when the explore would happen, so a Map token's "target creature you
+control explores" and a creature's own "it explores" are both doubled. Each
+repetition is a whole explore (701.40a): its own reveal, its own counter or land,
+its own choice, its own `EXPLORED`, so "whenever a creature you control explores"
+hears both. Two of them compound to four (616.1). An `explores` trigger is the
+near miss: it would explore again on the stack, after the first, and hear its
+own explore.
 
 ## "Can't draw more than one card each turn"
 
@@ -11616,6 +11748,28 @@ Sarkhan for the turn. Two near misses load and are wrong: `animate` sets the
 base power and toughness, and a granted `add_subtype` static is an ability that
 "loses all abilities" strips, where the printed type change survives it.
 
+**For as long as it has a counter** is the third length — "that land is an
+Island in addition to its other types for as long as it has a flood counter on
+it" (Xolatoyac, the Smiling Flood):
+
+```jsonc
+{ "op": "add_counters", "counter": "flood", "objects": { "target": "t1" } },
+{ "op": "add_subtype", "subtypes": ["Island"], "objects": { "target": "t1" },
+  "duration": "while_counter", "counter": "flood" }
+```
+
+`while_counter` writes the `subtype` `TempEffect` on `TempEffect.while_counter`'s
+clock (611.2b): no cleanup or untap step ends it, and neither does its source
+leaving, because the condition is on the permanent it names.
+`GameObject._last_counter_gone` drops it the moment the last counter of that
+kind comes off, so a counter put back later does not revive it, and a permanent
+with no such counter when the op resolves gets nothing. `counter` is required on
+`while_counter`, checked by `validate_counter_kind`, and refused on every other
+duration. The near miss is an `add_subtype` static over `has_counters`, which
+ends when its source leaves and reaches counters any other card put there. A
+basic land type added this way brings its mana ability for exactly as long as
+it lasts — see [A basic land type is a mana ability](#a-basic-land-type-is-a-mana-ability).
+
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
@@ -13027,6 +13181,7 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
 | a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
+| a selector naming a sibling of another mode, or a card-level spec and a mode-owned one linked either way | a mode's specs are declared together, in order, at their own moment; a sibling declared elsewhere (or not at all) is not among the answers the link reads |
 
 ### "Up to one target" inside a mode
 
@@ -13095,6 +13250,37 @@ owns it. The questions are still asked in printed mode order
 moves, and every reader of the stored refs walks the same list. The loader
 admits one sizeless mode-owned spec per card, and none a sibling's selector
 names.
+
+### A mode target that reads its own mode's player
+
+```jsonc
+"targets": [
+  {"id": "shuffler", "kind": "player", "mode": 3},
+  {"id": "tucked", "kind": "card_in_graveyard", "mode": 3, "count": 3, "up_to": true,
+   "selector": {"zone": "graveyard", "controller": {"target": "shuffler"}}}
+],
+…
+{"label": "Target player shuffles up to three target cards from their graveyard into their library.",
+ "effects": [{"op": "put_on_top", "objects": {"target": "tucked"}},
+             {"op": "shuffle", "player": {"target": "shuffler"}}]}
+```
+
+Quandrix Command's fourth bullet. A mode-owned spec may name a sibling of the
+**same** mode in its selector, the way a card-level "target opponent and up to
+one target creature they control" does: `Game._ask_mode_targets` asks the mode's
+specs in printed order and hands each the answers so far, so the cards are
+offered from the graveyard of the player just chosen. Here the linked spec is
+also the card's one caster-sized spec (0–3 refs), stored last, so a second
+bullet's target still reads its own ref however many cards were picked.
+
+608.2b re-checks a `card_in_graveyard` target against a selector that names a
+sibling, not just its zone: once the player is an illegal target (hexproof
+gained in response) the cards drop with it, and the bullet moves nothing rather
+than putting cards on top of a library nobody shuffles. A copy keeps the modes
+and the refs (706.10), and resolves through the same split. The near misses are
+a fixed `count: 3`, which strikes the bullet below three cards and forbids
+fewer, and a card-level target, declared under every pair of bullets.
+`tests/unit/modes/test_modal_variable_targets.py` is the witness.
 
 ### A mode chosen more than once
 
@@ -16589,6 +16775,47 @@ not connive in this engine (see `docs/rules-coverage.md`), so nothing fires.
 draw and discard at the table, so connive 2 would pay twice and a cleanup-step
 discard would pay too. Neither one names the creature, so "that creature" has
 nothing to point at.
+
+## "Whenever a creature you control explores"
+
+```jsonc
+// Merfolk Cave-Diver — "Whenever a creature you control explores, this creature
+// gets +1/+0 until end of turn and can't be blocked this turn."
+{ "kind": "triggered",
+  "trigger": { "event": "explores", "controller": "you",
+               "filter": { "types": ["Creature"] } },
+  "effects": [
+    { "op": "pump", "power": { "const": 1 }, "toughness": { "const": 0 },
+      "objects": { "zone": "battlefield", "self_only": true } },
+    { "op": "unblockable", "duration": "this_turn",
+      "objects": { "zone": "battlefield", "self_only": true } } ] }
+
+// Nicanzil, Current Conductor — "…explores a land card, …" and
+// "…explores a nonland card, put a +1/+1 counter on Nicanzil."
+{ "trigger": { "event": "explores_land", "controller": "you",
+               "filter": { "types": ["Creature"] } } }
+{ "trigger": { "event": "explores_nonland", "controller": "you",
+               "filter": { "types": ["Creature"] } } }
+```
+
+Three trigger events, all heard off the one event the `explore` op fires for
+each permanent that explores, after the revealed card is placed and the counter
+is on. Their subject is the permanent that explored: `filter` asks what it is,
+`controller: "you"` asks who controls it, and `{"binding": "subject"}` is "that
+creature". `source: "self"` means this permanent explored, never that this
+permanent's ability made something else explore.
+
+- `explores` hears every explore, including one of an empty library: 701.40b
+  says the permanent has explored even if some or all of the actions were
+  impossible.
+- `explores_land` hears only an explore that revealed a land card, and
+  `explores_nonland` only one that revealed a nonland card. An explore of an
+  empty library revealed no card, so it is neither.
+
+`counter_placed` is the near miss. It never fires on a land explore, so
+Cave-Diver would miss half its triggers, and it fires on every other +1/+1
+counter at the table. A `zone_change` of the revealed card fires only for a land
+or a binned nonland, and misses a nonland kept on top.
 
 ## Clash
 

@@ -320,6 +320,23 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: discard would pay at all, and a connive whose discard an opponent's
     #: shield stopped would not pay -- and neither event names the creature.
     "connives": EventType.CONNIVED,
+    #: "Whenever a creature you control explores, …" (701.40) -- Merfolk
+    #: Cave-Diver; "…explores a land card" and "…explores a nonland card" --
+    #: Nicanzil, Current Conductor. Once per exploring permanent, after the
+    #: revealed card is placed and the counter is on, fired by
+    #: `ops_cards.op_explore`. The subject is the permanent that explored (see
+    #: `OBJECT_SUBJECT_TRIGGERS`), so `controller: "you"` reads its controller
+    #: and `{"binding": "subject"}` is "that creature".
+    #:
+    #: The two narrower names read the revealed card through
+    #: `EVENT_REVEALED_LAND`: an explore of an empty library revealed no card
+    #: and is still an explore (701.40b), so it pays `explores` and neither of
+    #: the others. `counter_placed` is the near miss and wrong both ways: it
+    #: never fires on a land explore, and it fires on every other +1/+1
+    #: counter at the table.
+    "explores": EventType.EXPLORED,
+    "explores_land": EventType.EXPLORED,
+    "explores_nonland": EventType.EXPLORED,
     #: "Whenever you investigate for the first time each turn, investigate an
     #: additional time." -- Erdwal Illuminator. Once per investigation
     #: (701.16), fired by `ops_counters.op_investigate` after its Clue is
@@ -717,6 +734,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # event's `source`, which is whatever made it connive: see the
         # `source: "self"` check in `_matches`.
         "connives",
+        # The permanent that explored, for `connives`' reason: the event's
+        # `source` is whatever made it explore.
+        "explores",
+        "explores_land",
+        "explores_nonland",
         # The Saga itself. Listed so `source: "self"` -- which the loader always
         # supplies for a chapter -- scopes the ability to *this* Saga rather than
         # to every Saga on the table, and so `_actor` reads the Saga's controller
@@ -791,13 +813,27 @@ EVENT_OUTCOMES: dict[str, bool] = {
 }
 
 
+#: DSL trigger name -> whether the explore it hears revealed a land card.
+#: "Whenever a creature you control explores **a land card**" and "…**a
+#: nonland card**" (Nicanzil, Current Conductor) are both EXPLORED, told apart
+#: by its ``land``. An explore of an empty library carries ``None`` and so
+#: matches neither: it revealed no card at all, land or nonland.
+EVENT_REVEALED_LAND: dict[str, bool] = {
+    "explores_land": True,
+    "explores_nonland": False,
+}
+
+
 def _outcome_matches(dsl_event: str, event: GameEvent) -> bool:
-    """Whether this flip or clash came down the way ``dsl_event`` asks.
+    """Whether this flip, clash or explore came down the way ``dsl_event`` asks.
 
     Shared by `_matches` and `_delayed_matches` for `_half_matches`' reason: a
     delayed subscription must not be wider than the hosted trigger of the same
     name.
     """
+    revealed_land = EVENT_REVEALED_LAND.get(dsl_event)
+    if revealed_land is not None and event.data.get("land") is not revealed_land:
+        return False
     outcome = EVENT_OUTCOMES.get(dsl_event)
     return outcome is None or event.data.get("won") is outcome
 
@@ -1629,7 +1665,8 @@ def _matches(
     if not _half_matches(spec.event, event):
         return False
 
-    # Which outcome of a coin flip this trigger is about -- see `EVENT_OUTCOMES`.
+    # Which outcome of a coin flip, clash or explore this trigger is about -- see
+    # `EVENT_OUTCOMES` and `EVENT_REVEALED_LAND`.
     if not _outcome_matches(spec.event, event):
         return False
 
@@ -1645,6 +1682,14 @@ def _matches(
     # the ability that made something connive, so Doctor Doom making a Villain
     # connive would otherwise count as Doom conniving.
     if spec.event == "connives" and spec.source == "self" and subject_oid != obj.oid:
+        return False
+    # And for "whenever *this creature* explores": a creature whose ability
+    # makes another creature explore has not explored.
+    if (
+        spec.event in ("explores", "explores_land", "explores_nonland")
+        and spec.source == "self"
+        and subject_oid != obj.oid
+    ):
         return False
 
     if spec.event in ("deals_damage_to_player", "deals_damage") and subject_oid is None:

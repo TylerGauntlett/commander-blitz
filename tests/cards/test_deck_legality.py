@@ -48,6 +48,7 @@ PRECONS = {
     "frc_multiverse_reforged",
     "lcc_ahoy_mateys",
     "lcc_blood_rites",
+    "lcc_explorers_of_the_deep",
     "lcc_veloci_ramp_tor",
     "mkc_deep_clue_sea",
     "mkc_revenant_recon",

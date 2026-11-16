@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**388 cards** blocked by **339** capabilities.
+**383 cards** blocked by **336** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [basic-land-type-mana](#basic-land-type-mana) | 3 | 73 | engine |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -52,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [remove-named-counters-from-among](#remove-named-counters-from-among) | 2 | 10375 | cost |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
@@ -239,7 +237,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
-| [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
@@ -280,7 +277,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
@@ -314,6 +310,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
+| [static-count-derived-types](#static-count-derived-types) | 1 | 817 | value |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -787,29 +784,6 @@ Blocks **4** cards.
 
 </details>
 
-## basic-land-type-mana
-
-Blocks **3** cards.
-
-- **(engine)** Rule 305.6 -- a permanent with a basic land type has the matching intrinsic mana ability ({T}: Add {G} for Forest) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) so that a Forest subtype granted by a static brings {T}: Add {G} with it, visible to legality, the payment solver and activation (and still subject to summoning sickness on a creature, 302.6).
-  <br>Why the existing vocabulary won't do: The type change itself is sayable: the `add_subtype` static carries `types` as well as `subtypes` (characteristics.py layer-4 grant loop does `types.update(static.get("types"))`), so {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]} would make each nontoken creature a 'Creature Land -- Forest', and the first sentence is a self_only `set_pt` reading a count of lands you control. But the engine never derives a mana ability from a basic land subtype -- Forest's {T}: Add {G} is printed on the basic card in data/cards/basics.cards.json, and abilities_of returns printed plus statics-granted abilities only. So every creature would read as a Forest land and none could tap for {G}, which is the whole reason the card is played. A `grant_ability` static handing out {T}: Add {G} is unprinted text and the residual gate would have no line for it to claim. Same open gap as urborg_tomb_of_yawgmoth (and Dryad of the Ilysian Grove / Yavimaya, which already ship inert).
-- **(engine)** Rule 305.6 -- a land that gains a basic land type gains the matching intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}), derived in the characteristics pipeline so an `add_subtype` grant of Plains/Island/Swamp/Mountain/Forest brings the mana abilities with it, visible to legality, the payment solver and activation.
-  <br>Why the existing vocabulary won't do: The type change itself is sayable as {"effect": "add_subtype", "affects": {"types": ["Land"], "has_counters": ...}, "subtypes": [every land type in enums.SUBTYPE_CLASS]}, but the engine never derives a mana ability from a granted basic land type, so the land would be every land type in name only and tap for nothing new -- the main effect of the line. Same blocker as Urborg, Tomb of Yawgmoth and Ashaya.
-- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
-  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
-  - Each land is a Swamp in addition to its other land types.
-- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
-  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
-- **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
-  - Each land with an everything counter on it is every land type in addition to its other types.
-  - Each nonland creature with an everything counter on it is every creature type.
-
-</details>
-
 ## choose-new-targets
 
 Blocks **3** cards.
@@ -980,7 +954,6 @@ Blocks **2** cards.
   - Changeling (This card is every creature type.)
   - {X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
-  - Each land with an everything counter on it is every land type in addition to its other types.
   - Each nonland creature with an everything counter on it is every creature type.
 
 </details>
@@ -1314,24 +1287,6 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
-
-</details>
-
-## remove-named-counters-from-among
-
-Blocks **2** cards.
-
-- **(cost)** a counter kind on the `remove_counters_from_among` cost, e.g. {"mana": "{1}", "remove_counters_from_among": {"count": 1, "counter": "quest"}}, so the payer removes a counter of THAT kind from a permanent they control, with payability checked against counters of that kind only
-  <br>Why the existing vocabulary won't do: The `remove_counters_from_among` cost (costs._counter_removal_pool / counter_removal.remove_counters_one_at_a_time) removes a counter of any kind, so a permanent carrying a quest and a +1/+1 counter could pay with the +1/+1; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; the `remove_counters` cost names a kind but reads only the source. The trigger line (deals_combat_damage_to_player, controller you, add_counters quest on subject) and junk_token are both expressible
-- **(cost)** a counter kind on the `remove_counters_from_among` cost (and op), e.g. {"remove_counters_from_among": {"count": 3, "counter": "quest"}}, so the payer removes N counters of THAT kind split however they like across the permanents the selector names, with payability checked against the total of that kind only
-  <br>Why the existing vocabulary won't do: `remove_counters_from_among` (cost and op, via `counter_removal.remove_counters_one_at_a_time`) takes any kind of counter, so the payer could pay with +1/+1 counters; `has_counters: "quest"` on its selector only narrows which permanents are offered, not which kind comes off; `remove_counters` with `counter: "quest"` removes `amount` from each object rather than a total split among them, and the `remove_counters` cost reads only the source
-
-<details><summary>Cards waiting on this</summary>
-
-- **Overseer of Vault 76** (rank 10375) — `overseer_of_vault_76`
-  - At the beginning of combat on your turn, you may remove three quest counters from among permanents you control. When you do, put a +1/+1 counter on each creature you control and they gain vigilance until end of turn.
-- **Duchess, Wayward Tavernkeep** (rank 14635) — `duchess_wayward_tavernkeep`
-  - {1}, Remove a quest counter from a permanent you control: Create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
 
 </details>
 
@@ -4050,20 +4005,6 @@ Blocks **1** card.
 
 </details>
 
-## modal-variable-targets
-
-Blocks **1** card.
-
-- **(engine)** a target spec owned by one mode of a choose_mode spell whose count is caster-chosen ("up to three target cards", count 3 with up_to: true), so the stored target refs for that mode can be of variable length (0-3) while the other chosen modes' refs are still located correctly
-  <br>Why the existing vocabulary won't do: Targets carry `mode` and `up_to`, and the sibling-target clause `owner: {"target": "shuffler"}` with put_on_top + shuffle expresses the effect, but the loader (cards/loader/targets.py) refuses `variable_size` on a mode-owned target: `filter_legal` splits the stored refs by position per mode and a caster-chosen size leaves no way to say where the next mode's refs begin. Declaring the target at card level without `mode` would force the targets even when the mode is not chosen, and a fixed count of 3 would make the mode illegal with fewer than three cards and forbid choosing fewer.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Quandrix Command** (rank 4339) — `quandrix_command`
-  - • Target player shuffles up to three target cards from their graveyard into their library.
-
-</details>
-
 ## mode-owned-variable-targets
 
 Blocks **1** card.
@@ -4637,20 +4578,6 @@ Blocks **1** card.
 
 </details>
 
-## proliferate-binding
-
-Blocks **1** card.
-
-- **(op)** an `as` option on the `proliferate` op that binds the permanents which actually received a counter from that proliferate (across every repetition under replace_proliferate), so a following `choose_permanents` with objects {binding: <as>, controller: you} can pick any number of them and a `phase_out` can act on the choice
-  <br>Why the existing vocabulary won't do: `proliferate` takes no options at all (op_options is empty) and its implementation picks refs through ask_targets without recording them anywhere; no selector key (has_counters, modified, binding) or value reads 'had a counter put on them this way', and has_counters would wrongly offer every permanent you control carrying a counter, including ones you declined to proliferate
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ripples of Potential** (rank 957) — `ripples_of_potential`
-  - Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out
-
-</details>
-
 ## protection-from-mana-value
 
 Blocks **1** card.
@@ -5122,6 +5049,21 @@ Blocks **1** card.
 
 - **Summary Dismissal** (rank 8784) — `summary_dismissal`
   - Exile all other spells and counter all abilities.
+
+</details>
+
+## static-count-derived-types
+
+Blocks **1** card.
+
+- **(value)** A static value `count` (the `set_pt` characteristic-defining ability's "the number of lands you control") that sees the card types a layer-4 type-changing static grants (613.1d before 613.4), so Ashaya counts the nontoken creatures its own second line makes lands -- itself included -- and is 33/33, not 30/30, on a board of thirty lands and two other nontoken creatures.
+  <br>Why the existing vocabulary won't do: Both lines are otherwise sayable: the second is {"effect": "add_subtype", "affects": {"controller": "you", "types": ["Creature"], "is_token": false}, "types": ["Land"], "subtypes": ["Forest"]}, and since basic_land_type_mana each such creature has 305.6's {T}: Add {G} (summoning sickness still applies, 302.6). The first is a self_only `set_pt` over a `count` of lands you control -- but characteristics._count_matching matches through _matches, which reads printed characteristics only (ADR 0001, docs/rules-coverage.md 'Fixed layer order'), so the count never sees the Land type the add_subtype static grants and Ashaya would be smaller by the number of nontoken creatures you control. Reading derived types there is the static-reads-static dependency ADR 0001 rules out, so this is a decision, not a missing key.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
+  - Ashaya's power and toughness are each equal to the number of lands you control.
+  - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
 
 </details>
 

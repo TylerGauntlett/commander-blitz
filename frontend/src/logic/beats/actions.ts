@@ -56,6 +56,16 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * An explore finishing. Longer than a connive's, because its line is the
+     * only place the revealed card is shown -- a nonland kept on top moves
+     * nothing -- and a "whenever a creature you control explores" trigger
+     * follows it.
+     */
+    case "explored":
+      push({ hold: 260 });
+      return true;
+
+    /*
      * An investigation finishing. Its Clue has already had its beat, so this
      * one is short, like a connive's; it is here so a "whenever you
      * investigate" trigger that follows has a line before it.

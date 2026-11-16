@@ -135,6 +135,7 @@
    "types"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
+   "ability_cost_increase",
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
@@ -168,6 +169,7 @@
    "replace_counters",
    "replace_damage",
    "replace_dies",
+   "replace_explore",
    "replace_graveyard",
    "set_colors",
    "set_creature_types",
@@ -536,6 +538,7 @@
    "cast_as_though_flash"
   ],
   "STATIC_EFFECTS": [
+   "ability_cost_increase",
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
@@ -613,6 +616,7 @@
    "replace_dies",
    "replace_draw",
    "replace_empty_draw",
+   "replace_explore",
    "replace_graveyard",
    "replace_life_gain",
    "replace_life_loss",

@@ -885,24 +885,26 @@ def _provide_the_counter_fodder(game: Game, registry, ability, oid: int) -> None
     planeswalkers you control", and the generic board carries no counters at
     all. One permanent of the selector's first type with that many +1/+1
     counters pays it, which is all the sandbox needs -- the split is the
-    payer's and `test_remove_counters_from_among.py` pins it.
+    payer's and `test_remove_counters_from_among.py` pins it. A cost that
+    names its kind (Sage of Fables' +1/+1) gets counters of that kind.
     """
     cost = ability.cost
     spec = getattr(cost, "remove_counters_from_among", None) if cost else None
     if not spec:
         return
     wanted = int(spec.get("count", 1) or 1)
+    kind = str(spec.get("counter") or PLUS_ONE)
     if spec.get("self_only"):
         # Gavel of the Righteous: "Equip--...remove a counter from this
         # Equipment." The pool is the source alone, so the counters go there.
-        game.state.objects[oid].counters[PLUS_ONE] = wanted
+        game.state.objects[oid].counters[kind] = wanted
         return
     types = spec.get("types") or (spec.get("any_types") or ["Creature"])[:1]
     match = _fodder_for(registry, {"types": list(types)})
     if match is None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
-    fodder.counters[PLUS_ONE] = wanted
+    fodder.counters[kind] = wanted
     game.state.battlefield.append(fodder.oid)
 
 

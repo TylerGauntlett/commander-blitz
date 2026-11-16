@@ -148,6 +148,11 @@ RECORDING_OPS = frozenset(
         #: arrived, not what was chosen: a commander redirected to the command
         #: zone was not put there. See `ops_cards.op_put_on_top`.
         "put_on_top",
+        #: The permanents that actually received a counter, across every
+        #: repetition a `replace_proliferate` adds -- Ripples of Potential's
+        #: "permanents you control that had a counter put on them this way".
+        #: See `ops_combat_flags.op_proliferate`.
+        "proliferate",
         #: The permanents actually put onto the battlefield -- Zara, Renegade
         #: Recruiter's "return **that creature** to its owner's hand at the
         #: beginning of the next end step". What arrived, not what was chosen.

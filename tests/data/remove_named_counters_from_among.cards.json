@@ -1,0 +1,39 @@
+{
+  "cards": [
+    {
+      "id": "t_counter_sage",
+      "name": "Test Counter Sage",
+      "oracle_text": "{2}, Remove a +1/+1 counter from a creature you control: Draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, Remove a +1/+1 counter from a creature you control: Draw a card.",
+          "cost": {"mana": "{2}",
+                   "remove_counters_from_among": {"count": 1, "counter": "+1/+1", "types": ["Creature"]}},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_quest_harvest",
+      "name": "Test Quest Harvest",
+      "oracle_text": "Remove two quest counters from among permanents you control. You gain life equal to the number of counters removed this way.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "remove_counters_from_among", "objects": {"zone": "battlefield"},
+         "counter": "quest", "amount": {"const": 2}, "as": "removed"},
+        {"op": "gain_life", "player": "you", "amount": {"binding": "removed"}}
+      ]
+    }
+  ]
+}

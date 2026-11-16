@@ -23,6 +23,7 @@ from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
+    validate_counter_kind,
     validate_value,
 )
 from commanderblitz.engine.enums import SUBTYPE_CLASS
@@ -218,13 +219,9 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
     if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
         return
     if op == "remove_counters_from_among":
-        # Always any kinds, so it takes neither spelling of a kind; and the
+        # Any kinds unless a `counter` names one (the kind is checked with
+        # every op's above); `any_kind` is implied, so it is not spelled. The
         # number is `amount`, where the cost of the same name says `count`.
-        if "counter" in effect:
-            raise DslError(
-                f"{where}: remove_counters_from_among removes counters of any kind; "
-                f"a named 'counter' kind is not read"
-            )
         objects = effect.get("objects")
         if not isinstance(objects, Mapping) or not objects:
             raise DslError(
@@ -237,7 +234,7 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"from one counter at a time; the number is the op's 'amount', not "
                 f"a selector 'count' or 'chooser'"
             )
-        any_kind = True
+        any_kind = "counter" not in effect
     if any_kind and "counter" in effect:
         # One says "this kind", the other "whichever kinds the chooser likes";
         # the op would read `any_kind` and the printed kind would be ignored.
@@ -282,7 +279,7 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"{where}: 'up_to' needs an 'amount' to be a ceiling of; with no "
                 f"'amount' the removal is already \"any number\""
             )
-    if any_kind or effect.get("up_to"):
+    if any_kind or effect.get("up_to") or op == "remove_counters_from_among":
         amount = effect.get("amount")
         if isinstance(amount, Mapping) and set(amount) == {"const"}:
             amount = amount["const"]
@@ -3185,11 +3182,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             "permanent",
             "until_end_of_turn",
             "until_your_next_turn",
+            "while_counter",
         ):
             raise DslError(
                 f"{where}: unknown add_subtype duration {effect['duration']!r} "
-                f"(use 'until_end_of_turn', 'until_your_next_turn', or omit it for "
-                f"a type change with no duration)"
+                f"(use 'until_end_of_turn', 'until_your_next_turn', 'while_counter' "
+                f"with 'counter', or omit it for a type change with no duration)"
+            )
+        # "…for as long as it has a flood counter on it." The kind is the
+        # clock, so it is required on that duration and refused on every other:
+        # a `counter` beside a turn clock is a sentence nobody printed, and one
+        # dropped silently would be a card that reads as counter-bound and isn't.
+        if effect.get("duration") == "while_counter":
+            if "counter" not in effect:
+                raise DslError(
+                    f"{where}: add_subtype 'while_counter' needs 'counter' naming "
+                    f"the counter kind (\"for as long as it has a <kind> counter on it\")"
+                )
+            validate_counter_kind(effect["counter"], f"{where}.counter")
+        elif "counter" in effect:
+            raise DslError(
+                f"{where}: add_subtype's 'counter' is the 'while_counter' duration's "
+                f"kind and means nothing on {effect.get('duration', 'permanent')!r}"
             )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal

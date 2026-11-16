@@ -529,10 +529,11 @@ counter-anything ability.
 
 ```jsonc
 { "op": "proliferate" }
+{ "op": "proliferate", "as": "proliferated" }   // and bind what received a counter
 ```
 
 "Choose any number of permanents and/or players, then give each another counter
-of each kind already there" (701.27a). The op takes no keys: as it resolves, the
+of each kind already there" (701.27a). The choice is not a key: as it resolves, the
 controller is asked one `ask_targets` decision (purpose `"proliferate"`, minimum
 0, maximum everything offered) over every permanent **any** player controls that
 has a counter and every player with a counter — `PlayerState.poison`, the only
@@ -543,6 +544,24 @@ stop it.
 The loader refuses `objects`: a selector decides for the player what the printed
 word lets them choose, and an infect card's proliferate is worthless if it cannot
 reach an opponent's poison.
+
+`as` binds the permanents that **received** a counter from it — "permanents you
+control that had a counter put on them this way" (Ripples of Potential) — each
+once, across every repetition a `replace_proliferate` adds. It is not the
+choice: a permanent whose every placement was prohibited or replaced to nothing
+is not in it, and players never are. The binding is written even when nothing
+received a counter. Read it back as a pool, narrowed like any other:
+
+```jsonc
+{ "op": "proliferate", "as": "proliferated" },
+{ "op": "choose_permanents", "as": "chosen",
+  "objects": { "binding": "proliferated", "zone": "battlefield", "controller": "you",
+               "count": "any", "chooser": "controller" } },
+{ "op": "phase_out", "objects": { "binding": "chosen", "zone": "battlefield" } }
+```
+
+The near miss is a `has_counters` selector after the proliferate, which also
+offers every permanent you control that carried a counter and was not chosen.
 
 ## Selectors — "which objects"
 
@@ -3905,16 +3924,19 @@ on activation. The loader refuses it without a selector `objects`, with a
 ]
 ```
 
-The effect twin of the [cost of the same name](#remove_counters_from_among--counters-of-any-kind-off-other-permanents):
-counters of any kinds off whichever of the `objects` pool the controller picks,
-one counter at a time, as `any_kind` asks. `objects` is a required selector
-(`controller` defaults to you, so "permanents on the battlefield" says `"any"`);
-only permanents carrying a counter are offered. `amount` and `up_to` read as on
-`any_kind` — absent is "any number", down to none. `as` binds the number
+The effect twin of the [cost of the same name](#remove_counters_from_among--counters-off-permanents-the-payer-picks):
+counters off whichever of the `objects` pool the controller picks, one counter
+at a time. `objects` is a required selector (`controller` defaults to you, so
+"permanents on the battlefield" says `"any"`). Without `counter` the counters
+are of any kinds, as `any_kind` asks, and only permanents carrying a counter
+are offered; with it — Overseer of Vault 76's "remove three **quest** counters
+from among permanents you control" — only that kind comes off, only permanents
+carrying it are offered, and the kind is never asked. `amount` and `up_to` read
+as on `any_kind` — absent is "any number", down to none. `as` binds the number
 actually removed, an int for `{"binding": …}`, which is the only place "the
-number of counters removed this way" survives. The loader refuses a `counter`
-kind, `any_kind` (it is implied), a missing `objects`, and a `count` or
-`chooser` inside `objects` — the number is the op's `amount`.
+number of counters removed this way" survives. The loader refuses `any_kind`
+(it is implied), a missing `objects`, a `count` or `chooser` inside `objects` —
+the number is the op's `amount` — and an amount below one.
 
 ### The same number and kind of counters
 
@@ -5579,7 +5601,7 @@ and all three make the ability **unavailable** when too little matches rather
 than cheaper: an ability whose bounce cost has nothing to bounce would cost only
 its mana, and a cost of five that settled for four would be a different card.
 
-### `remove_counters_from_among` — counters of any kind, off other permanents
+### `remove_counters_from_among` — counters off permanents the payer picks
 
     Tekuthal, Inquiry Dominus — "Remove three counters from among other
     artifacts, creatures, and planeswalkers you control: …"
@@ -5597,8 +5619,24 @@ positive `count`. Payable when the matching permanents carry at least `count`
 counters between them; paid one counter at a time — which permanent
 (`ask_objects`, purpose `"remove_counter_cost"`), then which kind when it has
 more than one (`ask_mode`, harmful kinds such as -1/-1 and stun offered first) —
-so every split is expressible. Not `remove_counters`, which takes one **named**
-kind off the **source**; the loader refuses a `counter` key here.
+so every split is expressible.
+
+    Sage of Fables — "{2}, Remove a +1/+1 counter from a creature you control:
+    Draw a card."
+
+```jsonc
+"cost": { "mana": "{2}",
+          "remove_counters_from_among": {
+            "count": 1, "counter": "+1/+1", "types": ["Creature"] } }
+```
+
+A `counter` key names the one kind that may come off. Only counters of that
+kind count toward payability, only permanents carrying it are offered, and the
+kind is never asked — so a creature with a +1/+1 and a stun counter cannot pay
+with the stun. The near misses: `has_counters` in the selector narrows which
+permanents are offered but not which kind comes off, and the `remove_counters`
+cost takes a named kind off the **source** alone. The loader refuses a
+`counter` that is not a string or that nearly names a keyword counter.
 
 ## Player specs
 

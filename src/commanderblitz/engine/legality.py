@@ -43,6 +43,7 @@ from .enums import ActionKind, DecisionKind, Step, Zone
 from .mana import OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .objects import playable_condition_met
 from .player_statics import (
+    ability_mana_tax_targeted,
     graveyard_land_play_allows,
     player_cant_activate,
     player_doubles_mana_from,
@@ -947,7 +948,7 @@ def _ability_aims(
                         state, pid, ability.targets, oid, x=value
                     )
                     out_loyalty.extend((value, (), targets) for targets in tuples)
-                return out_loyalty or None
+                return _priced_aims(state, pid, oid, ability, purpose, out_loyalty)
             sources = mana_sources(state, pid, purpose=purpose)
             if ability.cost.tap:
                 # The tapped source cannot help pay for itself -- the same
@@ -967,7 +968,7 @@ def _ability_aims(
                     state, pid, ability.targets, oid, x=value
                 )
                 out_x.extend((value, (), targets) for targets in tuples)
-            return out_x or None
+            return _priced_aims(state, pid, oid, ability, purpose, out_x)
         tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
         if not tuples:
             return None
@@ -1006,7 +1007,33 @@ def _ability_aims(
         if not tuples:
             continue
         out.extend((0, (mode,), targets) for targets in tuples)
-    return out or None
+    return _priced_aims(state, pid, oid, ability, purpose, out)
+
+
+def _priced_aims(
+    state: GameState, pid: int, oid: int, ability, purpose, aims: list[tuple]
+) -> list[tuple] | None:
+    """``aims`` with every one the activation cannot pay for dropped, or ``None``.
+
+    The per-X and per-mode enumerations in `_ability_aims` are not otherwise
+    priced per tuple: the gate and the X ceiling bound them, and a discount
+    that reads the targets only ever lowers a tuple's price below what those
+    proved. A **tax** that reads them breaks that: "abilities your opponents
+    activate that target a Merfolk you control cost {2} more" (Kopala) is left
+    out at the gate and charged by `pay` off the action's own targets, so while
+    one is on the battlefield each aim is priced at its own X and targets --
+    the number `Game._activate` will charge.
+    """
+    if aims and ability_mana_tax_targeted(state):
+        aims = [
+            (x, modes, targets)
+            for x, modes, targets in aims
+            if can_pay(
+                state, pid, ability.cost, oid, x=x, purpose=purpose, ability=ability,
+                targets=targets,
+            )
+        ]
+    return aims or None
 
 
 def _mentions_x(node: Any) -> bool:

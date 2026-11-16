@@ -114,6 +114,23 @@ class EventType:
     #: that discards nothing (an opponent's ability under a discard shield) is
     #: still a connive, and connive 2 is one connive, not two.
     CONNIVED = "connived"
+    #: A permanent explored (701.40) -- "Whenever a creature you control
+    #: explores" (Merfolk Cave-Diver), "…explores a land card" and "…explores a
+    #: nonland card" (Nicanzil, Current Conductor). ``data["oid"]`` is the
+    #: permanent that explored, which is the trigger's subject, and ``player``
+    #: its controller; ``data["revealed"]`` is the card revealed and
+    #: ``data["land"]`` whether it was a land, both ``None`` when the library
+    #: was empty and nothing was revealed.
+    #:
+    #: One event per exploring permanent, fired by `ops_cards.op_explore` once
+    #: the revealed card is placed and the counter is on. An explore of an
+    #: empty library still fires (701.40b: the permanent explores even if some
+    #: or all of the actions were impossible), and explored neither a land
+    #: card nor a nonland card. Its own type because the near misses are wrong
+    #: both ways: `counter_placed` fires on every +1/+1 counter and never on a
+    #: land explore, and the revealed card's `zone_change` fires only on the
+    #: land half and on a binned nonland.
+    EXPLORED = "explored"
     #: A player investigated (701.16) -- "Whenever you investigate for the
     #: first time each turn" (Erdwal Illuminator). ``player`` is the
     #: **investigator**; ``data["nth"]`` is that investigation's ordinal for

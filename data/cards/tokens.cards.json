@@ -339,6 +339,29 @@
       ]
     },
     {
+      "id": "bird_1_1_u_flying",
+      "name": "Bird Token",
+      "oracle_text": "1/1 blue Bird creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "bird_2_2_u_flying",
       "name": "Bird Token",
       "oracle_text": "2/2 blue Bird creature token with flying.",
@@ -2844,6 +2867,29 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "merfolk_1_1_u_hexproof",
+      "name": "Merfolk Token",
+      "oracle_text": "1/1 blue Merfolk creature token with hexproof.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "hexproof"
+      ]
     },
     {
       "id": "lander_token",

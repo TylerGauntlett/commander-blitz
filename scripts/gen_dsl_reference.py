@@ -254,7 +254,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "Investigate — the `investigate` op and the `investigates` trigger"),
     "remove_counters": ("Board", "Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed.",
                         "Removing counters of any kind — `any_kind`"),
-    "remove_counters_from_among": ("Board", "Remove counters of any kinds from among a pool of permanents, one at a time; `as` records how many.",
+    "remove_counters_from_among": ("Board", "Remove counters of any kinds, or of the one `counter` names, from among a pool of permanents, one at a time; `as` records how many.",
                                    "Removing counters from among permanents — the `remove_counters_from_among` op"),
     "tap": ("Board", "Tap permanents.", None),
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),
@@ -305,7 +305,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "move_counters": ("Board", "Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), N counters of kinds the controller picks (`any_kind`), or with `any_number` as many of each kind as the controller chooses.",
                       "Moving a counter of any kind — `move_counters` with `any_kind`"),
     "set_flag": ("Board", "Write a word on the source for the game (renowned, …).", H_EXERTED),
-    "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter.",
+    "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter; `as` binds the permanents that received one.",
                     "Proliferate — a choice over permanents and players"),
     "double_counters": ("Board", "Double the counters of a kind on a permanent.",
                         "Doubling the counters on a permanent"),
@@ -367,7 +367,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target narrowed to Vehicles).",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
-                    "for good or for a duration.",
+                    "for good, for a duration, or `while_counter` (with `counter`) for as long "
+                    "as a counter of that kind stays on it.",
                     '"It becomes a Vampire in addition to its other types"'),
     "change_text": ("Modify", "Replace one creature type or color word with another in its text.",
                     '`change_text` — "replacing all instances of one creature type"'),
@@ -882,6 +883,12 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "end_step": ("At the beginning of the end step.", None),
     "expend": ("You expend N (`nth`): the spell payment that takes your mana spent to cast spells this turn to N or more.",
                'Expend — "Whenever you expend N"'),
+    "explores": ("A permanent explores, once per explore after it completes, even of an empty library; the subject is the explorer.",
+                 '"Whenever a creature you control explores"'),
+    "explores_land": ("A permanent explores and reveals a land card; the subject is the explorer.",
+                      '"Whenever a creature you control explores"'),
+    "explores_nonland": ("A permanent explores and reveals a nonland card; the subject is the explorer.",
+                         '"Whenever a creature you control explores"'),
     "gives_gift": ("A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient.",
                    '"Whenever you give a gift"'),
     "land_played": ("A land is played.", None),
@@ -922,6 +929,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
 }
 
 STATICS: dict[str, Entry] = {
+    "ability_cost_increase": ("Activated abilities of a class (`equip`, or `any` beside `targeting`) cost more generic mana (`cost.mana`); `activated_by` names the activator, `targeting` is read against the chosen targets.",
+                              "…and on activated abilities"),
     "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included.",
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
@@ -978,8 +987,9 @@ STATICS: dict[str, Entry] = {
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard, narrowed to "
                             "cards surveilled this turn by `surveilled_this_turn`, for life equal "
-                            "to their mana value with `pay_life_instead`, or for an escape "
-                            "cost with `escape`; with "
+                            "to their mana value with `pay_life_instead`, for an escape "
+                            "cost with `escape`, or with retrace's land discard on top with "
+                            "`grants_retrace`; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
     "cast_from_library_top": ("The player may cast spells from the top of their library: for life "
@@ -1074,6 +1084,8 @@ STATICS: dict[str, Entry] = {
                         "Looking at more cards when you surveil"),
     "replace_proliferate": ("If the player would proliferate, they proliferate again.",
                             "Proliferating twice"),
+    "replace_explore": ("If a matching permanent would explore, it explores, then explores again.",
+                        "Exploring twice"),
     "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",
                                '"If you would create a … token, instead …"'),
     "reveal_library_top": ("The player plays with the top card of their library revealed.", None),
@@ -1172,8 +1184,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "put_counters": ("Put N counters of a kind on the source.",
                      "`put_counters` — counters on the source, paid on activation"),
     "remove_counters": ("Remove N counters of a kind from the source.", None),
-    "remove_counters_from_among": ("Remove N counters of any kinds from among other permanents.",
-                                   "`remove_counters_from_among` — counters of any kind, off other permanents"),
+    "remove_counters_from_among": ("Remove N counters of any kinds, or of the one `counter` names, from among permanents the payer picks.",
+                                   "`remove_counters_from_among` — counters off permanents the payer picks"),
     "return_to_hand": ("Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects.",
                        "Ninjutsu — swapping into a combat already under way"),
     "sacrifice": ("Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents.",

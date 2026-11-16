@@ -1,0 +1,300 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_ability_cost_increase.py. t_aci_kopala is Kopala, Warden of Waves' second line on an enchantment: abilities your opponents activate that target a Merfolk you control cost {2} more. t_aci_merfolk and t_aci_bear are the creature it protects and the one it does not. t_aci_tapper is a plain targeted activation, t_aci_pumper one whose {X} is asked after its targets are declared, and t_aci_aimer one whose target filter reads X, so legality announces X with the targets. t_aci_equip_tax taxes equip abilities with no targeting clause, the class that is read at the gate; t_aci_blade is the Equipment it taxes.",
+  "cards": [
+    {
+      "id": "t_aci_kopala",
+      "name": "Test Kopala Ward",
+      "oracle_text": "Abilities your opponents activate that target a Merfolk you control cost {2} more to activate.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Abilities your opponents activate that target a Merfolk you control cost {2} more to activate.",
+          "effect": "ability_cost_increase",
+          "affects_abilities": {
+            "any": true
+          },
+          "activated_by": "opponent",
+          "targeting": {
+            "controller": "you",
+            "subtypes": [
+              "Merfolk"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_aci_merfolk",
+      "name": "Test Taxed Merfolk",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "t_aci_bear",
+      "name": "Test Untaxed Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "t_aci_tapper",
+      "name": "Test Taxed Tapping Rod",
+      "oracle_text": "{1}: Tap target creature.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: Tap target creature.",
+          "cost": {
+            "mana": "{1}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "tap",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_aci_pumper",
+      "name": "Test Taxed X Tapping Rod",
+      "oracle_text": "{X}: Tap target creature. You gain X life.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}: Tap target creature. You gain X life.",
+          "cost": {
+            "mana": "{X}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "tap",
+              "objects": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "x": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_aci_aimer",
+      "name": "Test Taxed X Aimer",
+      "oracle_text": "{X}: Tap target creature with mana value X.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}: Tap target creature with mana value X.",
+          "cost": {
+            "mana": "{X}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ],
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "tap",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_aci_equip_tax",
+      "name": "Test Equip Toll",
+      "oracle_text": "Equip abilities your opponents activate cost {1} more to activate.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equip abilities your opponents activate cost {1} more to activate.",
+          "effect": "ability_cost_increase",
+          "affects_abilities": {
+            "equip": true
+          },
+          "activated_by": "opponent",
+          "cost": {
+            "mana": "{1}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_aci_blade",
+      "name": "Test Taxed Blade",
+      "oracle_text": "Equipped creature gets +1/+1.\nEquip {1}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {1}",
+          "sorcery_speed_only": true,
+          "is_equip": true,
+          "cost": {
+            "mana": "{1}"
+          },
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "equip_target"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

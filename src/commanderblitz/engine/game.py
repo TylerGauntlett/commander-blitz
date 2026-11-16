@@ -26,6 +26,7 @@ from .carddef import Cost, is_repeatable, mode_instances, stored_mode_specs
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
+    RETRACE_COST,
     _escape_exile_cost,
     _graveyard_cast_permission,
     _spell_as_cast,
@@ -34,6 +35,7 @@ from .casting import (
     convoke_pips,
     deferred_target_spec,
     granted_escape_permission,
+    granted_retrace_permission,
     life_x_ceiling,
     pay_generic_colors,
     pay_generic_currencies,
@@ -83,6 +85,7 @@ from .legality import _targets_read_x
 from .mana import N_SYMBOLS, OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .player import PlayerState
 from .player_statics import (
+    ability_mana_tax,
     any_color_added_on_tap,
     cast_lock_min_x,
     graveyard_cast_permissions,
@@ -877,7 +880,13 @@ class Game:
         # the spell goes on the stack -- and after the mana, which is the order
         # rule 601.2g gives and the order that lets a land be discarded to a
         # spell it just helped pay for.
-        if card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
+        # A granted retrace (`action.retrace`) charges retrace's own land
+        # discard, whatever graveyard cost the card prints.
+        if action.retrace:
+            ok = yield from pay(state, pid, RETRACE_COST, None)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+        elif card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
             ok = yield from pay(state, pid, card.retrace_cost, None)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
@@ -1005,6 +1014,15 @@ class Game:
             granting = granted_escape_permission(
                 state, pid, card, oid, (action.escape, action.escape_exile)
             )
+            if granting is not None:
+                permission = granting.oid
+                state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
+        elif action.retrace:
+            # Billed to the grant that offered the line. Retrace exiles nothing
+            # (702.81a), so the card goes where it normally would; the
+            # permission on the stack item is what makes it a spell cast from a
+            # graveyard.
+            granting = granted_retrace_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, GRAVEYARD_CAST_SLOT)
@@ -1276,7 +1294,10 @@ class Game:
                 # the cheapest this cost can get; `pay` then asks for at least
                 # the pips the chosen X needs.
                 most_life_for_mana(state, pid, ability.cost, oid),
-                0,
+                # Kopala's "cost {2} more" on an activation aimed at a Merfolk:
+                # read off the targets already declared, so the largest X
+                # offered is one `pay` can meet with the surcharge on top.
+                ability_mana_tax(state, pid, ability, oid, action.targets),
                 purpose,
                 exclude_oid=oid if ability.cost.tap else None,
                 # The whole cost node, not just its mana half: an ability that
@@ -1897,9 +1918,15 @@ class Game:
                 # `_ask_modes` offer a mode that then had nothing to point at,
                 # which is the silently-inert half of a spell this whole
                 # capability exists to prevent.
+                #
+                # ``declared`` is handed over as the siblings already picked:
+                # "target player shuffles up to three target cards from **their**
+                # graveyard" (Quandrix Command) reads the player its own mode
+                # declared one question earlier. The loader admits such a link
+                # only inside one mode, so the sibling is always answered first.
                 options = [
                     (describe_ref(state, ref), ref)
-                    for ref in candidates(state, pid, spec, oid)
+                    for ref in candidates(state, pid, spec, oid, chosen=declared)
                 ]
                 count = target_count(state, pid, spec, oid)
                 if spec.variable_size:

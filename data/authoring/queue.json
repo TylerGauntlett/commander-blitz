@@ -23932,12 +23932,12 @@
     },
     "Benthic Biomancer": {
       "edhrec_rank": 5214,
-      "gate": "template",
+      "gate": null,
       "name": "Benthic Biomancer",
-      "reason": "no template for: {1}{U}: Adapt 1",
+      "reason": "",
       "scryfall_id": "b83dd3a5-d9cc-470d-a9d0-bf9d270e9eb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benthic Criminologists": {
@@ -37142,12 +37142,12 @@
     },
     "Bygone Marvels": {
       "edhrec_rank": 9238,
-      "gate": "template",
+      "gate": null,
       "name": "Bygone Marvels",
-      "reason": "no template for: Descend 8 — When you cast this spell, if there are eight or more permanent cards in your g",
+      "reason": "",
       "scryfall_id": "23f083f9-d6cd-4076-b926-e29d083bcb8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Byrke, Long Ear of the Law": {
@@ -50872,12 +50872,12 @@
     },
     "Commit // Memory": {
       "edhrec_rank": 3246,
-      "gate": "template",
+      "gate": null,
       "name": "Commit // Memory",
-      "reason": "no template for: Put target spell or nonland permanent into its owner's library second from the top",
+      "reason": "",
       "scryfall_id": "855af9a8-31fc-4290-8204-04ee026f8853",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commodore Guff": {
@@ -53352,12 +53352,12 @@
     },
     "Coralhelm Commander": {
       "edhrec_rank": 10950,
-      "gate": "template",
+      "gate": null,
       "name": "Coralhelm Commander",
-      "reason": "no template for: Level up {1}",
+      "reason": "",
       "scryfall_id": "46246d37-dfce-4977-854e-ee79d47cea05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coralhelm Guide": {
@@ -64852,22 +64852,22 @@
     },
     "Deeproot Elite": {
       "edhrec_rank": 5808,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Elite",
-      "reason": "no template for: Whenever another Merfolk you control enters, put a +1/+1 counter on target Merfolk you con",
+      "reason": "",
       "scryfall_id": "991e24e5-8b37-4034-9be7-2fab5983ee7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Historian": {
       "edhrec_rank": 7218,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Historian",
-      "reason": "no template for: Merfolk and Druid cards in your graveyard have retrace",
+      "reason": "",
       "scryfall_id": "ac3dd116-7918-441d-9c05-5e5cb8c43cd6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Pilgrimage": {
@@ -64892,12 +64892,12 @@
     },
     "Deeproot Waters": {
       "edhrec_rank": 4340,
-      "gate": "template",
+      "gate": null,
       "name": "Deeproot Waters",
-      "reason": "no template for: Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof",
+      "reason": "",
       "scryfall_id": "a624ef59-69e6-4a41-b41a-3d19e287fe08",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deeproot Wayfinder": {
@@ -76492,12 +76492,12 @@
     },
     "Duchess, Wayward Tavernkeep": {
       "edhrec_rank": 14635,
-      "gate": "template",
+      "gate": null,
       "name": "Duchess, Wayward Tavernkeep",
-      "reason": "no template for: Hunters for Hire — Whenever a creature you control deals combat damage to a player, put a ",
+      "reason": "",
       "scryfall_id": "16c339fe-47cf-4a93-93b8-2fa00b6dfacc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duct Crawler": {
@@ -83102,12 +83102,12 @@
     },
     "Emperor Mihail II": {
       "edhrec_rank": 4185,
-      "gate": "template",
+      "gate": null,
       "name": "Emperor Mihail II",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "444ccd33-e88f-4d37-8a99-e10096eef5d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emperor of Bones": {
@@ -121282,12 +121282,12 @@
     },
     "Hakbal of the Surging Soul": {
       "edhrec_rank": 3747,
-      "gate": "template",
+      "gate": null,
       "name": "Hakbal of the Surging Soul",
-      "reason": "no template for: At the beginning of combat on your turn, each Merfolk creature you control explores",
+      "reason": "",
       "scryfall_id": "2ac81f0e-b5d0-4baa-9c5a-749bf1c5e6a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hakim, Loreweaver": {
@@ -126252,12 +126252,12 @@
     },
     "Herald of Secret Streams": {
       "edhrec_rank": 1054,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Secret Streams",
-      "reason": "no template for: Creatures you control with +1/+1 counters on them can't be blocked",
+      "reason": "",
       "scryfall_id": "d18870fa-624d-4291-a711-9743e504711f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Serra": {
@@ -149462,12 +149462,12 @@
     },
     "Kiora's Follower": {
       "edhrec_rank": 1559,
-      "gate": "template",
+      "gate": null,
       "name": "Kiora's Follower",
-      "reason": "no template for: {T}: Untap another target permanent",
+      "reason": "",
       "scryfall_id": "3666d3eb-fc62-4966-9149-aa3435650c29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kiora, Behemoth Beckoner": {
@@ -151472,12 +151472,12 @@
     },
     "Kopala, Warden of Waves": {
       "edhrec_rank": 4135,
-      "gate": "template",
+      "gate": null,
       "name": "Kopala, Warden of Waves",
-      "reason": "no template for: Spells your opponents cast that target a Merfolk you control cost {2} more to cast",
+      "reason": "",
       "scryfall_id": "0b018020-73e0-437c-a130-298b2f738c6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kor Aeronaut": {
@@ -153192,12 +153192,12 @@
     },
     "Kumena, Tyrant of Orazca": {
       "edhrec_rank": 5134,
-      "gate": "template",
+      "gate": null,
       "name": "Kumena, Tyrant of Orazca",
-      "reason": "no template for: Tap another untapped Merfolk you control: Kumena can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "9bd6ae71-29de-45d6-97bb-f60e6f821d6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kunoros, Hound of Athreos": {
@@ -160082,12 +160082,12 @@
     },
     "Llanowar Reborn": {
       "edhrec_rank": 2323,
-      "gate": "template",
+      "gate": null,
       "name": "Llanowar Reborn",
-      "reason": "no template for: Graft 1",
+      "reason": "",
       "scryfall_id": "284e165e-9ab6-47fc-9685-0fb03de237df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Llanowar Scout": {
@@ -169252,12 +169252,12 @@
     },
     "Master of the Pearl Trident": {
       "edhrec_rank": 3491,
-      "gate": "template",
+      "gate": null,
       "name": "Master of the Pearl Trident",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1 and have islandwalk",
+      "reason": "",
       "scryfall_id": "6b48dc56-667c-4fde-8175-952463e233cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master of the Veil": {
@@ -171522,12 +171522,12 @@
     },
     "Merfolk Cave-Diver": {
       "edhrec_rank": 9689,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Cave-Diver",
-      "reason": "no template for: Whenever a creature you control explores, this creature gets +1/+0 until end of turn and c",
+      "reason": "",
       "scryfall_id": "6e0fe81c-b8ef-49ff-8743-f03d0220cb9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Coralsmith": {
@@ -171572,12 +171572,12 @@
     },
     "Merfolk Mistbinder": {
       "edhrec_rank": 6207,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Mistbinder",
-      "reason": "no template for: Other Merfolk you control get +1/+1",
+      "reason": "",
       "scryfall_id": "f5c2c19b-2cac-4073-8d02-277cf42ae1ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Observer": {
@@ -171642,12 +171642,12 @@
     },
     "Merfolk Skydiver": {
       "edhrec_rank": 6508,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Skydiver",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "bb8fcaa7-3430-4de1-854a-77b7bef59864",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Skyscout": {
@@ -171662,12 +171662,12 @@
     },
     "Merfolk Sovereign": {
       "edhrec_rank": 4115,
-      "gate": "template",
+      "gate": null,
       "name": "Merfolk Sovereign",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "ac545978-ad30-4c6b-8add-3edd6c0eb7f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merfolk Spy": {
@@ -171842,12 +171842,12 @@
     },
     "Merrow Reejerey": {
       "edhrec_rank": 3984,
-      "gate": "template",
+      "gate": null,
       "name": "Merrow Reejerey",
-      "reason": "no template for: Other Merfolk creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "6ae8ea86-46c3-4855-92e9-7906e554becb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merrow Skyswimmer": {
@@ -175982,12 +175982,12 @@
     },
     "Mist Dancer": {
       "edhrec_rank": 5357,
-      "gate": "template",
+      "gate": null,
       "name": "Mist Dancer",
-      "reason": "no template for: Other Merfolk you control get +1/+0 and have flying",
+      "reason": "",
       "scryfall_id": "5fa09033-2b7a-4f13-99ef-7c5a347b3d84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mist Dragon": {
@@ -186292,12 +186292,12 @@
     },
     "Nicanzil, Current Conductor": {
       "edhrec_rank": 5350,
-      "gate": "template",
+      "gate": null,
       "name": "Nicanzil, Current Conductor",
-      "reason": "no template for: Whenever a creature you control explores a land card, you may put a land card from your ha",
+      "reason": "",
       "scryfall_id": "5e6f4aba-3500-4fb7-ab78-02f63c03778a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nick Fury, Agent of S.H.I.E.L.D.": {
@@ -196132,12 +196132,12 @@
     },
     "Overseer of Vault 76": {
       "edhrec_rank": 10375,
-      "gate": "template",
+      "gate": null,
       "name": "Overseer of Vault 76",
-      "reason": "no template for: First Contact — Whenever or another creature you control with power 3 or less enters, put ",
+      "reason": "",
       "scryfall_id": "35848917-d658-4c3b-b675-4f0185f76dc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overseer of the Damned": {
@@ -207172,12 +207172,12 @@
     },
     "Prime Speaker Zegana": {
       "edhrec_rank": 2775,
-      "gate": "template",
+      "gate": null,
       "name": "Prime Speaker Zegana",
-      "reason": "no template for: enters with X +1/+1 counters on it, where X is the greatest power among other creatures yo",
+      "reason": "",
       "scryfall_id": "d2f007b0-b578-44f8-be65-cd9e2ac56e09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Bounty": {
@@ -211362,12 +211362,12 @@
     },
     "Quandrix Command": {
       "edhrec_rank": 4339,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "b673dfb7-e384-4586-8326-ae6f23edfe78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Cultivator": {
@@ -216132,12 +216132,12 @@
     },
     "Ravenform": {
       "edhrec_rank": 1902,
-      "gate": "template",
+      "gate": null,
       "name": "Ravenform",
-      "reason": "no template for: Exile target artifact or creature. Its controller creates a 1/1 blue Bird creature token w",
+      "reason": "",
       "scryfall_id": "f2d5e87b-1ee8-47db-9bc3-f5becfe79b37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenhill Flock": {
@@ -224512,12 +224512,12 @@
     },
     "Ripples of Potential": {
       "edhrec_rank": 957,
-      "gate": "template",
+      "gate": null,
       "name": "Ripples of Potential",
-      "reason": "no template for: Proliferate, then choose any number of permanents you control that had a counter put on th",
+      "reason": "",
       "scryfall_id": "a28f7323-f2a2-4c19-b3c0-a7479ea4de19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ripples of Undeath": {
@@ -228772,12 +228772,12 @@
     },
     "Ruinous Intrusion": {
       "edhrec_rank": 5111,
-      "gate": "template",
+      "gate": null,
       "name": "Ruinous Intrusion",
-      "reason": "no template for: Exile target artifact or enchantment. Put X +1/+1 counters on target creature you control,",
+      "reason": "",
       "scryfall_id": "47f8c11f-8171-416a-a4a3-6530ca3ba7a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruinous Minotaur": {
@@ -230942,12 +230942,12 @@
     },
     "Sage of Fables": {
       "edhrec_rank": 8078,
-      "gate": "template",
+      "gate": null,
       "name": "Sage of Fables",
-      "reason": "no template for: Each other Wizard creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "36d22296-8eb6-4367-bb21-47b20ad700d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage of Hours": {
@@ -237622,12 +237622,12 @@
     },
     "Seafloor Oracle": {
       "edhrec_rank": 4509,
-      "gate": "template",
+      "gate": null,
       "name": "Seafloor Oracle",
-      "reason": "no template for: Whenever a Merfolk you control deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "a746c2ff-60f3-41c4-853d-e5159d005bea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seafloor Stalker": {
@@ -248322,12 +248322,12 @@
     },
     "Singer of Swift Rivers": {
       "edhrec_rank": 5952,
-      "gate": "template",
+      "gate": null,
       "name": "Singer of Swift Rivers",
-      "reason": "no template for: When this creature enters, put a shield counter on another target creature you control",
+      "reason": "",
       "scryfall_id": "43208437-9341-4bea-a1e0-556d9a5cb25b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Singing Bell Strike": {
@@ -265692,12 +265692,12 @@
     },
     "Stonybrook Banneret": {
       "edhrec_rank": 3041,
-      "gate": "template",
+      "gate": null,
       "name": "Stonybrook Banneret",
-      "reason": "no template for: Merfolk spells and Wizard spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "1b3bc8fd-97bd-4383-9ce4-8cfe7a6c1e62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stonybrook Schoolmaster": {
@@ -270812,12 +270812,12 @@
     },
     "Surgespanner": {
       "edhrec_rank": 8920,
-      "gate": "template",
+      "gate": null,
       "name": "Surgespanner",
-      "reason": "no template for: Whenever this creature becomes tapped, you may pay {1}{U}. If you do, return target perman",
+      "reason": "",
       "scryfall_id": "3303c5cb-0064-47c0-bc91-228acd82348e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surgical Extraction": {
@@ -271432,12 +271432,12 @@
     },
     "Svyelun of Sea and Sky": {
       "edhrec_rank": 3815,
-      "gate": "template",
+      "gate": null,
       "name": "Svyelun of Sea and Sky",
-      "reason": "no template for: Svyelun has indestructible as long as you control at least two other Merfolk",
+      "reason": "",
       "scryfall_id": "01f5ab00-5305-4ac4-915d-feeb591f9389",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Svyelunite Priest": {
@@ -279612,12 +279612,12 @@
     },
     "Thassa, God of the Sea": {
       "edhrec_rank": 1966,
-      "gate": "template",
+      "gate": null,
       "name": "Thassa, God of the Sea",
-      "reason": "no template for: As long as your devotion to blue is less than five, Thassa isn't a creature",
+      "reason": "",
       "scryfall_id": "9f9db424-e668-48b4-b275-7b35be4e1bf8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "That Which Was Taken": {
@@ -287972,12 +287972,12 @@
     },
     "Tishana, Voice of Thunder": {
       "edhrec_rank": 5422,
-      "gate": "template",
+      "gate": null,
       "name": "Tishana, Voice of Thunder",
-      "reason": "no template for: Tishana's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "e522b695-859e-4fba-bf8c-c415fbce13e3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan Forge": {
@@ -289352,12 +289352,12 @@
     },
     "Topography Tracker": {
       "edhrec_rank": 6151,
-      "gate": "template",
+      "gate": null,
       "name": "Topography Tracker",
-      "reason": "no template for: When this creature enters, create a Map token",
+      "reason": "",
       "scryfall_id": "04e04291-ed8c-4f1e-8d68-df8587968b13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Topple": {
@@ -292662,12 +292662,12 @@
     },
     "Tributary Instructor": {
       "edhrec_rank": 8204,
-      "gate": "template",
+      "gate": null,
       "name": "Tributary Instructor",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "af57728e-6f64-4df1-bdf8-55137b8d129e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tributary Vaulter": {
@@ -299402,12 +299402,12 @@
     },
     "Urborg, Tomb of Yawgmoth": {
       "edhrec_rank": 73,
-      "gate": "template",
+      "gate": null,
       "name": "Urborg, Tomb of Yawgmoth",
-      "reason": "no template for: Each land is a Swamp in addition to its other land types",
+      "reason": "",
       "scryfall_id": "cc4be3ef-547e-41bb-855f-9c779f434919",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urdnan, Dromoka Warrior": {
@@ -312122,12 +312122,12 @@
     },
     "Wave Goodbye": {
       "edhrec_rank": 1523,
-      "gate": "template",
+      "gate": null,
       "name": "Wave Goodbye",
-      "reason": "no template for: Return each creature without a +1/+1 counter on it to its owner's hand",
+      "reason": "",
       "scryfall_id": "8fb141d9-addd-47ad-bfc1-b5b376d4c950",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wave of Indifference": {
@@ -313994,7 +313994,7 @@
       "edhrec_rank": 1305,
       "gate": "template",
       "name": "Whir of Invention",
-      "reason": "no template for: Improvise",
+      "reason": "no template for: Search your library for an artifact card with mana value X or less, put it onto the battle",
       "scryfall_id": "16086247-1878-4e21-b2ba-da4aac84c02b",
       "source": "",
       "status": "pending",
@@ -320322,12 +320322,12 @@
     },
     "Xolatoyac, the Smiling Flood": {
       "edhrec_rank": 4927,
-      "gate": "template",
+      "gate": null,
       "name": "Xolatoyac, the Smiling Flood",
-      "reason": "no template for: Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an ",
+      "reason": "",
       "scryfall_id": "1444a798-4e94-4bcc-b16a-0f20334f2550",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xorn": {
@@ -322172,12 +322172,12 @@
     },
     "Zegana, Utopian Speaker": {
       "edhrec_rank": 5260,
-      "gate": "template",
+      "gate": null,
       "name": "Zegana, Utopian Speaker",
-      "reason": "no template for: When Zegana enters, if you control another creature with a +1/+1 counter on it, draw a car",
+      "reason": "",
       "scryfall_id": "93800249-4fcd-47ec-92f9-58f875cb6f00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zektar Shrine Expedition": {

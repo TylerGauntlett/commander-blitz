@@ -179,6 +179,25 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Ultron Unlimited connives");
   });
 
+  it("gives an explore its own beat and line", () => {
+    // Without a case here the explore would have a log line and no beat, and
+    // a Merfolk Cave-Diver trigger would arrive with nothing before it.
+    const [beat] = beatsFor(
+      [
+        event(
+          "explored",
+          { card: "ultron_unlimited", revealed: "forest" },
+          { player: 1, source: 12 },
+        ),
+      ],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 260 });
+    expect(beat.text).toBe("Ultron Unlimited explores, revealing Forest");
+  });
+
   it("gives an investigation its own beat and line", () => {
     // The Clue has its own beat; without this one an Erdwal Illuminator
     // trigger would arrive with nothing to say an investigation happened.

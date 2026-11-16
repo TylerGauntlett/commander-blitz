@@ -85,7 +85,13 @@ import dataclasses
 from collections.abc import Iterable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-from .carddef import Ability, CardDef, ward_ability
+from .carddef import (
+    BASIC_LAND_MANA_ABILITIES,
+    BASIC_LAND_TYPE_COLORS,
+    Ability,
+    CardDef,
+    ward_ability,
+)
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaCost, ManaOrigin, printed_cost_is
@@ -1352,7 +1358,74 @@ def present_printed_abilities(
     return printed if len(present) == len(printed) else present
 
 
-def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
+def _prints_intrinsic(ability: Ability, intrinsic: Ability) -> bool:
+    """Does this printed ability already make what ``intrinsic`` makes, and only that?
+
+    A basic land prints its 305.6 ability as reminder text -- "({T}: Add {U}.)"
+    on Island, "({T}: Add {U} or {B}.)" on Watery Grave -- and the card JSON
+    carries it as an ordinary ability. That printed line *is* the intrinsic
+    ability, so deriving a second one would give the land two. Covered means:
+    an option of the printed ability is exactly the intrinsic one's pip, and
+    once its index, words, effects and options are set aside it is the
+    intrinsic ability field for field -- the same bare ``{T}`` cost and no
+    rider, restriction, condition or variable amount. A two-colour reminder
+    covers both of its types, which is the same land: two "{T}: Add" abilities
+    and one "{T}: Add either" are never both activated off one tap.
+    """
+    if not ability.is_mana_ability or intrinsic.mana_options[0] not in ability.mana_options:
+        return False
+    bare = dataclasses.replace(
+        ability,
+        index=intrinsic.index,
+        text=intrinsic.text,
+        effects=intrinsic.effects,
+        mana_options=intrinsic.mana_options,
+    )
+    return bare == intrinsic
+
+
+def intrinsic_mana_abilities(
+    state: GameState, obj: GameObject, printed: tuple[Ability, ...]
+) -> tuple[Ability, ...]:
+    """The 305.6 mana abilities this permanent has that ``printed`` does not.
+
+    One `carddef.BASIC_LAND_MANA_ABILITIES` entry for each basic land type in
+    the permanent's **derived** subtypes, while it is a land -- so the Swamp an
+    Urborg grants, the Island Xolatoyac's flood counter holds and the Forest
+    Ashaya makes of a creature each bring their "{T}: Add" with them, and take
+    it away again with the type. Less every type a printed ability already
+    produces (`_prints_intrinsic`), which is every basic land and dual as
+    printed: none of them gains an ability here.
+
+    Battlefield only: a mana ability is used there, and off it the card's
+    printed list is what every reader wants. Reads `chars`, so it is never
+    asked from inside `_compute` -- `_battlefield_statics` reads
+    ``abilities_of(..., intrinsic=False)``, and a mana ability is no static.
+
+    Not 305.7: an effect that *sets* a land's subtype would also strip the
+    abilities its old types and its rules text gave it, and no op or static
+    here sets a land subtype -- Song of the Dryads is a `set_types`, a
+    `lose_all_abilities` and a granted "{T}: Add {G}.", and the loss takes this
+    derived ability with the printed ones, so its Forest taps once.
+    """
+    if not obj.on_battlefield:
+        return ()
+    derived = chars(state, obj.oid)
+    if "Land" not in derived.types or derived.subtypes.isdisjoint(BASIC_LAND_TYPE_COLORS):
+        return ()
+    out = []
+    for subtype in BASIC_LAND_TYPE_COLORS:
+        if subtype not in derived.subtypes:
+            continue
+        intrinsic = BASIC_LAND_MANA_ABILITIES[subtype]
+        if not any(_prints_intrinsic(ability, intrinsic) for ability in printed):
+            out.append(intrinsic)
+    return tuple(out)
+
+
+def abilities_of(
+    state: GameState, oid: int, *, intrinsic: bool = True
+) -> tuple[Ability, ...]:
     """The abilities a permanent **actually has**, printed ones included.
 
     The engine had no such notion: every reader -- `legality`, `costs`,
@@ -1374,6 +1447,13 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     -- and the abilities are renumbered so `Ability.index` agrees with where it
     now sits. Legality and resolution both read this list, so the two cannot
     disagree about what index 0 means.
+
+    A land's 305.6 mana abilities (`intrinsic_mana_abilities`) come **last**,
+    after every grant, so a land gaining or losing a basic land type moves no
+    granted ability's index; they are mana abilities, which never use the stack
+    and so are never looked up by index again once activated. ``intrinsic=False``
+    leaves them out, for `_battlefield_statics`, which runs inside `_compute`
+    and so cannot ask `chars` what a permanent's subtypes are.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1392,8 +1472,15 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
         and not obj.lost_all_abilities
         and timed_loss_cutoff(obj) is None
     ):
-        return printed
-    out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
+        extra = intrinsic_mana_abilities(state, obj, printed) if intrinsic else ()
+        if not extra:
+            return printed
+        out = [*printed, *extra]
+    else:
+        out = [
+            ability
+            for ability, _origin in _derived_abilities(state, obj, statics, intrinsic=intrinsic)
+        ]
     if out == list(printed):
         return printed
 
@@ -1401,7 +1488,11 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
 
 
 def _derived_abilities(
-    state: GameState, obj: GameObject, statics: list[tuple[GameObject, Mapping[str, Any]]]
+    state: GameState,
+    obj: GameObject,
+    statics: list[tuple[GameObject, Mapping[str, Any]]],
+    *,
+    intrinsic: bool = True,
 ) -> list[tuple[Ability, tuple[int, int] | Borrowed | None]]:
     """Every ability this permanent has, each with **where it came from**.
 
@@ -1430,11 +1521,12 @@ def _derived_abilities(
     # (The Irencrag). Either way the printed abilities are not here -- and the
     # grants below still are, which is what "loses all **other** abilities and
     # gains …" says.
-    if not obj.lost_all_abilities and timed_loss_cutoff(obj) is None and not any(
+    keeps_own = not obj.lost_all_abilities and timed_loss_cutoff(obj) is None and not any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in statics
-    ):
+    )
+    if keeps_own:
         out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
         effect = static.get("effect")
@@ -1453,6 +1545,13 @@ def _derived_abilities(
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
     out.extend(_op_granted_abilities(state, obj))
+    # 305.6, last so no grant's index moves with a land type. A loss of all
+    # abilities takes these with the printed ones: the type change that gave
+    # them is layer 4 and the loss layer 6 (613.1d, 613.1f). Read against the
+    # printed list rather than `out`, so a *granted* "{T}: Add {G}." (Song of
+    # the Dryads) never stands in for a Forest's own.
+    if intrinsic and keeps_own:
+        out.extend((ability, None) for ability in intrinsic_mana_abilities(state, obj, printed))
     return out
 
 
@@ -1642,7 +1741,7 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
         obj = state.objects.get(oid)
         if obj is None:
             continue
-        for ability in abilities_of(state, oid):
+        for ability in abilities_of(state, oid, intrinsic=False):
             if not (ability.is_static and ability.static):
                 continue
             if Zone.BATTLEFIELD not in ability.active_zones:

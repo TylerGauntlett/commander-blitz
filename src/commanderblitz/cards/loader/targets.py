@@ -618,6 +618,25 @@ def _check_mode_targets(
                     f"an 'optional' or caster-sized mode-owned target -- that one "
                     f"is stored after every other target, so nothing can read it"
                 )
+    # "Target player shuffles up to three target cards from **their**
+    # graveyard" (Quandrix Command): a mode-owned spec may read a sibling its
+    # own mode declares, because `Game._ask_mode_targets` (and a trigger's
+    # enumeration) asks a mode's specs in order and hands over the answers so
+    # far. A sibling of another mode, or a card-level one, is declared at a
+    # different moment or not at all, so the link would read nobody.
+    by_id = {spec.id: spec for spec in specs}
+    for spec in specs:
+        for named in by_id:
+            if (
+                named != spec.id
+                and _links_to(spec.selector, named)
+                and by_id[named].mode != spec.mode
+            ):
+                raise DslError(
+                    f"{where}.target[{spec.id}]: names target {named!r}, which "
+                    f"another mode (or the card itself) declares -- a linked "
+                    f"target must belong to the same mode as the one it reads"
+                )
     if any(spec.optional for spec in specs if spec.mode is None):
         raise DslError(
             f"{where}: a card-level 'optional' target cannot share a card with a "
@@ -640,6 +659,18 @@ def _names_target(node: Any, target_id: str) -> bool:
         return any(_names_target(v, target_id) for v in node.values())
     if isinstance(node, (list, tuple)):
         return any(_names_target(v, target_id) for v in node)
+    return False
+
+
+def _links_to(node: Any, target_id: str) -> bool:
+    """Does this selector read the sibling target ``target_id`` -- as
+    ``{"target": …}`` or as ``{"controller_of_target": …}``?"""
+    if isinstance(node, Mapping):
+        if target_id in (node.get("target"), node.get("controller_of_target")):
+            return True
+        return any(_links_to(v, target_id) for v in node.values())
+    if isinstance(node, (list, tuple)):
+        return any(_links_to(v, target_id) for v in node)
     return False
 
 

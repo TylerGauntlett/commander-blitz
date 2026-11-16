@@ -178,6 +178,14 @@ class TempEffect:
     #: source that is blinked, or stolen and handed back, does not revive it:
     #: the oid survives both, and the effect must not.
     while_controller: int | None = None
+    #: "…for as long as it has a **flood counter** on it" (611.2b): the counter
+    #: kind the permanent carrying the entry must go on having, and ``None`` on
+    #: every other clock. Not bound to :attr:`source`, which may leave without
+    #: ending it, and no cleanup or untap step ends it.
+    #: `GameObject._last_counter_gone` does, the moment the last counter of the
+    #: kind is removed, so a counter put on again later does not revive it --
+    #: `AttackMark.while_counter`'s clock, on a characteristic.
+    while_counter: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -198,6 +206,7 @@ class TempEffect:
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
             "while_controller": self.while_controller,
+            "while_counter": self.while_counter,
         }
 
 

@@ -95,6 +95,10 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
     no clock, or ``"until_end_of_turn"`` / ``"until_your_next_turn"`` for "until
     end of turn, Sarkhan becomes a Dragon in addition to its other types": a
     ``subtype`` `TempEffect` that wears off with the rest (`add_subtypes`).
+    ``"while_counter"`` with ``counter`` naming a kind is "that land is an
+    Island in addition to its other types for as long as it has a flood counter
+    on it" (Xolatoyac, the Smiling Flood): it outlives the source, ends as the
+    last such counter goes, and gives a permanent without one nothing.
 
     **Literal names only**, and the assertion is the point. `str()` stood where
     this check does, and it made `{"chosen_type_of": "self"}` -- which the
@@ -117,7 +121,9 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     # "**Until end of turn**, Sarkhan becomes a Dragon…" -- the same words with
     # a clock. No duration is the printed one-shot, which never wears off.
-    timed = "duration" in spec and spec["duration"] != "permanent"
+    duration = spec.get("duration", "permanent")
+    while_counter = str(spec["counter"]) if duration == "while_counter" else None
+    timed = duration not in ("permanent", "while_counter")
     until_player = until_player_of(ctx, spec) if timed else None
     oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
     for oid in oids:
@@ -128,6 +134,7 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
             timed=timed,
             source=ctx.source_oid,
             until_player=until_player,
+            while_counter=while_counter,
         )
 
 
