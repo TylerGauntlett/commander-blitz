@@ -13119,6 +13119,7 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
 | a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
+| a selector naming a sibling of another mode, or a card-level spec and a mode-owned one linked either way | a mode's specs are declared together, in order, at their own moment; a sibling declared elsewhere (or not at all) is not among the answers the link reads |
 
 ### "Up to one target" inside a mode
 
@@ -13187,6 +13188,37 @@ owns it. The questions are still asked in printed mode order
 moves, and every reader of the stored refs walks the same list. The loader
 admits one sizeless mode-owned spec per card, and none a sibling's selector
 names.
+
+### A mode target that reads its own mode's player
+
+```jsonc
+"targets": [
+  {"id": "shuffler", "kind": "player", "mode": 3},
+  {"id": "tucked", "kind": "card_in_graveyard", "mode": 3, "count": 3, "up_to": true,
+   "selector": {"zone": "graveyard", "controller": {"target": "shuffler"}}}
+],
+…
+{"label": "Target player shuffles up to three target cards from their graveyard into their library.",
+ "effects": [{"op": "put_on_top", "objects": {"target": "tucked"}},
+             {"op": "shuffle", "player": {"target": "shuffler"}}]}
+```
+
+Quandrix Command's fourth bullet. A mode-owned spec may name a sibling of the
+**same** mode in its selector, the way a card-level "target opponent and up to
+one target creature they control" does: `Game._ask_mode_targets` asks the mode's
+specs in printed order and hands each the answers so far, so the cards are
+offered from the graveyard of the player just chosen. Here the linked spec is
+also the card's one caster-sized spec (0–3 refs), stored last, so a second
+bullet's target still reads its own ref however many cards were picked.
+
+608.2b re-checks a `card_in_graveyard` target against a selector that names a
+sibling, not just its zone: once the player is an illegal target (hexproof
+gained in response) the cards drop with it, and the bullet moves nothing rather
+than putting cards on top of a library nobody shuffles. A copy keeps the modes
+and the refs (706.10), and resolves through the same split. The near misses are
+a fixed `count: 3`, which strikes the bullet below three cards and forbids
+fewer, and a card-level target, declared under every pair of bullets.
+`tests/unit/modes/test_modal_variable_targets.py` is the witness.
 
 ### A mode chosen more than once
 

@@ -16145,6 +16145,9 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "quandrix_command": {
+    "zone": "graveyard"
+  },
   "quantum_misalignment": {
     "battlefield_count": 33,
     "zone": "exile"

@@ -1079,7 +1079,16 @@ def still_legal(
     if not can_be_targeted(state, controller, ref.id, source_oid=source_oid):
         return False
     if spec.kind == "card_in_graveyard":
-        return obj.zone is Zone.GRAVEYARD
+        if obj.zone is not Zone.GRAVEYARD:
+            return False
+        # A printed face cannot change while it lies there, so the zone is
+        # usually the whole re-check -- but a selector naming a sibling is a
+        # clause that can: "up to three target cards from **their** graveyard"
+        # (Quandrix Command) is no longer met once that player target has been
+        # dropped, so the cards are not moved for a player who performs nothing.
+        if chosen and _names_a_sibling(spec.selector, set(chosen)):
+            return matches(ctx, ref.id, spec.selector)
+        return True
     if spec.kind == "card_in_exile":
         # The zone **and** the selector, where `card_in_graveyard` above checks
         # only the zone. Re-resolved rather than matched, because the clause

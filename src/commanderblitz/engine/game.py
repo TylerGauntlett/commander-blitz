@@ -1918,9 +1918,15 @@ class Game:
                 # `_ask_modes` offer a mode that then had nothing to point at,
                 # which is the silently-inert half of a spell this whole
                 # capability exists to prevent.
+                #
+                # ``declared`` is handed over as the siblings already picked:
+                # "target player shuffles up to three target cards from **their**
+                # graveyard" (Quandrix Command) reads the player its own mode
+                # declared one question earlier. The loader admits such a link
+                # only inside one mode, so the sibling is always answered first.
                 options = [
                     (describe_ref(state, ref), ref)
-                    for ref in candidates(state, pid, spec, oid)
+                    for ref in candidates(state, pid, spec, oid, chosen=declared)
                 ]
                 count = target_count(state, pid, spec, oid)
                 if spec.variable_size:

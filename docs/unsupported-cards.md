@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**388 cards** blocked by **339** capabilities.
+**387 cards** blocked by **338** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -240,7 +240,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
-| [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
@@ -4061,20 +4060,6 @@ Blocks **1** card.
 
 - **Entreat the Angels** (rank 4945) — `entreat_the_angels`
   - Miracle {X}{W}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)
-
-</details>
-
-## modal-variable-targets
-
-Blocks **1** card.
-
-- **(engine)** a target spec owned by one mode of a choose_mode spell whose count is caster-chosen ("up to three target cards", count 3 with up_to: true), so the stored target refs for that mode can be of variable length (0-3) while the other chosen modes' refs are still located correctly
-  <br>Why the existing vocabulary won't do: Targets carry `mode` and `up_to`, and the sibling-target clause `owner: {"target": "shuffler"}` with put_on_top + shuffle expresses the effect, but the loader (cards/loader/targets.py) refuses `variable_size` on a mode-owned target: `filter_legal` splits the stored refs by position per mode and a caster-chosen size leaves no way to say where the next mode's refs begin. Declaring the target at card level without `mode` would force the targets even when the mode is not chosen, and a fixed count of 3 would make the mode illegal with fewer than three cards and forbid choosing fewer.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Quandrix Command** (rank 4339) — `quandrix_command`
-  - • Target player shuffles up to three target cards from their graveyard into their library.
 
 </details>
 
