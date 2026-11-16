@@ -1,0 +1,848 @@
+{
+  "id": "lcc_ahoy_mateys",
+  "name": "Ahoy Mateys",
+  "commanders": [
+    "admiral_brass_unsinkable"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "LCC",
+    "set_name": "The Lost Caverns of Ixalan Commander",
+    "date": "2023-11-17"
+  },
+  "notes": "The Lost Caverns of Ixalan Commander precon, card for card (https://mtgjson.com/api/v5/decks/AhoyMateys_LCC.json).",
+  "tags": [
+    "Pirates",
+    "Treasure",
+    "Theft",
+    "Reanimation"
+  ],
+  "strategy": "Admiral Brass, Unsinkable mills four as it enters and, at the start of every combat, brings a Pirate back from the graveyard as a 4/4 with haste and a finality counter, so the deck fills its own yard with Angrath's Marauders, Hostage Taker and the rest of the crew and keeps attacking with them. Corsair Captain, Gemcutter Buccaneer and Storm Fleet Negotiator pile up Treasure while Breeches, Brazen Plunderer, Don Andres, the Renegade and Coercive Recruiter turn it into the opponents' own cards and creatures, played and swung back at them. Shared Animosity, Herald's Horn and Icon of Ancestry pump the fleet, Port Razer's extra combat phases close the game, and Blasphemous Act, Chaos Warp and Rakdos Charm keep the table honest.",
+  "archetype": "tribal",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "admiral_brass_unsinkable",
+      "why": "Every combat, a Pirate climbs out of the graveyard as a hasty 4/4."
+    },
+    {
+      "card_id": "breeches_brazen_plunderer",
+      "why": "Pirate damage exiles the top of each opponent's library for you to play."
+    },
+    {
+      "card_id": "don_andres_the_renegade",
+      "why": "Stolen creatures turn into deathtouch Pirates, and stolen spells into Treasure."
+    },
+    {
+      "card_id": "port_razer",
+      "why": "Connect once and every creature untaps for another combat."
+    }
+  ],
+  "printings": {
+    "admiral_beckett_brass": {
+      "scryfall_id": "02cbd397-3ef3-465f-84fe-765dd1444af8",
+      "artist": "Jason Rainville",
+      "set_code": "lcc",
+      "collector_number": "264"
+    },
+    "admiral_brass_unsinkable": {
+      "scryfall_id": "bdc2d492-9d1e-4543-8b9c-c66ee67992ce",
+      "artist": "Jason Rainville",
+      "set_code": "lcc",
+      "collector_number": "1"
+    },
+    "amphin_mutineer": {
+      "scryfall_id": "4b45f225-0553-482b-8be4-9c7f3ccf0d0d",
+      "artist": "Nicholas Gregory",
+      "set_code": "lcc",
+      "collector_number": "143"
+    },
+    "angrath_s_marauders": {
+      "scryfall_id": "1685b354-c165-4300-8307-fd38dcd4b3b6",
+      "artist": "Victor Adame Minguez",
+      "set_code": "lcc",
+      "collector_number": "215"
+    },
+    "arcane_signet": {
+      "scryfall_id": "fc6c69a0-ac24-4486-8893-a6303d08fc6e",
+      "artist": "Dan Murayama Scott",
+      "set_code": "lcc",
+      "collector_number": "299"
+    },
+    "arm_mounted_anchor": {
+      "scryfall_id": "15bcbfae-89cd-4fa4-978c-ad1332e81e18",
+      "artist": "Nino Vecia",
+      "set_code": "lcc",
+      "collector_number": "99"
+    },
+    "azure_fleet_admiral": {
+      "scryfall_id": "adb04bab-a10a-40da-813e-6afa68956efc",
+      "artist": "Sidharth Chaturvedi",
+      "set_code": "lcc",
+      "collector_number": "144"
+    },
+    "bident_of_thassa": {
+      "scryfall_id": "94751d5e-7693-44af-b1b5-e440677dc7a2",
+      "artist": "Yeong-Hao Han",
+      "set_code": "lcc",
+      "collector_number": "146"
+    },
+    "black_market_connections": {
+      "scryfall_id": "b8c66fab-7494-42b1-bc4e-dae85a48fa41",
+      "artist": "Lixin Yin",
+      "set_code": "lcc",
+      "collector_number": "181"
+    },
+    "blasphemous_act": {
+      "scryfall_id": "8aa9682d-5176-4475-a0bd-e000f1d6999a",
+      "artist": "Daarken",
+      "set_code": "lcc",
+      "collector_number": "216"
+    },
+    "blood_money": {
+      "scryfall_id": "bbbc5c9d-110a-44cd-a2c9-8bad7dac4b5f",
+      "artist": "Inka Schulz",
+      "set_code": "lcc",
+      "collector_number": "183"
+    },
+    "breeches_brazen_plunderer": {
+      "scryfall_id": "fb6dc94e-9b57-4161-a835-15e46c3bb13a",
+      "artist": "Svetlin Velinov",
+      "set_code": "lcc",
+      "collector_number": "217"
+    },
+    "broadside_bombardiers": {
+      "scryfall_id": "9721f8da-39ed-4ada-a571-61e08a86032b",
+      "artist": "Tomek Larek",
+      "set_code": "lcc",
+      "collector_number": "86"
+    },
+    "captain_lannery_storm": {
+      "scryfall_id": "19862605-e965-4cdc-afca-678cff198d21",
+      "artist": "Chris Rallis",
+      "set_code": "lcc",
+      "collector_number": "218"
+    },
+    "captivating_crew": {
+      "scryfall_id": "611950cc-d10b-438e-abc2-ca0bbe00d76b",
+      "artist": "Winona Nelson",
+      "set_code": "lcc",
+      "collector_number": "219"
+    },
+    "chaos_warp": {
+      "scryfall_id": "73ca9629-b1e3-49d6-ae10-908b9e4e67ce",
+      "artist": "Trevor Claxton",
+      "set_code": "lcc",
+      "collector_number": "221"
+    },
+    "choked_estuary": {
+      "scryfall_id": "1fee96d0-f470-4ddd-a9ac-9dc724f801b0",
+      "artist": "Vincent Proce",
+      "set_code": "lcc",
+      "collector_number": "322"
+    },
+    "coercive_recruiter": {
+      "scryfall_id": "16a1d084-34f1-4278-ae54-d0dac288b1da",
+      "artist": "Randy Vargas",
+      "set_code": "lcc",
+      "collector_number": "222"
+    },
+    "command_tower": {
+      "scryfall_id": "d477d733-2360-4f1d-9ecd-cdedc2e8a7ae",
+      "artist": "Evan Shipard",
+      "set_code": "lcc",
+      "collector_number": "325"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "c643146f-da7b-4cc0-b874-4accad99ccce",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "lcc",
+      "collector_number": "301"
+    },
+    "corsair_captain": {
+      "scryfall_id": "b8deb5cc-14e5-4440-ad12-5fe42d5140a1",
+      "artist": "Victor Adame Minguez",
+      "set_code": "lcc",
+      "collector_number": "149"
+    },
+    "crumbling_necropolis": {
+      "scryfall_id": "d3600e12-5633-42fd-b1cc-e90790a16b20",
+      "artist": "Volkan Baǵa",
+      "set_code": "lcc",
+      "collector_number": "326"
+    },
+    "daring_saboteur": {
+      "scryfall_id": "66483d05-444a-4710-97fa-7b7481b4a420",
+      "artist": "Victor Adame Minguez",
+      "set_code": "lcc",
+      "collector_number": "151"
+    },
+    "departed_deckhand": {
+      "scryfall_id": "985cfee6-97b7-4f42-8bfe-5e1e44bb54d6",
+      "artist": "Zoltan Boros",
+      "set_code": "lcc",
+      "collector_number": "153"
+    },
+    "desolate_lighthouse": {
+      "scryfall_id": "c155cc10-09f4-424b-b366-142adf9c1712",
+      "artist": "Scott Chou",
+      "set_code": "lcc",
+      "collector_number": "327"
+    },
+    "dimir_signet": {
+      "scryfall_id": "95de0112-3560-413c-91a9-a2b29d6488f6",
+      "artist": "Raoul Vitale",
+      "set_code": "lcc",
+      "collector_number": "302"
+    },
+    "dire_fleet_daredevil": {
+      "scryfall_id": "76c57c43-18be-4eee-afa4-111269d8ad87",
+      "artist": "Zoltan Boros",
+      "set_code": "lcc",
+      "collector_number": "223"
+    },
+    "dire_fleet_ravager": {
+      "scryfall_id": "5538fa26-bf25-4aba-9730-3c4cbde77402",
+      "artist": "Bram Sels",
+      "set_code": "lcc",
+      "collector_number": "192"
+    },
+    "distant_melody": {
+      "scryfall_id": "bba22321-526e-4587-903b-a60cda2093fa",
+      "artist": "Sam Guay",
+      "set_code": "lcc",
+      "collector_number": "154"
+    },
+    "don_andres_the_renegade": {
+      "scryfall_id": "3cf9f3ae-694d-4d37-9498-4bdd1723a55e",
+      "artist": "Daarken",
+      "set_code": "lcc",
+      "collector_number": "6"
+    },
+    "enterprising_scallywag": {
+      "scryfall_id": "44420f52-2ed8-4f81-93e4-5decc77bed01",
+      "artist": "Denman Rooke",
+      "set_code": "lci",
+      "collector_number": "148"
+    },
+    "evacuation": {
+      "scryfall_id": "b11037bc-e719-461e-a89e-9c026dfd9fd4",
+      "artist": "Jason Rainville",
+      "set_code": "lcc",
+      "collector_number": "156"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "fa6a5029-f4df-43dd-b5a9-fbf6ff003675",
+      "artist": "Daniel Ljunggren",
+      "set_code": "lcc",
+      "collector_number": "328"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "a54b6832-9990-4144-99ef-990a9ad4c081",
+      "artist": "Steven Belledin",
+      "set_code": "lcc",
+      "collector_number": "329"
+    },
+    "faithless_looting": {
+      "scryfall_id": "57800da2-c68c-4535-a5eb-19cd007f6ced",
+      "artist": "Karl Kopinski",
+      "set_code": "lcc",
+      "collector_number": "225"
+    },
+    "fathom_fleet_captain": {
+      "scryfall_id": "7374d12c-6a0a-457a-b7b8-5aaf3c11e009",
+      "artist": "Matt Stewart",
+      "set_code": "lcc",
+      "collector_number": "197"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "9f48e48d-6bc5-4f9c-9c3e-457cf6632cf5",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "lcc",
+      "collector_number": "198"
+    },
+    "foreboding_ruins": {
+      "scryfall_id": "eaf65322-6f41-413e-9852-0366e88e5245",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "330"
+    },
+    "francisco_fowl_marauder": {
+      "scryfall_id": "5182b527-739e-4523-8611-01244ced26ac",
+      "artist": "Rudy Siswanto",
+      "set_code": "lcc",
+      "collector_number": "81"
+    },
+    "frostboil_snarl": {
+      "scryfall_id": "faa52a92-18ce-46f9-b360-3477b6e78234",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "332"
+    },
+    "geier_reach_sanitarium": {
+      "scryfall_id": "4b9c92f0-4242-4a3e-9ede-6a4935f5c75d",
+      "artist": "Cliff Childs",
+      "set_code": "lcc",
+      "collector_number": "335"
+    },
+    "gemcutter_buccaneer": {
+      "scryfall_id": "ce8f708a-2b7b-48b9-88ae-70dd60007b3d",
+      "artist": "Helge C. Balzer",
+      "set_code": "lcc",
+      "collector_number": "87"
+    },
+    "ghost_of_ramirez_depietro": {
+      "scryfall_id": "15e649e1-dcb3-41d9-8055-cf3c98e25b1e",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "lcc",
+      "collector_number": "157"
+    },
+    "herald_s_horn": {
+      "scryfall_id": "4bfa71d4-4125-4404-9c24-979401bae592",
+      "artist": "Jason Felix",
+      "set_code": "lcc",
+      "collector_number": "304"
+    },
+    "hostage_taker": {
+      "scryfall_id": "04d0e3f2-04cb-4775-947e-3c92e61b8fac",
+      "artist": "Wayne Reynolds",
+      "set_code": "lcc",
+      "collector_number": "271"
+    },
+    "icon_of_ancestry": {
+      "scryfall_id": "f6cdbdf3-f8bd-48a9-8a47-6b0b9d5de0db",
+      "artist": "Chris Seaman",
+      "set_code": "lcc",
+      "collector_number": "305"
+    },
+    "island": {
+      "scryfall_id": "23e3ed2c-342b-44aa-8e3e-0c53602397c3",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "lci",
+      "collector_number": "395"
+    },
+    "izzet_signet": {
+      "scryfall_id": "8f4f9cb2-4003-4588-af80-d47ec57f65f4",
+      "artist": "Raoul Vitale",
+      "set_code": "lcc",
+      "collector_number": "306"
+    },
+    "kari_zev_skyship_raider": {
+      "scryfall_id": "48765efe-bcb5-4a15-acd0-607ead64ae6d",
+      "artist": "Brad Rigney",
+      "set_code": "lcc",
+      "collector_number": "227"
+    },
+    "king_narfi_s_betrayal": {
+      "scryfall_id": "4c4edeef-7582-4027-8087-e643601d5161",
+      "artist": "Chase Stone",
+      "set_code": "lcc",
+      "collector_number": "272"
+    },
+    "lethal_scheme": {
+      "scryfall_id": "a132a71e-f173-47bc-a014-444e3fd7c122",
+      "artist": "Tuan Duong Chu",
+      "set_code": "lcc",
+      "collector_number": "201"
+    },
+    "malcolm_keen_eyed_navigator": {
+      "scryfall_id": "51187cdb-85ee-4f68-9e29-d84d296f0825",
+      "artist": "Eric Deschamps",
+      "set_code": "lcc",
+      "collector_number": "161"
+    },
+    "merchant_raiders": {
+      "scryfall_id": "f6236b1e-2e3e-4088-87e0-9cdf1fc8db66",
+      "artist": "Deruchenko Alexander",
+      "set_code": "lcc",
+      "collector_number": "163"
+    },
+    "mountain": {
+      "scryfall_id": "e82fc4bc-ac81-4ad6-8b33-781d047f60d5",
+      "artist": "Muhammad Firdaus",
+      "set_code": "lci",
+      "collector_number": "399"
+    },
+    "nephalia_drownyard": {
+      "scryfall_id": "fe2e25b7-f950-482b-9e35-266b1278a71a",
+      "artist": "Cliff Childs",
+      "set_code": "lcc",
+      "collector_number": "344"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "f30552a5-db59-4164-bbd2-44bf7ae1e91e",
+      "artist": "Alayna Danner",
+      "set_code": "lcc",
+      "collector_number": "346"
+    },
+    "pitiless_plunderer": {
+      "scryfall_id": "5b5cd187-857a-44dd-8595-a52857a0b753",
+      "artist": "David Palumbo",
+      "set_code": "lcc",
+      "collector_number": "208"
+    },
+    "port_of_karfell": {
+      "scryfall_id": "c03065d5-ada7-462b-ad2f-26fd4b5aa8b8",
+      "artist": "Mauricio Calle",
+      "set_code": "lcc",
+      "collector_number": "347"
+    },
+    "port_razer": {
+      "scryfall_id": "eb32429a-7ef9-418f-baf8-fed9aa010c9e",
+      "artist": "Craig J Spearing",
+      "set_code": "lcc",
+      "collector_number": "230"
+    },
+    "prismari_command": {
+      "scryfall_id": "85159701-bc58-4d40-9c10-84cbe8099b75",
+      "artist": "Johannes Voss",
+      "set_code": "lcc",
+      "collector_number": "279"
+    },
+    "rakdos_charm": {
+      "scryfall_id": "875fa08c-cb66-4230-a380-0123260aac74",
+      "artist": "Zoltan Boros",
+      "set_code": "lcc",
+      "collector_number": "284"
+    },
+    "rakdos_signet": {
+      "scryfall_id": "e9816461-a471-4f29-9a57-67ac8552d09d",
+      "artist": "Martina Pilcerova",
+      "set_code": "lcc",
+      "collector_number": "311"
+    },
+    "ramirez_depietro_pillager": {
+      "scryfall_id": "11a4e199-faa9-4c41-863d-92170c8f20cc",
+      "artist": "Anna Steinbauer",
+      "set_code": "lcc",
+      "collector_number": "285"
+    },
+    "rogue_s_passage": {
+      "scryfall_id": "a7dc75a8-c500-4b50-aff9-32ce36566104",
+      "artist": "Christine Choi",
+      "set_code": "lcc",
+      "collector_number": "349"
+    },
+    "secluded_courtyard": {
+      "scryfall_id": "26c40b2a-cb27-4fad-a9b2-1fb065d44d77",
+      "artist": "Sam Burley",
+      "set_code": "lcc",
+      "collector_number": "350"
+    },
+    "shared_animosity": {
+      "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c",
+      "artist": "Chuck Lukacs",
+      "set_code": "lcc",
+      "collector_number": "231"
+    },
+    "siren_stormtamer": {
+      "scryfall_id": "073c301e-5bb6-49fa-bf61-2f662030540f",
+      "artist": "Josu Hernaiz",
+      "set_code": "lcc",
+      "collector_number": "171"
+    },
+    "skeleton_crew": {
+      "scryfall_id": "dd9f52d6-da6d-4f68-aafb-6bd3d022f616",
+      "artist": "Camille Alquier",
+      "set_code": "lcc",
+      "collector_number": "85"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "71727ccd-8243-48f2-a90e-6ae4b80bb61b",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "353"
+    },
+    "sol_ring": {
+      "scryfall_id": "2d47121d-8b90-4d28-9ffa-0a640b9dd611",
+      "artist": "Mike Bierek",
+      "set_code": "lcc",
+      "collector_number": "313"
+    },
+    "spectral_sailor": {
+      "scryfall_id": "0b25b281-ab3b-4821-8144-dcb1f3281f96",
+      "artist": "Cristi Balanescu",
+      "set_code": "lcc",
+      "collector_number": "172"
+    },
+    "storm_fleet_negotiator": {
+      "scryfall_id": "7ac4efff-eb66-48dd-9d6b-14eaf1684034",
+      "artist": "Nino Vecia",
+      "set_code": "lcc",
+      "collector_number": "78"
+    },
+    "sulfur_falls": {
+      "scryfall_id": "fae97b42-b84b-4a12-91f4-9d115b58729a",
+      "artist": "Cliff Childs",
+      "set_code": "lcc",
+      "collector_number": "354"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "4622cb98-5a82-4fbf-9a81-d18c56dfea50",
+      "artist": "Adam Paquette",
+      "set_code": "lcc",
+      "collector_number": "355"
+    },
+    "swamp": {
+      "scryfall_id": "4f893107-84b0-4e3f-b1f5-b04632f192c5",
+      "artist": "Logan Feliciano",
+      "set_code": "lci",
+      "collector_number": "397"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "19b72af8-9bb9-4542-9115-09c27ad6e7ad",
+      "artist": "Dan Murayama Scott",
+      "set_code": "lcc",
+      "collector_number": "360"
+    },
+    "the_grim_captain_s_locker": {
+      "scryfall_id": "3f10a61b-d48b-4519-8c7d-d8bbf70091b2",
+      "artist": "Bruce Brenneise",
+      "set_code": "lcc",
+      "collector_number": "82"
+    },
+    "the_indomitable": {
+      "scryfall_id": "e6456329-b521-474b-bfb5-bfcd7e52b5f8",
+      "artist": "Samuel Perin",
+      "set_code": "lcc",
+      "collector_number": "75"
+    },
+    "thriving_bluff": {
+      "scryfall_id": "0786c046-0cf6-41c8-800a-082997d2fcbf",
+      "artist": "Johannes Voss",
+      "set_code": "lcc",
+      "collector_number": "361"
+    },
+    "thriving_isle": {
+      "scryfall_id": "ae11e661-da7e-4df8-9473-f19bbc4ebeae",
+      "artist": "Jonas De Ro",
+      "set_code": "lcc",
+      "collector_number": "364"
+    },
+    "thriving_moor": {
+      "scryfall_id": "c7b522da-9626-42f7-82ec-4a997d47158c",
+      "artist": "Titus Lunter",
+      "set_code": "lcc",
+      "collector_number": "365"
+    },
+    "timestream_navigator": {
+      "scryfall_id": "086afafe-6b6c-4a54-8ce7-0040295d309c",
+      "artist": "Zezhou Chen",
+      "set_code": "lcc",
+      "collector_number": "178"
+    },
+    "unclaimed_territory": {
+      "scryfall_id": "e7bd3aaa-864c-4cbb-bbab-68d87c824e3d",
+      "artist": "Dimitar Marinski",
+      "set_code": "lcc",
+      "collector_number": "366"
+    },
+    "vanquishers_banner": {
+      "scryfall_id": "efa6944e-b5e2-4584-ae37-f5b59a8ec75e",
+      "artist": "Milivoj Ćeran",
+      "set_code": "lcc",
+      "collector_number": "316"
+    },
+    "warkite_marauder": {
+      "scryfall_id": "be9c4e92-7a20-4070-96b2-57f310d27c12",
+      "artist": "Victor Adame Minguez",
+      "set_code": "lcc",
+      "collector_number": "179"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "2eb513b3-9c9e-4837-8f58-67d698677041",
+      "artist": "David Sondered",
+      "set_code": "lcc",
+      "collector_number": "317"
+    },
+    "windfall": {
+      "scryfall_id": "14e1af91-34fe-4d82-b119-cbadf75a7dbe",
+      "artist": "Scott Murphy",
+      "set_code": "lcc",
+      "collector_number": "180"
+    },
+    "zara_renegade_recruiter": {
+      "scryfall_id": "d8bd1312-2c3a-4591-943c-c1550b506fa4",
+      "artist": "Chris Rallis",
+      "set_code": "lcc",
+      "collector_number": "297"
+    }
+  },
+  "cards": [
+    {
+      "id": "admiral_beckett_brass"
+    },
+    {
+      "id": "amphin_mutineer"
+    },
+    {
+      "id": "angrath_s_marauders"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "arm_mounted_anchor"
+    },
+    {
+      "id": "azure_fleet_admiral"
+    },
+    {
+      "id": "bident_of_thassa"
+    },
+    {
+      "id": "black_market_connections"
+    },
+    {
+      "id": "blasphemous_act"
+    },
+    {
+      "id": "blood_money"
+    },
+    {
+      "id": "breeches_brazen_plunderer"
+    },
+    {
+      "id": "broadside_bombardiers"
+    },
+    {
+      "id": "captain_lannery_storm"
+    },
+    {
+      "id": "captivating_crew"
+    },
+    {
+      "id": "chaos_warp"
+    },
+    {
+      "id": "choked_estuary"
+    },
+    {
+      "id": "coercive_recruiter"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "corsair_captain"
+    },
+    {
+      "id": "crumbling_necropolis"
+    },
+    {
+      "id": "daring_saboteur"
+    },
+    {
+      "id": "departed_deckhand"
+    },
+    {
+      "id": "desolate_lighthouse"
+    },
+    {
+      "id": "dimir_signet"
+    },
+    {
+      "id": "dire_fleet_daredevil"
+    },
+    {
+      "id": "dire_fleet_ravager"
+    },
+    {
+      "id": "distant_melody"
+    },
+    {
+      "id": "don_andres_the_renegade"
+    },
+    {
+      "id": "enterprising_scallywag"
+    },
+    {
+      "id": "evacuation"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "faithless_looting"
+    },
+    {
+      "id": "fathom_fleet_captain"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "foreboding_ruins"
+    },
+    {
+      "id": "francisco_fowl_marauder"
+    },
+    {
+      "id": "frostboil_snarl"
+    },
+    {
+      "id": "geier_reach_sanitarium"
+    },
+    {
+      "id": "gemcutter_buccaneer"
+    },
+    {
+      "id": "ghost_of_ramirez_depietro"
+    },
+    {
+      "id": "herald_s_horn"
+    },
+    {
+      "id": "hostage_taker"
+    },
+    {
+      "id": "icon_of_ancestry"
+    },
+    {
+      "id": "island",
+      "qty": 6
+    },
+    {
+      "id": "izzet_signet"
+    },
+    {
+      "id": "kari_zev_skyship_raider"
+    },
+    {
+      "id": "king_narfi_s_betrayal"
+    },
+    {
+      "id": "lethal_scheme"
+    },
+    {
+      "id": "malcolm_keen_eyed_navigator"
+    },
+    {
+      "id": "merchant_raiders"
+    },
+    {
+      "id": "mountain",
+      "qty": 5
+    },
+    {
+      "id": "nephalia_drownyard"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "pitiless_plunderer"
+    },
+    {
+      "id": "port_of_karfell"
+    },
+    {
+      "id": "port_razer"
+    },
+    {
+      "id": "prismari_command"
+    },
+    {
+      "id": "rakdos_charm"
+    },
+    {
+      "id": "rakdos_signet"
+    },
+    {
+      "id": "ramirez_depietro_pillager"
+    },
+    {
+      "id": "rogue_s_passage"
+    },
+    {
+      "id": "secluded_courtyard"
+    },
+    {
+      "id": "shared_animosity"
+    },
+    {
+      "id": "siren_stormtamer"
+    },
+    {
+      "id": "skeleton_crew"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "spectral_sailor"
+    },
+    {
+      "id": "storm_fleet_negotiator"
+    },
+    {
+      "id": "sulfur_falls"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 4
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "the_grim_captain_s_locker"
+    },
+    {
+      "id": "the_indomitable"
+    },
+    {
+      "id": "thriving_bluff"
+    },
+    {
+      "id": "thriving_isle"
+    },
+    {
+      "id": "thriving_moor"
+    },
+    {
+      "id": "timestream_navigator"
+    },
+    {
+      "id": "unclaimed_territory"
+    },
+    {
+      "id": "vanquishers_banner"
+    },
+    {
+      "id": "warkite_marauder"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "windfall"
+    },
+    {
+      "id": "zara_renegade_recruiter"
+    }
+  ]
+}
