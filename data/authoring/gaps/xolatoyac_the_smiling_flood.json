@@ -1,0 +1,18 @@
+{
+  "card_id": "xolatoyac_the_smiling_flood",
+  "name": "Xolatoyac, the Smiling Flood",
+  "oracle_text": "Whenever Xolatoyac enters or attacks, put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it.\nAt the beginning of your end step, untap each permanent you control with a counter on it.",
+  "blocked_sentences": [
+    "That land is an Island in addition to its other types for as long as it has a flood counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "add_subtype_while_has_counter",
+      "kind": "op",
+      "what": "a `while_counter` duration (with `counter` naming the kind, here flood) on the `add_subtype` op, so the targeted land is an Island in addition to its other types for as long as it has at least one flood counter on it, independent of whether the source stays on the battlefield, and loses the subtype when the last flood counter is removed, like `{\"op\": \"add_subtype\", \"subtypes\": [\"Island\"], \"objects\": {\"target\": \"t1\"}, \"duration\": \"while_counter\", \"counter\": \"flood\"}`",
+      "why_existing_wont_do": "the `add_subtype` op only takes `permanent`, `until_end_of_turn` or `until_your_next_turn` (`op_add_subtype`); `permanent` would keep the Island type after the counter is removed. The `add_subtype` static with `affects: {types: [Land], has_counters: \"flood\"}` would end when Xolatoyac leaves the battlefield, while the printed effect outlives its source, and it would also make lands flooded by other sources Islands. Same counter-bound duration family as the shield_broker (control) and immortal_obligation (goad) gaps"
+    }
+  ],
+  "closest_existing": ["add_subtype", "add_counters", "cant_attack_player"],
+  "confidence": "high"
+}

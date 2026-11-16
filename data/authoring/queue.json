@@ -322172,12 +322172,12 @@
     },
     "Zegana, Utopian Speaker": {
       "edhrec_rank": 5260,
-      "gate": "template",
+      "gate": null,
       "name": "Zegana, Utopian Speaker",
-      "reason": "no template for: When Zegana enters, if you control another creature with a +1/+1 counter on it, draw a car",
+      "reason": "",
       "scryfall_id": "93800249-4fcd-47ec-92f9-58f875cb6f00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zektar Shrine Expedition": {

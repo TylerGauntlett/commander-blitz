@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**396 cards** blocked by **344** capabilities.
+**397 cards** blocked by **345** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -74,6 +74,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
+| [add-subtype-while-has-counter](#add-subtype-while-has-counter) | 1 | 4927 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure](#adventure) | 1 | 8561 | engine |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
@@ -1705,6 +1706,20 @@ Blocks **1** card.
 
 - **Fertile Ground** (rank 1052) — `fertile_ground`
   - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
+
+</details>
+
+## add-subtype-while-has-counter
+
+Blocks **1** card.
+
+- **(op)** a `while_counter` duration (with `counter` naming the kind, here flood) on the `add_subtype` op, so the targeted land is an Island in addition to its other types for as long as it has at least one flood counter on it, independent of whether the source stays on the battlefield, and loses the subtype when the last flood counter is removed, like `{"op": "add_subtype", "subtypes": ["Island"], "objects": {"target": "t1"}, "duration": "while_counter", "counter": "flood"}`
+  <br>Why the existing vocabulary won't do: the `add_subtype` op only takes `permanent`, `until_end_of_turn` or `until_your_next_turn` (`op_add_subtype`); `permanent` would keep the Island type after the counter is removed. The `add_subtype` static with `affects: {types: [Land], has_counters: "flood"}` would end when Xolatoyac leaves the battlefield, while the printed effect outlives its source, and it would also make lands flooded by other sources Islands. Same counter-bound duration family as the shield_broker (control) and immortal_obligation (goad) gaps
+
+<details><summary>Cards waiting on this</summary>
+
+- **Xolatoyac, the Smiling Flood** (rank 4927) — `xolatoyac_the_smiling_flood`
+  - That land is an Island in addition to its other types for as long as it has a flood counter on it.
 
 </details>
 
