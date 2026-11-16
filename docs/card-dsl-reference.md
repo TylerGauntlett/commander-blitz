@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 181 |
-| [Selectors](#selectors) | 78 |
+| [Selectors](#selectors) | 79 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
@@ -305,6 +305,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `surveilled_this_turn` | Cards a surveil put into a graveyard this turn, as the same object. | [Cards in a graveyard surveilled this turn](card-dsl.md#cards-in-a-graveyard-surveilled-this-turn) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `that_targets` | On a `spell`, `ability_on_stack` or `spell_or_ability` target only: the object targets a `player` spec or a `permanent` matching a selector. | [that_targets — a spell or ability by what it targets](card-dsl.md#that_targets--a-spell-or-ability-by-what-it-targets) |
 | `toughness` | A comparison on live toughness, or its `parity`. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |

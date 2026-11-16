@@ -498,6 +498,33 @@ captured, the announced `x` and its ability kind, and goes on top of the stack.
 `new_targets` is offered from the **ability's** own target specs, not the
 card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
+### `that_targets` — a spell or ability by what it targets
+
+"Sacrifice this creature: Counter target spell or ability **that targets you or a
+creature you control**." — Siren Stormtamer.
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_ability", "count": 1,
+  "selector": { "that_targets": {
+    "player": "you",                                          // "targets you"
+    "permanent": { "controller": "you", "types": ["Creature"] } } } }  // "or a creature you control"
+```
+
+A selector key for a stack object, read by both stack matchers
+(`targeting._spell_matches` and `targeting._ability_matches`), so a `spell`,
+`ability_on_stack` or `spell_or_ability` target may carry it and every other
+selector refuses it at load time. It is met when **any** of the object's chosen
+targets is a player the `player` spec names (a named spec: `"you"`, `"opponent"`,
+…) or a battlefield permanent matching the `permanent` selector; give either half
+or both, never neither. "You" is the countering ability's controller. The
+targets' current state is read, both as the candidates are offered and when the
+target is re-checked on resolution (608.2b), so a creature that changed
+controller in between makes the counter fizzle. A target that is itself on the
+stack matches neither half.
+
+The near miss is the bare `spell_or_ability` target, which is a strictly wider
+counter-anything ability.
+
 ### Proliferate — a choice over permanents and players
 
 ```jsonc

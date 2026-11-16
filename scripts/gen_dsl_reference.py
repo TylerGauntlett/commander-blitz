@@ -506,6 +506,8 @@ SELECTORS: dict[str, Entry] = {
     "any_types": ("Any one of these card types is enough.", None),
     "ability_kind": ("On an `ability_on_stack` target only: `triggered` or `activated`.",
                      "Copying an ability on the stack"),
+    "that_targets": ("On a `spell`, `ability_on_stack` or `spell_or_ability` target only: the object targets a `player` spec or a `permanent` matching a selector.",
+                     "`that_targets` — a spell or ability by what it targets"),
     "attached": ("Attached to the named object (\"self\", a binding, a target).", None),
     "attached_to": ("Attached to a permanent matching this filter (`{\"self_only\": true}`: to the source).",
                     '"Attached to a creature" — `attached_to`'),

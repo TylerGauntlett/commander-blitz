@@ -426,6 +426,14 @@ SELECTOR_KEYS = frozenset(
         #: selector: `validate_selector` refuses it anywhere else, where no
         #: matcher would read it.
         "ability_kind",
+        #: "Counter target spell or ability **that targets you or a creature
+        #: you control**" -- Siren Stormtamer. ``{"player": <player spec>}``
+        #: and/or ``{"permanent": <selector>}``, met when any of the stack
+        #: object's own targets is such a player or permanent; read by
+        #: `targeting._targets_clause_met` from both stack matchers, so only a
+        #: `spell`, `ability_on_stack` or `spell_or_ability` target's selector
+        #: may carry it (`validate_selector` refuses it anywhere else).
+        "that_targets",
         "name",
         #: "…search your library for up to five Dragon cards **not named
         #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
@@ -1990,6 +1998,7 @@ ATTACHED_TO_REFUSED_KEYS = frozenset(
         "extreme",
         "player",
         "ability_kind",
+        "that_targets",
         "object_kind",
         "encoded_by",
         "haunted_by",
@@ -2088,6 +2097,13 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(
             f"{where}: 'ability_kind' narrows an 'ability_on_stack' target and "
             f"means nothing on any other selector"
+        )
+    if "that_targets" in selector:
+        # Lifted off a stack target's selector by `_compile_target`, like
+        # `ability_kind`; on anything else no matcher reads it.
+        raise DslError(
+            f"{where}: 'that_targets' narrows a 'spell', 'ability_on_stack' or "
+            f"'spell_or_ability' target and means nothing on any other selector"
         )
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
@@ -2395,3 +2411,42 @@ def validate_selector(selector: Any, where: str) -> None:
             validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
+
+
+#: The clauses a `that_targets` selector key may carry.
+THAT_TARGETS_KEYS = frozenset({"player", "permanent"})
+
+
+def validate_that_targets(clause: Any, where: str) -> None:
+    """Load-time shape of a stack target's ``that_targets`` clause.
+
+    ``player`` is one of the named player specs (``"you"``, ``"opponent"``,
+    ...); ``permanent`` is a selector over the battlefield. At least one is
+    required: an empty clause would read "that targets anything", which is a
+    different card from "that targets nothing in particular".
+    """
+    if not isinstance(clause, Mapping) or not clause:
+        raise DslError(
+            f"{where}.that_targets: give 'player' and/or 'permanent', got {clause!r}"
+        )
+    if unknown := set(clause) - THAT_TARGETS_KEYS:
+        raise DslError(
+            f"{where}.that_targets: {sorted(unknown)} are not read; only "
+            f"{sorted(THAT_TARGETS_KEYS)}"
+        )
+    if "player" in clause and not (
+        isinstance(clause["player"], str) and clause["player"] in PLAYER_SPEC_NAMES
+    ):
+        raise DslError(
+            f"{where}.that_targets.player: a named player spec, got {clause['player']!r}"
+        )
+    if "permanent" in clause:
+        permanent = clause["permanent"]
+        if not isinstance(permanent, Mapping):
+            raise DslError(f"{where}.that_targets.permanent: must be a selector")
+        if permanent.get("zone", "battlefield") != "battlefield":
+            raise DslError(
+                f"{where}.that_targets.permanent: a target permanent is on the "
+                f"battlefield, so 'zone' may only be 'battlefield'"
+            )
+        validate_selector(permanent, f"{where}.that_targets.permanent")

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**389 cards** blocked by **341** capabilities.
+**388 cards** blocked by **339** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -313,7 +313,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
-| [stack-object-targets-filter](#stack-object-targets-filter) | 1 | 2461 | selector |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
@@ -322,7 +321,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [targets-filter](#targets-filter) | 1 | 1165 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -2454,12 +2452,11 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(value)** a cost_reduction 'targeting' gate that can look through a stack-object target to its targets: {amount: 7} if the chosen spell-or-ability target itself targets a creature you control with power 7 or greater
-  <br>Why the existing vocabulary won't do: cost_reduction 'targeting' filters the cast's object targets with cost_reduction_filter_keys (types, controller, power...) but a stack-object target has no such characteristics and there is no key to reach the objects that stack object targets
+  <br>Why the existing vocabulary won't do: cost_reduction 'targeting' filters the cast's object targets with cost_reduction_filter_keys (types, controller, power...) but a stack-object target has no such characteristics and there is no key to reach the objects that stack object targets; the first sentence is expressible with the `that_targets` selector key on the spell_or_ability target
 
 <details><summary>Cards waiting on this</summary>
 
 - **Not of This World** (rank 2461) — `not_of_this_world`
-  - Counter target spell or ability that targets a permanent you control.
   - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
 
 </details>
@@ -5114,21 +5111,6 @@ Blocks **1** card.
 
 </details>
 
-## stack-object-targets-filter
-
-Blocks **1** card.
-
-- **(selector)** a selector clause on a 'spell_or_ability' (and 'spell') target that narrows the stack object by what IT targets: 'that targets a permanent you control' -- true when any of the stack object's chosen targets is a battlefield permanent matching a permanent filter (controller: you), re-checked on resolution
-  <br>Why the existing vocabulary won't do: The loader restricts a 'spell_or_ability' target's selector to 'controller' only (loader.targets._compile_target), and no selector_keys entry reads a stack object's own targets; 'counter' with target t1 can only counter any spell or ability, which is strictly wider than the printing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Not of This World** (rank 2461) — `not_of_this_world`
-  - Counter target spell or ability that targets a permanent you control.
-  - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
-
-</details>
-
 ## stack-wipe
 
 Blocks **1** card.
@@ -5240,20 +5222,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## targets-filter
-
-Blocks **1** card.
-
-- **(selector)** a target-spec selector clause for a stack object (spell or ability) that matches by what that object itself targets: 'targets you or a creature you control', i.e. one of its chosen targets is the ability's controller or a creature permanent that player controls, honoured by both candidates and still_legal for kind spell_or_ability
-  <br>Why the existing vocabulary won't do: The counter op and the spell_or_ability target kind exist, but no selector key reads a stack object's own targets; the ability matcher (targeting._ability_matches) honours only controller and ability_kind, and the spell matcher reads printed characteristics only, so dropping the restriction would make it a strictly wider counter-anything ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Siren Stormtamer** (rank 1165) — `siren_stormtamer`
-  - {U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.
 
 </details>
 

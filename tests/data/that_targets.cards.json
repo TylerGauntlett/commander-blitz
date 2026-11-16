@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards that exist only for tests/unit/choices/test_that_targets.py. Never part of a deck list. `t_stormtamer` counters a spell or ability that targets its controller or a creature they control; `t_nudge`, `t_hail` and `t_nudger` are free spells and an ability to point it at.",
+  "cards": [
+    {
+      "id": "t_stormtamer",
+      "name": "Test Stormtamer",
+      "oracle_text": "Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.",
+      "mana_cost": "{U}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.",
+          "cost": {"sacrifice": {"self_only": true}},
+          "targets": [{"id": "t1", "count": 1, "kind": "spell_or_ability", "selector": {"that_targets": {"player": "you", "permanent": {"controller": "you", "types": ["Creature"]}}}}],
+          "effects": [{"op": "counter", "target": "t1"}]
+        }
+      ]
+    },
+    {
+      "id": "t_nudge",
+      "name": "Test Nudge",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "targets": [{"id": "t1", "count": 1, "kind": "permanent", "selector": {"types": ["Creature"]}}],
+      "spell_effects": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"target": "t1"}}]
+    },
+    {
+      "id": "t_hail",
+      "name": "Test Hail",
+      "oracle_text": "Target player gains 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "targets": [{"id": "t1", "count": 1, "kind": "player", "selector": {}}],
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}, "player": {"target": "t1"}}]
+    },
+    {
+      "id": "t_nudger",
+      "name": "Test Nudger",
+      "oracle_text": "{0}: Put a +1/+1 counter on target creature.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{0}: Put a +1/+1 counter on target creature.",
+          "cost": {"mana": "{0}"},
+          "targets": [{"id": "t1", "count": 1, "kind": "permanent", "selector": {"types": ["Creature"]}}],
+          "effects": [{"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

@@ -263,8 +263,41 @@ def _ability_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> b
         return False
     if who == "opponent" and item.controller == ctx.controller:
         return False
+    if not _targets_clause_met(ctx, item, selector.get("that_targets")):
+        return False
     wanted = selector.get("ability_kind")
     return wanted is None or item.ability_kind == wanted
+
+
+def _targets_clause_met(
+    ctx: EffectContext, item: StackItem, clause: Mapping[str, Any] | None
+) -> bool:
+    """Does the stack object ``item`` target what ``that_targets`` names?
+
+    "…spell or ability **that targets you or a creature you control**" --
+    Siren Stormtamer. True when **any** of the object's chosen targets is a
+    player ``player`` names or a battlefield permanent matching ``permanent``,
+    both read from the asking ability's side (``ctx.controller`` is "you").
+    Read live, so a creature that changed controller since the target was
+    chosen no longer counts -- which is what 608.2b's re-check needs. A
+    target that is itself on the stack matches neither half.
+    """
+    if not clause:
+        return True
+    players = (
+        set(select_players(ctx, clause["player"])) if "player" in clause else set()
+    )
+    permanent = clause.get("permanent")
+    for ref in item.targets:
+        if ref.kind == "player" and ref.id in players:
+            return True
+        if (
+            permanent is not None
+            and ref.kind == "object"
+            and matches(ctx, ref.id, permanent, default_zone="battlefield")
+        ):
+            return True
+    return False
 
 
 def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> bool:
@@ -290,7 +323,12 @@ def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> boo
         return True
     if item.oid is None:
         return False
-    return matches(ctx, item.oid, spec.selector, default_zone="stack")
+    # `that_targets` is about the spell's targets, not its face, so it is asked
+    # of the stack item and lifted off before `matches` reads the rest.
+    selector = dict(spec.selector)
+    if not _targets_clause_met(ctx, item, selector.pop("that_targets", None)):
+        return False
+    return not selector or matches(ctx, item.oid, selector, default_zone="stack")
 
 
 def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:

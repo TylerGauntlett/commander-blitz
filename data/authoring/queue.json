@@ -248692,12 +248692,12 @@
     },
     "Siren Stormtamer": {
       "edhrec_rank": 1165,
-      "gate": "template",
+      "gate": null,
       "name": "Siren Stormtamer",
-      "reason": "no template for: {U}, Sacrifice this creature: Counter target spell or ability that targets you or a creatu",
+      "reason": "",
       "scryfall_id": "909a4eeb-2b5b-4b79-be32-26810ea7bc5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siren of the Fanged Coast": {

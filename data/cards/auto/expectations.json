@@ -18744,6 +18744,10 @@
     },
     "zone": "battlefield"
   },
+  "siren_stormtamer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sisay_s_ring": {
     "zone": "battlefield"
   },

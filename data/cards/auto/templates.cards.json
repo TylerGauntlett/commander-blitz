@@ -223894,6 +223894,68 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{U}",
+            "sacrifice": {
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell_or_ability",
+              "selector": {
+                "that_targets": {
+                  "permanent": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              }
+            }
+          ],
+          "text": "{U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "siren_stormtamer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Siren Stormtamer",
+      "oracle_text": "Flying\n{U}, Sacrifice this creature: Counter target spell or ability that targets you or a creature you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Siren",
+        "Pirate",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
