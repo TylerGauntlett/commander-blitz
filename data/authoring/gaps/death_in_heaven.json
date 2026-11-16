@@ -1,0 +1,16 @@
+{
+  "card_id": "death_in_heaven",
+  "name": "Death in Heaven",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Target player mills two cards, then exiles their graveyard.\nIII — Put all creature cards exiled with this enchantment onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.",
+  "blocked_sentences": [
+    "III — Put all creature cards exiled with this enchantment onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures."
+  ],
+  "needs": [{
+    "capability": "face_down_with_characteristics",
+    "kind": "op",
+    "what": "put cards from exile (selector: creature cards exiled_with self) onto the battlefield face down under your control as face-down permanents whose face-down characteristics are set by the effect (2/2 Artifact Creature — Cyberman, nameless, colorless, no abilities) rather than the plain 708.2 shell, with no turn-face-up permission (they are not manifested)",
+    "why_existing_wont_do": "search_zones / return_from_graveyard / look_at_top accept face_down, but that yields only the fixed FACE_DOWN_CHARS shell (typeless-subtype colorless 2/2 Creature) with no way to add the Artifact type and Cyberman subtype; put_onto_battlefield has no face_down; following up with animate or add_subtype is a layer-4 effect on top of the shell rather than the face-down characteristics themselves, so it is an approximation. Chapters I and II (player-targeted mill then exile op over their graveyard with link to self) look expressible."
+  }],
+  "closest_existing": ["search_zones", "manifest", "animate", "add_subtype"],
+  "confidence": "high"
+}

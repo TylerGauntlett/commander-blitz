@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**389 cards** blocked by **341** capabilities.
+**393 cards** blocked by **343** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,12 +39,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
+| [dalek-token](#dalek-token) | 2 | 7527 | token |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [escape](#escape) | 2 | 1514 | engine, op |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 2 | 6544 | cost |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [face-down-with-characteristics](#face-down-with-characteristics) | 2 | 5733 | op |
 | [goad](#goad) | 2 | 6258 | op |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -114,6 +116,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
+| [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
 | [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
@@ -132,7 +135,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
-| [dalek-token](#dalek-token) | 1 | 11215 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -178,7 +180,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
-| [face-down-with-characteristics](#face-down-with-characteristics) | 1 | 5733 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -293,6 +294,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
+| [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
@@ -1073,6 +1075,24 @@ Blocks **2** cards.
 
 </details>
 
+## dalek-token
+
+Blocks **2** cards.
+
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
+- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
+  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes, and the 3/3 artifact tokens (golem_3_3_c_artifact) are colorless without menace. The rest of the sentence looks expressible: a your-end-step trigger, an if on life_lost_this_turn of an opponent, and for_each_player over opponents with a choose_mode whose chooser is that player (the villainous choice shape Damocles Base uses)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Davros, Dalek Creator** (rank 7527) — `davros_dalek_creator`
+  - At the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card
+- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
+  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
+
+</details>
+
 ## dealt-damage-to-player-this-turn
 
 Blocks **2** cards.
@@ -1182,6 +1202,24 @@ Blocks **2** cards.
 - **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
   - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
   - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
+
+</details>
+
+## face-down-with-characteristics
+
+Blocks **2** cards.
+
+- **(op)** put the top N cards of a player's library onto the battlefield face down under your control as face-down permanents with printed-by-effect characteristics (2/2 Artifact Creature — Cyberman), and with no turn-face-up permission (they are not manifested, so 701.34c does not apply)
+  <br>Why the existing vocabulary won't do: `manifest` (with controller: you, player bound to the damaged player, amount 2) makes the plain colorless typeless 2/2 shell and marks the cards manifested, so it lacks the Artifact type and Cyberman subtype and wrongly lets creature cards be turned face up for their mana cost; it has no option to set the face-down shell's types/subtypes or forbid turning up
+- **(op)** put cards from exile (selector: creature cards exiled_with self) onto the battlefield face down under your control as face-down permanents whose face-down characteristics are set by the effect (2/2 Artifact Creature — Cyberman, nameless, colorless, no abilities) rather than the plain 708.2 shell, with no turn-face-up permission (they are not manifested)
+  <br>Why the existing vocabulary won't do: search_zones / return_from_graveyard / look_at_top accept face_down, but that yields only the fixed FACE_DOWN_CHARS shell (typeless-subtype colorless 2/2 Creature) with no way to add the Artifact type and Cyberman subtype; put_onto_battlefield has no face_down; following up with animate or add_subtype is a layer-4 effect on top of the shell rather than the face-down characteristics themselves, so it is an approximation. Chapters I and II (player-targeted mill then exile op over their graveyard with link to self) look expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cybership** (rank 5733) — `cybership`
+  - Whenever this Vehicle deals combat damage to a player, put the top two cards of that player's library onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
+- **Death in Heaven** (rank 9163) — `death_in_heaven`
+  - III — Put all creature cards exiled with this enchantment onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
 
 </details>
 
@@ -2253,6 +2291,20 @@ Blocks **1** card.
 
 </details>
 
+## chosen-names-on-permanent
+
+Blocks **1** card.
+
+- **(engine)** A card name chosen by an ability that is remembered on the source permanent and accumulates across resolutions (chapter II goads creatures named at I or II; chapter III all three), readable by a selector such as {"name": {"chosen_for": "self"}} matching any name in that set; and a name pool for the choice that includes creature names on the battlefield the chooser does not own (the opponents' creatures are the point of goading)
+  <br>Why the existing vocabulary won't do: choose_card_name binds the name only in the resolving ability's ctx.bindings, so each chapter forgets earlier chapters' names, and it offers only names of cards the chooser owns plus 'Another card name' (matching nothing), so an opponent's creature name cannot be chosen. goad with a {name: {binding}} selector would therefore goad only the controller's own creatures named this chapter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Day of the Moon** (rank 13799) — `day_of_the_moon`
+  - I, II, III — Choose a creature card name, then goad all creatures with a name chosen for this enchantment
+
+</details>
+
 ## chosen-number
 
 Blocks **1** card.
@@ -2507,20 +2559,6 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
-
-</details>
-
-## dalek-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 black Dalek artifact creature token with menace (e.g. id dalek_3_3_b_artifact_menace)
-  <br>Why the existing vocabulary won't do: token_ids has no Dalek token; the nearest black menace tokens (pirate_2_2_b_menace, villain_2_1_b_menace, zombie_knight_2_2_b_menace) are 2/2 or 2/1 non-artifact creatures of other subtypes. The rest of the card is expressible: a self attacks trigger with choose_mode random:true, add_counters, draw and lose_life
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cult of Skaro** (rank 11215) — `cult_of_skaro`
-  - • Sec — Create a 3/3 black Dalek artifact creature token with menace.
 
 </details>
 
@@ -3166,20 +3204,6 @@ Blocks **1** card.
 
 - **Veiled Ascension** (rank 15770) — `veiled_ascension`
   - Face-down creatures you control enter with a flying counter on them.
-
-</details>
-
-## face-down-with-characteristics
-
-Blocks **1** card.
-
-- **(op)** put the top N cards of a player's library onto the battlefield face down under your control as face-down permanents with printed-by-effect characteristics (2/2 Artifact Creature — Cyberman), and with no turn-face-up permission (they are not manifested, so 701.34c does not apply)
-  <br>Why the existing vocabulary won't do: `manifest` (with controller: you, player bound to the damaged player, amount 2) makes the plain colorless typeless 2/2 shell and marks the cards manifested, so it lacks the Artifact type and Cyberman subtype and wrongly lets creature cards be turned face up for their mana cost; it has no option to set the face-down shell's types/subtypes or forbid turning up
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cybership** (rank 5733) — `cybership`
-  - Whenever this Vehicle deals combat damage to a player, put the top two cards of that player's library onto the battlefield face down under your control. They're 2/2 Cyberman artifact creatures.
 
 </details>
 
@@ -4813,6 +4837,20 @@ Blocks **1** card.
 - **Gisa, Glorious Resurrector** (rank 2740) — `gisa_glorious_resurrector`
   - If a creature an opponent controls would die, exile it instead.
   - At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed.
+
+</details>
+
+## replace-enters-battlefield
+
+Blocks **1** card.
+
+- **(replacement)** a timed (until end of turn) replacement op on a spell for battlefield entry: if a creature would enter the battlefield from exile, or would enter as a resolving permanent spell that was cast from exile, it is instead shuffled into its owner's library; filtered by object type (Creature) and origin (exile zone or cast-from-exile), applying to all players
+  <br>Why the existing vocabulary won't do: The replacement vocabulary covers deaths (replace_deaths, replace_dies), leaving the battlefield (replace_leaves_battlefield), graveyard moves (replace_graveyard), draws, damage, counters, tokens and mill, but nothing replaces a permanent's entry to the battlefield with a different destination, and no selector or condition reads the zone a creature is entering from or whether its spell was cast from exile at the moment of entry; a permanent_enters delayed_trigger that shuffles afterward would let enters triggers and static effects happen, which the replacement prevents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Don't Blink** (rank 18834) — `don_t_blink`
+  - Until end of turn, if one or more creatures would enter from exile or after being cast from exile, their owners shuffle them into their libraries instead.
 
 </details>
 

@@ -1,0 +1,18 @@
+{
+  "card_id": "day_of_the_moon",
+  "name": "Day of the Moon",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II, III — Choose a creature card name, then goad all creatures with a name chosen for this enchantment. (Until your next turn, they attack each combat if able and attack a player other than you if able.)",
+  "blocked_sentences": [
+    "I, II, III — Choose a creature card name, then goad all creatures with a name chosen for this enchantment"
+  ],
+  "needs": [
+    {
+      "capability": "chosen_names_on_permanent",
+      "kind": "engine",
+      "what": "A card name chosen by an ability that is remembered on the source permanent and accumulates across resolutions (chapter II goads creatures named at I or II; chapter III all three), readable by a selector such as {\"name\": {\"chosen_for\": \"self\"}} matching any name in that set; and a name pool for the choice that includes creature names on the battlefield the chooser does not own (the opponents' creatures are the point of goading)",
+      "why_existing_wont_do": "choose_card_name binds the name only in the resolving ability's ctx.bindings, so each chapter forgets earlier chapters' names, and it offers only names of cards the chooser owns plus 'Another card name' (matching nothing), so an opponent's creature name cannot be chosen. goad with a {name: {binding}} selector would therefore goad only the controller's own creatures named this chapter"
+    }
+  ],
+  "closest_existing": ["choose_card_name", "goad", "chosen_color"],
+  "confidence": "high"
+}

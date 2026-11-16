@@ -60162,12 +60162,12 @@
     },
     "Dalek Squadron": {
       "edhrec_rank": 5437,
-      "gate": "template",
+      "gate": null,
       "name": "Dalek Squadron",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "40a5f1c9-8164-43c6-96f1-894d6981a2ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dalkovan Encampment": {
@@ -65682,12 +65682,12 @@
     },
     "Delete": {
       "edhrec_rank": 5211,
-      "gate": "template",
+      "gate": null,
       "name": "Delete",
-      "reason": "no template for: deals X damage to each nonartifact creature and each player",
+      "reason": "",
       "scryfall_id": "875c7337-78af-4e13-89e5-3255ba2d4053",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deliberate": {

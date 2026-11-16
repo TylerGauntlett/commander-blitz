@@ -4716,6 +4716,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "dalek_squadron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "damn": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -5189,6 +5193,14 @@
     "life": {
       "0": 40,
       "1": 38
+    },
+    "zone": "graveyard"
+  },
+  "delete": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 20,
+      "1": 20
     },
     "zone": "graveyard"
   },

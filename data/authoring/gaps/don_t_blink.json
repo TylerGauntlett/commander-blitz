@@ -1,0 +1,16 @@
+{
+  "card_id": "don_t_blink",
+  "name": "Don't Blink",
+  "oracle_text": "Until end of turn, if one or more creatures would enter from exile or after being cast from exile, their owners shuffle them into their libraries instead.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+  "blocked_sentences": [
+    "Until end of turn, if one or more creatures would enter from exile or after being cast from exile, their owners shuffle them into their libraries instead."
+  ],
+  "needs": [{
+    "capability": "replace_enters_battlefield",
+    "kind": "replacement",
+    "what": "a timed (until end of turn) replacement op on a spell for battlefield entry: if a creature would enter the battlefield from exile, or would enter as a resolving permanent spell that was cast from exile, it is instead shuffled into its owner's library; filtered by object type (Creature) and origin (exile zone or cast-from-exile), applying to all players",
+    "why_existing_wont_do": "The replacement vocabulary covers deaths (replace_deaths, replace_dies), leaving the battlefield (replace_leaves_battlefield), graveyard moves (replace_graveyard), draws, damage, counters, tokens and mill, but nothing replaces a permanent's entry to the battlefield with a different destination, and no selector or condition reads the zone a creature is entering from or whether its spell was cast from exile at the moment of entry; a permanent_enters delayed_trigger that shuffles afterward would let enters triggers and static effects happen, which the replacement prevents"
+  }],
+  "closest_existing": ["replace_leaves_battlefield", "multiply_token_creation", "delayed_trigger"],
+  "confidence": "high"
+}
