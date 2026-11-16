@@ -1,0 +1,16 @@
+{
+  "card_id": "thijarian_witness",
+  "name": "Thijarian Witness",
+  "oracle_text": "Flash\nBear Witness — Whenever another creature dies, if it was attacking or blocking alone, exile it and investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+  "blocked_sentences": [
+    "Bear Witness — Whenever another creature dies, if it was attacking or blocking alone, exile it and investigate."
+  ],
+  "needs": [{
+    "capability": "died_attacking_or_blocking_alone",
+    "kind": "selector",
+    "what": "a last-known-information combat check on a dies trigger's subject: the creature was an attacking creature and the only attacking creature, or a blocking creature and the only blocking creature, at the moment it left the battlefield (usable as a creature_dies trigger filter key or intervening-if condition)",
+    "why_existing_wont_do": "trigger_filter_keys carry no attacking/blocking key and filters are read against the card in the graveyard, where it is no longer in combat; the 'attacks alone' templates use a cmp on attackers at declaration time, and value_keys like attackers_this_turn / opponents_attacked_this_combat count declarations, not who was still attacking or blocking alone when the subject died; snapshot only captures values from targets, not the dying creature's combat status"
+  }],
+  "closest_existing": ["creature_dies", "attacks (alone via cmp condition)", "snapshot"],
+  "confidence": "high"
+}
