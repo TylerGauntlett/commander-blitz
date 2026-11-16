@@ -60522,12 +60522,12 @@
     },
     "Danny Pink": {
       "edhrec_rank": 2763,
-      "gate": "template",
+      "gate": "compile",
       "name": "Danny Pink",
-      "reason": "no template for: Mentor",
+      "reason": "danny_pink.grantable.abilities[0]: 'batched' groups the events of one simultaneous batch and only ['attacks_unblocked', 'deals_damage_to_player', 'dealt_damage', 'discard', 'leaves_graveyard', 'life_lost', 'permanent_enters', 'put_into_graveyard', 'token_created'] carry one, not 'counter_placed'",
       "scryfall_id": "141a12bf-0078-446e-9471-01d43ec099d1",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Danse Macabre": {
@@ -97262,12 +97262,12 @@
     },
     "Flaming Tyrannosaurus": {
       "edhrec_rank": 3147,
-      "gate": "template",
+      "gate": null,
       "name": "Flaming Tyrannosaurus",
-      "reason": "no template for: Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deal",
+      "reason": "",
       "scryfall_id": "0bc8ecfd-7388-4725-8c58-bed2cc61400f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flanking Licid": {
@@ -102662,12 +102662,12 @@
     },
     "Frost Fair Lure Fish": {
       "edhrec_rank": 20341,
-      "gate": "template",
+      "gate": null,
       "name": "Frost Fair Lure Fish",
-      "reason": "no template for: Fish you control have haste and can't be blocked by Humans",
+      "reason": "",
       "scryfall_id": "0d85d8c7-07b2-4577-8c62-7a34dca73ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frost Giant": {

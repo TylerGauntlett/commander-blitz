@@ -90156,6 +90156,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "Paradox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flaming_tyrannosaurus",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Flaming Tyrannosaurus",
+      "oracle_text": "Menace\nParadox — Whenever you cast a spell from anywhere other than your hand, this creature deals 3 damage to any target. Then put a +1/+1 counter on this creature.\nWhen this creature dies, it deals damage equal to its power to each opponent.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "alternative_cost": {
         "sacrifice": {
           "colors": [
@@ -94756,6 +94839,87 @@
         "Wizard"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "fish_1_1_u"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 1/1 blue Fish creature tokens and create two tapped Treasure tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Fish"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Fish you control have haste and can't be blocked by Humans."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Fish"
+            ]
+          },
+          "blockers": {
+            "subtypes": [
+              "Human"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Fish you control have haste and can't be blocked by Humans."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "foretell": "{3}{U}{R}",
+      "id": "frost_fair_lure_fish",
+      "mana_cost": "{5}{U}{R}",
+      "name": "Frost Fair Lure Fish",
+      "oracle_text": "When this creature enters, create two 1/1 blue Fish creature tokens and create two tapped Treasure tokens.\nFish you control have haste and can't be blocked by Humans.\nForetell {3}{U}{R}",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Fish"
+      ],
+      "toughness": 7,
       "types": [
         "Creature"
       ]

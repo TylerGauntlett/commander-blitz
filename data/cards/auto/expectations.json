@@ -7612,6 +7612,10 @@
       "graveyard"
     ]
   },
+  "flaming_tyrannosaurus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flare_of_denial": {
     "hand_size": {
       "0": 1
@@ -8028,6 +8032,14 @@
   },
   "frontline_sage": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "frost_fair_lure_fish": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 2,
+      "id": "fish_1_1_u"
+    },
     "zone": "battlefield"
   },
   "frost_marsh": {
