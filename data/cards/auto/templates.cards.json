@@ -274772,6 +274772,100 @@
           },
           "effects": [
             {
+              "mana": "{U}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}. Put a time counter on Trenzalore Clocktower."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Time Lord"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "exile_self": true,
+            "mana": "{1}{U}",
+            "remove_counters": {
+              "amount": 12,
+              "counter": "time"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 7
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "trenzalore_clocktower",
+      "mana_cost": "",
+      "name": "Trenzalore Clocktower",
+      "oracle_text": "{T}: Add {U}. Put a time counter on Trenzalore Clocktower.\n{1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [

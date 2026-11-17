@@ -292342,12 +292342,12 @@
     },
     "Trenzalore Clocktower": {
       "edhrec_rank": 4613,
-      "gate": "template",
+      "gate": null,
       "name": "Trenzalore Clocktower",
-      "reason": "no template for: {T}: Add {U}. Put a time counter on",
+      "reason": "",
       "scryfall_id": "0d0b3429-e42f-4eb7-acd5-8fddf100f0c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trepanation Blade": {
