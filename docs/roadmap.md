@@ -80,7 +80,7 @@ each heading; this table is generated from them.
 | [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
-| [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | nothing | 0 |
+| [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
 | [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) | S | high | nothing | 0 |
@@ -118,8 +118,8 @@ each heading; this table is generated from them.
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
+| [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
-| [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
@@ -147,7 +147,7 @@ each heading; this table is generated from them.
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
-| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 1 |
+| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 2 |
 
 ## What to do next
 
@@ -155,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who).
 
 **Ready now, best first:**
 
@@ -197,8 +195,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 35. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
 36. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
 37. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-38. [Difficulty](#difficulty) — S, medium
-39. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+38. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+39. [Difficulty](#difficulty) — S, medium
 40. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 41. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
 42. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
@@ -258,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
+- [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -3108,7 +3107,7 @@ whole-game test able to draw the deck.
 
 ### Timey-Wimey (Doctor Who)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type).
 
 #### Today
 
@@ -3118,7 +3117,10 @@ coming-soon shell on the shelf: its row `who_timey_wimey` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_timey_wimey` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; TARDIS waits on
+planeswalking ([planechase](planechase.md)) and Trenzalore Clocktower on the
+Time Lord creature type ([time-lord-subtype](time-lord-subtype.md)), so the
+deck cannot be whole until those land.
 
 #### The change
 
