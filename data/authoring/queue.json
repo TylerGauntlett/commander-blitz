@@ -248582,12 +248582,12 @@
     },
     "Siona, Captain of the Pyleas": {
       "edhrec_rank": 8858,
-      "gate": "template",
+      "gate": null,
       "name": "Siona, Captain of the Pyleas",
-      "reason": "no template for: When Siona enters, look at the top seven cards of your library. You may reveal an Aura car",
+      "reason": "",
       "scryfall_id": "9adb1528-dc72-4ec7-bcb4-a043bcd8d9d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sip of Hemlock": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**477 cards** blocked by **428** capabilities.
+**476 cards** blocked by **427** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -109,7 +109,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
-| [becomes-attached](#becomes-attached) | 1 | 8858 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -2352,20 +2351,6 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
-
-</details>
-
-## becomes-attached
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired whenever a permanent becomes attached to an object (an Aura resolving onto, entering attached to, or being moved onto a permanent), filterable on the attachment (Aura you control) and on the object it became attached to (creature you control)
-  <br>Why the existing vocabulary won't do: trigger_events has no attach event; the engine emits an ATTACHED event but it is not exposed as a trigger. permanent_enters with an Aura filter misses Auras moved or re-attached by attach/aura_swap, fires for Auras entering attached to an opponent's creature, and cannot filter on what the Aura is attached to
-
-<details><summary>Cards waiting on this</summary>
-
-- **Siona, Captain of the Pyleas** (rank 8858) — `siona_captain_of_the_pyleas`
-  - Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.
 
 </details>
 
