@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [planechase, time-lord-subtype, voting]
+status: proposed
 rank: 59
 ---
 
@@ -18,7 +18,12 @@ coming-soon shell on the shelf: its row `who_blast_from_the_past` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_blast_from_the_past` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; TARDIS and Susan
+Foreman wait on planeswalking ([planechase](planechase.md)), Trial of a Time
+Lord on council's dilemma ([voting](voting.md)), and Trenzalore Clocktower and
+Time Lord Regeneration on the Time Lord creature type
+([time-lord-subtype](time-lord-subtype.md)), so the deck cannot be whole until
+those land.
 
 ## The change
 
