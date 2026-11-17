@@ -281832,12 +281832,12 @@
     },
     "The Night of the Doctor": {
       "edhrec_rank": 9228,
-      "gate": "template",
+      "gate": null,
       "name": "The Night of the Doctor",
-      "reason": "no template for: I — Destroy all creatures",
+      "reason": "",
       "scryfall_id": "513d33fb-becc-4804-806a-764d08fc7b7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Ninth Doctor": {
@@ -287382,12 +287382,12 @@
     },
     "Time Lord Regeneration": {
       "edhrec_rank": 14672,
-      "gate": "template",
+      "gate": "playable",
       "name": "Time Lord Regeneration",
-      "reason": "no template for: Until end of turn, target Time Lord you control gains \"When this creature dies, reveal car",
+      "reason": "CommanderBlitzError: time_lord_regeneration is not playable in the sandbox; offered: ['Pass', 'Play Forest']",
       "scryfall_id": "2aeba907-5dc7-4dbb-b5a4-c86e8151f2ec",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Time Reaper": {
@@ -291672,12 +291672,12 @@
     },
     "Traverse Eternity": {
       "edhrec_rank": 8012,
-      "gate": "template",
+      "gate": null,
       "name": "Traverse Eternity",
-      "reason": "no template for: Draw cards equal to the greatest mana value among historic permanents you control",
+      "reason": "",
       "scryfall_id": "9c6c512b-adc8-4ce2-80e5-28a3b827d40f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Traverse the Outlands": {

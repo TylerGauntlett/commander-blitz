@@ -21677,6 +21677,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_night_of_the_doctor": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "the_nipton_lottery": {
     "battlefield_count": 31,
     "opponent_battlefield_count": 4,
@@ -22592,6 +22601,15 @@
   },
   "traveling_philosopher": {
     "zone": "battlefield"
+  },
+  "traverse_eternity": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "treasonous_ogre": {
     "zone": "battlefield"

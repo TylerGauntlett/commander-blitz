@@ -1,0 +1,16 @@
+{
+  "card_id": "trial_of_a_time_lord",
+  "name": "Trial of a Time Lord",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Exile target nontoken creature an opponent controls until this Saga leaves the battlefield.\nIV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library.",
+  "blocked_sentences": [
+    "IV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library"
+  ],
+  "needs": [{
+    "capability": "council_s_dilemma",
+    "kind": "op",
+    "what": "a vote op (rule 701.38) over printed word options: starting with the ability's controller and going in turn order, each player votes for one of the named options (here 'innocent' or 'guilty'); the per-option tally is bound under an `as` (or exposed as a value key such as votes_for) so a following `if` can compare 'guilty gets more votes' against 'innocent' with a cmp, strictly greater so a tie does nothing",
+    "why_existing_wont_do": "No vote op is in reference ops. for_each_player can walk the players and choose_mode has a chooser, but nothing accumulates each player's choice into a per-option count, and no value key reads a vote tally, so 'if guilty gets more votes' cannot be said; join_forces pools mana, not votes. The rest of the chapter (cards exiled_with self moved to the bottom of their owners' libraries) and chapters I-III (exile_until until_leaves) look expressible once the vote exists"
+  }],
+  "closest_existing": ["for_each_player", "choose_mode", "join_forces"],
+  "confidence": "high"
+}

@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**451 cards** blocked by **399** capabilities.
+**453 cards** blocked by **400** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
-| [council-s-dilemma](#council-s-dilemma) | 6 | 3539 | decision, op |
+| [council-s-dilemma](#council-s-dilemma) | 7 | 3539 | decision, op |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -82,6 +82,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
+| [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
 | [alien-salamander-2-2-g-islandwalk-token](#alien-salamander-2-2-g-islandwalk-token) | 1 | 17360 | token |
 | [alien-token](#alien-token) | 1 | 5885 | token |
@@ -599,7 +600,7 @@ Blocks **9** cards.
 
 ## council-s-dilemma
 
-Blocks **6** cards.
+Blocks **7** cards.
 
 - **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
   <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
@@ -609,6 +610,8 @@ Blocks **6** cards.
   <br>Why the existing vocabulary won't do: for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player
 - **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
   <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(op)** a vote op (rule 701.38) over printed word options: starting with the ability's controller and going in turn order, each player votes for one of the named options (here 'innocent' or 'guilty'); the per-option tally is bound under an `as` (or exposed as a value key such as votes_for) so a following `if` can compare 'guilty gets more votes' against 'innocent' with a cmp, strictly greater so a tie does nothing
+  <br>Why the existing vocabulary won't do: No vote op is in reference ops. for_each_player can walk the players and choose_mode has a chooser, but nothing accumulates each player's choice into a per-option count, and no value key reads a vote tally, so 'if guilty gets more votes' cannot be said; join_forces pools mana, not votes. The rest of the chapter (cards exiled_with self moved to the bottom of their owners' libraries) and chapters I-III (exile_until until_leaves) look expressible once the vote exists
 - **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses one of N named options (here 'truth' or 'consequences'), then all votes are revealed at once; the op binds the tally per option under an `as` (e.g. {binding: 'votes.truth'}, {binding: 'votes.consequences'}) so later effects can size a draw by the truth count and a damage amount of 3 times the consequences count
   <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a vote; for_each_player wrapping choose_mode cannot accumulate a count per chosen option, nothing makes the choices secret and simultaneous, and value_keys has no vote tally to size the draw or the damage. join_forces is the closest per-player decision but collects mana payments, not a choice
 - **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
@@ -624,6 +627,8 @@ Blocks **6** cards.
   - You may put a permanent card from your hand onto the battlefield for each free vote.
 - **Mob Verdict** (rank 6957) — `mob_verdict`
   - Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.
+- **Trial of a Time Lord** (rank 10383) — `trial_of_a_time_lord`
+  - IV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library
 - **Truth or Consequences** (rank 10776) — `truth_or_consequences`
   - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
   - You draw cards equal to the number of truth votes.
@@ -1921,6 +1926,20 @@ Blocks **1** card.
 
 - **Blink** (rank 13679) — `blink`
   - II, IV — Create a 2/2 black Alien Angel artifact creature token with first strike, vigilance, and "Whenever an opponent casts a creature spell, this token isn't a creature until end of turn."
+
+</details>
+
+## alien-insect-1-1-gw-flying-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green and white Alien Insect creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has insect_1_1_b_flying (black, no Alien), insect_1_1_g, insect_1_1_bg, insect_1_1_g_flying_deathtouch and insect_2_1_w_flying, but no green-white 1/1 Alien Insect with flying; substituting any of them changes colour, subtype or P/T
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vrestin, Menoptra Leader** (rank 13408) — `vrestin_menoptra_leader`
+  - When Vrestin enters, create X 1/1 green and white Alien Insect creature tokens with flying.
 
 </details>
 
