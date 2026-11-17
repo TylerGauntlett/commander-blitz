@@ -1472,6 +1472,10 @@
   "auntie_s_hovel": {
     "zone": "battlefield"
   },
+  "aura_gnarlid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "auramancer": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -5411,6 +5415,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "den_protector": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "departed_deckhand": {
     "battlefield_count": 33,

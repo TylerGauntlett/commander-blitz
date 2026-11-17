@@ -1203,6 +1203,10 @@
     "artist": "Hari & Deepti",
     "scryfall_id": "c5585b62-b9dc-4a48-bf2a-a25d14dbd7a3"
   },
+  "aura_gnarlid": {
+    "artist": "Lars Grant-West",
+    "scryfall_id": "59ae8d4f-a808-4802-a55b-04a3a911b9e0"
+  },
   "auramancer": {
     "artist": "Rebecca Guay",
     "scryfall_id": "d0957032-6d98-4cac-889b-890e9bfe1f86"
@@ -4634,6 +4638,10 @@
   "demonic_tutor_26156d": {
     "artist": "Jodie Muir",
     "scryfall_id": "26156da4-1ec3-4702-bded-9868af3026b5"
+  },
+  "den_protector": {
+    "artist": "Viktor Titov",
+    "scryfall_id": "c22d8b77-4274-48ae-a36f-5739d785b599"
   },
   "departed_deckhand": {
     "artist": "Zoltan Boros",

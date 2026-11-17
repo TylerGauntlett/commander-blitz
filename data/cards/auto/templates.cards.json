@@ -17663,6 +17663,71 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<",
+              "value": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures with power less than this creature's power can't block it."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "subtypes": [
+                "Aura"
+              ]
+            }
+          },
+          "text": "This creature gets +1/+1 for each Aura on the battlefield.",
+          "toughness": {
+            "count": {
+              "controller": "any",
+              "subtypes": [
+                "Aura"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "aura_gnarlid",
+      "mana_cost": "{2}{G}",
+      "name": "Aura Gnarlid",
+      "oracle_text": "Creatures with power less than this creature's power can't block it.\nThis creature gets +1/+1 for each Aura on the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -65598,6 +65663,78 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<",
+              "value": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Creatures with power less than this creature's power can't block it."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature is turned face up, return target card from your graveyard to your hand.",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "den_protector",
+      "mana_cost": "{1}{G}",
+      "morph": "{1}{G}",
+      "morph_counter": true,
+      "name": "Den Protector",
+      "oracle_text": "Creatures with power less than this creature's power can't block it.\nMegamorph {1}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its megamorph cost and put a +1/+1 counter on it.)\nWhen this creature is turned face up, return target card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

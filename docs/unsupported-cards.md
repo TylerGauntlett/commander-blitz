@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**479 cards** blocked by **429** capabilities.
+**477 cards** blocked by **428** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [block-restriction-relative-power](#block-restriction-relative-power) | 3 | 6335 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -915,29 +914,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## block-restriction-relative-power
-
-Blocks **3** cards.
-
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value`; Aura Gnarlid's own power grows with every Aura on the battlefield (its second line), so no constant is correct. The second line (a self buff counting Auras) is expressible; only this line is blocked
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (and reads base P/T); Den Protector's power changes with its megamorph +1/+1 counter and any pump, so no constant is correct. Megamorph (`morph` + `morph_counter`) and the `turned_face_up` trigger are expressible; only this line is blocked
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Den Protector** (rank 6335) — `den_protector`
-  - Creatures with power less than this creature's power can't block it.
-- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
-  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
-- **Aura Gnarlid** (rank 10835) — `aura_gnarlid`
-  - Creatures with power less than this creature's power can't block it.
 
 </details>
 
@@ -3403,7 +3379,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
   - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>

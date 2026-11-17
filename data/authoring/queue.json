@@ -16322,12 +16322,12 @@
     },
     "Aura Gnarlid": {
       "edhrec_rank": 10835,
-      "gate": "template",
+      "gate": null,
       "name": "Aura Gnarlid",
-      "reason": "no template for: Creatures with power less than this creature's power can't block it",
+      "reason": "",
       "scryfall_id": "59ae8d4f-a808-4802-a55b-04a3a911b9e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aura Graft": {
@@ -66432,12 +66432,12 @@
     },
     "Den Protector": {
       "edhrec_rank": 6335,
-      "gate": "template",
+      "gate": null,
       "name": "Den Protector",
-      "reason": "no template for: Creatures with power less than this creature's power can't block it",
+      "reason": "",
       "scryfall_id": "c22d8b77-4274-48ae-a36f-5739d785b599",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Den of the Bugbear": {
