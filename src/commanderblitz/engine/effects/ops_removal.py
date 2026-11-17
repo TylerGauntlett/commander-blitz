@@ -739,11 +739,12 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # 303.4f: an Aura this puts down chooses its host as it enters, and
         # stays where it is when nothing could be enchanted -- before anything
         # else is asked about an arrival that may not happen. ``host_named`` is
-        # the effect naming the host itself, held to the same legality test.
+        # the effect naming the host itself, held to the same legality test;
+        # ``aura_host`` narrows the choice to the hosts matching it.
         if hosts is not None:
             if not offer_named_host(ctx.state, oid, controller, hosts):
                 continue
-        elif not (yield from offer_aura_host(ctx.state, oid, controller)):
+        elif not (yield from offer_aura_host(ctx.state, oid, controller, spec.get("aura_host"))):
             continue
         obj.controller = controller
         # "If this artifact **would enter**, you may discard a land card

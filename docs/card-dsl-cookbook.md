@@ -1594,6 +1594,34 @@ destination, anything but a selector, and a `target` the card does not declare.
 A following `attach` with `attachment` is the near miss: the Aura has already
 entered unattached, and `attach` does not read its enchant clause.
 
+`aura_host`, on the same two ops and beside the same destination, is the case
+between: the effect names no host but restricts the choice — Retether's "Only
+creatures can be enchanted this way". Its value is a filter of
+`AURA_HOST_KEYS` (`types`, `any_types`, `not_types`, `subtypes`,
+`not_subtypes`, `supertypes`, `colors`, `controller`), read on the battlefield
+for the player the Aura enters under. 303.4f is still asked, but only among the
+hosts the Aura's enchant clause allows that also match it: the filter narrows
+the clause and never replaces it. An Aura with no such host stays in its zone
+(303.4g); an "enchant player" Aura and one enchanting a card in a graveyard
+never have one, since the filter describes a permanent. The loader refuses it
+on any other op or destination, beside `host_named` (there is no choice left)
+or `face_down: true`, empty or not an object, and with any other key.
+
+    Return each Aura card from your graveyard to the battlefield. Only
+    creatures can be enchanted this way. (Aura cards that can't enchant a
+    creature on the battlefield remain in your graveyard.)
+
+```jsonc
+"spell_effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "aura_host": { "types": ["Creature"] },
+    "objects": { "zone": "graveyard", "controller": "you", "subtypes": ["Aura"], "count": "all" } }
+]
+```
+
+The selector's `types` is the near miss: it filters which Aura *cards* return,
+not what they may enchant.
+
 ### An Aura that enchants a card in a graveyard — Animate Dead
 
     Enchant creature card in a graveyard

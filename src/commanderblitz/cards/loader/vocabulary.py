@@ -1907,6 +1907,25 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 #: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
 
+#: The keys an arrival's ``aura_host`` filter may use: "Only **creatures** can
+#: be enchanted this way" (Retether). It narrows the host an arriving Aura
+#: chooses (`zones.offer_aura_host`) to the permanents also matching it, so it
+#: is read on the ops in `HOST_NAMED_OPS` and describes a permanent by what it
+#: is and who controls it -- nothing about the arrival, a binding or a target,
+#: which would make it a named host rather than a restriction on a choice.
+AURA_HOST_KEYS = frozenset(
+    {
+        "controller",
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "not_subtypes",
+        "supertypes",
+        "colors",
+    }
+)
+
 #: The one non-string ``counter`` an ``add_counters`` may name: "the same
 #: **kind** of counters" (Captain Marvel, Apex Avenger), the kind the
 #: triggering placement put. Only `counter_placed` binds a ``counter``, so the

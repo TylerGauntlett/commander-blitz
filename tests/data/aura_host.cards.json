@@ -1,0 +1,46 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_aura_host_restriction.py. t_ah_retether is Retether as the coordinator authors it: return_from_graveyard with aura_host {types: [Creature]}. t_ah_any_aura is 'Enchant permanent' and nothing else, the clause broad enough that the arrival's filter is what keeps it off a land or an artifact.",
+  "cards": [
+    {
+      "id": "t_ah_retether",
+      "name": "Test Retether",
+      "oracle_text": "Return each Aura card from your graveyard to the battlefield. Only creatures can be enchanted this way. (Aura cards that can't enchant a creature on the battlefield remain in your graveyard.)",
+      "mana_cost": "{3}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Sorcery"],
+      "spell_effects": [
+        {
+          "op": "return_from_graveyard",
+          "destination": "battlefield",
+          "controller": "you",
+          "aura_host": {"types": ["Creature"]},
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "subtypes": ["Aura"],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ah_any_aura",
+      "name": "Test Permanent Aura",
+      "oracle_text": "Enchant permanent",
+      "mana_cost": "{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"zone": "battlefield"}
+        }
+      ],
+      "abilities": []
+    }
+  ]
+}

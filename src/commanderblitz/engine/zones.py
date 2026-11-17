@@ -1256,7 +1256,9 @@ def graveyard_hosts(state: GameState, aura_oid: int, controller: int) -> list[in
     ]
 
 
-def offer_aura_host(state: GameState, oid: int, controller: int):
+def offer_aura_host(
+    state: GameState, oid: int, controller: int, restrict: Mapping[str, Any] | None = None
+):
     """303.4f: an Aura put onto the battlefield without being cast **chooses
     what it will enchant as it enters**. Returns whether it may enter at all.
 
@@ -1285,6 +1287,13 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
     `_enter_battlefield`, which attaches the Aura as it enters. The cast path
     never calls this -- the spell's target is the host -- and neither does an
     effect that names the host itself: that is `offer_named_host`.
+
+    ``restrict`` is the arrival op's ``aura_host`` filter -- Retether's "Only
+    creatures can be enchanted this way" -- one of "any other applicable
+    effects" 303.4f holds the choice to. The pool is the enchant clause's
+    hosts that also match it, read for ``controller``; it names permanents, so
+    an "enchant player" Aura and one enchanting a card in a graveyard have no
+    host under it and stay where they are (303.4g).
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1303,6 +1312,8 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
         state=state, controller=controller, source_oid=oid, source_name=card.name
     )
     if spec.kind == "player":
+        if restrict is not None:
+            return False
         clause = spec.selector.get("controller", "any")
         allowed = None if clause == "any" else set(select_players(ctx, clause))
         seats = [
@@ -1320,6 +1331,9 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
         obj.enters_attached_to_player = chosen
         return True
     pool = _aura_host_pool(state, oid, controller)
+    if restrict is not None:
+        allowed = set(resolve_pool(ctx, {**dict(restrict), "zone": "battlefield"}))
+        pool = [host for host in pool if host in allowed]
     if not pool:
         return False
     chosen = yield from ask_objects(ctx, f"What will {card.name} enchant?", pool, 1, 1, controller)

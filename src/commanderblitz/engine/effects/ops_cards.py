@@ -1378,11 +1378,17 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
                 # an Aura chooses one as it enters and stays in the graveyard when
                 # none is legal. ``host_named`` is "…attached to that creature":
                 # the effect names the host, and an Aura that can't legally
-                # enchant it stays in the graveyard (303.4g).
+                # enchant it stays in the graveyard (303.4g). ``aura_host`` is
+                # "Only creatures can be enchanted this way" (Retether): the
+                # choice is still asked, among the hosts that also match it.
                 if hosts is not None:
                     if not offer_named_host(ctx.state, oid, controller, hosts):
                         continue
-                elif not (yield from offer_aura_host(ctx.state, oid, controller)):
+                elif not (
+                    yield from offer_aura_host(
+                        ctx.state, oid, controller, spec.get("aura_host")
+                    )
+                ):
                     continue
                 obj.controller = controller
                 # "If this artifact **would enter**…" -- reanimation is an arrival,
