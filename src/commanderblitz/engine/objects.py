@@ -1669,6 +1669,24 @@ class GameObject:
     def on_battlefield(self) -> bool:
         return self.zone is Zone.BATTLEFIELD
 
+    @property
+    def suspended(self) -> bool:
+        """702.62b: "a card is suspended if it's in exile, has suspend, and has
+        a time counter on it." The one reading of the word, shared by
+        `suspend.suspended_cards` and the `suspended` selector key.
+
+        "Has suspend" is the `suspended_by` mark, written by the suspend
+        action and by `suspend.make_suspended` (the effect that "gains
+        suspend"). A card exiled with time counters some other way is not
+        marked and so not suspended, and a marked card whose last counter came
+        off is not suspended either: it is waiting on its free cast.
+        """
+        return (
+            self.zone is Zone.EXILE
+            and self.suspended_by is not None
+            and self.counter(TIME_COUNTER) > 0
+        )
+
     def summoning_sick(self, turn: int) -> bool:
         """True if this creature has not been controlled since the turn began."""
         return self.entered_turn >= turn

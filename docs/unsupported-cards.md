@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**455 cards** blocked by **399** capabilities.
+**477 cards** blocked by **428** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
+| [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -66,6 +67,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
+| [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
@@ -87,7 +89,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
 | [alien-salamander-2-2-g-islandwalk-token](#alien-salamander-2-2-g-islandwalk-token) | 1 | 17360 | token |
-| [alien-token](#alien-token) | 1 | 5885 | token |
 | [alien-warrior-token](#alien-warrior-token) | 1 | 6181 | token |
 | [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
@@ -98,6 +99,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
+| [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [aura-control](#aura-control) | 1 | 16395 | static_effect |
@@ -105,6 +107,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
+| [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
+| [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -113,11 +117,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
 | [cant-block-filtered-group](#cant-block-filtered-group) | 1 | 7948 | op |
+| [cant-lose-life](#cant-lose-life) | 1 | 2072 | op |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
+| [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
@@ -129,6 +135,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [choose-counter-kind](#choose-counter-kind) | 1 | 4274 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
@@ -169,6 +176,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
 | [died-attacking-or-blocking-alone](#died-attacking-or-blocking-alone) | 1 | 22760 | selector |
+| [dinosaur-2-2-rw-flying-haste-token](#dinosaur-2-2-rw-flying-haste-token) | 1 | 5193 | token |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
@@ -180,6 +188,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
+| [emerge](#emerge) | 1 | 17443 | value |
 | [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
@@ -201,10 +210,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
+| [exiled-card-mana-value](#exiled-card-mana-value) | 1 | 20131 | value |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-combat-attacker-restriction](#extra-combat-attacker-restriction) | 1 | 8880 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [extra-upkeep-step](#extra-upkeep-step) | 1 | 7041 | op |
 | [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
@@ -235,6 +246,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
+| [grant-exiled-triggered-abilities](#grant-exiled-triggered-abilities) | 1 | 20131 | static_effect |
+| [grant-player-hexproof](#grant-player-hexproof) | 1 | 2072 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
@@ -248,9 +261,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
+| [horse-2-2-w-horsemanship-lord-token](#horse-2-2-w-horsemanship-lord-token) | 1 | 13482 | token |
 | [human-1-1-w-ward2-token](#human-1-1-w-ward2-token) | 1 | 18598 | token |
+| [human-doctor-discount-token](#human-doctor-discount-token) | 1 | 12626 | token |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
+| [human-noble-1-1-w-vanishing-token](#human-noble-1-1-w-vanishing-token) | 1 | 13482 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
@@ -302,18 +319,23 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
+| [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [ogre-token](#ogre-token) | 1 | 1855 | token |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
+| [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
+| [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
+| [playable-while-source-on-battlefield](#playable-while-source-on-battlefield) | 1 | 14646 | value |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
@@ -335,8 +357,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
+| [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
 | [random-opponent](#random-opponent) | 1 | 10776 | decision |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -366,6 +390,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -376,6 +401,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
+| [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -383,6 +409,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
+| [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -402,6 +429,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
 | [undaunted](#undaunted) | 1 | 3405 | value |
 | [unleash](#unleash) | 1 | 12169 | keyword |
+| [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
+| [vanishing](#vanishing) | 1 | 2735 | replacement |
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
 | [voting](#voting) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
@@ -1173,6 +1202,24 @@ Blocks **2** cards.
 
 </details>
 
+## alien-token
+
+Blocks **2** cards.
+
+- **(token)** a 2/2 white Alien creature token (alien_2_2_w)
+  <br>Why the existing vocabulary won't do: token_ids has no Alien token at all; the nearest 2/2 white creature tokens (cat_2_2_w, cat_beast_2_2_w) have the wrong creature type
+- **(token)** a 0/0 blue Alien creature token (no abilities), e.g. id alien_0_0_u
+  <br>Why the existing vocabulary won't do: token_ids has no Alien token; the nearest 0/0 blue tokens (illusion_x_x_u, shark_x_x_u_flying) have the wrong creature type or keywords. The rest of the card is expressible: create_token with `as` to bind it then add_counters +1/+1 on it, proliferate on an attacks trigger, and Crew 2 as tap_permanents total_power 2.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Recon Craft Theta** (rank 5885) — `recon_craft_theta`
+  - When this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.
+- **Adipose Offspring** (rank 17443) — `adipose_offspring`
+  - When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.
+
+</details>
+
 ## all-creature-types
 
 Blocks **2** cards.
@@ -1671,6 +1718,24 @@ Blocks **2** cards.
 
 </details>
 
+## suspend-cast-on-any-last-counter
+
+Blocks **2** cards.
+
+- **(engine)** suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick
+  <br>Why the existing vocabulary won't do: `suspend.tick` calls `cast_for_free` itself after its own one-counter removal; a `remove_counters` op that takes the last time counter off a suspended card would strand it in exile with zero counters, never cast
+- **(engine)** suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick or time travel
+  <br>Why the existing vocabulary won't do: `suspend.tick` and `time_travel` call `cast_suspended` themselves after their own removals; a `remove_counters` op that takes the last time counter off a suspended card strands it in exile with zero counters, never cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+- **Amy Pond** (rank 13329) — `amy_pond`
+  - Whenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it.
+
+</details>
+
 ## switch-power-toughness
 
 Blocks **2** cards.
@@ -2010,20 +2075,6 @@ Blocks **1** card.
 
 </details>
 
-## alien-token
-
-Blocks **1** card.
-
-- **(token)** a 0/0 blue Alien creature token (no abilities), e.g. id alien_0_0_u
-  <br>Why the existing vocabulary won't do: token_ids has no Alien token; the nearest 0/0 blue tokens (illusion_x_x_u, shark_x_x_u_flying) have the wrong creature type or keywords. The rest of the card is expressible: create_token with `as` to bind it then add_counters +1/+1 on it, proliferate on an attacks trigger, and Crew 2 as tap_permanents total_power 2.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Recon Craft Theta** (rank 5885) — `recon_craft_theta`
-  - When this Vehicle enters, create a 0/0 blue Alien creature token. Put a +1/+1 counter on it.
-
-</details>
-
 ## alien-warrior-token
 
 Blocks **1** card.
@@ -2165,6 +2216,20 @@ Blocks **1** card.
 
 </details>
 
+## attacker-limit
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static capping how many creatures may attack the static's controller in a single combat (affects_player: "you", amount: {"const": 1}), enforced as an attack-declaration restriction (508.1c) so a declaration with two or more attackers aimed at that player is illegal
+  <br>Why the existing vocabulary won't do: cant_attack_you forbids every attack on you rather than allowing exactly one; cant_attack_alone and attack_tax restrict or price individual attackers, and none of the static_effects counts the attackers declared against a given player
+
+<details><summary>Cards waiting on this</summary>
+
+- **Judoon Enforcers** (rank 12302) — `judoon_enforcers`
+  - No more than one creature can attack you each combat.
+
+</details>
+
 ## attacking-opponents-of-player
 
 Blocks **1** card.
@@ -2262,6 +2327,34 @@ Blocks **1** card.
 
 - **Broodcaller Scourge** (rank 3943) — `broodcaller_scourge`
   - Whenever one or more Dragons you control deal combat damage to a player, you may put a permanent card with mana value less than or equal to that damage from your hand onto the battlefield.
+
+</details>
+
+## batched-counter-removed
+
+Blocks **1** card.
+
+- **(trigger_event)** a "whenever one or more <kind> counters are removed from this permanent" trigger that fires once per removal (one primitives.remove_counters call), not once per counter: `batched: true` accepted on the `counter_removed` event, queuing one firing per COUNTER_REMOVED event with the event's whole `amount`
+  <br>Why the existing vocabulary won't do: `counter_removed` deliberately splits a removal of N counters into N firings (triggers._per_counter_events, 603.2c for "a counter"), so removing several time counters at once would scry and gain life several times; `counter_removed` is not in triggers.BATCHED_EVENTS, so the loader refuses `batched` on it; `last_counter_removed` hears only the removal that leaves none and would miss every other tick
+
+<details><summary>Cards waiting on this</summary>
+
+- **Regenerations Restored** (rank 11093) — `regenerations_restored`
+  - Whenever one or more time counters are removed from this enchantment, scry 1 and you gain 1 life. Then if this enchantment has no time counters on it, exile it. When you do, take an extra turn after this one.
+
+</details>
+
+## become-copy-remove-supertypes
+
+Blocks **1** card.
+
+- **(op)** a `remove_supertypes` key in `become_copy`'s `except_` (707.9b "except it isn't legendary"), written into the in-place copy's `copying_remove_supertypes` so every creature that becomes a copy of a legendary target drops Legendary and the legend rule does not wipe them
+  <br>Why the existing vocabulary won't do: `become_copy` handles the in-place, until-end-of-turn copy of a target onto `count: all` other creatures (exclude_binding t1), but its `except_` accepts only add_keywords, keep_abilities, add_types and add_supertypes (BECOME_COPY_EXCEPT_KEYS) and the op explicitly resets `copying_remove_supertypes` to None. `remove_supertypes` exists only on `copy_permanent` / as-enters copies (Spark Double), which create a new object rather than altering existing ones. Without the exception, copying a legendary creature makes every copy legendary and the legend rule kills all but one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
+  - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
 
 </details>
 
@@ -2378,6 +2471,21 @@ Blocks **1** card.
 
 </details>
 
+## cant-lose-life
+
+Blocks **1** card.
+
+- **(op)** a timed op `cant_lose_life` with a player spec and duration this_turn: life loss (damage and lose_life, paid life included) is forbidden for those players while life gain still works
+  <br>Why the existing vocabulary won't do: lock_life_total forbids any change, so it also blocks life gain and its durations are built around until_your_next_turn; damage_life_floor floors damage only at 1 and lets lose_life through; replace_life_loss is a static and a multiplier. cant_lose_the_game covers the second half of the sentence (cant_lose and cant_win both "any")
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everybody Lives!** (rank 2072) — `everybody_lives`
+  - Players gain hexproof until end of turn.
+  - Players can't lose life this turn and players can't lose the game or win the game this turn.
+
+</details>
+
 ## cards-exiled-trigger
 
 Blocks **1** card.
@@ -2447,6 +2555,20 @@ Blocks **1** card.
 
 - **Bismuth Mindrender** (rank 7161) — `bismuth_mindrender`
   - Whenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile a nonland card. You may cast that card by paying life equal to the spell's mana value rather than paying its mana cost.
+
+</details>
+
+## cast-for-suspend-cost
+
+Blocks **1** card.
+
+- **(op)** an effect that lets the controller cast a card from their hand that has suspend, paying that card's printed suspend cost (its `suspend` mana) as an alternative cost instead of its mana cost, cast immediately rather than exiled with time counters; plus a selector key matching cards that have suspend
+  <br>Why the existing vocabulary won't do: `cast_from_hand` and `cast_card` take only as/exiles/objects/per_owner/player/selector/zones and have no option to substitute the card's suspend cost for its mana cost; the `suspend` op exiles a card with time counters instead of casting it; and `selector_keys` has nothing that matches a card by having suspend (keywords lists no suspend, and suspend is a card-level cost key)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Face of Boe** (rank 16296) — `the_face_of_boe`
+  - {T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery.
 
 </details>
 
@@ -2607,6 +2729,20 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## choose-counter-kind
+
+Blocks **1** card.
+
+- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
+  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
 
 </details>
 
@@ -3180,6 +3316,20 @@ Blocks **1** card.
 
 </details>
 
+## dinosaur-2-2-rw-flying-haste-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 red and white Dinosaur creature token with flying and haste
+  <br>Why the existing vocabulary won't do: token_ids holds only dinosaur_3_1_r, dinosaur_3_3_g_trample and dinosaur_beast_x_x_g_trample; none is a 2/2 red-white flier with haste, and substituting a near token would change the card. The trigger itself (counter_removed with a time-counter filter, active in exile) and Suspend 4 (card-level suspend) appear expressible once the token exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dinosaurs on a Spaceship** (rank 5193) — `dinosaurs_on_a_spaceship`
+  - Whenever a time counter is removed from this card while it's exiled, create a 2/2 red and white Dinosaur creature token with flying and haste.
+
+</details>
+
 ## discard-first-time-each-turn
 
 Blocks **1** card.
@@ -3334,6 +3484,20 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
+
+</details>
+
+## emerge
+
+Blocks **1** card.
+
+- **(value)** a condition reading whether this permanent's spell was cast for its emerge cost ("if this creature's emerge cost was paid"), and a value reading the toughness of the creature sacrificed to emerge (last-known toughness, since it is in the graveyard by the time the enters trigger resolves), usable on an enters trigger
+  <br>Why the existing vocabulary won't do: `emerge` exists as a card-level cost and the cast action carries `emerge_oid`, but game.py only sacrifices that object and records nothing on the spell or permanent; condition_keys has `evoked`, `kicked`, `cost_option`, `was_cast` but no emerged flag, and value_keys has `toughness_had`/`toughness_of` only for bound objects, with no binding naming the emerge victim
+
+<details><summary>Cards waiting on this</summary>
+
+- **Adipose Offspring** (rank 17443) — `adipose_offspring`
+  - When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.
 
 </details>
 
@@ -3635,6 +3799,20 @@ Blocks **1** card.
 
 </details>
 
+## exiled-card-mana-value
+
+Blocks **1** card.
+
+- **(value)** a static magnitude reading the mana value of the card(s) linked to the source in exile (exiled_with: self), for a buff whose power and toughness are that mana value
+  <br>Why the existing vocabulary won't do: static_value_keys has count, counters_on, sum and extreme_value over battlefield filters but nothing that reads the printed mana value of a card the source exiled; pump on the enters trigger would wear off and would not track the card leaving exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Idris, Soul of the TARDIS** (rank 20131) — `idris_soul_of_the_tardis`
+  - Idris has all activated and triggered abilities of the exiled card and gets +X/+X, where X is the exiled card's mana value.
+
+</details>
+
 ## exiled-this-way-lki
 
 Blocks **1** card.
@@ -3693,6 +3871,20 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## extra-upkeep-step
+
+Blocks **1** card.
+
+- **(op)** an op that inserts one additional upkeep step for the controller directly after the current step (500.8), so upkeep triggers fire again, without adding an untap or draw step
+  <br>Why the existing vocabulary won't do: extra_beginning_phase adds a whole beginning phase (untap, upkeep and draw), which would untap permanents and draw an extra card; extra_combat and extra_turn are other turn structures; no op adds a single step
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Ninth Doctor** (rank 7041) — `the_ninth_doctor`
+  - Into the TARDIS — Whenever The Ninth Doctor becomes untapped during your untap step, you get an additional upkeep step after this step.
 
 </details>
 
@@ -4127,6 +4319,35 @@ Blocks **1** card.
 
 </details>
 
+## grant-exiled-triggered-abilities
+
+Blocks **1** card.
+
+- **(static_effect)** a static that lends the source the triggered abilities (as well as the activated ones) printed on a card linked to it in exile (607.2a), firing as the source's own triggers while the card stays exiled with it
+  <br>Why the existing vocabulary won't do: grant_exiled_abilities (Hazel's Brewmaster) hands over only activated abilities: exiled_activated_abilities in engine/characteristics.py filters on ability.is_activated, so the exiled artifact's triggered abilities would be silently dropped
+
+<details><summary>Cards waiting on this</summary>
+
+- **Idris, Soul of the TARDIS** (rank 20131) — `idris_soul_of_the_tardis`
+  - Idris has all activated and triggered abilities of the exiled card and gets +X/+X, where X is the exiled card's mana value.
+
+</details>
+
+## grant-player-hexproof
+
+Blocks **1** card.
+
+- **(op)** a one-shot op (or a `player` recipient on grant_keyword) that gives each selected player hexproof until end of turn, from an instant
+  <br>Why the existing vocabulary won't do: `player_hexproof` exists only as a static_effect, which an instant cannot install; grant_keyword resolves objects only and skips seats; grant_protection's `player` recipient grants protection qualities, not hexproof
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everybody Lives!** (rank 2072) — `everybody_lives`
+  - Players gain hexproof until end of turn.
+  - Players can't lose life this turn and players can't lose the game or win the game this turn.
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -4311,6 +4532,20 @@ Blocks **1** card.
 
 </details>
 
+## has-suspend-selector
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching a card whose printed characteristics include suspend (`CardDef.suspend` is set), e.g. `has_suspend: true`, usable over an `as` binding of exiled cards, so an effect can act on 'each of those cards that has suspend' and only those
+  <br>Why the existing vocabulary won't do: selector_keys has no such key and suspend is a card-level cost key, not one of the `keywords` a `keywords` selector can read; the `suspend` op filters nothing and also grants suspend to cards that lack it (Doom's Time Platform), so applying it to all three exiled cards would suspend cards the printed text leaves alone; the `suspended` selector key is not it either: it asks 702.62b's 'is suspended' (in exile, marked, with a time counter), which none of these freshly exiled cards is yet, where the printed clause asks whether the card has suspend at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ecstatic Beauty** (rank 10715) — `ecstatic_beauty`
+  - Exile the top three cards of your library. You may play those cards until end of turn. Put four time counters on each of those cards that has suspend.
+
+</details>
+
 ## hidden-card-guess
 
 Blocks **1** card.
@@ -4322,6 +4557,21 @@ Blocks **1** card.
 
 - **The Seventh Doctor** (rank 10904) — `the_seventh_doctor`
   - Whenever The Seventh Doctor attacks, choose a card in your hand. Defending player guesses whether that card's mana value is greater than the number of artifacts you control. If they guessed wrong, you may cast it without paying its mana cost. If you don't cast a spell this way, investigate.
+
+</details>
+
+## horse-2-2-w-horsemanship-lord-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Horse creature token with "Doctors you control have horsemanship." (a grant_keyword static, affects controller you, subtypes Doctor, keyword horsemanship)
+  <br>Why the existing vocabulary won't do: token_ids contains no Horse token at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Girl in the Fireplace** (rank 13482) — `the_girl_in_the_fireplace`
+  - I — Create a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
+  - II — Create a 2/2 white Horse creature token with "Doctors you control have horsemanship." (They can't be blocked except by creatures with horsemanship.)
 
 </details>
 
@@ -4339,6 +4589,20 @@ Blocks **1** card.
 
 </details>
 
+## human-doctor-discount-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white Human creature token with "Doctor spells you cast cost {1} less to cast." (a static spell_cost_reduction, affects_spells controller you, subtypes ["Doctor"], amount 1)
+  <br>Why the existing vocabulary won't do: token_ids has food_token and human_1_1_w, but human_1_1_w is a vanilla 1/1 white Human; the printed token carries a Doctor cost-reduction static, and no token id grants it
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Eleventh Hour** (rank 12626) — `the_eleventh_hour`
+  - II — Create a Food token and a 1/1 white Human creature token with "Doctor spells you cast cost {1} less to cast."
+
+</details>
+
 ## human-knight-2-2-w-artifact-entered-buff
 
 Blocks **1** card.
@@ -4350,6 +4614,21 @@ Blocks **1** card.
 
 - **The Prydwen, Steel Flagship** (rank 6715) — `the_prydwen_steel_flagship`
   - Whenever another nontoken artifact you control enters, create a 2/2 white Human Knight creature token with "This token gets +2/+2 as long as an artifact entered the battlefield under your control this turn."
+
+</details>
+
+## human-noble-1-1-w-vanishing-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
+  <br>Why the existing vocabulary won't do: token_ids has human_1_1_w and human_soldier_1_1_w but no Human Noble, and none carries vanishing 3 or a self damage-prevention static
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Girl in the Fireplace** (rank 13482) — `the_girl_in_the_fireplace`
+  - I — Create a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
+  - II — Create a 2/2 white Horse creature token with "Doctors you control have horsemanship." (They can't be blocked except by creatures with horsemanship.)
 
 </details>
 
@@ -5079,6 +5358,20 @@ Blocks **1** card.
 
 </details>
 
+## not-shares-a-creature-type-with
+
+Blocks **1** card.
+
+- **(selector)** a negated selector key matching objects that share NO creature type with any object in a sub-selector (here {"convoked": true}), where a convoking creature counts as sharing a type with itself, so a mass exile can spare creatures sharing a type with a creature that convoked the spell while still exiling every artifact and enchantment (an artifact creature sharing a type is still exiled)
+  <br>Why the existing vocabulary won't do: Convoke itself is pay_generic_with: tap_creatures, and {"convoked": true} plus shares_a_creature_type_with (selector form) can name the SPARED set, but the selector language has no negation of it: there is not_types/not_subtypes but no not_shares_a_creature_type_with or general 'not' sub-selector, exclude_binding only removes the convoked creatures themselves (not those sharing a type with them) and no op binds an automatic set with 'as' to exclude. The selector form of shares_a_creature_type_with also drops the checked object from the comparison pool, so a convoked creature with a unique type would not count as sharing with itself
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everything Comes to Dust** (rank 4503) — `everything_comes_to_dust`
+  - Exile all creatures except those that share a creature type with a creature that convoked this spell, all artifacts, and all enchantments.
+
+</details>
+
 ## noted-mana-type
 
 Blocks **1** card.
@@ -5168,6 +5461,20 @@ Blocks **1** card.
 
 </details>
 
+## optional-untap
+
+Blocks **1** card.
+
+- **(static_effect)** a static (affects self) that lets the controller choose, during their untap step, whether this permanent untaps (502.3 'you may choose not to untap'): a decision asked of the active player in the untap walk for each permanent carrying it, untapping only on yes
+  <br>Why the existing vocabulary won't do: skip_untap_step always holds the permanent (Mana Vault's 'doesn't untap'), untap_limit caps how many untap but not a per-permanent yes/no, and the skip_untap op is a one-shot; nothing offers the player the choice, and always-held or always-untapped are each a different card (the activated ability's linked phase-out depends on the choice to stay tapped)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Pandorica** (rank 13446) — `the_pandorica`
+  - You may choose not to untap The Pandorica during your untap step.
+
+</details>
+
 ## pay-any-amount-of-life
 
 Blocks **1** card.
@@ -5182,6 +5489,20 @@ Blocks **1** card.
 
 </details>
 
+## permanent-or-suspended-card-target
+
+Blocks **1** card.
+
+- **(engine)** one target spec whose pool spans a permanent on the battlefield and a suspended card in exile -- 'target permanent or suspended card' -- the `spell_or_permanent` shape with a battlefield half and an exile half read by the `suspended` selector key, offered and re-checked (608.2b) per the zone the object is in
+  <br>Why the existing vocabulary won't do: a target spec has one kind and one zone: `card_in_exile` with `suspended: true` reaches only the suspended half, `permanent` only the battlefield, and `any_of` narrows one zone's pool so it cannot join the two; two specs would be a card that targets twice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+
+</details>
+
 ## permanents-entered-this-turn-per-player
 
 Blocks **1** card.
@@ -5193,6 +5514,20 @@ Blocks **1** card.
 
 - **Smuggler's Share** (rank 1701) — `smuggler_s_share`
   - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
+
+</details>
+
+## phases-out-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a batched trigger event that fires when one or more permanents (other than the source) phase out, with the phased-out permanents as the batch
+  <br>Why the existing vocabulary won't do: trigger_events has no phase event; the phase_out op and the phasing keyword exist but nothing emits a triggerable event, and leaves_battlefield is wrong because phasing is not a zone change
+
+<details><summary>Cards waiting on this</summary>
+
+- **The War Doctor** (rank 7780) — `the_war_doctor`
+  - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
 
 </details>
 
@@ -5249,6 +5584,20 @@ Blocks **1** card.
 
 - **Arvinox, the Mind Flail** (rank 4763) — `arvinox_the_mind_flail`
   - At the beginning of your end step, exile the bottom card of each opponent's library face down. For as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any color to cast those spells.
+
+</details>
+
+## playable-while-source-on-battlefield
+
+Blocks **1** card.
+
+- **(value)** a `playable` duration for an exiled card's play permission that lasts for as long as the source permanent (this Saga) remains on the battlefield, ending when it leaves (rules 611.2b style: a new object if it returns), usable on `reveal_until`/`exile_until`/`exile`/`grant_playable`
+  <br>Why the existing vocabulary won't do: playable_durations offers only end_of_your_next_turn, later_turns, this_turn, until_next_exile_by_source, while_exiled and your_next_end_step; while_exiled outlives the Saga (it is sacrificed after IV, so the permission would wrongly persist), this_turn/later_turns end too early or never, and `until_leaves` on `exile` returns the exiled card rather than ending a permission. reveal_until with selector supertypes Legendary, destination exile and rest_to_bottom covers the rest of the sentence.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Day of the Doctor** (rank 14646) — `the_day_of_the_doctor`
+  - I, II, III — Exile cards from the top of your library until you exile a legendary card. You may play that card for as long as this Saga remains on the battlefield. Put the rest of those exiled cards on the bottom of your library in a random order.
 
 </details>
 
@@ -5552,6 +5901,20 @@ Blocks **1** card.
 
 </details>
 
+## put-into-exile-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a batched trigger event that fires when one or more cards (other than the source) are put into exile from any zone -- battlefield, graveyard, hand, library, stack
+  <br>Why the existing vocabulary won't do: leaves_battlefield and leaves_graveyard with to_zones exile cover only one origin zone each; exile from hand, library or the stack (and exiled spells) has no event
+
+<details><summary>Cards waiting on this</summary>
+
+- **The War Doctor** (rank 7780) — `the_war_doctor`
+  - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
+
+</details>
+
 ## random-opponent
 
 Blocks **1** card.
@@ -5579,6 +5942,20 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+
+</details>
+
+## rate-limited-free-cast-by-counters
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide alternative-cost static (pay {0} instead of the mana cost) that (a) may be used only once each turn per granting permanent, counted when a spell is cast under it, and (b) filters spells by mana value <= a dynamic value read from the source, here counters_on {counter: time, objects: {self_only: true}}
+  <br>Why the existing vocabulary won't do: free_cast_permission and granted_alternative_cost both replace the mana cost for an affects_spells class, but neither honours static_max_per_turn (only cast_from_graveyard does) so either would be unbounded rather than once each turn, and their filters are SPELL_FILTER_KEYS / FREE_CAST_FILTER_KEYS matched against the printed face only, with no mana_value comparison against a static value such as counters_on the source; spell_cost_reduction only reduces the generic part and is not an alternative cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **As Foretold** (rank 1837) — `as_foretold`
+  - Once each turn, you may pay {0} rather than pay the mana cost for a spell you cast with mana value X or less, where X is the number of time counters on this enchantment.
 
 </details>
 
@@ -6003,6 +6380,20 @@ Blocks **1** card.
 
 </details>
 
+## soulbond-paired-trigger
+
+Blocks **1** card.
+
+- **(selector)** a trigger filter key matching the soulbond partner of the trigger's source (`paired_with_source: true` in `trigger_filter_keys`), so a `dealt_damage` trigger on Donna with `per_subject`/`batched` can fire for 'Donna Noble or a creature it's paired with' (filter `any_of: [{self_only: true}, {paired_with_source: true}]`) while Donna remains the source dealing 'that much damage' to target opponent
+  <br>Why the existing vocabulary won't do: `paired` and `paired_with_source` exist only in static filter keys (and `pair` op handles Soulbond itself), but `trigger_filter_keys` has neither, so a trigger cannot name the partner. Granting the partner a `dealt_damage` ability via the `grant_ability` static would make the partner, not Donna Noble, the source of the damage, which changes the card (lifelink, infect, deathtouch, protection, damage-source replacements).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Donna Noble** (rank 10852) — `donna_noble`
+  - Whenever Donna Noble or a creature it's paired with is dealt damage, Donna Noble deals that much damage to target opponent.
+
+</details>
+
 ## source-filtered-damage-shield
 
 Blocks **1** card.
@@ -6148,6 +6539,20 @@ Blocks **1** card.
 
 </details>
 
+## suspend-itself-on-cast
+
+Blocks **1** card.
+
+- **(op)** a cast trigger on a permanent spell ("when you cast this spell", with a condition on the zone it was cast from: anything but exile) whose effect moves the spell itself from the stack to exile with N time counters and marks it suspended (gains suspend, 702.62), so it later ticks down and is cast free -- the creature version of Rousing Refrain's self-suspend, but performed by a triggered ability while the spell is still on the stack, followed by investigate
+  <br>Why the existing vocabulary won't do: the `suspends_itself` card-level rider is applied only on resolution and only for non-permanent spells (`stack.py` checks `not card.is_permanent`), so a creature spell can never use it; `spell_cast` has no self-source form for the card's own cast with a cast-from-zone condition, and no op in `reference` exiles a spell from the stack with time counters and grants suspend (`exile` moves permanents/cards, `suspend` is only a cast cost)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rory Williams** (rank 14357) — `rory_williams`
+  - The Last Centurion — When you cast this spell from anywhere other than exile, exile it with three time counters on it. It gains suspend. Then investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
+
+</details>
+
 ## tapped-for-mana-trigger
 
 Blocks **1** card.
@@ -6243,6 +6648,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## time-counters-suspend-exiled-card
+
+Blocks **1** card.
+
+- **(op)** putting N time counters on a card that already has suspend and is already in exile must make it suspended (702.62b: exiled, has suspend, has a time counter -- the engine's `suspended_by` mark from `suspend.make_suspended`), so the upkeep tick and the free cast pick it up, while it also stays playable this turn under the same effect's `playable: this_turn` permission
+  <br>Why the existing vocabulary won't do: `add_counters` on an exiled card puts time counters nothing ticks and never sets `suspended_by`; the `suspend` op does call `make_suspended` but has no way to restrict itself to cards that already have suspend (see the selector need above)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ecstatic Beauty** (rank 10715) — `ecstatic_beauty`
+  - Exile the top three cards of your library. You may play those cards until end of turn. Put four time counters on each of those cards that has suspend.
 
 </details>
 
@@ -6512,6 +6931,34 @@ Blocks **1** card.
 - **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
   - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
   - Other Dogs you control have unleash.
+
+</details>
+
+## untapped-during-untap-step
+
+Blocks **1** card.
+
+- **(trigger_event)** a becomes_untapped trigger restricted to the untap performed by your untap step (the trigger then goes on the stack in the following upkeep, so 'after this step' is after that upkeep)
+  <br>Why the existing vocabulary won't do: becomes_untapped exists, but no trigger key narrows it to the untap step's untap; step_is is a condition key with no documented untap-step value, and the untap step grants no priority so the engine's handling of triggers there is unconfirmed
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Ninth Doctor** (rank 7041) — `the_ninth_doctor`
+  - Into the TARDIS — Whenever The Ninth Doctor becomes untapped during your untap step, you get an additional upkeep step after this step.
+
+</details>
+
+## vanishing
+
+Blocks **1** card.
+
+- **(replacement)** a copy exception on the self_enters_as_copy replacement that grants vanishing N as a copiable value (the time counters on entry plus the upkeep remove-a-counter and last-counter sacrifice triggers), applied only when the copied creature does not itself have vanishing
+  <br>Why the existing vocabulary won't do: The packet reference has no as-enters copy vocabulary at all (no replacements key; become_copy is a one-shot op that a self_enters trigger would run after the permanent was already seen as itself, 614.1b). The engine's self_enters_as_copy except_ (ENTERS_COPY_EXCEPT_KEYS) carries add_keywords, add_types, add_subtypes, colors, no_mana_cost, remove_supertypes, name, enters_with and condition, but vanishing is a card-level rider, not a keyword, so add_keywords cannot grant it; enters_with time counters would add the counters without the upkeep and sacrifice triggers; and its condition is judged with the arriving permanent as source, with no way to ask whether the chosen copy target has vanishing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flesh Duplicate** (rank 2735) — `flesh_duplicate`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing
 
 </details>
 

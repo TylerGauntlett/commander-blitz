@@ -563,6 +563,43 @@ received a counter. Read it back as a pool, narrowed like any other:
 The near miss is a `has_counters` selector after the proliferate, which also
 offers every permanent you control that carried a counter and was not chosen.
 
+### Time travel — one time counter on or off, per object
+
+```jsonc
+{ "op": "time_travel" }                              // "Time travel."
+{ "op": "time_travel", "amount": { "const": 3 } }    // "Time travel three times."
+```
+
+"For each permanent you control with a time counter on it and each suspended card
+you own with a time counter on it, you may put a time counter on it or remove a
+time counter from it" (701.55a). As it resolves, the controller is asked one
+`ask_mode` per object (untagged, the object's `oid` in its context):
+put one on, take one off, or leave it. Offered are the phased-in permanents the
+controller controls with a time counter and `suspend.suspended_cards` — their own
+cards in exile marked suspended, with a time counter (702.62b). An exiled card
+with time counters that is not suspended is not offered, and nothing without a
+time counter ever is. The first answer is the default: remove for a suspended
+card, put for a permanent.
+
+Every counter goes through the engine's funnels, so the rest of the game hears
+it: a permanent's removal is `primitives.remove_counters` (vanishing's
+`last_counter_removed` sacrifice, Watcher of Hours' `counter_removed`), a
+suspended card's is `suspend.remove_time_counter`, the upkeep tick's own step,
+and a placement is `primitives.add_counters` (Kate Stewart's `counter_placed`).
+A suspended card whose **last** time counter it removes is cast without paying
+its mana cost, with suspend's haste, through `suspend.cast_suspended` (702.62a),
+once the op's every choice is made.
+
+`amount` (default 1) is the number of whole time travels, each asking its own
+questions after the one before was applied. A card the first emptied is no longer
+suspended, so the second does not offer it. The loader refuses `objects`,
+`counter`, `player`, `up_to` and `any_kind`: the rule names the objects, the kind
+and the chooser.
+
+The near miss is `for_each` with `choose_mode` over `add_counters` and
+`remove_counters`: no selector reads "suspended", and a removal there leaves a
+suspended card in exile at zero, never cast.
+
 ## Selectors — "which objects"
 
 Every key is optional; all present keys must match. The key list with a
@@ -2543,6 +2580,37 @@ layer writes, since no static puts a counter on anything — and honoured by eve
 reader of the filter language (the layer pipeline, trigger filters, cost
 reductions) and by the effect-side selector. The answer moves the moment a
 counter arrives or leaves.
+
+#### "A suspended card you own" — `suspended`
+
+```jsonc
+// Rose Tyler: "…put a time counter on it for each suspended card you own…"
+{ "count": { "suspended": true, "owner": "you" } }
+
+// "Target suspended card"
+{ "id": "t1", "kind": "card_in_exile", "count": 1,
+  "selector": { "suspended": true } }
+```
+
+702.62b: a card is suspended if it is in exile, has suspend and has a time
+counter on it. `GameObject.suspended` is that reading, the same one
+`suspend.suspended_cards` and the upkeep tick make: the `suspended_by` mark that
+the suspend action and the `suspend` op write, plus a time counter. `true` only.
+
+The zone is part of the word. A selector that names no zone searches exile
+instead of the battlefield, so the key works on its own in an `objects` pool, a
+value `count` and a `card_in_exile` target. A `zone` other than `exile` is
+refused at load time, and so is the key on any target kind but `card_in_exile`.
+Exile is kept per owner, so `owner: "you"` says whose cards (`controller` names
+the same seat there); with neither, the controller's own exile is walked, as for
+any zone somebody owns.
+
+The near miss is `{"zone": "exile", "has_counters": "time"}`, which is a wider
+set: it also takes a card exiled with time counters that nothing suspended, which
+the upkeep never ticks and which is never cast. A card whose last time counter
+came off is no longer suspended either, though it may still wait on its free
+cast. Inside `any_of` the key narrows the outer selector's one zone, so it cannot
+say "target permanent or suspended card", whose two halves live in two zones.
 
 #### `entered_this_turn` — the same fact asked of **one** permanent
 

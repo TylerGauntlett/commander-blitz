@@ -868,6 +868,19 @@ def _compile_target(
         )
     if model.kind == "card_in_exile" and zone not in (None, "exile"):
         raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind != "card_in_exile" and (
+        "suspended" in model.selector
+        or "suspended" in (model.permanent_selector or {})
+    ):
+        # "Target suspended card" is a card in exile (702.62b), and the kind
+        # is what the rest of the engine reads the target by -- a `permanent`
+        # spec would offer exiled cards under a permanent's name, and a
+        # two-zone kind forces its permanent half onto the battlefield, where
+        # nothing is suspended.
+        raise DslError(
+            f"{label}: a suspended card is in exile -- 'suspended' belongs on a "
+            f"'card_in_exile' target, not a {model.kind!r} one"
+        )
     if model.kind == "spell_permanent_or_graveyard_card" and zone is not None:
         # The kind names its three zones, and each half supplies its own; a
         # `zone` here would be overwritten in every one of them.

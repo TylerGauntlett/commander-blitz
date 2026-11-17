@@ -224,6 +224,22 @@ SELECTOR_KEYS = frozenset(
         #: kind (Liliana, Death Wielder). Also a static filter key (Innkeeper's
         #: Talent). See `characteristics.has_counters_matches`.
         "has_counters",
+        #: "Choose a **suspended card** you own" (Amy Pond); "for each
+        #: suspended card you own" (Rose Tyler). 702.62b: in exile, has
+        #: suspend, and has a time counter -- `GameObject.suspended`, the
+        #: reading `suspend.suspended_cards` makes. `true` only.
+        #:
+        #: The zone is part of the word, so a selector that names none
+        #: searches exile rather than the battlefield, and one that names a
+        #: zone other than exile is refused. Exile is walked per owner, so
+        #: `owner: "you"` (or `controller`, which is the owner there) says
+        #: whose.
+        #:
+        #: `zone: "exile"` with `has_counters: "time"` is the near miss and is
+        #: a wider set: it also takes a card exiled with time counters that
+        #: nothing suspended, which the upkeep never ticks and which is never
+        #: cast.
+        "suspended",
         "attacking",
         #: "Whenever an opponent attacks **you** with two or more creatures" --
         #: Trouble in Pairs. A creature attacking this player *itself*, and not
@@ -622,7 +638,7 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         return pooled
 
     state = ctx.state
-    zone_name = selector.get("zone", "battlefield")
+    zone_name = selector.get("zone", _default_zone(selector, "battlefield"))
     zone = ZONE_NAMES.get(zone_name)
     if zone is None:
         raise DslError(f"unknown zone {zone_name!r} in selector")
@@ -647,6 +663,21 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
     return _narrow_to_extreme(
         ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector
     )
+
+
+def _default_zone(selector: Mapping[str, Any], default: str | None) -> str | None:
+    """The zone an absent ``zone`` clause means for this selector.
+
+    ``default`` -- the battlefield where a selector searches, nothing where a
+    binding named the pool -- except that `suspended` names its own: a
+    suspended card is in exile by definition (702.62b), so "a suspended card
+    you own" searches exile without saying so, the way a `card_in_exile`
+    target does. Asked by both `resolve_pool` and `matches`, so a target
+    offered from exile is re-checked in exile.
+    """
+    if selector.get("suspended") and default == "battlefield":
+        return "exile"
+    return default
 
 
 #: What `extreme` may rank on. Derived characteristics only, and read through
@@ -900,7 +931,7 @@ def matches(
     if obj is None:
         return False
 
-    zone_name = selector.get("zone", default_zone)
+    zone_name = selector.get("zone", _default_zone(selector, default_zone))
     zone = ZONE_NAMES.get(zone_name) if zone_name is not None else None
     if zone is not None and obj.zone is not zone:
         return False
@@ -1202,6 +1233,8 @@ def matches(
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False
     if "has_counters" in selector and not has_counters_matches(obj, selector["has_counters"]):
+        return False
+    if selector.get("suspended") and not obj.suspended:
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
@@ -1914,6 +1947,30 @@ def validate_face_down_key(filt: Any, where: str) -> None:
         )
 
 
+def validate_suspended_key(filt: Any, where: str) -> None:
+    """``suspended`` is ``true``, about a card in exile.
+
+    ``true`` only: "a card that isn't suspended" is printed on nothing, and
+    ``false`` would load as every other object in the pool. And only beside
+    exile, or no zone at all (the key then supplies exile): a card anywhere
+    else is never suspended (702.62b), so ``{"zone": "battlefield",
+    "suspended": true}`` would load and match nothing.
+    """
+    if not isinstance(filt, Mapping) or "suspended" not in filt:
+        return
+    if filt["suspended"] is not True:
+        raise DslError(
+            f"{where}: 'suspended' must be true if present (a card in exile with "
+            f"suspend and a time counter, 702.62b), got {filt['suspended']!r}"
+        )
+    zone = filt.get("zone")
+    if zone is not None and zone != "exile":
+        raise DslError(
+            f"{where}: 'suspended' asks about a card in exile (702.62b); a card "
+            f"in the {zone} is never suspended -- drop 'zone' or write 'exile'"
+        )
+
+
 #: The keys an ``enchanted_by`` filter may put on the Auras themselves.
 ENCHANTED_BY_KEYS = frozenset({"controller"})
 
@@ -2256,6 +2313,7 @@ def validate_selector(selector: Any, where: str) -> None:
             f"the creature (701.38); it names no goader"
         )
     validate_face_down_key(selector, where)
+    validate_suspended_key(selector, where)
     validate_parity_clauses(selector, where)
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read

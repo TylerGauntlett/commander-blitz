@@ -1,0 +1,18 @@
+{
+  "card_id": "the_face_of_boe",
+  "name": "The Face of Boe",
+  "oracle_text": "{T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "cast_for_suspend_cost",
+      "kind": "op",
+      "what": "an effect that lets the controller cast a card from their hand that has suspend, paying that card's printed suspend cost (its `suspend` mana) as an alternative cost instead of its mana cost, cast immediately rather than exiled with time counters; plus a selector key matching cards that have suspend",
+      "why_existing_wont_do": "`cast_from_hand` and `cast_card` take only as/exiles/objects/per_owner/player/selector/zones and have no option to substitute the card's suspend cost for its mana cost; the `suspend` op exiles a card with time counters instead of casting it; and `selector_keys` has nothing that matches a card by having suspend (keywords lists no suspend, and suspend is a card-level cost key)"
+    }
+  ],
+  "closest_existing": ["cast_from_hand", "suspend", "alternative_cost"],
+  "confidence": "high"
+}

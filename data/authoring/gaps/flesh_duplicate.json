@@ -1,0 +1,18 @@
+{
+  "card_id": "flesh_duplicate",
+  "name": "Flesh Duplicate",
+  "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing. (A permanent with vanishing 3 enters with three time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)",
+  "blocked_sentences": [
+    "You may have this creature enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing"
+  ],
+  "needs": [
+    {
+      "capability": "vanishing",
+      "kind": "replacement",
+      "what": "a copy exception on the self_enters_as_copy replacement that grants vanishing N as a copiable value (the time counters on entry plus the upkeep remove-a-counter and last-counter sacrifice triggers), applied only when the copied creature does not itself have vanishing",
+      "why_existing_wont_do": "The packet reference has no as-enters copy vocabulary at all (no replacements key; become_copy is a one-shot op that a self_enters trigger would run after the permanent was already seen as itself, 614.1b). The engine's self_enters_as_copy except_ (ENTERS_COPY_EXCEPT_KEYS) carries add_keywords, add_types, add_subtypes, colors, no_mana_cost, remove_supertypes, name, enters_with and condition, but vanishing is a card-level rider, not a keyword, so add_keywords cannot grant it; enters_with time counters would add the counters without the upkeep and sacrifice triggers; and its condition is judged with the arriving permanent as source, with no way to ask whether the chosen copy target has vanishing"
+    }
+  ],
+  "closest_existing": ["self_enters_as_copy", "become_copy", "vanishing"],
+  "confidence": "high"
+}

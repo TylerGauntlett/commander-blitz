@@ -10,8 +10,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 181 |
-| [Selectors](#selectors) | 79 |
+| [Effect ops](#effect-ops) | 182 |
+| [Selectors](#selectors) | 80 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
@@ -145,6 +145,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `set_turn_flag` | Board |  | Write a word on the source for the turn (exerted, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `skip_untap` | Board |  | It doesn't untap during its controller's next untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
 | `tap` | Board |  | Tap permanents. | [Effect ops](card-dsl.md#effect-ops) |
+| `time_travel` | Board |  | Time travel (701.55a): for each permanent you control and each suspended card you own with a time counter, put one on, take one off or leave it; a suspended card's last counter casts it free. `amount` is how many times. | [Time travel — one time counter on or off, per object](card-dsl.md#time-travel--one-time-counter-on-or-off-per-object) |
 | `turn_face_up` | Board |  | Turn face-down permanents face up without paying a cost; no megamorph counter, a face-up one untouched. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `unattach` | Board |  | Unattach the source (reconfigure). | [Reconfigure — taking it off again](card-dsl-cookbook.md#reconfigure--taking-it-off-again) |
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |
@@ -303,6 +304,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `subtypes` | Has one of these subtypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `supertypes` | Has one of these supertypes. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `surveilled_this_turn` | Cards a surveil put into a graveyard this turn, as the same object. | [Cards in a graveyard surveilled this turn](card-dsl.md#cards-in-a-graveyard-surveilled-this-turn) |
+| `suspended` | A suspended card (702.62b): in exile, has suspend, has a time counter; true only, and searches exile when no zone is written. | ["A suspended card you own" — suspended](card-dsl.md#a-suspended-card-you-own--suspended) |
 | `tapped` | Is (or is not) tapped. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `target` | The objects a target id chose. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `that_targets` | On a `spell`, `ability_on_stack` or `spell_or_ability` target only: the object targets a `player` spec or a `permanent` matching a selector. | [that_targets — a spell or ability by what it targets](card-dsl.md#that_targets--a-spell-or-ability-by-what-it-targets) |

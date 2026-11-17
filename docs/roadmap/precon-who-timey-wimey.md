@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [planechase, time-lord-subtype]
 status: proposed
 rank: 60
 ---
@@ -18,7 +18,10 @@ coming-soon shell on the shelf: its row `who_timey_wimey` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_timey_wimey` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; TARDIS waits on
+planeswalking ([planechase](planechase.md)) and Trenzalore Clocktower on the
+Time Lord creature type ([time-lord-subtype](time-lord-subtype.md)), so the
+deck cannot be whole until those land.
 
 ## The change
 

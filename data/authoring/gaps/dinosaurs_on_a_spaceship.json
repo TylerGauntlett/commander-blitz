@@ -1,0 +1,21 @@
+{
+  "card_id": "dinosaurs_on_a_spaceship",
+  "name": "Dinosaurs on a Spaceship",
+  "oracle_text": "Vigilance, trample\nOther Dinosaurs you control get +1/+1 and have vigilance and trample.\nSuspend 4—{3}{R}{W}\nWhenever a time counter is removed from this card while it's exiled, create a 2/2 red and white Dinosaur creature token with flying and haste.",
+  "blocked_sentences": [
+    "Whenever a time counter is removed from this card while it's exiled, create a 2/2 red and white Dinosaur creature token with flying and haste."
+  ],
+  "needs": [
+    {
+      "capability": "dinosaur_2_2_rw_flying_haste_token",
+      "kind": "token",
+      "what": "a 2/2 red and white Dinosaur creature token with flying and haste",
+      "why_existing_wont_do": "token_ids holds only dinosaur_3_1_r, dinosaur_3_3_g_trample and dinosaur_beast_x_x_g_trample; none is a 2/2 red-white flier with haste, and substituting a near token would change the card. The trigger itself (counter_removed with a time-counter filter, active in exile) and Suspend 4 (card-level suspend) appear expressible once the token exists"
+    }
+  ],
+  "closest_existing": [
+    "dinosaur_3_1_r",
+    "dragon_illusion_x_x_r_flying_haste"
+  ],
+  "confidence": "high"
+}

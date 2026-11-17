@@ -1,0 +1,37 @@
+{
+  "card_id": "clockspinning",
+  "name": "Clockspinning",
+  "oracle_text": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nChoose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.",
+  "blocked_sentences": [
+    "Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "choose_counter_kind",
+      "kind": "op",
+      "what": "an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {\"binding\": <as>}` from an effect-made choice rather than from a counter_placed trigger",
+      "why_existing_wont_do": "add_counters needs a printed kind; its `{\"binding\": \"counter\"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target"
+    },
+    {
+      "capability": "permanent_or_suspended_card_target",
+      "kind": "engine",
+      "what": "one target spec whose pool spans a permanent on the battlefield and a suspended card in exile -- 'target permanent or suspended card' -- the `spell_or_permanent` shape with a battlefield half and an exile half read by the `suspended` selector key, offered and re-checked (608.2b) per the zone the object is in",
+      "why_existing_wont_do": "a target spec has one kind and one zone: `card_in_exile` with `suspended: true` reaches only the suspended half, `permanent` only the battlefield, and `any_of` narrows one zone's pool so it cannot join the two; two specs would be a card that targets twice"
+    },
+    {
+      "capability": "suspend_cast_on_any_last_counter",
+      "kind": "engine",
+      "what": "suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick or time travel",
+      "why_existing_wont_do": "`suspend.tick` and `time_travel` call `cast_suspended` themselves after their own removals; a `remove_counters` op that takes the last time counter off a suspended card strands it in exile with zero counters, never cast"
+    }
+  ],
+  "closest_existing": [
+    "remove_counters",
+    "add_counters",
+    "choose_mode",
+    "proliferate",
+    "buyback",
+    "suspended"
+  ],
+  "confidence": "high"
+}

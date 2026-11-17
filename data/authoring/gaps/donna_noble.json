@@ -1,0 +1,23 @@
+{
+  "card_id": "donna_noble",
+  "name": "Donna Noble",
+  "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nWhenever Donna Noble or a creature it's paired with is dealt damage, Donna Noble deals that much damage to target opponent.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Whenever Donna Noble or a creature it's paired with is dealt damage, Donna Noble deals that much damage to target opponent."
+  ],
+  "needs": [
+    {
+      "capability": "soulbond_paired_trigger",
+      "kind": "selector",
+      "what": "a trigger filter key matching the soulbond partner of the trigger's source (`paired_with_source: true` in `trigger_filter_keys`), so a `dealt_damage` trigger on Donna with `per_subject`/`batched` can fire for 'Donna Noble or a creature it's paired with' (filter `any_of: [{self_only: true}, {paired_with_source: true}]`) while Donna remains the source dealing 'that much damage' to target opponent",
+      "why_existing_wont_do": "`paired` and `paired_with_source` exist only in static filter keys (and `pair` op handles Soulbond itself), but `trigger_filter_keys` has neither, so a trigger cannot name the partner. Granting the partner a `dealt_damage` ability via the `grant_ability` static would make the partner, not Donna Noble, the source of the damage, which changes the card (lifelink, infect, deathtouch, protection, damage-source replacements)."
+    }
+  ],
+  "closest_existing": [
+    "pair",
+    "paired_with_source",
+    "grant_ability",
+    "dealt_damage"
+  ],
+  "confidence": "high"
+}

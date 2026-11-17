@@ -1,0 +1,18 @@
+{
+  "card_id": "regenerations_restored",
+  "name": "Regenerations Restored",
+  "oracle_text": "Vanishing 12 (This enchantment enters with twelve time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)\nWhenever one or more time counters are removed from this enchantment, scry 1 and you gain 1 life. Then if this enchantment has no time counters on it, exile it. When you do, take an extra turn after this one.",
+  "blocked_sentences": [
+    "Whenever one or more time counters are removed from this enchantment, scry 1 and you gain 1 life. Then if this enchantment has no time counters on it, exile it. When you do, take an extra turn after this one."
+  ],
+  "needs": [
+    {
+      "capability": "batched_counter_removed",
+      "kind": "trigger_event",
+      "what": "a \"whenever one or more <kind> counters are removed from this permanent\" trigger that fires once per removal (one primitives.remove_counters call), not once per counter: `batched: true` accepted on the `counter_removed` event, queuing one firing per COUNTER_REMOVED event with the event's whole `amount`",
+      "why_existing_wont_do": "`counter_removed` deliberately splits a removal of N counters into N firings (triggers._per_counter_events, 603.2c for \"a counter\"), so removing several time counters at once would scry and gain life several times; `counter_removed` is not in triggers.BATCHED_EVENTS, so the loader refuses `batched` on it; `last_counter_removed` hears only the removal that leaves none and would miss every other tick"
+    }
+  ],
+  "closest_existing": ["counter_removed", "last_counter_removed"],
+  "confidence": "high"
+}

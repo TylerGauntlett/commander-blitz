@@ -6548,6 +6548,56 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "all_of_history_all_at_once",
+      "mana_cost": "{2}{U}{U}",
+      "name": "All of History, All at Once",
+      "oracle_text": "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "time_travel"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -16126,6 +16176,91 @@
               "amount": {
                 "const": 1
               },
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Astrid Peth enters or attacks, create a Food token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Astrid Peth enters or attacks, create a Food token.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "explore"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Brand-new Sky — Whenever you sacrifice a Clue or Food, Astrid Peth explores.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Clue",
+                "Food"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "astrid_peth",
+      "mana_cost": "{1}{W}",
+      "name": "Astrid Peth",
+      "oracle_text": "Whenever Astrid Peth enters or attacks, create a Food token.\nBrand-new Sky — Whenever you sacrifice a Clue or Food, Astrid Peth explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on this creature, then put the card back or put it into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "as": "hero",
               "controller": "you",
               "op": "create_token",
@@ -16668,6 +16803,67 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile up to one target tapped creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "atraxi_warden",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Atraxi Warden",
+      "oracle_text": "Flying\nWhen this creature enters, exile up to one target tapped creature.\nSuspend 5—{1}{W} (Rather than cast this card from your hand, you may pay {1}{W} and exile it with five time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Eye"
+      ],
+      "suspend": {
+        "cost": "{1}{W}",
+        "counters": 5
+      },
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -53721,6 +53917,116 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "coward_killer",
+      "mana_cost": "{1}{R}",
+      "name": "Coward // Killer",
+      "oracle_text": "Target creature can't block this turn and becomes a Coward in addition to its other types until end of turn.\nTime travel.\nKiller deals 3 damage to target creature and each other creature that shares a creature type with it.",
+      "second_face": "coward_killer_killer",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "cant_block"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_subtype",
+          "subtypes": [
+            "Coward"
+          ]
+        },
+        {
+          "op": "time_travel"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "coward_killer_killer",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Killer",
+      "oracle_text": "Killer deals 3 damage to target creature and each other creature that shares a creature type with it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "objects": {
+            "union": [
+              {
+                "target": "t1"
+              },
+              {
+                "controller": "any",
+                "count": "all",
+                "shares_a_creature_type_with": {
+                  "target": "t1"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -53738,6 +54044,106 @@
       "types": [
         "Creature"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters and at the beginning of your first main phase, exile target creature an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters and at the beginning of your first main phase, exile target creature an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters and at the beginning of your first main phase, exile target creature an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "crack_in_time",
+      "mana_cost": "{3}{W}",
+      "name": "Crack in Time",
+      "oracle_text": "Vanishing 3 (This enchantment enters with three time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)\nWhen this enchantment enters and at the beginning of your first main phase, exile target creature an opponent controls until this enchantment leaves the battlefield.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ],
+      "vanishing": 3
     },
     {
       "color_identity": [
@@ -95139,6 +95545,42 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "four_knocks",
+      "mana_cost": "{2}{W}",
+      "name": "Four Knocks",
+      "oracle_text": "Vanishing 4 (This enchantment enters with four time counters on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.)\nAt the beginning of your first main phase, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ],
+      "vanishing": 4
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "as": "fractal",
               "controller": "you",
               "op": "create_token",
@@ -95285,6 +95727,61 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "fractured_identity",
+      "mana_cost": "{3}{W}{U}",
+      "name": "Fractured Identity",
+      "oracle_text": "Exile target nonland permanent. Each player other than its controller creates a token that's a copy of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "controller": {
+            "not": {
+              "controller_of": "victim"
+            }
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -128360,6 +128857,36 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "inspiring_refrain",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Inspiring Refrain",
+      "oracle_text": "Draw two cards. Exile Inspiring Refrain with three time counters on it.\nSuspend 3—{2}{U} (Rather than cast this card from your hand, you may pay {2}{U} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "suspend": {
+        "cost": "{2}{U}",
+        "counters": 3
+      },
+      "suspends_itself": 3,
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_player": "you",
@@ -132465,6 +132992,56 @@
         "Soldier"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "explore"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Jenny deals combat damage to a player, it explores.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "jenny_generated_anomaly",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{2}{R}{W}",
+      "name": "Jenny, Generated Anomaly",
+      "oracle_text": "Double strike\nWhenever Jenny deals combat damage to a player, it explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on this creature, then put the card back or put it into your graveyard.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -136660,6 +137237,107 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more time counters on a permanent you control, create a 1/1 white Soldier creature token.",
+          "trigger": {
+            "controller": "you",
+            "counter": "time",
+            "event": "counter_placed",
+            "put_by": "you"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "attacking": true,
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "zone": "battlefield"
+                      }
+                    }
+                  },
+                  "toughness": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "zone": "battlefield"
+                      }
+                    }
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{8}"
+              },
+              "prompt": "Pay {8} to pump attacking creatures?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kate Stewart attacks, you may pay {8}. If you do, attacking creatures get +X/+X until end of turn, where X is the number of time counters among permanents you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "kate_stewart",
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Kate Stewart",
+      "oracle_text": "Whenever you put one or more time counters on a permanent you control, create a 1/1 white Soldier creature token.\nWhenever Kate Stewart attacks, you may pay {8}. If you do, attacking creatures get +X/+X until end of turn, where X is the number of time counters among permanents you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -158517,6 +159195,96 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "investigate",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Woman Who Walked the Earth — When Martha Jones enters, investigate.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you sacrifice a Clue, Martha Jones and up to one other target creature can't be blocked this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Clue"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "martha_jones",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Martha Jones",
+      "oracle_text": "Woman Who Walked the Earth — When Martha Jones enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Clue, Martha Jones and up to one other target creature can't be blocked this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -183521,6 +184289,140 @@
       "mana_cost": "{1}{B}{B}",
       "name": "Oubliette",
       "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way. (Auras and Equipment phase out with it. While permanents are phased out, they're treated as though they don't exist.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "phased_out_with": "self",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. Put a time counter on this enchantment for each creature that phased out this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Vanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Vanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
+          "trigger": {
+            "counter": "time",
+            "event": "last_counter_removed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "out_of_time",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Out of Time",
+      "oracle_text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. Put a time counter on this enchantment for each creature that phased out this way.\nVanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -210585,6 +211487,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When RMS Titanic deals combat damage to a player, sacrifice it and create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 7
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rms_titanic",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "RMS Titanic",
+      "oracle_text": "Flying, trample\nWhen RMS Titanic deals combat damage to a player, sacrifice it and create that many Treasure tokens.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -212161,6 +213148,94 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Rose Tyler gets +1/+1 for each time counter on it.",
+          "toughness": {
+            "counters_on": {
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "count": {
+                      "owner": "you",
+                      "suspended": true
+                    }
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "exclude_self": true,
+                      "has_counters": "time",
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Bad Wolf — Whenever Rose Tyler attacks, put a time counter on it for each suspended card you own and each other permanent you control with a time counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rose_tyler",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Rose Tyler",
+      "oracle_text": "Rose Tyler gets +1/+1 for each time counter on it.\nBad Wolf — Whenever Rose Tyler attacks, put a time counter on it for each suspended card you own and each other permanent you control with a time counter on it.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "controller": "you",
@@ -212216,6 +213291,66 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add an amount of {C} equal to the number of time counters on this artifact."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "time_travel"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{4}, {T}: Time travel. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "rotating_fireplace",
+      "mana_cost": "{3}",
+      "name": "Rotating Fireplace",
+      "oracle_text": "This artifact enters tapped with a time counter on it.\n{T}: Add an amount of {C} equal to the number of time counters on this artifact.\n{4}, {T}: Time travel. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 1,
+          "counter": "time",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -213367,6 +214502,71 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 4,
+          "exclude_self": true
+        },
+        "mana": "{2}{U}{R}"
+      },
+      "id": "run_for_your_life",
+      "mana_cost": "{U}{R}",
+      "name": "Run for Your Life",
+      "oracle_text": "One or two target creatures each gain haste until end of turn. They can't be blocked this turn except by creatures with haste.\nEscape—{2}{U}{R}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "duration": "this_turn",
+          "except_blockers": {
+            "keywords": [
+              "haste"
+            ]
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "unblockable"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "min_count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -215415,6 +216615,66 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast creature spells as though they had flash."
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control leave the battlefield, investigate. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "sally_sparrow",
+      "mana_cost": "{2}{W}{U}",
+      "name": "Sally Sparrow",
+      "oracle_text": "You may cast creature spells as though they had flash.\nWhenever one or more other creatures you control leave the battlefield, investigate. This ability triggers only once each turn. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -228474,6 +229734,66 @@
         "Officer"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "destination": "exile",
+              "objects": {
+                "mana_value": {
+                  "op": ">=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "reveal_until",
+              "rest_to_bottom": true
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Temporal Foresight — When this creature enters, reveal cards from the top of your library until you reveal a nonland card with mana value 3 or greater. Exile that card with three time counters on it. If it doesn't have suspend, it gains suspend. Put the rest of the revealed cards on the bottom of your library in a random order",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sibylline_soothsayer",
+      "mana_cost": "{2}{R}",
+      "name": "Sibylline Soothsayer",
+      "oracle_text": "Temporal Foresight — When this creature enters, reveal cards from the top of your library until you reveal a nonland card with mana value 3 or greater. Exile that card with three time counters on it. If it doesn't have suspend, it gains suspend. Put the rest of the revealed cards on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -241662,6 +242982,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Other creatures you control have ward {2}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "star_whale",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{6}{U}{U}",
+      "name": "Star Whale",
+      "oracle_text": "Flying, vigilance\nOther creatures you control have ward {2}.\nSuspend 6—{1}{U} (Rather than cast this card from your hand, you may pay {1}{U} and exile it with six time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Whale"
+      ],
+      "suspend": {
+        "cost": "{1}{U}",
+        "counters": 6
+      },
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "types": [
@@ -248269,6 +249636,80 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {R} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "sunbaked_canyon",
+      "mana_cost": "",
+      "name": "Sunbaked Canyon",
+      "oracle_text": "{T}, Pay 1 life: Add {R} or {W}.\n{1}, {T}, Sacrifice this land: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -261267,6 +262708,110 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "suspended",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "hand"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "suspended"
+                      }
+                    }
+                  },
+                  "objects": {
+                    "binding": "suspended"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile a card from your hand with time counters equal to its mana value?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "I. AM. TALKING! — Whenever The Eleventh Doctor deals combat damage to a player, you may exile a card from your hand with a number of time counters on it equal to its mana value. If it doesn't have suspend, it gains suspend.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}: Target creature with power 3 or less can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "the_eleventh_doctor",
+      "mana_cost": "{1}{W}{U}",
+      "name": "The Eleventh Doctor",
+      "oracle_text": "I. AM. TALKING! — Whenever The Eleventh Doctor deals combat damage to a player, you may exile a card from your hand with a number of time counters on it equal to its mana value. If it doesn't have suspend, it gains suspend.\n{2}: Target creature with power 3 or less can't be blocked this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -263343,6 +264888,135 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a time counter on The Moment.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in"
+            }
+          ],
+          "kind": "triggered",
+          "text": "{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}, {T}: Destroy each nonland permanent with mana value less than or equal to the number of time counters on The Moment. Then sacrifice The Moment. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_moment",
+      "mana_cost": "{2}",
+      "name": "The Moment",
+      "oracle_text": "At the beginning of your upkeep, put a time counter on The Moment.\n{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield.\n{3}, {T}: Destroy each nonland permanent with mana value less than or equal to the number of time counters on The Moment. Then sacrifice The Moment. Activate only as a sorcery.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -263971,6 +265645,109 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": 5,
+              "as": "exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "each"
+                      }
+                    }
+                  },
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "objects": {
+                "binding": "exiled",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Exile the top five cards of your library. For each nonland card exiled this way, put a number of time counters on that card equal to its mana value. If it doesn't have suspend, it gains suspend."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "time_travel"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Time travel, then time travel."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "III — For each opponent, destroy up to one target artifact that player controls."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_parting_of_the_ways",
+      "mana_cost": "{4}{R}{R}",
+      "name": "The Parting of the Ways",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile the top five cards of your library. For each nonland card exiled this way, put a number of time counters on that card equal to its mana value. If it doesn't have suspend, it gains suspend.\nII — Time travel, then time travel.\nIII — For each opponent, destroy up to one target artifact that player controls.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -264971,6 +266748,80 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Allons-y! — Whenever you attack, exile cards from the top of your library until you exile a nonland card. Put three time counters on it. If it doesn't have suspend, it gains suspend",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{7}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "time_travel"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Timey-Wimey — {7}: Time travel three times. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "the_tenth_doctor",
+      "mana_cost": "{3}{U}{R}",
+      "name": "The Tenth Doctor",
+      "oracle_text": "Allons-y! — Whenever you attack, exile cards from the top of your library until you exile a nonland card. Put three time counters on it. If it doesn't have suspend, it gains suspend.\nTimey-Wimey — {7}: Time travel three times. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter. Then do it two more times.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -266126,6 +267977,109 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "the_wedding_of_river_song",
+      "mana_cost": "{2}{W}",
+      "name": "The Wedding of River Song",
+      "oracle_text": "Draw two cards, then you may exile a nonland card from your hand with a number of time counters on it equal to its mana value. Then target opponent does the same. Cards exiled this way that don't have suspend gain suspend.\nTime travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw"
+        },
+        {
+          "as": "yours",
+          "objects": {
+            "count": 1,
+            "not_types": [
+              "Land"
+            ],
+            "optional": true,
+            "player": "you",
+            "zone": "hand"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "objects": {
+                "binding": "yours"
+              }
+            }
+          },
+          "objects": {
+            "binding": "yours"
+          },
+          "op": "suspend"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "as": "theirs",
+          "objects": {
+            "chooser": {
+              "target": "t1"
+            },
+            "count": 1,
+            "not_types": [
+              "Land"
+            ],
+            "optional": true,
+            "player": {
+              "target": "t1"
+            },
+            "zone": "hand"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "objects": {
+                "binding": "theirs"
+              }
+            }
+          },
+          "objects": {
+            "binding": "theirs"
+          },
+          "op": "suspend"
+        },
+        {
+          "op": "time_travel"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -270062,6 +272016,46 @@
       "source": "auto",
       "subtypes": [
         "Wolf"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "time_travel"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parallel Universe — Whenever this creature deals combat damage to a player, time travel",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "time_beetle",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Time Beetle",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nParallel Universe — Whenever this creature deals combat damage to a player, time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Insect"
       ],
       "toughness": 1,
       "types": [
@@ -295382,6 +297376,33 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wibbly_wobbly_timey_wimey",
+      "mana_cost": "{1}{U}",
+      "name": "Wibbly-wobbly, Timey-wimey",
+      "oracle_text": "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "time_travel"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "wicker_witch",
@@ -296145,6 +298166,82 @@
         "Scout"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Look to the Stars — At the beginning of your upkeep, put a time counter on Wilfred Mott. Then look at the top X cards of your library, where X is the number of time counters on Wilfred Mott. You may put a nonland permanent card with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wilfred_mott",
+      "mana_cost": "{3}{W}",
+      "name": "Wilfred Mott",
+      "oracle_text": "Look to the Stars — At the beginning of your upkeep, put a time counter on Wilfred Mott. Then look at the top X cards of your library, where X is the number of time counters on Wilfred Mott. You may put a nonland permanent card with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

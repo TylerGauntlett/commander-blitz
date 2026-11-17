@@ -232,8 +232,7 @@ def suspended_cards(state: GameState, pid: int) -> list[int]:
     return [
         oid
         for oid in state.players[pid].exile
-        if state.objects[oid].suspended_by == pid
-        and state.objects[oid].counter(TIME_COUNTER) > 0
+        if state.objects[oid].suspended and state.objects[oid].suspended_by == pid
     ]
 
 
@@ -245,24 +244,57 @@ def tick(state: GameState, pid: int) -> None:
     during this very upkeep would tick on the turn it arrived.
     """
     for oid in suspended_cards(state, pid):
-        obj = state.objects.get(oid)
-        if obj is None or obj.zone is not Zone.EXILE:
-            continue
-        # Through the removal funnel, so the tick is a COUNTER_REMOVED like
-        # every other road a counter comes off by: "whenever you remove a time
-        # counter from this card while it's exiled" (Watcher of Hours) hears
-        # each tick, the last included. Its trigger is queued before the free
-        # cast below and stacked above the spell, so it resolves first.
-        remove_counters(state, oid, TIME_COUNTER, 1, by=pid)
-        state.emit(
-            EventType.TIME_COUNTER_REMOVED,
-            player=pid,
-            source=oid,
-            card=obj.def_id,
-            remaining=obj.counter(TIME_COUNTER),
-        )
-        if obj.counter(TIME_COUNTER) == 0:
-            cast_for_free(state, pid, oid, haste=True)
+        if remove_time_counter(state, pid, oid):
+            cast_suspended(state, pid, oid)
+
+
+def remove_time_counter(state: GameState, pid: int, oid: int) -> bool:
+    """Take one time counter off ``pid``'s suspended card; True if it was the last.
+
+    The one removal step behind the upkeep tick and time travel (701.55a),
+    so both are the same event: through the removal funnel, a COUNTER_REMOVED
+    like every other road a counter comes off by -- "whenever you remove a
+    time counter from this card while it's exiled" (Watcher of Hours) hears
+    each one, the last included, and its trigger is queued before the free
+    cast and stacked above the spell, so it resolves first. A card that is no
+    longer in exile, or has no counter to give, loses nothing.
+
+    The caller owes the free cast (`cast_suspended`) when this says the last
+    one came off: the tick makes it at once, time travel once its every choice
+    is made.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.zone is not Zone.EXILE or obj.counter(TIME_COUNTER) <= 0:
+        return False
+    remove_counters(state, oid, TIME_COUNTER, 1, by=pid)
+    state.emit(
+        EventType.TIME_COUNTER_REMOVED,
+        player=pid,
+        source=oid,
+        card=obj.def_id,
+        remaining=obj.counter(TIME_COUNTER),
+    )
+    return obj.counter(TIME_COUNTER) == 0
+
+
+def cast_suspended(state: GameState, pid: int, oid: int) -> bool:
+    """702.62a's "when the last is removed, you may cast it without paying its
+    mana cost": the free cast, with suspend's haste, of a card still in exile
+    and still marked suspended by ``pid`` with no time counter left.
+
+    Asked again here rather than trusted from the removal, because time
+    travel removes several counters before it casts anything, and a card that
+    left exile in between (a trigger, an earlier free cast) is owed nothing.
+    """
+    obj = state.objects.get(oid)
+    if (
+        obj is None
+        or obj.zone is not Zone.EXILE
+        or obj.suspended_by != pid
+        or obj.counter(TIME_COUNTER) > 0
+    ):
+        return False
+    return cast_for_free(state, pid, oid, haste=True)
 
 
 def rebound_tick(state: GameState, pid: int) -> None:

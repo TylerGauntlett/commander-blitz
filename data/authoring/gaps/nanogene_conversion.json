@@ -1,0 +1,18 @@
+{
+  "card_id": "nanogene_conversion",
+  "name": "Nanogene Conversion",
+  "oracle_text": "Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.",
+  "blocked_sentences": [
+    "Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary."
+  ],
+  "needs": [
+    {
+      "capability": "become_copy_remove_supertypes",
+      "kind": "op",
+      "what": "a `remove_supertypes` key in `become_copy`'s `except_` (707.9b \"except it isn't legendary\"), written into the in-place copy's `copying_remove_supertypes` so every creature that becomes a copy of a legendary target drops Legendary and the legend rule does not wipe them",
+      "why_existing_wont_do": "`become_copy` handles the in-place, until-end-of-turn copy of a target onto `count: all` other creatures (exclude_binding t1), but its `except_` accepts only add_keywords, keep_abilities, add_types and add_supertypes (BECOME_COPY_EXCEPT_KEYS) and the op explicitly resets `copying_remove_supertypes` to None. `remove_supertypes` exists only on `copy_permanent` / as-enters copies (Spark Double), which create a new object rather than altering existing ones. Without the exception, copying a legendary creature makes every copy legendary and the legend rule kills all but one."
+    }
+  ],
+  "closest_existing": ["become_copy", "copy_permanent"],
+  "confidence": "high"
+}

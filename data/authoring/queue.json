@@ -6232,12 +6232,12 @@
     },
     "All of History, All at Once": {
       "edhrec_rank": 9304,
-      "gate": "template",
+      "gate": null,
       "name": "All of History, All at Once",
-      "reason": "no template for: Time travel",
+      "reason": "",
       "scryfall_id": "0cc08a16-d2ef-44d2-ae6b-7ff9ce27ef00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "All-Fates Scroll": {
@@ -15512,12 +15512,12 @@
     },
     "Astrid Peth": {
       "edhrec_rank": 5464,
-      "gate": "template",
+      "gate": null,
       "name": "Astrid Peth",
-      "reason": "no template for: Whenever enters or attacks, create a Food token",
+      "reason": "",
       "scryfall_id": "4cda3aa2-5fac-4188-bdad-dc369a089d00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Astrolabe": {
@@ -15822,12 +15822,12 @@
     },
     "Atraxi Warden": {
       "edhrec_rank": 15272,
-      "gate": "template",
+      "gate": null,
       "name": "Atraxi Warden",
-      "reason": "no template for: Suspend 5—{1}{W}",
+      "reason": "",
       "scryfall_id": "03868f8d-1f1b-4892-abb0-be2b00fc2ba7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atreus, Impulsive Son": {
@@ -54832,12 +54832,12 @@
     },
     "Coward // Killer": {
       "edhrec_rank": 15185,
-      "gate": "template",
+      "gate": null,
       "name": "Coward // Killer",
-      "reason": "no template for: Target creature can't block this turn and becomes a Coward in addition to its other types ",
+      "reason": "",
       "scryfall_id": "0717b6ee-99f8-4b02-91f4-6ca07a08b2c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cowardice": {
@@ -54922,12 +54922,12 @@
     },
     "Crack in Time": {
       "edhrec_rank": 13475,
-      "gate": "template",
+      "gate": null,
       "name": "Crack in Time",
-      "reason": "no template for: Vanishing 3",
+      "reason": "",
       "scryfall_id": "53c9f47c-be91-4d77-a76e-2963a6d75864",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crack the Earth": {
@@ -101402,12 +101402,12 @@
     },
     "Four Knocks": {
       "edhrec_rank": 8728,
-      "gate": "template",
+      "gate": null,
       "name": "Four Knocks",
-      "reason": "no template for: Vanishing 4",
+      "reason": "",
       "scryfall_id": "02fe50fc-6c6c-43e7-ad0e-8f13a254da2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fourth Bridge Prowler": {
@@ -101522,12 +101522,12 @@
     },
     "Fractured Identity": {
       "edhrec_rank": 4561,
-      "gate": "template",
+      "gate": null,
       "name": "Fractured Identity",
-      "reason": "no template for: Exile target nonland permanent. Each player other than its controller creates a token that",
+      "reason": "",
       "scryfall_id": "bd1db186-dd74-4e05-905c-34321fb3d641",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fractured Loyalty": {
@@ -137782,12 +137782,12 @@
     },
     "Inspiring Refrain": {
       "edhrec_rank": 4009,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Refrain",
-      "reason": "no template for: Draw two cards. Exile with three time counters on it",
+      "reason": "",
       "scryfall_id": "49c678c4-7b36-42a9-88d3-1b4c5dadae36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Roar": {
@@ -142532,12 +142532,12 @@
     },
     "Jenny, Generated Anomaly": {
       "edhrec_rank": 18696,
-      "gate": "template",
+      "gate": null,
       "name": "Jenny, Generated Anomaly",
-      "reason": "no template for: Whenever Jenny deals combat damage to a player, it explores",
+      "reason": "",
       "scryfall_id": "18c430ce-b6c4-4b05-9439-07b4fbfdfe62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jenova, Ancient Calamity": {
@@ -146632,12 +146632,12 @@
     },
     "Kate Stewart": {
       "edhrec_rank": 15054,
-      "gate": "template",
+      "gate": null,
       "name": "Kate Stewart",
-      "reason": "no template for: Whenever you put one or more time counters on a permanent you control, create a 1/1 white ",
+      "reason": "",
       "scryfall_id": "0d1c2b4d-5627-4264-943f-9be029c0ee92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kathari Bomber": {
@@ -168302,12 +168302,12 @@
     },
     "Martha Jones": {
       "edhrec_rank": 8963,
-      "gate": "template",
+      "gate": null,
       "name": "Martha Jones",
-      "reason": "no template for: Woman Who Walked the Earth — When enters, investigate",
+      "reason": "",
       "scryfall_id": "2a9f97c9-825b-43dc-96a5-807d1a15fdce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Martial Coup": {
@@ -195482,12 +195482,12 @@
     },
     "Out of Time": {
       "edhrec_rank": 5943,
-      "gate": "template",
+      "gate": null,
       "name": "Out of Time",
-      "reason": "no template for: When this enchantment enters, untap all creatures, then those creatures phase out until th",
+      "reason": "",
       "scryfall_id": "116e94fb-c9cc-4ebe-a64b-51e88f938a58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Out of the Tombs": {
@@ -212412,12 +212412,12 @@
     },
     "RMS Titanic": {
       "edhrec_rank": 4619,
-      "gate": "template",
+      "gate": null,
       "name": "RMS Titanic",
-      "reason": "no template for: When deals combat damage to a player, sacrifice it and create that many Treasure tokens",
+      "reason": "",
       "scryfall_id": "3f5bcf60-f956-4e0d-beb7-a7f5c1c83692",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rabanastre, Royal City": {
@@ -227622,12 +227622,12 @@
     },
     "Rose Tyler": {
       "edhrec_rank": 16751,
-      "gate": "template",
+      "gate": null,
       "name": "Rose Tyler",
-      "reason": "no template for: gets +1/+1 for each time counter on it",
+      "reason": "",
       "scryfall_id": "08ca7fac-d0df-4d96-887f-16be6c995476",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rose, Cutthroat Raider": {
@@ -227802,12 +227802,12 @@
     },
     "Rotating Fireplace": {
       "edhrec_rank": 8397,
-      "gate": "template",
+      "gate": null,
       "name": "Rotating Fireplace",
-      "reason": "no template for: {4}, {T}: Time travel. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "151084cd-49cb-4361-85c1-f0485f3f52dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rotcrown Ghoul": {
@@ -229132,12 +229132,12 @@
     },
     "Run for Your Life": {
       "edhrec_rank": 12429,
-      "gate": "template",
+      "gate": null,
       "name": "Run for Your Life",
-      "reason": "no template for: One or two target creatures each gain haste until end of turn. They can't be blocked this ",
+      "reason": "",
       "scryfall_id": "3c5ecb3c-5da8-41fc-9196-0d67b4234de3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Runadi, Behemoth Caller": {
@@ -231562,12 +231562,12 @@
     },
     "Sally Sparrow": {
       "edhrec_rank": 14021,
-      "gate": "template",
+      "gate": null,
       "name": "Sally Sparrow",
-      "reason": "no template for: You may cast creature spells as though they had flash",
+      "reason": "",
       "scryfall_id": "0e085b17-e3a8-49eb-adff-6c748ca5a611",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Salt Flats": {
@@ -246052,12 +246052,12 @@
     },
     "Sibylline Soothsayer": {
       "edhrec_rank": 12325,
-      "gate": "template",
+      "gate": null,
       "name": "Sibylline Soothsayer",
-      "reason": "no template for: Temporal Foresight — When this creature enters, reveal cards from the top of your library ",
+      "reason": "",
       "scryfall_id": "145daf0b-55a3-45a9-b653-e6e4a461d629",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sicarian Infiltrator": {
@@ -262692,12 +262692,12 @@
     },
     "Star Whale": {
       "edhrec_rank": 5938,
-      "gate": "template",
+      "gate": null,
       "name": "Star Whale",
-      "reason": "no template for: Other creatures you control have ward {2}",
+      "reason": "",
       "scryfall_id": "82dca4c3-efd6-4b6b-ac49-5a916135a592",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Star of Extinction": {
@@ -269362,12 +269362,12 @@
     },
     "Sunbaked Canyon": {
       "edhrec_rank": 1479,
-      "gate": "template",
+      "gate": null,
       "name": "Sunbaked Canyon",
-      "reason": "no template for: {T}, Pay 1 life: Add {R} or {W}",
+      "reason": "",
       "scryfall_id": "e9e69236-3a67-449f-8591-094ef78da6e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunbathing Rootwalla": {
@@ -280532,12 +280532,12 @@
     },
     "The Eleventh Doctor": {
       "edhrec_rank": 9412,
-      "gate": "template",
+      "gate": null,
       "name": "The Eleventh Doctor",
-      "reason": "no template for: I. AM. TALKING! — Whenever deals combat damage to a player, you may exile a card from your",
+      "reason": "",
       "scryfall_id": "21d3891a-25e8-47ff-a516-4f3b8ce7fe24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Eleventh Hour": {
@@ -281732,12 +281732,12 @@
     },
     "The Moment": {
       "edhrec_rank": 13725,
-      "gate": "template",
+      "gate": null,
       "name": "The Moment",
-      "reason": "no template for: At the beginning of your upkeep, put a time counter on",
+      "reason": "",
       "scryfall_id": "683237b7-b3a9-4e34-abb4-ee0293385397",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Monumental Facade": {
@@ -281922,12 +281922,12 @@
     },
     "The Parting of the Ways": {
       "edhrec_rank": 9491,
-      "gate": "template",
+      "gate": null,
       "name": "The Parting of the Ways",
-      "reason": "no template for: I — Exile the top five cards of your library. For each nonland card exiled this way, put a",
+      "reason": "",
       "scryfall_id": "65015afb-cfdb-4373-a0db-0ca5e95c49a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Peregrine Dynamo": {
@@ -282542,12 +282542,12 @@
     },
     "The Tenth Doctor": {
       "edhrec_rank": 6492,
-      "gate": "template",
+      "gate": null,
       "name": "The Tenth Doctor",
-      "reason": "no template for: Allons-y! — Whenever you attack, exile cards from the top of your library until you exile ",
+      "reason": "",
       "scryfall_id": "10ea9e80-0d3a-4b75-8f29-56e88d6fe66a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Terror of Serpent's Pass": {
@@ -282932,12 +282932,12 @@
     },
     "The Wedding of River Song": {
       "edhrec_rank": 10795,
-      "gate": "template",
+      "gate": null,
       "name": "The Wedding of River Song",
-      "reason": "no template for: Draw two cards, then you may exile a nonland card from your hand with a number of time cou",
+      "reason": "",
       "scryfall_id": "47cdfa73-4e56-4364-82eb-744a1680911d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Whizzer, Classic Speedster": {
@@ -287342,12 +287342,12 @@
     },
     "Time Beetle": {
       "edhrec_rank": 8095,
-      "gate": "template",
+      "gate": null,
       "name": "Time Beetle",
-      "reason": "no template for: Parallel Universe — Whenever this creature deals combat damage to a player, time travel",
+      "reason": "",
       "scryfall_id": "813a8197-55c2-4abd-9979-b62014240796",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Time Bomb": {
@@ -314632,12 +314632,12 @@
     },
     "Wibbly-wobbly, Timey-wimey": {
       "edhrec_rank": 8149,
-      "gate": "template",
+      "gate": null,
       "name": "Wibbly-wobbly, Timey-wimey",
-      "reason": "no template for: Time travel",
+      "reason": "",
       "scryfall_id": "2355e847-f147-421a-8fc3-7e244b4a70ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wiccan, Rising Magician": {
@@ -315632,12 +315632,12 @@
     },
     "Wilfred Mott": {
       "edhrec_rank": 12930,
-      "gate": "template",
+      "gate": null,
       "name": "Wilfred Mott",
-      "reason": "no template for: Look to the Stars — At the beginning of your upkeep, put a time counter on . Then look at ",
+      "reason": "",
       "scryfall_id": "10918b68-b442-4895-b8a6-57f65274a39e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wilhelt, the Rotcleaver": {
