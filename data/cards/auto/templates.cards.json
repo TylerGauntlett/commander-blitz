@@ -134947,6 +134947,95 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "self_only": true,
+              "tapped": false
+            }
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Affirmative — {1}{U}, {T}: Target legendary creature can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "k_9_mark_i",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{U}",
+      "name": "K-9, Mark I",
+      "oracle_text": "Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}.\nAffirmative — {1}{U}, {T}: Target legendary creature can't be blocked this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Robot",
+        "Dog"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "black_mana_as_phyrexian",
           "kind": "static",
@@ -176756,6 +176845,124 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "as": "boosted",
+              "objects": {
+                "controller": "you",
+                "count": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "binding": "boosted"
+                  }
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "nyssa_of_traken_sonic_booster",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sonic Booster — Whenever Nyssa of Traken attacks, sacrifice any number of artifacts.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "boosted"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "id": "nyssa_of_traken_sonic_booster",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "binding": "boosted"
+                }
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you sacrifice one or more artifacts this way, tap up to that many target creatures and draw that many cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nyssa_of_traken",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Nyssa of Traken",
+      "oracle_text": "You have no maximum hand size.\nSonic Booster — Whenever Nyssa of Traken attacks, sacrifice any number of artifacts. When you sacrifice one or more artifacts this way, tap up to that many target creatures and draw that many cards.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -211226,6 +211433,69 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "entered_this_turn": true,
+                "is_token": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Create a tapped token that's a copy of target token that entered this turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "romana_ii",
+      "keywords": [
+        "vigilance",
+        "doctors_companion"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Romana II",
+      "oracle_text": "Vigilance\n{1}, {T}: Create a tapped token that's a copy of target token that entered this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -222618,6 +222888,65 @@
         "Detective"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Share Intelligence — Whenever Sergeant John Benton deals combat damage to a player, you and that player each draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sergeant_john_benton",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{1}{G}{W}",
+      "name": "Sergeant John Benton",
+      "oracle_text": "Trample, haste\nShare Intelligence — Whenever Sergeant John Benton deals combat damage to a player, you and that player each draw that many cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

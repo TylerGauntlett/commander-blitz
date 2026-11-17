@@ -11230,6 +11230,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "k_9_mark_i": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "k_rrik_son_of_yawgmoth": {
     "zone": "battlefield"
   },
@@ -14680,6 +14687,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nyssa_of_traken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nyx_fleece_ram": {
     "battlefield_count": 33,
     "life": {
@@ -17552,6 +17563,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "romana_ii": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "root_elemental": {
     "battlefield_count": 33,
     "hand_size": {
@@ -18469,6 +18484,13 @@
     "tokens": {
       "count": 1,
       "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
+  "sergeant_john_benton": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },

@@ -144862,12 +144862,12 @@
     },
     "K-9, Mark I": {
       "edhrec_rank": 3382,
-      "gate": "template",
+      "gate": null,
       "name": "K-9, Mark I",
-      "reason": "no template for: Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}",
+      "reason": "",
       "scryfall_id": "0f151285-08a7-4148-950e-82ccb36502bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ka-Zar of the Savage Land": {
@@ -189702,12 +189702,12 @@
     },
     "Nyssa of Traken": {
       "edhrec_rank": 13108,
-      "gate": "template",
+      "gate": null,
       "name": "Nyssa of Traken",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "1b212e7d-2ea1-4ba7-a060-c67d44e259a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nyx Herald": {
@@ -226912,12 +226912,12 @@
     },
     "Romana II": {
       "edhrec_rank": 15316,
-      "gate": "template",
+      "gate": null,
       "name": "Romana II",
-      "reason": "no template for: {1}, {T}: Create a tapped token that's a copy of target token that entered this turn",
+      "reason": "",
       "scryfall_id": "4ccc3ebd-34e1-421c-87b4-0be905954289",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Romantic Rendezvous": {
@@ -240692,12 +240692,12 @@
     },
     "Sergeant John Benton": {
       "edhrec_rank": 8452,
-      "gate": "template",
+      "gate": null,
       "name": "Sergeant John Benton",
-      "reason": "no template for: Share Intelligence — Whenever deals combat damage to a player, you and that player each dr",
+      "reason": "",
       "scryfall_id": "01f40e07-f565-4b9e-87a5-5b28b4e9fb0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sergeant-at-Arms": {

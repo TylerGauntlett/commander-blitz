@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**437 cards** blocked by **383** capabilities.
+**441 cards** blocked by **387** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -139,6 +139,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
+| [convoke](#convoke) | 1 | 13212 | static_effect |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
@@ -165,6 +166,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [draw-from-bottom](#draw-from-bottom) | 1 | 10400 | static_effect |
+| [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -220,6 +222,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
+| [grant-cycling](#grant-cycling) | 1 | 15774 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
@@ -294,6 +297,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
+| [planechase](#planechase) | 1 | 18784 | engine |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -2713,6 +2717,20 @@ Blocks **1** card.
 
 </details>
 
+## convoke
+
+Blocks **1** card.
+
+- **(static_effect)** a per-turn 'first spell' limit on the grant_pay_generic_with static (pay_generic_with: tap_creatures): only the first spell matching affects_spells that you cast each turn gains convoke, counted over the turn's casts (spells cast before the granter arrived included), with a historic spell filter (Artifact OR Legendary supertype OR Saga subtype, a union over affects_spells)
+  <br>Why the existing vocabulary won't do: grant_pay_generic_with hands convoke to every spell matching affects_spells with no turn counter (player_statics.granted_pay_generic_with); static_max_per_turn is accepted only on cast_from_graveyard and first_each_turn only on ability_cost_reduction; and affects_spells has no any_of union to say 'artifact or legendary or Saga', so writing it would grant convoke to every historic spell (or only one of the three kinds)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Peri Brown** (rank 13212) — `peri_brown`
+  - The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)
+
+</details>
+
 ## copy-all-on-stack
 
 Blocks **1** card.
@@ -3081,6 +3099,20 @@ Blocks **1** card.
 - **River Song** (rank 10400) — `river_song`
   - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
   - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
+
+</details>
+
+## draw-trigger-except-first-in-draw-step
+
+Blocks **1** card.
+
+- **(trigger_event)** a `draw` trigger key (e.g. `except_first_in_draw_step: true`) that skips the drawing player's first card drawn during their own draw step, read off the existing `state.cards_drawn_this_draw_step` ledger, so the trigger fires on every other draw by an opponent
+  <br>Why the existing vocabulary won't do: `except_first_in_draw_step` exists only on the `replace_draw` player static, not in `trigger_keys`; the `draw` trigger's `nth`/`max_per_turn` count per turn, not per draw step; a `condition` built from `step_is` plus `cards_drawn_this_turn` miscounts draws made earlier in the turn (upkeep) and cannot ask whether the drawer is the active player in their own draw step
+
+<details><summary>Cards waiting on this</summary>
+
+- **Leela, Sevateem Warrior** (rank 17497) — `leela_sevateem_warrior`
+  - Whenever an opponent draws a card except the first one they draw in each of their draw steps, put a +1/+1 counter on Leela.
 
 </details>
 
@@ -3871,6 +3903,20 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## grant-cycling
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a permanent that grants an activated cycling ability ({2}{W}, discard that card: draw a card, is_cycling so the cycle trigger fires) to each card in its controller's HAND matching a filter -- here historic, i.e. any_of artifact / legendary supertype / Saga subtype -- recomputed continuously while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The grant_ability static and grant_keyword static only affect objects on the battlefield (the packet notes 'a granted activated ability works on the battlefield only'); cycling exists only as a card's own is_cycling ability with active_zones ["hand"], and no static_effect or affects filter reaches cards in hand. The historic filter itself is expressible with any_of, and the second line is a plain 'cycle' trigger with add_counters, so only the hand-zone grant is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jo Grant** (rank 15774) — `jo_grant`
+  - Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)
 
 </details>
 
@@ -4925,6 +4971,20 @@ Blocks **1** card.
 
 - **Smuggler's Share** (rank 1701) — `smuggler_s_share`
   - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
+
+</details>
+
+## planechase
+
+Blocks **1** card.
+
+- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
+  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Susan Foreman** (rank 18784) — `susan_foreman`
+  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
 
 </details>
 

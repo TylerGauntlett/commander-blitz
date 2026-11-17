@@ -1,0 +1,16 @@
+{
+  "card_id": "leela_sevateem_warrior",
+  "name": "Leela, Sevateem Warrior",
+  "oracle_text": "Whenever an opponent draws a card except the first one they draw in each of their draw steps, put a +1/+1 counter on Leela.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Whenever an opponent draws a card except the first one they draw in each of their draw steps, put a +1/+1 counter on Leela."
+  ],
+  "needs": [{
+    "capability": "draw_trigger_except_first_in_draw_step",
+    "kind": "trigger_event",
+    "what": "a `draw` trigger key (e.g. `except_first_in_draw_step: true`) that skips the drawing player's first card drawn during their own draw step, read off the existing `state.cards_drawn_this_draw_step` ledger, so the trigger fires on every other draw by an opponent",
+    "why_existing_wont_do": "`except_first_in_draw_step` exists only on the `replace_draw` player static, not in `trigger_keys`; the `draw` trigger's `nth`/`max_per_turn` count per turn, not per draw step; a `condition` built from `step_is` plus `cards_drawn_this_turn` miscounts draws made earlier in the turn (upkeep) and cannot ask whether the drawer is the active player in their own draw step"
+  }],
+  "closest_existing": ["replace_draw", "draw"],
+  "confidence": "high"
+}
