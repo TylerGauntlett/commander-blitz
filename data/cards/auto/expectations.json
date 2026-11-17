@@ -2758,6 +2758,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "brazen_borrower_petty_theft": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "brazen_scourge": {
     "zone": "battlefield"
   },

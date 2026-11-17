@@ -2419,6 +2419,10 @@
     "artist": "Matt Cavotta",
     "scryfall_id": "e3d58928-500d-46fc-b82b-f1add64df859"
   },
+  "brazen_borrower_petty_theft": {
+    "artist": "Eric Deschamps",
+    "scryfall_id": "25d309d6-9e56-441e-bd29-5c903d5221bf"
+  },
   "brazen_scourge": {
     "artist": "Kev Walker",
     "scryfall_id": "eb84b86c-3276-4fc1-a09d-47de388cb729"
@@ -13701,6 +13705,10 @@
   "peter_parker_s_camera": {
     "artist": "Lixin Yin",
     "scryfall_id": "47875dff-c046-4cb0-b1e3-f926cbe25b59"
+  },
+  "petty_theft": {
+    "artist": "Eric Deschamps",
+    "scryfall_id": "25d309d6-9e56-441e-bd29-5c903d5221bf"
   },
   "phantom_monster": {
     "artist": "Richard Wright",

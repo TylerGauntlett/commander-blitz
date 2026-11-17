@@ -33422,12 +33422,12 @@
     },
     "Brazen Borrower // Petty Theft": {
       "edhrec_rank": 2673,
-      "gate": "template",
+      "gate": null,
       "name": "Brazen Borrower // Petty Theft",
-      "reason": "no template for: This creature can block only creatures with flying",
+      "reason": "",
       "scryfall_id": "25d309d6-9e56-441e-bd29-5c903d5221bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brazen Buccaneers": {

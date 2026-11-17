@@ -33424,6 +33424,50 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "attackers": {
+            "keywords": [
+              "flying"
+            ]
+          },
+          "effect": "can_block_only",
+          "kind": "static",
+          "text": "This creature can block only creatures with flying."
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "brazen_borrower_petty_theft",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{U}",
+      "name": "Brazen Borrower // Petty Theft",
+      "oracle_text": "Flash\nFlying\nThis creature can block only creatures with flying.",
+      "power": 3,
+      "second_face": "petty_theft",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -190835,6 +190879,47 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "petty_theft",
+      "mana_cost": "{1}{U}",
+      "name": "Petty Theft",
+      "oracle_text": "Return target nonland permanent an opponent controls to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
