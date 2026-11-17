@@ -1,0 +1,18 @@
+{
+  "card_id": "vrestin_menoptra_leader",
+  "name": "Vrestin, Menoptra Leader",
+  "oracle_text": "Flying\nVrestin enters with X +1/+1 counters on it.\nWhen Vrestin enters, create X 1/1 green and white Alien Insect creature tokens with flying.\nWhenever you attack with one or more Insects, put a +1/+1 counter on each of them.",
+  "blocked_sentences": [
+    "When Vrestin enters, create X 1/1 green and white Alien Insect creature tokens with flying."
+  ],
+  "needs": [
+    {
+      "capability": "alien_insect_1_1_gw_flying_token",
+      "kind": "token",
+      "what": "a 1/1 green and white Alien Insect creature token with flying",
+      "why_existing_wont_do": "token_ids has insect_1_1_b_flying (black, no Alien), insect_1_1_g, insect_1_1_bg, insect_1_1_g_flying_deathtouch and insect_2_1_w_flying, but no green-white 1/1 Alien Insect with flying; substituting any of them changes colour, subtype or P/T"
+    }
+  ],
+  "closest_existing": ["insect_1_1_b_flying", "insect_2_1_w_flying"],
+  "confidence": "high"
+}

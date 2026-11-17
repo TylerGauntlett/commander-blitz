@@ -1,0 +1,21 @@
+{
+  "card_id": "the_war_games",
+  "name": "The War Games",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI \u2014 Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield.\nII, III \u2014 Put a +1/+1 counter on each Warrior creature.\nIV \u2014 You may exile a nontoken creature you control. When you do, exile all Warriors.",
+  "blocked_sentences": [
+    "I \u2014 Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield."
+  ],
+  "needs": [
+    {
+      "capability": "goad_while_source_on_battlefield",
+      "kind": "op",
+      "what": "a goad duration tied to the source: the `goad` op with a clock like `duration: \"while_source_on_battlefield\"` (the O-Ring `until_leaves` link applied to goad), so the goad mark set by the Saga's controller ends exactly when the Saga leaves the battlefield and does not expire at the goader's next turn; applied to the tokens every player just created (an `as` binding over each player's create_token inside for_each_player)",
+      "why_existing_wont_do": "op_goad reads only `duration: \"permanent\"` (rest of the game) or the default 701.38 clock (until the goader's next turn); neither matches 'for as long as this Saga remains on the battlefield' \u2014 the default ends a turn cycle early while the Saga sits at chapters II-IV, and permanent outlives the Saga's sacrifice after IV"
+    }
+  ],
+  "closest_existing": [
+    "goad",
+    "exile.until_leaves"
+  ],
+  "confidence": "high"
+}

@@ -480,6 +480,7 @@ class TestActivatedAbilities:
             _provide_the_counter_fodder(game, registry, ability, oid)
             _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, registry, ability)
+            _fill_the_hand_it_counts(game, registry, card_id)
             _provide_the_graveyard_exile(game, registry, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
@@ -1362,6 +1363,32 @@ def _stock_the_hand(game: Game, registry, ability) -> None:
     for _ in range(needed - (fits if selector else len(hand))):
         card = new_object(game.state, card_id, owner=0, zone=Zone.HAND)
         hand.append(card.oid)
+
+
+def _fill_the_hand_it_counts(game: Game, registry, card_id: str) -> None:
+    """Give the player the hand a hand-sized creature's toughness counts.
+
+    The same family as `_stock_the_hand`. Duggan, Private Detective: "Duggan's
+    power and toughness are each equal to the number of cards in your hand."
+    The sandbox hand is empty, so the creature is a 0/0 that state-based
+    actions bury before its ability can be offered, and a working card reports
+    as unusable.
+
+    Only a self-only `set_pt` static whose toughness is a bare count of your
+    own hand is read; it is satisfied with real cards in hand, so the toughness
+    the engine derives is still the card's own. Any other shape is left alone.
+    """
+    for ability in registry.get(card_id).abilities:
+        static = getattr(ability, "static", None) or {}
+        if static.get("effect") != "set_pt" or not (static.get("affects") or {}).get("self_only"):
+            continue
+        count = (static.get("toughness") or {}).get("count") or {}
+        if count.get("zone") != "hand" or count.get("controller", "you") != "you":
+            continue
+        hand = game.state.players[0].hand
+        for _ in range(2 - len(hand)):
+            hand.append(new_object(game.state, "forest", owner=0, zone=Zone.HAND).oid)
+        return
 
 
 def _provide_the_graveyard_exile(game: Game, registry, ability) -> None:

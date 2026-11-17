@@ -1,0 +1,23 @@
+{
+  "card_id": "jo_grant",
+  "name": "Jo Grant",
+  "oracle_text": "Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)\nWhenever you cycle a card, put a +1/+1 counter on Jo Grant.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)"
+  ],
+  "needs": [
+    {
+      "capability": "grant_cycling_to_cards_in_hand",
+      "kind": "static_effect",
+      "what": "a static on a permanent that grants an activated cycling ability ({2}{W}, discard that card: draw a card, is_cycling so the cycle trigger fires) to each card in its controller's HAND matching a filter -- here historic, i.e. any_of artifact / legendary supertype / Saga subtype -- recomputed continuously while the permanent is on the battlefield",
+      "why_existing_wont_do": "The grant_ability static and grant_keyword static only affect objects on the battlefield (the packet notes 'a granted activated ability works on the battlefield only'); cycling exists only as a card's own is_cycling ability with active_zones [\"hand\"], and no static_effect or affects filter reaches cards in hand. The historic filter itself is expressible with any_of, and the second line is a plain 'cycle' trigger with add_counters, so only the hand-zone grant is missing"
+    }
+  ],
+  "closest_existing": [
+    "grant_ability",
+    "is_cycling",
+    "grant_miracle",
+    "grant_warp"
+  ],
+  "confidence": "high"
+}

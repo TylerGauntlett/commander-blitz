@@ -1,0 +1,18 @@
+{
+  "card_id": "the_seventh_doctor",
+  "name": "The Seventh Doctor",
+  "oracle_text": "Whenever The Seventh Doctor attacks, choose a card in your hand. Defending player guesses whether that card's mana value is greater than the number of artifacts you control. If they guessed wrong, you may cast it without paying its mana cost. If you don't cast a spell this way, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+  "blocked_sentences": [
+    "Whenever The Seventh Doctor attacks, choose a card in your hand. Defending player guesses whether that card's mana value is greater than the number of artifacts you control. If they guessed wrong, you may cast it without paying its mana cost. If you don't cast a spell this way, investigate."
+  ],
+  "needs": [
+    {
+      "capability": "hidden_card_guess",
+      "kind": "decision",
+      "what": "an op that has the controller secretly choose one card in their own hand and bind it (`as`), without casting or revealing it, followed by a binary guess made by the defending player (\"greater\" / \"not greater\") that is compared against `mana_value_of` the bound card versus the count of artifacts you control; then a free cast of exactly that bound hand card (optional, playable_free) whose outcome is bound so a following `if` can read \"you didn't cast a spell this way\" and investigate",
+      "why_existing_wont_do": "choose_permanents chooses only battlefield objects, so nothing binds a card in hand without moving it; cast_from_hand casts at once with no prior hidden choice, so the guess cannot come between the choice and the cast; choose_mode with a `chooser` could carry the opponent's two-way guess but has nothing to compare it to, and there is no value or condition that reports whether the optional free cast happened (the 'if you don't cast a spell this way' branch, which also covers a land or an uncastable card)"
+    }
+  ],
+  "closest_existing": ["cast_from_hand", "choose_mode", "choose_permanents", "investigate"],
+  "confidence": "high"
+}

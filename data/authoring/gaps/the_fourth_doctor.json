@@ -1,0 +1,24 @@
+{
+  "card_id": "the_fourth_doctor",
+  "name": "The Fourth Doctor",
+  "oracle_text": "You may look at the top card of your library any time.\nWould You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)",
+  "blocked_sentences": [
+    "Would You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)"
+  ],
+  "needs": [
+    {
+      "capability": "library_top_play_shared_limit",
+      "kind": "static_effect",
+      "what": "one library-top play permission whose once-per-turn cap is shared between playing a land and casting a spell from the top of your library, filtered to historic cards (any_of: Artifact type, Legendary supertype, Saga subtype) for both the land and the spell",
+      "why_existing_wont_do": "cast_from_library_top and play_lands_from_library_top are separate statics: play_lands_from_library_top takes no card filter (it would allow any land, not only historic ones) and no per-turn cap, cast_from_library_top's affects_spells (LIBRARY_TOP_CAST_FILTER_KEYS) has no any_of so 'artifact OR legendary OR Saga' cannot be said, and writing both would give two independent meters (a land AND a spell each turn) instead of one shared use"
+    },
+    {
+      "capability": "library_top_play_trigger",
+      "kind": "trigger_event",
+      "what": "a 'when you do' trigger that fires when this permanent's permission is used to play a land or cast a spell from the top of the library, so it can create_token food_token",
+      "why_existing_wont_do": "spell_cast and land_played triggers with from_zones: [\"library\"] fire for any library cast or play (another permission, a cascade, etc.), not specifically the use of this permission; no permission static carries a rider effect run on use (enters_tapped and cast_gains_keywords are the only riders)"
+    }
+  ],
+  "closest_existing": ["cast_from_library_top", "play_lands_from_library_top", "look_at_library_top", "static_max_per_turn"],
+  "confidence": "high"
+}

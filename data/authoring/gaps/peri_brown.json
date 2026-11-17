@@ -1,0 +1,18 @@
+{
+  "card_id": "peri_brown",
+  "name": "Peri Brown",
+  "oracle_text": "The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)"
+  ],
+  "needs": [
+    {
+      "capability": "convoke",
+      "kind": "static_effect",
+      "what": "a per-turn 'first spell' limit on the grant_pay_generic_with static (pay_generic_with: tap_creatures): only the first spell matching affects_spells that you cast each turn gains convoke, counted over the turn's casts (spells cast before the granter arrived included), with a historic spell filter (Artifact OR Legendary supertype OR Saga subtype, a union over affects_spells)",
+      "why_existing_wont_do": "grant_pay_generic_with hands convoke to every spell matching affects_spells with no turn counter (player_statics.granted_pay_generic_with); static_max_per_turn is accepted only on cast_from_graveyard and first_each_turn only on ability_cost_reduction; and affects_spells has no any_of union to say 'artifact or legendary or Saga', so writing it would grant convoke to every historic spell (or only one of the three kinds)"
+    }
+  ],
+  "closest_existing": ["grant_pay_generic_with", "static_max_per_turn", "first_each_turn"],
+  "confidence": "high"
+}

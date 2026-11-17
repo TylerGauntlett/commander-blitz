@@ -1,0 +1,19 @@
+{
+  "card_id": "susan_foreman",
+  "name": "Susan Foreman",
+  "oracle_text": "If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.\n{T}: Add {G}.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk."
+  ],
+  "needs": [
+    {
+      "capability": "planechase",
+      "kind": "engine",
+      "what": "Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk",
+      "why_existing_wont_do": "The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only",
+      "closest_existing": ["look_at_top", "put_on_top"]
+    }
+  ],
+  "closest_existing": ["look_at_top", "put_on_top"],
+  "confidence": "high"
+}

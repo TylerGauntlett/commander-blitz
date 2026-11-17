@@ -99,6 +99,16 @@
   "accursed_spirit": {
     "zone": "battlefield"
   },
+  "ace_fearless_rebel": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "adagia_windswept_bastion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -132,6 +142,10 @@
     "library_size": {
       "0": 36
     },
+    "zone": "battlefield"
+  },
+  "adric_mathematical_genius": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "adrix_and_nev_twincasters": {
@@ -472,6 +486,10 @@
     },
     "zone": "battlefield"
   },
+  "alistair_the_brigadier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "all_is_dust": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -611,6 +629,19 @@
   "an_offer_you_can_t_refuse": {
     "opponent_battlefield_count": 9,
     "zone": "graveyard"
+  },
+  "an_unearthly_child": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "anaba_bodyguard": {
     "zone": "battlefield"
@@ -1675,6 +1706,11 @@
   "banehound": {
     "zone": "battlefield"
   },
+  "banish_to_another_universe": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "banon_the_returners_leader": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1686,6 +1722,10 @@
     "battlefield_count": 30,
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "barbara_wright": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "barbarian_general": {
     "zone": "battlefield"
@@ -2005,6 +2045,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "bessie_the_doctor_s_roadster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "betor_ancestor_s_voice": {
@@ -3715,6 +3759,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "city_of_death": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "city_of_traitors": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4939,6 +4991,10 @@
   "dawntreader_elk": {
     "zone": "battlefield"
   },
+  "day_of_destiny": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "daybreak_chaplain": {
     "zone": "battlefield"
   },
@@ -5959,6 +6015,14 @@
   },
   "duelist_s_heritage": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "duggan_private_detective": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
     "zone": "battlefield"
   },
   "dune_beetle": {
@@ -7585,6 +7649,10 @@
     },
     "zone": "graveyard"
   },
+  "five_hundred_year_diary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flame_of_anor": {
     "graveyard_size": {
       "0": 3
@@ -8178,6 +8246,16 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "gallifrey_stands": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "galvanic_iteration": {
     "zone": "graveyard"
@@ -9862,6 +9940,10 @@
       "graveyard"
     ]
   },
+  "heroes_podium": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "heroic_intervention": {
     "granted": {
       "count": 32,
@@ -10048,6 +10130,10 @@
     "zone": "battlefield"
   },
   "horde_of_notions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "horizon_canopy": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10914,6 +11000,10 @@
   "jailbreak_scheme": {
     "zone": "graveyard"
   },
+  "jamie_mccrimmon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jarad_golgari_lich_lord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11138,6 +11228,13 @@
   },
   "jyoti_moag_ancient": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "k_9_mark_i": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "k_rrik_son_of_yawgmoth": {
@@ -14590,6 +14687,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nyssa_of_traken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nyx_fleece_ram": {
     "battlefield_count": 33,
     "life": {
@@ -17462,6 +17563,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "romana_ii": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "root_elemental": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17817,6 +17922,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "sarah_jane_smith": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sarinth_greatwurm": {
@@ -18379,6 +18488,13 @@
     "tokens": {
       "count": 1,
       "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
+  "sergeant_john_benton": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -21086,6 +21202,10 @@
     },
     "zone": "battlefield"
   },
+  "tegan_jovanka": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
@@ -21448,6 +21568,20 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_fifth_doctor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_five_doctors": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "the_flood_of_mars": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21543,6 +21677,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_night_of_the_doctor": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "the_nipton_lottery": {
     "battlefield_count": 31,
     "opponent_battlefield_count": 4,
@@ -21597,6 +21740,10 @@
     },
     "zone": "battlefield"
   },
+  "the_second_doctor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_sound_of_drums": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21632,6 +21779,10 @@
   },
   "the_thing": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_third_doctor": {
+    "battlefield_count": 34,
     "zone": "battlefield"
   },
   "the_thirteenth_doctor": {
@@ -22450,6 +22601,15 @@
   },
   "traveling_philosopher": {
     "zone": "battlefield"
+  },
+  "traverse_eternity": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "treasonous_ogre": {
     "zone": "battlefield"

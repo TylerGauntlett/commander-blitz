@@ -1,0 +1,16 @@
+{
+  "card_id": "the_sixth_doctor",
+  "name": "The Sixth Doctor",
+  "oracle_text": "Time Lord's Prerogative — Whenever you cast a historic spell, copy it, except the copy isn't legendary. This ability triggers only once each turn. (Artifacts, legendaries, and Sagas are historic. A copy of a permanent spell becomes a token.)",
+  "blocked_sentences": [
+    "Time Lord's Prerogative — Whenever you cast a historic spell, copy it, except the copy isn't legendary. This ability triggers only once each turn"
+  ],
+  "needs": [{
+    "capability": "copy_spell_except_nonlegendary",
+    "kind": "op",
+    "what": "an `except` modifier on `copy_spell` that removes the Legendary supertype from the copy (707.9b), so a copied legendary permanent spell resolves as a nonlegendary token and does not fall to the legend rule against the original",
+    "why_existing_wont_do": "copy_spell carries only amount, controller, new_targets, sid, spells, target and this_spell; put_copy_on_stack copies the original's characteristics unchanged. copy_permanent has `except`/`except_` but acts on a permanent on the battlefield, not a spell on the stack. The trigger itself is sayable (spell_cast with filter any_of Artifact / Legendary supertype / Saga subtype, max_per_turn 1), but dropping the except clause would make a legendary copy die to the legend rule"
+  }],
+  "closest_existing": ["copy_spell", "copy_permanent"],
+  "confidence": "high"
+}

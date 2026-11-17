@@ -1522,12 +1522,12 @@
     },
     "Ace, Fearless Rebel": {
       "edhrec_rank": 20675,
-      "gate": "template",
+      "gate": null,
       "name": "Ace, Fearless Rebel",
-      "reason": "no template for: Nitro-9 — Whenever Ace attacks, you may sacrifice an artifact. When you do, put a +1/+1 co",
+      "reason": "",
       "scryfall_id": "3ce6d329-9c3a-4fb0-bf1e-9b72346ca3ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Acererak the Archlich": {
@@ -2242,12 +2242,12 @@
     },
     "Adric, Mathematical Genius": {
       "edhrec_rank": 7942,
-      "gate": "template",
+      "gate": null,
       "name": "Adric, Mathematical Genius",
-      "reason": "no template for: {2}{U}, {T}: Copy target activated or triggered ability you control. You may choose new ta",
+      "reason": "",
       "scryfall_id": "176a1504-262b-48f5-92a8-9e29cb397366",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Adrix and Nev, Twincasters": {
@@ -6162,12 +6162,12 @@
     },
     "Alistair, the Brigadier": {
       "edhrec_rank": 11973,
-      "gate": "template",
+      "gate": null,
       "name": "Alistair, the Brigadier",
-      "reason": "no template for: Whenever you cast a historic spell, create a 1/1 white Soldier creature token",
+      "reason": "",
       "scryfall_id": "0a202892-3bbc-454f-83c6-51451c8e6215",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alive // Well": {
@@ -7642,12 +7642,12 @@
     },
     "An Unearthly Child": {
       "edhrec_rank": 13894,
-      "gate": "template",
+      "gate": null,
       "name": "An Unearthly Child",
-      "reason": "no template for: I, II, III — Reveal cards from the top of your library until you reveal a Doctor card, a c",
+      "reason": "",
       "scryfall_id": "2b6d87d6-e89c-4b84-b1d0-2aad21cb1c47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "An Unexpected Party // At the Door": {
@@ -20002,12 +20002,12 @@
     },
     "Banish to Another Universe": {
       "edhrec_rank": 14478,
-      "gate": "template",
+      "gate": null,
       "name": "Banish to Another Universe",
-      "reason": "no template for: Affinity for historic permanents",
+      "reason": "",
       "scryfall_id": "61f39d4c-af2d-486d-9408-b987474f8352",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banisher Priest": {
@@ -20282,12 +20282,12 @@
     },
     "Barbara Wright": {
       "edhrec_rank": 7148,
-      "gate": "template",
+      "gate": null,
       "name": "Barbara Wright",
-      "reason": "no template for: History Teacher — Sagas you control have read ahead",
+      "reason": "",
       "scryfall_id": "414bdd33-549d-4690-917c-ea48decffbbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barbarian Bully": {
@@ -24232,12 +24232,12 @@
     },
     "Bessie, the Doctor's Roadster": {
       "edhrec_rank": 10884,
-      "gate": "template",
+      "gate": null,
       "name": "Bessie, the Doctor's Roadster",
-      "reason": "no template for: Whenever Bessie attacks, another target legendary creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "39166adc-6b0e-4549-965b-a8dded70c54c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bestial Bloodline": {
@@ -47132,12 +47132,12 @@
     },
     "City of Death": {
       "edhrec_rank": 4477,
-      "gate": "template",
+      "gate": null,
       "name": "City of Death",
-      "reason": "no template for: I — Create a Treasure token",
+      "reason": "",
       "scryfall_id": "02242155-5612-4be7-b4db-c94f3ff34383",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "City of Shadows": {
@@ -62522,12 +62522,12 @@
     },
     "Day of Destiny": {
       "edhrec_rank": 6277,
-      "gate": "template",
+      "gate": null,
       "name": "Day of Destiny",
-      "reason": "no template for: Legendary creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "8c48ce9d-4158-421a-9a4f-50159188ef1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Day of the Dragons": {
@@ -76682,12 +76682,12 @@
     },
     "Duggan, Private Detective": {
       "edhrec_rank": 14248,
-      "gate": "template",
+      "gate": null,
       "name": "Duggan, Private Detective",
-      "reason": "no template for: Duggan's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "0d0cfc0e-6a38-4fa2-8e4b-64a893591fec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duke Ulder Ravengard": {
@@ -96552,12 +96552,12 @@
     },
     "Five Hundred Year Diary": {
       "edhrec_rank": 6352,
-      "gate": "template",
+      "gate": null,
       "name": "Five Hundred Year Diary",
-      "reason": "no template for: {2}, Sacrifice : Draw a card",
+      "reason": "",
       "scryfall_id": "54b79758-1d7c-484c-9b23-8e8fa3a9c560",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Five-Alarm Fire": {
@@ -104612,12 +104612,12 @@
     },
     "Gallifrey Stands": {
       "edhrec_rank": 13853,
-      "gate": "template",
+      "gate": null,
       "name": "Gallifrey Stands",
-      "reason": "no template for: When enters, return all Doctor cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "15dc4f0d-88f1-4434-a36e-ac9aae7b295c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galloping Lizrog": {
@@ -126822,12 +126822,12 @@
     },
     "Heroes' Podium": {
       "edhrec_rank": 2651,
-      "gate": "template",
+      "gate": null,
       "name": "Heroes' Podium",
-      "reason": "no template for: Each legendary creature you control gets +1/+1 for each other legendary creature you contr",
+      "reason": "",
       "scryfall_id": "4503b65f-416e-49af-88c8-0871bca2c050",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroes' Reunion": {
@@ -129792,12 +129792,12 @@
     },
     "Horizon Canopy": {
       "edhrec_rank": 1694,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon Canopy",
-      "reason": "no template for: {T}, Pay 1 life: Add {G} or {W}",
+      "reason": "",
       "scryfall_id": "014281b4-172c-4c4e-b859-4ca9ba110cce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horizon Chimera": {
@@ -141962,12 +141962,12 @@
     },
     "Jamie McCrimmon": {
       "edhrec_rank": 15303,
-      "gate": "template",
+      "gate": null,
       "name": "Jamie McCrimmon",
-      "reason": "no template for: Whenever you cast a historic spell, gets +X/+X until end of turn, where X is that spell's ",
+      "reason": "",
       "scryfall_id": "098150bc-a865-48d0-95c2-39c2bee9bbb4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jamuraan Lion": {
@@ -144862,12 +144862,12 @@
     },
     "K-9, Mark I": {
       "edhrec_rank": 3382,
-      "gate": "template",
+      "gate": null,
       "name": "K-9, Mark I",
-      "reason": "no template for: Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}",
+      "reason": "",
       "scryfall_id": "0f151285-08a7-4148-950e-82ccb36502bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ka-Zar of the Savage Land": {
@@ -189702,12 +189702,12 @@
     },
     "Nyssa of Traken": {
       "edhrec_rank": 13108,
-      "gate": "template",
+      "gate": null,
       "name": "Nyssa of Traken",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "1b212e7d-2ea1-4ba7-a060-c67d44e259a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nyx Herald": {
@@ -226912,12 +226912,12 @@
     },
     "Romana II": {
       "edhrec_rank": 15316,
-      "gate": "template",
+      "gate": null,
       "name": "Romana II",
-      "reason": "no template for: {1}, {T}: Create a tapped token that's a copy of target token that entered this turn",
+      "reason": "",
       "scryfall_id": "4ccc3ebd-34e1-421c-87b4-0be905954289",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Romantic Rendezvous": {
@@ -233262,12 +233262,12 @@
     },
     "Sarah Jane Smith": {
       "edhrec_rank": 9170,
-      "gate": "template",
+      "gate": null,
       "name": "Sarah Jane Smith",
-      "reason": "no template for: Whenever you cast a historic spell, investigate. This ability triggers only once each turn",
+      "reason": "",
       "scryfall_id": "1ba76f68-e647-4786-903c-92dbd3cef05d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarcatog": {
@@ -240692,12 +240692,12 @@
     },
     "Sergeant John Benton": {
       "edhrec_rank": 8452,
-      "gate": "template",
+      "gate": null,
       "name": "Sergeant John Benton",
-      "reason": "no template for: Share Intelligence — Whenever deals combat damage to a player, you and that player each dr",
+      "reason": "",
       "scryfall_id": "01f40e07-f565-4b9e-87a5-5b28b4e9fb0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sergeant-at-Arms": {
@@ -276652,12 +276652,12 @@
     },
     "Tegan Jovanka": {
       "edhrec_rank": 11947,
-      "gate": "template",
+      "gate": null,
       "name": "Tegan Jovanka",
-      "reason": "no template for: Brave Heart — Whenever you attack, target attacking historic creature gets +1/+1 and gains",
+      "reason": "",
       "scryfall_id": "19b6f28a-bca5-4f5c-8102-085316088a11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tegwyll's Scouring": {
@@ -280752,12 +280752,12 @@
     },
     "The Fifth Doctor": {
       "edhrec_rank": 10823,
-      "gate": "template",
+      "gate": null,
       "name": "The Fifth Doctor",
-      "reason": "no template for: Peaceful Coexistence — At the beginning of your end step, put a +1/+1 counter on each crea",
+      "reason": "",
       "scryfall_id": "038279a1-76fd-4bf0-8ebb-d06db9747a64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Filigree Sylex": {
@@ -280852,12 +280852,12 @@
     },
     "The Five Doctors": {
       "edhrec_rank": 15061,
-      "gate": "template",
+      "gate": null,
       "name": "The Five Doctors",
-      "reason": "no template for: Kicker {5}",
+      "reason": "",
       "scryfall_id": "18385ef8-2af8-47bc-8863-046dc5b4e8df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Flame of Keld": {
@@ -281832,12 +281832,12 @@
     },
     "The Night of the Doctor": {
       "edhrec_rank": 9228,
-      "gate": "template",
+      "gate": null,
       "name": "The Night of the Doctor",
-      "reason": "no template for: I — Destroy all creatures",
+      "reason": "",
       "scryfall_id": "513d33fb-becc-4804-806a-764d08fc7b7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Ninth Doctor": {
@@ -282232,12 +282232,12 @@
     },
     "The Second Doctor": {
       "edhrec_rank": 3796,
-      "gate": "template",
+      "gate": null,
       "name": "The Second Doctor",
-      "reason": "no template for: Players have no maximum hand size",
+      "reason": "",
       "scryfall_id": "24cdb7f9-232b-4c1e-9c27-d9d8f7fd3752",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Seedcore": {
@@ -282602,12 +282602,12 @@
     },
     "The Third Doctor": {
       "edhrec_rank": 9399,
-      "gate": "template",
+      "gate": null,
       "name": "The Third Doctor",
-      "reason": "no template for: gets +1/+1 for each noncreature token you control",
+      "reason": "",
       "scryfall_id": "1ee72f96-0989-42ca-a60a-7f88ce7440c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Thirteenth Doctor": {
@@ -287382,12 +287382,12 @@
     },
     "Time Lord Regeneration": {
       "edhrec_rank": 14672,
-      "gate": "template",
+      "gate": "playable",
       "name": "Time Lord Regeneration",
-      "reason": "no template for: Until end of turn, target Time Lord you control gains \"When this creature dies, reveal car",
+      "reason": "CommanderBlitzError: time_lord_regeneration is not playable in the sandbox; offered: ['Pass', 'Play Forest']",
       "scryfall_id": "2aeba907-5dc7-4dbb-b5a4-c86e8151f2ec",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Time Reaper": {
@@ -291672,12 +291672,12 @@
     },
     "Traverse Eternity": {
       "edhrec_rank": 8012,
-      "gate": "template",
+      "gate": null,
       "name": "Traverse Eternity",
-      "reason": "no template for: Draw cards equal to the greatest mana value among historic permanents you control",
+      "reason": "",
       "scryfall_id": "9c6c512b-adc8-4ce2-80e5-28a3b827d40f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Traverse the Outlands": {

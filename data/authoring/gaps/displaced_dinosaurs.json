@@ -1,0 +1,16 @@
+{
+  "card_id": "displaced_dinosaurs",
+  "name": "Displaced Dinosaurs",
+  "oracle_text": "As a historic permanent you control enters, it becomes a 7/7 Dinosaur creature in addition to its other types. (Artifacts, legendaries, and Sagas are historic.)",
+  "blocked_sentences": [
+    "As a historic permanent you control enters, it becomes a 7/7 Dinosaur creature in addition to its other types."
+  ],
+  "needs": [{
+    "capability": "enters_as_animated",
+    "kind": "replacement",
+    "what": "a static 'as another permanent enters' replacement on this permanent, filtered by a selector (controller you, any_of Artifact type / Legendary supertype / Saga subtype), that applies a lasting characteristic-changing effect to the entering permanent as it enters: adds the Creature type and Dinosaur subtype and sets base P/T 7/7, in addition to its other types, with no duration, so the change persists after Displaced Dinosaurs leaves and never touches historic permanents already on the battlefield",
+    "why_existing_wont_do": "The set_types/set_pt/add_subtype statics last only while the source is on the battlefield and also hit historic permanents that were already out; a permanent_enters trigger with the animate op (duration permanent) uses the stack, so the permanent enters as a noncreature and its own and others' enters-triggers see it that way and it can be responded to; enters_tapped and enters_with_additional_counters are the only as-enters replacements and neither changes types or P/T"
+  }],
+  "closest_existing": ["animate", "enters_with_additional_counters", "set_types", "set_pt"],
+  "confidence": "high"
+}

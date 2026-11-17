@@ -1,0 +1,25 @@
+{
+  "card_id": "the_curse_of_fenric",
+  "name": "The Curse of Fenric",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.\nII — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.\nIII — Target Mutant fights another target creature named Fenric.",
+  "blocked_sentences": [
+    "I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.",
+    "II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities."
+  ],
+  "needs": [
+    {
+      "capability": "mutant_3_3_g_deathtouch_token",
+      "kind": "token",
+      "what": "a 3/3 green Mutant creature token with deathtouch",
+      "why_existing_wont_do": "token_ids has no Mutant token; the nearest are beast_3_3_b_deathtouch (black Beast) and beast_3_3_g (no deathtouch), neither of which is the printed token"
+    },
+    {
+      "capability": "add_supertype",
+      "kind": "op",
+      "what": "a way for an effect to make a permanent legendary (add the Legendary supertype) alongside setting its base P/T, creature type and name, with permanent duration",
+      "why_existing_wont_do": "animate takes types, subtypes, power, toughness, colors and keywords but no supertypes; rename covers 'named Fenric' and lose_all_abilities covers the last clause, but no op in op_options writes a supertype"
+    }
+  ],
+  "closest_existing": ["animate", "rename", "lose_all_abilities", "beast_3_3_b_deathtouch"],
+  "confidence": "high"
+}

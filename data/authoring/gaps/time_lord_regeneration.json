@@ -1,0 +1,20 @@
+{
+  "card_id": "time_lord_regeneration",
+  "name": "Time Lord Regeneration",
+  "oracle_text": "Until end of turn, target Time Lord you control gains \"When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.\"",
+  "blocked_sentences": [
+    "Until end of turn, target Time Lord you control gains \"When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.\""
+  ],
+  "needs": [
+    {
+      "capability": "multiword_subtype_time_lord",
+      "kind": "engine",
+      "what": "the type-line split keeping \"Time Lord\" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming \"Time Lord\" matches none of them",
+      "why_existing_wont_do": "the target selector {\"subtypes\": [\"Time Lord\"]} compiles, but no permanent ever has that subtype, so the spell never has a legal target; naming \"Time\" or \"Lord\" alone would match the wrong things"
+    }
+  ],
+  "closest_existing": [
+    "exists"
+  ],
+  "confidence": "high"
+}

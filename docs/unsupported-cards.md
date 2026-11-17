@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**434 cards** blocked by **380** capabilities.
+**455 cards** blocked by **399** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
-| [council-s-dilemma](#council-s-dilemma) | 6 | 3539 | decision, op |
+| [council-s-dilemma](#council-s-dilemma) | 7 | 3539 | decision, op |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -33,6 +33,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
+| [planechase](#planechase) | 3 | 7274 | engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
@@ -49,12 +50,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
+| [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
+| [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
-| [planeswalk](#planeswalk) | 2 | 7274 | engine |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -63,6 +66,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
+| [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -76,10 +80,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
+| [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
+| [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
+| [alien-salamander-2-2-g-islandwalk-token](#alien-salamander-2-2-g-islandwalk-token) | 1 | 17360 | token |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [alien-warrior-token](#alien-warrior-token) | 1 | 6181 | token |
 | [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
@@ -139,7 +146,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
+| [convoke](#convoke) | 1 | 13212 | static_effect |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
+| [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
@@ -147,6 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
+| [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
@@ -165,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [draw-from-bottom](#draw-from-bottom) | 1 | 10400 | static_effect |
+| [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -176,6 +187,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
+| [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -202,6 +214,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [filtered-proliferate](#filtered-proliferate) | 1 | 17657 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -217,9 +230,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
-| [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -227,14 +240,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
+| [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
-| [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
 | [human-1-1-w-ward2-token](#human-1-1-w-ward2-token) | 1 | 18598 | token |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -242,6 +256,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
+| [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
+| [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
@@ -277,6 +293,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
+| [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
+| [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
@@ -327,6 +345,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
+| [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
@@ -348,6 +367,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
+| [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
@@ -356,7 +376,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -580,7 +599,7 @@ Blocks **9** cards.
 
 ## council-s-dilemma
 
-Blocks **6** cards.
+Blocks **7** cards.
 
 - **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
   <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
@@ -590,6 +609,8 @@ Blocks **6** cards.
   <br>Why the existing vocabulary won't do: for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player
 - **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
   <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(op)** a vote op (rule 701.38) over printed word options: starting with the ability's controller and going in turn order, each player votes for one of the named options (here 'innocent' or 'guilty'); the per-option tally is bound under an `as` (or exposed as a value key such as votes_for) so a following `if` can compare 'guilty gets more votes' against 'innocent' with a cmp, strictly greater so a tie does nothing
+  <br>Why the existing vocabulary won't do: No vote op is in reference ops. for_each_player can walk the players and choose_mode has a chooser, but nothing accumulates each player's choice into a per-option count, and no value key reads a vote tally, so 'if guilty gets more votes' cannot be said; join_forces pools mana, not votes. The rest of the chapter (cards exiled_with self moved to the bottom of their owners' libraries) and chapters I-III (exile_until until_leaves) look expressible once the vote exists
 - **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses one of N named options (here 'truth' or 'consequences'), then all votes are revealed at once; the op binds the tally per option under an `as` (e.g. {binding: 'votes.truth'}, {binding: 'votes.consequences'}) so later effects can size a draw by the truth count and a damage amount of 3 times the consequences count
   <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a vote; for_each_player wrapping choose_mode cannot accumulate a count per chosen option, nothing makes the choices secret and simultaneous, and value_keys has no vote tally to size the draw or the damage. join_forces is the closest per-player decision but collects mana payments, not a choice
 - **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
@@ -605,6 +626,8 @@ Blocks **6** cards.
   - You may put a permanent card from your hand onto the battlefield for each free vote.
 - **Mob Verdict** (rank 6957) — `mob_verdict`
   - Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.
+- **Trial of a Time Lord** (rank 10383) — `trial_of_a_time_lord`
+  - IV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library
 - **Truth or Consequences** (rank 10776) — `truth_or_consequences`
   - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
   - You draw cards equal to the number of truth votes.
@@ -1025,6 +1048,28 @@ Blocks **3** cards.
 
 </details>
 
+## planechase
+
+Blocks **3** cards.
+
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
+- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
+  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **TARDIS** (rank 7274) — `tardis`
+  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
+- **Start the TARDIS** (rank 13326) — `start_the_tardis`
+  - You may planeswalk.
+- **Susan Foreman** (rank 18784) — `susan_foreman`
+  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
+
+</details>
+
 ## random-player-choice
 
 Blocks **3** cards.
@@ -1332,6 +1377,42 @@ Blocks **2** cards.
 
 </details>
 
+## grant-cycling-to-cards-in-hand
+
+Blocks **2** cards.
+
+- **(static_effect)** a static on a permanent that grants an activated cycling ability ({2}{W}, discard that card: draw a card, is_cycling so the cycle trigger fires) to each card in its controller's HAND matching a filter -- here historic, i.e. any_of artifact / legendary supertype / Saga subtype -- recomputed continuously while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The grant_ability static and grant_keyword static only affect objects on the battlefield (the packet notes 'a granted activated ability works on the battlefield only'); cycling exists only as a card's own is_cycling ability with active_zones ["hand"], and no static_effect or affects filter reaches cards in hand. The historic filter itself is expressible with any_of, and the second line is a plain 'cycle' trigger with add_counters, so only the hand-zone grant is missing
+- **(static_effect)** a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: ["hand"]` only describe a card's own printed cycling, not one granted by another permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rhet-Tomb Mystic** (rank 5169) — `rhet_tomb_mystic`
+  - Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)
+- **Jo Grant** (rank 15774) — `jo_grant`
+  - Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)
+
+</details>
+
+## graveyard-play-shared-limit
+
+Blocks **2** cards.
+
+- **(static_effect)** a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all
+- **(static_effect)** one graveyard-play permission whose once-per-turn cap is shared between playing a land and casting a permanent spell from your graveyard (historic = Artifact, Legendary supertype, or Saga subtype), on your turns only
+  <br>Why the existing vocabulary won't do: cast_from_graveyard (static_max_per_turn) and play_lands_from_graveyard are separate statics with separate meters, so writing both lets you play a historic land AND cast a historic spell in the same turn; neither can be told to spend the other's use
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra Paragon** (rank 3531) — `serra_paragon`
+  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+- **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
+  - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+
+</details>
+
 ## lure
 
 Blocks **2** cards.
@@ -1367,6 +1448,24 @@ Blocks **2** cards.
   - Whenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
 - **We Ride at Dawn** (rank 9389) — `we_ride_at_dawn`
   - Whenever your commander attacks, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
+## multiword-subtype-time-lord
+
+Blocks **2** cards.
+
+- **(engine)** the type-line split keeping "Time Lord" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming "Time Lord" matches none of them
+  <br>Why the existing vocabulary won't do: the target selector {"subtypes": ["Time Lord"]} compiles, but no permanent ever has that subtype, so the spell never has a legal target; naming "Time" or "Lord" alone would match the wrong things
+- **(engine)** the type-line split keeping "Time Lord" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming "Time Lord" matches none of them
+  <br>Why the existing vocabulary won't do: the condition {"exists": {"subtypes": ["Time Lord"]}} compiles, but no permanent ever has that subtype, so the ability can never be activated; naming "Time" or "Lord" alone would match the wrong things
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trenzalore Clocktower** (rank 4613) — `trenzalore_clocktower`
+  - {1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.
+- **Time Lord Regeneration** (rank 14672) — `time_lord_regeneration`
+  - Until end of turn, target Time Lord you control gains "When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
 
 </details>
 
@@ -1422,24 +1521,6 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
-
-</details>
-
-## planeswalk
-
-Blocks **2** cards.
-
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **TARDIS** (rank 7274) — `tardis`
-  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
-- **Start the TARDIS** (rank 13326) — `start_the_tardis`
-  - You may planeswalk.
 
 </details>
 
@@ -1587,6 +1668,25 @@ Blocks **2** cards.
 - **Hot Pursuit** (rank 6258) — `hot_pursuit`
   - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
   - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+
+</details>
+
+## switch-power-toughness
+
+Blocks **2** cards.
+
+- **(op)** an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec
+  <br>Why the existing vocabulary won't do: set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch
+- **(op)** an op that switches the power and toughness of every creature matched by a selector (here each creature on the battlefield, any controller) until end of turn, as a layer-7d effect (613.4d) applied after every other P/T effect so pumps and counters are included in the swap
+  <br>Why the existing vocabulary won't do: set_pt takes only objects/power/toughness: it sets constants (or snapshots power_of/toughness_of in layer 7b, ignoring later pumps and counters) and has no duration for 'until end of turn'; pump adds constants. No op or static in reference performs the layer-7d switch
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
+  - • Switch each creature's power and toughness until end of turn.
+  - • Counter all other spells.
+- **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
+  - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
 
 </details>
 
@@ -1811,6 +1911,21 @@ Blocks **1** card.
 
 </details>
 
+## add-supertype
+
+Blocks **1** card.
+
+- **(op)** a way for an effect to make a permanent legendary (add the Legendary supertype) alongside setting its base P/T, creature type and name, with permanent duration
+  <br>Why the existing vocabulary won't do: animate takes types, subtypes, power, toughness, colors and keywords but no supertypes; rename covers 'named Fenric' and lose_all_abilities covers the last clause, but no op in op_options writes a supertype
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
+  - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
+  - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
+
+</details>
+
 ## additional-cost-target
 
 Blocks **1** card.
@@ -1853,6 +1968,20 @@ Blocks **1** card.
 
 </details>
 
+## alien-insect-1-1-gw-flying-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green and white Alien Insect creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has insect_1_1_b_flying (black, no Alien), insect_1_1_g, insect_1_1_bg, insect_1_1_g_flying_deathtouch and insect_2_1_w_flying, but no green-white 1/1 Alien Insect with flying; substituting any of them changes colour, subtype or P/T
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vrestin, Menoptra Leader** (rank 13408) — `vrestin_menoptra_leader`
+  - When Vrestin enters, create X 1/1 green and white Alien Insect creature tokens with flying.
+
+</details>
+
 ## alien-rhino-4-4-w-token
 
 Blocks **1** card.
@@ -1864,6 +1993,20 @@ Blocks **1** card.
 
 - **Fugitive of the Judoon** (rank 18598) — `fugitive_of_the_judoon`
   - I — Create a 1/1 white Human creature token with ward {2} and a 4/4 white Alien Rhino creature token.
+
+</details>
+
+## alien-salamander-2-2-g-islandwalk-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 green Alien Salamander creature token with islandwalk
+  <br>Why the existing vocabulary won't do: token_ids has salamander_warrior_4_3_u (a 4/3 blue Salamander Warrior), squid_1_1_u_islandwalk and plain 2/2 green tokens (wolf_2_2_g, boar_2_2_g, cat_2_2_g, elemental_2_2_g), none of which is a 2/2 green Alien Salamander with islandwalk; chapter III keys on the Salamander subtype, so a substitute token would also break chapter III
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Sea Devils** (rank 17360) — `the_sea_devils`
+  - I, II — Create a 2/2 green Alien Salamander creature token with islandwalk. (It can't be blocked as long as defending player controls an Island.)
 
 </details>
 
@@ -2710,6 +2853,20 @@ Blocks **1** card.
 
 </details>
 
+## convoke
+
+Blocks **1** card.
+
+- **(static_effect)** a per-turn 'first spell' limit on the grant_pay_generic_with static (pay_generic_with: tap_creatures): only the first spell matching affects_spells that you cast each turn gains convoke, counted over the turn's casts (spells cast before the granter arrived included), with a historic spell filter (Artifact OR Legendary supertype OR Saga subtype, a union over affects_spells)
+  <br>Why the existing vocabulary won't do: grant_pay_generic_with hands convoke to every spell matching affects_spells with no turn counter (player_statics.granted_pay_generic_with); static_max_per_turn is accepted only on cast_from_graveyard and first_each_turn only on ability_cost_reduction; and affects_spells has no any_of union to say 'artifact or legendary or Saga', so writing it would grant convoke to every historic spell (or only one of the three kinds)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Peri Brown** (rank 13212) — `peri_brown`
+  - The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)
+
+</details>
+
 ## copy-all-on-stack
 
 Blocks **1** card.
@@ -2721,6 +2878,20 @@ Blocks **1** card.
 
 - **Ulalek, Fused Atrocity** (rank 4558) — `ulalek_fused_atrocity`
   - Whenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies
+
+</details>
+
+## copy-spell-except-nonlegendary
+
+Blocks **1** card.
+
+- **(op)** an `except` modifier on `copy_spell` that removes the Legendary supertype from the copy (707.9b), so a copied legendary permanent spell resolves as a nonlegendary token and does not fall to the legend rule against the original
+  <br>Why the existing vocabulary won't do: copy_spell carries only amount, controller, new_targets, sid, spells, target and this_spell; put_copy_on_stack copies the original's characteristics unchanged. copy_permanent has `except`/`except_` but acts on a permanent on the battlefield, not a spell on the stack. The trigger itself is sayable (spell_cast with filter any_of Artifact / Legendary supertype / Saga subtype, max_per_turn 1), but dropping the except clause would make a legendary copy die to the legend rule
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Sixth Doctor** (rank 6462) — `the_sixth_doctor`
+  - Time Lord's Prerogative — Whenever you cast a historic spell, copy it, except the copy isn't legendary. This ability triggers only once each turn
 
 </details>
 
@@ -2820,6 +2991,21 @@ Blocks **1** card.
 
 - **Not of This World** (rank 2461) — `not_of_this_world`
   - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
+
+</details>
+
+## counter-all-spells
+
+Blocks **1** card.
+
+- **(op)** the counter op applied to every spell on the stack other than this one, chosen by a stack selector rather than a target ('Counter all other spells', untargeted, so hexproof-like and target-legality rules do not apply)
+  <br>Why the existing vocabulary won't do: op_counter (ops_stack.py) resolves its victims only from `sid` or from the `target` id's chosen sids; although `objects` appears in its op_options, the op body never reads it, so there is no way to name 'all spells except this one' without inventing targets the card does not have
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
+  - • Switch each creature's power and toughness until end of turn.
+  - • Counter all other spells.
 
 </details>
 
@@ -3081,6 +3267,20 @@ Blocks **1** card.
 
 </details>
 
+## draw-trigger-except-first-in-draw-step
+
+Blocks **1** card.
+
+- **(trigger_event)** a `draw` trigger key (e.g. `except_first_in_draw_step: true`) that skips the drawing player's first card drawn during their own draw step, read off the existing `state.cards_drawn_this_draw_step` ledger, so the trigger fires on every other draw by an opponent
+  <br>Why the existing vocabulary won't do: `except_first_in_draw_step` exists only on the `replace_draw` player static, not in `trigger_keys`; the `draw` trigger's `nth`/`max_per_turn` count per turn, not per draw step; a `condition` built from `step_is` plus `cards_drawn_this_turn` miscounts draws made earlier in the turn (upkeep) and cannot ask whether the drawer is the active player in their own draw step
+
+<details><summary>Cards waiting on this</summary>
+
+- **Leela, Sevateem Warrior** (rank 17497) — `leela_sevateem_warrior`
+  - Whenever an opponent draws a card except the first one they draw in each of their draw steps, put a +1/+1 counter on Leela.
+
+</details>
+
 ## each-player-chooses-color
 
 Blocks **1** card.
@@ -3235,6 +3435,20 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
+
+</details>
+
+## enters-as-animated
+
+Blocks **1** card.
+
+- **(replacement)** a static 'as another permanent enters' replacement on this permanent, filtered by a selector (controller you, any_of Artifact type / Legendary supertype / Saga subtype), that applies a lasting characteristic-changing effect to the entering permanent as it enters: adds the Creature type and Dinosaur subtype and sets base P/T 7/7, in addition to its other types, with no duration, so the change persists after Displaced Dinosaurs leaves and never touches historic permanents already on the battlefield
+  <br>Why the existing vocabulary won't do: The set_types/set_pt/add_subtype statics last only while the source is on the battlefield and also hit historic permanents that were already out; a permanent_enters trigger with the animate op (duration permanent) uses the stack, so the permanent enters as a noncreature and its own and others' enters-triggers see it that way and it can be responded to; enters_tapped and enters_with_additional_counters are the only as-enters replacements and neither changes types or P/T
+
+<details><summary>Cards waiting on this</summary>
+
+- **Displaced Dinosaurs** (rank 4716) — `displaced_dinosaurs`
+  - As a historic permanent you control enters, it becomes a 7/7 Dinosaur creature in addition to its other types.
 
 </details>
 
@@ -3609,6 +3823,20 @@ Blocks **1** card.
 
 </details>
 
+## filtered-proliferate
+
+Blocks **1** card.
+
+- **(op)** a proliferate restricted to permanents matching a selector (here not_subtypes: ["Saga"]) and excluding players: for each matching permanent with counters, choose one kind of counter on it and optionally add one more of that kind
+  <br>Why the existing vocabulary won't do: proliferate takes only `as` and covers every permanent and player, so it would add lore counters to Sagas (this one included, advancing its own chapters) and poison/energy to players; add_counters needs a fixed counter kind, and move_counters/double_counters do not add one of a chosen existing kind per permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Caves of Androzani** (rank 17657) — `the_caves_of_androzani`
+  - II, III — For each non-Saga permanent, choose a counter on it. You may put an additional counter of that kind on that permanent.
+
+</details>
+
 ## first-mate-ragavan
 
 Blocks **1** card.
@@ -3829,6 +4057,20 @@ Blocks **1** card.
 
 </details>
 
+## goad-while-source-on-battlefield
+
+Blocks **1** card.
+
+- **(op)** a goad duration tied to the source: the `goad` op with a clock like `duration: "while_source_on_battlefield"` (the O-Ring `until_leaves` link applied to goad), so the goad mark set by the Saga's controller ends exactly when the Saga leaves the battlefield and does not expire at the goader's next turn; applied to the tokens every player just created (an `as` binding over each player's create_token inside for_each_player)
+  <br>Why the existing vocabulary won't do: op_goad reads only `duration: "permanent"` (rest of the game) or the default 701.38 clock (until the goader's next turn); neither matches 'for as long as this Saga remains on the battlefield' — the default ends a turn cycle early while the Saga sits at chapters II-IV, and permanent outlives the Saga's sacrifice after IV
+
+<details><summary>Cards waiting on this</summary>
+
+- **The War Games** (rank 13656) — `the_war_games`
+  - I — Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield.
+
+</details>
+
 ## goad-without-goaded
 
 Blocks **1** card.
@@ -3854,20 +4096,6 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
-
-</details>
-
-## grant-cycling-to-cards-in-hand
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: ["hand"]` only describe a card's own printed cycling, not one granted by another permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rhet-Tomb Mystic** (rank 5169) — `rhet_tomb_mystic`
-  - Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)
 
 </details>
 
@@ -3969,6 +4197,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-cast-exile-on-leave
+
+Blocks **1** card.
+
+- **(static_effect)** a rider on a graveyard-play permission (like its enters_tapped rider) that gives the land or permanent played/cast under it the replacement "If this permanent would leave the battlefield, exile it instead of putting it anywhere else"
+  <br>Why the existing vocabulary won't do: replace_leaves_battlefield exists only as an op run by a resolving effect (Whip of Erebos, Spirit-Sister's Call); a static permission has no rider that applies it to the permanent that used the permission, and enters_tapped is the only such rider
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
+  - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+
+</details>
+
 ## graveyard-cast-per-permanent-type
 
 Blocks **1** card.
@@ -4026,20 +4268,6 @@ Blocks **1** card.
 
 </details>
 
-## graveyard-play-shared-limit
-
-Blocks **1** card.
-
-- **(static_effect)** a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra Paragon** (rank 3531) — `serra_paragon`
-  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
-
-</details>
-
 ## graveyard-trigger-cast-self
 
 Blocks **1** card.
@@ -4080,6 +4308,20 @@ Blocks **1** card.
 
 - **Zenith Festival** (rank 7442) — `zenith_festival`
   - Harmonize {X}{R}{R}
+
+</details>
+
+## hidden-card-guess
+
+Blocks **1** card.
+
+- **(decision)** an op that has the controller secretly choose one card in their own hand and bind it (`as`), without casting or revealing it, followed by a binary guess made by the defending player ("greater" / "not greater") that is compared against `mana_value_of` the bound card versus the count of artifacts you control; then a free cast of exactly that bound hand card (optional, playable_free) whose outcome is bound so a following `if` can read "you didn't cast a spell this way" and investigate
+  <br>Why the existing vocabulary won't do: choose_permanents chooses only battlefield objects, so nothing binds a card in hand without moving it; cast_from_hand casts at once with no prior hidden choice, so the guess cannot come between the choice and the cast; choose_mode with a `chooser` could carry the opponent's two-way guess but has nothing to compare it to, and there is no value or condition that reports whether the optional free cast happened (the 'if you don't cast a spell this way' branch, which also covers a land or an uncastable card)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Seventh Doctor** (rank 10904) — `the_seventh_doctor`
+  - Whenever The Seventh Doctor attacks, choose a card in your hand. Defending player guesses whether that card's mana value is greater than the number of artifacts you control. If they guessed wrong, you may cast it without paying its mana cost. If you don't cast a spell this way, investigate.
 
 </details>
 
@@ -4178,6 +4420,34 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
+
+</details>
+
+## library-top-play-shared-limit
+
+Blocks **1** card.
+
+- **(static_effect)** one library-top play permission whose once-per-turn cap is shared between playing a land and casting a spell from the top of your library, filtered to historic cards (any_of: Artifact type, Legendary supertype, Saga subtype) for both the land and the spell
+  <br>Why the existing vocabulary won't do: cast_from_library_top and play_lands_from_library_top are separate statics: play_lands_from_library_top takes no card filter (it would allow any land, not only historic ones) and no per-turn cap, cast_from_library_top's affects_spells (LIBRARY_TOP_CAST_FILTER_KEYS) has no any_of so 'artifact OR legendary OR Saga' cannot be said, and writing both would give two independent meters (a land AND a spell each turn) instead of one shared use
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Fourth Doctor** (rank 9924) — `the_fourth_doctor`
+  - Would You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)
+
+</details>
+
+## library-top-play-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'when you do' trigger that fires when this permanent's permission is used to play a land or cast a spell from the top of the library, so it can create_token food_token
+  <br>Why the existing vocabulary won't do: spell_cast and land_played triggers with from_zones: ["library"] fire for any library cast or play (another permission, a cascade, etc.), not specifically the use of this permission; no permission static carries a rider effect run on use (enters_tapped and cast_gains_keywords are the only riders)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Fourth Doctor** (rank 9924) — `the_fourth_doctor`
+  - Would You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)
 
 </details>
 
@@ -4679,6 +4949,35 @@ Blocks **1** card.
 
 - **Madame Vastra** (rank 19620) — `madame_vastra`
   - Madame Vastra must be blocked if able.
+
+</details>
+
+## must-be-blocked-if-able
+
+Blocks **1** card.
+
+- **(static_effect)** an attacker-side block requirement static: as long as the affected creature (here `affects: {attached: true, attacking: true}`) is attacking, the defending player must block it with at least one creature matching a blocker filter (here `subtypes: ["Dalek"]`) if able (509.1c), enforced in combat.blocks_valid / unmet_block_requirements beside provoke and the lure family
+  <br>Why the existing vocabulary won't do: `block_restriction` is the opposite direction (narrows who MAY block, 'can't be blocked except by'); the `must_block` op is a one-shot flag on a specific blocker naming an attacker, set by a resolving effect, so it cannot express a continuous requirement that applies to whichever Daleks the defender controls at declare-blockers; `must_block_any` names no attacker and is likewise a one-shot op. The first-strike half is expressible (grant_keyword static on attached+attacking) but the sentence cannot be split without dropping the Dalek clause
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ace's Baseball Bat** (rank 11381) — `ace_s_baseball_bat`
+  - As long as equipped creature is attacking, it has first strike and must be blocked by a Dalek if able.
+
+</details>
+
+## mutant-3-3-g-deathtouch-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 green Mutant creature token with deathtouch
+  <br>Why the existing vocabulary won't do: token_ids has no Mutant token; the nearest are beast_3_3_b_deathtouch (black Beast) and beast_3_3_g (no deathtouch), neither of which is the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
+  - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
+  - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
 
 </details>
 
@@ -5399,6 +5698,20 @@ Blocks **1** card.
 
 </details>
 
+## replicate
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants replicate to spells you cast matching a spell filter (subtypes: ["Saga"]), with the replicate cost equal to that spell's own mana cost: an additional cost payable any number of times on cast, and on cast a trigger copies the spell once per payment, with copies of permanent spells (Sagas) resolving into tokens
+  <br>Why the existing vocabulary won't do: No replicate exists anywhere in the reference: card_level_cost_keys has additional_repeatable and multikicker, but those are a card's own printed costs and cannot be granted to other spells; no static effect grants an additional or repeatable cost to spells (grant_warp, grant_miracle, granted_alternative_cost and cast_gains_keywords cover other mechanics); copy_spell copies a spell but nothing ties it to a count of cost payments, and nothing makes a copied permanent spell become a token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ian Chesterton** (rank 12791) — `ian_chesterton`
+  - Science Teacher — Each Saga spell you cast has replicate. The replicate cost is equal to its mana cost
+
+</details>
+
 ## retrace
 
 Blocks **1** card.
@@ -5706,6 +6019,20 @@ Blocks **1** card.
 
 </details>
 
+## spell-has-cascade-filter
+
+Blocks **1** card.
+
+- **(selector)** a spell_cast trigger filter matching a spell that has cascade (printed or granted, e.g. by Wildsear or Rain of Riches) -- a filter key such as `has_cascade: true` or `keywords: ["cascade"]` that the trigger's filter reads off the spell on the stack
+  <br>Why the existing vocabulary won't do: Cascade is not in the keyword list; it is written as a triggered ability on the stack whose effect is the `cascade` op, so the trigger filter's `keywords` cannot name it, and `trigger_filter_keys` has nothing (no `ability_kind` or ability-op test) that asks whether a spell carries a cascade ability. The first sentence is expressible as Tower Winder's search_zones over library and graveyard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The First Doctor** (rank 12447) — `the_first_doctor`
+  - Whenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature.
+
+</details>
+
 ## spells-cast-per-player
 
 Blocks **1** card.
@@ -5818,20 +6145,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## switch-power-toughness
-
-Blocks **1** card.
-
-- **(op)** an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec
-  <br>Why the existing vocabulary won't do: set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
-  - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
 
 </details>
 

@@ -1,0 +1,25 @@
+{
+  "card_id": "reverse_the_polarity",
+  "name": "Reverse the Polarity",
+  "oracle_text": "Choose one —\n• Counter all other spells.\n• Switch each creature's power and toughness until end of turn.\n• Creatures can't be blocked this turn.",
+  "blocked_sentences": [
+    "• Switch each creature's power and toughness until end of turn.",
+    "• Counter all other spells."
+  ],
+  "needs": [
+    {
+      "capability": "switch_power_toughness",
+      "kind": "op",
+      "what": "an op that switches the power and toughness of every creature matched by a selector (here each creature on the battlefield, any controller) until end of turn, as a layer-7d effect (613.4d) applied after every other P/T effect so pumps and counters are included in the swap",
+      "why_existing_wont_do": "set_pt takes only objects/power/toughness: it sets constants (or snapshots power_of/toughness_of in layer 7b, ignoring later pumps and counters) and has no duration for 'until end of turn'; pump adds constants. No op or static in reference performs the layer-7d switch"
+    },
+    {
+      "capability": "counter_all_spells",
+      "kind": "op",
+      "what": "the counter op applied to every spell on the stack other than this one, chosen by a stack selector rather than a target ('Counter all other spells', untargeted, so hexproof-like and target-legality rules do not apply)",
+      "why_existing_wont_do": "op_counter (ops_stack.py) resolves its victims only from `sid` or from the `target` id's chosen sids; although `objects` appears in its op_options, the op body never reads it, so there is no way to name 'all spells except this one' without inventing targets the card does not have"
+    }
+  ],
+  "closest_existing": ["set_pt", "pump", "counter", "unblockable"],
+  "confidence": "high"
+}

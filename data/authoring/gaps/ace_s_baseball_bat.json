@@ -1,0 +1,16 @@
+{
+  "card_id": "ace_s_baseball_bat",
+  "name": "Ace's Baseball Bat",
+  "oracle_text": "Equipped creature gets +3/+0.\nAs long as equipped creature is attacking, it has first strike and must be blocked by a Dalek if able.\nEquip legendary creature {1}\nEquip {3}",
+  "blocked_sentences": [
+    "As long as equipped creature is attacking, it has first strike and must be blocked by a Dalek if able."
+  ],
+  "needs": [{
+    "capability": "must_be_blocked_if_able",
+    "kind": "static_effect",
+    "what": "an attacker-side block requirement static: as long as the affected creature (here `affects: {attached: true, attacking: true}`) is attacking, the defending player must block it with at least one creature matching a blocker filter (here `subtypes: [\"Dalek\"]`) if able (509.1c), enforced in combat.blocks_valid / unmet_block_requirements beside provoke and the lure family",
+    "why_existing_wont_do": "`block_restriction` is the opposite direction (narrows who MAY block, 'can't be blocked except by'); the `must_block` op is a one-shot flag on a specific blocker naming an attacker, set by a resolving effect, so it cannot express a continuous requirement that applies to whichever Daleks the defender controls at declare-blockers; `must_block_any` names no attacker and is likewise a one-shot op. The first-strike half is expressible (grant_keyword static on attached+attacking) but the sentence cannot be split without dropping the Dalek clause"
+  }],
+  "closest_existing": ["block_restriction", "must_block", "must_block_any"],
+  "confidence": "high"
+}

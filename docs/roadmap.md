@@ -79,7 +79,7 @@ each heading; this table is generated from them.
 | [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | Every creature type means every creature type | 0 |
 | [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
-| [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | nothing | 0 |
+| [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | nothing | 0 |
 | [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) | L | high | nothing | 0 |
@@ -119,11 +119,12 @@ each heading; this table is generated from them.
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
+| [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 7 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 8 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 5 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
@@ -146,6 +147,7 @@ each heading; this table is generated from them.
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
+| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 1 |
 
 ## What to do next
 
@@ -157,45 +159,45 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-3. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-4. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-5. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-6. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-7. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-8. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-9. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-10. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-11. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-12. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-13. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-14. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-15. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-16. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-17. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-18. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-19. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-20. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-21. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-22. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-23. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-24. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-25. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-26. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-27. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-28. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-29. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-30. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-31. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-32. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-33. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-34. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-35. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-36. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-37. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-38. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-39. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-40. [Difficulty](#difficulty) — S, medium
+2. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+3. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+4. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+5. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+6. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+7. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+8. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+9. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+10. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+11. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+12. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+13. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+14. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+15. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+16. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+17. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+18. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+19. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+20. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+21. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+22. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+23. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+24. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+25. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+26. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+27. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+28. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+29. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+30. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+31. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+32. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+33. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+34. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+35. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+36. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+37. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+38. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+39. [Difficulty](#difficulty) — S, medium
+40. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
 41. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 42. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
 43. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
@@ -222,6 +224,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 64. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
 65. [Archidekt import](#archidekt-import) — S, low
 66. [Sound](#sound) — S, low
+67. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -253,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
 - [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
+- [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -407,6 +411,61 @@ cue that waits on a file load would be a lag the narration must never have;
 and the mute setting's e2e assertion still passes.
 
 ## Cards
+
+### Time Lord as one creature type
+
+Effort **S** · Impact **medium**, every Doctor Who card that names a Time Lord waits on it, Trenzalore Clocktower and Time Lord Regeneration in the Blast from the Past precon among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+"Time Lord" is a single creature type (205.3m), the only one printed as two
+words. `cards.proxy.split_type_line` splits the subtypes after the dash on
+whitespace (`right.split()`), so every Time Lord the pool ships carries the two
+subtypes `Time` and `Lord`: The Second, Third, Fifth and Thirteenth Doctor,
+Romana II and The Master, Mesmerist. `SUBTYPE_CLASS` in `engine/enums.py`
+knows neither word, so `characteristics` files both as creature types.
+
+A selector naming the type, `{"subtypes": ["Time Lord"]}`, compiles and
+matches nothing. So Trenzalore Clocktower's "Activate only if you control a
+Time Lord" can never be met, and Time Lord Regeneration's "target Time Lord you
+control" never has a target. Both cards are gapped under
+`multiword_subtype_time_lord` (`data/authoring/gaps/trenzalore_clocktower.json`,
+`data/authoring/gaps/time_lord_regeneration.json`), and TARDIS names a Time
+Lord too. Naming `Time` or `Lord` alone would match the wrong things: `Lord`
+is not a creature type, and a changeling would count twice.
+
+#### The change
+
+1. `split_type_line` keeps a known multi-word subtype whole: a small table of
+   the printed multi-word subtypes ("Time Lord"), joined before the split, so
+   no whitelist of ordinary subtypes is needed.
+2. `SUBTYPE_CLASS` learns `Time Lord` as a creature type, so changeling and
+   `shares_a_creature_type_with` read it as one.
+3. The six shipped Time Lords are re-collected through `--collect` with
+   `["Time Lord", ...]` in place of `Time` and `Lord`, never hand-edited, and
+   the golden pool and `registry_images.json` are re-pinned.
+4. Trenzalore Clocktower and Time Lord Regeneration are authored again, in
+   the same pull request, now that their selector matches.
+
+It does not touch any other subtype.
+
+#### Gate
+
+A unit test under `tests/unit/` that `split_type_line("Legendary Creature —
+Time Lord Doctor")` yields `["Time Lord", "Doctor"]`, and that a permanent
+with that type line matches `{"subtypes": ["Time Lord"]}` and not
+`{"subtypes": ["Lord"]}`; `tests/cards` green over the re-collected cards, with
+Trenzalore Clocktower's activated ability reached by the ability sandbox.
+
+#### Open questions
+
+- **Where the joined name lives.** A table in `cards/proxy.py`, or a
+  multi-word entry in `SUBTYPE_CLASS` that the splitter reads? Recommended: the
+  splitter reads `SUBTYPE_CLASS`, so the engine's list of subtypes stays the
+  one place a name is known.
+- **Hand-written cards.** None print a Time Lord today; should the loader
+  refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
+  bring the split back? Recommended: yes, a loader error naming "Time Lord".
 
 ### Voting: will of the council and council's dilemma
 
@@ -2994,7 +3053,7 @@ whole-game test able to draw the deck.
 
 ### Blast from the Past (Doctor Who)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
@@ -3004,7 +3063,12 @@ coming-soon shell on the shelf: its row `who_blast_from_the_past` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing who_blast_from_the_past` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+attempted card waits on. Every card has been attempted once; TARDIS and Susan
+Foreman wait on planeswalking ([planechase](planechase.md)), Trial of a Time
+Lord on council's dilemma ([voting](voting.md)), and Trenzalore Clocktower and
+Time Lord Regeneration on the Time Lord creature type
+([time-lord-subtype](time-lord-subtype.md)), so the deck cannot be whole until
+those land.
 
 #### The change
 
@@ -5332,6 +5396,61 @@ adapter does.
 A test with a real, trimmed Archidekt payload beside `moxfield_deck.json`,
 run through `importer.import_deck` as a dry run, asserting the same cards
 resolve the same way as the equivalent Moxfield list.
+
+### Planechase: the planar deck and planeswalking
+
+Effort **L** · Impact **low**, every card that planeswalks waits on it, TARDIS and Susan Foreman in the Blast from the Past precon among them · Depends on nothing · ADR first · Awaiting decisions.
+
+#### Today
+
+Planechase (901) is absent. A game is built from each seat's library and
+commander; nothing in `engine/state.py` holds a planar deck, a face-up plane or
+phenomenon, or the planar die, and no op in the DSL planeswalks (701.31) or
+makes chaos ensue (901.9). `Zone.COMMAND` exists in `engine/enums.py` for
+commanders and emblems only.
+
+The Doctor Who precons print the action on ordinary cards, outside a
+Planechase game: TARDIS ("you may planeswalk"), Start the TARDIS ("Surveil 2,
+then draw a card. Then you may planeswalk.") and Susan Foreman ("If you would
+planeswalk, instead…"), all gapped under `planechase`
+(`data/authoring/gaps/tardis.json`, `start_the_tardis.json`,
+`susan_foreman.json`). Missy and the "whenever chaos ensues" cards wait on the
+chaos half of the same rules.
+
+#### The change
+
+1. The ADR first: whether a game may carry a planar deck at all, and what a
+   planeswalk instruction does in a game without one. 901.1 makes Planechase a
+   variant, so in a game that is not one, "planeswalk" finds no planar deck and
+   does nothing; the ADR records whether that is the whole of this item.
+2. A `planeswalk` op that is a recorded no-op without a planar deck, and the
+   `if you would planeswalk` replacement shape for Susan Foreman, so the
+   Doctor Who cards can be written faithfully for a standard Commander game.
+3. Only if the ADR chooses the full variant: a planar deck per game in
+   `GameState`, the face-up plane in the command zone, the planar die as a
+   player action, `planeswalk` and `chaos_ensues` events, and plane cards in
+   the catalog. That step is its own pull request.
+
+It does not add plane cards to any precon, and it changes no shipped deck.
+
+#### Gate
+
+A unit test under `tests/unit/` per step: a `planeswalk` in a game with no
+planar deck leaves the state unchanged and fires no trigger; the Susan
+Foreman replacement is offered only when a planeswalk would happen. With the
+full variant, a server test that a game started with a planar deck rolls the
+die and turns over the next plane.
+
+#### Open questions
+
+- **Variant or no-op.** Build the full Planechase variant, or only the
+  instruction's meaning in a game without a planar deck? Recommended: the
+  no-op first, because every card that found this prints the action in a
+  Commander precon, and the site plays Commander, not Planechase.
+- **Is a no-op a card that does nothing?** `card-dsl.md` refuses "a card that
+  looks implemented and does nothing". Recommended: allowed here, because the
+  rules give the instruction no effect without a planar deck (901.1), and the
+  ADR says so.
 
 ## The Steam Deck build
 
