@@ -276907,6 +276907,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has indestructible."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flash_if_targets": {
+        "is_commander": true
+      },
+      "id": "timely_ward",
+      "mana_cost": "{2}{W}",
+      "name": "Timely Ward",
+      "oracle_text": "You may cast this spell as though it had flash if it targets a commander.\nEnchant creature\nEnchanted creature has indestructible.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "has_city_s_blessing": "you"
           },

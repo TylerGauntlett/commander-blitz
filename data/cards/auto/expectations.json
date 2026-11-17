@@ -22824,6 +22824,9 @@
     },
     "zone": "battlefield"
   },
+  "timely_ward": {
+    "zone": "battlefield"
+  },
   "timestream_navigator": {
     "battlefield_count": 33,
     "zone": "battlefield"

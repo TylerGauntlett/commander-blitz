@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**480 cards** blocked by **430** capabilities.
+**479 cards** blocked by **429** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -232,7 +232,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
-| [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretell](#foretell) | 1 | 9914 | op |
@@ -4124,20 +4123,6 @@ Blocks **1** card.
   - Look at the cards in the other pile.
   - You may cast a spell from among them without paying its mana cost.
   - Put the rest into your hand.
-
-</details>
-
-## flash-if-targets
-
-Blocks **1** card.
-
-- **(engine)** a card-level conditional flash permission whose condition reads the targets chosen for the spell itself: the card may be cast at instant speed only when its chosen target (here the Aura's enchant target) matches a selector such as `is_commander: true`. The cast must allow the card to be begun outside sorcery timing, then verify at target selection (601.2c) that the target matches, and reject/rewind the cast if it does not -- the same shape Ranger's Guile-style 'if it targets' riders and Nature's Way/Savage Smash-adjacent 'cast as though it had flash if' printings need
-  <br>Why the existing vocabulary won't do: `flash` is unconditional; the `cast_as_though_flash` static is a player-wide permission whose `affects_spells` filter reads only the printed characteristics of the face being cast and whose `condition` reads the board (static_condition_keys), never the spell's chosen targets; `grant_flash_permission` is a one-shot op from another source. `casting._timing_ok` decides timing from the CardDef and player statics before targets exist, so nothing can make timing depend on what the spell targets. Writing plain `flash` would be strictly better than the printed card (instant-speed Aura on any creature)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Timely Ward** (rank 1651) — `timely_ward`
-  - You may cast this spell as though it had flash if it targets a commander.
 
 </details>
 

@@ -287642,12 +287642,12 @@
     },
     "Timely Ward": {
       "edhrec_rank": 1651,
-      "gate": "template",
+      "gate": null,
       "name": "Timely Ward",
-      "reason": "no template for: You may cast this spell as though it had flash if it targets a commander",
+      "reason": "",
       "scryfall_id": "d61f8db1-0148-47bd-ae97-9aedccb83813",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timesifter": {
