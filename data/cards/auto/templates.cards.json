@@ -96322,6 +96322,56 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "free_the_fae",
+      "mana_cost": "{1}{U}",
+      "name": "Free the Fae",
+      "oracle_text": "Mill four cards. Then put an instant, sorcery, or Faerie card from among the milled cards into your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "as": "milled",
+          "op": "mill",
+          "player": "you"
+        },
+        {
+          "destination": "hand",
+          "objects": {
+            "any_of": [
+              {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Faerie"
+                ]
+              }
+            ],
+            "binding": "milled",
+            "count": 1
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -176007,6 +176057,72 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nightmare_unmaking",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Nightmare Unmaking",
+      "oracle_text": "Choose one —\n• Exile each creature with power greater than the number of cards in your hand.\n• Exile each creature with power less than the number of cards in your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "power": {
+                      "op": ">",
+                      "value": {
+                        "cards_in_hand": "you"
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile each creature with power greater than the number of cards in your hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "power": {
+                      "op": "<",
+                      "value": {
+                        "cards_in_hand": "you"
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile each creature with power less than the number of cards in your hand."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -178295,6 +178411,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first spell during each opponent's turn, look at the top two cards of your library. Put one of those cards into your hand and the other into your graveyard.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": false
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "nymris_oona_s_trickster",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{B}",
+      "name": "Nymris, Oona's Trickster",
+      "oracle_text": "Flash\nFlying\nWhenever you cast your first spell during each opponent's turn, look at the top two cards of your library. Put one of those cards into your hand and the other into your graveyard.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "no_hand_limit",
           "kind": "static",
@@ -180382,6 +180557,62 @@
         "Giant"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Faerie you control enters, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Faerie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "obyra_dreaming_duelist",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{U}{B}",
+      "name": "Obyra, Dreaming Duelist",
+      "oracle_text": "Flash\nFlying\nWhenever another Faerie you control enters, each opponent loses 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -191210,6 +191441,35 @@
       ]
     },
     {
+      "adventure": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "picklock_prankster_free_the_fae",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Picklock Prankster // Free the Fae",
+      "oracle_text": "Flying, vigilance",
+      "power": 1,
+      "second_face": "free_the_fae",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "behold": {
           "subtypes": [
@@ -200534,6 +200794,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Return another creature you control to its owner's hand?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, sacrifice it unless you return another creature you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "quickling",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Quickling",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nFlying\nWhen this creature enters, sacrifice it unless you return another creature you control to its owner's hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -205188,6 +205536,53 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "reckless_spite",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Reckless Spite",
+      "oracle_text": "Destroy two target nonblack creatures. You lose 5 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 5
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_colors": [
+              "B"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -207574,6 +207969,50 @@
           "id": "t1",
           "kind": "spell",
           "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "repulse",
+      "mana_cost": "{2}{U}",
+      "name": "Repulse",
+      "oracle_text": "Return target creature to its owner's hand.\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
         }
       ],
       "types": [
@@ -220451,6 +220890,70 @@
         "Dinosaur"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Faerie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Faerie creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Faerie"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "shroud"
+          ],
+          "kind": "static",
+          "text": "Other Faeries you control have shroud."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "scion_of_oona",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Scion of Oona",
+      "oracle_text": "Flash\nFlying\nOther Faerie creatures you control get +1/+1.\nOther Faeries you control have shroud. (They can't be the targets of spells or abilities.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Soldier"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -236623,6 +237126,54 @@
       "colors": [
         "U"
       ],
+      "id": "snap",
+      "mana_cost": "{1}{U}",
+      "name": "Snap",
+      "oracle_text": "Return target creature to its owner's hand. Untap up to two lands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "objects": {
+            "count": 2,
+            "optional": true,
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "untap"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "snapping_drake",
       "keywords": [
         "flying"
@@ -240374,6 +240925,112 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spell_stutter",
+      "mana_cost": "{1}{U}",
+      "name": "Spell Stutter",
+      "oracle_text": "Counter target spell unless its controller pays {2} plus an additional {1} for each Faerie you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{1}",
+            "times": {
+              "sum": [
+                {
+                  "const": 2
+                },
+                {
+                  "count": {
+                    "controller": "you",
+                    "subtypes": [
+                      "Faerie"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            }
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {2} plus {1} for each Faerie its caster controls to stop Spell Stutter countering your spell?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent discards a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "spellscorn_coven_take_it_back",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Spellscorn Coven // Take It Back",
+      "oracle_text": "Flying\nWhen this creature enters, each opponent discards a card.",
+      "power": 2,
+      "second_face": "take_it_back",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Warlock"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -254995,6 +255652,40 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "take_it_back",
+      "mana_cost": "{2}{U}",
+      "name": "Take It Back",
+      "oracle_text": "Return target spell to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "return_spell_to_hand",
+          "target": "t1"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -259240,6 +259931,87 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Faerie"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Faeries you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Faerie you control dies, you draw a card and you lose 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Faerie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "tegwyll_duke_of_splendor",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Tegwyll, Duke of Splendor",
+      "oracle_text": "Flying, deathtouch\nOther Faeries you control get +1/+1.\nWhenever another Faerie you control dies, you draw a card and you lose 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -268920,6 +269692,52 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "theoretical_duplication",
+      "mana_cost": "{2}{U}",
+      "name": "Theoretical Duplication",
+      "oracle_text": "Whenever a nontoken creature an opponent controls enters this turn, create a token that's a copy of that creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever a nontoken creature an opponent controls enters this turn, create a token that's a copy of that creature.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "opponent",
+            "event": "permanent_enters"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -271064,6 +271882,39 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "thrilling_encore",
+      "mana_cost": "{4}{B}",
+      "name": "Thrilling Encore",
+      "oracle_text": "Put onto the battlefield under your control all creature cards in all graveyards that were put there from the battlefield this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "graveyard_arrival_this_turn": [
+              "from_battlefield"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "put_onto_battlefield"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

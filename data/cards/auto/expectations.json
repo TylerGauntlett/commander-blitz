@@ -14665,6 +14665,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nightmare_unmaking": {
+    "zone": "graveyard"
+  },
   "nightshade_dryad": {
     "zone": "battlefield"
   },
@@ -14825,6 +14828,16 @@
   },
   "nuka_cola_vending_machine": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nymris_oona_s_trickster": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "nyssa_of_traken": {
@@ -14999,6 +15012,14 @@
     "zone": "battlefield"
   },
   "obsidian_giant": {
+    "zone": "battlefield"
+  },
+  "obyra_dreaming_duelist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "occult_epiphany": {
@@ -15813,6 +15834,16 @@
   "pia_nalaar_chief_mechanic": {
     "zone": "battlefield"
   },
+  "picklock_prankster_free_the_fae": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "piercing_exhale": {
     "library_size": {
       "0": 40
@@ -16591,6 +16622,13 @@
       "0": 3
     }
   },
+  "quickling": {
+    "battlefield_count": 32,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "quicksilver_pietro_maximoff": {
     "zone": "battlefield"
   },
@@ -16982,6 +17020,12 @@
     },
     "zone": "battlefield"
   },
+  "reckless_spite": {
+    "life": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
   "reconnaissance_mission": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17215,6 +17259,12 @@
       "0": 39
     },
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "repulse": {
+    "library_size": {
+      "0": 39
+    },
     "zone": "graveyard"
   },
   "requisition_raid": {
@@ -18265,6 +18315,10 @@
   "scion_of_calamity": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "scion_of_oona": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "scion_of_ugin": {
@@ -19696,6 +19750,9 @@
     },
     "zone": "graveyard"
   },
+  "snap": {
+    "zone": "graveyard"
+  },
   "snapping_drake": {
     "zone": "battlefield"
   },
@@ -19978,6 +20035,19 @@
   },
   "speed_young_avenger": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "spell_stutter": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "spellscorn_coven_take_it_back": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sphere_grid": {
@@ -21392,6 +21462,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tegwyll_duke_of_splendor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
@@ -22067,6 +22147,9 @@
     },
     "zone": "battlefield"
   },
+  "theoretical_duplication": {
+    "zone": "graveyard"
+  },
   "thespian_s_stage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22293,6 +22376,13 @@
   "thrilling_discovery": {
     "life": {
       "0": 42
+    },
+    "zone": "graveyard"
+  },
+  "thrilling_encore": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
     },
     "zone": "graveyard"
   },

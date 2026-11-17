@@ -186732,12 +186732,12 @@
     },
     "Nightmare Unmaking": {
       "edhrec_rank": 10341,
-      "gate": "template",
+      "gate": null,
       "name": "Nightmare Unmaking",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3b7762aa-2c2a-469c-b8e3-128e9b7abf2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nightmare Void": {
@@ -189692,12 +189692,12 @@
     },
     "Nymris, Oona's Trickster": {
       "edhrec_rank": 5552,
-      "gate": "template",
+      "gate": null,
       "name": "Nymris, Oona's Trickster",
-      "reason": "no template for: Whenever you cast your first spell during each opponent's turn, look at the top two cards ",
+      "reason": "",
       "scryfall_id": "319fb987-2bf2-4d94-81d1-c601edae3f28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nyssa of Traken": {
@@ -190922,12 +190922,12 @@
     },
     "Obyra, Dreaming Duelist": {
       "edhrec_rank": 3387,
-      "gate": "template",
+      "gate": null,
       "name": "Obyra, Dreaming Duelist",
-      "reason": "no template for: Whenever another Faerie you control enters, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "63ce03ee-279b-4955-98e3-9ce1990f8b7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obzedat's Aid": {
@@ -202232,12 +202232,12 @@
     },
     "Picklock Prankster // Free the Fae": {
       "edhrec_rank": 8124,
-      "gate": "template",
+      "gate": null,
       "name": "Picklock Prankster // Free the Fae",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "5ebac73a-1ecf-4e6d-87b1-ea560bfeb064",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Picnic Ruiner // Stolen Goodies": {
@@ -211902,12 +211902,12 @@
     },
     "Quickling": {
       "edhrec_rank": 7571,
-      "gate": "template",
+      "gate": null,
       "name": "Quickling",
-      "reason": "no template for: When this creature enters, sacrifice it unless you return another creature you control to ",
+      "reason": "",
       "scryfall_id": "3066379e-f639-4cc4-a6d8-8177c220a3f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quicksand": {
@@ -218002,12 +218002,12 @@
     },
     "Reckless Spite": {
       "edhrec_rank": 13071,
-      "gate": "template",
+      "gate": null,
       "name": "Reckless Spite",
-      "reason": "no template for: Destroy two target nonblack creatures. You lose 5 life",
+      "reason": "",
       "scryfall_id": "642d693f-481a-4d10-9071-c753fdfd103c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reckless Stormseeker // Storm-Charged Slasher": {
@@ -220832,12 +220832,12 @@
     },
     "Repulse": {
       "edhrec_rank": 8310,
-      "gate": "template",
+      "gate": null,
       "name": "Repulse",
-      "reason": "no template for: Return target creature to its owner's hand",
+      "reason": "",
       "scryfall_id": "88941ed3-1cae-47ce-8ccb-938c5d0e767f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Repulsive Mutation": {
@@ -235682,12 +235682,12 @@
     },
     "Scion of Oona": {
       "edhrec_rank": 3439,
-      "gate": "template",
+      "gate": null,
       "name": "Scion of Oona",
-      "reason": "no template for: Other Faerie creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "937c75ac-b7cf-4af5-a7b7-9e90f43fa1a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion of Opulence": {
@@ -253272,12 +253272,12 @@
     },
     "Snap": {
       "edhrec_rank": 267,
-      "gate": "template",
+      "gate": null,
       "name": "Snap",
-      "reason": "no template for: Return target creature to its owner's hand. Untap up to two lands",
+      "reason": "",
       "scryfall_id": "6e372969-460c-4ad0-9ecd-369dd641857b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Snap Judgment": {
@@ -257952,12 +257952,12 @@
     },
     "Spell Stutter": {
       "edhrec_rank": 3990,
-      "gate": "template",
+      "gate": null,
       "name": "Spell Stutter",
-      "reason": "no template for: Counter target spell unless its controller pays {2} plus an additional {1} for each Faerie",
+      "reason": "",
       "scryfall_id": "24447e36-a42f-40a9-ad44-e904b6f9b276",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spell Swindle": {
@@ -258152,12 +258152,12 @@
     },
     "Spellscorn Coven // Take It Back": {
       "edhrec_rank": 10989,
-      "gate": "template",
+      "gate": null,
       "name": "Spellscorn Coven // Take It Back",
-      "reason": "no template for: When this creature enters, each opponent discards a card",
+      "reason": "",
       "scryfall_id": "8c112f62-6034-4636-a75b-4a45bc916a91",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spellseeker": {
@@ -276672,12 +276672,12 @@
     },
     "Tegwyll, Duke of Splendor": {
       "edhrec_rank": 3792,
-      "gate": "template",
+      "gate": null,
       "name": "Tegwyll, Duke of Splendor",
-      "reason": "no template for: Other Faeries you control get +1/+1",
+      "reason": "",
       "scryfall_id": "03fab911-7bd4-45fa-ba07-cd0e51b0cd95",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tek": {
@@ -283132,12 +283132,12 @@
     },
     "Theoretical Duplication": {
       "edhrec_rank": 6243,
-      "gate": "template",
+      "gate": null,
       "name": "Theoretical Duplication",
-      "reason": "no template for: Whenever a nontoken creature an opponent controls enters this turn, create a token that's ",
+      "reason": "",
       "scryfall_id": "6290bfef-33a0-4ac6-a33c-66a58584f9d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Theoretical Necromancer": {
@@ -285432,12 +285432,12 @@
     },
     "Thrilling Encore": {
       "edhrec_rank": 7383,
-      "gate": "template",
+      "gate": null,
       "name": "Thrilling Encore",
-      "reason": "no template for: Put onto the battlefield under your control all creature cards in all graveyards that were",
+      "reason": "",
       "scryfall_id": "258ef0a1-e326-43d2-8564-667373d121ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriss, Nantuko Primus": {
