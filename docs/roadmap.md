@@ -81,7 +81,6 @@ each heading; this table is generated from them.
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
-| [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) | S | high | nothing | 0 |
 | [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | nothing | 0 |
 | [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | nothing | 0 |
@@ -156,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander).
 
 **Ready now, best first:**
 
@@ -3171,55 +3168,6 @@ Timey-Wimey ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck who_timey_wimey`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Virtue and Valor (Wilds of Eldraine Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
-
-#### Today
-
-Virtue and Valor, the Wilds of Eldraine Commander precon released 2023-09-08, is a
-coming-soon shell on the shelf: its row `woc_virtue_and_valor` is in
-`data/decks/sources.json` and there is no `data/decks/woc_virtue_and_valor.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing woc_virtue_and_valor` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Virtue and Valor ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck woc_virtue_and_valor`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
