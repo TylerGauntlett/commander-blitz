@@ -1,0 +1,711 @@
+{
+  "id": "woc_virtue_and_valor",
+  "name": "Virtue and Valor",
+  "commanders": [
+    "ellivere_of_the_wild_court"
+  ],
+  "color_identity": [
+    "G",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "WOC",
+    "set_name": "Wilds of Eldraine Commander",
+    "date": "2023-09-08"
+  },
+  "notes": "Wilds of Eldraine Commander precon, card for card (https://mtgjson.com/api/v5/decks/VirtueAndValor_WOC.json).",
+  "tags": [
+    "Auras",
+    "Enchantress",
+    "Roles",
+    "Voltron"
+  ],
+  "strategy": "Ellivere of the Wild Court puts a Virtuous Role on another creature each time she enters or attacks and draws a card whenever an enchanted creature connects, so the deck dresses its creatures in Auras and Roles and swings: Gylwain, Casting Director and Syr Armont hand out more Roles, Giant Inheritance, Ancestral Mask, Ethereal Armor and Daybreak Coronet make one body enormous, and Snake Umbra, Bear Umbra and Umbra Mystic keep it alive through removal. Setessan Champion, Eidolon of Blossoms, Enchantress's Presence, Sanctum Weaver and Jukai Naturalist turn every enchantment into cards and mana, Kor Spiritdancer and Siona reward each Aura that lands, Timber Paladin and Aura Gnarlid grow with what they wear, and Retether and Unfinished Business bring the Auras back after a wipe, while Swords to Plowshares, Generous Gift, Kenrith's Transformation and Austere Command answer what the Auras cannot race.",
+  "archetype": "voltron",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "ellivere_of_the_wild_court",
+      "why": "Every time she enters or attacks, another creature gets a Virtuous Role, and enchanted creatures that connect draw cards."
+    },
+    {
+      "card_id": "gylwain_casting_director",
+      "why": "Each nontoken creature that enters arrives wearing a Royal, Sorcerer or Monster Role."
+    },
+    {
+      "card_id": "setessan_champion",
+      "why": "Every enchantment you play grows it and draws a card."
+    },
+    {
+      "card_id": "daybreak_coronet",
+      "why": "Two mana for +3/+3, first strike, vigilance and lifelink on a creature that already wears an Aura."
+    }
+  ],
+  "printings": {
+    "ajani_s_chosen": {
+      "scryfall_id": "e0cb62f0-624a-4b7c-b237-1d3a8ac23eaa",
+      "artist": "Wayne Reynolds",
+      "set_code": "woc",
+      "collector_number": "59"
+    },
+    "ancestral_mask": {
+      "scryfall_id": "0d75292c-cc03-4c40-be01-a8dba66b761c",
+      "artist": "Massimiliano Frezzato",
+      "set_code": "woc",
+      "collector_number": "119"
+    },
+    "angelic_destiny": {
+      "scryfall_id": "58b6f2ab-0076-48b7-951c-b1ab6484d895",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "woc",
+      "collector_number": "60"
+    },
+    "arcane_signet": {
+      "scryfall_id": "18c14a74-dbf6-4224-8bd0-22cf75295924",
+      "artist": "Dan Murayama Scott",
+      "set_code": "woc",
+      "collector_number": "145"
+    },
+    "archon_of_sun_s_grace": {
+      "scryfall_id": "3c00d4e6-1922-4b18-b3f7-af868b058913",
+      "artist": "Matt Stewart",
+      "set_code": "woc",
+      "collector_number": "61"
+    },
+    "aura_gnarlid": {
+      "scryfall_id": "59ae8d4f-a808-4802-a55b-04a3a911b9e0",
+      "artist": "Lars Grant-West",
+      "set_code": "woc",
+      "collector_number": "120"
+    },
+    "austere_command": {
+      "scryfall_id": "901572b8-cf7a-4d4c-92f4-4183f98ba478",
+      "artist": "Anna Steinbauer",
+      "set_code": "woc",
+      "collector_number": "62"
+    },
+    "bear_umbra": {
+      "scryfall_id": "9fe8f2a7-70cd-41e9-b87d-16dc44c21537",
+      "artist": "Howard Lyon",
+      "set_code": "woc",
+      "collector_number": "121"
+    },
+    "canopy_vista": {
+      "scryfall_id": "ded2e0ca-acdb-470f-a287-67bd1605107f",
+      "artist": "Adam Paquette",
+      "set_code": "woc",
+      "collector_number": "153"
+    },
+    "careful_cultivation": {
+      "scryfall_id": "68d56fac-4dca-47b8-b48e-0a3d532004a5",
+      "artist": "A. M. Sartor",
+      "set_code": "woc",
+      "collector_number": "122"
+    },
+    "castle_ardenvale": {
+      "scryfall_id": "ea28b7a7-c261-4abb-a919-84cb0d2ed147",
+      "artist": "Volkan Baǵa",
+      "set_code": "woc",
+      "collector_number": "154"
+    },
+    "celestial_archon": {
+      "scryfall_id": "70e1129c-97d3-4da0-9bd7-63aa8eacef76",
+      "artist": "Matt Stewart",
+      "set_code": "woc",
+      "collector_number": "63"
+    },
+    "command_tower": {
+      "scryfall_id": "aed61bbb-83fd-452b-b940-c8eb1e1ebdac",
+      "artist": "Ryan Yee",
+      "set_code": "woc",
+      "collector_number": "156"
+    },
+    "danitha_capashen_paragon": {
+      "scryfall_id": "85cbf61d-4e16-411e-b67e-4f316c79c9e1",
+      "artist": "Chris Rallis",
+      "set_code": "woc",
+      "collector_number": "64"
+    },
+    "daybreak_coronet": {
+      "scryfall_id": "98bad09a-64f4-4067-9802-f408793d82f7",
+      "artist": "Johannes Voss",
+      "set_code": "woc",
+      "collector_number": "65"
+    },
+    "destiny_spinner": {
+      "scryfall_id": "cfcde60c-7dbf-41e1-98c5-7be993913a84",
+      "artist": "Livia Prima",
+      "set_code": "woc",
+      "collector_number": "123"
+    },
+    "eidolon_of_blossoms": {
+      "scryfall_id": "586c639e-9050-4f45-aa65-0947a2d2a57a",
+      "artist": "Min Yum",
+      "set_code": "woc",
+      "collector_number": "124"
+    },
+    "eidolon_of_countless_battles": {
+      "scryfall_id": "069300b3-071c-445c-972d-8051f2d5c3d9",
+      "artist": "Raymond Swanland",
+      "set_code": "woc",
+      "collector_number": "66"
+    },
+    "ellivere_of_the_wild_court": {
+      "scryfall_id": "45851394-b8f3-4713-8239-afcb387d47c5",
+      "artist": "Dmitry Burmak",
+      "set_code": "woc",
+      "collector_number": "2"
+    },
+    "enchantress_s_presence": {
+      "scryfall_id": "602bd27a-7ae1-4081-8d68-bb2539cd5965",
+      "artist": "Rebecca Guay",
+      "set_code": "woc",
+      "collector_number": "125"
+    },
+    "ethereal_armor": {
+      "scryfall_id": "19557197-521d-4900-a260-1a21e49113f5",
+      "artist": "Daarken",
+      "set_code": "woc",
+      "collector_number": "67"
+    },
+    "fertile_ground": {
+      "scryfall_id": "70f6d44d-f205-4116-87aa-3c57d38684aa",
+      "artist": "Mark Tedin",
+      "set_code": "woc",
+      "collector_number": "126"
+    },
+    "forest": {
+      "scryfall_id": "a4c99f1b-f304-42d5-bbea-32283b01d43b",
+      "artist": "Jonas De Ro",
+      "set_code": "woe",
+      "collector_number": "275"
+    },
+    "fortified_village": {
+      "scryfall_id": "9fdac3b7-5b79-47f7-bae1-da9e801a929b",
+      "artist": "Cliff Childs",
+      "set_code": "woc",
+      "collector_number": "161"
+    },
+    "generous_gift": {
+      "scryfall_id": "cda7894c-895c-4e43-b32c-cc28ae049534",
+      "artist": "Kev Walker",
+      "set_code": "woc",
+      "collector_number": "68"
+    },
+    "giant_inheritance": {
+      "scryfall_id": "3e8d46e1-7aad-4e2b-82a5-af81cd6c8ae5",
+      "artist": "Borja Pindado",
+      "set_code": "woc",
+      "collector_number": "17"
+    },
+    "gylwain_casting_director": {
+      "scryfall_id": "79e4242c-a53a-4287-976b-8e545888a1fa",
+      "artist": "Aurore Folny",
+      "set_code": "woc",
+      "collector_number": "4"
+    },
+    "hall_of_heliod_s_generosity": {
+      "scryfall_id": "72386d5a-cb57-445d-9bfa-d92c0905da8c",
+      "artist": "Daniel Ljunggren",
+      "set_code": "woc",
+      "collector_number": "162"
+    },
+    "indomitable_might": {
+      "scryfall_id": "c3905879-2110-488b-a4f3-e37e8a97c1b9",
+      "artist": "Svetlin Velinov",
+      "set_code": "woc",
+      "collector_number": "127"
+    },
+    "jukai_naturalist": {
+      "scryfall_id": "2dd0cba1-1d53-49a7-a6fa-dea0a6bd8ece",
+      "artist": "Anna Steinbauer",
+      "set_code": "woc",
+      "collector_number": "140"
+    },
+    "kenrith_s_transformation": {
+      "scryfall_id": "a34add4e-5d5e-489c-a3b4-daef05a2bb0f",
+      "artist": "Kimonas Theodossiou",
+      "set_code": "woc",
+      "collector_number": "128"
+    },
+    "knickknack_ouphe": {
+      "scryfall_id": "08fe7e9c-7c3b-435f-bc0d-e380e6b852c0",
+      "artist": "Iris Compiet",
+      "set_code": "woc",
+      "collector_number": "18"
+    },
+    "kor_spiritdancer": {
+      "scryfall_id": "8ca4e4d4-84b0-4a38-ad48-4a963c977471",
+      "artist": "Nils Hamm",
+      "set_code": "woc",
+      "collector_number": "69"
+    },
+    "krosan_verge": {
+      "scryfall_id": "5ca98bdb-8e5f-439f-8c5a-3562c268e767",
+      "artist": "Ruxing Gao",
+      "set_code": "woc",
+      "collector_number": "163"
+    },
+    "liberated_livestock": {
+      "scryfall_id": "f22f4c5a-fe42-4511-be96-78e0e807e704",
+      "artist": "Kisung Koh",
+      "set_code": "woc",
+      "collector_number": "5"
+    },
+    "loamcrafter_faun": {
+      "scryfall_id": "ac96f5b6-72bc-4cd5-8886-1edf2aba15d5",
+      "artist": "Mark Zug",
+      "set_code": "woc",
+      "collector_number": "19"
+    },
+    "mantle_of_the_ancients": {
+      "scryfall_id": "ff6fe6e4-f7b9-4d5b-9f38-f97a2df00e0c",
+      "artist": "Lucas Graciano",
+      "set_code": "woc",
+      "collector_number": "70"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "aa37af24-60d3-426a-b395-7b255fd54801",
+      "artist": "Richard Wright",
+      "set_code": "woc",
+      "collector_number": "164"
+    },
+    "ox_drover": {
+      "scryfall_id": "b479be78-da22-41f0-937e-348dc0c7511e",
+      "artist": "Filipe Pagliuso",
+      "set_code": "woc",
+      "collector_number": "6"
+    },
+    "paradise_druid": {
+      "scryfall_id": "000e2f80-7667-4a8b-91c2-359121d44ebb",
+      "artist": "Nils Hamm",
+      "set_code": "woc",
+      "collector_number": "129"
+    },
+    "plains": {
+      "scryfall_id": "eed1af19-e075-4e6f-9394-d258143e15a4",
+      "artist": "Carlos Palma Cruchaga",
+      "set_code": "woe",
+      "collector_number": "267"
+    },
+    "pollenbright_wings": {
+      "scryfall_id": "b88cd231-d2f3-4871-869b-ab5ba299f7f9",
+      "artist": "Brian Valeza",
+      "set_code": "woc",
+      "collector_number": "143"
+    },
+    "realm_cloaked_giant_cast_off": {
+      "scryfall_id": "d8b82dd5-c0ff-4294-9c09-9064c5e325c4",
+      "artist": "Adam Paquette",
+      "set_code": "woc",
+      "collector_number": "71"
+    },
+    "retether": {
+      "scryfall_id": "79bd15d3-255b-4aa5-8c71-04f7f9eacfd1",
+      "artist": "Dan Murayama Scott",
+      "set_code": "woc",
+      "collector_number": "72"
+    },
+    "rishkar_s_expertise": {
+      "scryfall_id": "6a580666-f698-401a-9db6-bf9aaf4222b2",
+      "artist": "Magali Villeneuve",
+      "set_code": "woc",
+      "collector_number": "130"
+    },
+    "sage_s_reverie": {
+      "scryfall_id": "2ad9d5f2-f41b-47f6-acdf-bd8974446a9a",
+      "artist": "Jason Rainville",
+      "set_code": "woc",
+      "collector_number": "73"
+    },
+    "sanctum_weaver": {
+      "scryfall_id": "12089acb-81f5-4d49-89f4-1f207f3b92fd",
+      "artist": "Kimonas Theodossiou",
+      "set_code": "woc",
+      "collector_number": "131"
+    },
+    "setessan_champion": {
+      "scryfall_id": "261deceb-38fe-4f22-8771-b665b1d36c33",
+      "artist": "Emrah Elmasli",
+      "set_code": "woc",
+      "collector_number": "132"
+    },
+    "shalai_voice_of_plenty": {
+      "scryfall_id": "f963ccb2-4ac3-41b3-8ecb-7879b50663a3",
+      "artist": "Victor Adame Minguez",
+      "set_code": "woc",
+      "collector_number": "74"
+    },
+    "siona_captain_of_the_pyleas": {
+      "scryfall_id": "9adb1528-dc72-4ec7-bcb4-a043bcd8d9d2",
+      "artist": "Chris Rallis",
+      "set_code": "woc",
+      "collector_number": "144"
+    },
+    "snake_umbra": {
+      "scryfall_id": "00b60638-bea3-4c27-9819-da5ac2be1ca1",
+      "artist": "Christopher Moeller",
+      "set_code": "woc",
+      "collector_number": "133"
+    },
+    "sol_ring": {
+      "scryfall_id": "16fbbd8d-bb18-4a8b-95a4-30ad6d548f72",
+      "artist": "Mike Bierek",
+      "set_code": "woc",
+      "collector_number": "149"
+    },
+    "songbirds_blessing": {
+      "scryfall_id": "1f19d737-97dc-4b58-9c6b-be2a40c098ff",
+      "artist": "Eelis Kyttanen",
+      "set_code": "woc",
+      "collector_number": "7"
+    },
+    "spectral_steel": {
+      "scryfall_id": "923ccb8e-5793-44fe-b15c-b218a8d84cfa",
+      "artist": "Johannes Voss",
+      "set_code": "woc",
+      "collector_number": "75"
+    },
+    "starfield_mystic": {
+      "scryfall_id": "622c4ee7-e91f-4839-aee5-071dcdbe8987",
+      "artist": "Eric Deschamps",
+      "set_code": "woc",
+      "collector_number": "76"
+    },
+    "sun_titan": {
+      "scryfall_id": "ae10463f-fe23-406c-8a63-051c5650c2ee",
+      "artist": "Todd Lockwood",
+      "set_code": "woc",
+      "collector_number": "77"
+    },
+    "sungrass_prairie": {
+      "scryfall_id": "634bb7ce-d361-4617-acfa-acd5ae7fb1ff",
+      "artist": "Ron Spencer",
+      "set_code": "woc",
+      "collector_number": "167"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "9443c31e-9f36-44ef-bc59-6d1d3a5499bb",
+      "artist": "Jesper Ejsing",
+      "set_code": "woc",
+      "collector_number": "78"
+    },
+    "sylvan_ranger": {
+      "scryfall_id": "db9edf66-4a30-4d82-9c46-505ed9b8a3f7",
+      "artist": "Christopher Moeller",
+      "set_code": "woc",
+      "collector_number": "134"
+    },
+    "syr_armont_the_redeemer": {
+      "scryfall_id": "85050609-baf0-430a-ab33-83a6ea6d4741",
+      "artist": "Magali Villeneuve",
+      "set_code": "woe",
+      "collector_number": "214"
+    },
+    "tanglespan_lookout": {
+      "scryfall_id": "3bc5c32d-be0a-4a5f-a8c7-9767a895bc76",
+      "artist": "Dmitry Burmak",
+      "set_code": "woe",
+      "collector_number": "188"
+    },
+    "temple_of_plenty": {
+      "scryfall_id": "88bdfe28-9f50-463a-8f12-302a06a2d3de",
+      "artist": "Chris Ostrowski",
+      "set_code": "woc",
+      "collector_number": "171"
+    },
+    "timber_paladin": {
+      "scryfall_id": "1edfd4d2-c492-4bec-9bb0-c5b7cb01818f",
+      "artist": "Johan Grenier",
+      "set_code": "woc",
+      "collector_number": "20"
+    },
+    "timely_ward": {
+      "scryfall_id": "dd0af67e-d31f-431f-b912-ce8382785ded",
+      "artist": "Matt Stewart",
+      "set_code": "woc",
+      "collector_number": "79"
+    },
+    "tithe_taker": {
+      "scryfall_id": "6c817300-c9be-4ff4-b59d-85eb21152c40",
+      "artist": "Aaron Miller",
+      "set_code": "woc",
+      "collector_number": "80"
+    },
+    "transcendent_envoy": {
+      "scryfall_id": "042b3a3c-a105-4bfa-b0bb-f93d22401c85",
+      "artist": "Zezhou Chen",
+      "set_code": "woc",
+      "collector_number": "81"
+    },
+    "umbra_mystic": {
+      "scryfall_id": "79865b8e-10fe-4f1a-805a-98bb5c10167f",
+      "artist": "Matt Stewart",
+      "set_code": "woc",
+      "collector_number": "82"
+    },
+    "unfinished_business": {
+      "scryfall_id": "08f320ca-d039-4e91-bf64-810d10d4cc8b",
+      "artist": "Mark Zug",
+      "set_code": "woc",
+      "collector_number": "8"
+    },
+    "utopia_sprawl": {
+      "scryfall_id": "612c2a10-b978-4000-894b-12d5f14afc97",
+      "artist": "Ron Spears",
+      "set_code": "woc",
+      "collector_number": "135"
+    },
+    "verdant_embrace": {
+      "scryfall_id": "b36f2399-bf72-48ab-9314-834b69194d5d",
+      "artist": "Stephen Tappin",
+      "set_code": "woc",
+      "collector_number": "136"
+    },
+    "vitu_ghazi_the_city_tree": {
+      "scryfall_id": "5630193b-4956-4f64-9dae-7aa7452d8989",
+      "artist": "Martina Pilcerova",
+      "set_code": "woc",
+      "collector_number": "173"
+    },
+    "warbriar_blessing": {
+      "scryfall_id": "76fd958e-bcc6-4f6d-9566-b6cd875fa6c4",
+      "artist": "Michele Parisi",
+      "set_code": "woc",
+      "collector_number": "137"
+    },
+    "winds_of_rath": {
+      "scryfall_id": "a3a619f0-32df-403a-a046-786c42f69ef5",
+      "artist": "Drew Tucker",
+      "set_code": "woc",
+      "collector_number": "83"
+    }
+  },
+  "cards": [
+    {
+      "id": "ajani_s_chosen"
+    },
+    {
+      "id": "ancestral_mask"
+    },
+    {
+      "id": "angelic_destiny"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "archon_of_sun_s_grace"
+    },
+    {
+      "id": "aura_gnarlid"
+    },
+    {
+      "id": "austere_command"
+    },
+    {
+      "id": "bear_umbra"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "careful_cultivation"
+    },
+    {
+      "id": "castle_ardenvale"
+    },
+    {
+      "id": "celestial_archon"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "danitha_capashen_paragon"
+    },
+    {
+      "id": "daybreak_coronet"
+    },
+    {
+      "id": "destiny_spinner"
+    },
+    {
+      "id": "eidolon_of_blossoms"
+    },
+    {
+      "id": "eidolon_of_countless_battles"
+    },
+    {
+      "id": "enchantress_s_presence"
+    },
+    {
+      "id": "ethereal_armor"
+    },
+    {
+      "id": "fertile_ground"
+    },
+    {
+      "id": "forest",
+      "qty": 15
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "generous_gift"
+    },
+    {
+      "id": "giant_inheritance"
+    },
+    {
+      "id": "gylwain_casting_director"
+    },
+    {
+      "id": "hall_of_heliod_s_generosity"
+    },
+    {
+      "id": "indomitable_might"
+    },
+    {
+      "id": "jukai_naturalist"
+    },
+    {
+      "id": "kenrith_s_transformation"
+    },
+    {
+      "id": "knickknack_ouphe"
+    },
+    {
+      "id": "kor_spiritdancer"
+    },
+    {
+      "id": "krosan_verge"
+    },
+    {
+      "id": "liberated_livestock"
+    },
+    {
+      "id": "loamcrafter_faun"
+    },
+    {
+      "id": "mantle_of_the_ancients"
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "ox_drover"
+    },
+    {
+      "id": "paradise_druid"
+    },
+    {
+      "id": "plains",
+      "qty": 14
+    },
+    {
+      "id": "pollenbright_wings"
+    },
+    {
+      "id": "realm_cloaked_giant_cast_off"
+    },
+    {
+      "id": "retether"
+    },
+    {
+      "id": "rishkar_s_expertise"
+    },
+    {
+      "id": "sage_s_reverie"
+    },
+    {
+      "id": "sanctum_weaver"
+    },
+    {
+      "id": "setessan_champion"
+    },
+    {
+      "id": "shalai_voice_of_plenty"
+    },
+    {
+      "id": "siona_captain_of_the_pyleas"
+    },
+    {
+      "id": "snake_umbra"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "songbirds_blessing"
+    },
+    {
+      "id": "spectral_steel"
+    },
+    {
+      "id": "starfield_mystic"
+    },
+    {
+      "id": "sun_titan"
+    },
+    {
+      "id": "sungrass_prairie"
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "sylvan_ranger"
+    },
+    {
+      "id": "syr_armont_the_redeemer"
+    },
+    {
+      "id": "tanglespan_lookout"
+    },
+    {
+      "id": "temple_of_plenty"
+    },
+    {
+      "id": "timber_paladin"
+    },
+    {
+      "id": "timely_ward"
+    },
+    {
+      "id": "tithe_taker"
+    },
+    {
+      "id": "transcendent_envoy"
+    },
+    {
+      "id": "umbra_mystic"
+    },
+    {
+      "id": "unfinished_business"
+    },
+    {
+      "id": "utopia_sprawl"
+    },
+    {
+      "id": "verdant_embrace"
+    },
+    {
+      "id": "vitu_ghazi_the_city_tree"
+    },
+    {
+      "id": "warbriar_blessing"
+    },
+    {
+      "id": "winds_of_rath"
+    }
+  ]
+}
