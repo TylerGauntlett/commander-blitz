@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**436 cards** blocked by **382** capabilities.
+**437 cards** blocked by **383** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -329,6 +329,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
+| [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
@@ -5426,6 +5427,20 @@ Blocks **1** card.
 
 - **Dauthi Voidwalker** (rank 386) — `dauthi_voidwalker`
   - If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.
+
+</details>
+
+## replicate
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants replicate to spells you cast matching a spell filter (subtypes: ["Saga"]), with the replicate cost equal to that spell's own mana cost: an additional cost payable any number of times on cast, and on cast a trigger copies the spell once per payment, with copies of permanent spells (Sagas) resolving into tokens
+  <br>Why the existing vocabulary won't do: No replicate exists anywhere in the reference: card_level_cost_keys has additional_repeatable and multikicker, but those are a card's own printed costs and cannot be granted to other spells; no static effect grants an additional or repeatable cost to spells (grant_warp, grant_miracle, granted_alternative_cost and cast_gains_keywords cover other mechanics); copy_spell copies a spell but nothing ties it to a count of cost payments, and nothing makes a copied permanent spell become a token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ian Chesterton** (rank 12791) — `ian_chesterton`
+  - Science Teacher — Each Saga spell you cast has replicate. The replicate cost is equal to its mana cost
 
 </details>
 

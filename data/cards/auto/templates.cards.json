@@ -1186,6 +1186,109 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "ace_nitro_9",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Nitro-9 — Whenever Ace attacks, you may sacrifice an artifact.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "fight",
+              "other": {
+                "target": "t1"
+              }
+            }
+          ],
+          "id": "ace_nitro_9",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, put a +1/+1 counter on Ace, then it fights up to one target creature defending player controls."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ace_fearless_rebel",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Ace, Fearless Rebel",
+      "oracle_text": "Nitro-9 — Whenever Ace attacks, you may sacrifice an artifact. When you do, put a +1/+1 counter on Ace, then it fights up to one target creature defending player controls.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -73108,6 +73211,127 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          },
+          "text": "Duggan's power and toughness are each equal to the number of cards in your hand.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Duggan enters or attacks, investigate.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Duggan enters or attacks, investigate.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ],
+          "exhaust": true,
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "The Most Important Punch in History — {1}{G}, {T}: Duggan deals damage equal to twice its power to another target creature. Activate only once."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "duggan_private_detective",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Duggan, Private Detective",
+      "oracle_text": "Duggan's power and toughness are each equal to the number of cards in your hand.\nWhenever Duggan enters or attacks, investigate.\nThe Most Important Punch in History — {1}{G}, {T}: Duggan deals damage equal to twice its power to another target creature. Activate only once.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -90755,6 +90979,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Clue"
+                  ]
+                }
+              },
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} for each Clue you control."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice Five Hundred Year Diary: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "five_hundred_year_diary",
+      "mana_cost": "{3}{U}",
+      "name": "Five Hundred Year Diary",
+      "oracle_text": "Five Hundred Year Diary enters tapped.\n{T}: Add {U} for each Clue you control.\n{2}, Sacrifice Five Hundred Year Diary: Draw a card.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Book",
+        "Clue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U"
@@ -97613,6 +97911,100 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Doctor"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Gallifrey Stands enters, return all Doctor cards from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Doctor"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "subtypes": [
+                      "Doctor"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                "right": {
+                  "const": 13
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "win_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may put a Doctor creature card from your hand onto the battlefield. Then if you control thirteen or more Doctors, you win the game.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "gallifrey_stands",
+      "mana_cost": "{4}{W}{U}",
+      "name": "Gallifrey Stands",
+      "oracle_text": "When Gallifrey Stands enters, return all Doctor cards from your graveyard to your hand.\nAt the beginning of your upkeep, you may put a Doctor creature card from your hand onto the battlefield. Then if you control thirteen or more Doctors, you win the game.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -118487,6 +118879,104 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": -1
+              }
+            ]
+          },
+          "text": "Each legendary creature you control gets +1/+1 for each other legendary creature you control",
+          "toughness": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "supertypes": [
+                    "Legendary"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": -1
+              }
+            ]
+          }
+        },
+        {
+          "cost": {
+            "mana": "{X}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}, {T}: Look at the top X cards of your library. You may reveal a legendary creature card from among them and put it into your hand. Put the rest on the bottom of your library in a random order"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "heroes_podium",
+      "mana_cost": "{5}",
+      "name": "Heroes' Podium",
+      "oracle_text": "Each legendary creature you control gets +1/+1 for each other legendary creature you control.\n{X}, {T}: Look at the top X cards of your library. You may reveal a legendary creature card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -120696,6 +121186,79 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {G} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "horizon_canopy",
+      "name": "Horizon Canopy",
+      "oracle_text": "{T}, Pay 1 life: Add {G} or {W}.\n{1}, {T}, Sacrifice this land: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -131412,6 +131975,84 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "toughness": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a historic spell, Jamie McCrimmon gets +X/+X until end of turn, where X is that spell's mana value. (Artifacts, legendaries, and Sagas are historic.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jamie_mccrimmon",
+      "keywords": [
+        "trample",
+        "doctors_companion"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Jamie McCrimmon",
+      "oracle_text": "Trample\nWhenever you cast a historic spell, Jamie McCrimmon gets +X/+X until end of turn, where X is that spell's mana value. (Artifacts, legendaries, and Sagas are historic.)\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

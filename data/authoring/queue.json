@@ -1522,12 +1522,12 @@
     },
     "Ace, Fearless Rebel": {
       "edhrec_rank": 20675,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Ace, Fearless Rebel",
-      "reason": "your battlefield is 31, expected 33",
+      "reason": "",
       "scryfall_id": "3ce6d329-9c3a-4fb0-bf1e-9b72346ca3ad",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Acererak the Archlich": {
@@ -76682,12 +76682,12 @@
     },
     "Duggan, Private Detective": {
       "edhrec_rank": 14248,
-      "gate": "template",
+      "gate": null,
       "name": "Duggan, Private Detective",
-      "reason": "no template for: Duggan's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "0d0cfc0e-6a38-4fa2-8e4b-64a893591fec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duke Ulder Ravengard": {
@@ -96552,12 +96552,12 @@
     },
     "Five Hundred Year Diary": {
       "edhrec_rank": 6352,
-      "gate": "template",
+      "gate": null,
       "name": "Five Hundred Year Diary",
-      "reason": "no template for: {2}, Sacrifice : Draw a card",
+      "reason": "",
       "scryfall_id": "54b79758-1d7c-484c-9b23-8e8fa3a9c560",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Five-Alarm Fire": {
@@ -104612,12 +104612,12 @@
     },
     "Gallifrey Stands": {
       "edhrec_rank": 13853,
-      "gate": "template",
+      "gate": null,
       "name": "Gallifrey Stands",
-      "reason": "no template for: When enters, return all Doctor cards from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "15dc4f0d-88f1-4434-a36e-ac9aae7b295c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galloping Lizrog": {
@@ -126822,12 +126822,12 @@
     },
     "Heroes' Podium": {
       "edhrec_rank": 2651,
-      "gate": "template",
+      "gate": null,
       "name": "Heroes' Podium",
-      "reason": "no template for: Each legendary creature you control gets +1/+1 for each other legendary creature you contr",
+      "reason": "",
       "scryfall_id": "4503b65f-416e-49af-88c8-0871bca2c050",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroes' Reunion": {
@@ -129792,12 +129792,12 @@
     },
     "Horizon Canopy": {
       "edhrec_rank": 1694,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon Canopy",
-      "reason": "no template for: {T}, Pay 1 life: Add {G} or {W}",
+      "reason": "",
       "scryfall_id": "014281b4-172c-4c4e-b859-4ca9ba110cce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horizon Chimera": {
@@ -141962,12 +141962,12 @@
     },
     "Jamie McCrimmon": {
       "edhrec_rank": 15303,
-      "gate": "template",
+      "gate": null,
       "name": "Jamie McCrimmon",
-      "reason": "no template for: Whenever you cast a historic spell, gets +X/+X until end of turn, where X is that spell's ",
+      "reason": "",
       "scryfall_id": "098150bc-a865-48d0-95c2-39c2bee9bbb4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jamuraan Lion": {

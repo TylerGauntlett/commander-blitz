@@ -99,6 +99,16 @@
   "accursed_spirit": {
     "zone": "battlefield"
   },
+  "ace_fearless_rebel": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "adagia_windswept_bastion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6007,6 +6017,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "duggan_private_detective": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "dune_beetle": {
     "zone": "battlefield"
   },
@@ -7631,6 +7649,10 @@
     },
     "zone": "graveyard"
   },
+  "five_hundred_year_diary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flame_of_anor": {
     "graveyard_size": {
       "0": 3
@@ -8224,6 +8246,16 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "gallifrey_stands": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "galvanic_iteration": {
     "zone": "graveyard"
@@ -9908,6 +9940,10 @@
       "graveyard"
     ]
   },
+  "heroes_podium": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "heroic_intervention": {
     "granted": {
       "count": 32,
@@ -10094,6 +10130,10 @@
     "zone": "battlefield"
   },
   "horde_of_notions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "horizon_canopy": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10959,6 +10999,10 @@
   },
   "jailbreak_scheme": {
     "zone": "graveyard"
+  },
+  "jamie_mccrimmon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "jarad_golgari_lich_lord": {
     "battlefield_count": 33,
