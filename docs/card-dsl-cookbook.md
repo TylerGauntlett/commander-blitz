@@ -6264,6 +6264,36 @@ A `block_restriction` carrying none of the three fields, or more than one, is
 refused at load time — an evasion ability that evades nothing would load
 perfectly cleanly.
 
+### Can block only creatures with …
+
+    Brazen Borrower — "This creature can block only creatures with flying."
+
+`block_restriction` turned around: the static sits on the **blocker** and its
+`attackers` filter names which attackers the creatures it `affects` may block.
+
+```jsonc
+{ "kind": "static", "effect": "can_block_only", "affects": { "self_only": true },
+  "attackers": { "keywords": ["flying"] } }
+```
+
+It is asked per pair in `combat.can_block` (through
+`player_statics.block_only_refused`), so a refused block is never offered.
+`attackers` reads the attacker's **derived** characteristics for `blockers`'
+reason, so a creature granted flying this turn may be blocked, and a flier that
+lost flying may not; its `controller` defaults to **any**, because the attacker
+is an opponent's by definition. `affects` is read on the blocker's derived
+characteristics too, and a creature that loses its abilities loses the
+restriction. Two such statics on one creature are both obeyed. Block
+requirements never compel a block it refuses (509.1c): provoke and "blocks this
+turn if able" ask `can_block`, so a Borrower lured toward a ground creature
+owes nothing.
+
+The loader refuses a missing or empty `attackers` ("can block only creatures"
+restricts nothing), keys outside `STATIC_FILTER_KEYS`, `self_only` and
+`exclude_self` in it (the source is the blocker, never the attacker), and
+`attackers` on any other effect. The near misses: `cant_block` forbids every
+block, and `block_restriction` filters the blockers of the creature it sits on.
+
 ### Skulk
 
     Vampire Cutthroat — "Skulk (This creature can't be blocked by creatures with

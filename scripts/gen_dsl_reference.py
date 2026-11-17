@@ -970,6 +970,8 @@ STATICS: dict[str, Entry] = {
                                      "attacked this turn (their planeswalkers stay open).",
                                      "Not the same player twice in a turn"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
+    "can_block_only": ("Matching creatures can block only attackers matching `attackers`.",
+                       "Can block only creatures with …"),
     "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
                                    "toughness rather than their power.",
                                    "Combat damage equal to toughness"),

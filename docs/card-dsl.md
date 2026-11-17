@@ -7361,7 +7361,7 @@ refused at load. `mana_cost` is the near miss: it matches exact printed costs.
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
-`block_restriction` · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·
+`block_restriction` · [`can_block_only`](card-dsl-cookbook.md#can-block-only-creatures-with-) · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·
 [`damage_life_floor`](card-dsl-cookbook.md#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) ·
@@ -7713,7 +7713,7 @@ cache miss. Borrowing one is a `DslError` at load.
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
 The rule binds the statics the pipeline applies; the rule-modifying ones it does
-not — `attacks_if_able` and `block_restriction` — match their filters against
+not — `attacks_if_able`, `block_restriction` and `can_block_only` — match their filters against
 derived characteristics instead (`characteristics._matches` with `derived`),
 since nothing they say can feed back into a layer.
 `exists_derived` is the condition-side form of that exception. Rhonas the

@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 62 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 101 |
+| [Static effects](#static-effects) | 102 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 46 |
+| [Grantable statics](#grantable-statics) | 47 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -591,6 +591,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `buff` |  | yes | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `can_block_only` |  | yes | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
@@ -751,6 +752,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `can_block_only` | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_attack_attacked_players` | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |

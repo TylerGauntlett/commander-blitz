@@ -1173,6 +1173,12 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``can_block_only``: which attackers the creatures it ``affects`` may
+    #: block. A static filter over the *attacker*, read on its derived
+    #: characteristics, so Brazen Borrower's "can block only creatures with
+    #: flying" is ``{"keywords": ["flying"]}``. Required there, and refused on
+    #: every other effect.
+    attackers: dict[str, Any] | None = None
     #: ``grant_keyword``: the N of a granted annihilator -- "enchanted creature
     #: ... has trample and **annihilator 2**" (Eldrazi Conscription). Required
     #: when ``keywords`` names ``"annihilator"`` and refused otherwise, because

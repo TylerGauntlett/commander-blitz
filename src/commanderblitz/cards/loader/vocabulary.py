@@ -533,6 +533,12 @@ STATIC_EFFECTS = frozenset(
         # rather than a keyword for the same reason `block_restriction` is: a
         # keyword is a characteristic and this is a permission.
         "cant_block",
+        # Brazen Borrower: "this creature can block only creatures with
+        # flying." `cant_block` narrowed by an `attackers` filter, and the
+        # mirror of `block_restriction`: that one sits on the attacker and
+        # filters blockers, this one sits on the blocker and filters attackers.
+        # Read by `player_statics.block_only_refused` from `combat.can_block`.
+        "can_block_only",
         # "This creature can't attack or block alone" -- Toby's Beast token, and
         # the two halves it is spelled from, each of which is also printed on
         # its own. Separate effects from `cant_attack`/`cant_block` rather than

@@ -1688,7 +1688,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                     f"faces, so a granted one would never reach a card off the "
                     f"battlefield"
                 )
-            for key in ("affects", "blockers"):
+            for key in ("affects", "blockers", "attackers"):
                 _refuse_granted_chosen_qualities(
                     ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
                 )
@@ -4963,7 +4963,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
-    for key in ("affects", "blockers", "cause_filter", "affects_spells"):
+    for key in ("affects", "blockers", "attackers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
         if key == "affects":
             check_literal_mana_value_key(model.affects, f"{where}.affects")
@@ -5011,6 +5011,36 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
+        )
+    if model.effect == "can_block_only":
+        # Without a filter the static says "can block only creatures", which
+        # is no restriction at all -- a printed line that loads and does
+        # nothing. An empty one is the same sentence.
+        if not model.attackers:
+            raise DslError(
+                f"{where}: can_block_only needs a non-empty 'attackers' filter "
+                f"-- the attackers the creature may block"
+            )
+        unknown = set(model.attackers) - STATIC_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}: can_block_only 'attackers' may only read printed "
+                f"characteristics; unsupported keys {sorted(unknown)}"
+            )
+        # The filter's source is the blocker's side of the table, and a
+        # creature never blocks itself: `self_only` would refuse every block,
+        # which is `cant_block`, and `exclude_self` would exclude nothing.
+        for key in ("self_only", "exclude_self"):
+            if key in model.attackers:
+                raise DslError(
+                    f"{where}: can_block_only 'attackers' cannot use {key!r} -- "
+                    f"the source is never the attacker it blocks"
+                )
+        _check_owner_key(model.attackers, f"{where}.attackers")
+    elif model.attackers is not None:
+        raise DslError(
+            f"{where}: 'attackers' only means anything on a can_block_only "
+            f"static, not on {model.effect!r}"
         )
     if model.effect == "double_triggers":
         # The cause clause is the half a card may omit, and omitting it means
@@ -7441,6 +7471,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    if model.attackers is not None:
+        static["attackers"] = dict(model.attackers)
     # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,
     # the grant would load and `annihilator_instances` would have no N to read.
     if model.annihilator is not None:
