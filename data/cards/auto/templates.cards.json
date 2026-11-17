@@ -265452,6 +265452,109 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": 5,
+              "as": "exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "each"
+                      }
+                    }
+                  },
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "objects": {
+                "binding": "exiled",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Exile the top five cards of your library. For each nonland card exiled this way, put a number of time counters on that card equal to its mana value. If it doesn't have suspend, it gains suspend."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "time_travel"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Time travel, then time travel."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "III — For each opponent, destroy up to one target artifact that player controls."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_parting_of_the_ways",
+      "mana_cost": "{4}{R}{R}",
+      "name": "The Parting of the Ways",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile the top five cards of your library. For each nonland card exiled this way, put a number of time counters on that card equal to its mana value. If it doesn't have suspend, it gains suspend.\nII — Time travel, then time travel.\nIII — For each opponent, destroy up to one target artifact that player controls.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -267676,6 +267779,109 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "the_wedding_of_river_song",
+      "mana_cost": "{2}{W}",
+      "name": "The Wedding of River Song",
+      "oracle_text": "Draw two cards, then you may exile a nonland card from your hand with a number of time counters on it equal to its mana value. Then target opponent does the same. Cards exiled this way that don't have suspend gain suspend.\nTime travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw"
+        },
+        {
+          "as": "yours",
+          "objects": {
+            "count": 1,
+            "not_types": [
+              "Land"
+            ],
+            "optional": true,
+            "player": "you",
+            "zone": "hand"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "objects": {
+                "binding": "yours"
+              }
+            }
+          },
+          "objects": {
+            "binding": "yours"
+          },
+          "op": "suspend"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "as": "theirs",
+          "objects": {
+            "chooser": {
+              "target": "t1"
+            },
+            "count": 1,
+            "not_types": [
+              "Land"
+            ],
+            "optional": true,
+            "player": {
+              "target": "t1"
+            },
+            "zone": "hand"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "objects": {
+                "binding": "theirs"
+              }
+            }
+          },
+          "objects": {
+            "binding": "theirs"
+          },
+          "op": "suspend"
+        },
+        {
+          "op": "time_travel"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

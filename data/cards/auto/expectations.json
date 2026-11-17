@@ -21831,6 +21831,17 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "the_parting_of_the_ways": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "battlefield"
+  },
   "the_queen_of_dale": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21953,6 +21964,13 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "the_wedding_of_river_song": {
+    "library_size": {
+      "0": 38,
+      "1": 18
+    },
+    "zone": "graveyard"
   },
   "the_whizzer_classic_speedster": {
     "zone": "battlefield"

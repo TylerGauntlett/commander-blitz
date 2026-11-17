@@ -281922,12 +281922,12 @@
     },
     "The Parting of the Ways": {
       "edhrec_rank": 9491,
-      "gate": "template",
+      "gate": null,
       "name": "The Parting of the Ways",
-      "reason": "no template for: I — Exile the top five cards of your library. For each nonland card exiled this way, put a",
+      "reason": "",
       "scryfall_id": "65015afb-cfdb-4373-a0db-0ca5e95c49a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Peregrine Dynamo": {
@@ -282932,12 +282932,12 @@
     },
     "The Wedding of River Song": {
       "edhrec_rank": 10795,
-      "gate": "template",
+      "gate": null,
       "name": "The Wedding of River Song",
-      "reason": "no template for: Draw two cards, then you may exile a nonland card from your hand with a number of time cou",
+      "reason": "",
       "scryfall_id": "47cdfa73-4e56-4364-82eb-744a1680911d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Whizzer, Classic Speedster": {
