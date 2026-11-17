@@ -3032,3 +3032,62 @@ class TestTheDaleksAreBlackArtifactsWithMenace:
         other = pool.get("pirate_2_2_b_menace")
         assert "Artifact" not in other.types
         assert "Dalek" not in other.subtypes
+
+
+class TestTheFaerieRoguesAreOneOneFliers:
+    """Alela, Cunning Conqueror, Shadow Puppeteers and Tegwyll's Scouring: *"create
+    a 1/1 **black Faerie Rogue** creature token with flying"*; Oona, Queen of the
+    Fae: *"create a 1/1 **blue and black** Faerie Rogue creature token with
+    flying."*
+
+    Both subtypes are load-bearing: Fae Dominion counts and pumps Faeries
+    (Tegwyll, Scion of Oona, Spell Stutter), and `faerie_1_1_u_flying` is the
+    right body with the wrong colour and no Rogue type.
+    """
+
+    def test_the_black_rogue_is_a_one_one_black_faerie_rogue_with_flying(self, pool):
+        token = pool.get("faerie_rogue_1_1_b_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["B"]
+        assert sorted(token.subtypes) == ["Faerie", "Rogue"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_blue_black_rogue_is_both_colours(self, pool):
+        token = pool.get("faerie_rogue_1_1_ub_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["B", "U"]
+        assert sorted(token.subtypes) == ["Faerie", "Rogue"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_blue_faerie_is_still_a_separate_token(self, pool):
+        other = pool.get("faerie_1_1_u_flying")
+        assert list(other.colors) == ["U"]
+        assert "Rogue" not in other.subtypes
+
+
+class TestNettlingNuisancesPirateCantBlock:
+    """Nettling Nuisance: *"that player creates a **4/2 red Pirate** creature
+    token with 'This token can't block.'"*
+
+    The static is the point of the token: it is goaded and must attack, and it
+    can never stay back to defend. `pirate_2_2_b_menace` shares only the type.
+    """
+
+    def test_it_is_a_four_two_red_pirate(self, pool):
+        token = pool.get("pirate_4_2_r_cant_block")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (4, 2)
+        assert list(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Pirate"]
+        assert not token.keywords
+
+    def test_it_prints_that_it_cant_block(self, pool):
+        token = pool.get("pirate_4_2_r_cant_block")
+        assert [a.static.get("effect") for a in token.abilities] == ["cant_block"]
+
+    def test_the_menace_pirate_is_still_a_separate_token(self, pool):
+        other = pool.get("pirate_2_2_b_menace")
+        assert (other.power, other.toughness) == (2, 2)
+        assert "menace" in other.keywords

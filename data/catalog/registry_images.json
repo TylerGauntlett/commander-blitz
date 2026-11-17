@@ -6232,6 +6232,14 @@
     "artist": "Kai Carpenter",
     "scryfall_id": "bc9a7599-3c7d-4b83-bff3-e3d1f20f1b0f"
   },
+  "faerie_rogue_1_1_b_flying": {
+    "artist": "Dave Allsop",
+    "scryfall_id": "096cbccf-cd00-49d6-9885-54ba68667c27"
+  },
+  "faerie_rogue_1_1_ub_flying": {
+    "artist": "Dave Allsop",
+    "scryfall_id": "096cbccf-cd00-49d6-9885-54ba68667c27"
+  },
   "faerie_seer": {
     "artist": "Eelis Kyttanen",
     "scryfall_id": "f0b96dc7-d046-4b64-b3a8-8bf5ac7c8f9b"
@@ -13837,6 +13845,10 @@
     "scryfall_id": "cd891675-12d4-40df-996a-97d694155227"
   },
   "pirate_2_2_b_menace": {
+    "artist": "Matt Stewart",
+    "scryfall_id": "ae3cbd25-2a67-499b-9613-d2c72ae87c2e"
+  },
+  "pirate_4_2_r_cant_block": {
     "artist": "Matt Stewart",
     "scryfall_id": "ae3cbd25-2a67-499b-9613-d2c72ae87c2e"
   },
