@@ -2119,6 +2119,12 @@ def change_control(
     ends the same way, in `temp_effects.end_source_bound`, whose handback for a
     control entry is this function pointed the other way.
 
+    ``"while_source_on_battlefield"`` is Sower of Temptation's "…for as long
+    as this creature remains on the battlefield" (611.2b): the same entry with
+    `TempEffect.while_source_on_battlefield` in place of the seat, ended by
+    ``source`` leaving the battlefield and by nothing else -- not by ``source``
+    changing controller, which ends the other one.
+
     The object does not move: ``GameObject.controller`` is a field and
     ``state.battlefield`` is one shared list, so the whole change is that field
     plus the three things the rules hang off it.
@@ -2167,6 +2173,9 @@ def change_control(
     source_bound = duration == "as_long_as_you_control_source"
     if source_bound and (source is None or while_controller is None):  # pragma: no cover
         raise ValueError("a source-bound control change needs its source and seat")
+    while_present = duration == "while_source_on_battlefield"
+    if while_present and source is None:  # pragma: no cover - the op passes it
+        raise ValueError("a control change bound to its source needs the source")
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield or obj.controller == pid:
         # Including the no-op: "gain control of a permanent you control" changes
@@ -2193,14 +2202,15 @@ def change_control(
                 since_turn=state.turn,
             )
         )
-    elif source_bound:
+    elif source_bound or while_present:
         obj.until_eot.append(
             TempEffect(
                 kind="control",
                 source=source,
                 previous_controller=previous,
                 new_controller=pid,
-                while_controller=while_controller,
+                while_controller=while_controller if source_bound else None,
+                while_source_on_battlefield=while_present,
             )
         )
     state.bump_chars()
@@ -2468,6 +2478,7 @@ def lose_all_abilities_timed(
     cutoff: int,
     source: int | None = None,
     until_player: int | None = None,
+    while_source_on_battlefield: bool = False,
 ) -> None:
     """ "Target creature **loses all abilities** … until end of turn" (Warkite
     Marauder), as a `TempEffect(kind="lose_all_abilities")` on the permanent.
@@ -2486,6 +2497,8 @@ def lose_all_abilities_timed(
     It rides `until_eot`, so cleanup -- or, with ``until_player``, that seat's
     next untap step -- ends it, and a zone change (400.7) drops it with the
     old object. It is not itself an ability, so a second loss does not end it.
+    With ``while_source_on_battlefield`` no clock ends it: ``source`` leaving
+    the battlefield does (`TempEffect.while_source_on_battlefield`).
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -2496,6 +2509,7 @@ def lose_all_abilities_timed(
             source=source,
             timestamp=cutoff,
             until_player=until_player,
+            while_source_on_battlefield=while_source_on_battlefield,
         )
     )
     state.bump_chars()
@@ -2730,8 +2744,9 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
 
     "Until end of turn" ends in every cleanup.  "Until your next turn" ends in
     none of them -- in its player's untap step instead -- and neither does "for
-    as long as you control" its source (`temp_effects.end_source_bound`), nor
-    "for as long as it has a <kind> counter on it"
+    as long as you control" its source or "for as long as" the source "remains
+    on the battlefield" (`temp_effects.end_source_bound`), nor "for as long as
+    it has a <kind> counter on it"
     (`GameObject._last_counter_gone`). "Until the end of your
     next turn" ends in the cleanup of the first of its seat's turns to *begin*
     after it was made, so the turn check is strict: made during that seat's own
@@ -2743,6 +2758,7 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     if (
         temp.until_player is not None
         or temp.while_controller is not None
+        or temp.while_source_on_battlefield
         or temp.while_counter is not None
     ):
         return False

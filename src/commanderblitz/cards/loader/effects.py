@@ -3606,13 +3606,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         "permanent",
         "until_end_of_turn",
         "until_your_next_turn",
+        "while_source_on_battlefield",
     ):
         # No duration is The Irencrag's permanent loss, so a misspelt clock
         # would otherwise load as the strictly stronger card that never ends.
         raise DslError(
             f"{where}: unknown lose_all_abilities duration {effect['duration']!r} "
-            f"(omit it for a permanent loss, or use 'until_end_of_turn' or "
-            f"'until_your_next_turn')"
+            f"(omit it for a permanent loss, or use 'until_end_of_turn', "
+            f"'until_your_next_turn' or 'while_source_on_battlefield')"
         )
     if op == "lose_keyword":
         # "…lose hexproof and shroud **and can't have** hexproof or shroud."

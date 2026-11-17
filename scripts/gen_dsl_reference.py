@@ -318,7 +318,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "detain": ("Board", "Detain permanents until your next turn.", None),
     "distribute_control_among_opponents": ("Board", "For each permanent, choose a different opponent; each gains control of theirs.",
                                            "Each opponent gains control of the one chosen for them"),
-    "gain_control": ("Board", "Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good.",
+    "gain_control": ("Board", "Gain control of permanents, for a duration (`as_long_as_you_control_source` and `while_source_on_battlefield` included) or for good.",
                      H_GAIN_CONTROL),
     "rotate_control": ("Board", "Pass permanents around the table to the left or right.",
                        '"Choose left or right" — passing the board around the table'),
@@ -379,7 +379,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
               H_CASES),
     "lose_all_abilities": ("Modify", "Permanents lose all abilities: for good, or with "
-                           "`duration` until end of turn or your next turn.",
+                           "`duration` until end of turn, your next turn or "
+                           "`while_source_on_battlefield`.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",

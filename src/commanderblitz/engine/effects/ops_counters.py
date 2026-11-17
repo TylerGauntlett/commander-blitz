@@ -866,6 +866,12 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     controller no longer controls the source as it would begin, and the steal
     is handed back the moment the source leaves the battlefield or changes
     hands (`temp_effects.end_source_bound`).
+
+    ``duration: "while_source_on_battlefield"`` is Sower of Temptation's "gain
+    control of target creature for as long as this creature remains on the
+    battlefield" (611.2b): handed back the moment the source leaves the
+    battlefield and not when it changes hands, and nothing at all when the
+    source is already gone as the effect would begin.
     """
     players = _players(ctx, spec.get("player", "you"))
     if not players:

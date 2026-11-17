@@ -14276,9 +14276,9 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default), `"until_end_of_turn"`, `"end_of_your_next_turn"` or
-`"as_long_as_you_control_source"` (both below); **any other spelling is a load
-error**. A
+default), `"until_end_of_turn"`, `"end_of_your_next_turn"`,
+`"as_long_as_you_control_source"` or `"while_source_on_battlefield"` (all
+below); **any other spelling is a load error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -14384,7 +14384,39 @@ steals when the thief leaves the game. Refused in a spell's `spell_effects`,
 where nobody controls the source.
 
 The near misses: `permanent` keeps the artifact after the source dies, the
-strictly better card; `until_end_of_turn` hands it back at the first cleanup.
+strictly better card; `until_end_of_turn` hands it back at the first cleanup;
+`while_source_on_battlefield` (next) keeps it when the source is stolen.
+
+### …for as long as the source remains on the battlefield
+
+    Sower of Temptation — "When this creature enters, gain control of target
+    creature for as long as this creature remains on the battlefield."
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "while_source_on_battlefield" }
+```
+
+611.2b's other source-bound duration, and the narrower of the two endings:
+only the source **leaving the battlefield** ends it. The steal is a
+`TempEffect(kind="control")` with `while_source_on_battlefield` set and no
+seat, and `temp_effects.end_source_bound` ends it — the handback, as above —
+when `zones.move_object` takes the source off the battlefield. A change of the
+source's controller does not: a Sower stolen by an opponent goes on holding
+the creature for the player who cast it, until the Sower leaves. A source
+already gone as the effect would begin takes nothing (the duration has ended
+before it starts); a blinked source is a new object and does not take it
+again; 800.4a still hands the creature back when the player who gained it
+leaves the game. Refused in a spell's `spell_effects`, where the source is on
+the stack.
+
+`lose_all_abilities` takes the same duration for Opportunistic Dragon's "for
+as long as this creature remains on the battlefield, … it loses all
+abilities": a `TempEffect(kind="lose_all_abilities")` with the same flag, ended
+the same way.
+
+The near miss is `as_long_as_you_control_source` (Yuffie's wording), which
+also ends when the source changes controller — a weaker card.
 
 ### "Choose left or right" — passing the board around the table
 

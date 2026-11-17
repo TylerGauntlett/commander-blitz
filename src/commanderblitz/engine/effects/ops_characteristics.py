@@ -40,6 +40,11 @@ TIMED_DURATIONS = ("until_end_of_turn", "until_your_next_turn")
 #: `pump` take beside the timed clocks. Not a clock: see `source_bound_seat`.
 SOURCE_BOUND = "as_long_as_you_control_source"
 
+#: "…for as long as this creature remains on the battlefield" (611.2b), which
+#: `gain_control` and `lose_all_abilities` take. `SOURCE_BOUND` with one of its
+#: two endings: only the source leaving ends it (`source_bound_seat`).
+SOURCE_PRESENT = "while_source_on_battlefield"
+
 
 def until_player_of(ctx: EffectContext, spec: Mapping[str, Any]) -> int | None:
     """The seat whose next turn ends this effect, or ``None`` for cleanup.
@@ -51,7 +56,7 @@ def until_player_of(ctx: EffectContext, spec: Mapping[str, Any]) -> int | None:
     duration = str(spec.get("duration", "until_end_of_turn"))
     if duration == "until_your_next_turn":
         return ctx.controller
-    if duration not in (*TIMED_DURATIONS, "permanent", SOURCE_BOUND):  # pragma: no cover - loader guards
+    if duration not in (*TIMED_DURATIONS, "permanent", SOURCE_BOUND, SOURCE_PRESENT):  # pragma: no cover
         raise ValueError(f"unknown duration {duration!r}")
     return None
 
@@ -66,12 +71,21 @@ def source_bound_seat(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[bool
     you don't control [it] when the effect would begin, it does nothing", so
     a source that has already left, or been stolen, before the trigger resolves
     answers ``applies`` false and the op writes nothing -- it must not fall
-    back to an until-end-of-turn grant. Every other duration applies and
-    carries no seat.
+    back to an until-end-of-turn grant.
+
+    ``SOURCE_PRESENT`` carries no seat and reads the same half of 611.2b with
+    one condition fewer: "for as long as this creature remains on the
+    battlefield" has already ended when the source is gone as the effect would
+    begin, so Sower of Temptation bounced in response to its own trigger takes
+    nothing, whoever controls it. Every other duration applies and carries no
+    seat.
     """
-    if str(spec.get("duration", "")) != SOURCE_BOUND:
+    duration = str(spec.get("duration", ""))
+    if duration not in (SOURCE_BOUND, SOURCE_PRESENT):
         return True, None
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if duration == SOURCE_PRESENT:
+        return source is not None and source.on_battlefield, None
     if source is None or not source.on_battlefield or source.controller != ctx.controller:
         return False, None
     return True, ctx.controller
@@ -160,6 +174,11 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
     "loses all abilities … until end of turn", written as a timed entry
     (`primitives.lose_all_abilities_timed`) that hides the older grants rather
     than deleting them, so they are back when it wears off.
+    ``"while_source_on_battlefield"`` is Opportunistic Dragon's "for as long as
+    this creature remains on the battlefield, … it loses all abilities": the
+    same timed entry with no clock, ended only by the source leaving the
+    battlefield, and nothing at all when the source is already gone as the
+    effect would begin (`source_bound_seat`).
 
     **Other** abilities: the grants applied alongside it survive, because
     `_derived_abilities` drops the *printed* list and appends the granted ones
@@ -167,6 +186,10 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     timed = spec.get("duration", "permanent") != "permanent"
     until_player = until_player_of(ctx, spec) if timed else None
+    while_present = spec.get("duration") == SOURCE_PRESENT
+    applies, _ = source_bound_seat(ctx, spec)
+    if not applies:
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Loses all abilities")
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -179,6 +202,7 @@ def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
                 cutoff=ctx.began_at,
                 source=ctx.source_oid,
                 until_player=until_player,
+                while_source_on_battlefield=while_present,
             )
             continue
         obj.lost_all_abilities = True

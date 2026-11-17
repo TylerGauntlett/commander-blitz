@@ -2836,8 +2836,8 @@ printed list outright when no static and no op grant is in sight, and
 `_derived_abilities` drops the *printed* list and appends the granted ones after
 — which is what "loses all other abilities and gains …" says.
 
-**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`
-or `"until_your_next_turn"` for the timed one:
+**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`,
+`"until_your_next_turn"` or `"while_source_on_battlefield"` for the timed one:
 
 ```jsonc
 // Warkite Marauder: "…target creature defending player controls loses all
@@ -2854,7 +2854,13 @@ gone and every keyword, protection and ability *granted* before it is read past
 (613.7); one granted after it survives. Nothing is deleted, which is the
 difference from the permanent loss: a grant that lasts as long as the permanent
 does (riot's haste, a `"permanent"` `grant_keyword`) is back when cleanup — or,
-for `until_your_next_turn`, that seat's untap step — ends the loss. Any other
+for `until_your_next_turn`, that seat's untap step — ends the loss.
+`while_source_on_battlefield` is Opportunistic Dragon's "for as long as this
+creature remains on the battlefield": no step ends it, the source leaving the
+battlefield does (`temp_effects.end_source_bound`), a source already gone as
+the effect would begin makes it do nothing, and a spell's `spell_effects`
+refuses it — the clock `gain_control` takes for Sower of Temptation (see the
+cookbook's *…for as long as the source remains on the battlefield*). Any other
 spelling is a load error, since a misspelt clock would otherwise read as the
 permanent loss, the strictly stronger card.
 

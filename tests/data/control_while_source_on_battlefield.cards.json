@@ -1,0 +1,51 @@
+{
+  "_comment": "Cards that exist only for tests/unit/effects/test_control_while_source_on_battlefield.py. Never part of a deck list. `t_wsb_tempter` is Sower of Temptation's enters trigger on its own, at no cost; `t_wsb_flier` is a plain creature with flying for it to take.",
+  "cards": [
+    {
+      "id": "t_wsb_tempter",
+      "name": "Test Tempter",
+      "oracle_text": "When this creature enters, gain control of target creature for as long as this creature remains on the battlefield.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "subtypes": ["Faerie", "Wizard"],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, gain control of target creature for as long as this creature remains on the battlefield.",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {"types": ["Creature"]}
+            }
+          ],
+          "effects": [
+            {
+              "op": "gain_control",
+              "objects": {"target": "t1"},
+              "duration": "while_source_on_battlefield"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wsb_flier",
+      "name": "Test Coveted Flier",
+      "oracle_text": "Flying",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "power": 1,
+      "toughness": 1,
+      "keywords": ["flying"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

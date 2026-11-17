@@ -1422,6 +1422,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"you control the source, and a spell is not a permanent anyone "
             f"controls as it resolves (611.2b) -- it would do nothing"
         )
+    if uses_source_bound_duration(model.spell_effects, "while_source_on_battlefield"):
+        raise DslError(
+            f"{where}.spell_effects: 'while_source_on_battlefield' lasts while the "
+            f"source remains on the battlefield, and a spell is on the stack as it "
+            f"resolves (611.2b) -- it would do nothing"
+        )
     if reads_placed_kind(model.spell_effects):
         raise DslError(
             f"{where}.spell_effects: {{'binding': 'counter'}} is the kind a "
