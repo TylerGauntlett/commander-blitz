@@ -28,8 +28,8 @@ nothing linked the Aura's leaves trigger to the creature it returned.
 
 The engine reads the printed swap of enchant abilities as two hosts in two
 zones: `zones.graveyard_hosts` is the graveyard clause, asked only of a host in
-a graveyard, and once the creature is on the battlefield nothing re-tests an
-Aura's clause (`docs/rules-coverage.md`), which is what "enchant creature put
+a graveyard, and once the creature is on the battlefield nothing re-tests this
+Aura's clause (`zones.enchant_clause_holds`, `docs/rules-coverage.md`), which is what "enchant creature put
 onto the battlefield with this Aura" amounts to. A card that leaves the
 graveyard is a new object wherever it lands (400.7), so `move_object` takes
 the Aura off it. "That creature" is `return_from_graveyard`'s ``link``, read

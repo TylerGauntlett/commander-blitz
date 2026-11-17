@@ -25,7 +25,7 @@ from .temp_effects import (
     clear_permanent_shields,
     drop_attack_requirements,
 )
-from .zones import destroy, graveyard_hosts, move_object, sacrifice
+from .zones import destroy, enchant_clause_holds, graveyard_hosts, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
@@ -486,8 +486,12 @@ def _tokens_and_attachments(state: GameState) -> bool:
         # them by falling through to the branch below. `is_alive` rather than a
         # seat-count test, because a player eliminated in a pod keeps their
         # index -- the list is never compacted.
+        #
+        # A seat still in the game is a legal host only while the Aura's enchant
+        # clause still names it (303.4d): "enchant opponent" on the seat that
+        # has since gained control of it is attached to an illegal player.
         if obj.attached_to_player is not None:
-            if state.is_alive(obj.attached_to_player):
+            if state.is_alive(obj.attached_to_player) and enchant_clause_holds(state, oid):
                 continue
             obj.attached_to_player = None
             changed = True
@@ -509,6 +513,14 @@ def _tokens_and_attachments(state: GameState) -> bool:
             if aura:
                 move_object(state, oid, Zone.GRAVEYARD, cause="aura_unattached")
                 changed = True
+        elif aura and not enchant_clause_holds(state, oid):
+            # 704.5m: the host is still here but no longer one the Aura's
+            # enchant clause allows (303.4d) -- the creature changed hands
+            # under "enchant creature you control", stopped being a creature,
+            # or lost the other Aura "enchant creature with another Aura
+            # attached to it" asks for.
+            move_object(state, oid, Zone.GRAVEYARD, cause="aura_unattached")
+            changed = True
     if changed:
         state.bump_chars()
     return changed

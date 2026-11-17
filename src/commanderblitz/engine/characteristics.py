@@ -2939,7 +2939,9 @@ def counters_of_kind(obj: GameObject, kind: str) -> int:
     return obj.counter(kind)
 
 
-def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
+def enchanted_by(
+    state: GameState, oid: int, spec: Any, controller: int, *, source_oid: int | None = None
+) -> bool:
     """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
 
     "Destroy all creatures that **aren't enchanted**" (Winds of Rath),
@@ -2951,6 +2953,12 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     the player the filter is read for. A player's Curse is attached to a seat,
     not to a permanent, and enchants no permanent.
 
+    ``{"exclude_self": true}`` in the filter leaves ``source_oid`` -- the
+    ability's own source -- out of the Auras counted: "enchant creature with
+    **another** Aura attached to it" (Daybreak Coronet), which its own Aura
+    attached to the creature must not satisfy. Only the effect selector writes
+    it (`selectors.validate_enchanted_by_key`).
+
     Answered by walking the battlefield for attachments, because attachment is
     stored one way -- on the Aura, as `attached_to` -- the walk `modified`
     makes in `selectors._is_modified`. An Aura is told by its printed face or by
@@ -2960,7 +2968,10 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     **input**, so a static's filter can read it without depending on another
     static's output (ADR 0001).
     """
-    return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
+    excluding = (
+        source_oid if isinstance(spec, Mapping) and spec.get("exclude_self") else None
+    )
+    return enchanted_by_answer(aura_controllers(state, oid, excluding=excluding), spec, controller)
 
 
 def is_equipped(state: GameState, oid: int) -> bool:
@@ -3010,7 +3021,7 @@ def is_modified_printed(state: GameState, obj: GameObject, controller: int) -> b
     return enchanted_by(state, obj.oid, {"controller": "you"}, controller)
 
 
-def aura_controllers(state: GameState, oid: int) -> list[int]:
+def aura_controllers(state: GameState, oid: int, *, excluding: int | None = None) -> list[int]:
     """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
 
     The one place an Aura is told from any other attachment, for both readers of
@@ -3020,11 +3031,12 @@ def aura_controllers(state: GameState, oid: int) -> list[int]:
     event as ``had_auras`` -- the last-known information (603.10a) that "whenever
     an enchanted creature dies" and "for each Aura you controlled that was
     attached to it" (Hateful Eidolon) read once the Auras have fallen off.
+    ``excluding`` is an Aura left out of the count: "another Aura".
     """
     seats: list[int] = []
     for aura_oid in state.battlefield:
         aura = state.objects.get(aura_oid)
-        if aura is None or aura.attached_to != oid:
+        if aura is None or aura.attached_to != oid or aura_oid == excluding:
             continue
         if not (state.card_of(aura).is_aura or aura.cast_bestowed or aura.became_aura):
             continue

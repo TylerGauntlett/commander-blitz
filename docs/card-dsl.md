@@ -1762,7 +1762,27 @@ the trigger filter and the cost-reduction count — answered by one function,
 `characteristics.enchanted_by`, from the host's end of `attached_to`. Every half
 of the answer is a pipeline input, so a static may read it (ADR 0001). The
 loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter
-and any key on the Auras but `controller`.
+and any key on the Auras but `controller` — and, in the effect selector alone,
+`exclude_self`.
+
+"Another Aura" is `{"exclude_self": true}`: the ability's own source is not
+counted among the Auras, so an Aura attached to the creature does not satisfy
+its own clause.
+
+```jsonc
+// Daybreak Coronet: "Enchant creature with another Aura attached to it"
+"targets": [{ "id": "enchanted", "kind": "permanent",
+  "selector": { "zone": "battlefield", "types": ["Creature"], "enchanted_by": { "exclude_self": true } } }]
+```
+
+`true` is the near miss: once the Coronet is attached it is an Aura on its host,
+and `true` would hold for ever. `true` is the only value; the static, trigger and
+cost-reduction filters refuse the key, since their readers do not carry the
+source. An enchant clause is standing (303.4d): `sba` re-tests the Aura's first
+target spec against its host and puts the Coronet into its graveyard once the
+other Aura leaves (704.5m; `zones.enchant_clause_holds`, ADR 0029). So the
+first target spec of an Aura holds only enchant qualities; a restriction that
+applies only as it is cast does not belong there.
 
 On a trigger watching a permanent leave the battlefield (`dies`,
 `creature_dies`, `leaves_battlefield`, `sacrificed`) the key looks back in time

@@ -132,7 +132,10 @@ SELECTOR_KEYS = frozenset(
         #: `{"controller": "you" | "opponent" | "any"}` naming whose Aura it
         #: must be, relative to the ability's controller. The same word in the
         #: static, trigger and cost-reduction filters, all answered by
-        #: `characteristics.enchanted_by`.
+        #: `characteristics.enchanted_by`. Here alone the filter may also say
+        #: `"exclude_self": true` -- "enchant creature with **another** Aura
+        #: attached to it" (Daybreak Coronet) -- so the ability's own source,
+        #: attached to the creature, does not count as one of its Auras.
         #:
         #: `modified` is the near miss: it also counts counters and Equipment,
         #: and only Auras you control. `attached` is the other, and names the
@@ -988,7 +991,7 @@ def matches(
     if selector.get("modified") and not _is_modified(ctx, oid):
         return False
     if "enchanted_by" in selector and not enchanted_by(
-        state, oid, selector["enchanted_by"], ctx.controller
+        state, oid, selector["enchanted_by"], ctx.controller, source_oid=ctx.source_oid
     ):
         return False
     if "equipped" in selector and is_equipped(state, oid) != selector["equipped"]:
@@ -2005,7 +2008,7 @@ def validate_has_counters_key(filt: Any, where: str) -> None:
     validate_counter_kind(spec, f"{where}.has_counters")
 
 
-def validate_enchanted_by_key(filt: Any, where: str) -> None:
+def validate_enchanted_by_key(filt: Any, where: str, *, exclude_self: bool = False) -> None:
     """``enchanted_by`` is ``true``, ``false`` or a filter on the Auras.
 
     The same check in every filter language, as `validate_colorless_key` is.
@@ -2014,6 +2017,13 @@ def validate_enchanted_by_key(filt: Any, where: str) -> None:
     "enchanted by anybody's Aura", so it is refused, as are a filter key the
     readers do not answer about an Aura and an empty filter, which is ``true``
     written the long way.
+
+    ``exclude_self`` says whether this language may write
+    ``{"exclude_self": true}`` -- "**another** Aura", one other than the
+    ability's own source (Daybreak Coronet). Only `validate_selector` passes
+    it, because only the effect selector's reader knows the source; a static,
+    trigger or cost-reduction filter is refused the key rather than reading it
+    as "any Aura".
     """
     if not isinstance(filt, Mapping) or "enchanted_by" not in filt:
         return
@@ -2025,13 +2035,19 @@ def validate_enchanted_by_key(filt: Any, where: str) -> None:
             f"{where}.enchanted_by: true, false, or a filter on the Auras such as "
             f'{{"controller": "you"}}, got {spec!r}'
         )
-    unknown = set(spec) - ENCHANTED_BY_KEYS
+    allowed = ENCHANTED_BY_KEYS | ({"exclude_self"} if exclude_self else set())
+    unknown = set(spec) - allowed
     if unknown:
         raise DslError(
             f"{where}.enchanted_by: {sorted(unknown)} are not asked of the Auras; "
-            f"only {sorted(ENCHANTED_BY_KEYS)}"
+            f"only {sorted(allowed)}"
         )
-    if spec["controller"] not in ENCHANTED_BY_CONTROLLERS:
+    if "exclude_self" in spec and spec["exclude_self"] is not True:
+        raise DslError(
+            f"{where}.enchanted_by.exclude_self: true only -- an Aura other than "
+            f"this one; drop the key to count every Aura"
+        )
+    if "controller" in spec and spec["controller"] not in ENCHANTED_BY_CONTROLLERS:
         raise DslError(
             f"{where}.enchanted_by.controller: one of "
             f"{list(ENCHANTED_BY_CONTROLLERS)}, got {spec['controller']!r}"
@@ -2278,7 +2294,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
     validate_colorless_key(selector, where)
-    validate_enchanted_by_key(selector, where)
+    validate_enchanted_by_key(selector, where, exclude_self=True)
     validate_has_counters_key(selector, where)
     validate_attached_to_key(selector, where)
     if "attached_to" in selector:

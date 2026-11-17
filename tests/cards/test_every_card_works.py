@@ -19,6 +19,7 @@ import pytest
 from commanderblitz.cards.authoring.verify import (
     _pass_for_the_opponent,
     check_expectation,
+    dress_own_creature,
     encoded_itself,
     graveyard_spell_props,
     sandbox_turn,
@@ -125,6 +126,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     board = swap_in_tribal_body(registry, list(OWN_BOARD), under_test)
     board = swap_in_legendary_body(registry, board, under_test)
     builder.battlefield(0, swap_in_artifact_body(registry, board, under_test))
+    # "Enchant creature with another Aura attached to it" (Daybreak Coronet)
+    # needs a creature already enchanted to target; `dress_own_creature` puts a
+    # quiet Aura token on the first one, shared so the two sandboxes agree, and
+    # only for a card that needs it.
+    dress_own_creature(builder, registry, under_test)
     builder.battlefield(1, OPPONENT_BOARD)
     # Surge to Victory and Arcane Heist must target an instant or sorcery card
     # in your graveyard and an opponent's; these hold none, so the card had no

@@ -24,7 +24,7 @@ from .characteristics import (
 from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
-from .effects.selectors import resolve_pool, select_players
+from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value, object_mana_value
 from .enums import Keyword, Zone
 from .events import EventType
@@ -1236,8 +1236,9 @@ def graveyard_hosts(state: GameState, aura_oid: int, controller: int) -> list[in
 
     The other half of Animate Dead's enchant ability -- "enchant creature put
     onto the battlefield with this Aura", gained as its enters trigger
-    resolves -- needs nothing here: that host is on the battlefield, where
-    nothing re-tests an Aura's enchant clause (`docs/rules-coverage.md`).
+    resolves -- needs nothing here: that host is on the battlefield, and
+    `enchant_clause_holds` leaves an Aura with this clause un-re-tested there,
+    since its first target spec names the graveyard card, not that creature.
     """
     aura = state.objects.get(aura_oid)
     if aura is None:
@@ -1367,6 +1368,51 @@ def _aura_host_pool(state: GameState, oid: int, controller: int) -> list[int]:
         for host in resolve_pool(ctx, selector)
         if host != oid and not protected_from(state, host, oid, attaching=True)
     ]
+
+
+def enchant_clause_holds(state: GameState, aura_oid: int) -> bool:
+    """Does the Aura ``aura_oid`` still satisfy its enchant clause where it is?
+
+    303.4d: an Aura's enchant ability restricts what it can be attached to for
+    as long as it is on the battlefield, and 704.5m puts one attached to an
+    illegal object or player into its owner's graveyard. The clause is the
+    Aura's first target spec, the one `offer_aura_host` and the cast read, asked
+    of the one host it is on, for its controller now -- so "enchant creature
+    you control" fails when the creature changes hands, "enchant creature with
+    another Aura attached to it" when the other Aura leaves, and "enchant
+    creature" when the host stops being one.
+
+    ``True`` -- nothing to re-test -- for an Aura with no clause written (a Role,
+    attached by the op that made it), for a printed non-Aura that became one
+    (Necromancy, whose clause is the creature it returned), and for "enchant
+    creature card in a graveyard" (Animate Dead), whose battlefield clause is
+    the creature put onto the battlefield with it and whose graveyard host is
+    `graveyard_hosts`' question. Not targeting, and not protection: hexproof,
+    shroud and ward never apply, and protection is checked as the Aura
+    attaches (`primitives.attach`).
+    """
+    obj = state.objects.get(aura_oid)
+    if obj is None:
+        return True
+    card = state.card_of(obj)
+    if not card.is_aura or not card.targets:
+        return True
+    spec = card.targets[0]
+    if spec.kind == "card_in_graveyard":
+        return True
+    ctx = EffectContext(
+        state=state, controller=obj.controller, source_oid=aura_oid, source_name=card.name
+    )
+    if obj.attached_to_player is not None:
+        if spec.kind != "player":
+            return False
+        clause = spec.selector.get("controller", "any")
+        return clause == "any" or obj.attached_to_player in select_players(ctx, clause)
+    if obj.attached_to is None:
+        return True
+    if spec.kind == "player":
+        return False
+    return matches(ctx, obj.attached_to, {**dict(spec.selector), "zone": "battlefield"})
 
 
 def offer_named_host(state: GameState, oid: int, controller: int, hosts: list[int]) -> bool:
