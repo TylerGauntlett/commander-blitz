@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**476 cards** blocked by **426** capabilities.
+**481 cards** blocked by **431** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,6 +26,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [block-restriction-relative-power](#block-restriction-relative-power) | 3 | 6335 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -43,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
-| [block-restriction-relative-power](#block-restriction-relative-power) | 2 | 6335 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
@@ -77,13 +77,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
+| [ability-tax-nonmana](#ability-tax-nonmana) | 1 | 7606 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
-| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
+| [afterlife](#afterlife) | 1 | 7606 | token |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
@@ -93,6 +94,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [as-becomes-attached-choice](#as-becomes-attached-choice) | 1 | 6322 | replacement |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
+| [assign-damage-as-though-unblocked](#assign-damage-as-though-unblocked) | 1 | 4569 | static_effect |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
@@ -102,12 +104,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [aura-control](#aura-control) | 1 | 16395 | static_effect |
+| [aura-host-restriction](#aura-host-restriction) | 1 | 3485 | op |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
+| [becomes-attached](#becomes-attached) | 1 | 8858 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -188,6 +192,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [emerge](#emerge) | 1 | 17443 | value |
+| [enchant-restriction](#enchant-restriction) | 1 | 3305 | engine |
 | [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
@@ -915,6 +920,29 @@ Blocks **4** cards.
 
 </details>
 
+## block-restriction-relative-power
+
+Blocks **3** cards.
+
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value`; Aura Gnarlid's own power grows with every Aura on the battlefield (its second line), so no constant is correct. The second line (a self buff counting Auras) is expressible; only this line is blocked
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (and reads base P/T); Den Protector's power changes with its megamorph +1/+1 counter and any pump, so no constant is correct. Megamorph (`morph` + `morph_counter`) and the `turned_face_up` trigger are expressible; only this line is blocked
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
+
+<details><summary>Cards waiting on this</summary>
+
+- **Den Protector** (rank 6335) — `den_protector`
+  - Creatures with power less than this creature's power can't block it.
+- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
+  - Creatures with power less than this creature's power can't block it.
+  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
+- **Aura Gnarlid** (rank 10835) — `aura_gnarlid`
+  - Creatures with power less than this creature's power can't block it.
+
+</details>
+
 ## choose-new-targets
 
 Blocks **3** cards.
@@ -1270,25 +1298,6 @@ Blocks **2** cards.
   - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
 - **Spirit of Resilience** (rank 13273) — `spirit_of_resilience`
   - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn
-
-</details>
-
-## block-restriction-relative-power
-
-Blocks **2** cards.
-
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (and reads base P/T); Den Protector's power changes with its megamorph +1/+1 counter and any pump, so no constant is correct. Megamorph (`morph` + `morph_counter`) and the `turned_face_up` trigger are expressible; only this line is blocked
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Den Protector** (rank 6335) — `den_protector`
-  - Creatures with power less than this creature's power can't block it.
-- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
-  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>
 
@@ -1901,6 +1910,21 @@ Blocks **2** cards.
 
 </details>
 
+## ability-tax-nonmana
+
+Blocks **1** card.
+
+- **(static_effect)** an ability_cost_increase class covering every non-mana activated ability an opponent activates (no targeting clause), e.g. affects_abilities {"non_mana": true}, with activated_by opponent and condition is_your_turn
+  <br>Why the existing vocabulary won't do: ability_cost_increase's affects_abilities offers only equip, or any beside a targeting clause; the loader refuses any without targeting because the payment solver activates tap-only mana abilities without consulting the tax, so a blanket 'unless they're mana abilities' tax cannot be said. The spell half (spell_cost_increase) alone would be a partial card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tithe Taker** (rank 7606) — `tithe_taker`
+  - During your turn, spells your opponents cast cost {1} more to cast and abilities your opponents activate cost {1} more to activate unless they're mana abilities.
+  - Afterlife 1 (When this creature dies, create a 1/1 white and black Spirit creature token with flying.)
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -1960,20 +1984,6 @@ Blocks **1** card.
 
 </details>
 
-## add-mana-on-tap-any-color
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fertile Ground** (rank 1052) — `fertile_ground`
-  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
-
-</details>
-
 ## add-supertype
 
 Blocks **1** card.
@@ -2000,6 +2010,21 @@ Blocks **1** card.
 
 - **Hulk's Thunderclap** (rank 20956) — `hulk_s_thunderclap`
   - Target creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment.
+
+</details>
+
+## afterlife
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white and black Spirit creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_w_flying (white only) and inkling_2_1_wb_flying (wrong size and type); no white-black 1/1 flying Spirit exists, and a nearly-right token is not the printed one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tithe Taker** (rank 7606) — `tithe_taker`
+  - During your turn, spells your opponents cast cost {1} more to cast and abilities your opponents activate cost {1} more to activate unless they're mana abilities.
+  - Afterlife 1 (When this creature dies, create a 1/1 white and black Spirit creature token with flying.)
 
 </details>
 
@@ -2130,6 +2155,20 @@ Blocks **1** card.
 
 </details>
 
+## assign-damage-as-though-unblocked
+
+Blocks **1** card.
+
+- **(static_effect)** a static (affects a creature filter, e.g. {"attached": true}) letting that creature's controller choose, at combat damage assignment, to have a blocked creature assign all its combat damage to the player or planeswalker it is attacking as though it weren't blocked (702.19-style option, as on Thorn Elemental / Rhox)
+  <br>Why the existing vocabulary won't do: No static_effects entry or keyword covers it: combat_damage_by_toughness changes which value is assigned, not where; trample only assigns excess past lethal; grant_keyword has no such keyword in the closed keyword list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Indomitable Might** (rank 4569) — `indomitable_might`
+  - Enchanted creature's controller may have it assign its combat damage as though it weren't blocked.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -2257,6 +2296,20 @@ Blocks **1** card.
 
 </details>
 
+## aura-host-restriction
+
+Blocks **1** card.
+
+- **(op)** an option on return_from_graveyard / put_onto_battlefield (e.g. `host_filter: {"types": ["Creature"]}`) that narrows the 303.4f host choice an uncast Aura makes as it enters: the controller still chooses a host its enchant clause allows, but only among permanents also matching the filter, and an Aura with no such host stays in the graveyard (303.4g)
+  <br>Why the existing vocabulary won't do: return_from_graveyard with an Aura selector already routes each Aura through zones.offer_aura_host, but that pool is the Aura's own enchant clause only, so an 'Enchant permanent/artifact/land' Aura could land on a non-creature. `host_named` names one fixed host rather than restricting a choice, and the selector key `attached_to` filters existing attachments, not arrival hosts
+
+<details><summary>Cards waiting on this</summary>
+
+- **Retether** (rank 3485) — `retether`
+  - Return each Aura card from your graveyard to the battlefield. Only creatures can be enchanted this way. (Aura cards that can't enchant a creature on the battlefield remain in your graveyard.)
+
+</details>
+
 ## base-power
 
 Blocks **1** card.
@@ -2339,6 +2392,20 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
+
+</details>
+
+## becomes-attached
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired whenever a permanent becomes attached to an object (an Aura resolving onto, entering attached to, or being moved onto a permanent), filterable on the attachment (Aura you control) and on the object it became attached to (creature you control)
+  <br>Why the existing vocabulary won't do: trigger_events has no attach event; the engine emits an ATTACHED event but it is not exposed as a trigger. permanent_enters with an Aura filter misses Auras moved or re-attached by attach/aura_swap, fires for Auras entering attached to an opponent's creature, and cannot filter on what the Aura is attached to
+
+<details><summary>Cards waiting on this</summary>
+
+- **Siona, Captain of the Pyleas** (rank 8858) — `siona_captain_of_the_pyleas`
+  - Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.
 
 </details>
 
@@ -3482,6 +3549,20 @@ Blocks **1** card.
 
 - **Adipose Offspring** (rank 17443) — `adipose_offspring`
   - When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.
+
+</details>
+
+## enchant-restriction
+
+Blocks **1** card.
+
+- **(engine)** An Aura's enchant restriction re-checked as a state-based action (303.4d, 704.5m): an Aura attached to a permanent that no longer satisfies its 'Enchant <quality>' selector is put into its owner's graveyard. Here the quality is 'creature enchanted by an Aura other than this one', so the selector also needs enchanted_by to exclude the source Aura itself (e.g. enchanted_by: {"exclude_self": true} or a count of other Auras).
+  <br>Why the existing vocabulary won't do: The card-level target selector with enchanted_by: true restricts the cast, but sba._tokens_and_attachments only bins an Aura whose host has left the battlefield or a lost player; it never re-checks the enchant selector, so the Coronet would stay on (and keep granting +3/+3, first strike, vigilance, lifelink) after the other Aura leaves. enchanted_by also accepts only {controller} and cannot exclude the Coronet itself, so once attached the Coronet would satisfy its own 'another Aura' clause. The sandbox position also has no enchanted creature, so the card has no legal target there.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Daybreak Coronet** (rank 3305) — `daybreak_coronet`
+  - Enchant creature with another Aura attached to it
 
 </details>
 

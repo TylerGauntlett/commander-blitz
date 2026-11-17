@@ -1,0 +1,16 @@
+{
+  "card_id": "siona_captain_of_the_pyleas",
+  "name": "Siona, Captain of the Pyleas",
+  "oracle_text": "When Siona enters, look at the top seven cards of your library. You may reveal an Aura card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nWhenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.",
+  "blocked_sentences": [
+    "Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token."
+  ],
+  "needs": [{
+    "capability": "becomes_attached",
+    "kind": "trigger_event",
+    "what": "a trigger event fired whenever a permanent becomes attached to an object (an Aura resolving onto, entering attached to, or being moved onto a permanent), filterable on the attachment (Aura you control) and on the object it became attached to (creature you control)",
+    "why_existing_wont_do": "trigger_events has no attach event; the engine emits an ATTACHED event but it is not exposed as a trigger. permanent_enters with an Aura filter misses Auras moved or re-attached by attach/aura_swap, fires for Auras entering attached to an opponent's creature, and cannot filter on what the Aura is attached to"
+  }],
+  "closest_existing": ["permanent_enters", "attach"],
+  "confidence": "high"
+}

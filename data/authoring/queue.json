@@ -7992,12 +7992,12 @@
     },
     "Ancestral Mask": {
       "edhrec_rank": 2214,
-      "gate": "template",
+      "gate": null,
       "name": "Ancestral Mask",
-      "reason": "no template for: Enchanted creature gets +2/+2 for each other enchantment on the battlefield",
+      "reason": "",
       "scryfall_id": "09f97283-3325-424a-9f31-65fe9a0bff97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancestral Memories": {
@@ -39882,12 +39882,12 @@
     },
     "Careful Cultivation": {
       "edhrec_rank": 10879,
-      "gate": "template",
+      "gate": null,
       "name": "Careful Cultivation",
-      "reason": "no template for: Enchant artifact or creature",
+      "reason": "",
       "scryfall_id": "68d56fac-4dca-47b8-b48e-0a3d532004a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Careful Study": {
@@ -42002,12 +42002,12 @@
     },
     "Celestial Archon": {
       "edhrec_rank": 12611,
-      "gate": "template",
+      "gate": null,
       "name": "Celestial Archon",
-      "reason": "no template for: Bestow {5}{W}{W}",
+      "reason": "",
       "scryfall_id": "70e1129c-97d3-4da0-9bd7-63aa8eacef76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Celestial Armor": {
@@ -60472,12 +60472,12 @@
     },
     "Danitha Capashen, Paragon": {
       "edhrec_rank": 797,
-      "gate": "template",
+      "gate": null,
       "name": "Danitha Capashen, Paragon",
-      "reason": "no template for: Aura and Equipment spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "210ff924-215e-4ae8-8706-5af3891c6605",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Danitha, Benalia's Hope": {
@@ -67562,12 +67562,12 @@
     },
     "Destiny Spinner": {
       "edhrec_rank": 946,
-      "gate": "template",
+      "gate": null,
       "name": "Destiny Spinner",
-      "reason": "no template for: Creature and enchantment spells you control can't be countered",
+      "reason": "",
       "scryfall_id": "011c9afa-46c0-419e-848c-92476702fd68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Destroy Evil": {
@@ -79712,12 +79712,12 @@
     },
     "Eidolon of Blossoms": {
       "edhrec_rank": 867,
-      "gate": "template",
+      "gate": null,
       "name": "Eidolon of Blossoms",
-      "reason": "no template for: Constellation — Whenever this creature or another enchantment you control enters, draw a c",
+      "reason": "",
       "scryfall_id": "586c639e-9050-4f45-aa65-0947a2d2a57a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eidolon of Countless Battles": {
@@ -81282,12 +81282,12 @@
     },
     "Ellivere of the Wild Court": {
       "edhrec_rank": 6158,
-      "gate": "template",
+      "gate": null,
       "name": "Ellivere of the Wild Court",
-      "reason": "no template for: Whenever Ellivere enters or attacks, create a Virtuous Role token attached to another targ",
+      "reason": "",
       "scryfall_id": "45851394-b8f3-4713-8239-afcb387d47c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ellyn Harbreeze, Busybody": {
@@ -83452,12 +83452,12 @@
     },
     "Enchantress's Presence": {
       "edhrec_rank": 949,
-      "gate": "template",
+      "gate": null,
       "name": "Enchantress's Presence",
-      "reason": "no template for: Whenever you cast an enchantment spell, draw a card",
+      "reason": "",
       "scryfall_id": "602bd27a-7ae1-4081-8d68-bb2539cd5965",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Encircling Fissure": {
@@ -86742,12 +86742,12 @@
     },
     "Ethereal Armor": {
       "edhrec_rank": 1077,
-      "gate": "template",
+      "gate": null,
       "name": "Ethereal Armor",
-      "reason": "no template for: Enchanted creature gets +1/+1 for each enchantment you control and has first strike",
+      "reason": "",
       "scryfall_id": "fd0e8a82-0201-483e-a976-5f29764b35a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ethereal Champion": {
@@ -93782,12 +93782,12 @@
     },
     "Fertile Ground": {
       "edhrec_rank": 1052,
-      "gate": "template",
+      "gate": null,
       "name": "Fertile Ground",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional one mana of ",
+      "reason": "",
       "scryfall_id": "83778d03-6196-4994-8f78-4db6cec823fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fertile Imagination": {
@@ -108472,12 +108472,12 @@
     },
     "Giant Inheritance": {
       "edhrec_rank": 9851,
-      "gate": "template",
+      "gate": null,
       "name": "Giant Inheritance",
-      "reason": "no template for: Enchanted creature gets +5/+5 and has \"Whenever this creature attacks, create a Monster Ro",
+      "reason": "",
       "scryfall_id": "3e8d46e1-7aad-4e2b-82a5-af81cd6c8ae5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Giant Killer // Chop Down": {
@@ -120902,12 +120902,12 @@
     },
     "Gylwain, Casting Director": {
       "edhrec_rank": 10565,
-      "gate": "template",
+      "gate": null,
       "name": "Gylwain, Casting Director",
-      "reason": "no template for: Whenever Gylwain or another nontoken creature you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "79e4242c-a53a-4287-976b-8e545888a1fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gyome, Master Chef": {
@@ -144212,12 +144212,12 @@
     },
     "Jukai Naturalist": {
       "edhrec_rank": 1287,
-      "gate": "template",
+      "gate": null,
       "name": "Jukai Naturalist",
-      "reason": "no template for: Enchantment spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "2dd0cba1-1d53-49a7-a6fa-dea0a6bd8ece",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jukai Preserver": {
@@ -150372,12 +150372,12 @@
     },
     "Knickknack Ouphe": {
       "edhrec_rank": 13999,
-      "gate": "template",
+      "gate": null,
       "name": "Knickknack Ouphe",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "08fe7e9c-7c3b-435f-bc0d-e380e6b852c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knife": {
@@ -157312,12 +157312,12 @@
     },
     "Liberated Livestock": {
       "edhrec_rank": 17597,
-      "gate": "template",
+      "gate": null,
       "name": "Liberated Livestock",
-      "reason": "no template for: When this creature dies, create a 1/1 white Cat creature token with lifelink, a 1/1 white ",
+      "reason": "",
       "scryfall_id": "890e8f0d-07c2-47bb-af99-944289c6ea56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liberating Combustion": {
@@ -196472,12 +196472,12 @@
     },
     "Ox Drover": {
       "edhrec_rank": 11926,
-      "gate": "template",
+      "gate": null,
       "name": "Ox Drover",
-      "reason": "no template for: This creature can't be blocked by Oxen",
+      "reason": "",
       "scryfall_id": "2f2681b8-0728-47d4-b7f2-dae7fbf87319",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ox of Agonas": {
@@ -204782,12 +204782,12 @@
     },
     "Pollenbright Wings": {
       "edhrec_rank": 14124,
-      "gate": "template",
+      "gate": null,
       "name": "Pollenbright Wings",
-      "reason": "no template for: Whenever enchanted creature deals combat damage to a player, create that many 1/1 green Sa",
+      "reason": "",
       "scryfall_id": "b88cd231-d2f3-4871-869b-ab5ba299f7f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Polliwallop": {
@@ -232332,12 +232332,12 @@
     },
     "Sanctum Weaver": {
       "edhrec_rank": 622,
-      "gate": "template",
+      "gate": null,
       "name": "Sanctum Weaver",
-      "reason": "proxy simplified it: mana clause read loosely: 'X mana of any one color, where X is the '",
+      "reason": "",
       "scryfall_id": "f15b8e8e-1a71-4445-ba82-e3d2cc7afdfc",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sanctum of All": {
@@ -241342,12 +241342,12 @@
     },
     "Setessan Champion": {
       "edhrec_rank": 976,
-      "gate": "template",
+      "gate": null,
       "name": "Setessan Champion",
-      "reason": "no template for: Constellation — Whenever an enchantment you control enters, put a +1/+1 counter on this cr",
+      "reason": "",
       "scryfall_id": "261deceb-38fe-4f22-8771-b665b1d36c33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Setessan Griffin": {
@@ -253232,12 +253232,12 @@
     },
     "Snake Umbra": {
       "edhrec_rank": 1475,
-      "gate": "template",
+      "gate": null,
       "name": "Snake Umbra",
-      "reason": "no template for: Enchanted creature gets +1/+1 and has \"Whenever this creature deals damage to an opponent,",
+      "reason": "",
       "scryfall_id": "00b60638-bea3-4c27-9819-da5ac2be1ca1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Snake of the Golden Grove": {
@@ -257782,12 +257782,12 @@
     },
     "Spectral Steel": {
       "edhrec_rank": 10433,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Steel",
-      "reason": "no template for: {1}{W}, Exile this card from your graveyard: Return another target Aura or Equipment card ",
+      "reason": "",
       "scryfall_id": "923ccb8e-5793-44fe-b15c-b218a8d84cfa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectrum Sentinel": {
@@ -273222,12 +273222,12 @@
     },
     "Syr Armont, the Redeemer": {
       "edhrec_rank": 17290,
-      "gate": "template",
+      "gate": null,
       "name": "Syr Armont, the Redeemer",
-      "reason": "no template for: When Syr Armont enters, create a Monster Role token attached to another target creature yo",
+      "reason": "",
       "scryfall_id": "85050609-baf0-430a-ab33-83a6ea6d4741",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syr Carah, the Bold": {
@@ -275112,12 +275112,12 @@
     },
     "Tanglespan Lookout": {
       "edhrec_rank": 5801,
-      "gate": "template",
+      "gate": null,
       "name": "Tanglespan Lookout",
-      "reason": "no template for: Whenever an Aura you control enters, draw a card",
+      "reason": "",
       "scryfall_id": "3bc5c32d-be0a-4a5f-a8c7-9767a895bc76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tangletrap": {
@@ -287232,12 +287232,12 @@
     },
     "Timber Paladin": {
       "edhrec_rank": 11219,
-      "gate": "template",
+      "gate": null,
       "name": "Timber Paladin",
-      "reason": "no template for: As long as this creature is enchanted by exactly one Aura, it has base power and toughness",
+      "reason": "",
       "scryfall_id": "1edfd4d2-c492-4bec-9bb0-c5b7cb01818f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timber Protector": {
@@ -296392,12 +296392,12 @@
     },
     "Umbra Mystic": {
       "edhrec_rank": 4136,
-      "gate": "template",
+      "gate": null,
       "name": "Umbra Mystic",
-      "reason": "no template for: Auras attached to permanents you control have umbra armor",
+      "reason": "",
       "scryfall_id": "79865b8e-10fe-4f1a-805a-98bb5c10167f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Umbra Stalker": {
@@ -303062,12 +303062,12 @@
     },
     "Verdant Embrace": {
       "edhrec_rank": 6280,
-      "gate": "template",
+      "gate": null,
       "name": "Verdant Embrace",
-      "reason": "no template for: Enchanted creature gets +3/+3 and has \"At the beginning of each upkeep, create a 1/1 green",
+      "reason": "",
       "scryfall_id": "b36f2399-bf72-48ab-9314-834b69194d5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verdant Field": {
@@ -306112,12 +306112,12 @@
     },
     "Vitu-Ghazi, the City-Tree": {
       "edhrec_rank": 8129,
-      "gate": "template",
+      "gate": null,
       "name": "Vitu-Ghazi, the City-Tree",
-      "reason": "no template for: {2}{G}{W}, {T}: Create a 1/1 green Saproling creature token",
+      "reason": "",
       "scryfall_id": "5630193b-4956-4f64-9dae-7aa7452d8989",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Viv Vision, Teen Synthezoid": {
@@ -310562,12 +310562,12 @@
     },
     "Warbriar Blessing": {
       "edhrec_rank": 14285,
-      "gate": "template",
+      "gate": null,
       "name": "Warbriar Blessing",
-      "reason": "no template for: When this Aura enters, enchanted creature fights up to one target creature you don't contr",
+      "reason": "",
       "scryfall_id": "828a7b4e-fc9d-4db4-bcf1-58b76cb32d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Warbringer": {

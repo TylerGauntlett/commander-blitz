@@ -1,0 +1,23 @@
+{
+  "card_id": "daybreak_coronet",
+  "name": "Daybreak Coronet",
+  "oracle_text": "Enchant creature with another Aura attached to it\nEnchanted creature gets +3/+3 and has first strike, vigilance, and lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)",
+  "blocked_sentences": [
+    "Enchant creature with another Aura attached to it"
+  ],
+  "needs": [
+    {
+      "capability": "enchant_restriction",
+      "kind": "engine",
+      "what": "An Aura's enchant restriction re-checked as a state-based action (303.4d, 704.5m): an Aura attached to a permanent that no longer satisfies its 'Enchant <quality>' selector is put into its owner's graveyard. Here the quality is 'creature enchanted by an Aura other than this one', so the selector also needs enchanted_by to exclude the source Aura itself (e.g. enchanted_by: {\"exclude_self\": true} or a count of other Auras).",
+      "why_existing_wont_do": "The card-level target selector with enchanted_by: true restricts the cast, but sba._tokens_and_attachments only bins an Aura whose host has left the battlefield or a lost player; it never re-checks the enchant selector, so the Coronet would stay on (and keep granting +3/+3, first strike, vigilance, lifelink) after the other Aura leaves. enchanted_by also accepts only {controller} and cannot exclude the Coronet itself, so once attached the Coronet would satisfy its own 'another Aura' clause. The sandbox position also has no enchanted creature, so the card has no legal target there."
+    }
+  ],
+  "closest_existing": [
+    "enchanted_by",
+    "targets",
+    "buff",
+    "grant_keyword"
+  ],
+  "confidence": "high"
+}
