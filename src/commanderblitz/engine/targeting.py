@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import itertools
 import sys
+from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
@@ -452,6 +453,28 @@ def _one_each(state: GameState, refs: Sequence[TargetRef]) -> bool:
     return True
 
 
+def _drop_shared_controllers(
+    state: GameState, refs: Sequence[TargetRef]
+) -> list[TargetRef]:
+    """608.2b's re-check of "controlled by different players", target by target.
+
+    The restriction is part of what makes each target legal, so each one is
+    asked it again on resolution against the other targets still legal. A
+    target that now shares a controller with another one fails it -- and so
+    does that other one, because the restriction reads the same from either
+    side and the game keeps no record of which creature moved. Run Away
+    Together aimed at two creatures, one of which was stolen by the other's
+    controller in response, returns neither. A target that has left (no
+    object) has no controller to clash with.
+    """
+    def seat(ref: TargetRef) -> int | None:
+        obj = state.objects.get(ref.id) if ref.kind == "object" else None
+        return None if obj is None else obj.controller
+
+    seats = Counter(seat(ref) for ref in refs)
+    return [ref for ref in refs if seat(ref) is None or seats[seat(ref)] == 1]
+
+
 def _controller_count(state: GameState, refs: Sequence[TargetRef]) -> int:
     """How many distinct controllers ``refs`` have -- the most `_one_each` admits.
 
@@ -815,9 +838,15 @@ def _spec_options(
         # be put on the stack at all.
         return [()]
     if count > 1:
+        # "Two target creatures controlled by different players" (Run Away
+        # Together) is every pair across two seats, and only a pair: a board
+        # where every creature shares one controller offers nothing, and so
+        # does a board with one creature on it (601.2c) -- one target is not a
+        # pair, and no smaller set is a choice the card offers.
+        size = count if spec.one_per_player else min(count, len(options))
         combos = [
             tuple(c)
-            for c in itertools.combinations(options, min(count, len(options)))
+            for c in itertools.combinations(options, size)
             if _set_rules_hold(state, spec, c)
         ]
         if not combos and not spec.optional:
@@ -1194,6 +1223,8 @@ def filter_legal(
                 x=x,
             )
         ]
+        if spec.one_per_player:
+            kept = _drop_shared_controllers(state, kept)
         if chunk:
             had_targets = True
         buckets[spec.id] = kept

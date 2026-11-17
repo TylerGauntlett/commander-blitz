@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**477 cards** blocked by **428** capabilities.
+**476 cards** blocked by **426** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -84,7 +84,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
-| [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
@@ -112,7 +111,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
-| [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -168,6 +166,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
+| [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -224,7 +223,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
-| [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [filtered-proliferate](#filtered-proliferate) | 1 | 17657 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
@@ -391,6 +389,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
+| [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -434,7 +433,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
 | [voting](#voting) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
-| [while-source-on-battlefield-duration](#while-source-on-battlefield-duration) | 1 | 8222 | engine |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
@@ -2005,20 +2003,6 @@ Blocks **1** card.
 
 </details>
 
-## adventure-half-in-index
-
-Blocks **1** card.
-
-- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
-  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
-  - This creature can block only creatures with flying.
-
-</details>
-
 ## alien-angel-token
 
 Blocks **1** card.
@@ -2398,20 +2382,6 @@ Blocks **1** card.
 
 - **Twins of Discord** (rank 6438) — `twins_of_discord`
   - Each other colorless creature you control has bloodthirst 2
-
-</details>
-
-## can-block-only
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a creature restricting which attackers IT may block, by a filter over the attacker ("this creature can block only creatures with flying"): an `affects` naming the blocker (self_only) and an `attackers` filter (e.g. keywords: [flying]) read on the attacker's derived characteristics in combat.can_block
-  <br>Why the existing vocabulary won't do: `block_restriction` is the mirror image: it sits on the ATTACKER and filters which blockers may block it (block_restrictions(state, attacker_oid) matches `affects` against the attacker). `cant_block` forbids blocking outright with no attacker filter. No keyword covers it (shadow is two-way and about shadow only). combat.can_block has no check of a blocker-side static against the attacker's qualities
-
-<details><summary>Cards waiting on this</summary>
-
-- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
-  - This creature can block only creatures with flying.
 
 </details>
 
@@ -3198,6 +3168,20 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
+
+</details>
+
+## cursed-role
+
+Blocks **1** card.
+
+- **(token)** a Cursed Role token: a colorless Aura Role enchantment token with "Enchant creature" and "Enchanted creature is 1/1" (base power and toughness set to 1/1)
+  <br>Why the existing vocabulary won't do: token_ids holds only one Role, wicked_role ("Enchanted creature gets +1/+1"); create_token with attached_to inside a for_each over opponents' creatures would express the sentence, and flash_cost {"mana": "{2}"} covers the first line, but no cursed_role id exists to name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Asinine Antics** (rank 7808) — `asinine_antics`
+  - For each creature your opponents control, create a Cursed Role token attached to that creature.
 
 </details>
 
@@ -3998,20 +3982,6 @@ Blocks **1** card.
 
 - **Time Reaper** (rank 21122) — `time_reaper`
   - Consume Anomaly — Whenever this creature deals combat damage to a player, put target face-up card they own in exile on the bottom of their library. If you do, you gain 3 life.
-
-</details>
-
-## faerie-rogue-1-1-b-flying-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black Faerie Rogue creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has faerie_1_1_u_flying (blue Faerie, no Rogue) and faerie_dragon_1_1_u_flying, neither of which is a black Faerie Rogue (111.4)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
-  - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
 
 </details>
 
@@ -6394,6 +6364,20 @@ Blocks **1** card.
 
 </details>
 
+## source-bound-cant-attack-or-block
+
+Blocks **1** card.
+
+- **(engine)** a "can't attack or block" on a permanent that lasts for as long as the source remains on the battlefield (611.2b), so it ends with the steal and the ability loss when the Dragon leaves
+  <br>Why the existing vocabulary won't do: gain_control and lose_all_abilities now take `duration: while_source_on_battlefield`, but `cant_block` keeps its prohibitions in its own table, which knows only this turn and until your next turn, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
+  - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
+
+</details>
+
 ## source-filtered-damage-shield
 
 Blocks **1** card.
@@ -7003,20 +6987,6 @@ Blocks **1** card.
 
 - **Moira Brown, Guide Author** (rank 14880) — `moira_brown_guide_author`
   - When Moira Brown enters, create a colorless Book Equipment artifact token named Wasteland Survival Guide with "Equipped creature gets +1/+1 for each quest counter among permanents you control" and equip {1}.
-
-</details>
-
-## while-source-on-battlefield-duration
-
-Blocks **1** card.
-
-- **(engine)** a duration "for as long as <source> remains on the battlefield" (611.2b, ended only by the source leaving the battlefield, not by a change of its controller) that gain_control, lose_all_abilities, cant_block and a can't-attack effect can all carry, so one trigger steals the target, strips its abilities and stops it attacking or blocking, all ending together when the Dragon leaves
-  <br>Why the existing vocabulary won't do: gain_control's CONTROL_DURATIONS has `as_long_as_you_control_source`, which also ends if the Dragon changes controller -- a different, narrower card; the `lose_all_abilities` op takes only `objects` (no duration), `cant_block` has no source-bound duration, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Opportunistic Dragon** (rank 8222) — `opportunistic_dragon`
-  - When this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.
 
 </details>
 

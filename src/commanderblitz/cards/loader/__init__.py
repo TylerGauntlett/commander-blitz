@@ -62,6 +62,7 @@ from commanderblitz.engine.enums import (
     SUBTYPE_CLASS,
     AbilityKind,
     CardType,
+    Keyword,
     Phase,
     Step,
     Zone,
@@ -1262,6 +1263,49 @@ def _compile_cast_window(model: CardModel) -> CastWindow | None:
     return CastWindow(turn=window.turn, steps=steps)
 
 
+def _compile_flash_cost(model: CardModel, where: str) -> Cost | None:
+    """The price of the card's own flash permission, or ``None``.
+
+    Every refusal is a card that would load and play differently from the
+    printed one: a cost that is never owed (the card may already be cast at
+    instant speed), a cost nobody can pay (a spell in hand has no {T}), or a
+    permission that costs nothing (`as_though_flash` under another name).
+    """
+    spec = model.flash_cost
+    if spec is None:
+        return None
+    if model.as_though_flash:
+        raise DslError(
+            f"{where}: 'as_though_flash' is the free permission and 'flash_cost' "
+            f"its priced twin -- with both, the price is never owed"
+        )
+    if CardType.INSTANT.value in model.types or Keyword.FLASH.value in model.keywords:
+        raise DslError(
+            f"{where}.flash_cost: an instant or a card with flash is castable at "
+            f"instant speed already, so this price would never be owed"
+        )
+    if CardType.LAND.value in model.types:
+        raise DslError(f"{where}.flash_cost: a land is played, not cast")
+    if spec.mana_reduction or spec.x_value or spec.tap or spec.untap or spec.exert:
+        # Nothing prices a reduction or an X here, and a spell being cast has
+        # no {T}, {Q} or exert to pay: each would load and be ignored.
+        raise DslError(
+            f"{where}.flash_cost: 'mana_reduction', 'x_value', 'tap', 'untap' and "
+            f"'exert' mean nothing on the price of casting a spell"
+        )
+    cost = _compile_cost(spec, f"{where}.flash_cost")
+    if cost.mana.x_count or cost.takes_x or cost.pay_life_x:
+        # The spell's own X is announced at 601.2b; a second one on this price
+        # would have nobody to announce it.
+        raise DslError(f"{where}.flash_cost: must be a fixed cost, with no X")
+    if cost.charges_nothing() and cost.mana.mana_value() == 0:
+        raise DslError(
+            f"{where}.flash_cost: charges nothing -- a free permission is "
+            f"'as_though_flash': true"
+        )
+    return cost
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -1421,6 +1465,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}.spell_effects: 'as_long_as_you_control_source' lasts while "
             f"you control the source, and a spell is not a permanent anyone "
             f"controls as it resolves (611.2b) -- it would do nothing"
+        )
+    if uses_source_bound_duration(model.spell_effects, "while_source_on_battlefield"):
+        raise DslError(
+            f"{where}.spell_effects: 'while_source_on_battlefield' lasts while the "
+            f"source remains on the battlefield, and a spell is on the stack as it "
+            f"resolves (611.2b) -- it would do nothing"
         )
     if reads_placed_kind(model.spell_effects):
         raise DslError(
@@ -1682,7 +1732,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                     f"faces, so a granted one would never reach a card off the "
                     f"battlefield"
                 )
-            for key in ("affects", "blockers"):
+            for key in ("affects", "blockers", "attackers"):
                 _refuse_granted_chosen_qualities(
                     ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
                 )
@@ -2573,6 +2623,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'graveyard_additional_cost' must be a fixed cost that "
                 f"charges something"
             )
+    flash_cost = _compile_flash_cost(model, where)
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2779,6 +2830,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         as_though_flash=model.as_though_flash,
+        flash_cost=flash_cost,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,
@@ -4957,7 +5009,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
-    for key in ("affects", "blockers", "cause_filter", "affects_spells"):
+    for key in ("affects", "blockers", "attackers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
         if key == "affects":
             check_literal_mana_value_key(model.affects, f"{where}.affects")
@@ -5005,6 +5057,36 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
+        )
+    if model.effect == "can_block_only":
+        # Without a filter the static says "can block only creatures", which
+        # is no restriction at all -- a printed line that loads and does
+        # nothing. An empty one is the same sentence.
+        if not model.attackers:
+            raise DslError(
+                f"{where}: can_block_only needs a non-empty 'attackers' filter "
+                f"-- the attackers the creature may block"
+            )
+        unknown = set(model.attackers) - STATIC_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}: can_block_only 'attackers' may only read printed "
+                f"characteristics; unsupported keys {sorted(unknown)}"
+            )
+        # The filter's source is the blocker's side of the table, and a
+        # creature never blocks itself: `self_only` would refuse every block,
+        # which is `cant_block`, and `exclude_self` would exclude nothing.
+        for key in ("self_only", "exclude_self"):
+            if key in model.attackers:
+                raise DslError(
+                    f"{where}: can_block_only 'attackers' cannot use {key!r} -- "
+                    f"the source is never the attacker it blocks"
+                )
+        _check_owner_key(model.attackers, f"{where}.attackers")
+    elif model.attackers is not None:
+        raise DslError(
+            f"{where}: 'attackers' only means anything on a can_block_only "
+            f"static, not on {model.effect!r}"
         )
     if model.effect == "double_triggers":
         # The cause clause is the half a card may omit, and omitting it means
@@ -7435,6 +7517,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    if model.attackers is not None:
+        static["attackers"] = dict(model.attackers)
     # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,
     # the grant would load and `annihilator_instances` would have no N to read.
     if model.annihilator is not None:

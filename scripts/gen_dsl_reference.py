@@ -318,7 +318,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "detain": ("Board", "Detain permanents until your next turn.", None),
     "distribute_control_among_opponents": ("Board", "For each permanent, choose a different opponent; each gains control of theirs.",
                                            "Each opponent gains control of the one chosen for them"),
-    "gain_control": ("Board", "Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good.",
+    "gain_control": ("Board", "Gain control of permanents, for a duration (`as_long_as_you_control_source` and `while_source_on_battlefield` included) or for good.",
                      H_GAIN_CONTROL),
     "rotate_control": ("Board", "Pass permanents around the table to the left or right.",
                        '"Choose left or right" — passing the board around the table'),
@@ -379,7 +379,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "solve": ("Modify", "A Case becomes solved; supplied by the loader on a `to_solve` line.",
               H_CASES),
     "lose_all_abilities": ("Modify", "Permanents lose all abilities: for good, or with "
-                           "`duration` until end of turn or your next turn.",
+                           "`duration` until end of turn, your next turn or "
+                           "`while_source_on_battlefield`.",
                            "Losing all abilities because an effect said so"),
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",
@@ -969,6 +970,8 @@ STATICS: dict[str, Entry] = {
                                      "attacked this turn (their planeswalkers stay open).",
                                      "Not the same player twice in a turn"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
+    "can_block_only": ("Matching creatures can block only attackers matching `attackers`.",
+                       "Can block only creatures with …"),
     "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
                                    "toughness rather than their power.",
                                    "Combat damage equal to toughness"),
@@ -1285,6 +1288,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "melds_into": ("The permanent the pair melds into.", H_MELD),
     "as_though_flash": ("May be cast as though it had flash; the card does not have flash.",
                         '"If you cast it any time a sorcery couldn\'t have been cast"'),
+    "flash_cost": ("May be cast as though it had flash by also paying this cost; at sorcery timing it is not paid.",
+                   "Flash for a price"),
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "cast_only_during": ("Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route.",

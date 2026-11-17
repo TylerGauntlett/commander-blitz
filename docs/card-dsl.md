@@ -2836,8 +2836,8 @@ printed list outright when no static and no op grant is in sight, and
 `_derived_abilities` drops the *printed* list and appends the granted ones after
 — which is what "loses all other abilities and gains …" says.
 
-**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`
-or `"until_your_next_turn"` for the timed one:
+**`duration`** — omitted (or `"permanent"`) for the loss above; `"until_end_of_turn"`,
+`"until_your_next_turn"` or `"while_source_on_battlefield"` for the timed one:
 
 ```jsonc
 // Warkite Marauder: "…target creature defending player controls loses all
@@ -2854,7 +2854,13 @@ gone and every keyword, protection and ability *granted* before it is read past
 (613.7); one granted after it survives. Nothing is deleted, which is the
 difference from the permanent loss: a grant that lasts as long as the permanent
 does (riot's haste, a `"permanent"` `grant_keyword`) is back when cleanup — or,
-for `until_your_next_turn`, that seat's untap step — ends the loss. Any other
+for `until_your_next_turn`, that seat's untap step — ends the loss.
+`while_source_on_battlefield` is Opportunistic Dragon's "for as long as this
+creature remains on the battlefield": no step ends it, the source leaving the
+battlefield does (`temp_effects.end_source_bound`), a source already gone as
+the effect would begin makes it do nothing, and a spell's `spell_effects`
+refuses it — the clock `gain_control` takes for Sower of Temptation (see the
+cookbook's *…for as long as the source remains on the battlefield*). Any other
 spelling is a load error, since a misspelt clock would otherwise read as the
 permanent loss, the strictly stronger card.
 
@@ -4338,6 +4344,9 @@ saying yes.
 this spell as though it had flash" (Necromancy), a permission and not the flash
 keyword — see the cookbook's
 ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
+`flash_cost` is the same permission with a price, paid only by a cast made
+outside sorcery timing — see the cookbook's
+[Flash for a price](card-dsl-cookbook.md#flash-for-a-price).
 
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read
@@ -7355,7 +7364,7 @@ refused at load. `mana_cost` is the near miss: it matches exact printed costs.
 
 Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`add_subtype`](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
-`block_restriction` · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·
+`block_restriction` · [`can_block_only`](card-dsl-cookbook.md#can-block-only-creatures-with-) · `prevent_damage` · [`prevent_all_but`](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) ·
 [`damage_life_floor`](card-dsl-cookbook.md#damage-cant-take-you-below-1) · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) ·
@@ -7707,7 +7716,7 @@ cache miss. Borrowing one is a `DslError` at load.
 The line that decides what may be in this table is the same one that shapes
 `affects` filters: **a static may read pipeline inputs, never pipeline outputs.**
 The rule binds the statics the pipeline applies; the rule-modifying ones it does
-not — `attacks_if_able` and `block_restriction` — match their filters against
+not — `attacks_if_able`, `block_restriction` and `can_block_only` — match their filters against
 derived characteristics instead (`characteristics._matches` with `derived`),
 since nothing they say can feed back into a layer.
 `exists_derived` is the condition-side form of that exception. Rhonas the

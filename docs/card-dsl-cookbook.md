@@ -6264,6 +6264,36 @@ A `block_restriction` carrying none of the three fields, or more than one, is
 refused at load time — an evasion ability that evades nothing would load
 perfectly cleanly.
 
+### Can block only creatures with …
+
+    Brazen Borrower — "This creature can block only creatures with flying."
+
+`block_restriction` turned around: the static sits on the **blocker** and its
+`attackers` filter names which attackers the creatures it `affects` may block.
+
+```jsonc
+{ "kind": "static", "effect": "can_block_only", "affects": { "self_only": true },
+  "attackers": { "keywords": ["flying"] } }
+```
+
+It is asked per pair in `combat.can_block` (through
+`player_statics.block_only_refused`), so a refused block is never offered.
+`attackers` reads the attacker's **derived** characteristics for `blockers`'
+reason, so a creature granted flying this turn may be blocked, and a flier that
+lost flying may not; its `controller` defaults to **any**, because the attacker
+is an opponent's by definition. `affects` is read on the blocker's derived
+characteristics too, and a creature that loses its abilities loses the
+restriction. Two such statics on one creature are both obeyed. Block
+requirements never compel a block it refuses (509.1c): provoke and "blocks this
+turn if able" ask `can_block`, so a Borrower lured toward a ground creature
+owes nothing.
+
+The loader refuses a missing or empty `attackers` ("can block only creatures"
+restricts nothing), keys outside `STATIC_FILTER_KEYS`, `self_only` and
+`exclude_self` in it (the source is the blocker, never the attacker), and
+`attackers` on any other effect. The near misses: `cant_block` forbids every
+block, and `block_restriction` filters the blockers of the creature it sits on.
+
 ### Skulk
 
     Vampire Cutthroat — "Skulk (This creature can't be blocked by creatures with
@@ -12864,10 +12894,36 @@ The subset enumeration applies both — at most two, pairwise different
 controllers, every size from none up. `count: "any"` alone is the near miss: at
 a pod of four it exiles up to four.
 
-Needs a size the caster picks — `count: "any"`, or `up_to` with a ceiling;
-refused at load time otherwise (an exact `count`, or `optional`'s "exactly N, or
-none"), because on a fixed-size spec the cap either changes nothing or makes the
-spec unsatisfiable, and both are silent.
+**On an exact size.** "Choose **two** target creatures controlled by different
+players" (Run Away Together) is a literal `count` with no `up_to`:
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": 2,
+              "one_per_player": true,
+              "selector": {"zone": "battlefield", "types": ["Creature"],
+                           "controller": "any"}}],
+ "spell_effects": [{"op": "return_to_hand", "objects": {"target": "t1"}}]}
+```
+
+Only full-size sets across that many seats are offered, so the spell is cast
+only while N players each control a candidate (601.2c) — one creature, or two of
+one player's, offer nothing. `count: 2, up_to: true` is the near miss: it casts
+at zero or one creature. So is a `controller: "you"` spec beside a
+`controller: "opponent"` one, which cannot reach two different opponents'
+creatures in a pod.
+
+**Re-checked on resolution, target by target.** "Controlled by a different
+player" is part of what made each target legal, so 608.2b asks it again
+(`targeting._drop_shared_controllers`): among the targets still legal on their
+own, any two that now share a controller are both illegal — the restriction
+reads the same from either side, and the game keeps no record of which one
+moved. A target that has left the battlefield is illegal for that alone and
+spoils nothing for the others.
+
+Refused at load time: a `count` of 1 (one target has nobody to differ from), a
+computed exact `count` (declared by a pick that asks objects one toggle at a
+time), `optional`'s "exactly N, or none", and a `random` target, whose draw
+takes no rule between its picks.
 
 ## "…with total mana value 6 or less" — a cap on the picks together
 
@@ -13185,7 +13241,7 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
 | a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
-| `one_per_player`, `total_mana_value` or `total_power` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| `one_per_player`, `total_mana_value` or `total_power` on a mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
 | a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
 | a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
@@ -14276,9 +14332,9 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default), `"until_end_of_turn"`, `"end_of_your_next_turn"` or
-`"as_long_as_you_control_source"` (both below); **any other spelling is a load
-error**. A
+default), `"until_end_of_turn"`, `"end_of_your_next_turn"`,
+`"as_long_as_you_control_source"` or `"while_source_on_battlefield"` (all
+below); **any other spelling is a load error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -14384,7 +14440,39 @@ steals when the thief leaves the game. Refused in a spell's `spell_effects`,
 where nobody controls the source.
 
 The near misses: `permanent` keeps the artifact after the source dies, the
-strictly better card; `until_end_of_turn` hands it back at the first cleanup.
+strictly better card; `until_end_of_turn` hands it back at the first cleanup;
+`while_source_on_battlefield` (next) keeps it when the source is stolen.
+
+### …for as long as the source remains on the battlefield
+
+    Sower of Temptation — "When this creature enters, gain control of target
+    creature for as long as this creature remains on the battlefield."
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "while_source_on_battlefield" }
+```
+
+611.2b's other source-bound duration, and the narrower of the two endings:
+only the source **leaving the battlefield** ends it. The steal is a
+`TempEffect(kind="control")` with `while_source_on_battlefield` set and no
+seat, and `temp_effects.end_source_bound` ends it — the handback, as above —
+when `zones.move_object` takes the source off the battlefield. A change of the
+source's controller does not: a Sower stolen by an opponent goes on holding
+the creature for the player who cast it, until the Sower leaves. A source
+already gone as the effect would begin takes nothing (the duration has ended
+before it starts); a blinked source is a new object and does not take it
+again; 800.4a still hands the creature back when the player who gained it
+leaves the game. Refused in a spell's `spell_effects`, where the source is on
+the stack.
+
+`lose_all_abilities` takes the same duration for Opportunistic Dragon's "for
+as long as this creature remains on the battlefield, … it loses all
+abilities": a `TempEffect(kind="lose_all_abilities")` with the same flag, ended
+the same way.
+
+The near miss is `as_long_as_you_control_source` (Yuffie's wording), which
+also ends when the source changes controller — a weaker card.
 
 ### "Choose left or right" — passing the board around the table
 
@@ -16120,6 +16208,36 @@ cast" is `false` and never `{"not": {"cast_at_sorcery_timing": true}}`, which
 is also true of a reanimated card. `cast_during` is the near miss: it reads the
 phase alone, and a copy cast in response during your own main phase is in the
 right phase and not at sorcery timing.
+
+## Flash for a price
+
+```jsonc
+// Tegwyll's Scouring — "You may cast this spell as though it had flash by
+//   tapping three untapped creatures you control with flying in addition to
+//   paying its other costs."
+{ "types": ["Sorcery"],
+  "flash_cost": { "tap_permanents": { "types": ["Creature"], "keywords": ["flying"], "count": 3 } } }
+
+// Rout — "…as though it had flash if you pay {2} more to cast it."
+{ "types": ["Sorcery"], "flash_cost": { "mana": "{2}" } }
+```
+
+`flash_cost` is `as_though_flash` with a price: any cost node, owed only by a
+cast that needs the card's own permission to be legal. `casting._timing_ok`
+lets the card through at instant speed, and `casting.flash_cost_owed` decides
+the price per line. A line cast outside sorcery timing (307.1) carries
+`Action.flash_cost`, folds the cost's mana into the spell's price where every
+additional cost goes (601.2f, so cost reductions reach it) and pays the rest
+after the mana. A line cast at sorcery timing, or under another flash
+permission such as a `cast_as_though_flash` static, pays nothing extra and is
+the only line offered. A face-down cast cannot use it.
+
+The loader refuses it beside `as_though_flash`, on an instant or a card with
+flash (the price would never be owed), on a land, with `tap`, `untap`, `exert`,
+`mana_reduction` or `x_value`, with any X, and when it charges nothing.
+
+Near misses: `additional_cost` charges at every timing and widens none, and
+`as_though_flash: true` is the same permission for free.
 
 ## "If it was cast" — 603.6e
 

@@ -108,18 +108,27 @@ def _compile_targets(
             raise DslError(f"{where}: two targets share the id {spec.id!r}")
         seen.add(spec.id)
     for spec in specs:
-        # A per-player cap is a constraint on how many of a *caster-sized*
-        # choice may share a controller: "any number of …, no two controlled by
-        # the same player" (`count: "any"`), or under a printed ceiling, "up to
-        # two target artifacts and/or enchantments controlled by different
-        # players" (Protector of the Wastes, `count: 2, up_to: true`). On an
-        # exact size, or `optional`'s "exactly N, or none", it either changes
-        # nothing or makes the spec unsatisfiable, and both are silent.
-        if spec.one_per_player and not (spec.count == "any" or spec.up_to):
+        # "No two controlled by the same player" is a rule between the picks,
+        # checked where the combinations are built (601.2c) and again per
+        # target on resolution (608.2b). It reads on "any number of …"
+        # (`count: "any"`), under a printed ceiling ("up to two … controlled by
+        # different players", `count: N, up_to: true`), and on a printed exact
+        # size ("two target creatures controlled by different players", a
+        # literal `count` of 2 or more), where it makes the spell castable only
+        # while N seats each control a candidate. A computed exact size is
+        # declared by a pick that asks the objects one toggle at a time, and
+        # `optional`'s "exactly N, or none" is not a size any such card prints,
+        # so both are refused rather than left unchecked.
+        if spec.one_per_player and not (
+            spec.count == "any"
+            or spec.up_to
+            or (isinstance(spec.count, int) and spec.count >= 2 and not spec.optional)
+        ):
             raise DslError(
-                f"{where}: 'one_per_player' needs a size the caster picks -- "
-                f"'count': 'any', or a ceiling ('count': N with 'up_to': true); "
-                f"it caps a variable-size choice, and a fixed one has no room to cap"
+                f"{where}: 'one_per_player' needs 'count': 'any', a ceiling "
+                f"('count': N with 'up_to': true), or a literal 'count' of 2 or "
+                f"more without 'optional' -- one target has nobody to differ "
+                f"from, and a computed or optional exact size is not checked"
             )
         if (
             on_spell
@@ -177,6 +186,14 @@ def _compile_targets(
             raise DslError(
                 f"{where}.target[{spec.id}]: a random target takes a fixed 'count' "
                 f"-- 'optional', 'up_to' and 'any' are choices nobody makes"
+            )
+        if spec.constrains_the_set:
+            # `stack._random_trigger_targets` draws N candidates with no rule
+            # between them, so a cap or "different players" would be ignored.
+            raise DslError(
+                f"{where}.target[{spec.id}]: a random target cannot carry "
+                f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
+                f"draw takes no rule between its picks"
             )
     for spec in specs:
         _check_target_chooser(spec, specs, where, on_trigger=on_trigger)
@@ -585,9 +602,9 @@ def _check_mode_targets(
                 f"picks how many) or 'any'; a computed count has no cast-time "
                 f"value to read"
             )
-        if spec.variable_size and spec.constrains_the_set:
+        if spec.constrains_the_set:
             raise DslError(
-                f"{label}: a caster-sized mode-owned target cannot carry "
+                f"{label}: a mode-owned target cannot carry "
                 f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
                 f"mode's targets are asked one spec at a time, with no check "
                 f"between the picks"

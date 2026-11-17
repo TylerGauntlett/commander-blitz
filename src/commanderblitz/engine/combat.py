@@ -33,6 +33,7 @@ from .player_statics import (
     attacked_player_forbidden,
     block_alone_forbidden,
     block_forbidden,
+    block_only_refused,
     block_tax,
     defender_waived,
     goaders,
@@ -1127,6 +1128,13 @@ def can_block(
     # into `block_forbidden` because it is table state and not a static: the
     # characteristics layer reads permanents, and this belongs to none.
     if block_prohibited(state, blocker_oid):
+        return False
+
+    # "This creature can block only creatures with flying." (Brazen Borrower.)
+    # `cant_block` narrowed by a filter over the attacker, so it is asked of
+    # the pair -- and every block requirement goes through here, which is what
+    # keeps a lure or provoke from ever compelling a block this refuses.
+    if block_only_refused(state, blocker_oid, attacker_oid):
         return False
 
     # "That creature can't be blocked this turn." (Rogue's Passage.) The line

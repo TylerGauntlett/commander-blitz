@@ -1472,8 +1472,10 @@ def damage_redirect(
     return None
 
 
-def end_source_bound(state: GameState, source: int) -> None:
-    """End every "for as long as you control ``source``" entry (611.2b).
+def end_source_bound(state: GameState, source: int, *, left_battlefield: bool = False) -> None:
+    """End every "for as long as you control ``source``" entry (611.2b), and --
+    with ``left_battlefield`` -- every "for as long as ``source`` remains on the
+    battlefield" entry too.
 
     Called as ``source`` leaves the battlefield (`zones.move_object`) and as it
     changes controller (`primitives.change_control`): either way the seat that
@@ -1495,6 +1497,12 @@ def end_source_bound(state: GameState, source: int) -> None:
     else has since taken is not handed anywhere. Handed back only after every
     entry is dropped, because the handback is itself a control change and runs
     this function again for the permanent it moves.
+
+    The second duration (`TempEffect.while_source_on_battlefield`, Sower of
+    Temptation) has only the first of those two endings, so ``left_battlefield``
+    is ``True`` from `zones.move_object` alone: a change of controller ends what
+    the source's controller had to go on controlling, and leaves what only
+    needed the source to stay put.
     """
     changed = False
     handbacks: list[tuple[int, TempEffect]] = []
@@ -1503,7 +1511,10 @@ def end_source_bound(state: GameState, source: int) -> None:
             continue
         kept = []
         for temp in obj.until_eot:
-            if temp.while_controller is None or temp.source != source:
+            bound = temp.while_controller is not None or (
+                left_battlefield and temp.while_source_on_battlefield
+            )
+            if not bound or temp.source != source:
                 kept.append(temp)
             elif temp.kind == "control":
                 handbacks.append((oid, temp))

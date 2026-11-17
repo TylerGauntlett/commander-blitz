@@ -631,6 +631,56 @@
       ]
     },
     {
+      "id": "faerie_rogue_1_1_b_flying",
+      "name": "Faerie Rogue Token",
+      "oracle_text": "1/1 black Faerie Rogue creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "faerie_rogue_1_1_ub_flying",
+      "name": "Faerie Rogue Token",
+      "oracle_text": "1/1 blue and black Faerie Rogue creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "golem_3_3_c_artifact",
       "name": "Golem Token",
       "oracle_text": "3/3 colorless Golem artifact creature token.",
@@ -1499,6 +1549,36 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "pirate_4_2_r_cant_block",
+      "name": "Pirate Token",
+      "oracle_text": "4/2 red Pirate creature token with \"This token can't block.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pirate"
+      ],
+      "power": 4,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't block.",
+          "effect": "cant_block",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
     },
     {
       "id": "squid_1_1_u_islandwalk",

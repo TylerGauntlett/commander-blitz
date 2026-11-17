@@ -391,20 +391,24 @@ def _before(models: Sequence[Any], target_id: str) -> set[str]:
 _check_counter_kind = validate_counter_kind
 
 
-def uses_source_bound_duration(effects: Any) -> bool:
+def uses_source_bound_duration(
+    effects: Any, duration: str = "as_long_as_you_control_source"
+) -> bool:
     """Does any effect in this tree last "for as long as you control" its source?
 
     ``duration: "as_long_as_you_control_source"`` on `grant_keyword`, `pump` or
-    `gain_control`.
-    Only a permanent can be controlled for a while, so the spell compiler
-    refuses it on ``spell_effects``: an instant's source is on the stack as the
-    effect would begin, and 611.2b makes the whole effect do nothing -- a card
-    that loads and never works.
+    `gain_control`; or, with ``duration`` naming it, "for as long as this
+    remains on the battlefield" -- ``"while_source_on_battlefield"`` on
+    `gain_control` or `lose_all_abilities`.
+    Only a permanent can be controlled, or remain on the battlefield, for a
+    while, so the spell compiler refuses both on ``spell_effects``: an
+    instant's source is on the stack as the effect would begin, and 611.2b
+    makes the whole effect do nothing -- a card that loads and never works.
     """
     if isinstance(effects, Mapping):
-        if effects.get("duration") == "as_long_as_you_control_source":
+        if effects.get("duration") == duration:
             return True
-        return any(uses_source_bound_duration(v) for v in effects.values())
+        return any(uses_source_bound_duration(v, duration) for v in effects.values())
     if isinstance(effects, (list, tuple)):
-        return any(uses_source_bound_duration(v) for v in effects)
+        return any(uses_source_bound_duration(v, duration) for v in effects)
     return False

@@ -153,9 +153,11 @@ class TargetSpec:
     #: cast at all (601.2c). ``0`` is plain "up to N".
     min_count: int = 0
     #: At most one chosen object per controller -- "for each player, up to one
-    #: target permanent that player controls". Only on a caster-sized spec:
-    #: ``count == "any"``, or an `up_to` ceiling ("up to two target artifacts
-    #: controlled by different players").
+    #: target permanent that player controls". On ``count == "any"``, an
+    #: `up_to` ceiling ("up to two target artifacts controlled by different
+    #: players"), or a literal exact count of 2 or more ("two target creatures
+    #: controlled by different players"), which then offers only full sets.
+    #: Re-checked per target on resolution by `targeting.filter_legal`.
     one_per_player: bool = False
     optional: bool = False
     #: A cap on the combined mana value of everything chosen for this spec --
@@ -1665,6 +1667,16 @@ class CardDef:
     #: not *have* flash: nothing that asks whether a spell or permanent has
     #: flash may see it. The permissive twin of `cast_before_step` below.
     as_though_flash: bool = False
+    #: "You may cast this spell as though it had flash **if you pay {2} more**"
+    #: (Rout); "…**by tapping three untapped creatures you control with
+    #: flying** in addition to paying its other costs" (Tegwyll's Scouring).
+    #: `as_though_flash` with a price: `casting._timing_ok` lets the card
+    #: through at instant speed, and `casting.flash_cost_owed` says whether
+    #: this cast needs the permission. A line that does carries
+    #: `Action.flash_cost` and pays this on top of everything else (601.2f); a
+    #: line cast at sorcery timing, or under some other flash permission, pays
+    #: nothing extra.
+    flash_cost: Cost | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The step
     #: at which the casting window **closes**, read by `casting._timing_ok`.
     #:

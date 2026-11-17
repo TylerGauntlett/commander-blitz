@@ -451,6 +451,10 @@
     },
     "zone": "battlefield"
   },
+  "alela_cunning_conqueror": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alena_kessig_trapper": {
     "zone": "battlefield"
   },
@@ -1128,6 +1132,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "archmage_of_echoes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "archmage_of_runes": {
@@ -2283,6 +2291,10 @@
   "blightwidow": {
     "zone": "battlefield"
   },
+  "blightwing_bandit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blind_obedience": {
     "zone": "battlefield"
   },
@@ -2746,6 +2758,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "brazen_borrower_petty_theft": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "brazen_scourge": {
     "zone": "battlefield"
   },
@@ -2768,6 +2785,11 @@
       "count": 1,
       "id": "junk_token"
     },
+    "zone": "graveyard"
+  },
+  "breaking_wave": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "breakneck_berserker": {
@@ -3890,6 +3912,13 @@
     "zone": "battlefield"
   },
   "cloud_manta": {
+    "zone": "battlefield"
+  },
+  "cloud_of_faeries": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "cloud_s_limit_break": {
@@ -7176,7 +7205,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "faerie_bladecrafter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "faerie_conclave": {
+    "zone": "battlefield"
+  },
+  "faerie_formation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "faerie_invaders": {
@@ -8534,6 +8574,13 @@
   "ghitu_encampment": {
     "zone": "battlefield"
   },
+  "ghitu_fire": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "ghost_of_ramirez_depietro": {
     "zone": "battlefield"
   },
@@ -8818,6 +8865,17 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "glen_elendra_archmage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "glen_elendra_liege": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glider_kids": {
@@ -9563,6 +9621,13 @@
   "hallowed_fountain": {
     "zone": "battlefield"
   },
+  "halo_forager": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "halo_fountain": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9630,6 +9695,13 @@
       "keywords": [
         "flying"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "harbinger_of_the_tides": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -11476,6 +11548,15 @@
   "keeneye_aven": {
     "zone": "battlefield"
   },
+  "keep_watch": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "keeper_of_the_accord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12964,6 +13045,10 @@
   "malcolm_keen_eyed_navigator": {
     "zone": "battlefield"
   },
+  "malleable_impostor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mammoth_spider": {
     "zone": "battlefield"
   },
@@ -13818,6 +13903,13 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mocking_sprite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mog_moogle_warrior": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13862,6 +13954,9 @@
   },
   "molimo_maro_sorcerer": {
     "zone": "battlefield"
+  },
+  "molten_exhale": {
+    "zone": "graveyard"
   },
   "molten_tributary": {
     "zone": "battlefield"
@@ -14282,6 +14377,11 @@
     },
     "zone": "battlefield"
   },
+  "mystical_tether": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "mystical_tutor": {
     "graveyard_size": {
       "0": 3
@@ -14536,6 +14636,10 @@
     },
     "zone": "battlefield"
   },
+  "nettling_nuisance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "neurok_hoversail": {
     "zone": "battlefield"
   },
@@ -14600,6 +14704,9 @@
   "nightmare_shepherd": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "nightmare_unmaking": {
+    "zone": "graveyard"
   },
   "nightshade_dryad": {
     "zone": "battlefield"
@@ -14763,6 +14870,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nymris_oona_s_trickster": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "nyssa_of_traken": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14813,6 +14930,13 @@
     ]
   },
   "oakgnarl_warrior": {
+    "zone": "battlefield"
+  },
+  "oakshade_stalker_moonlit_ambusher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "oashra_cultivator": {
@@ -14935,6 +15059,14 @@
     "zone": "battlefield"
   },
   "obsidian_giant": {
+    "zone": "battlefield"
+  },
+  "obyra_dreaming_duelist": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "occult_epiphany": {
@@ -15125,6 +15257,10 @@
     ]
   },
   "ongoing_investigation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "oona_queen_of_the_fae": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15747,6 +15883,16 @@
     "zone": "battlefield"
   },
   "pia_nalaar_chief_mechanic": {
+    "zone": "battlefield"
+  },
+  "picklock_prankster_free_the_fae": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "piercing_exhale": {
@@ -16527,6 +16673,13 @@
       "0": 3
     }
   },
+  "quickling": {
+    "battlefield_count": 32,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "quicksilver_pietro_maximoff": {
     "zone": "battlefield"
   },
@@ -16918,6 +17071,12 @@
     },
     "zone": "battlefield"
   },
+  "reckless_spite": {
+    "life": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
   "reconnaissance_mission": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17151,6 +17310,12 @@
       "0": 39
     },
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "repulse": {
+    "library_size": {
+      "0": 39
+    },
     "zone": "graveyard"
   },
   "requisition_raid": {
@@ -17746,6 +17911,10 @@
     },
     "zone": "exile"
   },
+  "rout": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "roving_harper": {
     "hand_size": {
       "0": 2
@@ -17823,6 +17992,17 @@
   },
   "rumbling_sentry": {
     "zone": "battlefield"
+  },
+  "run_away_together": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "run_for_your_life": {
     "zone": "graveyard"
@@ -18032,6 +18212,14 @@
     },
     "zone": "battlefield"
   },
+  "saproling_symbiosis": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "saproling_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "sarah_jane_smith": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18201,6 +18389,10 @@
   "scion_of_calamity": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "scion_of_oona": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "scion_of_ugin": {
@@ -18696,6 +18888,14 @@
   },
   "shadow_of_the_second_sun": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "shadow_puppeteers": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "faerie_rogue_1_1_b_flying"
+    },
     "zone": "battlefield"
   },
   "shadow_summoning": {
@@ -19632,6 +19832,9 @@
     },
     "zone": "graveyard"
   },
+  "snap": {
+    "zone": "graveyard"
+  },
   "snapping_drake": {
     "zone": "battlefield"
   },
@@ -19851,6 +20054,11 @@
   "southern_elephant": {
     "zone": "battlefield"
   },
+  "sower_of_temptation": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "space_marine_scout": {
     "zone": "battlefield"
   },
@@ -19914,6 +20122,19 @@
   },
   "speed_young_avenger": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "spell_stutter": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "spellscorn_coven_take_it_back": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sphere_grid": {
@@ -21328,6 +21549,23 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tegwyll_duke_of_splendor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "tegwyll_s_scouring": {
+    "tokens": {
+      "count": 3,
+      "id": "faerie_rogue_1_1_b_flying"
+    },
+    "zone": "graveyard"
+  },
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },
@@ -22003,6 +22241,9 @@
     },
     "zone": "battlefield"
   },
+  "theoretical_duplication": {
+    "zone": "graveyard"
+  },
   "thespian_s_stage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22229,6 +22470,13 @@
   "thrilling_discovery": {
     "life": {
       "0": 42
+    },
+    "zone": "graveyard"
+  },
+  "thrilling_encore": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
     },
     "zone": "graveyard"
   },
@@ -22998,6 +23246,13 @@
   "twilight_prophet": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "twilight_s_call": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "twin_silk_spider": {
     "battlefield_count": 34,

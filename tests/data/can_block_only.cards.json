@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_can_block_only.py. t_cbo_borrower is Brazen Borrower's creature half: flash, flying, and the can_block_only static.",
+  "cards": [
+    {
+      "id": "t_cbo_borrower",
+      "name": "Test Brazen Borrower",
+      "oracle_text": "Flash\nFlying\nThis creature can block only creatures with flying.",
+      "mana_cost": "{1}{U}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Faerie", "Rogue"],
+      "power": 3,
+      "toughness": 1,
+      "keywords": ["flash", "flying"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can block only creatures with flying.",
+          "effect": "can_block_only",
+          "affects": { "self_only": true },
+          "attackers": { "keywords": ["flying"] }
+        }
+      ]
+    }
+  ]
+}

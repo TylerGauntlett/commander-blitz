@@ -81,7 +81,6 @@ each heading; this table is generated from them.
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
-| [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) | L | high | nothing | 0 |
 | [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) | S | high | nothing | 0 |
 | [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | nothing | 0 |
@@ -140,6 +139,7 @@ each heading; this table is generated from them.
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -147,6 +147,7 @@ each heading; this table is generated from them.
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
+| [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) | S | low | nothing | 0 |
 | [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 2 |
 
 ## What to do next
@@ -159,71 +160,72 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-3. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-4. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-5. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-6. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-7. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-8. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-9. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-10. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-11. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-12. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-13. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-14. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-15. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-16. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-17. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-18. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-19. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-20. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-21. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-22. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-23. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-24. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-25. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-26. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-27. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-28. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-29. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-30. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-31. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-32. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-33. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-34. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-35. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-36. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-37. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-38. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-39. [Difficulty](#difficulty) — S, medium
-40. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-41. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-42. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-43. [Why a press is refused](#why-a-press-is-refused) — S, medium
-44. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-45. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-46. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-47. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-48. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-49. [Secret choices](#secret-choices) — M, medium
-50. [Experience counters](#experience-counters) — M, medium
-51. [Outcomes as data](#outcomes-as-data) — M, medium
-52. [Rad counters](#rad-counters) — M, medium
-53. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-54. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-55. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-56. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-57. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-58. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-59. [Replays and sharing](#replays-and-sharing) — M, medium
+2. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+3. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+4. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+5. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+6. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+7. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+8. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+9. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+10. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+11. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+12. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+13. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+14. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+15. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+16. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+17. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+18. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+19. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+20. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+21. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+22. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+23. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+24. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+25. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+26. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+27. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+28. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+29. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+30. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+31. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+32. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+33. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+34. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+35. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+36. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+37. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+38. [Difficulty](#difficulty) — S, medium
+39. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+40. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+41. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+42. [Why a press is refused](#why-a-press-is-refused) — S, medium
+43. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+44. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+45. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+46. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+47. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+48. [Secret choices](#secret-choices) — M, medium
+49. [Experience counters](#experience-counters) — M, medium
+50. [Outcomes as data](#outcomes-as-data) — M, medium
+51. [Rad counters](#rad-counters) — M, medium
+52. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+53. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+54. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+55. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+56. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+57. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+58. [Replays and sharing](#replays-and-sharing) — M, medium
+59. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
 60. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 61. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
 62. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
 63. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
 64. [Archidekt import](#archidekt-import) — S, low
 65. [Sound](#sound) — S, low
-66. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+66. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+67. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -1364,6 +1366,43 @@ golden pool re-pinned once.
 - **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
   the existing comment already promise, and its line goes in the "Type
   changes" row of rules-coverage.md.
+
+### Target tapped creature" is not "enters tapped
+
+Effort **S** · Impact **low**, a card whose trigger targets a tapped creature is authored entering tapped, so it is a weaker card than the printed one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The authoring templates in `cards/authoring/templates.py` read the word
+"tapped" in a printed line as the card entering tapped, so a packet's
+`starting_point` for Harbinger of the Tides ("When this creature enters, you
+may return target tapped creature an opponent controls to its owner's hand")
+carried a `self_enters_tapped` replacement the card does not print. A worker
+caught it there; Surrakar Banisher shipped with the same replacement in
+`data/cards/auto/templates.cards.json`. Gate 5 cannot see it, because nothing
+in the sandbox asserts the card's own tapped state.
+
+#### The change
+
+1. The enters-tapped template matches only a line about the card itself
+   entering tapped, never "target tapped …" or "tapped creature".
+2. Every shipped card carrying `self_enters_tapped` whose printed text does
+   not say it enters tapped is re-collected through `--collect`, never
+   hand-edited.
+
+#### Gate
+
+A unit test under `tests/unit/` that the template gives Harbinger of the
+Tides' and Surrakar Banisher's lines no `self_enters_tapped`, and still gives
+it to a card printing "This land enters tapped."; a test in `tests/cards`
+that no auto card carries `self_enters_tapped` without "enters tapped" in its
+oracle text.
+
+#### Open questions
+
+- **Scope.** The template fix and the cards it mis-authored only, or an audit
+  of every template keyword that can appear inside a target phrase?
+  Recommended: this fix and its cards only; an audit is its own item.
 
 ## Decks
 
@@ -3131,55 +3170,6 @@ Timey-Wimey ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck who_timey_wimey`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Fae Dominion (Wilds of Eldraine Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Fae Dominion, the Wilds of Eldraine Commander precon released 2023-09-08, is a
-coming-soon shell on the shelf: its row `woc_fae_dominion` is in
-`data/decks/sources.json` and there is no `data/decks/woc_fae_dominion.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing woc_fae_dominion` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Fae Dominion ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck woc_fae_dominion`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -5375,6 +5365,52 @@ the game; this item makes it a URL.
 A server test that a shared tape replays to the same final state and the
 same event log as the game that produced it; a client test that the viewer
 sends no action; and the arena accepting a tape as a position under test.
+
+### A fixed target count is exact, not a ceiling
+
+Effort **M** · Impact **medium**, every "N target" spell can be cast today with fewer targets than it prints, which makes it a cheaper card than the paper one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A target spec with a literal `count` and no `up_to` is printed as an exact
+number ("six target permanents"), and 601.2c asks for exactly that many.
+`targeting._spec_options` enumerates the choices as combinations of
+`min(count, len(options))` candidates, so with fewer legal candidates than the
+count the spell is offered with a short set: Aether Gale can be cast with one
+permanent on the table. The one exception is `one_per_player` on an exact count,
+which asks for the full size (Run Away Together). Making every fixed count exact
+breaks `tests/unit/keywords/test_monstrosity.py`, whose position relies on the
+short set.
+
+#### The change
+
+1. `_spec_options` asks for the full `count` on every fixed-size spec without
+   `up_to`, as it already does under `one_per_player`; a spell with too few
+   candidates has no cast line, and a triggered ability with too few is
+   removed from the stack (603.3d).
+2. The Monstrosity test's position is given enough candidates, or reads the
+   card the way it is printed, whichever the card says.
+3. `tests/cards` is the witness that no shipped card relied on the short set;
+   any card it fails was authored against the bug and is re-collected, never
+   hand-edited.
+
+It does not change `up_to`, `min_count` or "any number" specs.
+
+#### Gate
+
+A unit test under `tests/unit/targets/` that a "two target creatures" spell has
+no cast line with one creature on the battlefield and one with two, and that a
+triggered ability with too few candidates leaves the stack; `tests/cards`
+green.
+
+#### Open questions
+
+- **Triggered abilities.** Should a trigger with too few candidates be removed
+  (603.3d) or fire with what there is? Recommended: removed, as the rules say,
+  in the same pull request, since the enumeration is shared.
+- **Cards that break.** If `tests/cards` shows shipped cards that only pass
+  with a short set, are they re-collected here or each filed as a gap?
+  Recommended: re-collected here, since the fix is what makes them right.
 
 ### Archidekt import
 

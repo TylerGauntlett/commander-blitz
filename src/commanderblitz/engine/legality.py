@@ -14,7 +14,13 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .casting import GRAVEYARD_CAST_SLOT, _cast_actions, _timing_ok
+from .casting import (
+    GRAVEYARD_CAST_SLOT,
+    _cast_actions,
+    _timing_ok,
+    flash_cost_owed,
+    sorcery_timing,
+)
 from .characteristics import (
     abilities_of,
     loyalty_activation_timing_waived,
@@ -39,7 +45,7 @@ from .costs import (
 )
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
-from .enums import ActionKind, DecisionKind, Step, Zone
+from .enums import ActionKind, DecisionKind, Zone
 from .mana import OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .objects import playable_condition_met
 from .player_statics import (
@@ -361,11 +367,7 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
 
 
 def _can_act_at_sorcery_speed(state: GameState, pid: int) -> bool:
-    return (
-        state.active_player == pid
-        and state.step in (Step.PRECOMBAT_MAIN, Step.POSTCOMBAT_MAIN)
-        and not state.stack
-    )
+    return sorcery_timing(state, pid)
 
 
 def _land_actions(state: GameState, pid: int) -> list[Action]:
@@ -532,6 +534,14 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
 
     if not _timing_ok(state, pid, card, sorcery_speed):
         return "timing"
+    # The card's priced flash permission (`flash_cost`), as `_cast_variant`
+    # charges it: a timing gate when its non-mana half cannot be paid, and its
+    # mana half added to the price below.
+    price = card.mana_cost
+    if flash_cost_owed(state, pid, card):
+        if not can_pay(state, pid, card.flash_cost.without_mana(), oid):
+            return "timing"
+        price = price.plus(card.flash_cost.mana)
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
     discount = cost_reduction(
@@ -543,9 +553,9 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
     # afterwards for the same reason: this diagnostic has to agree with the
     # action list, and that list now offers the spell at its floor.
     if (
-        card.mana_cost.x_count
+        price.x_count
         and max_affordable_x(
-            card.mana_cost,
+            price,
             state.players[pid].mana_pool.spendable(purpose),
             mana_sources(state, pid, purpose=purpose),
             extra_generic=-discount,
@@ -553,7 +563,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         < 0
     ):
         return "mana"
-    if not can_pay_mana(state, pid, card.mana_cost, x=x, extra_generic=-discount, purpose=purpose):
+    if not can_pay_mana(state, pid, price, x=x, extra_generic=-discount, purpose=purpose):
         return "mana"
 
     exclude_sid = state.objects[oid].stack_id
@@ -568,7 +578,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         and can_pay_mana(
             state,
             pid,
-            card.mana_cost.plus(card.kicker),
+            price.plus(card.kicker),
             x=x,
             extra_generic=-discount,
             purpose=purpose,

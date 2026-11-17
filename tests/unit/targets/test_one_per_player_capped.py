@@ -11,8 +11,8 @@ them sharing a controller. Each nearer spelling is a different card:
 So `one_per_player` sits beside an `up_to` ceiling, and the subset enumeration
 (`targeting._spec_options`) applies both: at most two, pairwise different
 controllers, every size from none up. Checked as the targets are chosen
-(601.2c, and 603.3d for a trigger). An exact count, or `optional`'s "exactly
-N, or none", is still refused -- "one per player" caps a size the caster picks.
+(601.2c, and 603.3d for a trigger). `optional`'s "exactly N, or none" is
+refused; an exact count of two or more is test_one_per_player_exact.py's.
 """
 
 from __future__ import annotations
@@ -141,11 +141,10 @@ class TestTheLoader:
         target = _compile().targets[0]
         assert target.one_per_player and target.up_to and target.count == 2
 
-    def test_an_exact_count_is_refused(self):
-        """"Two target artifacts controlled by different players" is no
-        ceiling for the rule to cap."""
+    def test_an_exact_count_of_one_is_refused(self):
+        """"Target artifact" alone has nobody to differ from."""
         with pytest.raises(DslError, match="one_per_player"):
-            _compile(up_to=None)
+            _compile(up_to=None, count=1)
 
     def test_exactly_n_or_none_is_refused(self):
         with pytest.raises(DslError, match="one_per_player"):

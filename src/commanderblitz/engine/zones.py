@@ -372,9 +372,10 @@ def move_object(
         # battlefield)". It is not, and the object that may come back is a new
         # one (400.7) under the same oid. See `structs.DamageRedirect`.
         end_redirects_to(state, oid)
-        # "…for as long as you control this creature" is over (611.2b), and
-        # the permanent that may come back under the same oid is not it.
-        end_source_bound(state, oid)
+        # "…for as long as you control this creature" and "…for as long as
+        # this creature remains on the battlefield" are over (611.2b), and the
+        # permanent that may come back under the same oid is not it.
+        end_source_bound(state, oid, left_battlefield=True)
         # 702.99c: an encoded card stops being encoded once its creature
         # leaves the battlefield, and the creature that may come back under the
         # same oid is a new object (400.7) that nothing is encoded on. The link

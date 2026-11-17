@@ -16,7 +16,7 @@ from commanderblitz.engine.characteristics import chars, protected_from
 from commanderblitz.engine.combat import block_prohibited, can_block, unblockable
 from commanderblitz.engine.costs import produced_symbols
 from commanderblitz.engine.enums import Keyword
-from commanderblitz.engine.player_statics import block_forbidden
+from commanderblitz.engine.player_statics import block_forbidden, block_only_refused
 
 if TYPE_CHECKING:  # pragma: no cover
     from commanderblitz.engine.carddef import CardDef
@@ -165,7 +165,8 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
     blocker -- which is why the classic agent saw an empty board in front of
     every attack and swung into whatever was waiting. This is the same set of
     questions about the two creatures, without the declaration: tapped, can't
-    block, unblockable, protection, and the evasion keywords. Landwalk and
+    block, "can block only …", unblockable, protection, and the evasion
+    keywords. Landwalk and
     card-specific "can't be blocked by Humans" are left out; they are rare, and
     getting them wrong only makes the agent a little more careful.
     """
@@ -179,6 +180,8 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
     if "Creature" not in bc.types:
         return False
     if block_forbidden(state, blocker) or block_prohibited(state, blocker):
+        return False
+    if block_only_refused(state, blocker, attacker):
         return False
     if Keyword.DECAYED.value in bc.keywords:
         return False

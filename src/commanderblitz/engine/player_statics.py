@@ -1364,6 +1364,43 @@ def block_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def block_only_refused(state: GameState, blocker_oid: int, attacker_oid: int) -> bool:
+    """Does a "can block only creatures with …" static stop this pair?
+
+    Brazen Borrower's "this creature can block only creatures with flying": a
+    restriction on the **blocker** (509.1b), naming which attackers it may
+    block by an ``attackers`` filter. The mirror of `block_restriction`, which
+    sits on the attacker and filters blockers, and the partial form of
+    `cant_block`, which is this static with an ``attackers`` filter nothing
+    matches.
+
+    ``affects`` names the blockers it binds, read like `block_forbidden`'s. The
+    ``attackers`` filter is read on the attacker's derived characteristics, the
+    way `block_restriction`'s ``blockers`` is read on the blocker's: a creature
+    that was granted flying this turn is a creature with flying. Its
+    ``controller`` defaults to ``any`` for that filter's reason -- the attacker
+    is an opponent's by definition, so "you" would refuse every block. Two such
+    statics on one creature are two restrictions, and an attacker must match
+    both.
+    """
+    blocker = state.objects.get(blocker_oid)
+    attacker = state.objects.get(attacker_oid)
+    if blocker is None or attacker is None or not blocker.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "can_block_only":
+            continue
+        # Not a layer (613): a restriction reads the blocker as it now is.
+        if not _matches(
+            state, blocker, source_obj, static.get("affects"), derived=True
+        ) or not _static_active(state, source_obj, static, affected=blocker):
+            continue
+        spec = {"controller": "any", **dict(static["attackers"])}
+        if not _matches(state, attacker, source_obj, spec, derived=True):
+            return True
+    return False
+
+
 def _alone_forbidden(state: GameState, oid: int, effect: str) -> bool:
     """Is this creature under a "…alone" static of this kind?
 

@@ -473,10 +473,11 @@ class TargetModel(BaseModel):
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
     #: what this says, and why it is a constraint on the *combination* rather
-    #: than one spec per seat. Requires a size the caster picks: ``count:
-    #: "any"``, or a printed ceiling (``count: N, up_to: true``) -- "exile **up
-    #: to two** target artifacts and/or enchantments controlled by different
-    #: players" (Protector of the Wastes).
+    #: than one spec per seat. On ``count: "any"``, a printed ceiling
+    #: (``count: N, up_to: true``) -- "exile **up to two** target artifacts
+    #: and/or enchantments controlled by different players" (Protector of the
+    #: Wastes) -- or a literal exact ``count`` of 2 or more: "choose **two**
+    #: target creatures controlled by different players" (Run Away Together).
     one_per_player: bool = False
     optional: bool = False
     #: "Choose up to two. Return those cards from your graveyard to your hand.
@@ -1173,6 +1174,12 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``can_block_only``: which attackers the creatures it ``affects`` may
+    #: block. A static filter over the *attacker*, read on its derived
+    #: characteristics, so Brazen Borrower's "can block only creatures with
+    #: flying" is ``{"keywords": ["flying"]}``. Required there, and refused on
+    #: every other effect.
+    attackers: dict[str, Any] | None = None
     #: ``grant_keyword``: the N of a granted annihilator -- "enchanted creature
     #: ... has trample and **annihilator 2**" (Eldrazi Conscription). Required
     #: when ``keywords`` names ``"annihilator"`` and refused otherwise, because
@@ -1675,6 +1682,12 @@ class CardModel(BaseModel):
     #: "You may cast this spell as though it had flash" (Necromancy). The card's
     #: own timing permission; it does not give the card the flash keyword.
     as_though_flash: bool = False
+    #: "You may cast this spell as though it had flash if you pay {2} more to
+    #: cast it" (Rout), "…by tapping three untapped creatures you control with
+    #: flying in addition to paying its other costs" (Tegwyll's Scouring). The
+    #: price of the card's own flash permission: owed only by a cast that needs
+    #: the permission, never by one made at sorcery timing.
+    flash_cost: CostModel | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The name
     #: of the step the casting window closes at, lowercased -- the one card
     #: field that narrows the timing window itself (`casting._timing_ok`).

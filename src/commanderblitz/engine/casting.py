@@ -547,7 +547,39 @@ def _window_closes_at(named: Step) -> Step:
     return _WINDOW_CLOSES.get(named, named)
 
 
-def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -> bool:
+def sorcery_timing(state: GameState, pid: int) -> bool:
+    """307.1's "a sorcery could be cast now", less the card: the active
+    player, in a main phase, with an empty stack. Holding priority is the
+    caller's to know -- legality only ever asks it of a player who has it."""
+    return (
+        state.active_player == pid
+        and state.step in (Step.PRECOMBAT_MAIN, Step.POSTCOMBAT_MAIN)
+        and not state.stack
+    )
+
+
+def flash_cost_owed(state: GameState, pid: int, card: CardDef) -> bool:
+    """Does casting this card now need its own **priced** flash permission?
+
+    "You may cast this spell as though it had flash if you pay {2} more"
+    (Rout), "…by tapping three untapped creatures you control with flying"
+    (Tegwyll's Scouring). The price is owed only by a cast the permission is
+    what makes legal: at sorcery timing the card is cast as printed, and a cast
+    some other permission already allows -- Leyline of Anticipation, Teferi's
+    +1 -- does not use this one, so it does not pay for it (601.2f charges the
+    costs of the way the spell is actually being cast).
+
+    `_cast_variant` asks this on every line it builds and `Game._cast` charges
+    whatever the line it was handed says, so the line offered is the line paid.
+    """
+    if card.flash_cost is None:
+        return False
+    return not _timing_ok(state, pid, card, sorcery_timing(state, pid), priced=False)
+
+
+def _timing_ok(
+    state: GameState, pid: int, card: CardDef, sorcery_speed: bool, *, priced: bool = True
+) -> bool:
     """May ``pid`` cast this card at the present moment?
 
     Printed characteristics first, then the sorcery-speed window -- and between
@@ -596,7 +628,13 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     # (`consume_next_spell_flash_permissions`).
     if any(flash_permission_covers(perm, pid, card) for perm in state.flash_permissions):
         return True
-    return player_casts_as_though_flash(state, pid, card)
+    if player_casts_as_though_flash(state, pid, card):
+        return True
+    # The card's own flash permission **with a price** (`flash_cost`) -- last,
+    # because it is the only branch that costs anything, and a cast any branch
+    # above allows must not be charged for it. `priced=False` is
+    # `flash_cost_owed` asking whether the cast would be legal without paying.
+    return priced and card.flash_cost is not None
 
 
 def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
@@ -2203,6 +2241,16 @@ def _cast_variant(
     # flashed-back spell than to a fresh one.
     if not modal_cast_ok(state, pid, card, oid):
         return []
+    # The card's own priced flash permission (`flash_cost`). Asked here, for
+    # `modal_cast_ok`'s reason, so every zone and every variant owes it alike.
+    # The non-mana half is proved payable now and charged by `Game._cast`
+    # after the mana (601.2g-h); the mana half is folded into the price below.
+    # A face-down spell is a nameless 2/2 (708.2) with no permission to use.
+    flash_owed = flash_cost_owed(state, pid, card)
+    if flash_owed and (
+        face_down or not can_pay(state, pid, card.flash_cost.without_mana(), oid)
+    ):
+        return []
     # "Sacrifice X creatures. Destroy X target nonland permanents." -- Immoral
     # Bargain. The line's own enumeration, because the size of its target list
     # is the number of times this line pays the additional cost, announced at
@@ -2484,6 +2532,10 @@ def _cast_variant(
             # this and the branch above and the whole reason spree needed its
             # own slot: a player who chose two modes owes two prices.
             cost = cost.plus(card.spree[mode].mana)
+        if flash_owed:
+            # Rout's "{2} more" -- an additional cost (601.2f), so it is folded
+            # in where the others are and every discount below reaches it.
+            cost = cost.plus(card.flash_cost.mana)
         # `targets=None` is the generous reading a *gate* has to take: a
         # discount that asks what the spell is aiming at has no tuple to read
         # yet, and refusing here would drop a spell that is affordable once
@@ -2627,6 +2679,8 @@ def _cast_variant(
             label_base += " (overloaded)"
         if foretold:
             label_base += " (foretold)"
+        if flash_owed:
+            label_base += f" (as though it had flash: {card.flash_cost.describe()})"
         if face_down:
             label_base = "Cast a face-down creature"
         if additional_times and card.escalate is not None:
@@ -2690,6 +2744,7 @@ def _cast_variant(
                     from_library_top=from_library_top,
                     granted_cost=granted_cost,
                     foretold=foretold,
+                    flash_cost=flash_owed,
                     face_down=face_down,
                     second_face=second_face,
                     prepared=prepared,

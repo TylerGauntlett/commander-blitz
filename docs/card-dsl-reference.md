@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 62 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 101 |
+| [Static effects](#static-effects) | 102 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 46 |
+| [Grantable statics](#grantable-statics) | 47 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 22 |
+| [Card-level rider keys](#card-level-rider-keys) | 23 |
 | [Engine events](#engine-events) | 85 |
 
 ## Effect ops
@@ -109,7 +109,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `exile` | Board | yes | Exile objects, or a spell a `{"target": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard; `playable_by: "owner"` hands a `while_exiled` permission to each card's owner. | [Effect ops](card-dsl.md#effect-ops) |
 | `exile_and_return` | Board |  | Exile permanents, then return them (transformed, under an owner). | ["Exile it, then return it transformed under its owner's control"](card-dsl-cookbook.md#exile-it-then-return-it-transformed-under-its-owners-control) |
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
-| `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
+| `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` and `while_source_on_battlefield` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
 | `goad` | Board |  | Goad creatures until your next turn, or for the rest of the game. | [Goad](card-dsl-cookbook.md#goad) |
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
@@ -157,7 +157,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
-| `lose_all_abilities` | Modify |  | Permanents lose all abilities: for good, or with `duration` until end of turn or your next turn. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
+| `lose_all_abilities` | Modify |  | Permanents lose all abilities: for good, or with `duration` until end of turn, your next turn or `while_source_on_battlefield`. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
 | `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
 | `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
@@ -591,6 +591,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `buff` |  | yes | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `can_block_only` |  | yes | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
@@ -751,6 +752,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `can_block_only` | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_attack_attacked_players` | Matching creatures can't attack a player they already attacked this turn (their planeswalkers stay open). | [Not the same player twice in a turn](card-dsl.md#not-the-same-player-twice-in-a-turn) |
@@ -1185,6 +1187,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `as_though_flash` | May be cast as though it had flash; the card does not have flash. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
+| `flash_cost` | May be cast as though it had flash by also paying this cost; at sorcery timing it is not paid. | [Flash for a price](card-dsl-cookbook.md#flash-for-a-price) |
 | `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |

@@ -178,6 +178,15 @@ class TempEffect:
     #: source that is blinked, or stolen and handed back, does not revive it:
     #: the oid survives both, and the effect must not.
     while_controller: int | None = None
+    #: "…for as long as **this creature remains on the battlefield**" (611.2b):
+    #: true when :attr:`source` leaving the battlefield is the only thing that
+    #: ends the entry. :attr:`while_controller`'s sibling with one of its two
+    #: endings: the source changing controller does not end it, so a stolen
+    #: Sower of Temptation keeps what it took for its first controller.
+    #: `temp_effects.end_source_bound` ends it as `zones.move_object` takes the
+    #: source off the battlefield, and the oid that may come back is a new
+    #: object (400.7) that does not revive it. No cleanup or untap step ends it.
+    while_source_on_battlefield: bool = False
     #: "…for as long as it has a **flood counter** on it" (611.2b): the counter
     #: kind the permanent carrying the entry must go on having, and ``None`` on
     #: every other clock. Not bound to :attr:`source`, which may leave without
@@ -206,6 +215,7 @@ class TempEffect:
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
             "while_controller": self.while_controller,
+            "while_source_on_battlefield": self.while_source_on_battlefield,
             "while_counter": self.while_counter,
         }
 
@@ -230,12 +240,16 @@ ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn"
 #: as long as you control Yuffie" (611.2b), spelled the way `grant_keyword`'s
 #: Thancred Waters duration is (`TempEffect.while_controller`), because it is the
 #: same duration ending the same way: `temp_effects.end_source_bound`, which
-#: for a control entry is the handback.
+#: for a control entry is the handback.  The fifth is Sower of Temptation's
+#: "…for as long as this creature remains on the battlefield" (611.2b,
+#: `TempEffect.while_source_on_battlefield`): the same handback on the source's
+#: leaving only, so it outlives the source changing controller.
 CONTROL_DURATIONS = (
     "permanent",
     "until_end_of_turn",
     "end_of_your_next_turn",
     "as_long_as_you_control_source",
+    "while_source_on_battlefield",
 )
 
 

@@ -1,0 +1,29 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_flash_cost.py. t_fc_scouring is Tegwyll's Scouring's first sentence on a cheap sorcery: castable as though it had flash by tapping three untapped creatures you control with flying. t_fc_rout is Rout's: as though it had flash if you pay {2} more. Both gain 1 life so the only thing a cast changes is what it cost.",
+  "cards": [
+    {
+      "id": "t_fc_scouring",
+      "name": "Test Flash Cost Scouring",
+      "oracle_text": "You may cast this spell as though it had flash by tapping three untapped creatures you control with flying in addition to paying its other costs.\nYou gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "flash_cost": {
+        "tap_permanents": {"types": ["Creature"], "keywords": ["flying"], "count": 3}
+      },
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}, "player": "you"}]
+    },
+    {
+      "id": "t_fc_rout",
+      "name": "Test Flash Cost Rout",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it.\nYou gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "flash_cost": {"mana": "{2}"},
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}, "player": "you"}]
+    }
+  ]
+}

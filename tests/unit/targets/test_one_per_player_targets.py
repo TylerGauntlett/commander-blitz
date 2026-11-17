@@ -150,11 +150,11 @@ class TestItResolves:
 
 
 class TestLoadTimeGuards:
-    def test_it_needs_a_variable_count(self):
-        """On a fixed-size spec the cap either changes nothing or makes the
-        spec unsatisfiable, and both are silent."""
+    def test_one_target_is_refused(self):
+        """A single target has nobody to differ from, so the flag would say
+        nothing -- see test_one_per_player_exact.py for the exact sizes that load."""
         card = copy.deepcopy(CARD)
-        card["targets"][0]["count"] = 2
+        card["targets"][0]["count"] = 1
         with pytest.raises(DslError, match="one_per_player"):
             compile_card(CardModel.model_validate(card))
 

@@ -1,0 +1,21 @@
+{
+  "_comment": "Cards that exist only for tests/unit/targets/test_one_per_player_exact.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_run_away` is Run Away Together: exactly two target creatures, controlled by different players.",
+  "cards": [
+    {
+      "id": "t_run_away",
+      "name": "Test Run Away",
+      "oracle_text": "Choose two target creatures controlled by different players. Return those creatures to their owners' hands.",
+      "mana_cost": "{1}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 2, "one_per_player": true,
+         "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "return_to_hand", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}
