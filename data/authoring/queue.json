@@ -288292,12 +288292,12 @@
     },
     "Tithe Taker": {
       "edhrec_rank": 7606,
-      "gate": "template",
+      "gate": null,
       "name": "Tithe Taker",
-      "reason": "no template for: During your turn, spells your opponents cast cost {1} more to cast and abilities your oppo",
+      "reason": "",
       "scryfall_id": "6c817300-c9be-4ff4-b59d-85eb21152c40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tithebearer Giant": {

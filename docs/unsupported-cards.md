@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**476 cards** blocked by **427** capabilities.
+**475 cards** blocked by **425** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -76,14 +76,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
-| [ability-tax-nonmana](#ability-tax-nonmana) | 1 | 7606 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
-| [afterlife](#afterlife) | 1 | 7606 | token |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
@@ -1883,21 +1881,6 @@ Blocks **2** cards.
 
 </details>
 
-## ability-tax-nonmana
-
-Blocks **1** card.
-
-- **(static_effect)** an ability_cost_increase class covering every non-mana activated ability an opponent activates (no targeting clause), e.g. affects_abilities {"non_mana": true}, with activated_by opponent and condition is_your_turn
-  <br>Why the existing vocabulary won't do: ability_cost_increase's affects_abilities offers only equip, or any beside a targeting clause; the loader refuses any without targeting because the payment solver activates tap-only mana abilities without consulting the tax, so a blanket 'unless they're mana abilities' tax cannot be said. The spell half (spell_cost_increase) alone would be a partial card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tithe Taker** (rank 7606) — `tithe_taker`
-  - During your turn, spells your opponents cast cost {1} more to cast and abilities your opponents activate cost {1} more to activate unless they're mana abilities.
-  - Afterlife 1 (When this creature dies, create a 1/1 white and black Spirit creature token with flying.)
-
-</details>
-
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -1983,21 +1966,6 @@ Blocks **1** card.
 
 - **Hulk's Thunderclap** (rank 20956) — `hulk_s_thunderclap`
   - Target creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment.
-
-</details>
-
-## afterlife
-
-Blocks **1** card.
-
-- **(token)** a 1/1 white and black Spirit creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_w_flying (white only) and inkling_2_1_wb_flying (wrong size and type); no white-black 1/1 flying Spirit exists, and a nearly-right token is not the printed one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tithe Taker** (rank 7606) — `tithe_taker`
-  - During your turn, spells your opponents cast cost {1} more to cast and abilities your opponents activate cost {1} more to activate unless they're mana abilities.
-  - Afterlife 1 (When this creature dies, create a 1/1 white and black Spirit creature token with flying.)
 
 </details>
 
