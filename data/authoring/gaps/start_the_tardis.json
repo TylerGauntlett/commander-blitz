@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "planeswalk",
+      "capability": "planechase",
       "kind": "engine",
       "what": "the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its \"When you planeswalk to/away from\" triggers; wrapped in `may` for \"You may planeswalk\"",
       "why_existing_wont_do": "No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: \"{1}{U}\"}` as Radical Idea ships it"

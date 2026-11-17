@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**455 cards** blocked by **401** capabilities.
+**455 cards** blocked by **399** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,6 +33,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
+| [planechase](#planechase) | 3 | 7274 | engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
@@ -49,6 +50,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
@@ -56,7 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
-| [planeswalk](#planeswalk) | 2 | 7274 | engine |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -232,8 +233,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
-| [grant-cycling](#grant-cycling) | 1 | 15774 | static_effect |
-| [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 1 | 5169 | static_effect |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -311,7 +310,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
-| [planechase](#planechase) | 1 | 18784 | engine |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -1050,6 +1048,28 @@ Blocks **3** cards.
 
 </details>
 
+## planechase
+
+Blocks **3** cards.
+
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
+- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
+  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **TARDIS** (rank 7274) — `tardis`
+  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
+- **Start the TARDIS** (rank 13326) — `start_the_tardis`
+  - You may planeswalk.
+- **Susan Foreman** (rank 18784) — `susan_foreman`
+  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
+
+</details>
+
 ## random-player-choice
 
 Blocks **3** cards.
@@ -1357,6 +1377,24 @@ Blocks **2** cards.
 
 </details>
 
+## grant-cycling-to-cards-in-hand
+
+Blocks **2** cards.
+
+- **(static_effect)** a static on a permanent that grants an activated cycling ability ({2}{W}, discard that card: draw a card, is_cycling so the cycle trigger fires) to each card in its controller's HAND matching a filter -- here historic, i.e. any_of artifact / legendary supertype / Saga subtype -- recomputed continuously while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The grant_ability static and grant_keyword static only affect objects on the battlefield (the packet notes 'a granted activated ability works on the battlefield only'); cycling exists only as a card's own is_cycling ability with active_zones ["hand"], and no static_effect or affects filter reaches cards in hand. The historic filter itself is expressible with any_of, and the second line is a plain 'cycle' trigger with add_counters, so only the hand-zone grant is missing
+- **(static_effect)** a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: ["hand"]` only describe a card's own printed cycling, not one granted by another permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rhet-Tomb Mystic** (rank 5169) — `rhet_tomb_mystic`
+  - Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)
+- **Jo Grant** (rank 15774) — `jo_grant`
+  - Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)
+
+</details>
+
 ## graveyard-play-shared-limit
 
 Blocks **2** cards.
@@ -1483,24 +1521,6 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
-
-</details>
-
-## planeswalk
-
-Blocks **2** cards.
-
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **TARDIS** (rank 7274) — `tardis`
-  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
-- **Start the TARDIS** (rank 13326) — `start_the_tardis`
-  - You may planeswalk.
 
 </details>
 
@@ -4079,34 +4099,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-cycling
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a permanent that grants an activated cycling ability ({2}{W}, discard that card: draw a card, is_cycling so the cycle trigger fires) to each card in its controller's HAND matching a filter -- here historic, i.e. any_of artifact / legendary supertype / Saga subtype -- recomputed continuously while the permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: The grant_ability static and grant_keyword static only affect objects on the battlefield (the packet notes 'a granted activated ability works on the battlefield only'); cycling exists only as a card's own is_cycling ability with active_zones ["hand"], and no static_effect or affects filter reaches cards in hand. The historic filter itself is expressible with any_of, and the second line is a plain 'cycle' trigger with add_counters, so only the hand-zone grant is missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jo Grant** (rank 15774) — `jo_grant`
-  - Each historic card in your hand has cycling {2}{W}. ({2}{W}, Discard that card: Draw a card.)
-
-</details>
-
-## grant-cycling-to-cards-in-hand
-
-Blocks **1** card.
-
-- **(static_effect)** a static on a permanent that grants cycling {1}{U} (an activated ability playable from hand: pay {1}{U}, discard that card, draw a card, counting as cycling for `cycle` triggers) to each creature card in its controller's hand, while the permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: The `grant_ability` static grants abilities only to permanents and a granted activated ability works on the battlefield only; `static_affects_filter_keys` has no zone key to reach cards in hand; cycling is not in `keywords`, and `is_cycling`/`discard_self` with `active_zones: ["hand"]` only describe a card's own printed cycling, not one granted by another permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rhet-Tomb Mystic** (rank 5169) — `rhet_tomb_mystic`
-  - Each creature card in your hand has cycling {1}{U}. ({1}{U}, Discard that card: Draw a card.)
-
-</details>
-
 ## grant-evoke
 
 Blocks **1** card.
@@ -5201,20 +5193,6 @@ Blocks **1** card.
 
 - **Smuggler's Share** (rank 1701) — `smuggler_s_share`
   - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
-
-</details>
-
-## planechase
-
-Blocks **1** card.
-
-- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
-  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
-
-<details><summary>Cards waiting on this</summary>
-
-- **Susan Foreman** (rank 18784) — `susan_foreman`
-  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
 
 </details>
 
