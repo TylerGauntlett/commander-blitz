@@ -20528,6 +20528,50 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Saga"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "read_ahead"
+          ],
+          "kind": "static",
+          "text": "History Teacher — Sagas you control have read ahead."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "barbara_wright",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Barbara Wright",
+      "oracle_text": "History Teacher — Sagas you control have read ahead. (As a Saga enters, choose a chapter and start with that many lore counters. Skipped chapters don't trigger.)\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -24807,6 +24851,92 @@
         "Vehicle"
       ],
       "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Bessie attacks, another target legendary creature can't be blocked this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bessie_the_doctor_s_roadster",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}",
+      "name": "Bessie, the Doctor's Roadster",
+      "oracle_text": "Haste\nWhenever Bessie attacks, another target legendary creature can't be blocked this turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Artifact"
       ]
@@ -46175,6 +46305,182 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Create a Treasure token."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "not_subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "not_subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "not_subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control."
+        },
+        {
+          "chapter": 5,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "not_subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control."
+        },
+        {
+          "chapter": 6,
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "not_subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "city_of_death",
+      "mana_cost": "{2}{G}",
+      "name": "City of Death",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after VI.)\nI — Create a Treasure token.\nII, III, IV, V, VI — Create a token that's a copy of target non-Saga token you control.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -60620,6 +60926,47 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Legendary creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "day_of_destiny",
+      "mana_cost": "{3}{W}",
+      "name": "Day of Destiny",
+      "oracle_text": "Legendary creatures you control get +2/+2.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

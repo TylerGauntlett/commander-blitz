@@ -1713,6 +1713,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "barbara_wright": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barbarian_general": {
     "zone": "battlefield"
   },
@@ -2031,6 +2035,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "bessie_the_doctor_s_roadster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "betor_ancestor_s_voice": {
@@ -3741,6 +3749,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "city_of_death": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "city_of_traitors": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4963,6 +4979,10 @@
     "zone": "battlefield"
   },
   "dawntreader_elk": {
+    "zone": "battlefield"
+  },
+  "day_of_destiny": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "daybreak_chaplain": {

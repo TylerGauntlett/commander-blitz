@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**435 cards** blocked by **381** capabilities.
+**436 cards** blocked by **382** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -176,6 +176,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [energy-gained-trigger](#energy-gained-trigger) | 1 | 7466 | trigger_event |
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
+| [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -3236,6 +3237,20 @@ Blocks **1** card.
 
 - **Rapid Augmenter** (rank 7379) — `rapid_augmenter`
   - Whenever another creature you control enters, if it wasn't cast, put a +1/+1 counter on this creature and this creature can't be blocked this turn.
+
+</details>
+
+## enters-as-animated
+
+Blocks **1** card.
+
+- **(replacement)** a static 'as another permanent enters' replacement on this permanent, filtered by a selector (controller you, any_of Artifact type / Legendary supertype / Saga subtype), that applies a lasting characteristic-changing effect to the entering permanent as it enters: adds the Creature type and Dinosaur subtype and sets base P/T 7/7, in addition to its other types, with no duration, so the change persists after Displaced Dinosaurs leaves and never touches historic permanents already on the battlefield
+  <br>Why the existing vocabulary won't do: The set_types/set_pt/add_subtype statics last only while the source is on the battlefield and also hit historic permanents that were already out; a permanent_enters trigger with the animate op (duration permanent) uses the stack, so the permanent enters as a noncreature and its own and others' enters-triggers see it that way and it can be responded to; enters_tapped and enters_with_additional_counters are the only as-enters replacements and neither changes types or P/T
+
+<details><summary>Cards waiting on this</summary>
+
+- **Displaced Dinosaurs** (rank 4716) — `displaced_dinosaurs`
+  - As a historic permanent you control enters, it becomes a 7/7 Dinosaur creature in addition to its other types.
 
 </details>
 

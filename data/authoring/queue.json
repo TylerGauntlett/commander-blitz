@@ -20282,12 +20282,12 @@
     },
     "Barbara Wright": {
       "edhrec_rank": 7148,
-      "gate": "template",
+      "gate": null,
       "name": "Barbara Wright",
-      "reason": "no template for: History Teacher — Sagas you control have read ahead",
+      "reason": "",
       "scryfall_id": "414bdd33-549d-4690-917c-ea48decffbbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barbarian Bully": {
@@ -24232,12 +24232,12 @@
     },
     "Bessie, the Doctor's Roadster": {
       "edhrec_rank": 10884,
-      "gate": "template",
+      "gate": null,
       "name": "Bessie, the Doctor's Roadster",
-      "reason": "no template for: Whenever Bessie attacks, another target legendary creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "39166adc-6b0e-4549-965b-a8dded70c54c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bestial Bloodline": {
@@ -47132,12 +47132,12 @@
     },
     "City of Death": {
       "edhrec_rank": 4477,
-      "gate": "template",
+      "gate": null,
       "name": "City of Death",
-      "reason": "no template for: I — Create a Treasure token",
+      "reason": "",
       "scryfall_id": "02242155-5612-4be7-b4db-c94f3ff34383",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "City of Shadows": {
@@ -62522,12 +62522,12 @@
     },
     "Day of Destiny": {
       "edhrec_rank": 6277,
-      "gate": "template",
+      "gate": null,
       "name": "Day of Destiny",
-      "reason": "no template for: Legendary creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "8c48ce9d-4158-421a-9a4f-50159188ef1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Day of the Dragons": {
