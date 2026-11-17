@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**486 cards** blocked by **428** capabilities.
+**478 cards** blocked by **427** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
-| [time-travel](#time-travel) | 9 | 6492 | op |
 | [council-s-dilemma](#council-s-dilemma) | 7 | 3539 | decision, op |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
@@ -623,54 +622,6 @@ Blocks **9** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## time-travel
-
-Blocks **9** cards.
-
-- **(op)** an op that, for each suspended card the controller owns (exile, suspended_by == controller, time counters > 0) and each permanent they control with a time counter, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it for free as suspend does (702.62), and the removal goes through the same COUNTER_REMOVED / TIME_COUNTER_REMOVED funnel
-  <br>Why the existing vocabulary won't do: for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters on exile also matches non-suspended exiled cards with time counters), and the free cast on the last counter lives only in suspend.tick at upkeep, so an effect removing the last counter would strand the card in exile with zero counters. Storm itself is expressible (Brain Freeze's copy_spell with spells_cast_this_turn minus 1).
-- **(op)** an op that, for each suspended card the controller owns (in exile, suspended, with time counters) and each permanent they control with a time counter on it, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62), through the same counter-removed funnel
-  <br>Why the existing vocabulary won't do: for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters in exile also matches non-suspended exiled cards with time counters), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. The rest of the card is expressible: Coward is cant_block + add_subtype with duration this turn on a target creature, and Killer is a second_face split half whose damage reaches each other creature via shares_a_creature_type_with on the target plus exclude_binding.
-- **(op)** an op that, for each suspended card the controller owns (in exile, suspended, with time counters) and each permanent they control with a time counter on it, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62), through the same counter-removed funnel
-  <br>Why the existing vocabulary won't do: for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters in exile also matches non-suspended exiled cards with time counters), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. The rest of the card is expressible: enters tapped with add_counters time on entry, and the mana ability is add_mana {C} with amount counters_on time on self; the activated ability's cost is mana {4} + tap with sorcery_speed_only.
-- **(op)** the keyword action time travel (701.55): for each permanent you control with a time counter on it and each suspended card you own in exile with a time counter on it, you may put a time counter on it or remove a time counter from it
-  <br>Why the existing vocabulary won't do: No op in reference is named time_travel; add_counters/remove_counters act on a fixed selector with a fixed direction and cannot offer a per-object add-or-remove choice spanning both battlefield permanents and suspended cards in exile
-- **(op)** the keyword action time travel (701.55): for each permanent you control with a time counter on it and each suspended card you own in exile with a time counter on it, you may put a time counter on it or remove a time counter from it (a per-object add/remove/skip choice), repeatable as two sequential instances
-  <br>Why the existing vocabulary won't do: No time_travel op in reference; add_counters/remove_counters/proliferate each act in one fixed direction over a fixed selector and cannot offer a per-object add-or-remove choice spanning battlefield permanents and suspended cards in exile
-- **(op)** an op, with an amount for 'time travel three times', that for each suspended card the controller owns (in exile, suspended, with time counters) and each permanent they control with a time counter on it lets them choose to add one time counter, remove one, or do nothing, repeated N times; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62)
-  <br>Why the existing vocabulary won't do: No time_travel op is in reference. repeat + for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters in exile also matches non-suspended exiled cards), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. The Allons-y! line looks expressible (you_attack trigger, exile_until a nonland card bound with as, then the suspend op with amount 3 on that binding), and the activated ability's cost is mana {7} with sorcery_speed_only.
-- **(op)** the keyword action time travel (701.55): for each suspended card the controller owns in exile and each permanent they control with a time counter on it, the controller may add one time counter, remove one time counter, or leave it, chosen per object
-  <br>Why the existing vocabulary won't do: No op or selector names a suspended card: the selector keys have has_counters and zone but nothing that reads the engine's suspended mark (suspend.suspended_cards), so a for_each over exile cards with time counters would also catch non-suspended exiled cards with time counters; proliferate only adds and covers every counter kind and every player; add_counters/remove_counters act on a fixed set with no per-object add-or-remove choice. The first sentence is expressible with the suspend op inside for_each_player/for_each (amount mana_value_of the chosen card), but the card cannot be written partially
-- **(op)** an op that, for each suspended card the controller owns (in exile, suspended, with time counters) and each permanent they control with a time counter on it, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62), through the same counter-removed funnel
-  <br>Why the existing vocabulary won't do: No time_travel op exists. for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters in exile also matches non-suspended exiled cards with time counters), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. The rest is expressible: skulk is a keyword (in starting_point) and the trigger is deals_combat_damage_to_player with source self.
-- **(op)** an op that, for each suspended card the controller owns (in exile, with suspend, with a time counter) and each permanent they control with a time counter on it, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62), through the same counter-removed funnel
-  <br>Why the existing vocabulary won't do: No time_travel op is in reference. for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters: "time" in exile also matches non-suspended exiled cards), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. "Draw a card." alone is a plain draw op.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Tenth Doctor** (rank 6492) — `the_tenth_doctor`
-  - Timey-Wimey — {7}: Time travel three times. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter. Then do it two more times.)
-- **Time Beetle** (rank 8095) — `time_beetle`
-  - Parallel Universe — Whenever this creature deals combat damage to a player, time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)
-- **Wibbly-wobbly, Timey-wimey** (rank 8149) — `wibbly_wobbly_timey_wimey`
-  - Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)
-- **Rotating Fireplace** (rank 8397) — `rotating_fireplace`
-  - {4}, {T}: Time travel. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)
-- **All of History, All at Once** (rank 9304) — `all_of_history_all_at_once`
-  - Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)
-- **The Parting of the Ways** (rank 9491) — `the_parting_of_the_ways`
-  - II — Time travel, then time travel.
-- **The Wedding of River Song** (rank 10795) — `the_wedding_of_river_song`
-  - Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)
-- **The Girl in the Fireplace** (rank 13482) — `the_girl_in_the_fireplace`
-  - I — Create a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
-  - II — Create a 2/2 white Horse creature token with "Doctors you control have horsemanship." (They can't be blocked except by creatures with horsemanship.)
-  - III — Whenever a creature you control deals combat damage to a player this turn, time travel.
-- **Coward // Killer** (rank 15185) — `coward_killer`
-  - Time travel.
 
 </details>
 
@@ -4614,7 +4565,6 @@ Blocks **1** card.
 - **The Girl in the Fireplace** (rank 13482) — `the_girl_in_the_fireplace`
   - I — Create a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
   - II — Create a 2/2 white Horse creature token with "Doctors you control have horsemanship." (They can't be blocked except by creatures with horsemanship.)
-  - III — Whenever a creature you control deals combat damage to a player this turn, time travel.
 
 </details>
 
@@ -4672,7 +4622,6 @@ Blocks **1** card.
 - **The Girl in the Fireplace** (rank 13482) — `the_girl_in_the_fireplace`
   - I — Create a 1/1 white Human Noble creature token with vanishing 3 and "Prevent all damage that would be dealt to this token."
   - II — Create a 2/2 white Horse creature token with "Doctors you control have horsemanship." (They can't be blocked except by creatures with horsemanship.)
-  - III — Whenever a creature you control deals combat damage to a player this turn, time travel.
 
 </details>
 

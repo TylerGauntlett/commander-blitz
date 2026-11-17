@@ -3797,6 +3797,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: proliferate takes no 'objects' -- the controller chooses "
             f"what to proliferate as it resolves (701.27a)"
         )
+    if op == "time_travel":
+        # 701.55a names its own objects (permanents you control and suspended
+        # cards you own, each with a time counter), its own counter kind and its
+        # own chooser. Accepted and ignored, any of these keys would load a card
+        # that time-travels something other than what it printed.
+        for key in ("objects", "counter", "player", "up_to", "any_kind"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: time_travel offers every permanent you control and "
+                    f"every suspended card you own with a time counter, and takes "
+                    f"no {key!r}; 'amount' is how many times (701.55a)"
+                )
     if op == "detain" and not effect.get("objects"):
         # Detain with no selector restricts nobody: the card resolves, the log
         # says nothing, and the creature attacks anyway.

@@ -563,6 +563,43 @@ received a counter. Read it back as a pool, narrowed like any other:
 The near miss is a `has_counters` selector after the proliferate, which also
 offers every permanent you control that carried a counter and was not chosen.
 
+### Time travel — one time counter on or off, per object
+
+```jsonc
+{ "op": "time_travel" }                              // "Time travel."
+{ "op": "time_travel", "amount": { "const": 3 } }    // "Time travel three times."
+```
+
+"For each permanent you control with a time counter on it and each suspended card
+you own with a time counter on it, you may put a time counter on it or remove a
+time counter from it" (701.55a). As it resolves, the controller is asked one
+`ask_mode` per object (untagged, the object's `oid` in its context):
+put one on, take one off, or leave it. Offered are the phased-in permanents the
+controller controls with a time counter and `suspend.suspended_cards` — their own
+cards in exile marked suspended, with a time counter (702.62b). An exiled card
+with time counters that is not suspended is not offered, and nothing without a
+time counter ever is. The first answer is the default: remove for a suspended
+card, put for a permanent.
+
+Every counter goes through the engine's funnels, so the rest of the game hears
+it: a permanent's removal is `primitives.remove_counters` (vanishing's
+`last_counter_removed` sacrifice, Watcher of Hours' `counter_removed`), a
+suspended card's is `suspend.remove_time_counter`, the upkeep tick's own step,
+and a placement is `primitives.add_counters` (Kate Stewart's `counter_placed`).
+A suspended card whose **last** time counter it removes is cast without paying
+its mana cost, with suspend's haste, through `suspend.cast_suspended` (702.62a),
+once the op's every choice is made.
+
+`amount` (default 1) is the number of whole time travels, each asking its own
+questions after the one before was applied. A card the first emptied is no longer
+suspended, so the second does not offer it. The loader refuses `objects`,
+`counter`, `player`, `up_to` and `any_kind`: the rule names the objects, the kind
+and the chooser.
+
+The near miss is `for_each` with `choose_mode` over `add_counters` and
+`remove_counters`: no selector reads "suspended", and a removal there leaves a
+suspended card in exile at zero, never cast.
+
 ## Selectors — "which objects"
 
 Every key is optional; all present keys must match. The key list with a

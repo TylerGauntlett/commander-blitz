@@ -11,6 +11,7 @@ from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
 from ..events import EventType
+from ..objects import TIME_COUNTER
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
@@ -26,12 +27,13 @@ from ..primitives import (
     untap_permanent,
 )
 from ..structs import StackItem
+from ..suspend import cast_suspended, remove_time_counter, suspended_cards
 from ..triggers import fire
 from ..zones import exile, move_object
 from .board_helpers import (
     _players,
 )
-from .context import EffectContext, ask_objects, ask_x, ask_yes_no
+from .context import EffectContext, ask_mode, ask_objects, ask_x, ask_yes_no
 from .counter_removal import remove_counters_one_at_a_time
 from .ops_cards import cast_copy_paying
 from .ops_characteristics import source_bound_seat
@@ -481,6 +483,106 @@ def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
     )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = removed
+
+
+#: What each of one object's three time travel answers means. The labels are
+#: ordered per object (`_time_travel_labels`), so an answer is read by its
+#: meaning, never by its position.
+_TT_ADD, _TT_REMOVE, _TT_LEAVE = "add", "remove", "leave"
+
+
+@register("time_travel")
+def op_time_travel(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Time travel." (701.55a) -- "For each permanent you control with a
+    time counter on it and each suspended card you own with a time counter on
+    it, you may put a time counter on it or remove a time counter from it."
+
+    **One question per object, three answers**: put one, remove one, or leave
+    it -- an `ask_mode` the controller answers, since "you" both controls every
+    permanent offered and owns every suspended card. Untagged, so the client's
+    generic labelled-mode dialog answers it; the object rides in the context
+    as ``oid``. Not proliferate's single
+    pick: proliferate only adds, and here each object's answer is a direction.
+
+    **Who is offered** is read as each time travel begins: a permanent the
+    controller controls that is phased in and carries a time counter, and
+    `suspend.suspended_cards` -- the controller's own cards in exile marked
+    `suspended_by` them with a time counter (702.62b). A card in exile with
+    time counters that is not suspended is not offered, nor is anything with
+    no time counter, which time travel never starts.
+
+    **Removal goes through the same funnels as every other road.** A
+    permanent's counter comes off through `primitives.remove_counters`, so
+    vanishing's `last_counter_removed` sacrifice hears it; a suspended card's
+    through `suspend.remove_time_counter`, the upkeep tick's own step. A
+    suspended card whose **last** counter this removes is cast for free with
+    haste (702.62a) through `suspend.cast_suspended`, once every choice of
+    the op is made, never stranded in exile at zero.
+
+    ``amount`` (default 1) is "time travel three times" (The Tenth Doctor):
+    each a whole time travel with its own choices, asked after the one before
+    it was applied. A card emptied by an earlier repetition is no longer
+    suspended (702.62b), so a later one does not offer it; the casts wait for
+    the last repetition, as the trigger 702.62a makes would wait for the
+    resolving effect to finish.
+    """
+    state = ctx.state
+    pid = ctx.controller
+    emptied: list[int] = []
+    for _ in range(max(0, evaluate_value(ctx, spec.get("amount", 1)))):
+        permanents = [
+            oid
+            for oid in state.battlefield
+            if (obj := state.objects.get(oid)) is not None
+            and obj.on_battlefield
+            and not obj.phased_out
+            and obj.controller == pid
+            and obj.counter(TIME_COUNTER) > 0
+        ]
+        suspended = suspended_cards(state, pid)
+        for oid in permanents + suspended:
+            obj = state.objects.get(oid)
+            is_suspended = oid in suspended
+            if obj is None or obj.counter(TIME_COUNTER) <= 0:
+                continue
+            if is_suspended and (obj.zone is not Zone.EXILE or obj.suspended_by != pid):
+                continue
+            if not is_suspended and (not obj.on_battlefield or obj.controller != pid):
+                continue
+            answers = _time_travel_labels(is_suspended)
+            [index] = yield from ask_mode(
+                ctx,
+                f"Time travel: {ctx.name_of(oid)} has "
+                f"{obj.counter(TIME_COUNTER)} time counter(s)",
+                [label for _, label in answers],
+                pid,
+                extra={"oid": oid},
+            )
+            meaning = answers[index][0]
+            if meaning == _TT_ADD:
+                add_counters(state, oid, TIME_COUNTER, 1, source=ctx.source_oid, by=pid)
+            elif meaning == _TT_REMOVE:
+                if is_suspended:
+                    if remove_time_counter(state, pid, oid):
+                        emptied.append(oid)
+                else:
+                    remove_counters(state, oid, TIME_COUNTER, 1, by=pid)
+    for oid in emptied:
+        cast_suspended(state, pid, oid)
+
+
+def _time_travel_labels(suspended: bool) -> list[tuple[str, str]]:
+    """One object's three answers, the likelier wish first.
+
+    The first label is the default answer -- the one the authoring verifier
+    and a timed-out seat give -- so it is the direction a player usually
+    wants: a suspended card sooner (remove), a permanent's clock longer
+    (put). "Leave it" is always offered and always last.
+    """
+    add = (_TT_ADD, "Put a time counter on it")
+    remove = (_TT_REMOVE, "Remove a time counter from it")
+    leave = (_TT_LEAVE, "Leave it")
+    return [remove, add, leave] if suspended else [add, remove, leave]
 
 
 @register("tap")

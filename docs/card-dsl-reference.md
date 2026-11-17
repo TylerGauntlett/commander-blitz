@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 181 |
+| [Effect ops](#effect-ops) | 182 |
 | [Selectors](#selectors) | 79 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 76 |
@@ -145,6 +145,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `set_turn_flag` | Board |  | Write a word on the source for the turn (exerted, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `skip_untap` | Board |  | It doesn't untap during its controller's next untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
 | `tap` | Board |  | Tap permanents. | [Effect ops](card-dsl.md#effect-ops) |
+| `time_travel` | Board |  | Time travel (701.55a): for each permanent you control and each suspended card you own with a time counter, put one on, take one off or leave it; a suspended card's last counter casts it free. `amount` is how many times. | [Time travel — one time counter on or off, per object](card-dsl.md#time-travel--one-time-counter-on-or-off-per-object) |
 | `turn_face_up` | Board |  | Turn face-down permanents face up without paying a cost; no megamorph counter, a face-up one untouched. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `unattach` | Board |  | Unattach the source (reconfigure). | [Reconfigure — taking it off again](card-dsl-cookbook.md#reconfigure--taking-it-off-again) |
 | `unblockable` | Board |  | Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`). | [The unblockable op — the same wire, read from the attacker's end](card-dsl-cookbook.md#the-unblockable-op--the-same-wire-read-from-the-attackers-end) |

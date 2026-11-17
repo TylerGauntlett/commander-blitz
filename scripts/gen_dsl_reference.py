@@ -307,6 +307,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "set_flag": ("Board", "Write a word on the source for the game (renowned, …).", H_EXERTED),
     "proliferate": ("Board", "Proliferate: choose permanents and players, add one of each counter; `as` binds the permanents that received one.",
                     "Proliferate — a choice over permanents and players"),
+    "time_travel": ("Board", "Time travel (701.55a): for each permanent you control and each suspended card you own with a time counter, put one on, take one off or leave it; a suspended card's last counter casts it free. `amount` is how many times.",
+                    "Time travel — one time counter on or off, per object"),
     "double_counters": ("Board", "Double the counters of a kind on a permanent.",
                         "Doubling the counters on a permanent"),
     "distribute_counters": ("Board", "Distribute N counters among targets as the player chooses.",

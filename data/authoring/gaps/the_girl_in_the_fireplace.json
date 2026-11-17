@@ -4,16 +4,9 @@
   "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 1/1 white Human Noble creature token with vanishing 3 and \"Prevent all damage that would be dealt to this token.\"\nII — Create a 2/2 white Horse creature token with \"Doctors you control have horsemanship.\" (They can't be blocked except by creatures with horsemanship.)\nIII — Whenever a creature you control deals combat damage to a player this turn, time travel.",
   "blocked_sentences": [
     "I — Create a 1/1 white Human Noble creature token with vanishing 3 and \"Prevent all damage that would be dealt to this token.\"",
-    "II — Create a 2/2 white Horse creature token with \"Doctors you control have horsemanship.\" (They can't be blocked except by creatures with horsemanship.)",
-    "III — Whenever a creature you control deals combat damage to a player this turn, time travel."
+    "II — Create a 2/2 white Horse creature token with \"Doctors you control have horsemanship.\" (They can't be blocked except by creatures with horsemanship.)"
   ],
   "needs": [
-    {
-      "capability": "time_travel",
-      "kind": "op",
-      "what": "the keyword action time travel (701.55): for each permanent you control with a time counter on it and each suspended card you own in exile with a time counter on it, you may put a time counter on it or remove a time counter from it",
-      "why_existing_wont_do": "No op in reference is named time_travel; add_counters/remove_counters act on a fixed selector with a fixed direction and cannot offer a per-object add-or-remove choice spanning both battlefield permanents and suspended cards in exile"
-    },
     {
       "capability": "human_noble_1_1_w_vanishing_token",
       "kind": "token",
