@@ -17955,6 +17955,17 @@
   "rumbling_sentry": {
     "zone": "battlefield"
   },
+  "run_away_together": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "run_for_your_life": {
     "zone": "graveyard"
   },

@@ -216076,6 +216076,45 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "run_away_together",
+      "mana_cost": "{1}{U}",
+      "name": "Run Away Together",
+      "oracle_text": "Choose two target creatures controlled by different players. Return those creatures to their owners' hands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R",
         "U"
       ],

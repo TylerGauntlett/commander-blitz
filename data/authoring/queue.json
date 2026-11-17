@@ -229082,12 +229082,12 @@
     },
     "Run Away Together": {
       "edhrec_rank": 1674,
-      "gate": "template",
+      "gate": null,
       "name": "Run Away Together",
-      "reason": "no template for: Choose two target creatures controlled by different players. Return those creatures to the",
+      "reason": "",
       "scryfall_id": "35c56aff-1f0f-464a-b705-d67803e3d060",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Run Behind": {
