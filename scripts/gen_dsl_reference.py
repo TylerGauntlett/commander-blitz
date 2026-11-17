@@ -972,6 +972,10 @@ STATICS: dict[str, Entry] = {
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
     "can_block_only": ("Matching creatures can block only attackers matching `attackers`.",
                        "Can block only creatures with …"),
+    "assign_damage_as_though_unblocked": ("Matching creatures' controller may have each, when "
+                                          "blocked, assign all its combat damage as though it "
+                                          "weren't blocked.",
+                                          "Combat damage as though it weren't blocked"),
     "combat_damage_by_toughness": ("Matching creatures assign combat damage equal to their "
                                    "toughness rather than their power.",
                                    "Combat damage equal to toughness"),

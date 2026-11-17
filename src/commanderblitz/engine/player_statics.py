@@ -1136,6 +1136,32 @@ def assigns_damage_by_toughness(state: GameState, oid: int) -> bool:
     return False
 
 
+def assigns_damage_as_though_unblocked(state: GameState, oid: int) -> bool:
+    """May this creature's controller have it assign its combat damage as
+    though it weren't blocked?
+
+    Rule 510.1c-d: a blocked creature assigns its combat damage to the
+    creatures blocking it, unless an effect lets it assign that damage "as
+    though it weren't blocked" -- Thorn Elemental, Lone Wolf, Rhox, Siege
+    Behemoth, and Indomitable Might's "enchanted creature's controller may
+    have it …". The `assign_damage_as_though_unblocked` static, its `affects`
+    read off the creature as it now is and its `condition` asked per creature.
+    This answers only whether the option exists; the choice itself is asked of
+    the creature's controller by `combat.deal_combat_damage`.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "assign_damage_as_though_unblocked":
+            continue
+        if _matches(
+            state, obj, source_obj, static.get("affects"), derived=True
+        ) and _static_active(state, source_obj, static, affected=obj):
+            return True
+    return False
+
+
 def attacked_player_forbidden(
     state: GameState, oid: int, defender: int, *, permanent: int | None = None
 ) -> bool:

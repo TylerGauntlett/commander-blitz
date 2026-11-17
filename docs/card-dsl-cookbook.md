@@ -5639,6 +5639,44 @@ The near misses are `buff` and `set_pt`, which change power itself — a fight,
 all read the changed number — and `replace_damage`, which scales an amount
 already computed from power.
 
+## Combat damage as though it weren't blocked
+
+    Thorn Elemental — "You may have Thorn Elemental assign its combat damage as
+                       though it weren't blocked."
+    Indomitable Might — "Enchanted creature's controller may have it assign its
+                         combat damage as though it weren't blocked."
+
+Rule 510.1c-d: a blocked creature with this option may assign all of its combat
+damage to the player, planeswalker or battle it is attacking instead of to its
+blockers. It is a static that names the creatures it reaches.
+
+```jsonc
+// Thorn Elemental, Lone Wolf, Siege Behemoth's own creature: itself
+{ "kind": "static", "effect": "assign_damage_as_though_unblocked",
+  "affects": { "self_only": true } }
+
+// Indomitable Might: the creature the Aura (or Equipment) is attached to
+{ "kind": "static", "effect": "assign_damage_as_though_unblocked",
+  "affects": { "attached": true } }
+```
+
+`affects` is required (a missing filter matches nothing) and is read off each
+creature as it now is; `condition` is asked per creature. The option is read by
+`player_statics.assigns_damage_as_though_unblocked`, and
+`combat.deal_combat_damage` asks the attacking creature's controller one yes/no
+question (`ask_yes_no`, a `MAY` decision) for each attacker that was blocked,
+assigns combat damage above 0 and has the option, before its blockers are
+ordered. Yes sends all of it where an unblocked attacker's would go; no is the
+ordinary lethal-first assignment. The question is still asked when every
+blocker has left combat, where no means it deals no combat damage. The blockers
+still deal their damage to it. Nothing is asked of a blocking creature. The CPU
+answers yes, as it answers every `MAY`.
+
+It is a choice of all or nothing, not a division: the engine still assigns an
+ordinary blocked creature's damage automatically. The near miss is `trample`,
+which sends only the excess past lethal; `combat_damage_by_toughness` changes
+how much a creature assigns, never where.
+
 ## Attacking as though it didn't have defender
 
     Felothar the Steadfast — "Creatures you control can attack as though they

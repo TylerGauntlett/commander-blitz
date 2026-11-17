@@ -528,6 +528,12 @@ STATIC_EFFECTS = frozenset(
         # power itself is unchanged for every other reader, so `buff` and
         # `set_pt` would print a different card.
         "combat_damage_by_toughness",
+        # Thorn Elemental, Lone Wolf, Siege Behemoth, Indomitable Might: "you
+        # may have it assign its combat damage as though it weren't blocked"
+        # (510.1c-d). Read by `player_statics.assigns_damage_as_though_unblocked`
+        # from `combat.deal_combat_damage`, which asks the creature's controller.
+        # Not a keyword: the option is where damage goes, not a characteristic.
+        "assign_damage_as_though_unblocked",
         # Unleash, and the "can't block" printed on aggressive commons. The
         # mirror of `cant_attack`, read by `combat.can_block`, and a static
         # rather than a keyword for the same reason `block_restriction` is: a

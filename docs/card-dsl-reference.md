@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 62 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 102 |
+| [Static effects](#static-effects) | 103 |
 | [Player-wide statics](#player-wide-statics) | 48 |
-| [Grantable statics](#grantable-statics) | 47 |
+| [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 36 |
 | [Card-level costs](#card-level-costs) | 35 |
@@ -584,6 +584,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype; a printed one with `off_battlefield` also reaches matching spells you control and cards you own in every other zone. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `all_damage_wither` |  |  | All damage to creatures, from every source, is dealt as -1/-1 counters. | ["All damage is dealt as though its source had wither"](card-dsl-cookbook.md#all-damage-is-dealt-as-though-its-source-had-wither) |
+| `assign_damage_as_though_unblocked` |  | yes | Matching creatures' controller may have each, when blocked, assign all its combat damage as though it weren't blocked. | [Combat damage as though it weren't blocked](card-dsl-cookbook.md#combat-damage-as-though-it-werent-blocked) |
 | `attack_despite_defender` |  | yes | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
@@ -746,6 +747,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype; a printed one with `off_battlefield` also reaches matching spells you control and cards you own in every other zone. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
+| `assign_damage_as_though_unblocked` | Matching creatures' controller may have each, when blocked, assign all its combat damage as though it weren't blocked. | [Combat damage as though it weren't blocked](card-dsl-cookbook.md#combat-damage-as-though-it-werent-blocked) |
 | `attack_despite_defender` | Matching creatures can attack as though they didn't have defender (`defending`: only the players it names). | [Attacking as though it didn't have defender](card-dsl-cookbook.md#attacking-as-though-it-didnt-have-defender) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |

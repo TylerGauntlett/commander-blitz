@@ -5157,6 +5157,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: combat_damage_by_toughness needs an 'affects' filter -- "
             f'e.g. {{"types": ["Creature"]}} for each creature you control'
         )
+    if model.effect == "assign_damage_as_though_unblocked" and model.affects is None:
+        # A missing filter matches nothing, so the option would load, print
+        # and never be offered. Thorn Elemental's is `{"self_only": true}`,
+        # Indomitable Might's `{"attached": true}`.
+        raise DslError(
+            f"{where}: assign_damage_as_though_unblocked needs an 'affects' filter -- "
+            f'{{"self_only": true}} for the creature that carries it, '
+            f'{{"attached": true}} for an Aura or Equipment'
+        )
     if model.effect == "cant_attack_you" and model.affects is None:
         # Same refusal, one step further: a missing filter matches nothing, so a
         # filterless `cant_attack_you` is a wall nobody bounces off. And the
