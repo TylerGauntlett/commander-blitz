@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**447 cards** blocked by **395** capabilities.
+**449 cards** blocked by **397** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -83,6 +83,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-rhino-4-4-w-token](#alien-rhino-4-4-w-token) | 1 | 18598 | token |
+| [alien-salamander-2-2-g-islandwalk-token](#alien-salamander-2-2-g-islandwalk-token) | 1 | 17360 | token |
 | [alien-token](#alien-token) | 1 | 5885 | token |
 | [alien-warrior-token](#alien-warrior-token) | 1 | 6181 | token |
 | [angel-warrior-4-4-w-flying-vigilance](#angel-warrior-4-4-w-flying-vigilance) | 1 | 15412 | token |
@@ -144,6 +145,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [convoke](#convoke) | 1 | 13212 | static_effect |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
+| [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
@@ -1934,6 +1936,20 @@ Blocks **1** card.
 
 </details>
 
+## alien-salamander-2-2-g-islandwalk-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 green Alien Salamander creature token with islandwalk
+  <br>Why the existing vocabulary won't do: token_ids has salamander_warrior_4_3_u (a 4/3 blue Salamander Warrior), squid_1_1_u_islandwalk and plain 2/2 green tokens (wolf_2_2_g, boar_2_2_g, cat_2_2_g, elemental_2_2_g), none of which is a 2/2 green Alien Salamander with islandwalk; chapter III keys on the Salamander subtype, so a substitute token would also break chapter III
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Sea Devils** (rank 17360) — `the_sea_devils`
+  - I, II — Create a 2/2 green Alien Salamander creature token with islandwalk. (It can't be blocked as long as defending player controls an Island.)
+
+</details>
+
 ## alien-token
 
 Blocks **1** card.
@@ -2802,6 +2818,20 @@ Blocks **1** card.
 
 - **Ulalek, Fused Atrocity** (rank 4558) — `ulalek_fused_atrocity`
   - Whenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies
+
+</details>
+
+## copy-spell-except-nonlegendary
+
+Blocks **1** card.
+
+- **(op)** an `except` modifier on `copy_spell` that removes the Legendary supertype from the copy (707.9b), so a copied legendary permanent spell resolves as a nonlegendary token and does not fall to the legend rule against the original
+  <br>Why the existing vocabulary won't do: copy_spell carries only amount, controller, new_targets, sid, spells, target and this_spell; put_copy_on_stack copies the original's characteristics unchanged. copy_permanent has `except`/`except_` but acts on a permanent on the battlefield, not a spell on the stack. The trigger itself is sayable (spell_cast with filter any_of Artifact / Legendary supertype / Saga subtype, max_per_turn 1), but dropping the except clause would make a legendary copy die to the legend rule
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Sixth Doctor** (rank 6462) — `the_sixth_doctor`
+  - Time Lord's Prerogative — Whenever you cast a historic spell, copy it, except the copy isn't legendary. This ability triggers only once each turn
 
 </details>
 
