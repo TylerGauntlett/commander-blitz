@@ -1,0 +1,20 @@
+{
+  "card_id": "trenzalore_clocktower",
+  "name": "Trenzalore Clocktower",
+  "oracle_text": "{T}: Add {U}. Put a time counter on Trenzalore Clocktower.\n{1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.",
+  "blocked_sentences": [
+    "{1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord."
+  ],
+  "needs": [
+    {
+      "capability": "multiword_subtype_time_lord",
+      "kind": "engine",
+      "what": "the type-line split keeping \"Time Lord\" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming \"Time Lord\" matches none of them",
+      "why_existing_wont_do": "the condition {\"exists\": {\"subtypes\": [\"Time Lord\"]}} compiles, but no permanent ever has that subtype, so the ability can never be activated; naming \"Time\" or \"Lord\" alone would match the wrong things"
+    }
+  ],
+  "closest_existing": [
+    "exists"
+  ],
+  "confidence": "high"
+}

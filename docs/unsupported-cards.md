@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**453 cards** blocked by **400** capabilities.
+**455 cards** blocked by **401** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -52,6 +52,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
+| [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
@@ -1409,6 +1410,24 @@ Blocks **2** cards.
   - Whenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
 - **We Ride at Dawn** (rank 9389) — `we_ride_at_dawn`
   - Whenever your commander attacks, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
+## multiword-subtype-time-lord
+
+Blocks **2** cards.
+
+- **(engine)** the type-line split keeping "Time Lord" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming "Time Lord" matches none of them
+  <br>Why the existing vocabulary won't do: the target selector {"subtypes": ["Time Lord"]} compiles, but no permanent ever has that subtype, so the spell never has a legal target; naming "Time" or "Lord" alone would match the wrong things
+- **(engine)** the type-line split keeping "Time Lord" one creature type (205.3m): proxy.split_type_line splits subtypes on whitespace, so every Time Lord in the pool carries the subtypes Time and Lord and a selector naming "Time Lord" matches none of them
+  <br>Why the existing vocabulary won't do: the condition {"exists": {"subtypes": ["Time Lord"]}} compiles, but no permanent ever has that subtype, so the ability can never be activated; naming "Time" or "Lord" alone would match the wrong things
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trenzalore Clocktower** (rank 4613) — `trenzalore_clocktower`
+  - {1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.
+- **Time Lord Regeneration** (rank 14672) — `time_lord_regeneration`
+  - Until end of turn, target Time Lord you control gains "When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
 
 </details>
 
