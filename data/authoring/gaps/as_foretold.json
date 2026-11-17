@@ -1,0 +1,18 @@
+{
+  "card_id": "as_foretold",
+  "name": "As Foretold",
+  "oracle_text": "At the beginning of your upkeep, put a time counter on this enchantment.\nOnce each turn, you may pay {0} rather than pay the mana cost for a spell you cast with mana value X or less, where X is the number of time counters on this enchantment.",
+  "blocked_sentences": [
+    "Once each turn, you may pay {0} rather than pay the mana cost for a spell you cast with mana value X or less, where X is the number of time counters on this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "rate_limited_free_cast_by_counters",
+      "kind": "static_effect",
+      "what": "a player-wide alternative-cost static (pay {0} instead of the mana cost) that (a) may be used only once each turn per granting permanent, counted when a spell is cast under it, and (b) filters spells by mana value <= a dynamic value read from the source, here counters_on {counter: time, objects: {self_only: true}}",
+      "why_existing_wont_do": "free_cast_permission and granted_alternative_cost both replace the mana cost for an affects_spells class, but neither honours static_max_per_turn (only cast_from_graveyard does) so either would be unbounded rather than once each turn, and their filters are SPELL_FILTER_KEYS / FREE_CAST_FILTER_KEYS matched against the printed face only, with no mana_value comparison against a static value such as counters_on the source; spell_cost_reduction only reduces the generic part and is not an alternative cost"
+    }
+  ],
+  "closest_existing": ["free_cast_permission", "granted_alternative_cost", "cast_from_graveyard"],
+  "confidence": "high"
+}

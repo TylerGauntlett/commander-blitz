@@ -1,0 +1,24 @@
+{
+  "card_id": "adipose_offspring",
+  "name": "Adipose Offspring",
+  "oracle_text": "Emerge {5}{W} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.",
+  "blocked_sentences": [
+    "When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness."
+  ],
+  "needs": [
+    {
+      "capability": "alien_token",
+      "kind": "token",
+      "what": "a 2/2 white Alien creature token (alien_2_2_w)",
+      "why_existing_wont_do": "token_ids has no Alien token at all; the nearest 2/2 white creature tokens (cat_2_2_w, cat_beast_2_2_w) have the wrong creature type"
+    },
+    {
+      "capability": "emerge",
+      "kind": "value",
+      "what": "a condition reading whether this permanent's spell was cast for its emerge cost (\"if this creature's emerge cost was paid\"), and a value reading the toughness of the creature sacrificed to emerge (last-known toughness, since it is in the graveyard by the time the enters trigger resolves), usable on an enters trigger",
+      "why_existing_wont_do": "`emerge` exists as a card-level cost and the cast action carries `emerge_oid`, but game.py only sacrifices that object and records nothing on the spell or permanent; condition_keys has `evoked`, `kicked`, `cost_option`, `was_cast` but no emerged flag, and value_keys has `toughness_had`/`toughness_of` only for bound objects, with no binding naming the emerge victim"
+    }
+  ],
+  "closest_existing": ["emerge", "evoked", "toughness_had", "cat_2_2_w"],
+  "confidence": "high"
+}

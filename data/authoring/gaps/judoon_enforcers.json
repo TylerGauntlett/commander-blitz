@@ -1,0 +1,14 @@
+{
+  "card_id": "judoon_enforcers",
+  "name": "Judoon Enforcers",
+  "oracle_text": "Trample\nNo more than one creature can attack you each combat.\nSuspend 6—{1}{R}{W} (Rather than cast this card from your hand, you may pay {1}{R}{W} and exile it with six time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+  "blocked_sentences": ["No more than one creature can attack you each combat."],
+  "needs": [{
+    "capability": "attacker_limit",
+    "kind": "static_effect",
+    "what": "a player-wide static capping how many creatures may attack the static's controller in a single combat (affects_player: \"you\", amount: {\"const\": 1}), enforced as an attack-declaration restriction (508.1c) so a declaration with two or more attackers aimed at that player is illegal",
+    "why_existing_wont_do": "cant_attack_you forbids every attack on you rather than allowing exactly one; cant_attack_alone and attack_tax restrict or price individual attackers, and none of the static_effects counts the attackers declared against a given player"
+  }],
+  "closest_existing": ["cant_attack_you", "attack_tax", "cant_attack_alone"],
+  "confidence": "high"
+}

@@ -1364,6 +1364,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "astrid_peth": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "astrologian_s_planisphere": {
     "battlefield_count": 34,
     "tokens": {
@@ -1400,6 +1408,11 @@
     "zone": "graveyard"
   },
   "atraxa_praetors_voice": {
+    "zone": "battlefield"
+  },
+  "atraxi_warden": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "atsushi_the_blazing_sky": {
@@ -4375,6 +4388,15 @@
     "zone": "battlefield"
   },
   "cowl_prowler": {
+    "zone": "battlefield"
+  },
+  "crack_in_time": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "time"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "crackle_with_power": {
@@ -8028,6 +8050,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "four_knocks": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "time"
+    },
+    "zone": "battlefield"
+  },
   "fractal_harness": {
     "battlefield_count": 34,
     "tokens": {
@@ -10715,6 +10745,15 @@
     },
     "zone": "battlefield"
   },
+  "inspiring_refrain": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "exile"
+  },
   "inspiring_statuary": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11030,6 +11069,10 @@
     "life": {
       "0": 44
     }
+  },
+  "jenny_generated_anomaly": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "jerrard_of_the_closed_fist": {
     "zone": "battlefield"

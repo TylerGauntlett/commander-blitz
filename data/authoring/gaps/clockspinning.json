@@ -1,0 +1,24 @@
+{
+  "card_id": "clockspinning",
+  "name": "Clockspinning",
+  "oracle_text": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nChoose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.",
+  "blocked_sentences": [
+    "Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "choose_counter_kind",
+      "kind": "op",
+      "what": "an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {\"binding\": <as>}` from an effect-made choice rather than from a counter_placed trigger",
+      "why_existing_wont_do": "add_counters needs a printed kind; its `{\"binding\": \"counter\"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target"
+    },
+    {
+      "capability": "suspend",
+      "kind": "selector",
+      "what": "a target spec that may pick either a permanent on the battlefield or a suspended card in exile (702.62b: exiled, has suspend, has a time counter -- the engine's `suspended_by` mark), and removing the last time counter from a suspended card this way must trigger suspend's free cast (702.62a), not only the upkeep tick",
+      "why_existing_wont_do": "selector_keys has no suspended key and a target spec has one kind/zone; `zone: exile` + `has_counters: \"time\"` is only an approximation, and suspend.tick alone casts the card when the last counter comes off, so an effect removal would strand it in exile"
+    }
+  ],
+  "closest_existing": ["remove_counters", "add_counters", "choose_mode", "proliferate", "buyback"],
+  "confidence": "high"
+}

@@ -1,0 +1,25 @@
+{
+  "card_id": "everybody_lives",
+  "name": "Everybody Lives!",
+  "oracle_text": "All creatures gain hexproof and indestructible until end of turn. Players gain hexproof until end of turn. Players can't lose life this turn and players can't lose the game or win the game this turn.",
+  "blocked_sentences": [
+    "Players gain hexproof until end of turn.",
+    "Players can't lose life this turn and players can't lose the game or win the game this turn."
+  ],
+  "needs": [
+    {
+      "capability": "grant_player_hexproof",
+      "kind": "op",
+      "what": "a one-shot op (or a `player` recipient on grant_keyword) that gives each selected player hexproof until end of turn, from an instant",
+      "why_existing_wont_do": "`player_hexproof` exists only as a static_effect, which an instant cannot install; grant_keyword resolves objects only and skips seats; grant_protection's `player` recipient grants protection qualities, not hexproof"
+    },
+    {
+      "capability": "cant_lose_life",
+      "kind": "op",
+      "what": "a timed op `cant_lose_life` with a player spec and duration this_turn: life loss (damage and lose_life, paid life included) is forbidden for those players while life gain still works",
+      "why_existing_wont_do": "lock_life_total forbids any change, so it also blocks life gain and its durations are built around until_your_next_turn; damage_life_floor floors damage only at 1 and lets lose_life through; replace_life_loss is a static and a multiplier. cant_lose_the_game covers the second half of the sentence (cant_lose and cant_win both \"any\")"
+    }
+  ],
+  "closest_existing": ["player_hexproof", "lock_life_total", "cant_lose_the_game", "grant_keyword"],
+  "confidence": "high"
+}

@@ -1,0 +1,23 @@
+{
+  "card_id": "everything_comes_to_dust",
+  "name": "Everything Comes to Dust",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nExile all creatures except those that share a creature type with a creature that convoked this spell, all artifacts, and all enchantments.",
+  "blocked_sentences": [
+    "Exile all creatures except those that share a creature type with a creature that convoked this spell, all artifacts, and all enchantments."
+  ],
+  "needs": [
+    {
+      "capability": "not_shares_a_creature_type_with",
+      "kind": "selector",
+      "what": "a negated selector key matching objects that share NO creature type with any object in a sub-selector (here {\"convoked\": true}), where a convoking creature counts as sharing a type with itself, so a mass exile can spare creatures sharing a type with a creature that convoked the spell while still exiling every artifact and enchantment (an artifact creature sharing a type is still exiled)",
+      "why_existing_wont_do": "Convoke itself is pay_generic_with: tap_creatures, and {\"convoked\": true} plus shares_a_creature_type_with (selector form) can name the SPARED set, but the selector language has no negation of it: there is not_types/not_subtypes but no not_shares_a_creature_type_with or general 'not' sub-selector, exclude_binding only removes the convoked creatures themselves (not those sharing a type with them) and no op binds an automatic set with 'as' to exclude. The selector form of shares_a_creature_type_with also drops the checked object from the comparison pool, so a convoked creature with a unique type would not count as sharing with itself"
+    }
+  ],
+  "closest_existing": [
+    "shares_a_creature_type_with",
+    "convoked",
+    "exclude_binding",
+    "not_subtypes"
+  ],
+  "confidence": "high"
+}

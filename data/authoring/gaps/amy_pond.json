@@ -1,0 +1,24 @@
+{
+  "card_id": "amy_pond",
+  "name": "Amy Pond",
+  "oracle_text": "Partner with Rory Williams (When this creature enters, target player may put Rory into their hand from their library, then shuffle.)\nWhenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "blocked_sentences": [
+    "Whenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it."
+  ],
+  "needs": [
+    {
+      "capability": "suspend",
+      "kind": "selector",
+      "what": "a selector key that matches a suspended card (702.62b: in exile, has suspend, has a time counter -- the engine's `suspended_by` mark that `suspend.suspended_cards` reads), so an effect can choose 'a suspended card you own' and remove N time counters from it",
+      "why_existing_wont_do": "selector_keys has no suspended key; `zone: exile` + `owner: you` + `has_counters: \"time\"` is only an approximation of 'suspended', and would also match a card exiled with time counters that is not suspended"
+    },
+    {
+      "capability": "suspend",
+      "kind": "engine",
+      "what": "suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick",
+      "why_existing_wont_do": "`suspend.tick` calls `cast_for_free` itself after its own one-counter removal; a `remove_counters` op that takes the last time counter off a suspended card would strand it in exile with zero counters, never cast"
+    }
+  ],
+  "closest_existing": ["remove_counters", "suspend"],
+  "confidence": "high"
+}

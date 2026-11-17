@@ -15512,12 +15512,12 @@
     },
     "Astrid Peth": {
       "edhrec_rank": 5464,
-      "gate": "template",
+      "gate": null,
       "name": "Astrid Peth",
-      "reason": "no template for: Whenever enters or attacks, create a Food token",
+      "reason": "",
       "scryfall_id": "4cda3aa2-5fac-4188-bdad-dc369a089d00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Astrolabe": {
@@ -15822,12 +15822,12 @@
     },
     "Atraxi Warden": {
       "edhrec_rank": 15272,
-      "gate": "template",
+      "gate": null,
       "name": "Atraxi Warden",
-      "reason": "no template for: Suspend 5—{1}{W}",
+      "reason": "",
       "scryfall_id": "03868f8d-1f1b-4892-abb0-be2b00fc2ba7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atreus, Impulsive Son": {
@@ -54922,12 +54922,12 @@
     },
     "Crack in Time": {
       "edhrec_rank": 13475,
-      "gate": "template",
+      "gate": null,
       "name": "Crack in Time",
-      "reason": "no template for: Vanishing 3",
+      "reason": "",
       "scryfall_id": "53c9f47c-be91-4d77-a76e-2963a6d75864",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crack the Earth": {
@@ -101402,12 +101402,12 @@
     },
     "Four Knocks": {
       "edhrec_rank": 8728,
-      "gate": "template",
+      "gate": null,
       "name": "Four Knocks",
-      "reason": "no template for: Vanishing 4",
+      "reason": "",
       "scryfall_id": "02fe50fc-6c6c-43e7-ad0e-8f13a254da2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fourth Bridge Prowler": {
@@ -137782,12 +137782,12 @@
     },
     "Inspiring Refrain": {
       "edhrec_rank": 4009,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Refrain",
-      "reason": "no template for: Draw two cards. Exile with three time counters on it",
+      "reason": "",
       "scryfall_id": "49c678c4-7b36-42a9-88d3-1b4c5dadae36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Roar": {
@@ -142532,12 +142532,12 @@
     },
     "Jenny, Generated Anomaly": {
       "edhrec_rank": 18696,
-      "gate": "template",
+      "gate": null,
       "name": "Jenny, Generated Anomaly",
-      "reason": "no template for: Whenever Jenny deals combat damage to a player, it explores",
+      "reason": "",
       "scryfall_id": "18c430ce-b6c4-4b05-9439-07b4fbfdfe62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jenova, Ancient Calamity": {

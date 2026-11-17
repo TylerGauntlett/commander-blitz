@@ -1,0 +1,24 @@
+{
+  "card_id": "idris_soul_of_the_tardis",
+  "name": "Idris, Soul of the TARDIS",
+  "oracle_text": "Vanishing 3\nImprint — When Idris enters, exile another artifact you control until Idris leaves the battlefield.\nIdris has all activated and triggered abilities of the exiled card and gets +X/+X, where X is the exiled card's mana value.",
+  "blocked_sentences": [
+    "Idris has all activated and triggered abilities of the exiled card and gets +X/+X, where X is the exiled card's mana value."
+  ],
+  "needs": [
+    {
+      "capability": "grant_exiled_triggered_abilities",
+      "kind": "static_effect",
+      "what": "a static that lends the source the triggered abilities (as well as the activated ones) printed on a card linked to it in exile (607.2a), firing as the source's own triggers while the card stays exiled with it",
+      "why_existing_wont_do": "grant_exiled_abilities (Hazel's Brewmaster) hands over only activated abilities: exiled_activated_abilities in engine/characteristics.py filters on ability.is_activated, so the exiled artifact's triggered abilities would be silently dropped"
+    },
+    {
+      "capability": "exiled_card_mana_value",
+      "kind": "value",
+      "what": "a static magnitude reading the mana value of the card(s) linked to the source in exile (exiled_with: self), for a buff whose power and toughness are that mana value",
+      "why_existing_wont_do": "static_value_keys has count, counters_on, sum and extreme_value over battlefield filters but nothing that reads the printed mana value of a card the source exiled; pump on the enters trigger would wear off and would not track the card leaving exile"
+    }
+  ],
+  "closest_existing": ["grant_exiled_abilities", "imprint_characteristics", "buff"],
+  "confidence": "high"
+}
