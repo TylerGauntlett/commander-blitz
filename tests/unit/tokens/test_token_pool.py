@@ -208,6 +208,33 @@ class TestAnafenzasSpiritIsATwoTwoWhite:
         assert not other.colors
 
 
+class TestTheAfterlifeSpiritIsWhiteAndBlack:
+    """Afterlife (702.135a): *"When this creature dies, create a 1/1 **white and
+    black** Spirit creature token with flying."* Tithe Taker is the witness.
+
+    `spirit_1_1_w_flying` is the right body with the right keyword and half the
+    colours. A mono-white token is a different object to every "black creature"
+    filter and every colour count, so it is not the afterlife token.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("spirit_1_1_wb_flying") is not None
+
+    def test_it_is_a_one_one_white_and_black_flying_spirit(self, pool):
+        spirit = pool.get("spirit_1_1_wb_flying")
+        assert (spirit.power, spirit.toughness) == (1, 1)
+        assert sorted(spirit.colors) == ["B", "W"]
+        assert "Spirit" in spirit.subtypes
+        assert "flying" in spirit.keywords
+        assert spirit.is_creature and spirit.is_token
+
+    def test_the_white_spirit_is_still_a_separate_token(self, pool):
+        """Nobody may "consolidate" these two: the colour is the point."""
+        other = pool.get("spirit_1_1_w_flying")
+        assert other is not None
+        assert sorted(other.colors) == ["W"]
+
+
 class TestTheAberrationsAngelsAreColorlessEldrazi:
     """Angelic Aberration: *"Create that many **4/4 colorless Eldrazi Angel**
     creature tokens with flying and vigilance."*

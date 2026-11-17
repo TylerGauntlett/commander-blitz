@@ -2,7 +2,8 @@
  "loader": {
   "ABILITY_CLASS_KEYS": [
    "any",
-   "equip"
+   "equip",
+   "non_mana"
   ],
   "ATTACKING_OPS": [
    "copy_permanent",

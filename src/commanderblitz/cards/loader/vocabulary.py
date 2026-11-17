@@ -1828,14 +1828,17 @@ STATIC_VALUE_KEYS = (
 #: These six change a number and return. Anything else is refused at load, which
 #: is the difference between a card that will not compile and a game that locks
 #: up the first time somebody taps a Talisman.
-#: The classes of activated ability an `ability_cost_reduction` may name.
+#: The classes of activated ability an `ability_cost_reduction` or
+#: `ability_cost_increase` may name.
 #:
 #: Each is a question the engine can actually answer about a compiled
 #: `Ability` -- `equip` reads `Ability.is_equip`, `any` is every activated
-#: ability ("the first activated ability you activate", Professor Hojo) -- and
-#: a class with no marker behind it would load and match nothing, which is the
-#: printed line silently not happening.
-ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
+#: ability ("the first activated ability you activate", Professor Hojo), and
+#: `non_mana` is every activated ability that is not a mana ability, read
+#: against `Ability.is_mana_ability` (Tithe Taker's "unless they're mana
+#: abilities", 605) -- and a class with no marker behind it would load and
+#: match nothing, which is the printed line silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip", "any", "non_mana"})
 
 #: The `targeting` keys an `ability_cost_reduction` with
 #: `first_during_your_turn` may read. "The **first** activated ability … that

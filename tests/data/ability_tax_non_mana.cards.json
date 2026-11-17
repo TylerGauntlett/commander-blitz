@@ -1,0 +1,164 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_ability_tax_non_mana.py. t_atn_taker is Tithe Taker's first line split into its two statics, each gated by is_your_turn: spells and non-mana abilities its controller's opponents cast or activate cost {1} more. t_atn_rod is an untargeted {2} activation, the kind Kopala's targeting clause never reached; t_atn_filter a {2} mana ability, activated by hand, which 605 exempts; t_atn_cycler an ability activated from a hand; t_atn_bolt a {U} instant for the spell half, which with two Islands also keeps the opponent holding priority on the taxing player's turn.",
+  "cards": [
+    {
+      "id": "t_atn_taker",
+      "name": "Test Tithe Collector",
+      "oracle_text": "During your turn, spells your opponents cast cost {1} more to cast and abilities your opponents activate cost {1} more to activate unless they're mana abilities.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During your turn, spells your opponents cast cost {1} more to cast.",
+          "effect": "spell_cost_increase",
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "mana": "{1}"
+          }
+        },
+        {
+          "kind": "static",
+          "text": "During your turn, abilities your opponents activate cost {1} more to activate unless they're mana abilities.",
+          "effect": "ability_cost_increase",
+          "affects_abilities": {
+            "non_mana": true
+          },
+          "activated_by": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "mana": "{1}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_atn_rod",
+      "name": "Test Tithed Rod",
+      "oracle_text": "{2}: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 1 life.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_atn_filter",
+      "name": "Test Untithed Filter",
+      "oracle_text": "{2}, {T}: Add {G}{G}.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}: Add {G}{G}.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}{G}"
+            }
+          ],
+          "is_mana_ability": true
+        }
+      ]
+    },
+    {
+      "id": "t_atn_cycler",
+      "name": "Test Tithed Cycler",
+      "oracle_text": "Cycling {1} ({1}, Discard this card: Draw a card.)",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Cycling {1}",
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}",
+            "discard_self": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_atn_bolt",
+      "name": "Test Tithed Bolt",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "amount": {
+            "const": 2
+          },
+          "player": "you"
+        }
+      ]
+    }
+  ]
+}

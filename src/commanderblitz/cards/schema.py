@@ -878,7 +878,9 @@ class AbilityModel(BaseModel):
     #:
     #: `ability_cost_increase` reads `affects_abilities`, `activated_by` and
     #: `targeting` exactly as the reduction does -- "abilities **your
-    #: opponents** activate **that target a Merfolk you control**" (Kopala).
+    #: opponents** activate **that target a Merfolk you control**" (Kopala) --
+    #: and alone takes the class ``{"non_mana": true}``, every activated
+    #: ability but a mana ability, with no `targeting` clause (Tithe Taker).
     #:
     #: `spell_cost_increase` takes the same clause pointing the other way --
     #: Terror of the Peaks' "spells your opponents cast **that target this

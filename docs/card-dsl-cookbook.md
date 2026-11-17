@@ -3160,8 +3160,8 @@ silently turn generic, so it is refused.
 ```
 
 `ability_cost_reduction`'s mirror, as `spell_cost_increase` is
-`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, or `any`
-beside a `targeting` clause), `activated_by` for the activating player (default
+`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, `any`
+beside a `targeting` clause, or `non_mana`), `activated_by` for the activating player (default
 `"you"`) and optional `affects` for the permanent that prints the ability, with
 the price in a `cost` node held to generic mana of {1} or more. Read by
 `player_statics.ability_mana_tax` and netted into `costs.ability_mana` as a
@@ -3176,6 +3176,25 @@ against. A mana ability is never taxed this way, because it has no targets
 (605.1a); `any` without `targeting` is refused, since the payment solver
 activates tap-only mana abilities without reading the static. An `amount`, a
 coloured surcharge, life or anything else in the `cost` is refused.
+
+```jsonc
+// Tithe Taker — "During your turn, … abilities your opponents activate cost
+// {1} more to activate unless they're mana abilities."
+{ "kind": "static", "effect": "ability_cost_increase",
+  "affects_abilities": { "non_mana": true },
+  "activated_by": "opponent",
+  "condition": { "is_your_turn": true },
+  "cost": { "mana": "{1}" } }
+```
+
+`non_mana` is the class that needs no `targeting` clause: every activated
+ability, from any zone, that is not a mana ability (605). `ability_mana_tax`
+skips a mana ability by `Ability.is_mana_ability`, so the one activated by hand
+and the one the payment solver taps are both untaxed, which is the printed
+sentence. "During your turn" is the static's ordinary `is_your_turn`
+condition; the spell half of the same sentence is a `spell_cost_increase` line
+beside it under the same condition. `non_mana` is the tax's class only;
+`ability_cost_reduction` refuses it.
 
 **Not `ability_cost_reduction` with a negative `amount`**: that total is a
 discount, read generously at the gate, and a tax read that way would offer

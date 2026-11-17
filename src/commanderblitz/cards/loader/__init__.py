@@ -5780,6 +5780,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.affects_abilities: unknown ability classes "
                 f"{sorted(unknown)} (implemented: {sorted(ABILITY_CLASS_KEYS)})"
             )
+        if model.affects_abilities.get("non_mana"):
+            # Read only by the tax: no printed discount says "unless they're
+            # mana abilities", and one that loaded would have no test behind it.
+            raise DslError(
+                f"{where}.affects_abilities: 'non_mana' is an ability_cost_increase "
+                f"class (Tithe Taker); ability_cost_reduction does not read it"
+            )
         if model.amount is None:
             raise DslError(
                 f"{where}: ability_cost_reduction needs an 'amount' -- how much "
@@ -5891,9 +5898,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # reaching this static, so "every activated ability" with nothing
             # else said would tax some of them and not others. A `targeting`
             # clause makes the gap moot: a mana ability has no targets (605.1a).
+            # So does `non_mana` -- Tithe Taker's "unless they're mana
+            # abilities" -- which `ability_mana_tax` reads against
+            # `Ability.is_mana_ability`, so no mana ability is taxed on either
+            # path and the solver's silence is the printed answer.
             raise DslError(
                 f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
-                f"mana abilities are priced where this static is not read"
+                f"mana abilities are priced where this static is not read; "
+                f"'non_mana' is every activated ability but those (605)"
             )
         if model.amount is not None:
             raise DslError(

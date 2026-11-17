@@ -1822,8 +1822,8 @@ def ability_mana_tax(
     picking the activation out, pointing the other way, and priced in a
     ``cost.mana`` node the loader holds to generic mana.
 
-    ``affects_abilities`` is the class (``equip``, or ``any`` beside a
-    `targeting` clause), ``activated_by`` the activating player (default
+    ``affects_abilities`` is the class (``equip``, ``any`` beside a
+    `targeting` clause, or ``non_mana``), ``activated_by`` the activating player (default
     ``"you"``), and ``affects`` the permanent the ability is printed on.
     ``targeting`` is matched against the refs the activation chose, and read
     **meanly** while ``targets`` is ``None``: at the gate, before any target
@@ -1835,6 +1835,12 @@ def ability_mana_tax(
     A mana ability is never taxed by a `targeting` clause, because it has no
     targets (605.1a); the loader refuses ``any`` without one, since the payment
     solver activates tap-only mana abilities without reaching this function.
+    ``non_mana`` is the class with no clause at all -- "abilities your
+    opponents activate cost {1} more to activate **unless they're mana
+    abilities**" (Tithe Taker) -- and it skips a mana ability here, by
+    `Ability.is_mana_ability`, so the one activated by hand is exempt exactly
+    as the one the solver taps is. "During your turn" is the static's ordinary
+    ``is_your_turn`` condition, asked by `_battlefield_statics`.
 
     Netted into `costs.ability_mana` as a negative discount -- the one function
     legality, `can_pay` and `pay` all reach -- so the offer and the charge
@@ -1856,6 +1862,8 @@ def ability_mana_tax(
             # ability on the table, so a compile bug reads as none.
             continue
         if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        if classes.get("non_mana") and getattr(ability, "is_mana_ability", False):
             continue
         who = str(static.get("activated_by", "you"))
         if who == "you" and source_obj.controller != pid:
