@@ -4344,6 +4344,9 @@ saying yes.
 this spell as though it had flash" (Necromancy), a permission and not the flash
 keyword — see the cookbook's
 ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
+`flash_cost` is the same permission with a price, paid only by a cast made
+outside sorcery timing — see the cookbook's
+[Flash for a price](card-dsl-cookbook.md#flash-for-a-price).
 
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read

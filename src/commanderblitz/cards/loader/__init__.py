@@ -62,6 +62,7 @@ from commanderblitz.engine.enums import (
     SUBTYPE_CLASS,
     AbilityKind,
     CardType,
+    Keyword,
     Phase,
     Step,
     Zone,
@@ -1260,6 +1261,49 @@ def _compile_cast_window(model: CardModel) -> CastWindow | None:
     if window.turn is None and steps is None:
         raise DslError(f"{where}: names neither a turn nor a step or phase, so it restricts nothing")
     return CastWindow(turn=window.turn, steps=steps)
+
+
+def _compile_flash_cost(model: CardModel, where: str) -> Cost | None:
+    """The price of the card's own flash permission, or ``None``.
+
+    Every refusal is a card that would load and play differently from the
+    printed one: a cost that is never owed (the card may already be cast at
+    instant speed), a cost nobody can pay (a spell in hand has no {T}), or a
+    permission that costs nothing (`as_though_flash` under another name).
+    """
+    spec = model.flash_cost
+    if spec is None:
+        return None
+    if model.as_though_flash:
+        raise DslError(
+            f"{where}: 'as_though_flash' is the free permission and 'flash_cost' "
+            f"its priced twin -- with both, the price is never owed"
+        )
+    if CardType.INSTANT.value in model.types or Keyword.FLASH.value in model.keywords:
+        raise DslError(
+            f"{where}.flash_cost: an instant or a card with flash is castable at "
+            f"instant speed already, so this price would never be owed"
+        )
+    if CardType.LAND.value in model.types:
+        raise DslError(f"{where}.flash_cost: a land is played, not cast")
+    if spec.mana_reduction or spec.x_value or spec.tap or spec.untap or spec.exert:
+        # Nothing prices a reduction or an X here, and a spell being cast has
+        # no {T}, {Q} or exert to pay: each would load and be ignored.
+        raise DslError(
+            f"{where}.flash_cost: 'mana_reduction', 'x_value', 'tap', 'untap' and "
+            f"'exert' mean nothing on the price of casting a spell"
+        )
+    cost = _compile_cost(spec, f"{where}.flash_cost")
+    if cost.mana.x_count or cost.takes_x or cost.pay_life_x:
+        # The spell's own X is announced at 601.2b; a second one on this price
+        # would have nobody to announce it.
+        raise DslError(f"{where}.flash_cost: must be a fixed cost, with no X")
+    if cost.charges_nothing() and cost.mana.mana_value() == 0:
+        raise DslError(
+            f"{where}.flash_cost: charges nothing -- a free permission is "
+            f"'as_though_flash': true"
+        )
+    return cost
 
 
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
@@ -2579,6 +2623,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'graveyard_additional_cost' must be a fixed cost that "
                 f"charges something"
             )
+    flash_cost = _compile_flash_cost(model, where)
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2785,6 +2830,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         uncounterable=model.uncounterable,
         split_second=model.split_second,
         as_though_flash=model.as_though_flash,
+        flash_cost=flash_cost,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,

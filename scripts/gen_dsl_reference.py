@@ -1288,6 +1288,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "melds_into": ("The permanent the pair melds into.", H_MELD),
     "as_though_flash": ("May be cast as though it had flash; the card does not have flash.",
                         '"If you cast it any time a sorcery couldn\'t have been cast"'),
+    "flash_cost": ("May be cast as though it had flash by also paying this cost; at sorcery timing it is not paid.",
+                   "Flash for a price"),
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "cast_only_during": ("Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route.",

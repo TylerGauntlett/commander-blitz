@@ -1682,6 +1682,12 @@ class CardModel(BaseModel):
     #: "You may cast this spell as though it had flash" (Necromancy). The card's
     #: own timing permission; it does not give the card the flash keyword.
     as_though_flash: bool = False
+    #: "You may cast this spell as though it had flash if you pay {2} more to
+    #: cast it" (Rout), "…by tapping three untapped creatures you control with
+    #: flying in addition to paying its other costs" (Tegwyll's Scouring). The
+    #: price of the card's own flash permission: owed only by a cast that needs
+    #: the permission, never by one made at sorcery timing.
+    flash_cost: CostModel | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The name
     #: of the step the casting window closes at, lowercased -- the one card
     #: field that narrows the timing window itself (`casting._timing_ok`).

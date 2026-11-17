@@ -755,6 +755,10 @@ class Game:
             cost = cost.plus(additional_branch.mana.scaled(action.additional_times))
         for mode in action.spree_modes:
             cost = cost.plus(card.spree[mode].mana)
+        # Rout's "{2} more": the mana half of the card's priced flash
+        # permission, folded where `_cast_variant` folds it.
+        if action.flash_cost and card.flash_cost is not None:
+            cost = cost.plus(card.flash_cost.mana)
 
         # Convoke and delve. Which creatures tap, or which cards are exiled, is
         # asked here -- the one line legality offered carries only the fewest
@@ -952,6 +956,12 @@ class Game:
                 ok = yield from pay(state, pid, additional.without_mana(), oid)
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
+        # The non-mana half of the card's priced flash permission -- Tegwyll's
+        # Scouring's three tapped fliers -- with the other additional costs.
+        if action.flash_cost and card.flash_cost is not None:
+            ok = yield from pay(state, pid, card.flash_cost.without_mana(), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
         # Written on every cast, a zero included: the count is a fact about this
         # cast, and a card bounced off the stack and cast again unpaid must not
         # read the last cast's sacrifices -- a copy re-choosing an Immoral

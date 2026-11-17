@@ -142,6 +142,13 @@ class Action:
     #: price is not the printed one and the action must not compare equal to a
     #: hand cast of the same card.
     foretold: bool = False
+    #: Cast as though it had flash **for the card's `flash_cost`** -- Rout's
+    #: "{2} more", Tegwyll's Scouring's three tapped fliers. Set only on a line
+    #: that needs the card's own priced permission to be cast now
+    #: (`casting.flash_cost_owed`), never on one cast at sorcery timing. Part
+    #: of the identity like `kicked`: the price is not the printed one, and
+    #: `Game._cast` charges it off this flag.
+    flash_cost: bool = False
     #: Cast **face down** for {3} -- morph. Part of the identity like `kicked`:
     #: a Morph creature cast face down and cast normally are two different
     #: things to do with one card, and they cost differently.

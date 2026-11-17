@@ -204,6 +204,10 @@ CARD_LEVEL_RIDER_KEYS = (
     # bool; "You may cast this spell as though it had flash" -- the card's own
     # timing permission, NOT the flash keyword
     "as_though_flash",
+    # a cost node; "…as though it had flash if you pay {2} more" / "…by tapping
+    # three untapped creatures you control with flying" -- the price of that
+    # permission, paid only outside sorcery timing. Never beside as_though_flash.
+    "flash_cost",
     # {"turn": "yours"|"opponents", "steps": [...] | "phase": ...}; "Cast this
     # spell only during [combat|the <step>] [on your|an opponent's] turn"
     "cast_only_during",

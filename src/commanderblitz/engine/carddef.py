@@ -1667,6 +1667,16 @@ class CardDef:
     #: not *have* flash: nothing that asks whether a spell or permanent has
     #: flash may see it. The permissive twin of `cast_before_step` below.
     as_though_flash: bool = False
+    #: "You may cast this spell as though it had flash **if you pay {2} more**"
+    #: (Rout); "…**by tapping three untapped creatures you control with
+    #: flying** in addition to paying its other costs" (Tegwyll's Scouring).
+    #: `as_though_flash` with a price: `casting._timing_ok` lets the card
+    #: through at instant speed, and `casting.flash_cost_owed` says whether
+    #: this cast needs the permission. A line that does carries
+    #: `Action.flash_cost` and pays this on top of everything else (601.2f); a
+    #: line cast at sorcery timing, or under some other flash permission, pays
+    #: nothing extra.
+    flash_cost: Cost | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The step
     #: at which the casting window **closes**, read by `casting._timing_ok`.
     #:

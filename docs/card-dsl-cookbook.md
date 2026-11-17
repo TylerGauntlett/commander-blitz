@@ -16209,6 +16209,36 @@ is also true of a reanimated card. `cast_during` is the near miss: it reads the
 phase alone, and a copy cast in response during your own main phase is in the
 right phase and not at sorcery timing.
 
+## Flash for a price
+
+```jsonc
+// Tegwyll's Scouring — "You may cast this spell as though it had flash by
+//   tapping three untapped creatures you control with flying in addition to
+//   paying its other costs."
+{ "types": ["Sorcery"],
+  "flash_cost": { "tap_permanents": { "types": ["Creature"], "keywords": ["flying"], "count": 3 } } }
+
+// Rout — "…as though it had flash if you pay {2} more to cast it."
+{ "types": ["Sorcery"], "flash_cost": { "mana": "{2}" } }
+```
+
+`flash_cost` is `as_though_flash` with a price: any cost node, owed only by a
+cast that needs the card's own permission to be legal. `casting._timing_ok`
+lets the card through at instant speed, and `casting.flash_cost_owed` decides
+the price per line. A line cast outside sorcery timing (307.1) carries
+`Action.flash_cost`, folds the cost's mana into the spell's price where every
+additional cost goes (601.2f, so cost reductions reach it) and pays the rest
+after the mana. A line cast at sorcery timing, or under another flash
+permission such as a `cast_as_though_flash` static, pays nothing extra and is
+the only line offered. A face-down cast cannot use it.
+
+The loader refuses it beside `as_though_flash`, on an instant or a card with
+flash (the price would never be owed), on a land, with `tap`, `untap`, `exert`,
+`mana_reduction` or `x_value`, with any X, and when it charges nothing.
+
+Near misses: `additional_cost` charges at every timing and widens none, and
+`as_though_flash: true` is the same permission for free.
+
 ## "If it was cast" — 603.6e
 
 ```jsonc
