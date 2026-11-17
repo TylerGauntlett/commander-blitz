@@ -5089,6 +5089,14 @@
   "daybreak_chaplain": {
     "zone": "battlefield"
   },
+  "daybreak_coronet": {
+    "battlefield_count": 34,
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
+    },
+    "zone": "battlefield"
+  },
   "daze": {
     "hand_size": {
       "0": 1

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**474 cards** blocked by **424** capabilities.
+**473 cards** blocked by **423** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -186,7 +186,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [emerge](#emerge) | 1 | 17443 | value |
-| [enchant-restriction](#enchant-restriction) | 1 | 3305 | engine |
 | [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
@@ -3446,20 +3445,6 @@ Blocks **1** card.
 
 - **Adipose Offspring** (rank 17443) — `adipose_offspring`
   - When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.
-
-</details>
-
-## enchant-restriction
-
-Blocks **1** card.
-
-- **(engine)** An Aura's enchant restriction re-checked as a state-based action (303.4d, 704.5m): an Aura attached to a permanent that no longer satisfies its 'Enchant <quality>' selector is put into its owner's graveyard. Here the quality is 'creature enchanted by an Aura other than this one', so the selector also needs enchanted_by to exclude the source Aura itself (e.g. enchanted_by: {"exclude_self": true} or a count of other Auras).
-  <br>Why the existing vocabulary won't do: The card-level target selector with enchanted_by: true restricts the cast, but sba._tokens_and_attachments only bins an Aura whose host has left the battlefield or a lost player; it never re-checks the enchant selector, so the Coronet would stay on (and keep granting +3/+3, first strike, vigilance, lifelink) after the other Aura leaves. enchanted_by also accepts only {controller} and cannot exclude the Coronet itself, so once attached the Coronet would satisfy its own 'another Aura' clause. The sandbox position also has no enchanted creature, so the card has no legal target there.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Daybreak Coronet** (rank 3305) — `daybreak_coronet`
-  - Enchant creature with another Aura attached to it
 
 </details>
 
