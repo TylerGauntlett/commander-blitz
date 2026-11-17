@@ -282232,12 +282232,12 @@
     },
     "The Second Doctor": {
       "edhrec_rank": 3796,
-      "gate": "template",
+      "gate": null,
       "name": "The Second Doctor",
-      "reason": "no template for: Players have no maximum hand size",
+      "reason": "",
       "scryfall_id": "24cdb7f9-232b-4c1e-9c27-d9d8f7fd3752",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Seedcore": {
@@ -282602,12 +282602,12 @@
     },
     "The Third Doctor": {
       "edhrec_rank": 9399,
-      "gate": "template",
+      "gate": null,
       "name": "The Third Doctor",
-      "reason": "no template for: gets +1/+1 for each noncreature token you control",
+      "reason": "",
       "scryfall_id": "1ee72f96-0989-42ca-a60a-7f88ce7440c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Thirteenth Doctor": {

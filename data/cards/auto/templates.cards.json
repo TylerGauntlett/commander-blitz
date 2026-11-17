@@ -264431,6 +264431,99 @@
     {
       "abilities": [
         {
+          "affects_player": "any",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "Players have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card?"
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    },
+                    {
+                      "attacker": {
+                        "binding": "each_player"
+                      },
+                      "defender": "you",
+                      "duration": "attacker_next_turn",
+                      "op": "cant_attack_player",
+                      "planeswalkers": true
+                    }
+                  ],
+                  "op": "may",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Draw a card? If you do, you can't attack The Second Doctor's controller or permanents they control during your next turn."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "How Civil of You — At the beginning of your end step, each player may draw a card. Each opponent who does can't attack you or permanents you control during their next turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "the_second_doctor",
+      "mana_cost": "{2}{W}{U}",
+      "name": "The Second Doctor",
+      "oracle_text": "Players have no maximum hand size.\nHow Civil of You — At the beginning of your end step, each player may draw a card. Each opponent who does can't attack you or permanents you control during their next turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -265016,6 +265109,119 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "is_token": true,
+              "not_types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "The Third Doctor gets +1/+1 for each noncreature token you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "is_token": true,
+              "not_types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "clue_token"
+                    }
+                  ],
+                  "label": "Create a Clue token."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "food_token"
+                    }
+                  ],
+                  "label": "Create a Food token."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "treasure_token"
+                    }
+                  ],
+                  "label": "Create a Treasure token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The Third Doctor enters, create your choice of a Clue token, a Food token, or a Treasure token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "the_third_doctor",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}{U}",
+      "name": "The Third Doctor",
+      "oracle_text": "Trample\nThe Third Doctor gets +1/+1 for each noncreature token you control.\nWhen The Third Doctor enters, create your choice of a Clue token, a Food token, or a Treasure token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

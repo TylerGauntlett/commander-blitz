@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**449 cards** blocked by **397** capabilities.
+**451 cards** blocked by **399** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -227,6 +227,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-cycling](#grant-cycling) | 1 | 15774 | static_effect |
@@ -246,6 +247,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
 | [human-1-1-w-ward2-token](#human-1-1-w-ward2-token) | 1 | 18598 | token |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -3997,6 +3999,20 @@ Blocks **1** card.
 
 </details>
 
+## goad-while-source-on-battlefield
+
+Blocks **1** card.
+
+- **(op)** a goad duration tied to the source: the `goad` op with a clock like `duration: "while_source_on_battlefield"` (the O-Ring `until_leaves` link applied to goad), so the goad mark set by the Saga's controller ends exactly when the Saga leaves the battlefield and does not expire at the goader's next turn; applied to the tokens every player just created (an `as` binding over each player's create_token inside for_each_player)
+  <br>Why the existing vocabulary won't do: op_goad reads only `duration: "permanent"` (rest of the game) or the default 701.38 clock (until the goader's next turn); neither matches 'for as long as this Saga remains on the battlefield' — the default ends a turn cycle early while the Saga sits at chapters II-IV, and permanent outlives the Saga's sacrifice after IV
+
+<details><summary>Cards waiting on this</summary>
+
+- **The War Games** (rank 13656) — `the_war_games`
+  - I — Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield.
+
+</details>
+
 ## goad-without-goaded
 
 Blocks **1** card.
@@ -4262,6 +4278,20 @@ Blocks **1** card.
 
 - **Zenith Festival** (rank 7442) — `zenith_festival`
   - Harmonize {X}{R}{R}
+
+</details>
+
+## hidden-card-guess
+
+Blocks **1** card.
+
+- **(decision)** an op that has the controller secretly choose one card in their own hand and bind it (`as`), without casting or revealing it, followed by a binary guess made by the defending player ("greater" / "not greater") that is compared against `mana_value_of` the bound card versus the count of artifacts you control; then a free cast of exactly that bound hand card (optional, playable_free) whose outcome is bound so a following `if` can read "you didn't cast a spell this way" and investigate
+  <br>Why the existing vocabulary won't do: choose_permanents chooses only battlefield objects, so nothing binds a card in hand without moving it; cast_from_hand casts at once with no prior hidden choice, so the guess cannot come between the choice and the cast; choose_mode with a `chooser` could carry the opponent's two-way guess but has nothing to compare it to, and there is no value or condition that reports whether the optional free cast happened (the 'if you don't cast a spell this way' branch, which also covers a land or an uncastable card)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Seventh Doctor** (rank 10904) — `the_seventh_doctor`
+  - Whenever The Seventh Doctor attacks, choose a card in your hand. Defending player guesses whether that card's mana value is greater than the number of artifacts you control. If they guessed wrong, you may cast it without paying its mana cost. If you don't cast a spell this way, investigate.
 
 </details>
 
