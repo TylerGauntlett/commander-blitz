@@ -19992,6 +19992,11 @@
   "southern_elephant": {
     "zone": "battlefield"
   },
+  "sower_of_temptation": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "space_marine_scout": {
     "zone": "battlefield"
   },

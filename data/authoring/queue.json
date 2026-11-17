@@ -256722,12 +256722,12 @@
     },
     "Sower of Temptation": {
       "edhrec_rank": 3978,
-      "gate": "template",
+      "gate": null,
       "name": "Sower of Temptation",
-      "reason": "no template for: When this creature enters, gain control of target creature for as long as this creature re",
+      "reason": "",
       "scryfall_id": "ca5f507e-0d87-4505-bb81-6bfe634da672",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sowing Mycospawn": {

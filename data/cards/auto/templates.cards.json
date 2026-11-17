@@ -240554,6 +240554,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "while_source_on_battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, gain control of target creature for as long as this creature remains on the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sower_of_temptation",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Sower of Temptation",
+      "oracle_text": "Flying\nWhen this creature enters, gain control of target creature for as long as this creature remains on the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

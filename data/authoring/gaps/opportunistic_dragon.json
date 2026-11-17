@@ -7,10 +7,10 @@
   ],
   "needs": [
     {
-      "capability": "while_source_on_battlefield_duration",
+      "capability": "source_bound_cant_attack_or_block",
       "kind": "engine",
-      "what": "a duration \"for as long as <source> remains on the battlefield\" (611.2b, ended only by the source leaving the battlefield, not by a change of its controller) that gain_control, lose_all_abilities, cant_block and a can't-attack effect can all carry, so one trigger steals the target, strips its abilities and stops it attacking or blocking, all ending together when the Dragon leaves",
-      "why_existing_wont_do": "gain_control's CONTROL_DURATIONS has `as_long_as_you_control_source`, which also ends if the Dragon changes controller -- a different, narrower card; the `lose_all_abilities` op takes only `objects` (no duration), `cant_block` has no source-bound duration, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)"
+      "what": "a \"can't attack or block\" on a permanent that lasts for as long as the source remains on the battlefield (611.2b), so it ends with the steal and the ability loss when the Dragon leaves",
+      "why_existing_wont_do": "gain_control and lose_all_abilities now take `duration: while_source_on_battlefield`, but `cant_block` keeps its prohibitions in its own table, which knows only this turn and until your next turn, and there is no one-shot can't-attack op with a duration at all (cant_attack_player restricts a defender, not every attack)"
     }
   ],
   "closest_existing": [
