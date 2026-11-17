@@ -498,6 +498,15 @@
     "opponent_battlefield_count": 3,
     "zone": "graveyard"
   },
+  "all_of_history_all_at_once": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "all_that_glitters": {
     "target_pt_delta": {
       "power": 1,
@@ -17693,6 +17702,14 @@
   "rot_hulk": {
     "zone": "battlefield"
   },
+  "rotating_fireplace": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "time"
+    },
+    "zone": "battlefield"
+  },
   "rotted_hulk": {
     "zone": "battlefield"
   },
@@ -21868,6 +21885,13 @@
     },
     "zone": "battlefield"
   },
+  "the_tenth_doctor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_terror_of_serpent_s_pass": {
     "zone": "battlefield"
   },
@@ -22321,6 +22345,10 @@
     "zone": "battlefield"
   },
   "timber_wolves": {
+    "zone": "battlefield"
+  },
+  "time_beetle": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "time_wipe": {
@@ -24556,6 +24584,15 @@
     "life": {
       "0": 45
     }
+  },
+  "wibbly_wobbly_timey_wimey": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "wicker_witch": {
     "zone": "battlefield"

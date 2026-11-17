@@ -6548,6 +6548,56 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "all_of_history_all_at_once",
+      "mana_cost": "{2}{U}{U}",
+      "name": "All of History, All at Once",
+      "oracle_text": "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "time_travel"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -213046,6 +213096,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add an amount of {C} equal to the number of time counters on this artifact."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "time_travel"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{4}, {T}: Time travel. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "rotating_fireplace",
+      "mana_cost": "{3}",
+      "name": "Rotating Fireplace",
+      "oracle_text": "This artifact enters tapped with a time counter on it.\n{T}: Add an amount of {C} equal to the number of time counters on this artifact.\n{4}, {T}: Time travel. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 1,
+          "counter": "time",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -266340,6 +266450,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Allons-y! — Whenever you attack, exile cards from the top of your library until you exile a nonland card. Put three time counters on it. If it doesn't have suspend, it gains suspend",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{7}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "time_travel"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Timey-Wimey — {7}: Time travel three times. Activate only as a sorcery"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "the_tenth_doctor",
+      "mana_cost": "{3}{U}{R}",
+      "name": "The Tenth Doctor",
+      "oracle_text": "Allons-y! — Whenever you attack, exile cards from the top of your library until you exile a nonland card. Put three time counters on it. If it doesn't have suspend, it gains suspend.\nTimey-Wimey — {7}: Time travel three times. Activate only as a sorcery. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter. Then do it two more times.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -271428,6 +271612,46 @@
       "source": "auto",
       "subtypes": [
         "Wolf"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "time_travel"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parallel Universe — Whenever this creature deals combat damage to a player, time travel",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "time_beetle",
+      "keywords": [
+        "skulk"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Time Beetle",
+      "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nParallel Universe — Whenever this creature deals combat damage to a player, time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Insect"
       ],
       "toughness": 1,
       "types": [
@@ -296745,6 +296969,33 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wibbly_wobbly_timey_wimey",
+      "mana_cost": "{1}{U}",
+      "name": "Wibbly-wobbly, Timey-wimey",
+      "oracle_text": "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "time_travel"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -6232,12 +6232,12 @@
     },
     "All of History, All at Once": {
       "edhrec_rank": 9304,
-      "gate": "template",
+      "gate": null,
       "name": "All of History, All at Once",
-      "reason": "no template for: Time travel",
+      "reason": "",
       "scryfall_id": "0cc08a16-d2ef-44d2-ae6b-7ff9ce27ef00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "All-Fates Scroll": {
@@ -227802,12 +227802,12 @@
     },
     "Rotating Fireplace": {
       "edhrec_rank": 8397,
-      "gate": "template",
+      "gate": null,
       "name": "Rotating Fireplace",
-      "reason": "no template for: {4}, {T}: Time travel. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "151084cd-49cb-4361-85c1-f0485f3f52dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rotcrown Ghoul": {
@@ -282542,12 +282542,12 @@
     },
     "The Tenth Doctor": {
       "edhrec_rank": 6492,
-      "gate": "template",
+      "gate": null,
       "name": "The Tenth Doctor",
-      "reason": "no template for: Allons-y! — Whenever you attack, exile cards from the top of your library until you exile ",
+      "reason": "",
       "scryfall_id": "10ea9e80-0d3a-4b75-8f29-56e88d6fe66a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Terror of Serpent's Pass": {
@@ -287342,12 +287342,12 @@
     },
     "Time Beetle": {
       "edhrec_rank": 8095,
-      "gate": "template",
+      "gate": null,
       "name": "Time Beetle",
-      "reason": "no template for: Parallel Universe — Whenever this creature deals combat damage to a player, time travel",
+      "reason": "",
       "scryfall_id": "813a8197-55c2-4abd-9979-b62014240796",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Time Bomb": {
@@ -314632,12 +314632,12 @@
     },
     "Wibbly-wobbly, Timey-wimey": {
       "edhrec_rank": 8149,
-      "gate": "template",
+      "gate": null,
       "name": "Wibbly-wobbly, Timey-wimey",
-      "reason": "no template for: Time travel",
+      "reason": "",
       "scryfall_id": "2355e847-f147-421a-8fc3-7e244b4a70ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wiccan, Rising Magician": {
