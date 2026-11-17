@@ -21568,6 +21568,20 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_fifth_doctor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_five_doctors": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "the_flood_of_mars": {
     "battlefield_count": 33,
     "zone": "battlefield"

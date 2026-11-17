@@ -280752,12 +280752,12 @@
     },
     "The Fifth Doctor": {
       "edhrec_rank": 10823,
-      "gate": "template",
+      "gate": null,
       "name": "The Fifth Doctor",
-      "reason": "no template for: Peaceful Coexistence — At the beginning of your end step, put a +1/+1 counter on each crea",
+      "reason": "",
       "scryfall_id": "038279a1-76fd-4bf0-8ebb-d06db9747a64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Filigree Sylex": {
@@ -280852,12 +280852,12 @@
     },
     "The Five Doctors": {
       "edhrec_rank": 15061,
-      "gate": "template",
+      "gate": null,
       "name": "The Five Doctors",
-      "reason": "no template for: Kicker {5}",
+      "reason": "",
       "scryfall_id": "18385ef8-2af8-47bc-8863-046dc5b4e8df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Flame of Keld": {

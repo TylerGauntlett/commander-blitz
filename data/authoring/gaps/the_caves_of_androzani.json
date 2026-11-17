@@ -1,0 +1,16 @@
+{
+  "card_id": "the_caves_of_androzani",
+  "name": "The Caves of Androzani",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Put two stun counters on each of up to two target tapped creatures.\nII, III — For each non-Saga permanent, choose a counter on it. You may put an additional counter of that kind on that permanent.\nIV — Search your library for a Doctor card, reveal it, put it into your hand, then shuffle.",
+  "blocked_sentences": [
+    "II, III — For each non-Saga permanent, choose a counter on it. You may put an additional counter of that kind on that permanent."
+  ],
+  "needs": [{
+    "capability": "filtered_proliferate",
+    "kind": "op",
+    "what": "a proliferate restricted to permanents matching a selector (here not_subtypes: [\"Saga\"]) and excluding players: for each matching permanent with counters, choose one kind of counter on it and optionally add one more of that kind",
+    "why_existing_wont_do": "proliferate takes only `as` and covers every permanent and player, so it would add lore counters to Sagas (this one included, advancing its own chapters) and poison/energy to players; add_counters needs a fixed counter kind, and move_counters/double_counters do not add one of a chosen existing kind per permanent"
+  }],
+  "closest_existing": ["proliferate", "add_counters", "for_each"],
+  "confidence": "high"
+}

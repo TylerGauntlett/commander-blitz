@@ -261666,6 +261666,141 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "untap"
+                }
+              ],
+              "objects": {
+                "attacked_this_turn": false,
+                "controller": "you",
+                "entered_this_turn": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Peaceful Coexistence — At the beginning of your end step, put a +1/+1 counter on each creature you control that didn't attack or enter this turn. Untap those creatures.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "the_fifth_doctor",
+      "mana_cost": "{2}{W}{U}",
+      "name": "The Fifth Doctor",
+      "oracle_text": "Peaceful Coexistence — At the beginning of your end step, put a +1/+1 counter on each creature you control that didn't attack or enter this turn. Untap those creatures.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "the_five_doctors",
+      "kicker": "{5}",
+      "mana_cost": "{5}{G}",
+      "name": "The Five Doctors",
+      "oracle_text": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nSearch your library and/or graveyard for up to five Doctor cards, reveal them, and put them into your hand. If you search your library this way, shuffle. If this spell was kicked, put those cards onto the battlefield instead of putting them into your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "kicked": true
+          },
+          "else": [
+            {
+              "count": {
+                "const": 5
+              },
+              "destination": "hand",
+              "op": "search_zones",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Doctor"
+                ]
+              },
+              "zones": [
+                "library",
+                "graveyard"
+              ]
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "count": {
+                "const": 5
+              },
+              "destination": "battlefield",
+              "op": "search_zones",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Doctor"
+                ]
+              },
+              "zones": [
+                "library",
+                "graveyard"
+              ]
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

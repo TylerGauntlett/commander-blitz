@@ -1,0 +1,24 @@
+{
+  "card_id": "the_eighth_doctor",
+  "name": "The Eighth Doctor",
+  "oracle_text": "When The Eighth Doctor enters, mill three cards.\nOnce during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains \"If this permanent would leave the battlefield, exile it instead of putting it anywhere else.\"",
+  "blocked_sentences": [
+    "Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains \"If this permanent would leave the battlefield, exile it instead of putting it anywhere else.\""
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_play_shared_limit",
+      "kind": "static_effect",
+      "what": "one graveyard-play permission whose once-per-turn cap is shared between playing a land and casting a permanent spell from your graveyard (historic = Artifact, Legendary supertype, or Saga subtype), on your turns only",
+      "why_existing_wont_do": "cast_from_graveyard (static_max_per_turn) and play_lands_from_graveyard are separate statics with separate meters, so writing both lets you play a historic land AND cast a historic spell in the same turn; neither can be told to spend the other's use"
+    },
+    {
+      "capability": "graveyard_cast_exile_on_leave",
+      "kind": "static_effect",
+      "what": "a rider on a graveyard-play permission (like its enters_tapped rider) that gives the land or permanent played/cast under it the replacement \"If this permanent would leave the battlefield, exile it instead of putting it anywhere else\"",
+      "why_existing_wont_do": "replace_leaves_battlefield exists only as an op run by a resolving effect (Whip of Erebos, Spirit-Sister's Call); a static permission has no rider that applies it to the permanent that used the permission, and enters_tapped is the only such rider"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "play_lands_from_graveyard", "replace_leaves_battlefield"],
+  "confidence": "high"
+}

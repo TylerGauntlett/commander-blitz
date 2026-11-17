@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**442 cards** blocked by **388** capabilities.
+**447 cards** blocked by **395** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
+| [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -77,6 +78,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
+| [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
@@ -207,6 +209,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [filtered-proliferate](#filtered-proliferate) | 1 | 17657 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
@@ -233,11 +236,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
+| [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
-| [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
@@ -248,6 +251,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
+| [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
+| [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
@@ -284,6 +289,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
+| [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
@@ -357,6 +363,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
+| [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
@@ -1340,6 +1347,24 @@ Blocks **2** cards.
 
 </details>
 
+## graveyard-play-shared-limit
+
+Blocks **2** cards.
+
+- **(static_effect)** a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all
+- **(static_effect)** one graveyard-play permission whose once-per-turn cap is shared between playing a land and casting a permanent spell from your graveyard (historic = Artifact, Legendary supertype, or Saga subtype), on your turns only
+  <br>Why the existing vocabulary won't do: cast_from_graveyard (static_max_per_turn) and play_lands_from_graveyard are separate statics with separate meters, so writing both lets you play a historic land AND cast a historic spell in the same turn; neither can be told to spend the other's use
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra Paragon** (rank 3531) — `serra_paragon`
+  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+- **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
+  - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+
+</details>
+
 ## lure
 
 Blocks **2** cards.
@@ -1835,6 +1860,21 @@ Blocks **1** card.
 
 - **Fertile Ground** (rank 1052) — `fertile_ground`
   - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
+
+</details>
+
+## add-supertype
+
+Blocks **1** card.
+
+- **(op)** a way for an effect to make a permanent legendary (add the Legendary supertype) alongside setting its base P/T, creature type and name, with permanent duration
+  <br>Why the existing vocabulary won't do: animate takes types, subtypes, power, toughness, colors and keywords but no supertypes; rename covers 'named Fenric' and lose_all_abilities covers the last clause, but no op in op_options writes a supertype
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
+  - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
+  - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
 
 </details>
 
@@ -3693,6 +3733,20 @@ Blocks **1** card.
 
 </details>
 
+## filtered-proliferate
+
+Blocks **1** card.
+
+- **(op)** a proliferate restricted to permanents matching a selector (here not_subtypes: ["Saga"]) and excluding players: for each matching permanent with counters, choose one kind of counter on it and optionally add one more of that kind
+  <br>Why the existing vocabulary won't do: proliferate takes only `as` and covers every permanent and player, so it would add lore counters to Sagas (this one included, advancing its own chapters) and poison/energy to players; add_counters needs a fixed counter kind, and move_counters/double_counters do not add one of a chosen existing kind per permanent
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Caves of Androzani** (rank 17657) — `the_caves_of_androzani`
+  - II, III — For each non-Saga permanent, choose a counter on it. You may put an additional counter of that kind on that permanent.
+
+</details>
+
 ## first-mate-ragavan
 
 Blocks **1** card.
@@ -4067,6 +4121,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-cast-exile-on-leave
+
+Blocks **1** card.
+
+- **(static_effect)** a rider on a graveyard-play permission (like its enters_tapped rider) that gives the land or permanent played/cast under it the replacement "If this permanent would leave the battlefield, exile it instead of putting it anywhere else"
+  <br>Why the existing vocabulary won't do: replace_leaves_battlefield exists only as an op run by a resolving effect (Whip of Erebos, Spirit-Sister's Call); a static permission has no rider that applies it to the permanent that used the permission, and enters_tapped is the only such rider
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
+  - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+
+</details>
+
 ## graveyard-cast-per-permanent-type
 
 Blocks **1** card.
@@ -4116,20 +4184,6 @@ Blocks **1** card.
 
 - **(static_effect)** the permanent played or cast through that permission gains a quoted triggered ability ("When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life") that persists on the resulting permanent independently of the source
   <br>Why the existing vocabulary won't do: `grant_ability` grants to objects chosen by an effect or a static filter over printed characteristics; nothing marks the object that used the graveyard permission and hands it an ability, and `cast_gains_keywords` / `mana_grant` give keywords only, not a triggered ability, and never to a land play
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra Paragon** (rank 3531) — `serra_paragon`
-  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
-
-</details>
-
-## graveyard-play-shared-limit
-
-Blocks **1** card.
-
-- **(static_effect)** a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all
 
 <details><summary>Cards waiting on this</summary>
 
@@ -4276,6 +4330,34 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
+
+</details>
+
+## library-top-play-shared-limit
+
+Blocks **1** card.
+
+- **(static_effect)** one library-top play permission whose once-per-turn cap is shared between playing a land and casting a spell from the top of your library, filtered to historic cards (any_of: Artifact type, Legendary supertype, Saga subtype) for both the land and the spell
+  <br>Why the existing vocabulary won't do: cast_from_library_top and play_lands_from_library_top are separate statics: play_lands_from_library_top takes no card filter (it would allow any land, not only historic ones) and no per-turn cap, cast_from_library_top's affects_spells (LIBRARY_TOP_CAST_FILTER_KEYS) has no any_of so 'artifact OR legendary OR Saga' cannot be said, and writing both would give two independent meters (a land AND a spell each turn) instead of one shared use
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Fourth Doctor** (rank 9924) — `the_fourth_doctor`
+  - Would You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)
+
+</details>
+
+## library-top-play-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'when you do' trigger that fires when this permanent's permission is used to play a land or cast a spell from the top of the library, so it can create_token food_token
+  <br>Why the existing vocabulary won't do: spell_cast and land_played triggers with from_zones: ["library"] fire for any library cast or play (another permission, a cascade, etc.), not specifically the use of this permission; no permission static carries a rider effect run on use (enters_tapped and cast_gains_keywords are the only riders)
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Fourth Doctor** (rank 9924) — `the_fourth_doctor`
+  - Would You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)
 
 </details>
 
@@ -4791,6 +4873,21 @@ Blocks **1** card.
 
 - **Ace's Baseball Bat** (rank 11381) — `ace_s_baseball_bat`
   - As long as equipped creature is attacking, it has first strike and must be blocked by a Dalek if able.
+
+</details>
+
+## mutant-3-3-g-deathtouch-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 green Mutant creature token with deathtouch
+  <br>Why the existing vocabulary won't do: token_ids has no Mutant token; the nearest are beast_3_3_b_deathtouch (black Beast) and beast_3_3_g (no deathtouch), neither of which is the printed token
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
+  - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
+  - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
 
 </details>
 
@@ -5843,6 +5940,20 @@ Blocks **1** card.
   - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
   - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
   - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
+
+</details>
+
+## spell-has-cascade-filter
+
+Blocks **1** card.
+
+- **(selector)** a spell_cast trigger filter matching a spell that has cascade (printed or granted, e.g. by Wildsear or Rain of Riches) -- a filter key such as `has_cascade: true` or `keywords: ["cascade"]` that the trigger's filter reads off the spell on the stack
+  <br>Why the existing vocabulary won't do: Cascade is not in the keyword list; it is written as a triggered ability on the stack whose effect is the `cascade` op, so the trigger filter's `keywords` cannot name it, and `trigger_filter_keys` has nothing (no `ability_kind` or ability-op test) that asks whether a spell carries a cascade ability. The first sentence is expressible as Tower Winder's search_zones over library and graveyard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The First Doctor** (rank 12447) — `the_first_doctor`
+  - Whenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature.
 
 </details>
 

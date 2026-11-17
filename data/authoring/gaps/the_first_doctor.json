@@ -1,0 +1,16 @@
+{
+  "card_id": "the_first_doctor",
+  "name": "The First Doctor",
+  "oracle_text": "When The First Doctor enters, search your library and/or graveyard for a card named TARDIS, reveal it, and put it into your hand. If you search your library this way, shuffle.\nWhenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature.",
+  "blocked_sentences": [
+    "Whenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature."
+  ],
+  "needs": [{
+    "capability": "spell_has_cascade_filter",
+    "kind": "selector",
+    "what": "a spell_cast trigger filter matching a spell that has cascade (printed or granted, e.g. by Wildsear or Rain of Riches) -- a filter key such as `has_cascade: true` or `keywords: [\"cascade\"]` that the trigger's filter reads off the spell on the stack",
+    "why_existing_wont_do": "Cascade is not in the keyword list; it is written as a triggered ability on the stack whose effect is the `cascade` op, so the trigger filter's `keywords` cannot name it, and `trigger_filter_keys` has nothing (no `ability_kind` or ability-op test) that asks whether a spell carries a cascade ability. The first sentence is expressible as Tower Winder's search_zones over library and graveyard."
+  }],
+  "closest_existing": ["spell_cast", "keywords", "cascade"],
+  "confidence": "high"
+}
