@@ -1677,6 +1677,46 @@ a return a replacement sends elsewhere leaves an Aura attached to nothing.
 Animate Dead's shape without the op is the near miss: it attaches a non-Aura
 enchantment that stays on the battlefield when its creature leaves.
 
+### "Whenever an Aura you control becomes attached to a creature you control"
+
+```jsonc
+// Siona, Captain of the Pyleas
+{ "kind": "triggered",
+  "text": "Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.",
+  "trigger": { "event": "becomes_attached", "controller": "you",
+               "filter": { "subtypes": ["Aura"],
+                           "attached_to": { "types": ["Creature"], "controller": "you" } } },
+  "effects": [ { "op": "create_token", "token": "human_soldier_1_1_w" } ] }
+```
+
+`becomes_attached` fires each time an Aura, Equipment or Fortification becomes
+attached (701.3a): an Aura spell resolving onto its target, an Aura entering the
+battlefield attached, an equip, an `attach` or an `aura_swap` moving one. Every
+route goes through `primitives.attach` or `primitives.attach_to_player`. Staying
+attached fires nothing, and neither does attaching to the object it is already
+on (701.3b).
+
+The trigger asks two objects:
+
+- **The attachment** is the subject. `filter` asks what it is, `controller` asks
+  who controls it, and `source: "self"` is "whenever **this** Equipment becomes
+  attached". "An Equipment" with no controller named is `controller: "any"`.
+- **The host** is `attached_to` inside the filter, a trigger filter of its own
+  asked of the permanent the event names. `controller` there is the host's
+  controller, and `self_only` is the ability's own permanent ("becomes attached
+  to **this creature**"). An attachment put onto a player has no host and
+  matches no `attached_to`. Without the key, any host matches, a player included.
+
+Both read the printed face like every trigger filter, so a bestowed creature or
+a Necromancy is not an Aura to `subtypes: ["Aura"]`. The loader refuses
+`attached_to` in the filter of any other trigger event, inside an `any_of`
+branch and nested in itself.
+
+| Near miss | Why not |
+|---|---|
+| `permanent_enters` with `subtypes: ["Aura"]` | misses an Aura or Equipment moved by an equip or an `attach`, and cannot ask what the Aura entered on |
+| a `self_enters` on the Aura | the Aura's own ability, not a watcher's, and an equip is not an arrival |
+
 ## Player-wide statics
 
 Some static effects describe the *player* rather than a characteristic, so

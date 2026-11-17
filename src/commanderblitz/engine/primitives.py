@@ -1865,6 +1865,12 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     # the one Aura whose own static it is.
     elif protected_from(state, target_oid, aura_oid, attaching=True):
         return False
+    if aura.attached_to == target_oid:
+        # 701.3b: attaching to the object it is already attached to does
+        # nothing -- no new timestamp, and no ATTACHED event for a
+        # `becomes_attached` trigger to mistake for becoming attached. True,
+        # because it is attached there: the refusals above are False.
+        return True
     aura.attached_to = target_oid
     aura.attached_timestamp = state.alloc_timestamp()
     # A fresh attachment supersedes the remembered one, so an Equipment moved to

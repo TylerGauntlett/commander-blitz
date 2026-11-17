@@ -84,6 +84,7 @@ from commanderblitz.engine.triggers import (
     STATE_TRIGGER,
     TRIGGER_EVENTS,
     validate_face_down_trigger,
+    validate_host_filter,
     validate_trigger_filter,
 )
 
@@ -3749,7 +3750,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(implemented: {sorted(TRIGGER_EVENTS)})"
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
-        validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        # "…becomes attached to **a creature you control**": the host filter,
+        # refused off `HOST_FILTER_TRIGGERS` and otherwise held to the trigger
+        # filter's list on its own, beside the attachment's filter.
+        validate_host_filter(
+            model.trigger.event, model.trigger.filter, f"{where}.trigger.filter"
+        )
+        validate_trigger_filter(
+            {k: v for k, v in (model.trigger.filter or {}).items() if k != "attached_to"},
+            f"{where}.trigger.filter",
+        )
         validate_face_down_trigger(
             model.trigger.event, model.trigger.filter, f"{where}.trigger.filter"
         )

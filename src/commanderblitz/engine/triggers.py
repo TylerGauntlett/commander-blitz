@@ -468,6 +468,27 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: *becoming* tapped, and it is also why tapping for mana and being declared
     #: as an attacker both count. They are taps.
     "becomes_tapped": EventType.TAPPED,
+    #: "Whenever an Aura you control becomes attached to a creature you
+    #: control…" (Siona, Captain of the Pyleas). 701.3a: an Aura, Equipment or
+    #: Fortification becomes attached each time it is put onto an object -- an
+    #: Aura spell resolving, an Aura entering attached (303.4f), an equip or an
+    #: `attach` moving it, an `aura_swap` -- and every one of those goes through
+    #: `primitives.attach` or `primitives.attach_to_player`, which fire
+    #: `EventType.ATTACHED`. Staying attached is not becoming attached, and
+    #: attaching to what it is already on does nothing (701.3b), so neither
+    #: fires.
+    #:
+    #: The subject is the **attachment** (see `OBJECT_SUBJECT_TRIGGERS` and
+    #: `_subject_oid`): `filter` asks what it is, `controller` asks who controls
+    #: it, and `source: "self"` is "whenever **this** Equipment becomes
+    #: attached". The host is the second object, asked by the filter's
+    #: `attached_to` (`HOST_FILTER_TRIGGERS`), which is matched against the
+    #: event's host rather than the attachment's current one.
+    #:
+    #: `permanent_enters` with an Aura filter is the near miss: it misses an
+    #: Aura moved by an equip or an `attach`, fires for an Aura entering
+    #: attached to an opponent's creature, and cannot ask what it entered on.
+    "becomes_attached": EventType.ATTACHED,
     #: "…until an opponent becomes the monarch" (Palace Jailer). The one monarch
     #: card that must be *woken up* by the designation moving rather than merely
     #: asking about it with `is_monarch`.
@@ -724,6 +745,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # The permanent that untapped, and the one that tapped.
         "becomes_untapped",
         "becomes_tapped",
+        # The attachment -- the Aura or Equipment that became attached, which
+        # the event carries as `source`. Its `oid` is the host, so
+        # `_subject_oid` reads `source` by name.
+        "becomes_attached",
         # The permanent whose ability was activated, so a filter can ask what it
         # was -- "an ability of an artifact, creature, or land **on the
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
@@ -1921,8 +1946,13 @@ def _matches(
     if spec.filter is not None and spec.event != "creatures_deal_combat_damage":
         if subject_oid is None:
             return False
-        if not matches_card_filter(
-            state, subject_oid, spec.filter, obj, departed_auras(event)
+        filt = spec.filter
+        if spec.event in HOST_FILTER_TRIGGERS and "attached_to" in filt:
+            if not _host_matches(state, obj, filt["attached_to"], event):
+                return False
+            filt = {k: v for k, v in filt.items() if k != "attached_to"}
+        if filt and not matches_card_filter(
+            state, subject_oid, filt, obj, departed_auras(event)
         ):
             return False
 
@@ -2411,11 +2441,56 @@ def _player_or_planeswalker(state: GameState, permanent: Any) -> bool:
     return obj is not None and "Planeswalker" in chars(state, obj.oid).types
 
 
+#: The triggers whose `filter` may carry ``attached_to``: a trigger filter on
+#: the **host** the subject became attached to, for "an Aura you control
+#: becomes attached to **a creature you control**". The subject is the
+#: attachment; the host is the second object, and the event names it.
+HOST_FILTER_TRIGGERS = frozenset({"becomes_attached"})
+
+
+def _host_matches(
+    state: GameState, obj: GameObject, host_filter: Mapping[str, Any], event: GameEvent
+) -> bool:
+    """Does the permanent this ATTACHED event names as host match ``host_filter``?
+
+    Read off the event's ``oid`` rather than the attachment's `attached_to`, so
+    a held event collected after the attachment moved again still asks about
+    the host it named. An attachment put onto a **player** (``player_attached``,
+    no ``oid``) has no permanent host and matches no host filter, which is the
+    printed "attached to a creature". ``self_only`` in the host filter is the
+    ability's own permanent: "becomes attached to **this creature**".
+    """
+    host = event.data.get("oid")
+    if host is None:
+        return False
+    return matches_card_filter(state, int(host), host_filter, obj)
+
+
+def validate_host_filter(event: str, filt: Mapping[str, Any] | None, where: str) -> None:
+    """``attached_to`` in a trigger filter: on `HOST_FILTER_TRIGGERS` only.
+
+    Anywhere else `matches_card_filter` never reads it, so the filter would
+    load and fire for any host. Where it is read, the host filter is a trigger
+    filter of its own and is held to the same list -- which refuses an
+    ``attached_to`` nested inside it, as `validate_trigger_filter` refuses the
+    key inside an ``any_of`` branch.
+    """
+    if not filt or "attached_to" not in filt:
+        return
+    if event not in HOST_FILTER_TRIGGERS:
+        raise DslError(
+            f"{where}: ['attached_to'] would load and be ignored -- a trigger "
+            f"filter reads it only on {sorted(HOST_FILTER_TRIGGERS)}, not on {event!r}"
+        )
+    validate_trigger_filter(filt["attached_to"], f"{where}.attached_to")
+
+
 def _subject_oid(dsl_event: str, event: GameEvent) -> int | None:
     if dsl_event not in OBJECT_SUBJECT_TRIGGERS:
         return None
-    if dsl_event == "deals_damage":
+    if dsl_event in ("deals_damage", "becomes_attached"):
         # The dealer, on either half: on the permanent half `oid` is the victim.
+        # And the attachment, never the host that is an ATTACHED event's `oid`.
         return event.source
     for key in ("oid", "spell_oid", "attacker", "blocker", "land_oid"):
         value = event.data.get(key)

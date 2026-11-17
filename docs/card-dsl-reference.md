@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 76 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 62 |
+| [Trigger events](#trigger-events) | 63 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 103 |
 | [Player-wide statics](#player-wide-statics) | 48 |
@@ -468,6 +468,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `ability_activated` | `ability_activated` | An ability is activated. | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` | A creature attacks. | [Triggers](card-dsl.md#triggers) |
 | `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
+| `becomes_attached` | `attached` | An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host. | ["Whenever an Aura you control becomes attached to a creature you control"](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control) |
 | `becomes_blocked` | `became_blocked` | An attacking creature becomes blocked. | [Triggers](card-dsl.md#triggers) |
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
@@ -1207,7 +1208,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `ability_activated` | `ability_activated` |  | [Triggers](card-dsl.md#triggers) |
 | `ability_resolved` |  |  | [Triggers](card-dsl.md#triggers) |
 | `ability_triggered` |  |  | [Triggers](card-dsl.md#triggers) |
-| `attached` |  |  | [Triggers](card-dsl.md#triggers) |
+| `attached` | `becomes_attached` |  | [Triggers](card-dsl.md#triggers) |
 | `attacked_unblocked` | `attacks_unblocked` |  | [Triggers](card-dsl.md#triggers) |
 | `attackers_declared` | `you_attack` |  | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` |  | [Triggers](card-dsl.md#triggers) |

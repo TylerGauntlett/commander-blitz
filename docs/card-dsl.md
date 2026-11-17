@@ -1896,8 +1896,10 @@ works in a selector, a static's `affects` and its counting filters. The loader
 refuses an empty or non-filter value, a host `zone` off the battlefield, a host
 filter nested inside the host filter, `attached` beside it (which names one
 host already), the pool-shaping keys (`target`, `binding`, `count`, …) inside
-it, and the key in a trigger filter and a cost reduction, whose matchers do not
-read it.
+it, and the key in a cost reduction and in the filter of any trigger but
+`becomes_attached`, whose matchers do not read it. On `becomes_attached` it asks
+the host the attachment became attached to: see
+[the cookbook](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control).
 
 | Near miss | Why not |
 |---|---|
@@ -6420,7 +6422,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·

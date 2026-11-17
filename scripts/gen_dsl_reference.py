@@ -846,6 +846,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "attacks": ("A creature attacks.", None),
     "attacks_unblocked": ("An attacking creature goes unblocked; `batched` fires once per block declaration.",
                           H_BATCHED),
+    "becomes_attached": ("An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host.",
+                         '"Whenever an Aura you control becomes attached to a creature you control"'),
     "becomes_blocked": ("An attacking creature becomes blocked.", None),
     "becomes_level": ("A Class reaches a level.", '"When this Class becomes level N"'),
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),

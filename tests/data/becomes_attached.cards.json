@@ -1,0 +1,104 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_attached.py. t_ba_siona is Siona, Captain of the Pyleas's second line alone -- 'whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token' -- so the test measures the trigger and not her enters ability. t_ba_hound is the host-side reading, 'whenever an Equipment becomes attached to this creature, draw a card', with no controller on the Equipment. t_ba_aura is a free vanilla Aura, t_ba_gear a vanilla Equipment with Equip {0}, and t_ba_bear a vanilla creature for them to go on.",
+  "cards": [
+    {
+      "id": "t_ba_siona",
+      "name": "Test Attach Captain",
+      "oracle_text": "Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 2,
+      "toughness": 4,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "becomes_attached",
+            "controller": "you",
+            "filter": {
+              "subtypes": ["Aura"],
+              "attached_to": {"types": ["Creature"], "controller": "you"}
+            }
+          },
+          "effects": [{"op": "create_token", "token": "human_soldier_1_1_w"}]
+        }
+      ]
+    },
+    {
+      "id": "t_ba_hound",
+      "name": "Test Attach Hound",
+      "oracle_text": "Whenever an Equipment becomes attached to this creature, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Dog"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an Equipment becomes attached to this creature, draw a card.",
+          "trigger": {
+            "event": "becomes_attached",
+            "controller": "any",
+            "filter": {"subtypes": ["Equipment"], "attached_to": {"self_only": true}}
+          },
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_ba_aura",
+      "name": "Test Attach Charm",
+      "oracle_text": "Enchant creature",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": [],
+      "color_identity": [],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ]
+    },
+    {
+      "id": "t_ba_gear",
+      "name": "Test Attach Gear",
+      "oracle_text": "Equip {0}",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Equip {0}",
+          "cost": {"mana": "{0}"},
+          "is_equip": true,
+          "sorcery_speed_only": true,
+          "targets": [
+            {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}}
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "t1"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_ba_bear",
+      "name": "Test Attach Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    }
+  ]
+}
