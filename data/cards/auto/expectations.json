@@ -10749,6 +10749,13 @@
   "indomitable_ancients": {
     "zone": "battlefield"
   },
+  "indomitable_might": {
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
+    },
+    "zone": "battlefield"
+  },
   "indomitable_will": {
     "zone": [
       "battlefield",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**481 cards** blocked by **431** capabilities.
+**480 cards** blocked by **430** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -94,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [as-becomes-attached-choice](#as-becomes-attached-choice) | 1 | 6322 | replacement |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
-| [assign-damage-as-though-unblocked](#assign-damage-as-though-unblocked) | 1 | 4569 | static_effect |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
@@ -2152,20 +2151,6 @@ Blocks **1** card.
 
 - **Queen Marchesa** (rank 2604) — `queen_marchesa`
   - At the beginning of your upkeep, if an opponent is the monarch, create a 1/1 black Assassin creature token with deathtouch and haste.
-
-</details>
-
-## assign-damage-as-though-unblocked
-
-Blocks **1** card.
-
-- **(static_effect)** a static (affects a creature filter, e.g. {"attached": true}) letting that creature's controller choose, at combat damage assignment, to have a blocked creature assign all its combat damage to the player or planeswalker it is attacking as though it weren't blocked (702.19-style option, as on Thorn Elemental / Rhox)
-  <br>Why the existing vocabulary won't do: No static_effects entry or keyword covers it: combat_damage_by_toughness changes which value is assigned, not where; trample only assigns excess past lethal; grant_keyword has no such keyword in the closed keyword list
-
-<details><summary>Cards waiting on this</summary>
-
-- **Indomitable Might** (rank 4569) — `indomitable_might`
-  - Enchanted creature's controller may have it assign its combat damage as though it weren't blocked.
 
 </details>
 

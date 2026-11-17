@@ -135812,12 +135812,12 @@
     },
     "Indomitable Might": {
       "edhrec_rank": 4569,
-      "gate": "template",
+      "gate": null,
       "name": "Indomitable Might",
-      "reason": "no template for: Enchanted creature's controller may have it assign its combat damage as though it weren't ",
+      "reason": "",
       "scryfall_id": "c3905879-2110-488b-a4f3-e37e8a97c1b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indomitable Will": {

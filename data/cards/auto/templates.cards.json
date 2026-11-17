@@ -128808,6 +128808,64 @@
           "effect": "buff",
           "kind": "static",
           "power": {
+            "const": 3
+          },
+          "text": "Enchanted creature gets +3/+3.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "assign_damage_as_though_unblocked",
+          "kind": "static",
+          "text": "Enchanted creature's controller may have it assign its combat damage as though it weren't blocked."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "indomitable_might",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Indomitable Might",
+      "oracle_text": "Flash\nEnchant creature\nEnchanted creature gets +3/+3.\nEnchanted creature's controller may have it assign its combat damage as though it weren't blocked.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
             "const": 1
           },
           "text": "Enchanted creature gets +1/+2",
