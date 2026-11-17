@@ -23,6 +23,31 @@
   ],
   "strategy": "Tegwyll, Duke of Splendor pumps every other Faerie and turns each one that dies into a card, so the deck floods the air with flash fliers and plays on the opponents' turns: Alela, Cunning Conqueror, Shadow Puppeteers, Faerie Formation and Oona, Queen of the Fae make Faerie Rogue tokens, Scion of Oona and Glen Elendra Liege pump them, and Blightwing Bandit and Nymris, Oona's Trickster reward the first spell cast in an opponent's turn. Alela and Nettling Nuisance goad what the Faeries connect with, Sower of Temptation and Malleable Impostor steal or copy the best creature on the table, and Spell Stutter, Arcane Denial, Glen Elendra Archmage and Spellscorn Coven's Take It Back protect the board, while Nightmare Unmaking and Tegwyll's Scouring reset it and leave the fliers behind.",
   "archetype": "tribal",
+  "ratings": {
+    "speed": 3,
+    "complexity": 4,
+    "interaction": 4,
+    "resilience": 2,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "tegwyll_duke_of_splendor",
+      "why": "Other Faeries get +1/+1, and each one that dies draws a card."
+    },
+    {
+      "card_id": "alela_cunning_conqueror",
+      "why": "Your first spell in each opponent's turn makes a Faerie Rogue, and Faerie hits goad."
+    },
+    {
+      "card_id": "sower_of_temptation",
+      "why": "Steals the best creature for as long as it stays on the battlefield."
+    },
+    {
+      "card_id": "tegwyll_s_scouring",
+      "why": "A board wipe at instant speed, paid for by tapping three fliers, that leaves three Faeries behind."
+    }
+  ],
   "printings": {
     "alela_cunning_conqueror": {
       "scryfall_id": "79ba5c35-6e5c-406a-b95f-844d5ec296ab",
