@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**475 cards** blocked by **425** capabilities.
+**476 cards** blocked by **426** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -166,6 +166,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
+| [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -3167,6 +3168,20 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
+
+</details>
+
+## cursed-role
+
+Blocks **1** card.
+
+- **(token)** a Cursed Role token: a colorless Aura Role enchantment token with "Enchant creature" and "Enchanted creature is 1/1" (base power and toughness set to 1/1)
+  <br>Why the existing vocabulary won't do: token_ids holds only one Role, wicked_role ("Enchanted creature gets +1/+1"); create_token with attached_to inside a for_each over opponents' creatures would express the sentence, and flash_cost {"mana": "{2}"} covers the first line, but no cursed_role id exists to name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Asinine Antics** (rank 7808) — `asinine_antics`
+  - For each creature your opponents control, create a Cursed Role token attached to that creature.
 
 </details>
 

@@ -2787,6 +2787,11 @@
     },
     "zone": "graveyard"
   },
+  "breaking_wave": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "breakneck_berserker": {
     "zone": "battlefield"
   },
@@ -8569,6 +8574,13 @@
   "ghitu_encampment": {
     "zone": "battlefield"
   },
+  "ghitu_fire": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "ghost_of_ramirez_depietro": {
     "zone": "battlefield"
   },
@@ -9683,6 +9695,13 @@
       "keywords": [
         "flying"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "harbinger_of_the_tides": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -13936,6 +13955,9 @@
   "molimo_maro_sorcerer": {
     "zone": "battlefield"
   },
+  "molten_exhale": {
+    "zone": "graveyard"
+  },
   "molten_tributary": {
     "zone": "battlefield"
   },
@@ -14353,6 +14375,11 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "mystical_tether": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "mystical_tutor": {
@@ -14903,6 +14930,13 @@
     ]
   },
   "oakgnarl_warrior": {
+    "zone": "battlefield"
+  },
+  "oakshade_stalker_moonlit_ambusher": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "oashra_cultivator": {
@@ -17877,6 +17911,10 @@
     },
     "zone": "exile"
   },
+  "rout": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "roving_harper": {
     "hand_size": {
       "0": 2
@@ -18173,6 +18211,14 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "saproling_symbiosis": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "saproling_1_1_g"
+    },
+    "zone": "graveyard"
   },
   "sarah_jane_smith": {
     "battlefield_count": 33,
@@ -23200,6 +23246,13 @@
   "twilight_prophet": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "twilight_s_call": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "twin_silk_spider": {
     "battlefield_count": 34,

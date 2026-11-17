@@ -2439,6 +2439,10 @@
     "artist": "Yosuke Adachi",
     "scryfall_id": "acfe026f-75a7-45b9-b7e8-e1a76855ea94"
   },
+  "breaking_wave": {
+    "artist": "Carl Critchlow",
+    "scryfall_id": "1b39cd77-97aa-4099-8405-366f82079758"
+  },
   "breakneck_berserker": {
     "artist": "Scott Murphy",
     "scryfall_id": "d6eb23c9-6061-4ad1-a8f3-2c791c49f352"
@@ -7344,6 +7348,10 @@
     "artist": "Rockey Chen",
     "scryfall_id": "896a02a6-5348-4f90-90b1-68aa61e84b73"
   },
+  "ghitu_fire": {
+    "artist": "Glen Angus",
+    "scryfall_id": "118fd9f1-2b6b-4eb2-bae4-e4178c6bcd55"
+  },
   "ghost_of_ramirez_depietro": {
     "artist": "Grzegorz Rutkowski",
     "scryfall_id": "15e649e1-dcb3-41d9-8055-cf3c98e25b1e"
@@ -8387,6 +8395,10 @@
   "harbinger_of_the_hunt": {
     "artist": "Chris Rahn",
     "scryfall_id": "52b7ea31-e853-4e8f-82f8-440388a5b110"
+  },
+  "harbinger_of_the_tides": {
+    "artist": "Svetlin Velinov",
+    "scryfall_id": "9ca4f70d-ec17-49a4-8968-598ecdbe8243"
   },
   "hard_won_jitte": {
     "artist": "Kim Sokol",
@@ -12094,6 +12106,10 @@
     "artist": "Mark Zug",
     "scryfall_id": "6c5d3eba-e456-47c2-992b-a97ba66e9676"
   },
+  "molten_exhale": {
+    "artist": "Nathaniel Himawan",
+    "scryfall_id": "0ab95aab-a4bf-4131-83a0-2c138b6f20c3"
+  },
   "molten_tributary": {
     "artist": "Yeong-Hao Han",
     "scryfall_id": "9c6d0f64-b8e1-41bc-ab86-bd6783daf72a"
@@ -12173,6 +12189,11 @@
   "moonglove_winnower": {
     "artist": "William O'Connor",
     "scryfall_id": "e102660a-af2f-4983-8cef-ab9a363c24b2"
+  },
+  "moonlit_ambusher": {
+    "artist": "Alexander Mokhov",
+    "back": true,
+    "scryfall_id": "57f1736a-bbbd-4707-9b0c-1063c6dbdbc0"
   },
   "moonshaker_cavalry": {
     "artist": "Diana Franco",
@@ -12449,6 +12470,10 @@
   "mystic_sanctuary": {
     "artist": "Randy Vargas",
     "scryfall_id": "4cd86997-d7b9-4b5b-9488-11f5c679e4d3"
+  },
+  "mystical_tether": {
+    "artist": "Adam Volker",
+    "scryfall_id": "18344498-952e-489c-8b03-bd1bef4c26ca"
   },
   "mystical_tutor": {
     "artist": "Shane Beresford",
@@ -12945,6 +12970,10 @@
   "oakgnarl_warrior": {
     "artist": "Jim Nelson",
     "scryfall_id": "b72aa0be-dd6c-4737-a4c7-acd8b6170a9d"
+  },
+  "oakshade_stalker_moonlit_ambusher": {
+    "artist": "Alexander Mokhov",
+    "scryfall_id": "57f1736a-bbbd-4707-9b0c-1063c6dbdbc0"
   },
   "oashra_cultivator": {
     "artist": "Sara Winters",
@@ -15528,6 +15557,10 @@
     "artist": "Izzy",
     "scryfall_id": "2b3ec666-0e57-4c42-872c-51799e0b5c68"
   },
+  "rout": {
+    "artist": "Igor Kieryluk",
+    "scryfall_id": "84446f5b-cec6-4a51-8d6a-402ad9d7c9b5"
+  },
   "roving_harper": {
     "artist": "Anastasia Ovchinnikova",
     "scryfall_id": "c6b0ed9c-9a99-4a50-80a9-396420a8dcf9"
@@ -15831,6 +15864,10 @@
   "saproling_1_1_g": {
     "artist": "Joseph Meehan",
     "scryfall_id": "248ade83-ac57-42d6-985c-1e4cc3639f36"
+  },
+  "saproling_symbiosis": {
+    "artist": "Ciruelo",
+    "scryfall_id": "64ae774a-c1de-4c9e-a2ec-86d71cb2d1db"
   },
   "sarah_jane_smith": {
     "artist": "Fajareka Setiawan",
@@ -20154,6 +20191,10 @@
   "twilight_prophet": {
     "artist": "David Astruga",
     "scryfall_id": "050ca791-265a-4e7b-9640-4fd5a6d8cd3a"
+  },
+  "twilight_s_call": {
+    "artist": "Mark Romanoski",
+    "scryfall_id": "a6e04dd2-75ad-4427-93cc-37226340c2fb"
   },
   "twin_silk_spider": {
     "artist": "Ben Maier",

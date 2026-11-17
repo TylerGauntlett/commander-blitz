@@ -1,0 +1,18 @@
+{
+  "card_id": "asinine_antics",
+  "name": "Asinine Antics",
+  "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it.\nFor each creature your opponents control, create a Cursed Role token attached to that creature. (If you control another Role on it, put that one into the graveyard. Enchanted creature is 1/1.)",
+  "blocked_sentences": [
+    "For each creature your opponents control, create a Cursed Role token attached to that creature."
+  ],
+  "needs": [
+    {
+      "capability": "cursed_role",
+      "kind": "token",
+      "what": "a Cursed Role token: a colorless Aura Role enchantment token with \"Enchant creature\" and \"Enchanted creature is 1/1\" (base power and toughness set to 1/1)",
+      "why_existing_wont_do": "token_ids holds only one Role, wicked_role (\"Enchanted creature gets +1/+1\"); create_token with attached_to inside a for_each over opponents' creatures would express the sentence, and flash_cost {\"mana\": \"{2}\"} covers the first line, but no cursed_role id exists to name"
+    }
+  ],
+  "closest_existing": ["wicked_role"],
+  "confidence": "high"
+}

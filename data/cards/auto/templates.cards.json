@@ -33706,6 +33706,65 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "breaking_wave",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Breaking Wave",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nSimultaneously untap all tapped creatures and tap all untapped creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "each",
+                  "tapped": true
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "untap"
+                }
+              ]
+            }
+          ],
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "for_each"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -101699,6 +101758,48 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "ghitu_fire",
+      "mana_cost": "{X}{R}",
+      "name": "Ghitu Fire",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nGhitu Fire deals X damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "damage",
+          "target": "t"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -115221,6 +115322,65 @@
         "Dragon"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may return target tapped creature an opponent controls to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "harbinger_of_the_tides",
+      "mana_cost": "{U}{U}",
+      "name": "Harbinger of the Tides",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nWhen this creature enters, you may return target tapped creature an opponent controls to its owner's hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -167692,6 +167852,54 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flash_cost": {
+        "behold": {
+          "subtypes": [
+            "Dragon"
+          ]
+        }
+      },
+      "id": "molten_exhale",
+      "mana_cost": "{1}{R}",
+      "name": "Molten Exhale",
+      "oracle_text": "You may cast this spell as though it had flash if you behold a Dragon as an additional cost to cast it. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)\nMolten Exhale deals 4 damage to target creature or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "damage"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -168460,6 +168668,29 @@
       "subtypes": [
         "Elf",
         "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "moonlit_ambusher",
+      "keywords": [
+        "nightbound"
+      ],
+      "name": "Moonlit Ambusher",
+      "oracle_text": "Nightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Werewolf"
       ],
       "toughness": 3,
       "types": [
@@ -172356,6 +172587,58 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, exile target artifact or creature an opponent controls until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "mystical_tether",
+      "mana_cost": "{2}{W}",
+      "name": "Mystical Tether",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it.\nWhen this enchantment enters, exile target artifact or creature an opponent controls until this enchantment leaves the battlefield.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -179165,6 +179448,36 @@
         "Warrior"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "back_face": "moonlit_ambusher",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "oakshade_stalker_moonlit_ambusher",
+      "keywords": [
+        "daybound"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Oakshade Stalker // Moonlit Ambusher",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ranger",
+        "Werewolf"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -215150,6 +215463,39 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "rout",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Rout",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nDestroy all creatures. They can't be regenerated.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "no_regeneration": true,
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -219092,6 +219438,40 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "saproling_symbiosis",
+      "mana_cost": "{3}{G}",
+      "name": "Saproling Symbiosis",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nCreate a 1/1 green Saproling creature token for each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "create_token",
+          "token": "saproling_1_1_g"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -281356,6 +281736,39 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "flash_cost": {
+        "mana": "{2}"
+      },
+      "id": "twilight_s_call",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Twilight's Call",
+      "oracle_text": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nEach player returns all creature cards from their graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "battlefield",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

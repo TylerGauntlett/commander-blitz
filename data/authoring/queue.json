@@ -33722,12 +33722,12 @@
     },
     "Breaking Wave": {
       "edhrec_rank": 22077,
-      "gate": "template",
+      "gate": null,
       "name": "Breaking Wave",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "1b39cd77-97aa-4099-8405-366f82079758",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breaking of the Fellowship": {
@@ -107662,12 +107662,12 @@
     },
     "Ghitu Fire": {
       "edhrec_rank": 22302,
-      "gate": "template",
+      "gate": null,
       "name": "Ghitu Fire",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "118fd9f1-2b6b-4eb2-bae4-e4178c6bcd55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghitu Fire-Eater": {
@@ -122502,12 +122502,12 @@
     },
     "Harbinger of the Tides": {
       "edhrec_rank": 11400,
-      "gate": "template",
+      "gate": null,
       "name": "Harbinger of the Tides",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "9ca4f70d-ec17-49a4-8968-598ecdbe8243",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harbor Bandit": {
@@ -177622,12 +177622,12 @@
     },
     "Molten Exhale": {
       "edhrec_rank": 13551,
-      "gate": "template",
+      "gate": null,
       "name": "Molten Exhale",
-      "reason": "no template for: You may cast this spell as though it had flash if you behold a Dragon as an additional cos",
+      "reason": "",
       "scryfall_id": "0ab95aab-a4bf-4131-83a0-2c138b6f20c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molten Firebird": {
@@ -182532,12 +182532,12 @@
     },
     "Mystical Tether": {
       "edhrec_rank": 19591,
-      "gate": "template",
+      "gate": null,
       "name": "Mystical Tether",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "18344498-952e-489c-8b03-bd1bef4c26ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mystical Tutor": {
@@ -190032,12 +190032,12 @@
     },
     "Oakshade Stalker // Moonlit Ambusher": {
       "edhrec_rank": 22831,
-      "gate": "template",
+      "gate": null,
       "name": "Oakshade Stalker // Moonlit Ambusher",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "57f1736a-bbbd-4707-9b0c-1063c6dbdbc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oashra Cultivator": {
@@ -228072,12 +228072,12 @@
     },
     "Rout": {
       "edhrec_rank": 7866,
-      "gate": "template",
+      "gate": null,
       "name": "Rout",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "84446f5b-cec6-4a51-8d6a-402ad9d7c9b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rover Blades": {
@@ -233232,12 +233232,12 @@
     },
     "Saproling Symbiosis": {
       "edhrec_rank": 5334,
-      "gate": "template",
+      "gate": null,
       "name": "Saproling Symbiosis",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "64ae774a-c1de-4c9e-a2ec-86d71cb2d1db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sapseep Forest": {
@@ -294772,12 +294772,12 @@
     },
     "Twilight's Call": {
       "edhrec_rank": 14019,
-      "gate": "template",
+      "gate": null,
       "name": "Twilight's Call",
-      "reason": "no template for: You may cast this spell as though it had flash if you pay {2} more to cast it",
+      "reason": "",
       "scryfall_id": "a6e04dd2-75ad-4427-93cc-37226340c2fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twin Blades": {
