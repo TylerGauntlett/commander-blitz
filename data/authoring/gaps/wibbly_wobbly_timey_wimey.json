@@ -1,0 +1,24 @@
+{
+  "card_id": "wibbly_wobbly_timey_wimey",
+  "name": "Wibbly-wobbly, Timey-wimey",
+  "oracle_text": "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)\nDraw a card.",
+  "blocked_sentences": [
+    "Time travel. (For each suspended card you own and each permanent you control with a time counter on it, you may add or remove a time counter.)"
+  ],
+  "needs": [
+    {
+      "capability": "time_travel",
+      "kind": "op",
+      "what": "an op that, for each suspended card the controller owns (in exile, with suspend, with a time counter) and each permanent they control with a time counter on it, lets them choose to add one time counter, remove one, or do nothing; removing the last time counter from a suspended card must cast it without paying its mana cost as suspend does (702.62), through the same counter-removed funnel",
+      "why_existing_wont_do": "No time_travel op is in reference. for_each + choose_mode over add_counters/remove_counters is the near miss, but no selector key reads 'suspended' (has_counters: \"time\" in exile also matches non-suspended exiled cards), and the free cast on removing the last counter lives only in suspend's upkeep tick, so an effect removing it would strand the card in exile. \"Draw a card.\" alone is a plain draw op."
+    }
+  ],
+  "closest_existing": [
+    "for_each",
+    "choose_mode",
+    "add_counters",
+    "remove_counters",
+    "proliferate"
+  ],
+  "confidence": "high"
+}

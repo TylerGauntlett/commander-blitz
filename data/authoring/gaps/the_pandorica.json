@@ -1,0 +1,18 @@
+{
+  "card_id": "the_pandorica",
+  "name": "The Pandorica",
+  "oracle_text": "You may choose not to untap The Pandorica during your untap step.\n{1}{W}, {T}: Untap another target nonland permanent, then it phases out. It can't phase in for as long as The Pandorica remains tapped. When The Pandorica becomes untapped or leaves the battlefield, that permanent phases in. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "You may choose not to untap The Pandorica during your untap step."
+  ],
+  "needs": [
+    {
+      "capability": "optional_untap",
+      "kind": "static_effect",
+      "what": "a static (affects self) that lets the controller choose, during their untap step, whether this permanent untaps (502.3 'you may choose not to untap'): a decision asked of the active player in the untap walk for each permanent carrying it, untapping only on yes",
+      "why_existing_wont_do": "skip_untap_step always holds the permanent (Mana Vault's 'doesn't untap'), untap_limit caps how many untap but not a per-permanent yes/no, and the skip_untap op is a one-shot; nothing offers the player the choice, and always-held or always-untapped are each a different card (the activated ability's linked phase-out depends on the choice to stay tapped)"
+    }
+  ],
+  "closest_existing": ["skip_untap_step", "untap_limit"],
+  "confidence": "high"
+}

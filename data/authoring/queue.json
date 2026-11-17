@@ -280532,12 +280532,12 @@
     },
     "The Eleventh Doctor": {
       "edhrec_rank": 9412,
-      "gate": "template",
+      "gate": null,
       "name": "The Eleventh Doctor",
-      "reason": "no template for: I. AM. TALKING! — Whenever deals combat damage to a player, you may exile a card from your",
+      "reason": "",
       "scryfall_id": "21d3891a-25e8-47ff-a516-4f3b8ce7fe24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Eleventh Hour": {
@@ -281732,12 +281732,12 @@
     },
     "The Moment": {
       "edhrec_rank": 13725,
-      "gate": "template",
+      "gate": null,
       "name": "The Moment",
-      "reason": "no template for: At the beginning of your upkeep, put a time counter on",
+      "reason": "",
       "scryfall_id": "683237b7-b3a9-4e34-abb4-ee0293385397",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Monumental Facade": {
@@ -315632,12 +315632,12 @@
     },
     "Wilfred Mott": {
       "edhrec_rank": 12930,
-      "gate": "template",
+      "gate": null,
       "name": "Wilfred Mott",
-      "reason": "no template for: Look to the Stars — At the beginning of your upkeep, put a time counter on . Then look at ",
+      "reason": "",
       "scryfall_id": "10918b68-b442-4895-b8a6-57f65274a39e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wilhelt, the Rotcleaver": {

@@ -7,18 +7,24 @@
   ],
   "needs": [
     {
-      "capability": "suspend",
+      "capability": "suspended_card_selector",
       "kind": "selector",
       "what": "a selector key matching a card whose printed characteristics include suspend (`CardDef.suspend` is set), e.g. `has_suspend: true`, usable over an `as` binding of exiled cards, so an effect can act on 'each of those cards that has suspend' and only those",
       "why_existing_wont_do": "selector_keys has no such key and suspend is a card-level cost key, not one of the `keywords` a `keywords` selector can read; the `suspend` op filters nothing and also grants suspend to cards that lack it (Doom's Time Platform), so applying it to all three exiled cards would suspend cards the printed text leaves alone"
     },
     {
-      "capability": "suspend",
+      "capability": "time_counters_suspend_exiled_card",
       "kind": "op",
       "what": "putting N time counters on a card that already has suspend and is already in exile must make it suspended (702.62b: exiled, has suspend, has a time counter -- the engine's `suspended_by` mark from `suspend.make_suspended`), so the upkeep tick and the free cast pick it up, while it also stays playable this turn under the same effect's `playable: this_turn` permission",
       "why_existing_wont_do": "`add_counters` on an exiled card puts time counters nothing ticks and never sets `suspended_by`; the `suspend` op does call `make_suspended` but has no way to restrict itself to cards that already have suspend (see the selector need above)"
     }
   ],
-  "closest_existing": ["exile", "look_at_top", "suspend", "add_counters", "for_each"],
+  "closest_existing": [
+    "exile",
+    "look_at_top",
+    "suspend",
+    "add_counters",
+    "for_each"
+  ],
   "confidence": "high"
 }

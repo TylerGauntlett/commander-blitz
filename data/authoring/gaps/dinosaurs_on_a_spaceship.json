@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "dinosaur_2_2_rw_flying_haste",
+      "capability": "dinosaur_2_2_rw_flying_haste_token",
       "kind": "token",
       "what": "a 2/2 red and white Dinosaur creature token with flying and haste",
       "why_existing_wont_do": "token_ids holds only dinosaur_3_1_r, dinosaur_3_3_g_trample and dinosaur_beast_x_x_g_trample; none is a 2/2 red-white flier with haste, and substituting a near token would change the card. The trigger itself (counter_removed with a time-counter filter, active in exile) and Suspend 4 (card-level suspend) appear expressible once the token exists"

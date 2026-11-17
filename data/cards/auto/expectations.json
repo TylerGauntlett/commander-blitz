@@ -21647,6 +21647,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "the_eleventh_doctor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_emperor_of_palamecia_the_lord_master_of_hell": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21765,6 +21769,10 @@
     "graveyard_size": {
       "0": 0
     },
+    "zone": "battlefield"
+  },
+  "the_moment": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_mycosynth_gardens": {
@@ -24627,6 +24635,13 @@
     "zone": "battlefield"
   },
   "wildwood_patrol": {
+    "zone": "battlefield"
+  },
+  "wilfred_mott": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "wilhelt_the_rotcleaver": {

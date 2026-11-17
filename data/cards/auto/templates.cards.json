@@ -262400,6 +262400,110 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "suspended",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "hand"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "suspended"
+                      }
+                    }
+                  },
+                  "objects": {
+                    "binding": "suspended"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile a card from your hand with time counters equal to its mana value?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "I. AM. TALKING! — Whenever The Eleventh Doctor deals combat damage to a player, you may exile a card from your hand with a number of time counters on it equal to its mana value. If it doesn't have suspend, it gains suspend.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}: Target creature with power 3 or less can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "the_eleventh_doctor",
+      "mana_cost": "{1}{W}{U}",
+      "name": "The Eleventh Doctor",
+      "oracle_text": "I. AM. TALKING! — Whenever The Eleventh Doctor deals combat damage to a player, you may exile a card from your hand with a number of time counters on it equal to its mana value. If it doesn't have suspend, it gains suspend.\n{2}: Target creature with power 3 or less can't be blocked this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Time",
+        "Lord",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -264471,6 +264575,135 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a time counter on The Moment.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in"
+            }
+          ],
+          "kind": "triggered",
+          "text": "{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}, {T}: Destroy each nonland permanent with mana value less than or equal to the number of time counters on The Moment. Then sacrifice The Moment. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_moment",
+      "mana_cost": "{2}",
+      "name": "The Moment",
+      "oracle_text": "At the beginning of your upkeep, put a time counter on The Moment.\n{2}, {T}: Untap target creature you control. It phases out until The Moment leaves the battlefield.\n{3}, {T}: Destroy each nonland permanent with mana value less than or equal to the number of time counters on The Moment. Then sacrifice The Moment. Activate only as a sorcery.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -297278,6 +297511,82 @@
         "Scout"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Look to the Stars — At the beginning of your upkeep, put a time counter on Wilfred Mott. Then look at the top X cards of your library, where X is the number of time counters on Wilfred Mott. You may put a nonland permanent card with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wilfred_mott",
+      "mana_cost": "{3}{W}",
+      "name": "Wilfred Mott",
+      "oracle_text": "Look to the Stars — At the beginning of your upkeep, put a time counter on Wilfred Mott. Then look at the top X cards of your library, where X is the number of time counters on Wilfred Mott. You may put a nonland permanent card with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
