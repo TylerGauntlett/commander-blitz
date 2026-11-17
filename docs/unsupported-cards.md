@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**434 cards** blocked by **380** capabilities.
+**435 cards** blocked by **381** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -277,6 +277,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
+| [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
@@ -4679,6 +4680,20 @@ Blocks **1** card.
 
 - **Madame Vastra** (rank 19620) — `madame_vastra`
   - Madame Vastra must be blocked if able.
+
+</details>
+
+## must-be-blocked-if-able
+
+Blocks **1** card.
+
+- **(static_effect)** an attacker-side block requirement static: as long as the affected creature (here `affects: {attached: true, attacking: true}`) is attacking, the defending player must block it with at least one creature matching a blocker filter (here `subtypes: ["Dalek"]`) if able (509.1c), enforced in combat.blocks_valid / unmet_block_requirements beside provoke and the lure family
+  <br>Why the existing vocabulary won't do: `block_restriction` is the opposite direction (narrows who MAY block, 'can't be blocked except by'); the `must_block` op is a one-shot flag on a specific blocker naming an attacker, set by a resolving effect, so it cannot express a continuous requirement that applies to whichever Daleks the defender controls at declare-blockers; `must_block_any` names no attacker and is likewise a one-shot op. The first-strike half is expressible (grant_keyword static on attached+attacking) but the sentence cannot be split without dropping the Dalek clause
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ace's Baseball Bat** (rank 11381) — `ace_s_baseball_bat`
+  - As long as equipped creature is attacking, it has first strike and must be blocked by a Dalek if able.
 
 </details>
 

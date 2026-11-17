@@ -1522,12 +1522,12 @@
     },
     "Ace, Fearless Rebel": {
       "edhrec_rank": 20675,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Ace, Fearless Rebel",
-      "reason": "no template for: Nitro-9 — Whenever Ace attacks, you may sacrifice an artifact. When you do, put a +1/+1 co",
+      "reason": "your battlefield is 31, expected 33",
       "scryfall_id": "3ce6d329-9c3a-4fb0-bf1e-9b72346ca3ad",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Acererak the Archlich": {
@@ -2242,12 +2242,12 @@
     },
     "Adric, Mathematical Genius": {
       "edhrec_rank": 7942,
-      "gate": "template",
+      "gate": null,
       "name": "Adric, Mathematical Genius",
-      "reason": "no template for: {2}{U}, {T}: Copy target activated or triggered ability you control. You may choose new ta",
+      "reason": "",
       "scryfall_id": "176a1504-262b-48f5-92a8-9e29cb397366",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Adrix and Nev, Twincasters": {
@@ -6162,12 +6162,12 @@
     },
     "Alistair, the Brigadier": {
       "edhrec_rank": 11973,
-      "gate": "template",
+      "gate": null,
       "name": "Alistair, the Brigadier",
-      "reason": "no template for: Whenever you cast a historic spell, create a 1/1 white Soldier creature token",
+      "reason": "",
       "scryfall_id": "0a202892-3bbc-454f-83c6-51451c8e6215",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alive // Well": {
@@ -7642,12 +7642,12 @@
     },
     "An Unearthly Child": {
       "edhrec_rank": 13894,
-      "gate": "template",
+      "gate": null,
       "name": "An Unearthly Child",
-      "reason": "no template for: I, II, III — Reveal cards from the top of your library until you reveal a Doctor card, a c",
+      "reason": "",
       "scryfall_id": "2b6d87d6-e89c-4b84-b1d0-2aad21cb1c47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "An Unexpected Party // At the Door": {
@@ -20002,12 +20002,12 @@
     },
     "Banish to Another Universe": {
       "edhrec_rank": 14478,
-      "gate": "template",
+      "gate": null,
       "name": "Banish to Another Universe",
-      "reason": "no template for: Affinity for historic permanents",
+      "reason": "",
       "scryfall_id": "61f39d4c-af2d-486d-9408-b987474f8352",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banisher Priest": {

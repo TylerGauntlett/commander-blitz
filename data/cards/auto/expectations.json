@@ -134,6 +134,10 @@
     },
     "zone": "battlefield"
   },
+  "adric_mathematical_genius": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adrix_and_nev_twincasters": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -472,6 +476,10 @@
     },
     "zone": "battlefield"
   },
+  "alistair_the_brigadier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "all_is_dust": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -611,6 +619,19 @@
   "an_offer_you_can_t_refuse": {
     "opponent_battlefield_count": 9,
     "zone": "graveyard"
+  },
+  "an_unearthly_child": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "anaba_bodyguard": {
     "zone": "battlefield"
@@ -1673,6 +1694,11 @@
     "zone": "battlefield"
   },
   "banehound": {
+    "zone": "battlefield"
+  },
+  "banish_to_another_universe": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "banon_the_returners_leader": {
