@@ -5061,8 +5061,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so
-        # the check costs nothing and the loop stays one list.
-        _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
+        # the check costs nothing and the loop stays one list. `blockers` alone
+        # may compare against the source's power (Aura Gnarlid): it is read
+        # outside the layer pipeline, and only on a `block_restriction`.
+        _check_pt_keys(
+            getattr(model, key, None), f"{where}.{key}", source_power=key == "blockers"
+        )
         validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
         validate_enchanted_by_key(getattr(model, key, None), f"{where}.{key}")
         validate_has_counters_key(getattr(model, key, None), f"{where}.{key}")

@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from commanderblitz.engine.characteristics import SOURCE_POWER
 from commanderblitz.engine.effects.selectors import (
     validate_attached_to_key,
     validate_colorless_key,
@@ -85,7 +86,7 @@ def check_literal_mana_value_key(filt: Any, where: str) -> None:
         )
 
 
-def _check_pt_keys(filt: Any, where: str) -> None:
+def _check_pt_keys(filt: Any, where: str, *, source_power: bool = False) -> None:
     """``power``/``toughness`` in a static filter is a comparison, not a size.
 
     ``{"op": ">=", "value": 4}``, a bare integer meaning equality, or
@@ -101,6 +102,11 @@ def _check_pt_keys(filt: Any, where: str) -> None:
 
     The compared-against value is a plain integer, because a static filter tests
     one object and has no source permanent to measure an expression against.
+    ``source_power`` admits the one exception, `characteristics.SOURCE_POWER` as
+    the ``power`` clause's value -- "creatures with power less than this
+    creature's power" -- and only `block_restriction`'s ``blockers`` passes it:
+    that filter is read outside the layer pipeline, against derived
+    characteristics, where the source's derived power is safe to read.
     """
     if not isinstance(filt, Mapping):
         return
@@ -133,10 +139,18 @@ def _check_pt_keys(filt: Any, where: str) -> None:
                 f"(implemented: {sorted(STATIC_CONDITION_OPS)})"
             )
         value = spec.get("value", 0)
+        if source_power and key == "power" and value == SOURCE_POWER:
+            continue
         if not isinstance(value, int) or isinstance(value, bool):
+            hint = (
+                " (the source's power, {'power_of': {'self': true}}, is read only by "
+                "a block_restriction's 'blockers' power)"
+                if value == SOURCE_POWER
+                else ""
+            )
             raise DslError(
                 f"{where}.{key}.value: a static compares against a plain integer, "
-                f"got {value!r}"
+                f"got {value!r}{hint}"
             )
 
 

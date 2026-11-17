@@ -1217,7 +1217,7 @@ def can_block(
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
     # blocker is what has the quality -- the same asymmetry as protection above.
-    for source_obj, static in block_restrictions(state, attacker_oid):
+    for _source, static in block_restrictions(state, attacker_oid):
         # "Can't be blocked by more than one creature" (Challenger Troll).
         # Asked per pair as well as on the whole declaration: once the attacker
         # has its quota no further blocker can ever make the declaration legal
@@ -1228,6 +1228,25 @@ def can_block(
             _blocker_count(state, attacker_oid, defender, excluding=blocker_oid) >= cap
         ):
             return False
+    return not blockers_filter_refuses(state, blocker_oid, attacker_oid)
+
+
+def blockers_filter_refuses(state: GameState, blocker_oid: int, attacker_oid: int) -> bool:
+    """Does a `block_restriction`'s ``blockers`` filter on the attacker refuse this blocker?
+
+    The per-pair half of `can_block`'s card-supplied restrictions, split out
+    because it needs no declaration: the CPU's `ai.strategy.board.could_block`
+    asks it while attackers are still being chosen. `max_blockers` and
+    `require_all` count a declaration and stay where one exists.
+
+    "Creatures with power less than this creature's power can't block it"
+    (Aura Gnarlid) compares against the source's power as it is now, when the
+    question is asked (509.1b) -- `characteristics.SOURCE_POWER`.
+    """
+    blocker = state.objects.get(blocker_oid)
+    if blocker is None:
+        return False
+    for source_obj, static in block_restrictions(state, attacker_oid):
         spec = static.get("blockers")
         if spec is None:
             continue
@@ -1235,13 +1254,13 @@ def can_block(
         # read, and here that default is always wrong: a blocker belongs to the
         # defending player by definition, so "you" would match nothing and the
         # restriction would silently never fire. Whose creature it is has
-        # already been settled above; this clause is only about what it *is*.
+        # already been settled by the caller; this clause is only about what it *is*.
         spec = {"controller": "any", **dict(spec)}
         # Derived, as the attacker side is: a creature some static made a Wall
         # is a Wall to "can't be blocked by Walls".
         if matches_static(state, blocker, source_obj, spec, derived=True):
-            return False
-    return True
+            return True
+    return False
 
 
 def _controls_land_type(state: GameState, pid: int, subtype: str) -> bool:

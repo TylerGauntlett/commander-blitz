@@ -2684,7 +2684,11 @@ The clause is `{"op": ">=", "value": 4}` — the same spelling the effect-side
 selector and a trigger filter already take, down to the defaulted `">="` and
 the bare-integer shorthand (`"power": 4` is equality). `value` is a plain
 integer here and not a value expression: a filter tests one object and has no
-source permanent to measure an expression against.
+source permanent to measure an expression against. The one exception is
+`{"power_of": {"self": true}}` — "this creature's power" — as the `power`
+clause's value in a `block_restriction`'s `blockers`, which is read outside the
+pipeline ([Block restrictions](card-dsl-cookbook.md#block-restrictions)); every
+other static filter refuses it at load time.
 
 **This is the one derived characteristic in `static_filter_keys`, and it is in
 there under a restriction rather than as an exception.** `entered_this_turn`

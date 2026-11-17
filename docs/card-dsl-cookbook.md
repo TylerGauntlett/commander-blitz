@@ -6287,6 +6287,26 @@ from every other static filter: `controller` defaults to **any** rather than
 the usual default would match nothing and the restriction would silently never
 fire.
 
+"Creatures with power less than this creature's power can't block it" (Aura
+Gnarlid, Den Protector) compares the blocker against the **source's** power,
+which no integer can stand for:
+
+```jsonc
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "blockers": { "power": { "op": "<", "value": { "power_of": { "self": true } } } } }
+```
+
+`{"power_of": {"self": true}}` is the value language's own spelling of "this
+creature's power", and `characteristics._against_source` reads it off `chars`
+at the moment the block is asked (509.1b): counters, pumps and the Gnarlid's own
+Aura count all move the bar, and a creature of equal power still blocks. It is
+admitted only as `blockers`' `power` value — `toughness`, any other object
+reference, and every layered static's filter refuse it at load time, because
+inside the pipeline the source's power is another static's output. The CPU's
+`ai.strategy.board.could_block` asks the same `combat.blockers_filter_refuses`
+before attackers are declared. Skulk is the near miss: it compares the other
+way ("greater power") and is a keyword.
+
 `require_all` is literal about "controls": a *tapped* creature that cannot block
 still makes the block illegal, which is why Tromokratis is close to unblockable
 and is the entire point of the card.
