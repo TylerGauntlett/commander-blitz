@@ -63,6 +63,7 @@ PRECONS = {
     "soc_witherbloom_pestilence",
     "tdc_abzan_armor",
     "tdc_mardu_surge",
+    "woc_fae_dominion",
 }
 
 #: Every deck a player sees on the shelf.

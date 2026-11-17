@@ -276662,12 +276662,12 @@
     },
     "Tegwyll's Scouring": {
       "edhrec_rank": 7851,
-      "gate": "template",
+      "gate": null,
       "name": "Tegwyll's Scouring",
-      "reason": "no template for: You may cast this spell as though it had flash by tapping three untapped creatures you con",
+      "reason": "",
       "scryfall_id": "0d326981-30ee-4d5a-98c6-2e69f706073c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tegwyll, Duke of Splendor": {

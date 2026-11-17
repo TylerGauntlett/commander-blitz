@@ -21513,6 +21513,13 @@
     },
     "zone": "battlefield"
   },
+  "tegwyll_s_scouring": {
+    "tokens": {
+      "count": 3,
+      "id": "faerie_rogue_1_1_b_flying"
+    },
+    "zone": "graveyard"
+  },
   "tekuthal_inquiry_dominus": {
     "zone": "battlefield"
   },

@@ -260665,6 +260665,54 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "flash_cost": {
+        "tap_permanents": {
+          "count": 3,
+          "keywords": [
+            "flying"
+          ],
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "tegwyll_s_scouring",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Tegwyll's Scouring",
+      "oracle_text": "You may cast this spell as though it had flash by tapping three untapped creatures you control with flying in addition to paying its other costs.\nDestroy all creatures. Create three 1/1 black Faerie Rogue creature tokens with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "faerie_rogue_1_1_b_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_player": "you",
