@@ -13096,6 +13096,70 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Faerie or Wizard permanent spell, copy it. (The copy becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "subtypes": [
+                "Faerie",
+                "Wizard"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "archmage_of_echoes",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Archmage of Echoes",
+      "oracle_text": "Flying, ward {2}\nWhenever you cast a Faerie or Wizard permanent spell, copy it. (The copy becomes a token.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "any_types": [
               "Instant",
@@ -27724,6 +27788,62 @@
         "Spider"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_type": true,
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "player": "active_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first spell during each opponent's turn, look at the top card of that player's library, then exile it face down. You may play that card for as long as it remains exiled, and mana of any type can be spent to cast it.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": false
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blightwing_bandit",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Blightwing Bandit",
+      "oracle_text": "Flying, deathtouch\nWhenever you cast your first spell during each opponent's turn, look at the top card of that player's library, then exile it face down. You may play that card for as long as it remains exiled, and mana of any type can be spent to cast it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -47938,6 +48058,74 @@
         "Fish"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "count": 2,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, untap up to two lands.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "cloud_of_faeries",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Cloud of Faeries",
+      "oracle_text": "Flying\nWhen this creature enters, untap up to two lands.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Faerie"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -85595,6 +85783,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Faeries you control deal combat damage to a player, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Faerie"
+              ]
+            },
+            "per_player": true
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, each opponent loses X life and you gain X life, where X is its power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "faerie_bladecrafter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Faerie Bladecrafter",
+      "oracle_text": "Flying\nWhenever one or more Faeries you control deal combat damage to a player, put a +1/+1 counter on this creature.\nWhen this creature dies, each opponent loses X life and you gain X life, where X is its power.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -85658,6 +85923,55 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "faerie_1_1_u_flying"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Create a 1/1 blue Faerie creature token with flying. Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "faerie_formation",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Faerie Formation",
+      "oracle_text": "Flying\n{3}{U}: Create a 1/1 blue Faerie creature token with flying. Draw a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Faerie"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -104784,6 +105098,162 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{U}",
+            "sacrifice": {
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "{U}, Sacrifice this creature: Counter target noncreature spell."
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "-1/-1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "glen_elendra_archmage",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Glen Elendra Archmage",
+      "oracle_text": "Flying\n{U}, Sacrifice this creature: Counter target noncreature spell.\nPersist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "colors": [
+              "U"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other blue creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              "B"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other black creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "glen_elendra_liege",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U/B}{U/B}{U/B}",
+      "name": "Glen Elendra Liege",
+      "oracle_text": "Flying\nOther blue creatures you control get +1/+1.\nOther black creatures you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -113657,6 +114127,97 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "halo_forager_cast",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}"
+              },
+              "player": "you",
+              "prompt": "Pay {X} for Halo Forager to cast an instant or sorcery card with mana value X from a graveyard?",
+              "x": {
+                "as": "paid_x"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may pay {X}.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "id": "halo_forager_cast",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "any",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "binding": "paid_x"
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you do, you may cast target instant or sorcery card with mana value X from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "halo_forager",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Halo Forager",
+      "oracle_text": "Flying\nWhen this creature enters, you may pay {X}. When you do, you may cast target instant or sorcery card with mana value X from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -138122,6 +138683,38 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "keep_watch",
+      "mana_cost": "{2}{U}",
+      "name": "Keep Watch",
+      "oracle_text": "Draw a card for each attacking creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "attacking": true,
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -156738,6 +157331,53 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "malleable_impostor",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Malleable Impostor",
+      "oracle_text": "Flash\nFlying\nYou may have this creature enter as a copy of a creature an opponent controls, except it's a Faerie Shapeshifter in addition to its other types and it has flying.",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_keywords": [
+              "flying"
+            ],
+            "add_subtypes": [
+              "Faerie",
+              "Shapeshifter"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Shapeshifter"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -166330,6 +166970,48 @@
         "Fish"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mocking_sprite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Mocking Sprite",
+      "oracle_text": "Flying\nInstant and sorcery spells you cast cost {1} less to cast.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

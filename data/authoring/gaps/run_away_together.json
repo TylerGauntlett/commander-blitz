@@ -1,0 +1,18 @@
+{
+  "card_id": "run_away_together",
+  "name": "Run Away Together",
+  "oracle_text": "Choose two target creatures controlled by different players. Return those creatures to their owners' hands.",
+  "blocked_sentences": [
+    "Choose two target creatures controlled by different players. Return those creatures to their owners' hands."
+  ],
+  "needs": [
+    {
+      "capability": "one_per_player_exact_count",
+      "kind": "selector",
+      "what": "a target spec of an exact size (count: 2, every target required) whose chosen targets must be controlled by pairwise different players -- i.e. `one_per_player` allowed on a fixed-size spec, so the spell is cast only when two creatures with different controllers exist and fizzles per-target normally",
+      "why_existing_wont_do": "`one_per_player` is refused by the loader (cards/loader/targets.py) unless the size is caster-picked (`count: \"any\"` or `up_to`); `count: 2, up_to: true` would let the spell be cast at zero or one creature, and `min_count: 2` under a ceiling of 2 is refused (a floor at or above the ceiling). Two separate specs (one `controller: you`, one `controller: opponent`) are narrower than the card: in a multiplayer pod it can return creatures of two different opponents, or of you and one opponent, which a fixed you/opponent split cannot offer"
+    }
+  ],
+  "closest_existing": ["one_per_player", "min_count", "up_to"],
+  "confidence": "high"
+}

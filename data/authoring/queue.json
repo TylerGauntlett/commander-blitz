@@ -12182,12 +12182,12 @@
     },
     "Archmage of Echoes": {
       "edhrec_rank": 4182,
-      "gate": "template",
+      "gate": null,
       "name": "Archmage of Echoes",
-      "reason": "no template for: Flying, ward {2}",
+      "reason": "",
       "scryfall_id": "2a0d4110-907d-4777-a759-aed47801a8df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archmage of Runes": {
@@ -27252,12 +27252,12 @@
     },
     "Blightwing Bandit": {
       "edhrec_rank": 6038,
-      "gate": "template",
+      "gate": null,
       "name": "Blightwing Bandit",
-      "reason": "no template for: Whenever you cast your first spell during each opponent's turn, look at the top card of th",
+      "reason": "",
       "scryfall_id": "9869763c-1f20-4214-a8bd-bd9291b837f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blim, Comedic Genius": {
@@ -48752,12 +48752,12 @@
     },
     "Cloud of Faeries": {
       "edhrec_rank": 1377,
-      "gate": "template",
+      "gate": null,
       "name": "Cloud of Faeries",
-      "reason": "no template for: When this creature enters, untap up to two lands",
+      "reason": "",
       "scryfall_id": "96f230e9-3007-4d1a-b0b2-6b3fe9351627",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloud's Limit Break": {
@@ -89902,12 +89902,12 @@
     },
     "Faerie Bladecrafter": {
       "edhrec_rank": 6001,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Bladecrafter",
-      "reason": "no template for: Whenever one or more Faeries you control deal combat damage to a player, put a +1/+1 count",
+      "reason": "",
       "scryfall_id": "c9ea46bc-11ee-494d-8032-5c23e0f1d54a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faerie Conclave": {
@@ -89952,12 +89952,12 @@
     },
     "Faerie Formation": {
       "edhrec_rank": 7139,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Formation",
-      "reason": "no template for: {3}{U}: Create a 1/1 blue Faerie creature token with flying. Draw a card",
+      "reason": "",
       "scryfall_id": "9899691d-384b-4853-bc85-b725e854de40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faerie Guidemother // Gift of the Fae": {
@@ -110602,12 +110602,12 @@
     },
     "Glen Elendra Archmage": {
       "edhrec_rank": 1652,
-      "gate": "template",
+      "gate": null,
       "name": "Glen Elendra Archmage",
-      "reason": "no template for: {U}, Sacrifice this creature: Counter target noncreature spell",
+      "reason": "",
       "scryfall_id": "5ace8996-5a6d-4968-893c-fe537a7df36f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glen Elendra Guardian": {
@@ -110622,12 +110622,12 @@
     },
     "Glen Elendra Liege": {
       "edhrec_rank": 4939,
-      "gate": "template",
+      "gate": null,
       "name": "Glen Elendra Liege",
-      "reason": "no template for: Other blue creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "fe9adc6f-84d6-4c9d-bf4d-1c1323a4fe32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glen Elendra Pranksters": {
@@ -121702,12 +121702,12 @@
     },
     "Halo Forager": {
       "edhrec_rank": 6088,
-      "gate": "template",
+      "gate": null,
       "name": "Halo Forager",
-      "reason": "no template for: When this creature enters, you may pay {X}. When you do, you may cast target instant or so",
+      "reason": "",
       "scryfall_id": "a8031969-42ea-43b9-b360-a2b7c2325a5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Halo Fountain": {
@@ -147392,12 +147392,12 @@
     },
     "Keep Watch": {
       "edhrec_rank": 4525,
-      "gate": "template",
+      "gate": null,
       "name": "Keep Watch",
-      "reason": "no template for: Draw a card for each attacking creature",
+      "reason": "",
       "scryfall_id": "d956c510-25a7-4681-8adb-16e073d781b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keeper of Fables": {
@@ -166052,12 +166052,12 @@
     },
     "Malleable Impostor": {
       "edhrec_rank": 4435,
-      "gate": "template",
+      "gate": null,
       "name": "Malleable Impostor",
-      "reason": "no template for: You may have this creature enter as a copy of a creature an opponent controls, except it's",
+      "reason": "",
       "scryfall_id": "ad0fc934-f49d-4607-a52b-aea5c1d5d342",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mammoth Bellow": {
@@ -176982,12 +176982,12 @@
     },
     "Mocking Sprite": {
       "edhrec_rank": 2852,
-      "gate": "template",
+      "gate": null,
       "name": "Mocking Sprite",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "d52d16be-c74b-4e40-94f9-2ffa497b6337",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mockingbird": {

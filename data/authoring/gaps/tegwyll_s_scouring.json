@@ -1,0 +1,25 @@
+{
+  "card_id": "tegwyll_s_scouring",
+  "name": "Tegwyll's Scouring",
+  "oracle_text": "You may cast this spell as though it had flash by tapping three untapped creatures you control with flying in addition to paying its other costs.\nDestroy all creatures. Create three 1/1 black Faerie Rogue creature tokens with flying.",
+  "blocked_sentences": [
+    "You may cast this spell as though it had flash by tapping three untapped creatures you control with flying in addition to paying its other costs.",
+    "Create three 1/1 black Faerie Rogue creature tokens with flying."
+  ],
+  "needs": [
+    {
+      "capability": "flash_with_additional_cost",
+      "kind": "cost",
+      "what": "a card-level timing permission that lets the spell be cast as though it had flash ONLY when an extra cost is paid -- here a `tap_permanents` of three untapped creatures you control with flying ({\"types\": [\"Creature\"], \"keywords\": [\"flying\"], \"count\": 3}) on top of the mana cost -- e.g. a `flash_cost` node from `cost_keys` beside `as_though_flash`; at sorcery timing the spell is cast normally without that cost, outside it the cast is legal only by paying it",
+      "why_existing_wont_do": "`as_though_flash` is an unconditional boolean rider (schema `as_though_flash: bool`), so setting it would let the sweeper be cast at instant speed for free -- strictly better than the printed card. `additional_cost`/`additional_optional` charge a cost at any timing but do not widen timing, and nothing ties a paid additional cost to `casting._timing_ok`; `cast_as_though_flash` statics and `grant_flash_permission` are permissions from another source with board-only conditions. The tap cost itself (`tap_permanents` with a flying filter) already exists; only the link between paying it and flash timing is missing"
+    },
+    {
+      "capability": "faerie_rogue_1_1_b_flying_token",
+      "kind": "token",
+      "what": "a 1/1 black Faerie Rogue creature token with flying",
+      "why_existing_wont_do": "`token_ids` has `faerie_1_1_u_flying` (blue, Faerie only), `bat_1_1_b_flying`, `insect_1_1_b_flying` and `vampire_rogue_1_1_b_lifelink`, none of which is a black Faerie Rogue with flying; the same token is already recorded by shadow_puppeteers"
+    }
+  ],
+  "closest_existing": ["as_though_flash", "additional_cost", "tap_permanents", "faerie_1_1_u_flying"],
+  "confidence": "high"
+}

@@ -1130,6 +1130,10 @@
     },
     "zone": "battlefield"
   },
+  "archmage_of_echoes": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archmage_of_runes": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2281,6 +2285,10 @@
     "zone": "battlefield"
   },
   "blightwidow": {
+    "zone": "battlefield"
+  },
+  "blightwing_bandit": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blind_obedience": {
@@ -3890,6 +3898,13 @@
     "zone": "battlefield"
   },
   "cloud_manta": {
+    "zone": "battlefield"
+  },
+  "cloud_of_faeries": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "cloud_s_limit_break": {
@@ -7176,7 +7191,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "faerie_bladecrafter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "faerie_conclave": {
+    "zone": "battlefield"
+  },
+  "faerie_formation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "faerie_invaders": {
@@ -8820,6 +8846,17 @@
     },
     "zone": "battlefield"
   },
+  "glen_elendra_archmage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "glen_elendra_liege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "glider_kids": {
     "zone": "battlefield"
   },
@@ -9561,6 +9598,13 @@
     "zone": "battlefield"
   },
   "hallowed_fountain": {
+    "zone": "battlefield"
+  },
+  "halo_forager": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "halo_fountain": {
@@ -11476,6 +11520,15 @@
   "keeneye_aven": {
     "zone": "battlefield"
   },
+  "keep_watch": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "keeper_of_the_accord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12964,6 +13017,10 @@
   "malcolm_keen_eyed_navigator": {
     "zone": "battlefield"
   },
+  "malleable_impostor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mammoth_spider": {
     "zone": "battlefield"
   },
@@ -13816,6 +13873,13 @@
     "zone": "battlefield"
   },
   "moat_piranhas": {
+    "zone": "battlefield"
+  },
+  "mocking_sprite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mog_moogle_warrior": {
