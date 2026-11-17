@@ -12894,10 +12894,36 @@ The subset enumeration applies both — at most two, pairwise different
 controllers, every size from none up. `count: "any"` alone is the near miss: at
 a pod of four it exiles up to four.
 
-Needs a size the caster picks — `count: "any"`, or `up_to` with a ceiling;
-refused at load time otherwise (an exact `count`, or `optional`'s "exactly N, or
-none"), because on a fixed-size spec the cap either changes nothing or makes the
-spec unsatisfiable, and both are silent.
+**On an exact size.** "Choose **two** target creatures controlled by different
+players" (Run Away Together) is a literal `count` with no `up_to`:
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": 2,
+              "one_per_player": true,
+              "selector": {"zone": "battlefield", "types": ["Creature"],
+                           "controller": "any"}}],
+ "spell_effects": [{"op": "return_to_hand", "objects": {"target": "t1"}}]}
+```
+
+Only full-size sets across that many seats are offered, so the spell is cast
+only while N players each control a candidate (601.2c) — one creature, or two of
+one player's, offer nothing. `count: 2, up_to: true` is the near miss: it casts
+at zero or one creature. So is a `controller: "you"` spec beside a
+`controller: "opponent"` one, which cannot reach two different opponents'
+creatures in a pod.
+
+**Re-checked on resolution, target by target.** "Controlled by a different
+player" is part of what made each target legal, so 608.2b asks it again
+(`targeting._drop_shared_controllers`): among the targets still legal on their
+own, any two that now share a controller are both illegal — the restriction
+reads the same from either side, and the game keeps no record of which one
+moved. A target that has left the battlefield is illegal for that alone and
+spoils nothing for the others.
+
+Refused at load time: a `count` of 1 (one target has nobody to differ from), a
+computed exact `count` (declared by a pick that asks objects one toggle at a
+time), `optional`'s "exactly N, or none", and a `random` target, whose draw
+takes no rule between its picks.
 
 ## "…with total mana value 6 or less" — a cap on the picks together
 
@@ -13215,7 +13241,7 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
 | a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
-| `one_per_player`, `total_mana_value` or `total_power` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| `one_per_player`, `total_mana_value` or `total_power` on a mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
 | a second `optional`, `up_to` or `"any"` mode-owned spec on the same card | a declined or caster-sized target stores no fixed number of refs, so it is stored last (`CardDef.specs_for_modes`), and two of them in one declaration leave no position to split them at |
 | a target whose selector names that sizeless spec | stored last, the sizeless spec is enumerated after every other target, so nothing can read its answer |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
