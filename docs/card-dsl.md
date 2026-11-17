@@ -2581,6 +2581,37 @@ reader of the filter language (the layer pipeline, trigger filters, cost
 reductions) and by the effect-side selector. The answer moves the moment a
 counter arrives or leaves.
 
+#### "A suspended card you own" — `suspended`
+
+```jsonc
+// Rose Tyler: "…put a time counter on it for each suspended card you own…"
+{ "count": { "suspended": true, "owner": "you" } }
+
+// "Target suspended card"
+{ "id": "t1", "kind": "card_in_exile", "count": 1,
+  "selector": { "suspended": true } }
+```
+
+702.62b: a card is suspended if it is in exile, has suspend and has a time
+counter on it. `GameObject.suspended` is that reading, the same one
+`suspend.suspended_cards` and the upkeep tick make: the `suspended_by` mark that
+the suspend action and the `suspend` op write, plus a time counter. `true` only.
+
+The zone is part of the word. A selector that names no zone searches exile
+instead of the battlefield, so the key works on its own in an `objects` pool, a
+value `count` and a `card_in_exile` target. A `zone` other than `exile` is
+refused at load time, and so is the key on any target kind but `card_in_exile`.
+Exile is kept per owner, so `owner: "you"` says whose cards (`controller` names
+the same seat there); with neither, the controller's own exile is walked, as for
+any zone somebody owns.
+
+The near miss is `{"zone": "exile", "has_counters": "time"}`, which is a wider
+set: it also takes a card exiled with time counters that nothing suspended, which
+the upkeep never ticks and which is never cast. A card whose last time counter
+came off is no longer suspended either, though it may still wait on its free
+cast. Inside `any_of` the key narrows the outer selector's one zone, so it cannot
+say "target permanent or suspended card", whose two halves live in two zones.
+
 #### `entered_this_turn` — the same fact asked of **one** permanent
 
 ```jsonc

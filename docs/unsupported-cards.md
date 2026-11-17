@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**478 cards** blocked by **427** capabilities.
+**477 cards** blocked by **428** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
-| [suspended-card-selector](#suspended-card-selector) | 4 | 4274 | selector |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
@@ -68,6 +67,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
+| [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
@@ -261,6 +261,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
+| [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
 | [horse-2-2-w-horsemanship-lord-token](#horse-2-2-w-horsemanship-lord-token) | 1 | 13482 | token |
 | [human-1-1-w-ward2-token](#human-1-1-w-ward2-token) | 1 | 18598 | token |
@@ -327,6 +328,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
@@ -399,7 +401,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 1 | 13329 | engine |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
@@ -887,32 +888,6 @@ Blocks **4** cards.
   - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
   - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
   - 8+ | Flying
-
-</details>
-
-## suspended-card-selector
-
-Blocks **4** cards.
-
-- **(selector)** a selector key that matches a suspended card (702.62b: in exile, has suspend, has a time counter -- the engine's `suspended_by` mark that `suspend.suspended_cards` reads), so an effect can choose 'a suspended card you own' and remove N time counters from it
-  <br>Why the existing vocabulary won't do: selector_keys has no suspended key; `zone: exile` + `owner: you` + `has_counters: "time"` is only an approximation of 'suspended', and would also match a card exiled with time counters that is not suspended
-- **(selector)** a target spec that may pick either a permanent on the battlefield or a suspended card in exile (702.62b: exiled, has suspend, has a time counter -- the engine's `suspended_by` mark), and removing the last time counter from a suspended card this way must trigger suspend's free cast (702.62a), not only the upkeep tick
-  <br>Why the existing vocabulary won't do: selector_keys has no suspended key and a target spec has one kind/zone; `zone: exile` + `has_counters: "time"` is only an approximation, and suspend.tick alone casts the card when the last counter comes off, so an effect removal would strand it in exile
-- **(selector)** a selector key matching a card whose printed characteristics include suspend (`CardDef.suspend` is set), e.g. `has_suspend: true`, usable over an `as` binding of exiled cards, so an effect can act on 'each of those cards that has suspend' and only those
-  <br>Why the existing vocabulary won't do: selector_keys has no such key and suspend is a card-level cost key, not one of the `keywords` a `keywords` selector can read; the `suspend` op filters nothing and also grants suspend to cards that lack it (Doom's Time Platform), so applying it to all three exiled cards would suspend cards the printed text leaves alone
-- **(selector)** a selector key (usable inside a value `count`) that matches a suspended card (702.62b: in exile, has suspend, has a time counter -- the engine's `suspended_by` mark on the object), so an amount can count 'each suspended card you own'; the rest of the amount is a `sum` with `{"count": {"zone": "battlefield", "controller": "you", "has_counters": "time", "exclude_self": true}}`
-  <br>Why the existing vocabulary won't do: selector_keys has no suspended key; `zone: exile` + `owner: you` + `has_counters: "time"` only approximates 'suspended' and would also count a card exiled with time counters that is not suspended (e.g. a foretold or vanishing-leftover card). The first line is expressible as a self `buff` whose power/toughness are `counters_on` time on self_only, and the attack trigger itself is `attacks` with source self plus `add_counters`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clockspinning** (rank 4274) — `clockspinning`
-  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
-- **Ecstatic Beauty** (rank 10715) — `ecstatic_beauty`
-  - Exile the top three cards of your library. You may play those cards until end of turn. Put four time counters on each of those cards that has suspend.
-- **Amy Pond** (rank 13329) — `amy_pond`
-  - Whenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it.
-- **Rose Tyler** (rank 16751) — `rose_tyler`
-  - Bad Wolf — Whenever Rose Tyler attacks, put a time counter on it for each suspended card you own and each other permanent you control with a time counter on it.
 
 </details>
 
@@ -1740,6 +1715,24 @@ Blocks **2** cards.
 - **Hot Pursuit** (rank 6258) — `hot_pursuit`
   - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
   - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+
+</details>
+
+## suspend-cast-on-any-last-counter
+
+Blocks **2** cards.
+
+- **(engine)** suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick
+  <br>Why the existing vocabulary won't do: `suspend.tick` calls `cast_for_free` itself after its own one-counter removal; a `remove_counters` op that takes the last time counter off a suspended card would strand it in exile with zero counters, never cast
+- **(engine)** suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick or time travel
+  <br>Why the existing vocabulary won't do: `suspend.tick` and `time_travel` call `cast_suspended` themselves after their own removals; a `remove_counters` op that takes the last time counter off a suspended card strands it in exile with zero counters, never cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+- **Amy Pond** (rank 13329) — `amy_pond`
+  - Whenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it.
 
 </details>
 
@@ -4539,6 +4532,20 @@ Blocks **1** card.
 
 </details>
 
+## has-suspend-selector
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching a card whose printed characteristics include suspend (`CardDef.suspend` is set), e.g. `has_suspend: true`, usable over an `as` binding of exiled cards, so an effect can act on 'each of those cards that has suspend' and only those
+  <br>Why the existing vocabulary won't do: selector_keys has no such key and suspend is a card-level cost key, not one of the `keywords` a `keywords` selector can read; the `suspend` op filters nothing and also grants suspend to cards that lack it (Doom's Time Platform), so applying it to all three exiled cards would suspend cards the printed text leaves alone; the `suspended` selector key is not it either: it asks 702.62b's 'is suspended' (in exile, marked, with a time counter), which none of these freshly exiled cards is yet, where the printed clause asks whether the card has suspend at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ecstatic Beauty** (rank 10715) — `ecstatic_beauty`
+  - Exile the top three cards of your library. You may play those cards until end of turn. Put four time counters on each of those cards that has suspend.
+
+</details>
+
 ## hidden-card-guess
 
 Blocks **1** card.
@@ -5479,6 +5486,20 @@ Blocks **1** card.
 
 - **Necrodominance** (rank 4322) — `necrodominance`
   - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
+
+</details>
+
+## permanent-or-suspended-card-target
+
+Blocks **1** card.
+
+- **(engine)** one target spec whose pool spans a permanent on the battlefield and a suspended card in exile -- 'target permanent or suspended card' -- the `spell_or_permanent` shape with a battlefield half and an exile half read by the `suspended` selector key, offered and re-checked (608.2b) per the zone the object is in
+  <br>Why the existing vocabulary won't do: a target spec has one kind and one zone: `card_in_exile` with `suspended: true` reaches only the suspended half, `permanent` only the battlefield, and `any_of` narrows one zone's pool so it cannot join the two; two specs would be a card that targets twice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
 
 </details>
 
@@ -6515,20 +6536,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## suspend-cast-on-any-last-counter
-
-Blocks **1** card.
-
-- **(engine)** suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick
-  <br>Why the existing vocabulary won't do: `suspend.tick` calls `cast_for_free` itself after its own one-counter removal; a `remove_counters` op that takes the last time counter off a suspended card would strand it in exile with zero counters, never cast
-
-<details><summary>Cards waiting on this</summary>
-
-- **Amy Pond** (rank 13329) — `amy_pond`
-  - Whenever Amy Pond deals combat damage to a player, choose a suspended card you own and remove that many time counters from it.
 
 </details>
 

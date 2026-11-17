@@ -232,8 +232,7 @@ def suspended_cards(state: GameState, pid: int) -> list[int]:
     return [
         oid
         for oid in state.players[pid].exile
-        if state.objects[oid].suspended_by == pid
-        and state.objects[oid].counter(TIME_COUNTER) > 0
+        if state.objects[oid].suspended and state.objects[oid].suspended_by == pid
     ]
 
 

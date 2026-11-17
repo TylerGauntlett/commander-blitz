@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "suspended_card_selector",
-      "kind": "selector",
-      "what": "a selector key that matches a suspended card (702.62b: in exile, has suspend, has a time counter -- the engine's `suspended_by` mark that `suspend.suspended_cards` reads), so an effect can choose 'a suspended card you own' and remove N time counters from it",
-      "why_existing_wont_do": "selector_keys has no suspended key; `zone: exile` + `owner: you` + `has_counters: \"time\"` is only an approximation of 'suspended', and would also match a card exiled with time counters that is not suspended"
-    },
-    {
       "capability": "suspend_cast_on_any_last_counter",
       "kind": "engine",
       "what": "suspend's 'when the last time counter is removed from it, if it's exiled, you may cast it without paying its mana cost' (702.62a) must fire whenever the last time counter comes off by any road, not only during the upkeep tick",
@@ -21,7 +15,8 @@
   ],
   "closest_existing": [
     "remove_counters",
-    "suspend"
+    "suspend",
+    "suspended"
   ],
   "confidence": "high"
 }
