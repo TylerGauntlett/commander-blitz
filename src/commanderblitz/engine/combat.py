@@ -17,13 +17,14 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .characteristics import block_restrictions, chars, matches_static, protected_from
 from .costs import can_pay
-from .effects.context import EffectContext, ask_objects
+from .effects.context import EffectContext, ask_objects, ask_yes_no
 from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
 from .mana import OTHER_PAYMENT, ManaCost
 from .player_statics import (
     ALL_DEFENDERS,
     any_defender_attack_prohibition,
+    assigns_damage_as_though_unblocked,
     assigns_damage_by_toughness,
     attack_alone_forbidden,
     attack_compelled,
@@ -1216,7 +1217,7 @@ def can_block(
     # "This creature can't be blocked by Humans." A card-supplied restriction,
     # checked on the attacker because the attacker is what has it and the
     # blocker is what has the quality -- the same asymmetry as protection above.
-    for source_obj, static in block_restrictions(state, attacker_oid):
+    for _source, static in block_restrictions(state, attacker_oid):
         # "Can't be blocked by more than one creature" (Challenger Troll).
         # Asked per pair as well as on the whole declaration: once the attacker
         # has its quota no further blocker can ever make the declaration legal
@@ -1227,6 +1228,25 @@ def can_block(
             _blocker_count(state, attacker_oid, defender, excluding=blocker_oid) >= cap
         ):
             return False
+    return not blockers_filter_refuses(state, blocker_oid, attacker_oid)
+
+
+def blockers_filter_refuses(state: GameState, blocker_oid: int, attacker_oid: int) -> bool:
+    """Does a `block_restriction`'s ``blockers`` filter on the attacker refuse this blocker?
+
+    The per-pair half of `can_block`'s card-supplied restrictions, split out
+    because it needs no declaration: the CPU's `ai.strategy.board.could_block`
+    asks it while attackers are still being chosen. `max_blockers` and
+    `require_all` count a declaration and stay where one exists.
+
+    "Creatures with power less than this creature's power can't block it"
+    (Aura Gnarlid) compares against the source's power as it is now, when the
+    question is asked (509.1b) -- `characteristics.SOURCE_POWER`.
+    """
+    blocker = state.objects.get(blocker_oid)
+    if blocker is None:
+        return False
+    for source_obj, static in block_restrictions(state, attacker_oid):
         spec = static.get("blockers")
         if spec is None:
             continue
@@ -1234,13 +1254,13 @@ def can_block(
         # read, and here that default is always wrong: a blocker belongs to the
         # defending player by definition, so "you" would match nothing and the
         # restriction would silently never fire. Whose creature it is has
-        # already been settled above; this clause is only about what it *is*.
+        # already been settled by the caller; this clause is only about what it *is*.
         spec = {"controller": "any", **dict(spec)}
         # Derived, as the attacker side is: a creature some static made a Wall
         # is a Wall to "can't be blocked by Walls".
         if matches_static(state, blocker, source_obj, spec, derived=True):
-            return False
-    return True
+            return True
+    return False
 
 
 def _controls_land_type(state: GameState, pid: int, subtype: str) -> bool:
@@ -1654,6 +1674,11 @@ def deal_combat_damage(
         if not _in_combat(state, attacker_oid):
             continue
         if not _deals_damage_this_step(state, attacker_oid, first_strike_step):
+            continue
+        # 510.1c-d: "as though it weren't blocked" -- asked before the order,
+        # because a creature that takes it has no blockers to order.
+        if (yield from _ask_as_though_unblocked(state, attacker_oid)):
+            assignments.extend(_unblocked_assignments(state, attacker_oid))
             continue
         # 702.21: a blocking creature with banding takes this order away from
         # the attacking player. The automatic sort *is* the attacker's choice
@@ -2088,28 +2113,8 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
     # blocked if any of its band was, so it deals no damage to the player --
     # which is the whole defensive value of blocking a band, and the reason a
     # band is a unit rather than a convenience.
-    was_blocked = any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
-
-    if not was_blocked:
-        # 508.1: a creature attacking a planeswalker **or battle** that is still
-        # there deals its damage to that permanent instead of to its controller.
-        # If it has already left -- burned down in response, or bounced -- the
-        # attacker deals no combat damage at all rather than falling through to
-        # the player, which is 506.4c and the whole risk of the attack.
-        #
-        # One branch for both, because the difference between them is entirely
-        # downstream: `damage_permanent` reads the type and takes the amount off
-        # loyalty (306.8) or off defense (310.6). Nothing about *assigning* the
-        # damage knows which it is.
-        target = combat.attacking_permanent.get(attacker_oid)
-        if target is not None:
-            obj = state.objects.get(target)
-            if obj is None or not obj.on_battlefield:
-                return []
-            return [
-                DamageAssignment(source=attacker_oid, to_object=target, amount=power)
-            ]
-        return [DamageAssignment(source=attacker_oid, to_player=defender, amount=power)]
+    if not _was_blocked(state, attacker_oid):
+        return _unblocked_assignments(state, attacker_oid)
 
     out: list[DamageAssignment] = []
     remaining = power
@@ -2136,6 +2141,78 @@ def _attacker_assignments(state: GameState, attacker_oid: int) -> list[DamageAss
             # deals no damage at all.
             pass
     return out
+
+
+def _was_blocked(state: GameState, attacker_oid: int) -> bool:
+    """702.21e: a band is blocked as a unit, so a member nobody blocked is
+    still blocked if any of its band was."""
+    combat = state.combat
+    assert combat is not None
+    return any(combat.block_order.get(oid) for oid in combat.band_of(attacker_oid))
+
+
+def _unblocked_assignments(state: GameState, attacker_oid: int) -> list[DamageAssignment]:
+    """All of an attacker's combat damage to what it is attacking (510.1b).
+
+    508.1: a creature attacking a planeswalker **or battle** that is still
+    there deals its damage to that permanent instead of to its controller. If
+    it has already left -- burned down in response, or bounced -- the attacker
+    deals no combat damage at all rather than falling through to the player,
+    which is 506.4c and the whole risk of the attack.
+
+    One branch for both, because the difference between them is entirely
+    downstream: `damage_permanent` reads the type and takes the amount off
+    loyalty (306.8) or off defense (310.6). Nothing about *assigning* the
+    damage knows which it is.
+
+    Also the whole of a blocked creature's assignment "as though it weren't
+    blocked" (510.1c-d), which sends it to the same place.
+    """
+    combat = state.combat
+    assert combat is not None
+    power = combat_damage_amount(state, attacker_oid)
+    if power <= 0:
+        return []
+    target = combat.attacking_permanent.get(attacker_oid)
+    if target is not None:
+        obj = state.objects.get(target)
+        if obj is None or not obj.on_battlefield:
+            return []
+        return [DamageAssignment(source=attacker_oid, to_object=target, amount=power)]
+    defender = combat.attackers[attacker_oid]
+    return [DamageAssignment(source=attacker_oid, to_player=defender, amount=power)]
+
+
+def _ask_as_though_unblocked(
+    state: GameState, attacker_oid: int
+) -> Generator[Any, list[int], bool]:
+    """Does this blocked attacker assign its damage as though it weren't blocked?
+
+    Rule 510.1c-d: the option belongs to the attacking creature's controller
+    and is taken or not as combat damage is assigned. A binary choice -- all of
+    it to the player, planeswalker or battle it is attacking, or the ordinary
+    assignment among its blockers -- so it is a plain `ask_yes_no`, and nobody
+    is asked about a creature that was not blocked, that assigns no damage, or
+    that has no such static (`player_statics.assigns_damage_as_though_unblocked`).
+    Its blockers having left combat does not take the option away: it is about
+    the creature having been blocked, not about what still blocks it.
+    """
+    if not _was_blocked(state, attacker_oid):
+        return False
+    if combat_damage_amount(state, attacker_oid) <= 0:
+        return False
+    if not assigns_damage_as_though_unblocked(state, attacker_oid):
+        return False
+    obj = state.objects[attacker_oid]
+    name = state.card(attacker_oid).name
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=attacker_oid)
+    return (
+        yield from ask_yes_no(
+            ctx,
+            f"Have {name} assign its combat damage as though it weren't blocked?",
+            obj.controller,
+        )
+    )
 
 
 def end_combat(state: GameState) -> None:

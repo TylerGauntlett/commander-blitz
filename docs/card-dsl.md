@@ -1762,7 +1762,27 @@ the trigger filter and the cost-reduction count — answered by one function,
 `characteristics.enchanted_by`, from the host's end of `attached_to`. Every half
 of the answer is a pipeline input, so a static may read it (ADR 0001). The
 loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter
-and any key on the Auras but `controller`.
+and any key on the Auras but `controller` — and, in the effect selector alone,
+`exclude_self`.
+
+"Another Aura" is `{"exclude_self": true}`: the ability's own source is not
+counted among the Auras, so an Aura attached to the creature does not satisfy
+its own clause.
+
+```jsonc
+// Daybreak Coronet: "Enchant creature with another Aura attached to it"
+"targets": [{ "id": "enchanted", "kind": "permanent",
+  "selector": { "zone": "battlefield", "types": ["Creature"], "enchanted_by": { "exclude_self": true } } }]
+```
+
+`true` is the near miss: once the Coronet is attached it is an Aura on its host,
+and `true` would hold for ever. `true` is the only value; the static, trigger and
+cost-reduction filters refuse the key, since their readers do not carry the
+source. An enchant clause is standing (303.4d): `sba` re-tests the Aura's first
+target spec against its host and puts the Coronet into its graveyard once the
+other Aura leaves (704.5m; `zones.enchant_clause_holds`, ADR 0029). So the
+first target spec of an Aura holds only enchant qualities; a restriction that
+applies only as it is cast does not belong there.
 
 On a trigger watching a permanent leave the battlefield (`dies`,
 `creature_dies`, `leaves_battlefield`, `sacrificed`) the key looks back in time
@@ -1896,8 +1916,10 @@ works in a selector, a static's `affects` and its counting filters. The loader
 refuses an empty or non-filter value, a host `zone` off the battlefield, a host
 filter nested inside the host filter, `attached` beside it (which names one
 host already), the pool-shaping keys (`target`, `binding`, `count`, …) inside
-it, and the key in a trigger filter and a cost reduction, whose matchers do not
-read it.
+it, and the key in a cost reduction and in the filter of any trigger but
+`becomes_attached`, whose matchers do not read it. On `becomes_attached` it asks
+the host the attachment became attached to: see
+[the cookbook](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control).
 
 | Near miss | Why not |
 |---|---|
@@ -2684,7 +2706,11 @@ The clause is `{"op": ">=", "value": 4}` — the same spelling the effect-side
 selector and a trigger filter already take, down to the defaulted `">="` and
 the bare-integer shorthand (`"power": 4` is equality). `value` is a plain
 integer here and not a value expression: a filter tests one object and has no
-source permanent to measure an expression against.
+source permanent to measure an expression against. The one exception is
+`{"power_of": {"self": true}}` — "this creature's power" — as the `power`
+clause's value in a `block_restriction`'s `blockers`, which is read outside the
+pipeline ([Block restrictions](card-dsl-cookbook.md#block-restrictions)); every
+other static filter refuses it at load time.
 
 **This is the one derived characteristic in `static_filter_keys`, and it is in
 there under a restriction rather than as an exception.** `entered_this_turn`
@@ -4346,7 +4372,10 @@ keyword — see the cookbook's
 ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
 `flash_cost` is the same permission with a price, paid only by a cast made
 outside sorcery timing — see the cookbook's
-[Flash for a price](card-dsl-cookbook.md#flash-for-a-price).
+[Flash for a price](card-dsl-cookbook.md#flash-for-a-price). `flash_if_targets`
+is the same permission conditioned on the spell's own targets, a cast outside
+sorcery timing offered only at a matching target — see
+[Flash if it targets](card-dsl-cookbook.md#flash-if-it-targets).
 
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read
@@ -6413,7 +6442,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·

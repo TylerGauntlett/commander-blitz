@@ -90,7 +90,7 @@ def own_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> in
     aimed = spec.get("targeting")
     if aimed is None:
         return reduction_amount(state, pid, spec)
-    if targets is not None and not _aims_at_match(state, pid, aimed, targets):
+    if targets is not None and not any_target_matches(state, pid, aimed, targets):
         return 0
     return reduction_amount(state, pid, {k: v for k, v in spec.items() if k != "targeting"})
 
@@ -99,7 +99,7 @@ def every_target_matches(state: GameState, pid: int, filt: Mapping[str, Any], ta
     """Whether the tuple has an object target and every object target matches.
 
     Wayta, Trainer Prodigy: "This ability costs {2} less to activate if it
-    targets **two creatures you control**." `_aims_at_match` asks whether any
+    targets **two creatures you control**." `any_target_matches` asks whether any
     one target matches, which on Wayta is always true -- its first target is a
     creature you control -- so this is the gate asked of all of them. A player
     target never matches, as there.
@@ -120,7 +120,10 @@ def targets_own_discount(card: CardDef) -> bool:
     return bool(card.cost_reduction) and "targeting" in card.cost_reduction
 
 
-def _aims_at_match(state: GameState, pid: int, filt: Mapping[str, Any], targets) -> bool:
+def any_target_matches(state: GameState, pid: int, filt: Mapping[str, Any], targets) -> bool:
+    """Whether some object in the tuple matches the filter ("if it targets an
+    attacking creature", "if it targets a commander"). ``controller`` defaults
+    to ``any``, and a player target never matches."""
     filt = {"controller": "any", **filt}
     for ref in targets:
         if getattr(ref, "kind", "") != "object":

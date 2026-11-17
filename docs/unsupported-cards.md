@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**476 cards** blocked by **426** capabilities.
+**473 cards** blocked by **423** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
-| [block-restriction-relative-power](#block-restriction-relative-power) | 2 | 6335 | static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
@@ -81,7 +80,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
-| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
@@ -228,7 +226,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
-| [flash-if-targets](#flash-if-targets) | 1 | 1651 | engine |
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretell](#foretell) | 1 | 9914 | op |
@@ -1273,25 +1270,6 @@ Blocks **2** cards.
 
 </details>
 
-## block-restriction-relative-power
-
-Blocks **2** cards.
-
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's current power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (and reads base P/T); Den Protector's power changes with its megamorph +1/+1 counter and any pump, so no constant is correct. Megamorph (`morph` + `morph_counter`) and the `turned_face_up` trigger are expressible; only this line is blocked
-- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Den Protector** (rank 6335) — `den_protector`
-  - Creatures with power less than this creature's power can't block it.
-- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
-  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
-
-</details>
-
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -1957,20 +1935,6 @@ Blocks **1** card.
   - Nonland permanents you control and permanent spells you control are enchantments in addition to their other types.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever you cast an enchantment spell, put a number of +1/+1 counters equal to that spell's mana value on up to one target creature.
-
-</details>
-
-## add-mana-on-tap-any-color
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver and payment treating it as a wildcard pip
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader (_validate_add_mana_on_tap) refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked. A literal '{G}' or a chosen colour would each be a different, narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fertile Ground** (rank 1052) — `fertile_ground`
-  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
 
 </details>
 
@@ -3352,7 +3316,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Creatures with power less than this creature's power can't block it.
   - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>
@@ -4058,20 +4021,6 @@ Blocks **1** card.
   - Look at the cards in the other pile.
   - You may cast a spell from among them without paying its mana cost.
   - Put the rest into your hand.
-
-</details>
-
-## flash-if-targets
-
-Blocks **1** card.
-
-- **(engine)** a card-level conditional flash permission whose condition reads the targets chosen for the spell itself: the card may be cast at instant speed only when its chosen target (here the Aura's enchant target) matches a selector such as `is_commander: true`. The cast must allow the card to be begun outside sorcery timing, then verify at target selection (601.2c) that the target matches, and reject/rewind the cast if it does not -- the same shape Ranger's Guile-style 'if it targets' riders and Nature's Way/Savage Smash-adjacent 'cast as though it had flash if' printings need
-  <br>Why the existing vocabulary won't do: `flash` is unconditional; the `cast_as_though_flash` static is a player-wide permission whose `affects_spells` filter reads only the printed characteristics of the face being cast and whose `condition` reads the board (static_condition_keys), never the spell's chosen targets; `grant_flash_permission` is a one-shot op from another source. `casting._timing_ok` decides timing from the CardDef and player statics before targets exist, so nothing can make timing depend on what the spell targets. Writing plain `flash` would be strictly better than the printed card (instant-speed Aura on any creature)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Timely Ward** (rank 1651) — `timely_ward`
-  - You may cast this spell as though it had flash if it targets a commander.
 
 </details>
 

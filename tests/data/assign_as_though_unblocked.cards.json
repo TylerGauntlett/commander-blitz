@@ -1,0 +1,46 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_assign_as_though_unblocked.py. t_dau_thorn is Thorn Elemental's line on a 3/3 (self_only); t_dau_might is Indomitable Might's line alone, on an Aura (attached).",
+  "cards": [
+    {
+      "id": "t_dau_thorn",
+      "name": "Test Unblocked Thorn",
+      "oracle_text": "You may have this creature assign its combat damage as though it weren't blocked.",
+      "mana_cost": "{2}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may have this creature assign its combat damage as though it weren't blocked.",
+          "effect": "assign_damage_as_though_unblocked",
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_dau_might",
+      "name": "Test Unblocked Might",
+      "oracle_text": "Enchant creature\nEnchanted creature's controller may have it assign its combat damage as though it weren't blocked.",
+      "mana_cost": "{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {"id": "enchanted", "kind": "permanent", "selector": {"types": ["Creature"], "zone": "battlefield"}}
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature's controller may have it assign its combat damage as though it weren't blocked.",
+          "effect": "assign_damage_as_though_unblocked",
+          "affects": {"attached": true}
+        }
+      ]
+    }
+  ]
+}

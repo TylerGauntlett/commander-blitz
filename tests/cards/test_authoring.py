@@ -1009,6 +1009,103 @@ class TestTheOwnArtifactTargetProp:
         assert not self._own_artifacts(V.build_sandbox(merged, card.id))
 
 
+class TestTheEnchantedCreatureProp:
+    """An Aura that must enchant a creature already enchanted needs one.
+
+    No permanent in the position wears an Aura, so "Enchant creature with
+    another Aura attached to it" (Daybreak Coronet) had no legal target (601.2c,
+    303.4a) and would fail gate 4 as "not playable in the sandbox". Your first
+    creature wears the quiet Aura token `dress_own_creature` brings, and only
+    for a card whose required target is that creature.
+    """
+
+    CORONET = {
+        "id": "auto_test_coronet",
+        "name": "Auto Test Coronet",
+        "oracle_text": "Enchant creature with another Aura attached to it\nEnchanted creature gets +3/+3.",
+        "mana_cost": "{W}{W}",
+        "types": ["Enchantment"],
+        "subtypes": ["Aura"],
+        "colors": ["W"],
+        "targets": [
+            {
+                "id": "enchanted",
+                "kind": "permanent",
+                "selector": {
+                    "zone": "battlefield",
+                    "types": ["Creature"],
+                    "enchanted_by": {"exclude_self": True},
+                },
+            }
+        ],
+        "abilities": [
+            {
+                "kind": "static",
+                "text": "Enchanted creature gets +3/+3.",
+                "effect": "buff",
+                "affects": {"attached": True},
+                "power": {"const": 3},
+                "toughness": {"const": 3},
+            }
+        ],
+    }
+
+    def _merged(self, pool: CardRegistry, payload: dict) -> tuple[CardRegistry, object]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def _auras(self, game) -> list:
+        return [o for o in game.state.battlefield_objects(0) if o.attached_to is not None]
+
+    def test_it_is_cast_onto_the_enchanted_creature(self, hand_written):
+        verdict = V.verify(
+            self.CORONET,
+            {
+                "zone": "battlefield",
+                "battlefield_count": 34,
+                "target_pt_delta": {"power": 3, "toughness": 3},
+            },
+            hand_written,
+        )
+        assert verdict.ok, str(verdict)
+
+    def test_the_prop_is_one_quiet_aura_on_a_creature_of_yours(self, hand_written):
+        merged, card = self._merged(hand_written, self.CORONET)
+        assert V.must_target_enchanted_creature(card)
+        game = V.build_sandbox(merged, card.id)
+        (aura,) = self._auras(game)
+        assert merged.get(game.state.objects[aura.attached_to].def_id).is_creature
+        prop = merged.get(aura.def_id)
+        assert prop.is_aura and not any(a.static or a.is_activated for a in prop.abilities)
+        assert len(game.state.battlefield_objects(0)) == 33
+        assert len(game.state.battlefield_objects(1)) == 6
+
+    def test_the_pick_is_the_same_in_both_pools(self, hand_written, pool):
+        """A token, so `--collect` and the full pool measure the same board."""
+        assert V.quiet_aura_token(hand_written) == V.quiet_aura_token(pool) is not None
+
+    @pytest.mark.parametrize(
+        "selector",
+        [
+            {"zone": "battlefield", "types": ["Creature"]},
+            {"zone": "battlefield", "types": ["Creature"], "enchanted_by": False},
+            {"zone": "battlefield", "types": ["Creature"], "controller": "opponent", "enchanted_by": True},
+            {"zone": "battlefield", "types": ["Creature"], "enchanted_by": True, "tapped": True},
+        ],
+        ids=["plain", "not_enchanted", "an_opponents", "a_question_the_prop_may_fail"],
+    )
+    def test_a_card_that_does_not_need_it_sees_the_old_board(self, hand_written, selector):
+        payload = {
+            **self.CORONET,
+            "id": "auto_test_coronet_variant",
+            "name": "Auto Test Coronet Variant",
+            "targets": [{**self.CORONET["targets"][0], "selector": selector}],
+        }
+        merged, card = self._merged(hand_written, payload)
+        assert not V.must_target_enchanted_creature(card)
+        assert not self._auras(V.build_sandbox(merged, card.id))
+
+
 class TestTheColorlessPipGetsWastes:
     """A ``{C}`` pip needs a land that makes colorless mana.
 

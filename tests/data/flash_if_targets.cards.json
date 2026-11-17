@@ -1,0 +1,32 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_flash_if_targets.py. t_fit_ward is Timely Ward on a one-mana Aura: castable as though it had flash if it targets a commander; enchanted creature has indestructible.",
+  "cards": [
+    {
+      "id": "t_fit_ward",
+      "name": "Test Flash If Targets Ward",
+      "oracle_text": "You may cast this spell as though it had flash if it targets a commander.\nEnchant creature\nEnchanted creature has indestructible.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "flash_if_targets": {"is_commander": true},
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"types": ["Creature"], "zone": "battlefield"}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "grant_keyword",
+          "affects": {"attached": true},
+          "keywords": ["indestructible"],
+          "text": "Enchanted creature has indestructible."
+        }
+      ]
+    }
+  ]
+}

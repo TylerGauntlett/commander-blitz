@@ -208,6 +208,33 @@ class TestAnafenzasSpiritIsATwoTwoWhite:
         assert not other.colors
 
 
+class TestTheAfterlifeSpiritIsWhiteAndBlack:
+    """Afterlife (702.135a): *"When this creature dies, create a 1/1 **white and
+    black** Spirit creature token with flying."* Tithe Taker is the witness.
+
+    `spirit_1_1_w_flying` is the right body with the right keyword and half the
+    colours. A mono-white token is a different object to every "black creature"
+    filter and every colour count, so it is not the afterlife token.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("spirit_1_1_wb_flying") is not None
+
+    def test_it_is_a_one_one_white_and_black_flying_spirit(self, pool):
+        spirit = pool.get("spirit_1_1_wb_flying")
+        assert (spirit.power, spirit.toughness) == (1, 1)
+        assert sorted(spirit.colors) == ["B", "W"]
+        assert "Spirit" in spirit.subtypes
+        assert "flying" in spirit.keywords
+        assert spirit.is_creature and spirit.is_token
+
+    def test_the_white_spirit_is_still_a_separate_token(self, pool):
+        """Nobody may "consolidate" these two: the colour is the point."""
+        other = pool.get("spirit_1_1_w_flying")
+        assert other is not None
+        assert sorted(other.colors) == ["W"]
+
+
 class TestTheAberrationsAngelsAreColorlessEldrazi:
     """Angelic Aberration: *"Create that many **4/4 colorless Eldrazi Angel**
     creature tokens with flying and vigilance."*
@@ -3091,3 +3118,103 @@ class TestNettlingNuisancesPirateCantBlock:
         other = pool.get("pirate_2_2_b_menace")
         assert (other.power, other.toughness) == (2, 2)
         assert "menace" in other.keywords
+
+
+class TestCarefulCultivationsMonkTapsForGreen:
+    """Careful Cultivation's channel: *"Create a **1/1 green Human Monk**
+    creature token with '{T}: Add {G}.'"*
+
+    `monk_1_1_w_prowess` is the pool's other Monk and is white with prowess and
+    no mana ability; handing it over would turn a ramp body into a combat one.
+    The mana ability is the token's whole point.
+    """
+
+    def test_it_is_a_one_one_green_human_monk(self, pool):
+        token = pool.get("human_monk_1_1_g_mana")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Human", "Monk"]
+        assert not token.keywords
+
+    def test_it_taps_for_one_green(self, pool):
+        token = pool.get("human_monk_1_1_g_mana")
+        [ability] = token.abilities
+        assert ability.is_mana_ability
+        assert [e["op"] for e in ability.effects] == ["add_mana"]
+        assert ability.effects[0]["mana"] == "{G}"
+
+    def test_the_white_prowess_monk_is_still_a_separate_token(self, pool):
+        other = pool.get("monk_1_1_w_prowess")
+        assert list(other.colors) == ["W"]
+        assert "Human" not in other.subtypes
+
+
+class TestTheRolesAreDistinctAuras:
+    """Gylwain, Casting Director; Giant Inheritance; Syr Armont; Ellivere of the
+    Wild Court: *"create a **Royal / Sorcerer / Monster / Virtuous Role**
+    token attached to ..."*
+
+    Every Role is a colorless Aura Role (so 704.5y keeps one per controller on a
+    creature), and each prints a different rider. `wicked_role` is the near
+    miss for all four: a flat +1/+1 with a death trigger, so handing it over
+    drops trample, ward, the scry trigger or the enchantment count.
+    """
+
+    @pytest.mark.parametrize(
+        "token_id", ["monster_role", "royal_role", "sorcerer_role", "virtuous_role"]
+    )
+    def test_it_is_a_colorless_aura_role(self, pool, token_id):
+        token = pool.get(token_id)
+        assert token is not None and token.is_token
+        assert list(token.types) == ["Enchantment"]
+        assert sorted(token.subtypes) == ["Aura", "Role"]
+        assert not token.colors
+
+    def test_the_monster_role_grants_trample(self, pool):
+        effects = {a.static.get("effect"): a.static for a in pool.get("monster_role").abilities}
+        assert effects["grant_keyword"]["keywords"] == ["trample"]
+        assert effects["buff"]["power"] == {"const": 1}
+
+    def test_the_royal_role_grants_ward_one(self, pool):
+        effects = {a.static.get("effect"): a.static for a in pool.get("royal_role").abilities}
+        assert effects["ward"]["cost"] == {"mana": "{1}"}
+
+    def test_the_sorcerer_role_grants_an_attack_scry(self, pool):
+        effects = {a.static.get("effect") for a in pool.get("sorcerer_role").abilities}
+        assert effects == {"buff", "grant_ability"}
+
+    def test_the_virtuous_role_counts_enchantments(self, pool):
+        [buff] = pool.get("virtuous_role").abilities
+        assert buff.static["power"]["count"]["types"] == ["Enchantment"]
+
+    def test_the_wicked_role_is_still_a_separate_token(self, pool):
+        role = pool.get("wicked_role")
+        assert {a.kind for a in role.abilities} == {"static", "triggered"}
+
+
+class TestTheWhiteOxIsATwoFour:
+    """Ox Drover and Liberated Livestock: *"create a **2/4 white Ox** creature
+    token."* `ox_2_2_w` is the near miss, and two toughness is the difference
+    between a wall and a chump."""
+
+    def test_it_is_a_two_four_white_ox(self, pool):
+        token = pool.get("ox_2_4_w")
+        assert (token.power, token.toughness) == (2, 4)
+        assert list(token.colors) == ["W"] and list(token.subtypes) == ["Ox"]
+
+    def test_the_two_two_ox_is_still_a_separate_token(self, pool):
+        assert (pool.get("ox_2_2_w").power, pool.get("ox_2_2_w").toughness) == (2, 2)
+
+
+class TestLiberatedLivestocksCatHasLifelink:
+    """Liberated Livestock: *"a **1/1 white Cat** creature token with
+    lifelink."* `cat_1_1_w` is the same body without the keyword."""
+
+    def test_it_is_a_one_one_white_cat_with_lifelink(self, pool):
+        token = pool.get("cat_1_1_w_lifelink")
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.subtypes) == ["Cat"] and list(token.keywords) == ["lifelink"]
+
+    def test_the_plain_cat_is_still_a_separate_token(self, pool):
+        assert not pool.get("cat_1_1_w").keywords

@@ -528,6 +528,12 @@ STATIC_EFFECTS = frozenset(
         # power itself is unchanged for every other reader, so `buff` and
         # `set_pt` would print a different card.
         "combat_damage_by_toughness",
+        # Thorn Elemental, Lone Wolf, Siege Behemoth, Indomitable Might: "you
+        # may have it assign its combat damage as though it weren't blocked"
+        # (510.1c-d). Read by `player_statics.assigns_damage_as_though_unblocked`
+        # from `combat.deal_combat_damage`, which asks the creature's controller.
+        # Not a keyword: the option is where damage goes, not a characteristic.
+        "assign_damage_as_though_unblocked",
         # Unleash, and the "can't block" printed on aggressive commons. The
         # mirror of `cant_attack`, read by `combat.can_block`, and a static
         # rather than a keyword for the same reason `block_restriction` is: a
@@ -1822,14 +1828,17 @@ STATIC_VALUE_KEYS = (
 #: These six change a number and return. Anything else is refused at load, which
 #: is the difference between a card that will not compile and a game that locks
 #: up the first time somebody taps a Talisman.
-#: The classes of activated ability an `ability_cost_reduction` may name.
+#: The classes of activated ability an `ability_cost_reduction` or
+#: `ability_cost_increase` may name.
 #:
 #: Each is a question the engine can actually answer about a compiled
 #: `Ability` -- `equip` reads `Ability.is_equip`, `any` is every activated
-#: ability ("the first activated ability you activate", Professor Hojo) -- and
-#: a class with no marker behind it would load and match nothing, which is the
-#: printed line silently not happening.
-ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
+#: ability ("the first activated ability you activate", Professor Hojo), and
+#: `non_mana` is every activated ability that is not a mana ability, read
+#: against `Ability.is_mana_ability` (Tithe Taker's "unless they're mana
+#: abilities", 605) -- and a class with no marker behind it would load and
+#: match nothing, which is the printed line silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip", "any", "non_mana"})
 
 #: The `targeting` keys an `ability_cost_reduction` with
 #: `first_during_your_turn` may read. "The **first** activated ability … that
@@ -1897,6 +1906,25 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 #: -- `zones.offer_named_host`. Every other arrival of an Aura chooses its host
 #: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
+
+#: The keys an arrival's ``aura_host`` filter may use: "Only **creatures** can
+#: be enchanted this way" (Retether). It narrows the host an arriving Aura
+#: chooses (`zones.offer_aura_host`) to the permanents also matching it, so it
+#: is read on the ops in `HOST_NAMED_OPS` and describes a permanent by what it
+#: is and who controls it -- nothing about the arrival, a binding or a target,
+#: which would make it a named host rather than a restriction on a choice.
+AURA_HOST_KEYS = frozenset(
+    {
+        "controller",
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "not_subtypes",
+        "supertypes",
+        "colors",
+    }
+)
 
 #: The one non-string ``counter`` an ``add_counters`` may name: "the same
 #: **kind** of counters" (Captain Marvel, Apex Avenger), the kind the

@@ -2115,6 +2115,37 @@ def parity_matches(value: int, spec: Any) -> bool | None:
     return value % 2 == PARITIES.index(parity)
 
 
+#: "Creatures with power less than **this creature's power** can't block it"
+#: (Aura Gnarlid, Den Protector): the one non-integer ``value`` a static
+#: filter's ``power`` comparison takes, spelled the way the effect-side value
+#: language spells "this creature's power". The loader admits it only in
+#: `block_restriction`'s ``blockers``; :func:`_against_source` says why.
+SOURCE_POWER: Mapping[str, Any] = {"power_of": {"self": True}}
+
+
+def _against_source(state: GameState, source: GameObject, spec: Any, *, derived: bool) -> Any:
+    """``spec`` with a `SOURCE_POWER` value replaced by the source's power now.
+
+    The source's power is a layer **output** -- counters, pumps, Aura Gnarlid's
+    own "+1/+1 for each Aura" -- so only a reader outside the pipeline may ask
+    for it: one passing ``derived``, which already reads :func:`chars` for the
+    object under test and so cannot recurse into the pipeline. A layered
+    static's filter asking it would be one static reading another's output,
+    the cycle `STATIC_FILTER_KEYS` exists to forbid, so that is a `DslError`
+    rather than a silent read of printed power. The loader refuses it first.
+    """
+    if not isinstance(spec, Mapping) or not isinstance(spec.get("value"), Mapping):
+        return spec
+    if dict(spec["value"]) != SOURCE_POWER:
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    if not derived:
+        raise DslError(
+            "a comparison against the source's power is read only outside the "
+            "layer pipeline (block_restriction 'blockers')"
+        )
+    return {**spec, "value": chars(state, source.oid).power}
+
+
 def compare_pt(value: int, spec: Any) -> bool:
     """A filter's ``power``/``toughness`` clause: ``{"op": ">=", "value": 4}``.
 
@@ -2126,7 +2157,9 @@ def compare_pt(value: int, spec: Any) -> bool:
     ``value`` is a plain integer rather than a value expression: the static
     value language needs a source permanent to measure against, and this is a
     per-object test that has only the object.  The loader enforces that, so a
-    non-integer reaching here means the two languages have drifted.
+    non-integer reaching here means the two languages have drifted. The one
+    exception, `SOURCE_POWER`, is resolved to an integer by the static matcher,
+    which has the source, before this is asked.
 
     Exported unmangled because `cost_reduction._object_matches` -- the reader of
     this key that runs *outside* the pipeline, against derived characteristics
@@ -2140,7 +2173,12 @@ def compare_pt(value: int, spec: Any) -> bool:
         raise DslError(f"bad power/toughness comparison {spec!r}")
     if (parity := parity_matches(value, spec)) is not None:
         return parity
-    return _compare(str(spec.get("op", ">=")), value, int(spec.get("value", 0)))
+    other = spec.get("value", 0)
+    if isinstance(other, bool) or not isinstance(other, int):
+        # `SOURCE_POWER` is resolved by `_matches_wherever` before it gets here;
+        # any other reader meeting it is a filter the loader should have refused.
+        raise DslError(f"bad power/toughness comparison {spec!r}")
+    return _compare(str(spec.get("op", ">=")), value, other)
 
 
 def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
@@ -2901,7 +2939,9 @@ def counters_of_kind(obj: GameObject, kind: str) -> int:
     return obj.counter(kind)
 
 
-def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
+def enchanted_by(
+    state: GameState, oid: int, spec: Any, controller: int, *, source_oid: int | None = None
+) -> bool:
     """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
 
     "Destroy all creatures that **aren't enchanted**" (Winds of Rath),
@@ -2913,6 +2953,12 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     the player the filter is read for. A player's Curse is attached to a seat,
     not to a permanent, and enchants no permanent.
 
+    ``{"exclude_self": true}`` in the filter leaves ``source_oid`` -- the
+    ability's own source -- out of the Auras counted: "enchant creature with
+    **another** Aura attached to it" (Daybreak Coronet), which its own Aura
+    attached to the creature must not satisfy. Only the effect selector writes
+    it (`selectors.validate_enchanted_by_key`).
+
     Answered by walking the battlefield for attachments, because attachment is
     stored one way -- on the Aura, as `attached_to` -- the walk `modified`
     makes in `selectors._is_modified`. An Aura is told by its printed face or by
@@ -2922,7 +2968,10 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     **input**, so a static's filter can read it without depending on another
     static's output (ADR 0001).
     """
-    return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
+    excluding = (
+        source_oid if isinstance(spec, Mapping) and spec.get("exclude_self") else None
+    )
+    return enchanted_by_answer(aura_controllers(state, oid, excluding=excluding), spec, controller)
 
 
 def is_equipped(state: GameState, oid: int) -> bool:
@@ -2972,7 +3021,7 @@ def is_modified_printed(state: GameState, obj: GameObject, controller: int) -> b
     return enchanted_by(state, obj.oid, {"controller": "you"}, controller)
 
 
-def aura_controllers(state: GameState, oid: int) -> list[int]:
+def aura_controllers(state: GameState, oid: int, *, excluding: int | None = None) -> list[int]:
     """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
 
     The one place an Aura is told from any other attachment, for both readers of
@@ -2982,11 +3031,12 @@ def aura_controllers(state: GameState, oid: int) -> list[int]:
     event as ``had_auras`` -- the last-known information (603.10a) that "whenever
     an enchanted creature dies" and "for each Aura you controlled that was
     attached to it" (Hateful Eidolon) read once the Auras have fallen off.
+    ``excluding`` is an Aura left out of the count: "another Aura".
     """
     seats: list[int] = []
     for aura_oid in state.battlefield:
         aura = state.objects.get(aura_oid)
-        if aura is None or aura.attached_to != oid:
+        if aura is None or aura.attached_to != oid or aura_oid == excluding:
             continue
         if not (state.card_of(aura).is_aura or aura.cast_bestowed or aura.became_aura):
             continue
@@ -3237,7 +3287,7 @@ def _matches_wherever(
     # restriction; `_base_pt` is the whole of it.
     # A `derived` reader is outside the pipeline and reads the real size.
     if (spec := selector.get("power")) is not None and not compare_pt(
-        (size or _base_pt(state, obj))[0], spec
+        (size or _base_pt(state, obj))[0], _against_source(state, source, spec, derived=derived)
     ):
         return False
     if (spec := selector.get("toughness")) is not None and not compare_pt(

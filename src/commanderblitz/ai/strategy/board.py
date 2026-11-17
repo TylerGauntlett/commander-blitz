@@ -13,7 +13,12 @@ from collections.abc import Iterable, Iterator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from commanderblitz.engine.characteristics import chars, protected_from
-from commanderblitz.engine.combat import block_prohibited, can_block, unblockable
+from commanderblitz.engine.combat import (
+    block_prohibited,
+    blockers_filter_refuses,
+    can_block,
+    unblockable,
+)
 from commanderblitz.engine.costs import produced_symbols
 from commanderblitz.engine.enums import Keyword
 from commanderblitz.engine.player_statics import block_forbidden, block_only_refused
@@ -165,10 +170,11 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
     blocker -- which is why the classic agent saw an empty board in front of
     every attack and swung into whatever was waiting. This is the same set of
     questions about the two creatures, without the declaration: tapped, can't
-    block, "can block only …", unblockable, protection, and the evasion
-    keywords. Landwalk and
-    card-specific "can't be blocked by Humans" are left out; they are rare, and
-    getting them wrong only makes the agent a little more careful.
+    block, "can block only …", unblockable, protection, a `block_restriction`'s
+    ``blockers`` filter ("can't be blocked by Humans", "…by creatures with power
+    less than this creature's power"), and the evasion keywords. Landwalk and
+    the declaration-counting `max_blockers`/`require_all` are left out; they are
+    rare, and getting them wrong only makes the agent a little more careful.
     """
     combat = state.combat
     if combat is not None and attacker in combat.attackers:
@@ -186,6 +192,8 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
     if Keyword.DECAYED.value in bc.keywords:
         return False
     if unblockable(state, attacker, blocker) or protected_from(state, attacker, blocker):
+        return False
+    if blockers_filter_refuses(state, blocker, attacker):
         return False
     if Keyword.FLYING.value in ac.keywords and not (
         Keyword.FLYING.value in bc.keywords or Keyword.REACH.value in bc.keywords

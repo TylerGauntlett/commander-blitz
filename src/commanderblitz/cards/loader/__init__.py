@@ -84,6 +84,7 @@ from commanderblitz.engine.triggers import (
     STATE_TRIGGER,
     TRIGGER_EVENTS,
     validate_face_down_trigger,
+    validate_host_filter,
     validate_trigger_filter,
 )
 
@@ -114,6 +115,7 @@ from .mana import (
 from .statics import (
     _validate_cast_zone_keys,
     _validate_cost_reduction,
+    _validate_reduction_targeting,
     _validate_static_condition,
     _validate_static_count_filter,
     _validate_static_value,
@@ -1304,6 +1306,48 @@ def _compile_flash_cost(model: CardModel, where: str) -> Cost | None:
             f"'as_though_flash': true"
         )
     return cost
+
+
+def _compile_flash_if_targets(model: CardModel, where: str) -> dict[str, Any] | None:
+    """The filter the card's own conditional flash permission asks of its
+    targets, or ``None``.
+
+    "You may cast this spell as though it had flash if it targets a commander"
+    (Timely Ward). Every refusal is a card that would load and play differently
+    from the printed one: a permission that is never needed (the card may
+    already be cast at instant speed), one beside a second card-level flash
+    permission that would always answer first, or one with no targets to read.
+    """
+    filt = model.flash_if_targets
+    if filt is None:
+        return None
+    field = f"{where}.flash_if_targets"
+    if model.as_though_flash or model.flash_cost is not None:
+        raise DslError(
+            f"{field}: not beside 'as_though_flash' or 'flash_cost' -- the card's "
+            f"own flash permission is one of the three"
+        )
+    if CardType.INSTANT.value in model.types or Keyword.FLASH.value in model.keywords:
+        raise DslError(
+            f"{field}: an instant or a card with flash is castable at instant "
+            f"speed already, so this condition would never be asked"
+        )
+    if CardType.LAND.value in model.types:
+        raise DslError(f"{field}: a land is played, not cast")
+    if not model.targets:
+        # The condition is read against the targets the cast chose (601.2c); a
+        # card with none would load and never once be castable at instant speed.
+        raise DslError(f"{field}: the card declares no targets for the condition to read")
+    if model.strive is not None:
+        # `casting._priced_tuples` re-enumerates a strive card's targets per
+        # count rather than pricing the tuples it is handed, so the condition's
+        # filtering would be undone on every line.
+        raise DslError(
+            f"{field}: not beside strive, which is priced per target count "
+            f"rather than per tuple"
+        )
+    _validate_reduction_targeting(filt, field)
+    return dict(filt)
 
 
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
@@ -2624,6 +2668,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"charges something"
             )
     flash_cost = _compile_flash_cost(model, where)
+    flash_if_targets = _compile_flash_if_targets(model, where)
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2831,6 +2876,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         as_though_flash=model.as_though_flash,
         flash_cost=flash_cost,
+        flash_if_targets=flash_if_targets,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,
@@ -3704,7 +3750,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(implemented: {sorted(TRIGGER_EVENTS)})"
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
-        validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        # "…becomes attached to **a creature you control**": the host filter,
+        # refused off `HOST_FILTER_TRIGGERS` and otherwise held to the trigger
+        # filter's list on its own, beside the attachment's filter.
+        validate_host_filter(
+            model.trigger.event, model.trigger.filter, f"{where}.trigger.filter"
+        )
+        validate_trigger_filter(
+            {k: v for k, v in (model.trigger.filter or {}).items() if k != "attached_to"},
+            f"{where}.trigger.filter",
+        )
         validate_face_down_trigger(
             model.trigger.event, model.trigger.filter, f"{where}.trigger.filter"
         )
@@ -5016,8 +5071,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so
-        # the check costs nothing and the loop stays one list.
-        _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
+        # the check costs nothing and the loop stays one list. `blockers` alone
+        # may compare against the source's power (Aura Gnarlid): it is read
+        # outside the layer pipeline, and only on a `block_restriction`.
+        _check_pt_keys(
+            getattr(model, key, None), f"{where}.{key}", source_power=key == "blockers"
+        )
         validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
         validate_enchanted_by_key(getattr(model, key, None), f"{where}.{key}")
         validate_has_counters_key(getattr(model, key, None), f"{where}.{key}")
@@ -5156,6 +5215,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: combat_damage_by_toughness needs an 'affects' filter -- "
             f'e.g. {{"types": ["Creature"]}} for each creature you control'
+        )
+    if model.effect == "assign_damage_as_though_unblocked" and model.affects is None:
+        # A missing filter matches nothing, so the option would load, print
+        # and never be offered. Thorn Elemental's is `{"self_only": true}`,
+        # Indomitable Might's `{"attached": true}`.
+        raise DslError(
+            f"{where}: assign_damage_as_though_unblocked needs an 'affects' filter -- "
+            f'{{"self_only": true}} for the creature that carries it, '
+            f'{{"attached": true}} for an Aura or Equipment'
         )
     if model.effect == "cant_attack_you" and model.affects is None:
         # Same refusal, one step further: a missing filter matches nothing, so a
@@ -5712,6 +5780,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.affects_abilities: unknown ability classes "
                 f"{sorted(unknown)} (implemented: {sorted(ABILITY_CLASS_KEYS)})"
             )
+        if model.affects_abilities.get("non_mana"):
+            # Read only by the tax: no printed discount says "unless they're
+            # mana abilities", and one that loaded would have no test behind it.
+            raise DslError(
+                f"{where}.affects_abilities: 'non_mana' is an ability_cost_increase "
+                f"class (Tithe Taker); ability_cost_reduction does not read it"
+            )
         if model.amount is None:
             raise DslError(
                 f"{where}: ability_cost_reduction needs an 'amount' -- how much "
@@ -5823,9 +5898,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             # reaching this static, so "every activated ability" with nothing
             # else said would tax some of them and not others. A `targeting`
             # clause makes the gap moot: a mana ability has no targets (605.1a).
+            # So does `non_mana` -- Tithe Taker's "unless they're mana
+            # abilities" -- which `ability_mana_tax` reads against
+            # `Ability.is_mana_ability`, so no mana ability is taxed on either
+            # path and the solver's silence is the printed answer.
             raise DslError(
                 f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
-                f"mana abilities are priced where this static is not read"
+                f"mana abilities are priced where this static is not read; "
+                f"'non_mana' is every activated ability but those (605)"
             )
         if model.amount is not None:
             raise DslError(

@@ -64,6 +64,7 @@ PRECONS = {
     "tdc_abzan_armor",
     "tdc_mardu_surge",
     "woc_fae_dominion",
+    "woc_virtue_and_valor",
 }
 
 #: Every deck a player sees on the shelf.

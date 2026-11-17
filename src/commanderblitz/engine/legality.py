@@ -19,6 +19,8 @@ from .casting import (
     _cast_actions,
     _timing_ok,
     flash_cost_owed,
+    flash_if_targets_ok,
+    flash_if_targets_owed,
     sorcery_timing,
 )
 from .characteristics import (
@@ -542,6 +544,16 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
         if not can_pay(state, pid, card.flash_cost.without_mana(), oid):
             return "timing"
         price = price.plus(card.flash_cost.mana)
+    # The card's targeted flash permission (`flash_if_targets`), as
+    # `_cast_variant` narrows it: outside sorcery timing the card is a timing
+    # "no" unless some legal target matches the condition.
+    if flash_if_targets_owed(state, pid, card) and not any(
+        flash_if_targets_ok(state, pid, card, t)
+        for t in enumerate_target_tuples(
+            state, pid, card.targets, oid, exclude_sid=state.objects[oid].stack_id
+        )
+    ):
+        return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
     discount = cost_reduction(

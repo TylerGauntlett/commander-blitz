@@ -558,6 +558,112 @@ def swap_in_artifact_body(
     return [*board[:-1], pick]
 
 
+#: The selector keys :func:`must_target_enchanted_creature` reads a target by,
+#: on :func:`must_target_own_artifact`'s terms: anything else asks a question
+#: the prop creature and its Aura may not answer.
+_ENCHANTED_CREATURE_TARGET_KEYS = frozenset({"zone", "controller", "types", "enchanted_by"})
+
+
+def must_target_enchanted_creature(card: CardDef | None) -> bool:
+    """Must this card, as it is cast, target a creature already enchanted?
+
+    "Enchant creature with another Aura attached to it" (Daybreak Coronet): an
+    Aura spell targets what it will enchant (303.4a), and no permanent in the
+    position wears an Aura, so the cast had no legal target (601.2c) and gate 4
+    would reject the card as "not playable in the sandbox". Dropping the clause
+    would describe a different card, so the prop is added and the gate left
+    alone -- :func:`must_target_own_artifact`'s call.
+
+    Only a required ``permanent`` target whose selector is a plain "creature
+    (you control) enchanted by an Aura (yours, or another)", which your first
+    creature wearing :func:`quiet_aura_token` satisfies exactly.
+    """
+    if card is None:
+        return False
+    for spec in card.targets:
+        if spec.kind != "permanent" or spec.optional or spec.up_to:
+            continue
+        selector = spec.selector
+        if not isinstance(selector, Mapping) or set(selector) - _ENCHANTED_CREATURE_TARGET_KEYS:
+            continue
+        enchanted = selector.get("enchanted_by")
+        if enchanted is not True and not isinstance(enchanted, Mapping):
+            continue
+        if isinstance(enchanted, Mapping) and enchanted.get("controller", "any") not in (
+            "you",
+            "any",
+        ):
+            continue
+        if (
+            selector.get("controller", "any") in ("you", "any")
+            and str(selector.get("zone", "battlefield")) == "battlefield"
+            and {str(t) for t in selector.get("types") or ()} == {"Creature"}
+        ):
+            return True
+    return False
+
+
+def quiet_aura_token(registry: CardRegistry) -> str | None:
+    """The quietest Aura token in this pool that enchants a creature, or None.
+
+    A **token** because tokens are hand-written (`data/cards/tokens.cards.json`)
+    and so the same in the pool `--collect` verifies against and in the full
+    one `tests/cards/test_auto_cards.py` re-verifies with: a printed Aura would
+    be a different pick in each, and the two verdicts could disagree. Quiet on
+    :func:`quiet_artifact_body`'s terms -- no static ability, which would move
+    the measured P/T of the creature it wears, and no activated one -- then
+    the fewest triggered abilities, then the id. An Aura token's clause, when
+    it writes one, must be a plain "enchant creature".
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if c.is_token
+            and c.is_aura
+            and not any(a.static or a.is_activated for a in c.abilities)
+            and (
+                not c.targets
+                or (
+                    c.targets[0].kind == "permanent"
+                    and set(c.targets[0].selector) <= {"zone", "types"}
+                    and list(c.targets[0].selector.get("types") or ()) == ["Creature"]
+                )
+            )
+        ),
+        key=lambda c: (len(c.abilities), c.id),
+    )
+    return match[0].id if match else None
+
+
+def dress_own_creature(builder: GameBuilder, registry: CardRegistry, card: CardDef | None) -> None:
+    """Put :func:`quiet_aura_token` on your first creature, if ``card`` needs it.
+
+    For a card that :func:`must_target_enchanted_creature` -- "Enchant creature
+    with another Aura attached to it" -- the enchanted creature is the legal
+    target its cast needed. The same terms as the swaps: **only** for that
+    card, so every other card sees the position it was measured in. An
+    addition rather than a swap, since an Aura is no slot of the board, so that
+    card's own board holds **33**. Placed, not cast, as `GameBuilder` places
+    everything: no trigger fires for the attachment. Leaves the position
+    untouched when the pool has no such token, and the card then fails gate 4
+    honestly.
+    """
+    if not must_target_enchanted_creature(card):
+        return
+    pick = quiet_aura_token(registry)
+    host = next(
+        (o for o in builder.state.battlefield_objects(0) if registry.get(o.def_id).is_creature),
+        None,
+    )
+    if pick is None or host is None:
+        return
+    builder.battlefield(0, [pick])
+    aura = builder.state.objects[builder.state.battlefield[-1]]
+    aura.attached_to = host.oid
+    aura.attached_timestamp = builder.state.alloc_timestamp()
+
+
 def colorless_pips(card: CardDef | None) -> int:
     """How many ``{C}`` pips ``card``'s mana cost prints."""
     return card.mana_cost.colored[-1] if card is not None else 0
@@ -629,7 +735,8 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     under_test = registry.get(card_id) if card_id in registry else None
     builder.battlefield(0, swap_in_colorless_sources(registry, MANA_BASE, under_test))
     builder.battlefield(0, _own_board(registry, under_test))
-    acts = under_test is not None and any(
+    dress_own_creature(builder, registry, under_test)
+    acts =under_test is not None and any(
         (a.is_activated and not a.is_mana_ability) or a.is_triggered
         for a in under_test.abilities
     )
@@ -2228,6 +2335,14 @@ def _covered(card: CardDef, line: str) -> bool:
         more = re.search(r"\bpay ((?:\{[^}]+\})+) more\b", stripped, re.IGNORECASE)
         if more is not None:
             return _declares_printed_cost(more.group(1), card.flash_cost.mana)
+        return True
+
+    # "You may cast this spell as though it had flash if it targets a
+    # commander" is the card-level `flash_if_targets`, asked by legality of
+    # each target tuple outside sorcery timing -- a property of the cast, with
+    # no ability to carry it. The filter is the rest of the sentence, which
+    # gate 5 holds.
+    if card.flash_if_targets is not None and "as though it had flash if it targets" in lowered:
         return True
 
     # "Emerge {5}{U}{U}" is a whole alternative way to cast the card, paid and

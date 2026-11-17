@@ -342,7 +342,11 @@ required `card_in_graveyard` target selects Instant or Sorcery there.
 `swap_in_artifact_body` serves two shapes: a non-artifact card whose toughness
 counts your artifacts, and a card whose required target is a plain artifact (or
 artifact creature) you control, "Enchant artifact you control"
-(`must_target_own_artifact`).
+(`must_target_own_artifact`). `dress_own_creature` is the one addition rather
+than a swap: for a card whose required target is a creature already enchanted,
+"Enchant creature with another Aura attached to it"
+(`must_target_enchanted_creature`), your first creature wears the quietest Aura
+token (`quiet_aura_token`), so that card's board holds 33.
 `tests/cards/test_every_card_works.py` calls the same helpers, so the two
 sandboxes agree.
 

@@ -1,0 +1,26 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_block_restriction_relative_power.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_rp_gnarlid is Aura Gnarlid's first line alone on a {2}{G} 2/2: creatures with power less than its power can't block it. The bear (2/2), dork (1/1), menacer (3/3) and anthem come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_rp_gnarlid",
+      "name": "Test Relative Gnarlid",
+      "oracle_text": "Creatures with power less than this creature's power can't block it.",
+      "mana_cost": "{2}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures with power less than this creature's power can't block it.",
+          "effect": "block_restriction",
+          "affects": {"self_only": true},
+          "blockers": {"power": {"op": "<", "value": {"power_of": {"self": true}}}}
+        }
+      ]
+    }
+  ]
+}

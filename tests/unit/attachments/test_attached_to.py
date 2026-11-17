@@ -39,6 +39,7 @@ from tests.conftest import oids_of, only_oid, pt, settle, static_probe
 from tests.unit.attachments.test_bestow import bestow_onto
 
 AURA = "t_eb_aura"  # Enchant creature, and nothing else
+LAND_AURA = "t_wild_growth"  # Enchant land: a land is only a legal host for this one (303.4d)
 BEAR = "t_eb_bear"
 REVERIE = "t_at_reverie"  # Sage's Reverie
 DANCER = "t_at_dancer"  # Kor Spiritdancer's "+2/+2 for each Aura attached to it", a 0/2
@@ -83,8 +84,8 @@ class TestTheSelector:
     def test_it_matches_by_what_the_host_is(self, builder):
         """An Aura on a creature, one on a land: only the first is attached to
         a creature."""
-        game = board(builder, mine=[AURA, AURA, BEAR, ISLAND])
-        on_bear, on_land = oids_of(game, AURA, 0)
+        game = board(builder, mine=[AURA, LAND_AURA, BEAR, ISLAND])
+        on_bear, on_land = only_oid(game, AURA, 0), only_oid(game, LAND_AURA, 0)
         attach(game.state, on_bear, only_oid(game, BEAR, 0))
         attach(game.state, on_land, only_oid(game, ISLAND, 0))
         go(game)
@@ -126,10 +127,14 @@ class TestSagesReverie:
         opponent's Aura on your Bear (not yours). Then the Reverie itself, on a
         creature as it enters: two cards."""
         game = board(
-            builder, mine=[AURA, AURA, BEAR, GEAR], theirs=[BEAR, AURA], hand=[REVERIE], lands=4
+            builder,
+            mine=[AURA, LAND_AURA, BEAR, GEAR],
+            theirs=[BEAR, AURA],
+            hand=[REVERIE],
+            lands=4,
         )
         state = game.state
-        mine_on_theirs, mine_on_land = oids_of(game, AURA, 0)
+        mine_on_theirs, mine_on_land = only_oid(game, AURA, 0), only_oid(game, LAND_AURA, 0)
         my_bear, their_bear = only_oid(game, BEAR, 0), only_oid(game, BEAR, 1)
         attach(state, mine_on_theirs, their_bear)
         attach(state, mine_on_land, oids_of(game, ISLAND, 0)[0])

@@ -69,6 +69,7 @@ from .statics import (
 )
 from .vocabulary import (
     ATTACKING_OPS,
+    AURA_HOST_KEYS,
     CONTROLLED_TARGET_KINDS,
     COUNTERS_ON_ARRIVAL_OPS,
     DELAYED_TRIGGER_KEYS,
@@ -1131,6 +1132,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.host_named: references target {named['target']!r} "
                 f"which the card does not declare"
             )
+
+    # "Only creatures can be enchanted this way" (Retether): a filter the host
+    # an arriving Aura chooses must also match (`zones.offer_aura_host`). Read
+    # by the ops that put a card onto the battlefield, beside the battlefield,
+    # and only where the Aura still chooses -- with `host_named` the effect
+    # names the host and there is no choice left to narrow. A face-down return
+    # is a creature, never an Aura.
+    if "aura_host" in effect:
+        host = effect["aura_host"]
+        if op not in HOST_NAMED_OPS or not isinstance(host, Mapping) or not host:
+            raise DslError(
+                f"{where}: 'aura_host' is a filter on the host an arriving Aura "
+                f"chooses, read by {sorted(HOST_NAMED_OPS)}; got {host!r} on {op!r}"
+            )
+        if op == "return_from_graveyard" and effect.get("destination") != "battlefield":
+            raise DslError(
+                f"{where}: 'aura_host' needs destination 'battlefield'; an Aura "
+                f"enchants nothing anywhere else"
+            )
+        if "host_named" in effect:
+            raise DslError(
+                f"{where}: 'aura_host' with 'host_named': the effect names the "
+                f"host, so there is no choice for the filter to narrow"
+            )
+        if effect.get("face_down") is True:
+            raise DslError(
+                f"{where}: 'aura_host' with 'face_down': a face-down permanent is "
+                f"a 2/2 creature, not an Aura (708.2)"
+            )
+        unknown = set(host) - AURA_HOST_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.aura_host: keys {sorted(unknown)} are not a description "
+                f"of a host; allowed: {sorted(AURA_HOST_KEYS)}"
+            )
+        validate_selector(host, f"{where}.aura_host")
 
     # "…put onto the battlefield with this Aura" (Animate Dead): `link` on a
     # return is written on the creature as it arrives, so anywhere but the

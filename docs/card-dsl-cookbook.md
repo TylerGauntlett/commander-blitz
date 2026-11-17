@@ -1594,6 +1594,34 @@ destination, anything but a selector, and a `target` the card does not declare.
 A following `attach` with `attachment` is the near miss: the Aura has already
 entered unattached, and `attach` does not read its enchant clause.
 
+`aura_host`, on the same two ops and beside the same destination, is the case
+between: the effect names no host but restricts the choice — Retether's "Only
+creatures can be enchanted this way". Its value is a filter of
+`AURA_HOST_KEYS` (`types`, `any_types`, `not_types`, `subtypes`,
+`not_subtypes`, `supertypes`, `colors`, `controller`), read on the battlefield
+for the player the Aura enters under. 303.4f is still asked, but only among the
+hosts the Aura's enchant clause allows that also match it: the filter narrows
+the clause and never replaces it. An Aura with no such host stays in its zone
+(303.4g); an "enchant player" Aura and one enchanting a card in a graveyard
+never have one, since the filter describes a permanent. The loader refuses it
+on any other op or destination, beside `host_named` (there is no choice left)
+or `face_down: true`, empty or not an object, and with any other key.
+
+    Return each Aura card from your graveyard to the battlefield. Only
+    creatures can be enchanted this way. (Aura cards that can't enchant a
+    creature on the battlefield remain in your graveyard.)
+
+```jsonc
+"spell_effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "aura_host": { "types": ["Creature"] },
+    "objects": { "zone": "graveyard", "controller": "you", "subtypes": ["Aura"], "count": "all" } }
+]
+```
+
+The selector's `types` is the near miss: it filters which Aura *cards* return,
+not what they may enchant.
+
 ### An Aura that enchants a card in a graveyard — Animate Dead
 
     Enchant creature card in a graveyard
@@ -1676,6 +1704,46 @@ needs no key: `attach` names the host with `returned_with`. Written first, so
 a return a replacement sends elsewhere leaves an Aura attached to nothing.
 Animate Dead's shape without the op is the near miss: it attaches a non-Aura
 enchantment that stays on the battlefield when its creature leaves.
+
+### "Whenever an Aura you control becomes attached to a creature you control"
+
+```jsonc
+// Siona, Captain of the Pyleas
+{ "kind": "triggered",
+  "text": "Whenever an Aura you control becomes attached to a creature you control, create a 1/1 white Human Soldier creature token.",
+  "trigger": { "event": "becomes_attached", "controller": "you",
+               "filter": { "subtypes": ["Aura"],
+                           "attached_to": { "types": ["Creature"], "controller": "you" } } },
+  "effects": [ { "op": "create_token", "token": "human_soldier_1_1_w" } ] }
+```
+
+`becomes_attached` fires each time an Aura, Equipment or Fortification becomes
+attached (701.3a): an Aura spell resolving onto its target, an Aura entering the
+battlefield attached, an equip, an `attach` or an `aura_swap` moving one. Every
+route goes through `primitives.attach` or `primitives.attach_to_player`. Staying
+attached fires nothing, and neither does attaching to the object it is already
+on (701.3b).
+
+The trigger asks two objects:
+
+- **The attachment** is the subject. `filter` asks what it is, `controller` asks
+  who controls it, and `source: "self"` is "whenever **this** Equipment becomes
+  attached". "An Equipment" with no controller named is `controller: "any"`.
+- **The host** is `attached_to` inside the filter, a trigger filter of its own
+  asked of the permanent the event names. `controller` there is the host's
+  controller, and `self_only` is the ability's own permanent ("becomes attached
+  to **this creature**"). An attachment put onto a player has no host and
+  matches no `attached_to`. Without the key, any host matches, a player included.
+
+Both read the printed face like every trigger filter, so a bestowed creature or
+a Necromancy is not an Aura to `subtypes: ["Aura"]`. The loader refuses
+`attached_to` in the filter of any other trigger event, inside an `any_of`
+branch and nested in itself.
+
+| Near miss | Why not |
+|---|---|
+| `permanent_enters` with `subtypes: ["Aura"]` | misses an Aura or Equipment moved by an equip or an `attach`, and cannot ask what the Aura entered on |
+| a `self_enters` on the Aura | the Aura's own ability, not a watcher's, and an equip is not an arrival |
 
 ## Player-wide statics
 
@@ -3120,8 +3188,8 @@ silently turn generic, so it is refused.
 ```
 
 `ability_cost_reduction`'s mirror, as `spell_cost_increase` is
-`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, or `any`
-beside a `targeting` clause), `activated_by` for the activating player (default
+`spell_cost_reduction`'s: the same `affects_abilities` class (`equip`, `any`
+beside a `targeting` clause, or `non_mana`), `activated_by` for the activating player (default
 `"you"`) and optional `affects` for the permanent that prints the ability, with
 the price in a `cost` node held to generic mana of {1} or more. Read by
 `player_statics.ability_mana_tax` and netted into `costs.ability_mana` as a
@@ -3136,6 +3204,25 @@ against. A mana ability is never taxed this way, because it has no targets
 (605.1a); `any` without `targeting` is refused, since the payment solver
 activates tap-only mana abilities without reading the static. An `amount`, a
 coloured surcharge, life or anything else in the `cost` is refused.
+
+```jsonc
+// Tithe Taker — "During your turn, … abilities your opponents activate cost
+// {1} more to activate unless they're mana abilities."
+{ "kind": "static", "effect": "ability_cost_increase",
+  "affects_abilities": { "non_mana": true },
+  "activated_by": "opponent",
+  "condition": { "is_your_turn": true },
+  "cost": { "mana": "{1}" } }
+```
+
+`non_mana` is the class that needs no `targeting` clause: every activated
+ability, from any zone, that is not a mana ability (605). `ability_mana_tax`
+skips a mana ability by `Ability.is_mana_ability`, so the one activated by hand
+and the one the payment solver taps are both untaxed, which is the printed
+sentence. "During your turn" is the static's ordinary `is_your_turn`
+condition; the spell half of the same sentence is a `spell_cost_increase` line
+beside it under the same condition. `non_mana` is the tax's class only;
+`ability_cost_reduction` refuses it.
 
 **Not `ability_cost_reduction` with a negative `amount`**: that total is a
 discount, read generously at the gate, and a tax read that way would offer
@@ -5639,6 +5726,44 @@ The near misses are `buff` and `set_pt`, which change power itself — a fight,
 all read the changed number — and `replace_damage`, which scales an amount
 already computed from power.
 
+## Combat damage as though it weren't blocked
+
+    Thorn Elemental — "You may have Thorn Elemental assign its combat damage as
+                       though it weren't blocked."
+    Indomitable Might — "Enchanted creature's controller may have it assign its
+                         combat damage as though it weren't blocked."
+
+Rule 510.1c-d: a blocked creature with this option may assign all of its combat
+damage to the player, planeswalker or battle it is attacking instead of to its
+blockers. It is a static that names the creatures it reaches.
+
+```jsonc
+// Thorn Elemental, Lone Wolf, Siege Behemoth's own creature: itself
+{ "kind": "static", "effect": "assign_damage_as_though_unblocked",
+  "affects": { "self_only": true } }
+
+// Indomitable Might: the creature the Aura (or Equipment) is attached to
+{ "kind": "static", "effect": "assign_damage_as_though_unblocked",
+  "affects": { "attached": true } }
+```
+
+`affects` is required (a missing filter matches nothing) and is read off each
+creature as it now is; `condition` is asked per creature. The option is read by
+`player_statics.assigns_damage_as_though_unblocked`, and
+`combat.deal_combat_damage` asks the attacking creature's controller one yes/no
+question (`ask_yes_no`, a `MAY` decision) for each attacker that was blocked,
+assigns combat damage above 0 and has the option, before its blockers are
+ordered. Yes sends all of it where an unblocked attacker's would go; no is the
+ordinary lethal-first assignment. The question is still asked when every
+blocker has left combat, where no means it deals no combat damage. The blockers
+still deal their damage to it. Nothing is asked of a blocking creature. The CPU
+answers yes, as it answers every `MAY`.
+
+It is a choice of all or nothing, not a division: the engine still assigns an
+ordinary blocked creature's damage automatically. The near miss is `trample`,
+which sends only the excess past lethal; `combat_damage_by_toughness` changes
+how much a creature assigns, never where.
+
 ## Attacking as though it didn't have defender
 
     Felothar the Steadfast — "Creatures you control can attack as though they
@@ -6248,6 +6373,26 @@ from every other static filter: `controller` defaults to **any** rather than
 `you`. A blocker belongs to the defending player by definition, so
 the usual default would match nothing and the restriction would silently never
 fire.
+
+"Creatures with power less than this creature's power can't block it" (Aura
+Gnarlid, Den Protector) compares the blocker against the **source's** power,
+which no integer can stand for:
+
+```jsonc
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "blockers": { "power": { "op": "<", "value": { "power_of": { "self": true } } } } }
+```
+
+`{"power_of": {"self": true}}` is the value language's own spelling of "this
+creature's power", and `characteristics._against_source` reads it off `chars`
+at the moment the block is asked (509.1b): counters, pumps and the Gnarlid's own
+Aura count all move the bar, and a creature of equal power still blocks. It is
+admitted only as `blockers`' `power` value — `toughness`, any other object
+reference, and every layered static's filter refuse it at load time, because
+inside the pipeline the source's power is another static's output. The CPU's
+`ai.strategy.board.could_block` asks the same `combat.blockers_filter_refuses`
+before attackers are declared. Skulk is the near miss: it compares the other
+way ("greater power") and is a keyword.
 
 `require_all` is literal about "controls": a *tapped* creature that cannot block
 still makes the block illegal, which is why Tromokratis is close to unblockable
@@ -16238,6 +16383,39 @@ flash (the price would never be owed), on a land, with `tap`, `untap`, `exert`,
 
 Near misses: `additional_cost` charges at every timing and widens none, and
 `as_though_flash: true` is the same permission for free.
+
+## Flash if it targets
+
+```jsonc
+// Timely Ward — "You may cast this spell as though it had flash if it targets
+//   a commander. Enchant creature"
+{ "types": ["Enchantment"], "subtypes": ["Aura"],
+  "flash_if_targets": { "is_commander": true },
+  "targets": [ { "id": "enchanted", "kind": "permanent",
+                 "selector": { "types": ["Creature"], "zone": "battlefield" } } ] }
+```
+
+`flash_if_targets` is `as_though_flash` with a condition on the spell's own
+targets: a filter in the language of `cost_reduction.targeting`, with
+`controller` defaulting to `any`, matched when **any** object target matches
+(a player target never does). The permission is checked when the spell is
+proposed (601.3), against the targets chosen for it (601.2c), and never again,
+so a later change to the target does not reach back. `casting._timing_ok` lets
+the card through at instant speed, `casting.flash_if_targets_owed` says whether
+a cast needs the permission, and a cast that does is offered only at the target
+tuples that match, so it cannot end up aimed elsewhere. A cast at sorcery
+timing, or under another flash permission, aims wherever the card legally can.
+Its targets always ride on the line, never asked mid-cast
+(`casting.deferred_target_spec`), and a face-down cast cannot use it.
+
+The loader refuses it beside `as_though_flash` or `flash_cost`, on an instant or
+a card with flash, on a land, on a card that declares no `targets`, beside
+strive, and with a filter `cost_reduction.targeting` would refuse.
+
+Near misses: `as_though_flash: true` lets the card aim anywhere at instant
+speed, which is a stronger card than the printed one, and a
+`cast_as_though_flash` static reads the card's printed characteristics, never
+its targets.
 
 ## "If it was cast" — 603.6e
 

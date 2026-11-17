@@ -878,7 +878,9 @@ class AbilityModel(BaseModel):
     #:
     #: `ability_cost_increase` reads `affects_abilities`, `activated_by` and
     #: `targeting` exactly as the reduction does -- "abilities **your
-    #: opponents** activate **that target a Merfolk you control**" (Kopala).
+    #: opponents** activate **that target a Merfolk you control**" (Kopala) --
+    #: and alone takes the class ``{"non_mana": true}``, every activated
+    #: ability but a mana ability, with no `targeting` clause (Tithe Taker).
     #:
     #: `spell_cost_increase` takes the same clause pointing the other way --
     #: Terror of the Peaks' "spells your opponents cast **that target this
@@ -1688,6 +1690,12 @@ class CardModel(BaseModel):
     #: price of the card's own flash permission: owed only by a cast that needs
     #: the permission, never by one made at sorcery timing.
     flash_cost: CostModel | None = None
+    #: "You may cast this spell as though it had flash **if it targets a
+    #: commander**" (Timely Ward). A filter over the spell's own targets, in
+    #: the language of `cost_reduction.targeting`: the permission is asked of
+    #: the targets the cast chose (601.2c, 601.3), so a cast outside sorcery
+    #: timing is offered only at a matching target.
+    flash_if_targets: dict[str, Any] | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The name
     #: of the step the casting window closes at, lowercased -- the one card
     #: field that narrows the timing window itself (`casting._timing_ok`).

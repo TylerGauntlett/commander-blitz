@@ -2,7 +2,8 @@
  "loader": {
   "ABILITY_CLASS_KEYS": [
    "any",
-   "equip"
+   "equip",
+   "non_mana"
   ],
   "ATTACKING_OPS": [
    "copy_permanent",
@@ -139,6 +140,7 @@
    "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
+   "assign_damage_as_though_unblocked",
    "attack_despite_defender",
    "attack_tax",
    "attacks_if_able",
@@ -547,6 +549,7 @@
    "add_mana_on_tap",
    "add_subtype",
    "all_damage_wither",
+   "assign_damage_as_though_unblocked",
    "attack_despite_defender",
    "attack_tax",
    "attacks_if_able",
