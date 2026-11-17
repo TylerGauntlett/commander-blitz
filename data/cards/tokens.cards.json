@@ -467,6 +467,29 @@
       "is_token": true
     },
     {
+      "id": "cat_1_1_w_lifelink",
+      "name": "Cat Token",
+      "oracle_text": "1/1 white Cat creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "cat_2_2_w",
       "name": "Cat Token",
       "oracle_text": "2/2 white Cat creature token.",
@@ -3084,6 +3107,43 @@
       "is_token": true
     },
     {
+      "id": "human_monk_1_1_g_mana",
+      "name": "Human Monk Token",
+      "oracle_text": "1/1 green Human Monk creature token with \"{T}: Add {G}.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {G}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{G}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "monk_1_1_w_prowess",
       "name": "Monk Token",
       "oracle_text": "1/1 white Monk creature token with prowess.",
@@ -3187,6 +3247,26 @@
       ],
       "power": 2,
       "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "ox_2_4_w",
+      "name": "Ox Token",
+      "oracle_text": "2/4 white Ox creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 2,
+      "toughness": 4,
       "colors": [
         "W"
       ],
@@ -4467,6 +4547,184 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "monster_role",
+      "name": "Monster Role",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has trample.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura",
+        "Role"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has trample.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has trample.",
+          "effect": "grant_keyword",
+          "affects": {
+            "attached": true
+          },
+          "keywords": [
+            "trample"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "royal_role",
+      "name": "Royal Role",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has ward {1}.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura",
+        "Role"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has ward {1}.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has ward {1}.",
+          "effect": "ward",
+          "affects": {
+            "attached": true
+          },
+          "cost": {
+            "mana": "{1}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sorcerer_role",
+      "name": "Sorcerer Role",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has \"Whenever this creature attacks, scry 1.\"",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura",
+        "Role"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has \"Whenever this creature attacks, scry 1.\"",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has \"Whenever this creature attacks, scry 1.\"",
+          "effect": "grant_ability",
+          "affects": {
+            "attached": true
+          },
+          "ability": 0
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, scry 1.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "scry",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "virtuous_role",
+      "name": "Virtuous Role",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 for each enchantment you control.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura",
+        "Role"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 for each enchantment you control.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "count": {
+              "types": [
+                "Enchantment"
+              ],
+              "controller": "you",
+              "zone": "battlefield"
+            }
+          },
+          "toughness": {
+            "count": {
+              "types": [
+                "Enchantment"
+              ],
+              "controller": "you",
+              "zone": "battlefield"
+            }
+          }
         }
       ]
     },
