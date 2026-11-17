@@ -5888,6 +5888,96 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "faerie_rogue_1_1_b_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": false
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever one or more Faeries you control deal combat damage to a player, goad target creature that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Faerie"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "alela_cunning_conqueror",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{B}",
+      "name": "Alela, Cunning Conqueror",
+      "oracle_text": "Flying\nWhenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.\nWhenever one or more Faeries you control deal combat damage to a player, goad target creature that player controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -175170,6 +175260,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "pirate",
+              "controller": {
+                "binding": "defender"
+              },
+              "op": "create_token",
+              "token": "pirate_4_2_r_cant_block"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "binding": "pirate",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Faeries you control deal combat damage to a player, that player creates a 4/2 red Pirate creature token with \"This token can't block.\" The token is goaded for the rest of the game. (It attacks each combat if able and attacks a player other than you if able.)",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Faerie"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nettling_nuisance",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Nettling Nuisance",
+      "oracle_text": "Flying\nWhenever one or more Faeries you control deal combat damage to a player, that player creates a 4/2 red Pirate creature token with \"This token can't block.\" The token is goaded for the rest of the game. (It attacks each combat if able and attacks a player other than you if able.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -183502,6 +183655,217 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{X}{U/B}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "as": "oona_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "target": "t1"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "count": {
+                          "binding": "oona_exiled",
+                          "colors": [
+                            "W"
+                          ]
+                        }
+                      },
+                      "op": "create_token",
+                      "token": "faerie_rogue_1_1_ub_flying"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "as": "oona_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "target": "t1"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "count": {
+                          "binding": "oona_exiled",
+                          "colors": [
+                            "U"
+                          ]
+                        }
+                      },
+                      "op": "create_token",
+                      "token": "faerie_rogue_1_1_ub_flying"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "as": "oona_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "target": "t1"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "count": {
+                          "binding": "oona_exiled",
+                          "colors": [
+                            "B"
+                          ]
+                        }
+                      },
+                      "op": "create_token",
+                      "token": "faerie_rogue_1_1_ub_flying"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "as": "oona_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "target": "t1"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "count": {
+                          "binding": "oona_exiled",
+                          "colors": [
+                            "R"
+                          ]
+                        }
+                      },
+                      "op": "create_token",
+                      "token": "faerie_rogue_1_1_ub_flying"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "as": "oona_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "target": "t1"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "count": {
+                          "binding": "oona_exiled",
+                          "colors": [
+                            "G"
+                          ]
+                        }
+                      },
+                      "op": "create_token",
+                      "token": "faerie_rogue_1_1_ub_flying"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{X}{U/B}: Choose a color. Target opponent exiles the top X cards of their library. For each card of the chosen color exiled this way, create a 1/1 blue and black Faerie Rogue creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "oona_queen_of_the_fae",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U/B}{U/B}{U/B}",
+      "name": "Oona, Queen of the Fae",
+      "oracle_text": "Flying\n{X}{U/B}: Choose a color. Target opponent exiles the top X cards of their library. For each card of the chosen color exiled this way, create a 1/1 blue and black Faerie Rogue creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -226327,6 +226691,108 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "faerie_rogue_1_1_b_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 1/1 black Faerie Rogue creature tokens with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "colors": [
+                    "R"
+                  ],
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 4
+                  },
+                  "subtypes": [
+                    "Dragon"
+                  ],
+                  "toughness": {
+                    "const": 4
+                  },
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Have that creature become a red 4/4 Dragon in addition to its other colors and types until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with flying attacks, you may have it become a red Dragon with base power and toughness 4/4 in addition to its other colors and types until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shadow_puppeteers",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{U}",
+      "name": "Shadow Puppeteers",
+      "oracle_text": "Flying, ward {2}\nWhen this creature enters, create two 1/1 black Faerie Rogue creature tokens with flying.\nWhenever a creature you control with flying attacks, you may have it become a red Dragon with base power and toughness 4/4 in addition to its other colors and types until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

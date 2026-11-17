@@ -451,6 +451,10 @@
     },
     "zone": "battlefield"
   },
+  "alela_cunning_conqueror": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alena_kessig_trapper": {
     "zone": "battlefield"
   },
@@ -14600,6 +14604,10 @@
     },
     "zone": "battlefield"
   },
+  "nettling_nuisance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "neurok_hoversail": {
     "zone": "battlefield"
   },
@@ -15210,6 +15218,10 @@
     ]
   },
   "ongoing_investigation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "oona_queen_of_the_fae": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18814,6 +18826,14 @@
   },
   "shadow_of_the_second_sun": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "shadow_puppeteers": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "faerie_rogue_1_1_b_flying"
+    },
     "zone": "battlefield"
   },
   "shadow_summoning": {

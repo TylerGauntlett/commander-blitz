@@ -363,6 +363,10 @@
     "artist": "Milivoj \u0106eran",
     "scryfall_id": "2fb8dace-c604-40fc-bbd4-5add5deb041a"
   },
+  "alela_cunning_conqueror": {
+    "artist": "Livia Prima",
+    "scryfall_id": "79ba5c35-6e5c-406a-b95f-844d5ec296ab"
+  },
   "alena_kessig_trapper": {
     "artist": "Zoltan Boros",
     "scryfall_id": "312a2a8d-2d84-4c4b-b2c4-cbc4e8300312"
@@ -12658,6 +12662,10 @@
     "artist": "Vincent Proce",
     "scryfall_id": "91ef92af-de6b-4dc4-81ab-8e527cb96fdd"
   },
+  "nettling_nuisance": {
+    "artist": "Kevin Sidharta",
+    "scryfall_id": "2a57965c-553b-49cf-b22e-0515d70f73d3"
+  },
   "neurok_hoversail": {
     "artist": "Alan Pollack",
     "scryfall_id": "0fa5790b-5388-4bf9-9caa-44d8cbb64708"
@@ -13205,6 +13213,10 @@
   "ongoing_investigation": {
     "artist": "Bud Cook",
     "scryfall_id": "ff084438-2e70-41bc-a208-30ab16c026c1"
+  },
+  "oona_queen_of_the_fae": {
+    "artist": "Adam Rex",
+    "scryfall_id": "bc9cc9f7-f434-4f6d-9777-e7908bb6832c"
   },
   "oona_s_gatewarden": {
     "artist": "Mike Dringenberg",
@@ -16383,6 +16395,10 @@
   "shadow_of_the_second_sun": {
     "artist": "Danny Schwartz",
     "scryfall_id": "4d1d6bbb-5589-4606-bd66-a6e8e607ca7d"
+  },
+  "shadow_puppeteers": {
+    "artist": "Cristi Balanescu",
+    "scryfall_id": "2ad71a49-8a93-462f-a2c3-9362b33481fa"
   },
   "shadow_summoning": {
     "artist": "Campbell White",

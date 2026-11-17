@@ -5892,12 +5892,12 @@
     },
     "Alela, Cunning Conqueror": {
       "edhrec_rank": 3457,
-      "gate": "template",
+      "gate": null,
       "name": "Alela, Cunning Conqueror",
-      "reason": "no template for: Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie ",
+      "reason": "",
       "scryfall_id": "79ba5c35-6e5c-406a-b95f-844d5ec296ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alena, Kessig Trapper": {
@@ -185632,12 +185632,12 @@
     },
     "Nettling Nuisance": {
       "edhrec_rank": 7932,
-      "gate": "template",
+      "gate": null,
       "name": "Nettling Nuisance",
-      "reason": "no template for: Whenever one or more Faeries you control deal combat damage to a player, that player creat",
+      "reason": "",
       "scryfall_id": "2a57965c-553b-49cf-b22e-0515d70f73d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Network Disruptor": {
@@ -193112,12 +193112,12 @@
     },
     "Oona, Queen of the Fae": {
       "edhrec_rank": 5068,
-      "gate": "template",
+      "gate": null,
       "name": "Oona, Queen of the Fae",
-      "reason": "no template for: {X}{U/B}: Choose a color. Target opponent exiles the top X cards of their library. For eac",
+      "reason": "",
       "scryfall_id": "bc9cc9f7-f434-4f6d-9777-e7908bb6832c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ooze Flux": {
@@ -241852,12 +241852,12 @@
     },
     "Shadow Puppeteers": {
       "edhrec_rank": 5987,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow Puppeteers",
-      "reason": "no template for: Flying, ward {2}",
+      "reason": "",
       "scryfall_id": "2ad71a49-8a93-462f-a2c3-9362b33481fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow Rider": {
