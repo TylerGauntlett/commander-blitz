@@ -17924,6 +17924,10 @@
     },
     "zone": "battlefield"
   },
+  "sarah_jane_smith": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sarinth_greatwurm": {
     "zone": "battlefield"
   },
@@ -21196,6 +21200,10 @@
       "amount": 4,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "tegan_jovanka": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tekuthal_inquiry_dominus": {

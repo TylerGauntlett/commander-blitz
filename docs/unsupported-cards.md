@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**441 cards** blocked by **387** capabilities.
+**442 cards** blocked by **388** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -63,6 +63,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
+| [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -148,6 +149,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
+| [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
@@ -363,7 +365,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
-| [switch-power-toughness](#switch-power-toughness) | 1 | 10418 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -1594,6 +1595,25 @@ Blocks **2** cards.
 - **Hot Pursuit** (rank 6258) — `hot_pursuit`
   - When this enchantment enters, suspect target creature an opponent controls. As long as this enchantment remains on the battlefield, that creature is also goaded.
   - At the beginning of combat on your turn, if two or more players have lost the game, gain control of all goaded and/or suspected creatures until end of turn. Untap them. They gain haste until end of turn.
+
+</details>
+
+## switch-power-toughness
+
+Blocks **2** cards.
+
+- **(op)** an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec
+  <br>Why the existing vocabulary won't do: set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch
+- **(op)** an op that switches the power and toughness of every creature matched by a selector (here each creature on the battlefield, any controller) until end of turn, as a layer-7d effect (613.4d) applied after every other P/T effect so pumps and counters are included in the swap
+  <br>Why the existing vocabulary won't do: set_pt takes only objects/power/toughness: it sets constants (or snapshots power_of/toughness_of in layer 7b, ignoring later pumps and counters) and has no duration for 'until end of turn'; pump adds constants. No op or static in reference performs the layer-7d switch
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
+  - • Switch each creature's power and toughness until end of turn.
+  - • Counter all other spells.
+- **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
+  - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
 
 </details>
 
@@ -2841,6 +2861,21 @@ Blocks **1** card.
 
 - **Not of This World** (rank 2461) — `not_of_this_world`
   - This spell costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
+
+</details>
+
+## counter-all-spells
+
+Blocks **1** card.
+
+- **(op)** the counter op applied to every spell on the stack other than this one, chosen by a stack selector rather than a target ('Counter all other spells', untargeted, so hexproof-like and target-legality rules do not apply)
+  <br>Why the existing vocabulary won't do: op_counter (ops_stack.py) resolves its victims only from `sid` or from the `target` id's chosen sids; although `objects` appears in its op_options, the op body never reads it, so there is no way to name 'all spells except this one' without inventing targets the card does not have
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
+  - • Switch each creature's power and toughness until end of turn.
+  - • Counter all other spells.
 
 </details>
 
@@ -5923,20 +5958,6 @@ Blocks **1** card.
 
 - **Lux Artillery** (rank 3735) — `lux_artillery`
   - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
-
-</details>
-
-## switch-power-toughness
-
-Blocks **1** card.
-
-- **(op)** an op that switches each target creature's power and toughness until end of turn (layer 7d, rule 613.4d), applied after every other P/T effect so pumps and counters are included in the swap, with objects bound to a variable-size ('any number of') target spec
-  <br>Why the existing vocabulary won't do: set_pt and pump fix or add constant amounts; set_pt with power_of/toughness_of values would snapshot the numbers in layer 7b and ignore later pumps and counters, and has no duration for 'until end of turn'. No op or static in reference performs the layer-7d switch
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inversion Behemoth** (rank 10418) — `inversion_behemoth`
-  - At the beginning of combat on your turn, switch the power and toughness of each of any number of target creatures until end of turn.
 
 </details>
 

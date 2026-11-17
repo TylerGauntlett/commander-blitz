@@ -216226,6 +216226,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a historic spell, investigate. This ability triggers only once each turn. (Artifacts, legendaries, and Sagas are historic. To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sarah_jane_smith",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Sarah Jane Smith",
+      "oracle_text": "Whenever you cast a historic spell, investigate. This ability triggers only once each turn. (Artifacts, legendaries, and Sagas are historic. To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -256965,6 +257028,97 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Brave Heart — Whenever you attack, target attacking historic creature gets +1/+1 and gains indestructible until end of turn. (Artifacts, legendaries, and Sagas are historic.)",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tegan_jovanka",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Tegan Jovanka",
+      "oracle_text": "Brave Heart — Whenever you attack, target attacking historic creature gets +1/+1 and gains indestructible until end of turn. (Artifacts, legendaries, and Sagas are historic.)\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

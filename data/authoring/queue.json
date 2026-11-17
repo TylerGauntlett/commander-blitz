@@ -233262,12 +233262,12 @@
     },
     "Sarah Jane Smith": {
       "edhrec_rank": 9170,
-      "gate": "template",
+      "gate": null,
       "name": "Sarah Jane Smith",
-      "reason": "no template for: Whenever you cast a historic spell, investigate. This ability triggers only once each turn",
+      "reason": "",
       "scryfall_id": "1ba76f68-e647-4786-903c-92dbd3cef05d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarcatog": {
@@ -276652,12 +276652,12 @@
     },
     "Tegan Jovanka": {
       "edhrec_rank": 11947,
-      "gate": "template",
+      "gate": null,
       "name": "Tegan Jovanka",
-      "reason": "no template for: Brave Heart — Whenever you attack, target attacking historic creature gets +1/+1 and gains",
+      "reason": "",
       "scryfall_id": "19b6f28a-bca5-4f5c-8102-085316088a11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tegwyll's Scouring": {
