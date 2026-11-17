@@ -1,0 +1,28 @@
+{
+  "card_id": "the_war_doctor",
+  "name": "The War Doctor",
+  "oracle_text": "Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.\nWhenever The War Doctor attacks, it deals damage equal to the number of time counters on it to any target. If a creature dealt damage this way would die this turn, exile it instead.",
+  "blocked_sentences": [
+    "Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor."
+  ],
+  "needs": [
+    {
+      "capability": "phases_out_trigger",
+      "kind": "trigger_event",
+      "what": "a batched trigger event that fires when one or more permanents (other than the source) phase out, with the phased-out permanents as the batch",
+      "why_existing_wont_do": "trigger_events has no phase event; the phase_out op and the phasing keyword exist but nothing emits a triggerable event, and leaves_battlefield is wrong because phasing is not a zone change"
+    },
+    {
+      "capability": "put_into_exile_trigger",
+      "kind": "trigger_event",
+      "what": "a batched trigger event that fires when one or more cards (other than the source) are put into exile from any zone -- battlefield, graveyard, hand, library, stack",
+      "why_existing_wont_do": "leaves_battlefield and leaves_graveyard with to_zones exile cover only one origin zone each; exile from hand, library or the stack (and exiled spells) has no event"
+    }
+  ],
+  "closest_existing": [
+    "leaves_battlefield",
+    "leaves_graveyard",
+    "phase_out"
+  ],
+  "confidence": "high"
+}

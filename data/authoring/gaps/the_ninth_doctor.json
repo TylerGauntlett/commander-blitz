@@ -1,0 +1,24 @@
+{
+  "card_id": "the_ninth_doctor",
+  "name": "The Ninth Doctor",
+  "oracle_text": "Haste\nInto the TARDIS — Whenever The Ninth Doctor becomes untapped during your untap step, you get an additional upkeep step after this step.",
+  "blocked_sentences": [
+    "Into the TARDIS — Whenever The Ninth Doctor becomes untapped during your untap step, you get an additional upkeep step after this step."
+  ],
+  "needs": [
+    {
+      "capability": "extra_upkeep_step",
+      "kind": "op",
+      "what": "an op that inserts one additional upkeep step for the controller directly after the current step (500.8), so upkeep triggers fire again, without adding an untap or draw step",
+      "why_existing_wont_do": "extra_beginning_phase adds a whole beginning phase (untap, upkeep and draw), which would untap permanents and draw an extra card; extra_combat and extra_turn are other turn structures; no op adds a single step"
+    },
+    {
+      "capability": "untapped_during_untap_step",
+      "kind": "trigger_event",
+      "what": "a becomes_untapped trigger restricted to the untap performed by your untap step (the trigger then goes on the stack in the following upkeep, so 'after this step' is after that upkeep)",
+      "why_existing_wont_do": "becomes_untapped exists, but no trigger key narrows it to the untap step's untap; step_is is a condition key with no documented untap-step value, and the untap step grants no priority so the engine's handling of triggers there is unconfirmed"
+    }
+  ],
+  "closest_existing": ["extra_beginning_phase", "becomes_untapped"],
+  "confidence": "high"
+}

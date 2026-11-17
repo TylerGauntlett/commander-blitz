@@ -8073,6 +8073,11 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "fractured_identity": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 7,
+    "zone": "graveyard"
+  },
   "francisco_fowl_marauder": {
     "zone": "battlefield"
   },
@@ -11395,6 +11400,10 @@
     },
     "zone": "battlefield"
   },
+  "kate_stewart": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kavu_climber": {
     "hand_size": {
       "0": 2
@@ -13154,6 +13163,14 @@
     "battlefield_count": 35,
     "graveyard_size": {
       "0": 0
+    },
+    "zone": "battlefield"
+  },
+  "martha_jones": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
     },
     "zone": "battlefield"
   },
@@ -15233,6 +15250,15 @@
   },
   "oubliette": {
     "battlefield_count": 32,
+    "zone": "battlefield"
+  },
+  "out_of_time": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 4,
+      "kind": "time"
+    },
+    "opponent_battlefield_count": 4,
     "zone": "battlefield"
   },
   "outpost_siege": {
@@ -17540,6 +17566,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "rms_titanic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "roadside_reliquary": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17766,6 +17796,9 @@
   "rumbling_sentry": {
     "zone": "battlefield"
   },
+  "run_for_your_life": {
+    "zone": "graveyard"
+  },
   "runeclaw_bear": {
     "zone": "battlefield"
   },
@@ -17908,6 +17941,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "sally_sparrow": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "salt_flats": {
@@ -18992,6 +19029,9 @@
     "zone": "battlefield"
   },
   "shuttle_crew": {
+    "zone": "battlefield"
+  },
+  "sibylline_soothsayer": {
     "zone": "battlefield"
   },
   "sicarian_infiltrator": {
@@ -20128,6 +20168,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "star_whale": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "starfield_mystic": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20623,6 +20670,10 @@
     "zone": "battlefield"
   },
   "sunastian_falconer": {
+    "zone": "battlefield"
+  },
+  "sunbaked_canyon": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sunbird_s_invocation": {

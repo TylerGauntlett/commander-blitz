@@ -1,0 +1,22 @@
+{
+  "card_id": "the_day_of_the_doctor",
+  "name": "The Day of the Doctor",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Exile cards from the top of your library until you exile a legendary card. You may play that card for as long as this Saga remains on the battlefield. Put the rest of those exiled cards on the bottom of your library in a random order.\nIV — Choose up to three Doctors. You may exile all other creatures. If you do, this Saga deals 13 damage to you.",
+  "blocked_sentences": [
+    "I, II, III — Exile cards from the top of your library until you exile a legendary card. You may play that card for as long as this Saga remains on the battlefield. Put the rest of those exiled cards on the bottom of your library in a random order."
+  ],
+  "needs": [
+    {
+      "capability": "playable_while_source_on_battlefield",
+      "kind": "value",
+      "what": "a `playable` duration for an exiled card's play permission that lasts for as long as the source permanent (this Saga) remains on the battlefield, ending when it leaves (rules 611.2b style: a new object if it returns), usable on `reveal_until`/`exile_until`/`exile`/`grant_playable`",
+      "why_existing_wont_do": "playable_durations offers only end_of_your_next_turn, later_turns, this_turn, until_next_exile_by_source, while_exiled and your_next_end_step; while_exiled outlives the Saga (it is sacrificed after IV, so the permission would wrongly persist), this_turn/later_turns end too early or never, and `until_leaves` on `exile` returns the exiled card rather than ending a permission. reveal_until with selector supertypes Legendary, destination exile and rest_to_bottom covers the rest of the sentence."
+    }
+  ],
+  "closest_existing": [
+    "reveal_until",
+    "exile_until",
+    "grant_playable"
+  ],
+  "confidence": "high"
+}

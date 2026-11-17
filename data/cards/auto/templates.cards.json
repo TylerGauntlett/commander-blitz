@@ -95570,6 +95570,61 @@
       ]
     },
     {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "fractured_identity",
+      "mana_cost": "{3}{W}{U}",
+      "name": "Fractured Identity",
+      "oracle_text": "Exile target nonland permanent. Each player other than its controller creates a token that's a copy of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "controller": {
+            "not": {
+              "controller_of": "victim"
+            }
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -137032,6 +137087,107 @@
               "amount": {
                 "const": 1
               },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more time counters on a permanent you control, create a 1/1 white Soldier creature token.",
+          "trigger": {
+            "controller": "you",
+            "counter": "time",
+            "event": "counter_placed",
+            "put_by": "you"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "attacking": true,
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "zone": "battlefield"
+                      }
+                    }
+                  },
+                  "toughness": {
+                    "counters_on": {
+                      "counter": "time",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "zone": "battlefield"
+                      }
+                    }
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{8}"
+              },
+              "prompt": "Pay {8} to pump attacking creatures?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kate Stewart attacks, you may pay {8}. If you do, attacking creatures get +X/+X until end of turn, where X is the number of time counters among permanents you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "kate_stewart",
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Kate Stewart",
+      "oracle_text": "Whenever you put one or more time counters on a permanent you control, create a 1/1 white Soldier creature token.\nWhenever Kate Stewart attacks, you may pay {8}. If you do, attacking creatures get +X/+X until end of turn, where X is the number of time counters among permanents you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "draw",
               "player": "you"
             }
@@ -158879,6 +159035,96 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "investigate",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Woman Who Walked the Earth — When Martha Jones enters, investigate.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you sacrifice a Clue, Martha Jones and up to one other target creature can't be blocked this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Clue"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "martha_jones",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Martha Jones",
+      "oracle_text": "Woman Who Walked the Earth — When Martha Jones enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Clue, Martha Jones and up to one other target creature can't be blocked this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -183883,6 +184129,140 @@
       "mana_cost": "{1}{B}{B}",
       "name": "Oubliette",
       "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way. (Auras and Equipment phase out with it. While permanents are phased out, they're treated as though they don't exist.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "any",
+                  "phased_out_with": "self",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. Put a time counter on this enchantment for each creature that phased out this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Vanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "time",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Vanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
+          "trigger": {
+            "counter": "time",
+            "event": "last_counter_removed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "out_of_time",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Out of Time",
+      "oracle_text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. Put a time counter on this enchantment for each creature that phased out this way.\nVanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -210947,6 +211327,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When RMS Titanic deals combat damage to a player, sacrifice it and create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 7
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rms_titanic",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "RMS Titanic",
+      "oracle_text": "Flying, trample\nWhen RMS Titanic deals combat damage to a player, sacrifice it and create that many Treasure tokens.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -213733,6 +214198,71 @@
     },
     {
       "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 4,
+          "exclude_self": true
+        },
+        "mana": "{2}{U}{R}"
+      },
+      "id": "run_for_your_life",
+      "mana_cost": "{U}{R}",
+      "name": "Run for Your Life",
+      "oracle_text": "One or two target creatures each gain haste until end of turn. They can't be blocked this turn except by creatures with haste.\nEscape—{2}{U}{R}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "duration": "this_turn",
+          "except_blockers": {
+            "keywords": [
+              "haste"
+            ]
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "unblockable"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "min_count": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G",
         "U"
       ],
@@ -215777,6 +216307,66 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast creature spells as though they had flash."
+        },
+        {
+          "effects": [
+            {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control leave the battlefield, investigate. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "sally_sparrow",
+      "mana_cost": "{2}{W}{U}",
+      "name": "Sally Sparrow",
+      "oracle_text": "You may cast creature spells as though they had flash.\nWhenever one or more other creatures you control leave the battlefield, investigate. This ability triggers only once each turn. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -228836,6 +229426,66 @@
         "Officer"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "destination": "exile",
+              "objects": {
+                "mana_value": {
+                  "op": ">=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "reveal_until",
+              "rest_to_bottom": true
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Temporal Foresight — When this creature enters, reveal cards from the top of your library until you reveal a nonland card with mana value 3 or greater. Exile that card with three time counters on it. If it doesn't have suspend, it gains suspend. Put the rest of the revealed cards on the bottom of your library in a random order",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sibylline_soothsayer",
+      "mana_cost": "{2}{R}",
+      "name": "Sibylline Soothsayer",
+      "oracle_text": "Temporal Foresight — When this creature enters, reveal cards from the top of your library until you reveal a nonland card with mana value 3 or greater. Exile that card with three time counters on it. If it doesn't have suspend, it gains suspend. Put the rest of the revealed cards on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -242024,6 +242674,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Other creatures you control have ward {2}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "star_whale",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{6}{U}{U}",
+      "name": "Star Whale",
+      "oracle_text": "Flying, vigilance\nOther creatures you control have ward {2}.\nSuspend 6—{1}{U} (Rather than cast this card from your hand, you may pay {1}{U} and exile it with six time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Whale"
+      ],
+      "suspend": {
+        "cost": "{1}{U}",
+        "counters": 6
+      },
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "types": [
@@ -248631,6 +249328,80 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {R} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this land: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "sunbaked_canyon",
+      "mana_cost": "",
+      "name": "Sunbaked Canyon",
+      "oracle_text": "{T}, Pay 1 life: Add {R} or {W}.\n{1}, {T}, Sacrifice this land: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
