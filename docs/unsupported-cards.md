@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**475 cards** blocked by **425** capabilities.
+**474 cards** blocked by **424** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -100,7 +100,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [aura-control](#aura-control) | 1 | 16395 | static_effect |
-| [aura-host-restriction](#aura-host-restriction) | 1 | 3485 | op |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -2220,20 +2219,6 @@ Blocks **1** card.
 - **Become the Pilot** (rank 16395) — `become_the_pilot`
   - You control enchanted creature.
   - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
-
-</details>
-
-## aura-host-restriction
-
-Blocks **1** card.
-
-- **(op)** an option on return_from_graveyard / put_onto_battlefield (e.g. `host_filter: {"types": ["Creature"]}`) that narrows the 303.4f host choice an uncast Aura makes as it enters: the controller still chooses a host its enchant clause allows, but only among permanents also matching the filter, and an Aura with no such host stays in the graveyard (303.4g)
-  <br>Why the existing vocabulary won't do: return_from_graveyard with an Aura selector already routes each Aura through zones.offer_aura_host, but that pool is the Aura's own enchant clause only, so an 'Enchant permanent/artifact/land' Aura could land on a non-creature. `host_named` names one fixed host rather than restricting a choice, and the selector key `attached_to` filters existing attachments, not arrival hosts
-
-<details><summary>Cards waiting on this</summary>
-
-- **Retether** (rank 3485) — `retether`
-  - Return each Aura card from your graveyard to the battlefield. Only creatures can be enchanted this way. (Aura cards that can't enchant a creature on the battlefield remain in your graveyard.)
 
 </details>
 

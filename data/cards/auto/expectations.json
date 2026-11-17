@@ -17573,6 +17573,16 @@
       "0": 46
     }
   },
+  "retether": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "retreat_to_coralhelm": {
     "battlefield_count": 33,
     "hand_size": {

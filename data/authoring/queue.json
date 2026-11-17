@@ -221902,12 +221902,12 @@
     },
     "Retether": {
       "edhrec_rank": 3485,
-      "gate": "template",
+      "gate": null,
       "name": "Retether",
-      "reason": "no template for: Return each Aura card from your graveyard to the battlefield. Only creatures can be enchan",
+      "reason": "",
       "scryfall_id": "79bd15d3-255b-4aa5-8c71-04f7f9eacfd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rethink": {
