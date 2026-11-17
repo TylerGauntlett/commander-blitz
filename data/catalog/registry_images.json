@@ -403,6 +403,10 @@
     "artist": "Jason Felix",
     "scryfall_id": "8764ca43-bbbb-43b5-895b-c7049cc76580"
   },
+  "all_of_history_all_at_once": {
+    "artist": "N\u00e9stor Ossand\u00f3n Leal",
+    "scryfall_id": "0cc08a16-d2ef-44d2-ae6b-7ff9ce27ef00"
+  },
   "all_that_glitters": {
     "artist": "MSCHF",
     "scryfall_id": "38866a48-8ad0-4813-8c53-fbee3ac3bcf9"
@@ -3822,6 +3826,14 @@
   "coveted_jewel": {
     "artist": "Eric Wilkerson",
     "scryfall_id": "06a7ad3b-87d4-47f0-9450-facac00dfe97"
+  },
+  "coward_killer": {
+    "artist": "Bartek Fedyczak",
+    "scryfall_id": "0717b6ee-99f8-4b02-91f4-6ca07a08b2c0"
+  },
+  "coward_killer_killer": {
+    "artist": "Bartek Fedyczak",
+    "scryfall_id": "0717b6ee-99f8-4b02-91f4-6ca07a08b2c0"
   },
   "cowl_prowler": {
     "artist": "Tomasz Jedruszek",
@@ -15372,6 +15384,10 @@
     "artist": "Grzegorz Rutkowski",
     "scryfall_id": "cc22c08c-bbaa-44f7-9c14-cd1fe9377da2"
   },
+  "rotating_fireplace": {
+    "artist": "Daniel Correia",
+    "scryfall_id": "151084cd-49cb-4361-85c1-f0485f3f52dd"
+  },
   "rotted_hulk": {
     "artist": "Raymond Swanland",
     "scryfall_id": "1066644a-ac62-4809-805c-607c645613c5"
@@ -19075,6 +19091,10 @@
     "artist": "Robin Olausson",
     "scryfall_id": "e0aaee13-bfeb-47fd-93cb-2ccdd5d44e75"
   },
+  "the_parting_of_the_ways": {
+    "artist": "Syd Mills",
+    "scryfall_id": "65015afb-cfdb-4373-a0db-0ca5e95c49a1"
+  },
   "the_queen_of_dale": {
     "artist": "Ashley Mackenzie",
     "scryfall_id": "4cff1878-3f23-4a0a-ad79-28a44921cca8"
@@ -19114,6 +19134,10 @@
   "the_ten_rings": {
     "artist": "Arthur Yuan",
     "scryfall_id": "2332bc91-b0f2-4911-844d-d1cc915cd6c8"
+  },
+  "the_tenth_doctor": {
+    "artist": "Luisa J. Preissler",
+    "scryfall_id": "10ea9e80-0d3a-4b75-8f29-56e88d6fe66a"
   },
   "the_terror_of_serpent_s_pass": {
     "artist": "Douzen",
@@ -19162,6 +19186,10 @@
   "the_wasp_winsome_avenger": {
     "artist": "Raoul Vitale",
     "scryfall_id": "ce5fb436-fcc6-426f-a33b-a8ba904df0ff"
+  },
+  "the_wedding_of_river_song": {
+    "artist": "Mandy Jurgens",
+    "scryfall_id": "47cdfa73-4e56-4364-82eb-744a1680911d"
   },
   "the_whizzer_classic_speedster": {
     "artist": "Julian Totino Tedesco",
@@ -19454,6 +19482,10 @@
   "timber_wolves": {
     "artist": "Melissa A. Benson",
     "scryfall_id": "d8f84fc8-69b4-4756-9634-4d6c17ec88a1"
+  },
+  "time_beetle": {
+    "artist": "John Tedrick",
+    "scryfall_id": "813a8197-55c2-4abd-9979-b62014240796"
   },
   "time_wipe": {
     "artist": "Svetlin Velinov",
@@ -21402,6 +21434,10 @@
   "whitesun_s_passage": {
     "artist": "John Avon",
     "scryfall_id": "a74d1bf3-4630-4be0-af5f-590789d27a0c"
+  },
+  "wibbly_wobbly_timey_wimey": {
+    "artist": "Skinnyelbows",
+    "scryfall_id": "2355e847-f147-421a-8fc3-7e244b4a70ee"
   },
   "wicked_role": {
     "artist": "Rovina Cai",

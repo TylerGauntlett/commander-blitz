@@ -53917,6 +53917,116 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "coward_killer",
+      "mana_cost": "{1}{R}",
+      "name": "Coward // Killer",
+      "oracle_text": "Target creature can't block this turn and becomes a Coward in addition to its other types until end of turn.\nTime travel.\nKiller deals 3 damage to target creature and each other creature that shares a creature type with it.",
+      "second_face": "coward_killer_killer",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "cant_block"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_subtype",
+          "subtypes": [
+            "Coward"
+          ]
+        },
+        {
+          "op": "time_travel"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "coward_killer_killer",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Killer",
+      "oracle_text": "Killer deals 3 damage to target creature and each other creature that shares a creature type with it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "objects": {
+            "union": [
+              {
+                "target": "t1"
+              },
+              {
+                "controller": "any",
+                "count": "all",
+                "shares_a_creature_type_with": {
+                  "target": "t1"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [

@@ -54832,12 +54832,12 @@
     },
     "Coward // Killer": {
       "edhrec_rank": 15185,
-      "gate": "template",
+      "gate": null,
       "name": "Coward // Killer",
-      "reason": "no template for: Target creature can't block this turn and becomes a Coward in addition to its other types ",
+      "reason": "",
       "scryfall_id": "0717b6ee-99f8-4b02-91f4-6ca07a08b2c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cowardice": {
