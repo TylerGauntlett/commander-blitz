@@ -2230,6 +2230,14 @@ def _covered(card: CardDef, line: str) -> bool:
             return _declares_printed_cost(more.group(1), card.flash_cost.mana)
         return True
 
+    # "You may cast this spell as though it had flash if it targets a
+    # commander" is the card-level `flash_if_targets`, asked by legality of
+    # each target tuple outside sorcery timing -- a property of the cast, with
+    # no ability to carry it. The filter is the rest of the sentence, which
+    # gate 5 holds.
+    if card.flash_if_targets is not None and "as though it had flash if it targets" in lowered:
+        return True
+
     # "Emerge {5}{U}{U}" is a whole alternative way to cast the card, paid and
     # spent inside `game._cast`. Like `kicker` above there is no ability that
     # could honestly claim it -- an AbilityModel is activated, triggered or

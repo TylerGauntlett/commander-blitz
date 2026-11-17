@@ -1677,6 +1677,16 @@ class CardDef:
     #: line cast at sorcery timing, or under some other flash permission, pays
     #: nothing extra.
     flash_cost: Cost | None = None
+    #: "You may cast this spell as though it had flash **if it targets a
+    #: commander**" (Timely Ward). The free permission, conditioned on the
+    #: spell's own targets: a filter in the `cost_reduction.targeting`
+    #: language. `casting._timing_ok` lets the card through at instant speed
+    #: as it does `flash_cost`, `casting.flash_if_targets_owed` says whether
+    #: this cast needs the permission, and a cast that does is offered only
+    #: the target tuples `cost_reduction.any_target_matches` accepts -- the
+    #: permission is checked when the spell is proposed (601.3), against the
+    #: targets chosen for it (601.2c), and never again.
+    flash_if_targets: Mapping[str, Any] | None = None
     #: "Cast this spell only before the combat damage step" (Berserk). The step
     #: at which the casting window **closes**, read by `casting._timing_ok`.
     #:

@@ -208,6 +208,11 @@ CARD_LEVEL_RIDER_KEYS = (
     # three untapped creatures you control with flying" -- the price of that
     # permission, paid only outside sorcery timing. Never beside as_though_flash.
     "flash_cost",
+    # a filter over the card's own targets (cost_reduction.targeting language);
+    # "…as though it had flash if it targets a commander" -- a cast outside
+    # sorcery timing is offered only at a matching target. Never beside
+    # as_though_flash or flash_cost; the card must declare targets.
+    "flash_if_targets",
     # {"turn": "yours"|"opponents", "steps": [...] | "phase": ...}; "Cast this
     # spell only during [combat|the <step>] [on your|an opponent's] turn"
     "cast_only_during",

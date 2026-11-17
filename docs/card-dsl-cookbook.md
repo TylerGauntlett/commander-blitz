@@ -16277,6 +16277,39 @@ flash (the price would never be owed), on a land, with `tap`, `untap`, `exert`,
 Near misses: `additional_cost` charges at every timing and widens none, and
 `as_though_flash: true` is the same permission for free.
 
+## Flash if it targets
+
+```jsonc
+// Timely Ward — "You may cast this spell as though it had flash if it targets
+//   a commander. Enchant creature"
+{ "types": ["Enchantment"], "subtypes": ["Aura"],
+  "flash_if_targets": { "is_commander": true },
+  "targets": [ { "id": "enchanted", "kind": "permanent",
+                 "selector": { "types": ["Creature"], "zone": "battlefield" } } ] }
+```
+
+`flash_if_targets` is `as_though_flash` with a condition on the spell's own
+targets: a filter in the language of `cost_reduction.targeting`, with
+`controller` defaulting to `any`, matched when **any** object target matches
+(a player target never does). The permission is checked when the spell is
+proposed (601.3), against the targets chosen for it (601.2c), and never again,
+so a later change to the target does not reach back. `casting._timing_ok` lets
+the card through at instant speed, `casting.flash_if_targets_owed` says whether
+a cast needs the permission, and a cast that does is offered only at the target
+tuples that match, so it cannot end up aimed elsewhere. A cast at sorcery
+timing, or under another flash permission, aims wherever the card legally can.
+Its targets always ride on the line, never asked mid-cast
+(`casting.deferred_target_spec`), and a face-down cast cannot use it.
+
+The loader refuses it beside `as_though_flash` or `flash_cost`, on an instant or
+a card with flash, on a land, on a card that declares no `targets`, beside
+strive, and with a filter `cost_reduction.targeting` would refuse.
+
+Near misses: `as_though_flash: true` lets the card aim anywhere at instant
+speed, which is a stronger card than the printed one, and a
+`cast_as_though_flash` static reads the card's printed characteristics, never
+its targets.
+
 ## "If it was cast" — 603.6e
 
 ```jsonc

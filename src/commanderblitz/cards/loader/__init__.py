@@ -114,6 +114,7 @@ from .mana import (
 from .statics import (
     _validate_cast_zone_keys,
     _validate_cost_reduction,
+    _validate_reduction_targeting,
     _validate_static_condition,
     _validate_static_count_filter,
     _validate_static_value,
@@ -1304,6 +1305,48 @@ def _compile_flash_cost(model: CardModel, where: str) -> Cost | None:
             f"'as_though_flash': true"
         )
     return cost
+
+
+def _compile_flash_if_targets(model: CardModel, where: str) -> dict[str, Any] | None:
+    """The filter the card's own conditional flash permission asks of its
+    targets, or ``None``.
+
+    "You may cast this spell as though it had flash if it targets a commander"
+    (Timely Ward). Every refusal is a card that would load and play differently
+    from the printed one: a permission that is never needed (the card may
+    already be cast at instant speed), one beside a second card-level flash
+    permission that would always answer first, or one with no targets to read.
+    """
+    filt = model.flash_if_targets
+    if filt is None:
+        return None
+    field = f"{where}.flash_if_targets"
+    if model.as_though_flash or model.flash_cost is not None:
+        raise DslError(
+            f"{field}: not beside 'as_though_flash' or 'flash_cost' -- the card's "
+            f"own flash permission is one of the three"
+        )
+    if CardType.INSTANT.value in model.types or Keyword.FLASH.value in model.keywords:
+        raise DslError(
+            f"{field}: an instant or a card with flash is castable at instant "
+            f"speed already, so this condition would never be asked"
+        )
+    if CardType.LAND.value in model.types:
+        raise DslError(f"{field}: a land is played, not cast")
+    if not model.targets:
+        # The condition is read against the targets the cast chose (601.2c); a
+        # card with none would load and never once be castable at instant speed.
+        raise DslError(f"{field}: the card declares no targets for the condition to read")
+    if model.strive is not None:
+        # `casting._priced_tuples` re-enumerates a strive card's targets per
+        # count rather than pricing the tuples it is handed, so the condition's
+        # filtering would be undone on every line.
+        raise DslError(
+            f"{field}: not beside strive, which is priced per target count "
+            f"rather than per tuple"
+        )
+    _validate_reduction_targeting(filt, field)
+    return dict(filt)
 
 
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
@@ -2624,6 +2667,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"charges something"
             )
     flash_cost = _compile_flash_cost(model, where)
+    flash_if_targets = _compile_flash_if_targets(model, where)
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2831,6 +2875,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         as_though_flash=model.as_though_flash,
         flash_cost=flash_cost,
+        flash_if_targets=flash_if_targets,
         cast_before_step=cast_before_step,
         cant_cast_first_turns=model.cant_cast_first_turns,
         cast_only_during=cast_only_during,

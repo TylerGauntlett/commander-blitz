@@ -4346,7 +4346,10 @@ keyword — see the cookbook's
 ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast).
 `flash_cost` is the same permission with a price, paid only by a cast made
 outside sorcery timing — see the cookbook's
-[Flash for a price](card-dsl-cookbook.md#flash-for-a-price).
+[Flash for a price](card-dsl-cookbook.md#flash-for-a-price). `flash_if_targets`
+is the same permission conditioned on the spell's own targets, a cast outside
+sorcery timing offered only at a matching target — see
+[Flash if it targets](card-dsl-cookbook.md#flash-if-it-targets).
 
 `cast_before_step` names the step the window closes at, and it is asked **first**,
 before any of the widening branches. Written after them it would load, read

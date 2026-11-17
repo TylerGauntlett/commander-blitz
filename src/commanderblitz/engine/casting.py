@@ -15,7 +15,12 @@ from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
-from .cost_reduction import cost_reduction, targets_own_discount, variant_reduction
+from .cost_reduction import (
+    any_target_matches,
+    cost_reduction,
+    targets_own_discount,
+    variant_reduction,
+)
 from .costs import (
     _tap_cost_pool,
     can_pay,
@@ -577,6 +582,31 @@ def flash_cost_owed(state: GameState, pid: int, card: CardDef) -> bool:
     return not _timing_ok(state, pid, card, sorcery_timing(state, pid), priced=False)
 
 
+def flash_if_targets_owed(state: GameState, pid: int, card: CardDef) -> bool:
+    """Does casting this card now need its own **targeted** flash permission?
+
+    "You may cast this spell as though it had flash if it targets a commander"
+    (Timely Ward). `flash_cost_owed`'s question asked of the free twin whose
+    condition is the spell's own targets: at sorcery timing, or under any other
+    permission, the card is cast as printed and may aim anywhere it legally
+    could. A cast this permission is what makes legal is offered only at the
+    tuples `flash_if_targets_ok` accepts, which is how 601.3's "the permission
+    is checked when the spell is proposed" reads in a legality list whose
+    every line already carries its targets.
+    """
+    if card.flash_if_targets is None:
+        return False
+    return not _timing_ok(state, pid, card, sorcery_timing(state, pid), priced=False)
+
+
+def flash_if_targets_ok(state: GameState, pid: int, card: CardDef, targets) -> bool:
+    """Whether a tuple satisfies the card's `flash_if_targets` condition: some
+    object it targets matches the filter."""
+    return card.flash_if_targets is not None and any_target_matches(
+        state, pid, card.flash_if_targets, targets
+    )
+
+
 def _timing_ok(
     state: GameState, pid: int, card: CardDef, sorcery_speed: bool, *, priced: bool = True
 ) -> bool:
@@ -630,11 +660,14 @@ def _timing_ok(
         return True
     if player_casts_as_though_flash(state, pid, card):
         return True
-    # The card's own flash permission **with a price** (`flash_cost`) -- last,
-    # because it is the only branch that costs anything, and a cast any branch
-    # above allows must not be charged for it. `priced=False` is
-    # `flash_cost_owed` asking whether the cast would be legal without paying.
-    return priced and card.flash_cost is not None
+    # The card's own **conditional** flash permissions -- last, because each
+    # binds the cast that uses it and a cast any branch above allows must not
+    # be bound: `flash_cost` charges a price, and `flash_if_targets` narrows
+    # the targets to the ones its condition names. Both are let through here
+    # and enforced per line by `_cast_variant`. `priced=False` is
+    # `flash_cost_owed` and `flash_if_targets_owed` asking whether the cast
+    # would be legal without either.
+    return priced and (card.flash_cost is not None or card.flash_if_targets is not None)
 
 
 def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
@@ -1943,6 +1976,11 @@ def deferred_target_spec(
     """
     if not specs or card.strive is not None or targets_own_discount(card):
         return None
+    if card.flash_if_targets is not None:
+        # "…as though it had flash if it targets a commander": the line's
+        # timing turns on what it targets, so the targets ride on the line
+        # where `_cast_variant` can hold each tuple to the condition.
+        return None
     spec = specs[-1]
     if spec.cast_during is not None:
         # Asked mid-cast it would be asked without the phase gate legality
@@ -2318,6 +2356,17 @@ def _cast_variant(
                 x=life_x_ceiling(state, pid, card, additional_choice, t) or 0,
             )
         ]
+    # The card's own targeted flash permission (`flash_if_targets`). A cast
+    # that needs it is proposed only at a matching target (601.2c, 601.3), so
+    # every other tuple goes -- and a face-down spell is a nameless 2/2
+    # (708.2) with no permission to use. Asked after every reassignment of
+    # `tuples` above, so no variant's own enumeration slips past it.
+    if flash_if_targets_owed(state, pid, card):
+        if face_down:
+            return []
+        tuples = [t for t in tuples if flash_if_targets_ok(state, pid, card, t)]
+        if not tuples:
+            return []
     # "Your opponents can't cast **noncreature** spells" -- Narset
     # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
     # asked here because this is the one function every offered cast passes

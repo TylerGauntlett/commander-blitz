@@ -1294,6 +1294,8 @@ RIDER_KEYS: dict[str, Entry] = {
                         '"If you cast it any time a sorcery couldn\'t have been cast"'),
     "flash_cost": ("May be cast as though it had flash by also paying this cost; at sorcery timing it is not paid.",
                    "Flash for a price"),
+    "flash_if_targets": ("May be cast as though it had flash only at a target matching this filter; at sorcery timing it aims anywhere.",
+                         "Flash if it targets"),
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "cast_only_during": ("Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route.",

@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 23 |
+| [Card-level rider keys](#card-level-rider-keys) | 24 |
 | [Engine events](#engine-events) | 85 |
 
 ## Effect ops
@@ -1190,6 +1190,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `as_though_flash` | May be cast as though it had flash; the card does not have flash. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
 | `flash_cost` | May be cast as though it had flash by also paying this cost; at sorcery timing it is not paid. | [Flash for a price](card-dsl-cookbook.md#flash-for-a-price) |
+| `flash_if_targets` | May be cast as though it had flash only at a target matching this filter; at sorcery timing it aims anywhere. | [Flash if it targets](card-dsl-cookbook.md#flash-if-it-targets) |
 | `cast_only_during` | Castable only on whose turn (`turn`) and in which `steps` or `phase` it names, by any route. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
