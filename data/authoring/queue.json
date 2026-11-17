@@ -227622,12 +227622,12 @@
     },
     "Rose Tyler": {
       "edhrec_rank": 16751,
-      "gate": "template",
+      "gate": null,
       "name": "Rose Tyler",
-      "reason": "no template for: gets +1/+1 for each time counter on it",
+      "reason": "",
       "scryfall_id": "08ca7fac-d0df-4d96-887f-16be6c995476",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rose, Cutthroat Raider": {

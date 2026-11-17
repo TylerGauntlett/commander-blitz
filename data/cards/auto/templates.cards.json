@@ -213148,6 +213148,94 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Rose Tyler gets +1/+1 for each time counter on it.",
+          "toughness": {
+            "counters_on": {
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "count": {
+                      "owner": "you",
+                      "suspended": true
+                    }
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "exclude_self": true,
+                      "has_counters": "time",
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Bad Wolf — Whenever Rose Tyler attacks, put a time counter on it for each suspended card you own and each other permanent you control with a time counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rose_tyler",
+      "keywords": [
+        "doctors_companion"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Rose Tyler",
+      "oracle_text": "Rose Tyler gets +1/+1 for each time counter on it.\nBad Wolf — Whenever Rose Tyler attacks, put a time counter on it for each suspended card you own and each other permanent you control with a time counter on it.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "controller": "you",
