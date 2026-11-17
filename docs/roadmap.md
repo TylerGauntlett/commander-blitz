@@ -139,6 +139,7 @@ each heading; this table is generated from them.
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -146,6 +147,7 @@ each heading; this table is generated from them.
 | [A queue](#a-queue) | L | medium | CPU takeover and reconnection, Brackets, derived from the list, Outcomes as data | 0 |
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
+| [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) | S | low | nothing | 0 |
 | [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 2 |
 
 ## What to do next
@@ -215,13 +217,15 @@ same list, and `/extend-roadmap` starts at the top of it.
 56. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 57. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
 58. [Replays and sharing](#replays-and-sharing) — M, medium
-59. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-60. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-61. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-62. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-63. [Archidekt import](#archidekt-import) — S, low
-64. [Sound](#sound) — S, low
-65. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+59. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+60. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+61. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+62. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+63. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+64. [Archidekt import](#archidekt-import) — S, low
+65. [Sound](#sound) — S, low
+66. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+67. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -1362,6 +1366,43 @@ golden pool re-pinned once.
 - **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
   the existing comment already promise, and its line goes in the "Type
   changes" row of rules-coverage.md.
+
+### Target tapped creature" is not "enters tapped
+
+Effort **S** · Impact **low**, a card whose trigger targets a tapped creature is authored entering tapped, so it is a weaker card than the printed one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The authoring templates in `cards/authoring/templates.py` read the word
+"tapped" in a printed line as the card entering tapped, so a packet's
+`starting_point` for Harbinger of the Tides ("When this creature enters, you
+may return target tapped creature an opponent controls to its owner's hand")
+carried a `self_enters_tapped` replacement the card does not print. A worker
+caught it there; Surrakar Banisher shipped with the same replacement in
+`data/cards/auto/templates.cards.json`. Gate 5 cannot see it, because nothing
+in the sandbox asserts the card's own tapped state.
+
+#### The change
+
+1. The enters-tapped template matches only a line about the card itself
+   entering tapped, never "target tapped …" or "tapped creature".
+2. Every shipped card carrying `self_enters_tapped` whose printed text does
+   not say it enters tapped is re-collected through `--collect`, never
+   hand-edited.
+
+#### Gate
+
+A unit test under `tests/unit/` that the template gives Harbinger of the
+Tides' and Surrakar Banisher's lines no `self_enters_tapped`, and still gives
+it to a card printing "This land enters tapped."; a test in `tests/cards`
+that no auto card carries `self_enters_tapped` without "enters tapped" in its
+oracle text.
+
+#### Open questions
+
+- **Scope.** The template fix and the cards it mis-authored only, or an audit
+  of every template keyword that can appear inside a target phrase?
+  Recommended: this fix and its cards only; an audit is its own item.
 
 ## Decks
 
@@ -5324,6 +5365,52 @@ the game; this item makes it a URL.
 A server test that a shared tape replays to the same final state and the
 same event log as the game that produced it; a client test that the viewer
 sends no action; and the arena accepting a tape as a position under test.
+
+### A fixed target count is exact, not a ceiling
+
+Effort **M** · Impact **medium**, every "N target" spell can be cast today with fewer targets than it prints, which makes it a cheaper card than the paper one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A target spec with a literal `count` and no `up_to` is printed as an exact
+number ("six target permanents"), and 601.2c asks for exactly that many.
+`targeting._spec_options` enumerates the choices as combinations of
+`min(count, len(options))` candidates, so with fewer legal candidates than the
+count the spell is offered with a short set: Aether Gale can be cast with one
+permanent on the table. The one exception is `one_per_player` on an exact count,
+which asks for the full size (Run Away Together). Making every fixed count exact
+breaks `tests/unit/keywords/test_monstrosity.py`, whose position relies on the
+short set.
+
+#### The change
+
+1. `_spec_options` asks for the full `count` on every fixed-size spec without
+   `up_to`, as it already does under `one_per_player`; a spell with too few
+   candidates has no cast line, and a triggered ability with too few is
+   removed from the stack (603.3d).
+2. The Monstrosity test's position is given enough candidates, or reads the
+   card the way it is printed, whichever the card says.
+3. `tests/cards` is the witness that no shipped card relied on the short set;
+   any card it fails was authored against the bug and is re-collected, never
+   hand-edited.
+
+It does not change `up_to`, `min_count` or "any number" specs.
+
+#### Gate
+
+A unit test under `tests/unit/targets/` that a "two target creatures" spell has
+no cast line with one creature on the battlefield and one with two, and that a
+triggered ability with too few candidates leaves the stack; `tests/cards`
+green.
+
+#### Open questions
+
+- **Triggered abilities.** Should a trigger with too few candidates be removed
+  (603.3d) or fire with what there is? Recommended: removed, as the rules say,
+  in the same pull request, since the enumeration is shared.
+- **Cards that break.** If `tests/cards` shows shipped cards that only pass
+  with a short set, are they re-collected here or each filed as a gap?
+  Recommended: re-collected here, since the fix is what makes them right.
 
 ### Archidekt import
 
