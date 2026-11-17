@@ -287,3 +287,38 @@ class TestTheLoader:
     def test_a_spell_has_no_tap_symbol_to_pay(self, key):
         with pytest.raises(DslError, match="mean nothing"):
             compile_card(self._card(flash_cost={key: True, "mana": "{1}"}))
+
+
+class TestTheResidualGateReadsTheLine:
+    """The authoring residual gate claims the printed "as though it had flash"
+    line for `flash_cost` on a permanent, whose line no `spell_effects` covers
+    (Harbinger of the Tides, Mystical Tether) -- and only at the printed price.
+    """
+
+    LINE = "You may cast this spell as though it had flash if you pay {2} more to cast it."
+
+    def _creature(self, price: str):
+        return compile_card(
+            CardModel.model_validate(
+                {
+                    "id": "x",
+                    "name": "X",
+                    "oracle_text": self.LINE,
+                    "mana_cost": "{U}",
+                    "types": ["Creature"],
+                    "power": 1,
+                    "toughness": 1,
+                    "flash_cost": {"mana": price},
+                }
+            )
+        )
+
+    def test_the_printed_price_claims_the_line(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        assert residual_text(self._creature("{2}"), self.LINE) == ""
+
+    def test_a_cheaper_price_does_not(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        assert residual_text(self._creature("{1}"), self.LINE) != ""

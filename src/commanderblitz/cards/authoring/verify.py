@@ -2215,6 +2215,21 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.cost_reduction is not None and "costs" in lowered and "less to cast" in lowered:
         return True
 
+    # "You may cast this spell as though it had flash if you pay {2} more to
+    # cast it" is the card-level `flash_cost`, charged by legality only outside
+    # sorcery timing, so no ability could honestly carry the line -- an instant
+    # or sorcery's line is already claimed by its `spell_effects`, but a
+    # permanent's is not. Strict where the price is mana: the printed "{N}
+    # more" must be what `flash_cost.mana` charges, so `{1}` cannot claim a
+    # printed "{2} more". A non-mana price (Tegwyll's Scouring's tapped
+    # fliers, Molten Exhale's behold) is the rest of the sentence, which gate 5
+    # and the cost's own load checks hold.
+    if card.flash_cost is not None and "as though it had flash" in lowered:
+        more = re.search(r"\bpay ((?:\{[^}]+\})+) more\b", stripped, re.IGNORECASE)
+        if more is not None:
+            return _declares_printed_cost(more.group(1), card.flash_cost.mana)
+        return True
+
     # "Emerge {5}{U}{U}" is a whole alternative way to cast the card, paid and
     # spent inside `game._cast`. Like `kicker` above there is no ability that
     # could honestly claim it -- an AbilityModel is activated, triggered or
