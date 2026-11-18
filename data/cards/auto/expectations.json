@@ -23503,6 +23503,15 @@
     },
     "zone": "battlefield"
   },
+  "too_greedily_too_deep": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "topiary_stomper": {
     "battlefield_count": 34,
     "hand_size": {
@@ -23712,6 +23721,20 @@
   },
   "treachery": {
     "zone": "battlefield"
+  },
+  "treason_of_isengard": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 40
+    },
+    "tokens": {
+      "count": 1,
+      "id": "orc_army_0_0_b"
+    },
+    "zone": "graveyard"
   },
   "treasonous_ogre": {
     "zone": "battlefield"
@@ -25032,6 +25055,15 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "voracious_fell_beast": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
     },
     "zone": "battlefield"
   },

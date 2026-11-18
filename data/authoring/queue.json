@@ -289142,12 +289142,12 @@
     },
     "Too Greedily, Too Deep": {
       "edhrec_rank": 7171,
-      "gate": "template",
+      "gate": null,
       "name": "Too Greedily, Too Deep",
-      "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. That cr",
+      "reason": "",
       "scryfall_id": "328b93f0-5078-4334-9c95-60ecdd17a388",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Toofer, Keeper of the Full Grip": {
@@ -291852,12 +291852,12 @@
     },
     "Treason of Isengard": {
       "edhrec_rank": 5947,
-      "gate": "template",
+      "gate": null,
       "name": "Treason of Isengard",
-      "reason": "no template for: Put up to one target instant or sorcery card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "8072a918-3f1a-42e1-8971-fd20ce6710de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasonous Ogre": {
@@ -307812,12 +307812,12 @@
     },
     "Voracious Fell Beast": {
       "edhrec_rank": 6675,
-      "gate": "template",
+      "gate": null,
       "name": "Voracious Fell Beast",
-      "reason": "no template for: When this creature enters, each opponent sacrifices a creature of their choice. Create a F",
+      "reason": "",
       "scryfall_id": "11603836-d1a3-4e95-a8cc-e6ca2c854309",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voracious Greatshark": {
