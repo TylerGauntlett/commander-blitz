@@ -66,6 +66,9 @@ MANA_BASE = ["plains"] * 6 + ["island"] * 6 + ["swamp"] * 6 + ["mountain"] * 6 +
 OWN_BOARD = ["t_bear", "t_dork"]
 OPPONENT_BOARD = ["t_legend", "t_flyer", "sol_ring", "t_anthem", "forest", "island"]
 OWN_GRAVEYARD = ["t_bear", "t_dork", "t_flyer"]
+#: How many matching permanents `_provide_the_tap_fodder` puts out for a
+#: `tap_x` cost, whose count is the X the player announces.
+TAP_X_FODDER = 4
 
 
 @pytest.fixture(scope="session")
@@ -819,9 +822,16 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
     """
     cost = ability.cost
     spec = getattr(cost, "tap_permanents", None) if cost else None
+    wanted = int(spec.get("count", 1) or 1) if spec else 0
+    # Aryel, Knight of Windgrace taps *X untapped Knights*, and X is also the
+    # power its target may have: with no Knights the only X is 0, and nothing
+    # on the generic board has power 0. A few Knights leave X room to reach
+    # a target.
+    if not spec and cost is not None and getattr(cost, "tap_x", None):
+        spec = cost.tap_x
+        wanted = TAP_X_FODDER
     if not spec:
         return
-    wanted = int(spec.get("count", 1) or 1)
     match = _fodder_for(registry, spec, wanted)
     # Sage of the Maze taps *an untapped Gate*, and Gates are lands: a subtype
     # with no card type is not a creature, so the creature-shaped search above

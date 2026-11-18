@@ -78,6 +78,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "acclaimed_contender": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "accorder_s_shield": {
     "zone": "battlefield"
   },
@@ -1316,6 +1320,14 @@
     "zone": "battlefield"
   },
   "artisan_of_kozilek": {
+    "zone": "battlefield"
+  },
+  "arvad_the_cursed": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aryel_knight_of_windgrace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ascended_lawmage": {
@@ -4272,6 +4284,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "conjurer_s_mantle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "connive_concoct": {
     "zone": "graveyard"
   },
@@ -6592,6 +6608,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "elenda_and_azor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "elenda_s_hierophant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7094,6 +7117,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ethersworn_adjudicator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "eumidian_hatchery": {
     "battlefield_count": 33,
     "life": {
@@ -7341,6 +7368,10 @@
       "1": 20
     },
     "zone": "graveyard"
+  },
+  "exsanguinator_cavalry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "exterminate": {
     "battlefield_count": 31,
@@ -8321,6 +8352,13 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foulmire_knight_profane_insight": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "foundation_breaker": {
@@ -10310,6 +10348,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "herald_of_hoofbeats": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "herald_of_secret_streams": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12203,6 +12245,10 @@
   "knight_errant": {
     "zone": "battlefield"
   },
+  "knight_exemplar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "knight_of_glory": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12226,6 +12272,13 @@
   "knight_of_the_keep": {
     "zone": "battlefield"
   },
+  "knight_of_the_last_breath": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "knight_of_the_tusk": {
     "zone": "battlefield"
   },
@@ -12244,6 +12297,14 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "knights_charge": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "knollspine_dragon": {
     "battlefield_count": 33,
@@ -12837,6 +12898,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "liliana_s_standard_bearer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "liliana_the_last_hope": {
     "battlefield_count": 33,
     "counters": {
@@ -12958,6 +13029,10 @@
     "zone": "battlefield"
   },
   "lockjaw_slobbering_teleporter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "locthwain_lancer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13821,6 +13896,17 @@
   },
   "mastery_of_the_unseen": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maul_of_the_skyclaves": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "first_strike"
+      ]
+    },
     "zone": "battlefield"
   },
   "mayhem_devil": {
@@ -15776,6 +15862,13 @@
   },
   "orcish_siegemaster": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "order_of_midnight_alter_fate": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "order_of_sacred_dusk": {
@@ -19868,6 +19961,13 @@
   "sickle_ripper": {
     "zone": "battlefield"
   },
+  "sidar_jabari_of_zhalfir": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sidar_kondo_of_jamuraa": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19926,6 +20026,10 @@
     "zone": "battlefield"
   },
   "sigiled_paladin": {
+    "zone": "battlefield"
+  },
+  "sigiled_sword_of_valeron": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sign_in_blood": {
@@ -20027,6 +20131,10 @@
     "zone": "battlefield"
   },
   "silverquill_lecturer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "silverwing_squadron": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -20366,6 +20474,13 @@
   },
   "smirking_spelljacker": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "smitten_swordmaster_curry_favor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "smokebraider": {
@@ -21870,6 +21985,16 @@
     "tokens": {
       "count": 1,
       "id": "monster_role"
+    },
+    "zone": "battlefield"
+  },
+  "syr_elenora_the_discerning": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "battlefield"
   },
@@ -24459,6 +24584,10 @@
   "valiant_guard": {
     "zone": "battlefield"
   },
+  "valiant_knight": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "valiant_veteran": {
     "battlefield_count": 33,
     "hand_size": {
@@ -24965,6 +25094,10 @@
     "zone": "battlefield"
   },
   "vodalian_soldiers": {
+    "zone": "battlefield"
+  },
+  "vodalian_wave_knight": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "voice_of_victory": {
@@ -25898,6 +26031,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "wintermoor_commander": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "wirewood_elf": {
     "zone": "battlefield"
   },
@@ -26077,6 +26217,13 @@
   "worn_powerstone": {
     "zone": "battlefield"
   },
+  "worthy_knight": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "wose_pathfinder": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26123,6 +26270,10 @@
     "zone": "battlefield"
   },
   "xenobotanist": {
+    "zone": "battlefield"
+  },
+  "xerex_strobe_knight": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "xolatoyac_the_smiling_flood": {

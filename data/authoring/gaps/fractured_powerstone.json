@@ -1,0 +1,21 @@
+{
+  "card_id": "fractured_powerstone",
+  "name": "Fractured Powerstone",
+  "oracle_text": "{T}: Add {C}.\n{T}: Roll the planar die. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{T}: Roll the planar die. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "planechase",
+      "kind": "engine",
+      "what": "the Planechase subsystem (rule 901): a planar deck and a face-up plane or phenomenon in the command zone, plus a `roll_planar_die` op (901.9) that rolls the six-sided planar die -- on the planeswalker symbol the roller planeswalks (701.31), on the chaos symbol the face-up plane's chaos ability triggers, otherwise nothing; activated here as a sorcery-speed {T} ability, with the free-roll-cost escalation of 901.9b not applying to an effect-driven roll",
+      "why_existing_wont_do": "`roll_dice` rolls ordinary numbered dice and has no planeswalk or chaos outcome, and nothing in `ops` or the game setup knows planes, phenomena, a planar deck or chaos triggers. The rest of the card is expressible: '{T}: Add {C}.' is already the starting_point mana ability, and the activation limit is `sorcery_speed_only`"
+    }
+  ],
+  "closest_existing": [
+    "roll_dice",
+    "noop"
+  ],
+  "confidence": "high"
+}

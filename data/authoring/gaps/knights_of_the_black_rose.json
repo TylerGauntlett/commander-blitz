@@ -1,0 +1,18 @@
+{
+  "card_id": "knights_of_the_black_rose",
+  "name": "Knights of the Black Rose",
+  "oracle_text": "When this creature enters, you become the monarch.\nWhenever an opponent becomes the monarch, if you were the monarch as the turn began, that player loses 2 life and you gain 2 life.",
+  "blocked_sentences": [
+    "Whenever an opponent becomes the monarch, if you were the monarch as the turn began, that player loses 2 life and you gain 2 life."
+  ],
+  "needs": [
+    {
+      "capability": "monarch_at_turn_start",
+      "kind": "value",
+      "what": "a condition that asks whether a given player was the monarch at the moment the current turn began (a per-turn snapshot of the monarch recorded at the start of the turn), usable as an intervening-if on a becomes_monarch trigger",
+      "why_existing_wont_do": "condition_keys has is_monarch and no_monarch, which read the monarch now; at resolution of a becomes_monarch trigger the opponent is already the monarch, so is_monarch cannot tell whether you held it when the turn began. has_turn_flag reads a flag on the source object, not who was monarch, and no value_key records the turn-start monarch"
+    }
+  ],
+  "closest_existing": ["is_monarch", "becomes_monarch", "has_turn_flag"],
+  "confidence": "high"
+}

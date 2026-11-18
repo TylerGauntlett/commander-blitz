@@ -1,0 +1,18 @@
+{
+  "card_id": "ichor_elixir",
+  "name": "Ichor Elixir",
+  "oracle_text": "If you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one.\n{T}: Add {C}{C}.",
+  "blocked_sentences": [
+    "If you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one."
+  ],
+  "needs": [
+    {
+      "capability": "planechase",
+      "kind": "engine",
+      "what": "the Planechase subsystem (rule 901) with planar die rolls (901.9, 706): a roll-the-planar-die special action and event, plus a player-wide replacement static that rolls N+1 planar dice instead of N and lets the roller ignore one result",
+      "why_existing_wont_do": "Nothing in the reference knows planar dice, planes or a planar deck: no op rolls a planar die, no trigger event or replacement static intercepts a die roll, and the existing replace_* statics (replace_draw, replace_damage, replace_life_gain, replace_counters, replace_token_creation) each replace a different event. The {T}: Add {C}{C} line is already expressible as the starting_point's mana ability; only the replacement line is blocked"
+    }
+  ],
+  "closest_existing": ["replace_draw"],
+  "confidence": "high"
+}

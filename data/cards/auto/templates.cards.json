@@ -973,6 +973,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Knight"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Aura"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Equipment"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ],
+                    "types": [
+                      "Artifact"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if you control another Knight, look at the top five cards of your library. You may reveal a Knight, Aura, Equipment, or legendary artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Knight"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "acclaimed_contender",
+      "mana_cost": "{2}{W}",
+      "name": "Acclaimed Contender",
+      "oracle_text": "When this creature enters, if you control another Knight, look at the top five cards of your library. You may reveal a Knight, Aura, Equipment, or legendary artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -7373,6 +7455,48 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "alter_fate_order_of_midnight",
+      "mana_cost": "{1}{B}",
+      "name": "Alter Fate",
+      "oracle_text": "Return target creature card from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -15397,6 +15521,150 @@
         "Eldrazi"
       ],
       "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other legendary creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "arvad_the_cursed",
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{3}{W}{B}",
+      "name": "Arvad the Cursed",
+      "oracle_text": "Deathtouch, lifelink\nOther legendary creatures you control get +2/+2.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "knight_2_2_w_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}, {T}: Create a 2/2 white Knight creature token with vigilance."
+        },
+        {
+          "cost": {
+            "mana": "{B}",
+            "tap": true,
+            "tap_x": {
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{B}, {T}, Tap X untapped Knights you control: Destroy target creature with power X or less."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "aryel_knight_of_windgrace",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}{B}",
+      "name": "Aryel, Knight of Windgrace",
+      "oracle_text": "Vigilance\n{2}{W}, {T}: Create a 2/2 white Knight creature token with vigilance.\n{B}, {T}, Tap X untapped Knights you control: Destroy target creature with power X or less.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -52486,6 +52754,109 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1 and has vigilance",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 and has vigilance"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "shares_a_creature_type_with": "subject"
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, look at the top six cards of your library. You may reveal a card that shares a creature type with that creature from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "conjurer_s_mantle",
+      "mana_cost": "{1}{W}",
+      "name": "Conjurer's Mantle",
+      "oracle_text": "Equipped creature gets +1/+1 and has vigilance.\nWhenever equipped creature attacks, look at the top six cards of your library. You may reveal a card that shares a creature type with that creature from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "U"
@@ -59174,6 +59545,53 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "curry_favor_smitten_swordmaster",
+      "mana_cost": "{B}",
+      "name": "Curry Favor",
+      "oracle_text": "You gain X life and each opponent loses X life, where X is the number of Knights you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Knight"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Knight"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "lose_life",
+          "player": "each_opponent"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -79571,6 +79989,110 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "paid_x"
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}{W}{U}{B}"
+              },
+              "player": "you",
+              "prompt": "Pay {X}{W}{U}{B} to draw X cards (Elenda and Azor)?",
+              "x": {
+                "as": "paid_x"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Elenda and Azor attacks, you may pay {X}{W}{U}{B}. If you do, draw X cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "cards_drawn_this_turn": "you"
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "vampire_knight_1_1_b_lifelink"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 4
+              },
+              "player": "you",
+              "prompt": "Pay 4 life to create Vampire Knight tokens (Elenda and Azor)?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, you may pay 4 life. If you do, create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the number of cards you've drawn this turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "elenda_and_azor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{U}{B}",
+      "name": "Elenda and Azor",
+      "oracle_text": "Flying, ward {2}\nWhenever Elenda and Azor attacks, you may pay {X}{W}{U}{B}. If you do, draw X cards.\nAt the beginning of each end step, you may pay 4 life. If you do, create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the number of cards you've drawn this turn.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight",
+        "Sphinx"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -85247,6 +85769,81 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}{W}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{W}{B}, {T}: Destroy target creature or enchantment."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}: Untap this creature."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ethersworn_adjudicator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Ethersworn Adjudicator",
+      "oracle_text": "Flying\n{1}{W}{B}, {T}: Destroy target creature or enchantment.\n{2}{U}: Untap this creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "pay_life": 1,
             "tap": true
           },
@@ -87413,6 +88010,67 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Knight you control deals combat damage to a player, put a +1/+1 counter on that creature and create a Blood token.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "exsanguinator_cavalry",
+      "keywords": [
+        "menace",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Exsanguinator Cavalry",
+      "oracle_text": "Menace, lifelink\nWhenever a Knight you control deals combat damage to a player, put a +1/+1 counter on that creature and create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -98345,6 +99003,34 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "adventure": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "foulmire_knight_profane_insight",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{B}",
+      "name": "Foulmire Knight // Profane Insight",
+      "oracle_text": "Deathtouch",
+      "power": 1,
+      "second_face": "profane_insight_foulmire_knight",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Knight"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -122613,6 +123299,48 @@
         {
           "affects": {
             "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Knight"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "horsemanship"
+          ],
+          "kind": "static",
+          "text": "Other Knights you control have horsemanship."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "herald_of_hoofbeats",
+      "keywords": [
+        "horsemanship"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Herald of Hoofbeats",
+      "oracle_text": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)\nOther Knights you control have horsemanship.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
             "has_counters": "+1/+1",
             "types": [
               "Creature"
@@ -146696,6 +147424,72 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Knight"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Knight creatures you control get +1/+1 and have indestructible.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Knight"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Other Knight creatures you control get +1/+1 and have indestructible."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "knight_exemplar",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Knight Exemplar",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nOther Knight creatures you control get +1/+1 and have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "effect": "protection",
@@ -146832,6 +147626,75 @@
         "Knight"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "is_token": false,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_wb_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, Sacrifice another nontoken creature: Create a 1/1 white and black Spirit creature token with flying."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Afterlife 3 (When this creature dies, create three 1/1 white and black Spirit creature tokens with flying.)",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "knight_of_the_last_breath",
+      "mana_cost": "{5}{W}{B}",
+      "name": "Knight of the Last Breath",
+      "oracle_text": "{3}, Sacrifice another nontoken creature: Create a 1/1 white and black Spirit creature token with flying.\nAfterlife 3 (When this creature dies, create three 1/1 white and black Spirit creature tokens with flying.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Giant",
+        "Knight"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -146976,6 +147839,86 @@
           }
         }
       ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Knight you control attacks, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{6}{W}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Knight"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "{6}{W}{B}, Sacrifice this enchantment: Return all Knight creature cards from your graveyard to the battlefield."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "knights_charge",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Knights' Charge",
+      "oracle_text": "Whenever a Knight you control attacks, each opponent loses 1 life and you gain 1 life.\n{6}{W}{B}, Sacrifice this enchantment: Return all Knight creature cards from your graveyard to the battlefield.",
+      "source": "auto",
       "types": [
         "Enchantment"
       ]
@@ -154363,6 +155306,50 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "creatures_died_this_turn": "you"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw X cards, where X is the number of creatures that died under your control this turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_s_standard_bearer",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Liliana's Standard Bearer",
+      "oracle_text": "Flash\nWhen this creature enters, draw X cards, where X is the number of creatures that died under your control this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Knight"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },
@@ -155909,6 +156896,64 @@
         "Legendary"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken Knight you control dies, each opponent loses 1 life and you draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "is_token": false,
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "locthwain_lancer",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Locthwain Lancer",
+      "oracle_text": "Menace\nWhenever a nontoken Knight you control dies, each opponent loses 1 life and you draw a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -166170,6 +167215,113 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Equipment enters, attach it to target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has flying and first strike.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "first_strike"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has flying and first strike."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}{W}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "maul_of_the_skyclaves",
+      "mana_cost": "{2}{W}",
+      "name": "Maul of the Skyclaves",
+      "oracle_text": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +2/+2 and has flying and first strike.(It deals combat damage before creatures without first strike.)\nEquip {2}{W}{W}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -190032,6 +191184,44 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "order_of_midnight_alter_fate",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Order of Midnight // Alter Fate",
+      "oracle_text": "Flying\nThis creature can't block.",
+      "power": 2,
+      "second_face": "alter_fate_order_of_midnight",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "exclude_self": true,
             "subtypes": [
@@ -203483,6 +204673,41 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "profane_insight_foulmire_knight",
+      "mana_cost": "{2}{B}",
+      "name": "Profane Insight",
+      "oracle_text": "You draw a card and you lose 1 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -238767,6 +239992,112 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "battlefield",
+            "command"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Eminence — Whenever you attack with one or more Knights, if Sidar Jabari is in the command zone or on the battlefield, draw a card, then discard a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Knight"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Knight"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Sidar Jabari deals combat damage to a player, return target Knight creature card from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "sidar_jabari_of_zhalfir",
+      "keywords": [
+        "flying",
+        "first_strike"
+      ],
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Sidar Jabari of Zhalfir",
+      "oracle_text": "Eminence — Whenever you attack with one or more Knights, if Sidar Jabari is in the command zone or on the battlefield, draw a card, then discard a card.\nFlying, first strike\nWhenever Sidar Jabari deals combat damage to a player, return target Knight creature card from your graveyard to the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "any",
             "power": {
@@ -239419,6 +240750,110 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0, has vigilance, and is a Knight in addition to its other types.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+0, has vigilance, and is a Knight in addition to its other types."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Knight"
+          ],
+          "text": "Equipped creature gets +2/+0, has vigilance, and is a Knight in addition to its other types."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "attacking": true,
+              "op": "create_token",
+              "token": "knight_2_2_w_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, create a 2/2 white Knight creature token with vigilance that's attacking.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sigiled_sword_of_valeron",
+      "mana_cost": "{3}",
+      "name": "Sigiled Sword of Valeron",
+      "oracle_text": "Equipped creature gets +2/+0, has vigilance, and is a Knight in addition to its other types.\nWhenever equipped creature attacks, create a 2/2 white Knight creature token with vigilance that's attacking.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -240372,6 +241807,76 @@
         "Wizard"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "Silverwing Squadron's power and toughness are each equal to the number of creatures you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "knight_2_2_w_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, create a number of 2/2 white Knight creature tokens with vigilance equal to the number of opponents you have.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "silverwing_squadron",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{5}{W}",
+      "name": "Silverwing Squadron",
+      "oracle_text": "Flying, vigilance\nSilverwing Squadron's power and toughness are each equal to the number of creatures you control.\nWhenever this creature attacks, create a number of 2/2 white Knight creature tokens with vigilance equal to the number of opponents you have.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -244220,6 +245725,34 @@
         "Rogue"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "adventure": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "smitten_swordmaster_curry_favor",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Smitten Swordmaster // Curry Favor",
+      "oracle_text": "Lifelink",
+      "power": 2,
+      "second_face": "curry_favor_smitten_swordmaster",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -262924,6 +264457,81 @@
       "name": "Syr Armont, the Redeemer",
       "oracle_text": "When Syr Armont enters, create a Monster Role token attached to another target creature you control. (If you control another Role on it, put that one into the graveyard. Enchanted creature gets +1/+1 and has trample.)\nEnchanted creatures you control get +1/+1.",
       "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          },
+          "text": "Syr Elenora's power is equal to the number of cards in your hand.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Syr Elenora enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "spell_cost_increase",
+          "kind": "static",
+          "targeting": {
+            "self_only": true
+          },
+          "text": "Spells your opponents cast that target Syr Elenora cost {2} more to cast."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "syr_elenora_the_discerning",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Syr Elenora, the Discerning",
+      "oracle_text": "Syr Elenora's power is equal to the number of cards in your hand.\nWhen Syr Elenora enters, draw a card.\nSpells your opponents cast that target Syr Elenora cost {2} more to cast.",
+      "power": 0,
       "source": "auto",
       "subtypes": [
         "Human",
@@ -295435,6 +297043,72 @@
             "controller": "you",
             "exclude_self": true,
             "subtypes": [
+              "Knight"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Knights you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}{W}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Knight"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}{W}: Knights you control gain double strike until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "valiant_knight",
+      "mana_cost": "{3}{W}",
+      "name": "Valiant Knight",
+      "oracle_text": "Other Knights you control get +1/+1.\n{3}{W}{W}: Knights you control gain double strike until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
               "Soldier"
             ],
             "types": [
@@ -301443,6 +303117,59 @@
         "Soldier"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "subtypes": [
+                  "Merfolk",
+                  "Knight"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, put a +1/+1 counter on each other Merfolk and/or Knight you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "vodalian_wave_knight",
+      "mana_cost": "{2}{W}{U}",
+      "name": "Vodalian Wave-Knight",
+      "oracle_text": "Whenever you draw a card, put a +1/+1 counter on each other Merfolk and/or Knight you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Knight"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -311450,6 +313177,89 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Wintermoor Commander's toughness is equal to the number of Knights you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Knight"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, another target Knight you control gains indestructible until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "wintermoor_commander",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{W}{B}",
+      "name": "Wintermoor Commander",
+      "oracle_text": "Deathtouch\nWintermoor Commander's toughness is equal to the number of Knights you control.\nWhenever this creature attacks, another target Knight you control gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -313706,6 +315516,53 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Knight spell, create a 1/1 white Human creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Knight"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "worthy_knight",
+      "mana_cost": "{1}{W}",
+      "name": "Worthy Knight",
+      "oracle_text": "Whenever you cast a Knight spell, create a 1/1 white Human creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -314554,6 +316411,60 @@
         "Scientist"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": "you"
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "knight_2_2_wu_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 2/2 white and blue Knight creature token with vigilance. Activate only if you've cast two or more spells this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "xerex_strobe_knight",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Xerex Strobe-Knight",
+      "oracle_text": "Flying, vigilance\n{T}: Create a 2/2 white and blue Knight creature token with vigilance. Activate only if you've cast two or more spells this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
