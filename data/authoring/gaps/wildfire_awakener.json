@@ -1,0 +1,18 @@
+{
+  "card_id": "wildfire_awakener",
+  "name": "Wildfire Awakener",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nWhen this creature enters, create X 1/1 red Elemental creature tokens with \"Whenever this token becomes tapped, it deals 1 damage to target player.\"",
+  "blocked_sentences": [
+    "When this creature enters, create X 1/1 red Elemental creature tokens with \"Whenever this token becomes tapped, it deals 1 damage to target player.\""
+  ],
+  "needs": [
+    {
+      "capability": "elemental_token",
+      "kind": "token",
+      "what": "a 1/1 red Elemental creature token with \"Whenever this token becomes tapped, it deals 1 damage to target player.\" (e.g. elemental_1_1_r_tapped_ping): a self becomes_tapped trigger whose effect is damage 1 from the token to a target player",
+      "why_existing_wont_do": "token_ids has elemental_1_1_r (a vanilla 1/1 red Elemental) and elemental_1_1_r_haste, but no Elemental carrying the becomes-tapped damage trigger; giving elemental_1_1_r the trigger with a permanent grant_ability after creation would make the ability a granted effect rather than a copiable printed characteristic of the token, which is not the printed card. Convoke itself is expressible as card-level pay_generic_with \"tap_creatures\", and X is fine as the token amount"
+    }
+  ],
+  "closest_existing": ["elemental_1_1_r", "grant_ability", "becomes_tapped"],
+  "confidence": "high"
+}

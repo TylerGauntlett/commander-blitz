@@ -243112,12 +243112,12 @@
     },
     "Shatter the Source": {
       "edhrec_rank": 14001,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Shatter the Source",
-      "reason": "no template for: Convoke",
+      "reason": "opponent battlefield is 6, expected 5",
       "scryfall_id": "032720a1-410b-4638-9294-35fd8e27375f",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Shattered Acolyte": {
@@ -265022,12 +265022,12 @@
     },
     "Stoke the Flames": {
       "edhrec_rank": 10067,
-      "gate": "template",
+      "gate": null,
       "name": "Stoke the Flames",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "e59ba241-49c8-4913-9226-2eb384ef73df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stolen Goods": {
@@ -319672,12 +319672,12 @@
     },
     "Wrenn's Resolve": {
       "edhrec_rank": 2118,
-      "gate": "template",
+      "gate": null,
       "name": "Wrenn's Resolve",
-      "reason": "no template for: Exile the top two cards of your library. Until the end of your next turn, you may play tho",
+      "reason": "",
       "scryfall_id": "763881c0-c8aa-4955-9d71-3049f982032c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wretched Anurid": {

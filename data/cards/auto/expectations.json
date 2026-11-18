@@ -21421,6 +21421,13 @@
     },
     "zone": "battlefield"
   },
+  "stoke_the_flames": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "stolen_goods": {
     "library_size": {
       "0": 40,
@@ -26376,6 +26383,18 @@
   },
   "wrecking_crew": {
     "zone": "battlefield"
+  },
+  "wrenn_s_resolve": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "wu_elite_cavalry": {
     "zone": "battlefield"
