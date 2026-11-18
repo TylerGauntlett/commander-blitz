@@ -1,0 +1,18 @@
+{
+  "card_id": "trap_the_trespassers",
+  "name": "Trap the Trespassers",
+  "oracle_text": "Secret council — Each player secretly votes for a creature you don't control, then those votes are revealed. For each creature with one or more votes, put that many stun counters on it, then tap it. (If a permanent with a stun counter would become untapped, remove one from it instead.)",
+  "blocked_sentences": [
+    "Secret council — Each player secretly votes for a creature you don't control, then those votes are revealed. For each creature with one or more votes, put that many stun counters on it, then tap it."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op (rule 701.38) over objects: every player secretly chooses one object from a selector (here creatures the spell's controller doesn't control) without targeting, votes revealed simultaneously (secret council); the op keeps a per-candidate tally and binds the set of candidates with one or more votes under an `as`, with a value key reading the vote count of the current object, so a following for_each can add_counters of kind stun with amount = that object's votes and then tap it",
+      "why_existing_wont_do": "for_each_player can walk the players but choose_permanents has no per-player chooser and no binding that accumulates across players; no value_key counts how many players chose a given object, so 'put that many stun counters on it' has no amount; targeting would be wrong because the vote does not target. add_counters (counter: stun) and tap are themselves available, so only the vote and tally are missing"
+    }
+  ],
+  "closest_existing": ["for_each_player", "choose_permanents", "for_each", "add_counters", "tap"],
+  "confidence": "high"
+}

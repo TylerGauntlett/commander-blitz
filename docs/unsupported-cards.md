@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**483 cards** blocked by **430** capabilities.
+**498 cards** blocked by **434** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
+| [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
-| [council-s-dilemma](#council-s-dilemma) | 7 | 3539 | decision, op |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
@@ -30,6 +30,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [escape](#escape) | 3 | 1514 | engine, op |
+| [excess-damage](#excess-damage) | 3 | 3919 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
@@ -49,7 +50,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [excess-damage](#excess-damage) | 2 | 4086 | value |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
@@ -65,14 +65,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
+| [scry-trigger](#scry-trigger) | 2 | 9218 | trigger_event |
 | [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [the-ring-tempts-you](#the-ring-tempts-you) | 2 | 4906 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
+| [undaunted](#undaunted) | 2 | 3405 | value |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -199,6 +202,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
+| [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -372,13 +376,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
+| [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [revolt](#revolt) | 1 | 8154 | value |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
-| [scry-trigger](#scry-trigger) | 1 | 10400 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -386,6 +390,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [set-name-static](#set-name-static) | 1 | 6322 | static_effect |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
+| [shares-card-type-with](#shares-card-type-with) | 1 | 12729 | selector |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -408,7 +413,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
-| [the-ring-tempts-you](#the-ring-tempts-you) | 1 | 4906 | op |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
@@ -421,6 +425,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
+| [treefolk-x-x-g](#treefolk-x-x-g) | 1 | 4777 | token |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
 | [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
@@ -430,7 +435,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
-| [undaunted](#undaunted) | 1 | 3405 | value |
 | [unleash](#unleash) | 1 | 12169 | keyword |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
@@ -507,6 +511,91 @@ Blocks **22** cards.
   - Whenever enchanted creature attacks, defending player gets two rad counters.
 - **Survivor's Med Kit** (rank 13179) — `survivor_s_med_kit`
   - • RadAway — Target player loses all rad counters. Sacrifice this artifact
+
+</details>
+
+## council-s-dilemma
+
+Blocks **16** cards.
+
+- **(op)** a vote op where each player (here secretly, revealed simultaneously) votes for a player, with the tally bound so later effects can read it per player: a value 'votes received by <each_player>' for 'draws a card for each vote they received', and a condition/player filter for 'received no votes' feeding a for_each_player whose may lets that player put a permanent card from their hand onto the battlefield
+  <br>Why the existing vocabulary won't do: choose_player is made by one player only and binds a single choice; for_each_player wrapping choose_player has no way to aggregate the choices into a per-player vote count, and no value_key or condition reads votes received; join_forces collects payments, not choices
+- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(op)** a vote op over named options (here 'fellowship' / 'aid'), every player voting, secretly and revealed simultaneously (secret council), that binds each voter's choice so later effects can (a) run per fellowship voter, with that voter choosing a creature they control, and (b) read the count of aid votes as an amount (repeat add_counters of +1/+1 on each creature you control once per aid vote)
+  <br>Why the existing vocabulary won't do: choose_mode and choose_player are one player's choice; for_each_player wrapping choose_mode has no way to bind each player's chosen option for later reading, and no value_key counts votes for an option; join_forces collects mana payments, not choices
+- **(trigger_event)** a 'players finish voting' trigger event fired after any vote (council's dilemma / will of the council) completes, which binds the vote's record: each player's chosen option(s), so an effect can select 'each opponent who voted for a choice you voted for' (a player filter for for_each_player) and a value can count 'opponents who voted for a choice you didn't vote for' (the scry amount)
+  <br>Why the existing vocabulary won't do: trigger_events has no voting event (nearest are spell_cast/ability_activated, which do not fire on a vote), there is no vote op in reference ops for a vote to come from, and value_keys/player specs have nothing that reads per-player vote choices; for_each_player plus create_token treasure_token and scry/draw cover the effects only once the vote record exists
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+- **(op)** a vote op (rule 701.38) over named word options: starting with the ability's controller and in turn order, each player votes for one of a fixed list of words (here 'dominion' or 'guidance'); the per-option tally is kept and exposed so a following `if` can compare 'dominion gets more votes' against 'guidance gets more votes or the vote is tied'
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with walks the players, but choose_mode has a single chooser per resolution and records no tally; no value key counts votes per option, so neither the vote nor the 'more votes / tied' comparison can be said
+- **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses a player other than themselves as their vote, then all votes are revealed at once; the op binds the per-player tally under an `as` so later effects can read 'number of votes player P received' as an amount (here a for_each_player over opponents repeating 2 damage to the player and each creature they control once per vote, and a draw of {votes received by you} cards)
+  <br>Why the existing vocabulary won't do: for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player
+- **(trigger_event)** a vote mechanic (701.38) that records each player's votes per vote, plus a 'players_finish_voting' trigger event fired when any vote completes, binding the vote record so the effect can select 'you and each opponent who voted for a choice you voted for' (a player filter reading shared vote choices) and have each of them may-scry 2
+  <br>Why the existing vocabulary won't do: There is no vote op in op_options and no voting event among trigger_events; choose_player/choose_mode are single-chooser decisions that produce no vote record, so neither the trigger nor the 'voted for a choice you voted for' player filter can be expressed. scry exists, but nothing selects which players scry
+- **(op)** a vote op (rule 701.38) over named options: starting with the spell's controller and going in turn order, each player picks one of a fixed list of words (here 'time' or 'knowledge') as a vote; the tally per option is bound under an `as` so a following `if` can compare the counts (time > knowledge -> extra_turn for you; otherwise, including a tie -> draw 3)
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players and choose_mode has a `chooser`, but nothing records which mode each player picked and no value key counts votes for an option, so 'gets more votes' and 'the vote is tied' cannot be compared; set_flag/set_turn_flag are booleans, not tallies, and extra_turn and draw themselves already exist
+- **(op)** a vote op (rule 701.38) over named options: starting with the spell's controller and going in turn order, each player votes for one of a fixed list of words (here 'return' or 'embark'); the tally per option is bound under an `as` so a following `if` can compare option counts (return > embark, else embark-or-tie branch)
+  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players and choose_mode has a `chooser`, but nothing records each player's chosen mode as a tally and no condition or value key reads 'how many players voted for option X', so the two outcome branches cannot be selected; running each player's choice as an immediate choose_mode would apply per-voter effects instead of the majority outcome
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
+  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(op)** a vote op (rule 701.38) over objects: every player secretly chooses one object from a selector (here creatures the spell's controller doesn't control) without targeting, votes revealed simultaneously (secret council); the op keeps a per-candidate tally and binds the set of candidates with one or more votes under an `as`, with a value key reading the vote count of the current object, so a following for_each can add_counters of kind stun with amount = that object's votes and then tap it
+  <br>Why the existing vocabulary won't do: for_each_player can walk the players but choose_permanents has no per-player chooser and no binding that accumulates across players; no value_key counts how many players chose a given object, so 'put that many stun counters on it' has no amount; targeting would be wrong because the vote does not target. add_counters (counter: stun) and tap are themselves available, so only the vote and tally are missing
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'Redhorn Pass' or 'Mines of Moria'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.redhorn_pass'} / {binding: 'votes.mines_of_moria'}) so later effects in the same spell can use each count as an amount -- here a search_library of basic lands to the battlefield tapped with count = the Redhorn tally (shuffle only if that tally > 0), and a return of that many chosen cards from your graveyard to hand
+  <br>Why the existing vocabulary won't do: No op in reference casts a vote and value_keys has no vote count; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists the rest looks expressible: search_library (selector basic Land, destination battlefield, tapped, shuffle) with count from the binding inside an if on tally > 0, a return_from_graveyard/search_zones over your graveyard to hand for the other tally, and exiles_itself for the last line
+- **(op)** a vote op (rule 701.38) over printed word options: starting with the ability's controller and going in turn order, each player votes for one of the named options (here 'innocent' or 'guilty'); the per-option tally is bound under an `as` (or exposed as a value key such as votes_for) so a following `if` can compare 'guilty gets more votes' against 'innocent' with a cmp, strictly greater so a tie does nothing
+  <br>Why the existing vocabulary won't do: No vote op is in reference ops. for_each_player can walk the players and choose_mode has a chooser, but nothing accumulates each player's choice into a per-option count, and no value key reads a vote tally, so 'if guilty gets more votes' cannot be said; join_forces pools mana, not votes. The rest of the chapter (cards exiled_with self moved to the bottom of their owners' libraries) and chapters I-III (exile_until until_leaves) look expressible once the vote exists
+- **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses one of N named options (here 'truth' or 'consequences'), then all votes are revealed at once; the op binds the tally per option under an `as` (e.g. {binding: 'votes.truth'}, {binding: 'votes.consequences'}) so later effects can size a draw by the truth count and a damage amount of 3 times the consequences count
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a vote; for_each_player wrapping choose_mode cannot accumulate a count per chosen option, nothing makes the choices secret and simultaneous, and value_keys has no vote tally to size the draw or the damage. join_forces is the closest per-player decision but collects mana payments, not a choice
+- **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
+  <br>Why the existing vocabulary won't do: choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Council's Judgment** (rank 3539) — `council_s_judgment`
+  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
+- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
+  - Council's dilemma — Starting with you, each player votes for wild or free.
+  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
+  - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Plea for Power** (rank 5643) — `plea_for_power`
+  - Will of the council — Starting with you, each player votes for time or knowledge. If time gets more votes, take an extra turn after this one. If knowledge gets more votes or the vote is tied, draw three cards.
+- **Mob Verdict** (rank 6957) — `mob_verdict`
+  - Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.
+- **Círdan the Shipwright** (rank 7814) — `cirdan_the_shipwright`
+  - Secret council — Whenever Círdan enters or attacks, each player secretly votes for a player, then those votes are revealed. Each player draws a card for each vote they received. Each player who received no votes may put a permanent card from their hand onto the battlefield
+- **Trap the Trespassers** (rank 7856) — `trap_the_trespassers`
+  - Secret council — Each player secretly votes for a creature you don't control, then those votes are revealed. For each creature with one or more votes, put that many stun counters on it, then tap it.
+- **Model of Unity** (rank 8638) — `model_of_unity`
+  - Whenever players finish voting, you and each opponent who voted for a choice you voted for may scry 2.
+- **Sail into the West** (rank 9610) — `sail_into_the_west`
+  - Will of the council — Starting with you, each player votes for return or embark.
+  - If return gets more votes, each player returns up to two cards from their graveyard to their hand, then you exile Sail into the West.
+  - If embark gets more votes or the vote is tied, each player may discard their hand and draw seven cards.
+- **Elrond of the White Council** (rank 9612) — `elrond_of_the_white_council`
+  - Secret council — When Elrond enters, each player secretly votes for fellowship or aid, then those votes are revealed. For each fellowship vote, the voter chooses a creature they control. You gain control of each creature chosen this way, and they gain "This creature can't attack its owner." Then for each aid vote, put a +1/+1 counter on each creature you control.
+- **Trial of a Time Lord** (rank 10383) — `trial_of_a_time_lord`
+  - IV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library
+- **Truth or Consequences** (rank 10776) — `truth_or_consequences`
+  - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
+  - You draw cards equal to the number of truth votes.
+  - Then choose an opponent at random. Truth or Consequences deals 3 damage to that player for each consequences vote.
+- **Galadriel, Elven-Queen** (rank 11138) — `galadriel_elven_queen`
+  - Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.
+- **Erestor of the Council** (rank 11338) — `erestor_of_the_council`
+  - Whenever players finish voting, each opponent who voted for a choice you voted for creates a Treasure token. You scry X, where X is the number of opponents who voted for a choice you didn't vote for. Draw a card.
+- **Vault 11: Voter's Dilemma** (rank 11857) — `vault_11_voter_s_dilemma`
+  - II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.
+- **Travel Through Caradhras** (rank 12486) — `travel_through_caradhras`
+  - Council's dilemma — Starting with you, each player votes for Redhorn Pass or Mines of Moria.
+  - For each Redhorn Pass vote, search your library for a basic land card and put it onto the battlefield tapped.
+  - If you search your library this way, shuffle.
+  - For each Mines of Moria vote, return a card from your graveyard to your hand.
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
 
 </details>
 
@@ -625,50 +714,6 @@ Blocks **9** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## council-s-dilemma
-
-Blocks **7** cards.
-
-- **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
-  <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
-- **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses a player other than themselves as their vote, then all votes are revealed at once; the op binds the per-player tally under an `as` so later effects can read 'number of votes player P received' as an amount (here a for_each_player over opponents repeating 2 damage to the player and each creature they control once per vote, and a draw of {votes received by you} cards)
-  <br>Why the existing vocabulary won't do: for_each_player can walk the seats, but choose_player has only as/players/prompt -- no per-player chooser, so each player cannot cast their own vote, and nothing makes the choices simultaneous and secret; value_keys has no vote count, so neither the damage repetition per vote an opponent received nor the draw per vote you received can be sized. join_forces is the closest per-player decision but it collects mana payments, not a choice of player
-- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
-  <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
-- **(op)** a vote op (rule 701.38) over printed word options: starting with the ability's controller and going in turn order, each player votes for one of the named options (here 'innocent' or 'guilty'); the per-option tally is bound under an `as` (or exposed as a value key such as votes_for) so a following `if` can compare 'guilty gets more votes' against 'innocent' with a cmp, strictly greater so a tie does nothing
-  <br>Why the existing vocabulary won't do: No vote op is in reference ops. for_each_player can walk the players and choose_mode has a chooser, but nothing accumulates each player's choice into a per-option count, and no value key reads a vote tally, so 'if guilty gets more votes' cannot be said; join_forces pools mana, not votes. The rest of the chapter (cards exiled_with self moved to the bottom of their owners' libraries) and chapters I-III (exile_until until_leaves) look expressible once the vote exists
-- **(op)** a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses one of N named options (here 'truth' or 'consequences'), then all votes are revealed at once; the op binds the tally per option under an `as` (e.g. {binding: 'votes.truth'}, {binding: 'votes.consequences'}) so later effects can size a draw by the truth count and a damage amount of 3 times the consequences count
-  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a vote; for_each_player wrapping choose_mode cannot accumulate a count per chosen option, nothing makes the choices secret and simultaneous, and value_keys has no vote tally to size the draw or the damage. join_forces is the closest per-player decision but collects mana payments, not a choice
-- **(op)** a vote op: each player (in turn order, here secretly, revealed simultaneously) chooses up to one object from a selector (here any creature on the battlefield), the tally is bound so later effects can read it -- a condition for 'no object got votes' and a selector for 'each object with the most votes or tied for most votes' -- feeding an if/else of draw for each player vs destroy over the top-voted set
-  <br>Why the existing vocabulary won't do: choose_permanents and choose_player are made by one player only, join_forces collects payments not choices, and for_each_player wrapping choose_permanents has no way to aggregate the choices into a per-object vote count nor a selector for the most-voted (tied included) objects; no condition reads 'no votes cast'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Council's Judgment** (rank 3539) — `council_s_judgment`
-  - Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.
-- **Selvala's Stampede** (rank 4067) — `selvala_s_stampede`
-  - Council's dilemma — Starting with you, each player votes for wild or free.
-  - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
-  - You may put a permanent card from your hand onto the battlefield for each free vote.
-- **Mob Verdict** (rank 6957) — `mob_verdict`
-  - Secret council — Each player secretly votes for another player, then those votes are revealed. For each vote an opponent received, Mob Verdict deals 2 damage to that player and each creature that player controls. For each vote you received, draw a card.
-- **Trial of a Time Lord** (rank 10383) — `trial_of_a_time_lord`
-  - IV — Starting with you, each player votes for innocent or guilty. If guilty gets more votes, the owner of each card exiled with this Saga puts that card on the bottom of their library
-- **Truth or Consequences** (rank 10776) — `truth_or_consequences`
-  - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
-  - You draw cards equal to the number of truth votes.
-  - Then choose an opponent at random. Truth or Consequences deals 3 damage to that player for each consequences vote.
-- **Vault 11: Voter's Dilemma** (rank 11857) — `vault_11_voter_s_dilemma`
-  - II, III — Each player secretly votes for up to one creature, then those votes are revealed. If no creature got votes, each player draws a card. Otherwise, destroy each creature with the most votes or tied for most votes.
-- **Fateful Tempest** (rank 15065) — `fateful_tempest`
-  - Council's dilemma — Starting with you, each player votes for past or present.
-  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
-  - Exile the top card of your library for each present vote.
 
 </details>
 
@@ -1004,6 +1049,28 @@ Blocks **3** cards.
   - {T}: Target legendary creature card in your graveyard gains escape until end of turn. The escape cost is equal to its mana cost plus exile three other cards from your graveyard.
 - **Desdemona, Freedom's Edge** (rank 16346) — `desdemona_freedom_s_edge`
   - Whenever Desdemona attacks, target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn. The escape cost is equal to its mana cost plus exile two other cards from your graveyard.
+
+</details>
+
+## excess-damage
+
+Blocks **3** cards.
+
+- **(value)** a value reading how much excess damage (120.4a: damage beyond lethal for a creature, beyond loyalty for a planeswalker, beyond defense for a battle) the preceding damage effect dealt to the permanent it hit, bindable (e.g. `as` on the `damage` op, read as {"binding": ...}) so a following create_token amount can be 'that many'; 0 when the target was a player
+  <br>Why the existing vocabulary won't do: The damage op's `excess_to` only redirects the remainder to the creature's controller (Gandalf's Sanction) and splits the event; here all 5 damage is dealt to the permanent and the excess is only measured. No value_key reports excess damage, and composing minus/toughness_of/snapshot cannot account for damage already marked, planeswalker loyalty or battle defense, nor zero it for a player target
+- **(value)** a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount
+  <br>Why the existing vocabulary won't do: value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount
+- **(value)** a value reading how much excess damage (120.4a: damage beyond lethal, i.e. toughness minus damage already marked, or beyond 1 from a deathtouch source) the preceding damage effect dealt to the creature it hit, bindable (e.g. `as` on the `damage` op, read as {"binding": ...}) so a following create_token of elf_warrior_1_1_g can take it as its amount; 0 when no excess was dealt or the target left before damage
+  <br>Why the existing vocabulary won't do: The first sentence is expressible as `damage` with amount power_of t1, source_object t1 and target t2, and the token elf_warrior_1_1_g exists. But the damage op's `excess_to` only accepts 'controller' and redirects the remainder to a player (Gandalf's Sanction), splitting the event; here all the damage is dealt to the creature and the excess is only measured. No value_key reports excess damage, and minus(power_of t1, toughness_of t2) ignores damage already marked on t2 and deathtouch on the dealing creature, and goes wrong once t2 has left
+
+<details><summary>Cards waiting on this</summary>
+
+- **Windswift Slice** (rank 3919) — `windswift_slice`
+  - Create a number of 1/1 green Elf Warrior creature tokens equal to the amount of excess damage dealt this way.
+- **Bottle-Cap Blast** (rank 4086) — `bottle_cap_blast`
+  - If excess damage was dealt to a permanent this way, create that many tapped Treasure tokens.
+- **Overclocked Electromancer** (rank 10942) — `overclocked_electromancer`
+  - Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.
 
 </details>
 
@@ -1391,24 +1458,6 @@ Blocks **2** cards.
 
 </details>
 
-## excess-damage
-
-Blocks **2** cards.
-
-- **(value)** a value reading how much excess damage (120.4a: damage beyond lethal for a creature, beyond loyalty for a planeswalker, beyond defense for a battle) the preceding damage effect dealt to the permanent it hit, bindable (e.g. `as` on the `damage` op, read as {"binding": ...}) so a following create_token amount can be 'that many'; 0 when the target was a player
-  <br>Why the existing vocabulary won't do: The damage op's `excess_to` only redirects the remainder to the creature's controller (Gandalf's Sanction) and splits the event; here all 5 damage is dealt to the permanent and the excess is only measured. No value_key reports excess damage, and composing minus/toughness_of/snapshot cannot account for damage already marked, planeswalker loyalty or battle defense, nor zero it for a player target
-- **(value)** a value (and condition) reading the excess damage (damage beyond lethal, 120.4a) dealt to a damaged creature this turn, readable from a deals_combat_damage trigger whose damaged creature is bound, so the trigger can intervene on excess > 0 and add_energy that amount
-  <br>Why the existing vocabulary won't do: value_keys has damage_dealt_to_this_turn and max_damage_taken_this_turn but nothing that subtracts the creature's lethal threshold; the damage op's excess_to only redirects excess from its own damage and is not a readable value; deals_combat_damage exposes no per-creature excess amount
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bottle-Cap Blast** (rank 4086) — `bottle_cap_blast`
-  - If excess damage was dealt to a permanent this way, create that many tapped Treasure tokens.
-- **Overclocked Electromancer** (rank 10942) — `overclocked_electromancer`
-  - Whenever this creature deals combat damage to a creature, if that creature was dealt excess damage this turn, you get X {E}, where X is that excess damage.
-
-</details>
-
 ## experience-counters
 
 Blocks **2** cards.
@@ -1686,6 +1735,25 @@ Blocks **2** cards.
 
 </details>
 
+## scry-trigger
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event fired when a player scries (controller-filterable, e.g. controller: you), whose event carries the number of cards looked at during that scry as a bindable value, so the effect can be pump on self_only with power and toughness equal to that count until end of turn
+  <br>Why the existing vocabulary won't do: trigger_events has surveils and searches_library but no scry event, and value_keys has nothing that reads how many cards a scry looked at; pumping a flat +1/+1 per trigger would be wrong for any scry N greater than 1 (e.g. from other cards)
+- **(trigger_event)** a trigger event fired when a player scries (with the scrying player bindable as the damaged player), so one trigger can cover 'whenever an opponent scries, surveils, or searches their library'
+  <br>Why the existing vocabulary won't do: trigger_events has surveils and searches_library but no scry event, so the scry third of the printed trigger cannot be written; writing only the other two events would drop a clause
+
+<details><summary>Cards waiting on this</summary>
+
+- **Celeborn the Wise** (rank 9218) — `celeborn_the_wise`
+  - Whenever you scry, Celeborn gets +1/+1 until end of turn for each card looked at while scrying this way.
+- **River Song** (rank 10400) — `river_song`
+  - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
+  - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
+
+</details>
+
 ## soldier-1-1-rw-haste
 
 Blocks **2** cards.
@@ -1798,6 +1866,25 @@ Blocks **2** cards.
 
 </details>
 
+## the-ring-tempts-you
+
+Blocks **2** cards.
+
+- **(op)** an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'
+  <br>Why the existing vocabulary won't do: No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to
+- **(op)** 'the Ring tempts you' (rule 701.54): the player gets the Ring emblem if they lack it, advances its level, and chooses a creature they control as their Ring-bearer; plus a selector naming 'your Ring-bearer' so add_counters can put a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: no op in reference tempts a player or designates a Ring-bearer, emblem only gives a card-authored emblem with no level progression, and no selector key reads a Ring-bearer designation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
+  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
+  - Partner with Sam, Loyal Attendant
+- **Galadriel, Elven-Queen** (rank 11138) — `galadriel_elven_queen`
+  - Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.
+
+</details>
+
 ## training
 
 Blocks **2** cards.
@@ -1832,6 +1919,24 @@ Blocks **2** cards.
 - **Obscuring Aether** (rank 10947) — `obscuring_aether`
   - Face-down creature spells you cast cost {1} less to cast.
   - {1}{G}: Turn this enchantment face down. (It becomes a 2/2 creature.)
+
+</details>
+
+## undaunted
+
+Blocks **2** cards.
+
+- **(value)** a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {"opponents": "you"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}
+  <br>Why the existing vocabulary won't do: cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value.
+- **(value)** a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {"opponents": "you"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}
+  <br>Why the existing vocabulary won't do: cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value. The rest of the card (return_to_hand over an up-to-two card_in_graveyard target, exiles_itself) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curtains' Call** (rank 3405) — `curtains_call`
+  - Undaunted (This spell costs {1} less to cast for each opponent.)
+- **Seeds of Renewal** (rank 15147) — `seeds_of_renewal`
+  - Undaunted (This spell costs {1} less to cast for each opponent.)
 
 </details>
 
@@ -3649,6 +3754,20 @@ Blocks **1** card.
 
 - **Horizon Explorer** (rank 1877) — `horizon_explorer`
   - Lands you control enter untapped.
+
+</details>
+
+## enters-with-counters-equal-to-source-toughness
+
+Blocks **1** card.
+
+- **(value)** an 'amount' for the enters_with_additional_counters static that reads the source permanent's current toughness (e.g. {"toughness_of": {"self_only": true}}), evaluated as each other creature enters
+  <br>Why the existing vocabulary won't do: The static enters_with_additional_counters exists and handles 'each other creature you control' via affects with exclude_self, but the loader (cards/loader/__init__.py) accepts its amount only as a whole number, {'count': <battlefield filter>} or a creatures_died_this_turn tally; static_value_keys has no toughness_of, and a const would ignore Arwen's toughness changing (buffs, counters)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arwen, Weaver of Hope** (rank 1905) — `arwen_weaver_of_hope`
+  - Each other creature you control enters with a number of additional +1/+1 counters on it equal to Arwen's toughness.
 
 </details>
 
@@ -6128,6 +6247,20 @@ Blocks **1** card.
 
 </details>
 
+## reveal-top-of-library
+
+Blocks **1** card.
+
+- **(selector)** a way for `reveal` (or a `for_each_player` over opponents) to name 'the top card of <player>'s library' as its objects and bind the revealed cards across all opponents under one `as`, so the following condition reads the union
+  <br>Why the existing vocabulary won't do: `selector_keys` has no top-of-library position key; `look_at_top`/`reveal_until` move cards to a destination and are the revealing player's own library effects, while this reveal leaves each card in place on top of its owner's library; `reveal_library_top` is a static (play with the top card revealed), not a one-shot
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gandalf, Westward Voyager** (rank 12729) — `gandalf_westward_voyager`
+  - Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card
+
+</details>
+
 ## revolt
 
 Blocks **1** card.
@@ -6211,21 +6344,6 @@ Blocks **1** card.
 
 - **Young Deathclaws** (rank 11499) — `young_deathclaws`
   - Each creature card in your graveyard has scavenge. The scavenge cost is equal to its mana cost.
-
-</details>
-
-## scry-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when a player scries (with the scrying player bindable as the damaged player), so one trigger can cover 'whenever an opponent scries, surveils, or searches their library'
-  <br>Why the existing vocabulary won't do: trigger_events has surveils and searches_library but no scry event, so the scry third of the printed trigger cannot be written; writing only the other two events would drop a clause
-
-<details><summary>Cards waiting on this</summary>
-
-- **River Song** (rank 10400) — `river_song`
-  - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
-  - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
 
 </details>
 
@@ -6330,6 +6448,20 @@ Blocks **1** card.
 
 - **Preston Garvey, Minuteman** (rank 12594) — `preston_garvey_minuteman`
   - At the beginning of combat on your turn, create a green Aura enchantment token named Settlement attached to up to one target land you control. It has enchant land and "Enchanted land has '{T}: Add one mana of any color.'"
+
+</details>
+
+## shares-card-type-with
+
+Blocks **1** card.
+
+- **(selector)** a selector clause matching cards that share ANY card type (205.2a: Artifact, Battle, Creature, Enchantment, Instant, Kindred, Land, Planeswalker, Sorcery) with a bound object, where the bound object may be a spell on the stack (the trigger's `subject`) -- so an `exists` condition over the cards each opponent revealed (bound with `reveal`'s `as`) can ask 'if any of those cards shares a card type with that spell'
+  <br>Why the existing vocabulary won't do: `shares_a_type_with` intersects SUBTYPES (Heirloom Blade, Shared Animosity), not card types; `shares_permanent_type_with` intersects card types but deliberately drops everything outside the permanent types, so an instant or sorcery spell would never match a revealed instant or sorcery -- quietly narrower than printed; `shares_a_type_with_commander` reads the commander, not the cast spell
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gandalf, Westward Voyager** (rank 12729) — `gandalf_westward_voyager`
+  - Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card
 
 </details>
 
@@ -6646,21 +6778,6 @@ Blocks **1** card.
 
 </details>
 
-## the-ring-tempts-you
-
-Blocks **1** card.
-
-- **(op)** an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'
-  <br>Why the existing vocabulary won't do: No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
-  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
-  - Partner with Sam, Loyal Attendant
-
-</details>
-
 ## this-combat-duration
 
 Blocks **1** card.
@@ -6829,6 +6946,20 @@ Blocks **1** card.
 
 </details>
 
+## treefolk-x-x-g
+
+Blocks **1** card.
+
+- **(token)** an X/X green Treefolk creature token (no abilities), its power and toughness set by create_token's power/toughness from the spell's X
+  <br>Why the existing vocabulary won't do: token_ids has no Treefolk token of any size; the nearest X/X green tokens are hydra_x_x_g and ooze_x_x_g, which carry the wrong creature type. The rest of the line (choose_player over opponents, then create_token for you and that player) and the whole Elf Warrior line (elf_warrior_1_1_g, amount X) are expressible once the token exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sylvan Offering** (rank 4777) — `sylvan_offering`
+  - Choose an opponent. You and that player each create an X/X green Treefolk creature token.
+
+</details>
+
 ## treefolk-x-x-g-reach-land-count
 
 Blocks **1** card.
@@ -6953,20 +7084,6 @@ Blocks **1** card.
 
 - **Become the Pilot** (rank 16395) — `become_the_pilot`
   - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
-
-</details>
-
-## undaunted
-
-Blocks **1** card.
-
-- **(value)** a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {"opponents": "you"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}
-  <br>Why the existing vocabulary won't do: cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Curtains' Call** (rank 3405) — `curtains_call`
-  - Undaunted (This spell costs {1} less to cast for each opponent.)
 
 </details>
 

@@ -254812,12 +254812,12 @@
     },
     "Song of Eärendil": {
       "edhrec_rank": 7435,
-      "gate": "template",
+      "gate": null,
       "name": "Song of Eärendil",
-      "reason": "no template for: I — Scry 2, then draw two cards",
+      "reason": "",
       "scryfall_id": "325bb6b7-6d19-48b5-82dd-2759d4fc3144",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Song of Freyalise": {
@@ -319282,12 +319282,12 @@
     },
     "Wose Pathfinder": {
       "edhrec_rank": 8494,
-      "gate": "template",
+      "gate": null,
       "name": "Wose Pathfinder",
-      "reason": "no template for: {6}{G}, {T}: Another target creature gets +3/+3 and gains trample until end of turn",
+      "reason": "",
       "scryfall_id": "6589b339-9067-4e9b-bfdb-c49f8b3ef2d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wound Reflection": {

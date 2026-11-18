@@ -20436,6 +20436,20 @@
   "somberwald_dryad": {
     "zone": "battlefield"
   },
+  "song_of_earendil": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "song_of_the_dryads": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25903,6 +25917,10 @@
     "zone": "graveyard"
   },
   "worn_powerstone": {
+    "zone": "battlefield"
+  },
+  "wose_pathfinder": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wound_reflection": {
