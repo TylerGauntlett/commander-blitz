@@ -1,0 +1,16 @@
+{
+  "card_id": "devouring_light",
+  "name": "Devouring Light",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nExile target attacking or blocking creature.",
+  "blocked_sentences": [
+    "Exile target attacking or blocking creature."
+  ],
+  "needs": [{
+    "capability": "sandbox_combat_targets",
+    "kind": "engine",
+    "what": "The authoring verification sandbox (cards/authoring/verify.py build_sandbox / _cast) must be able to cast an instant whose only target must be an attacking or blocking creature: move the sandbox into a combat (e.g. player 0 declares one of its creatures as an attacker and the spell is cast in declare attackers or declare blockers) when a card-level target selector, or one of its any_of branches, carries attacking/blocking -- the way tests/cards/test_every_card_works.py _selector_branches already drives a game to declare-attackers for such targets",
+    "why_existing_wont_do": "Every printed word is expressible: card-level `pay_generic_with: \"tap_creatures\"` (convoke), a `permanent` target t1 with selector {zone: battlefield, controller: any, types: [Creature], any_of: [{attacking: true}, {blocking: true}]} (the shape dawnray_archer ships), and spell_effects [{op: exile, objects: {target: t1}}]. But the sandbox is fixed at precombat main with combat declined, so no creature is attacking or blocking. Verified with a scratch run of verify(): the draft FAILED at the playable gate -- 'devouring_light is not playable in the sandbox; offered: [Pass, Play Forest]' (601.2c, no legal target). No expectation key can be satisfied by a card that cannot be cast, and adding an unprinted cast_only_during or widening the target to any creature would be an approximation"
+  }],
+  "closest_existing": ["pay_generic_with", "any_of", "attacking", "blocking", "exile"],
+  "confidence": "high"
+}

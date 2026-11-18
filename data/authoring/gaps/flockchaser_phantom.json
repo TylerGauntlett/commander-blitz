@@ -1,0 +1,16 @@
+{
+  "card_id": "flockchaser_phantom",
+  "name": "Flockchaser Phantom",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFlying, vigilance\nWhenever this creature attacks, the next spell you cast this turn has convoke.",
+  "blocked_sentences": [
+    "Whenever this creature attacks, the next spell you cast this turn has convoke."
+  ],
+  "needs": [{
+    "capability": "convoke",
+    "kind": "op",
+    "what": "a one-shot op that grants a pay_generic_with currency (convoke, i.e. tap_creatures) to the next spell a player casts this turn, consumed by that cast -- the next_spell shape of grant_flash_permission / next_spell_cost_reduction / uncounterable_this_turn, but handing over a pay_generic_with currency",
+    "why_existing_wont_do": "Convoke itself is the card-level pay_generic_with \"tap_creatures\", and grant_pay_generic_with is only a player-wide static that lasts while its source is on the battlefield and covers every matching spell, not a one-shot grant for the next spell this turn; next_spell_cost_reduction gives a flat generic discount, not a tap-creatures payment, and grant_flash_permission / uncounterable_this_turn carry next_spell but grant other things"
+  }],
+  "closest_existing": ["grant_pay_generic_with", "next_spell_cost_reduction", "grant_flash_permission"],
+  "confidence": "high"
+}
