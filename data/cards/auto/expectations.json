@@ -78,6 +78,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "acclaimed_contender": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "accorder_s_shield": {
     "zone": "battlefield"
   },
@@ -1316,6 +1320,14 @@
     "zone": "battlefield"
   },
   "artisan_of_kozilek": {
+    "zone": "battlefield"
+  },
+  "arvad_the_cursed": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aryel_knight_of_windgrace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ascended_lawmage": {
@@ -4272,6 +4284,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "conjurer_s_mantle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "connive_concoct": {
     "zone": "graveyard"
   },
@@ -6592,6 +6608,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "elenda_and_azor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "elenda_s_hierophant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7094,6 +7117,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ethersworn_adjudicator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "eumidian_hatchery": {
     "battlefield_count": 33,
     "life": {
@@ -7341,6 +7368,10 @@
       "1": 20
     },
     "zone": "graveyard"
+  },
+  "exsanguinator_cavalry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "exterminate": {
     "battlefield_count": 31,
@@ -8321,6 +8352,13 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foulmire_knight_profane_insight": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "foundation_breaker": {
@@ -10310,6 +10348,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "herald_of_hoofbeats": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "herald_of_secret_streams": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12203,6 +12245,10 @@
   "knight_errant": {
     "zone": "battlefield"
   },
+  "knight_exemplar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "knight_of_glory": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12226,6 +12272,13 @@
   "knight_of_the_keep": {
     "zone": "battlefield"
   },
+  "knight_of_the_last_breath": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "knight_of_the_tusk": {
     "zone": "battlefield"
   },
@@ -12244,6 +12297,14 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "knights_charge": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "knollspine_dragon": {
     "battlefield_count": 33,
@@ -12835,6 +12896,16 @@
   },
   "liliana_s_reaver": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "liliana_s_standard_bearer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "liliana_the_last_hope": {

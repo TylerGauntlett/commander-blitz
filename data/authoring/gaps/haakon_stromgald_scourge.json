@@ -1,0 +1,19 @@
+{
+  "card_id": "haakon_stromgald_scourge",
+  "name": "Haakon, Stromgald Scourge",
+  "oracle_text": "You may cast this card from your graveyard, but not from anywhere else.\nAs long as Haakon is on the battlefield, you may cast Knight spells from your graveyard.\nWhen Haakon dies, you lose 2 life.",
+  "blocked_sentences": [
+    "You may cast this card from your graveyard, but not from anywhere else."
+  ],
+  "needs": [
+    {
+      "capability": "cast_only_from_graveyard",
+      "kind": "static_effect",
+      "what": "a card-level restriction on the card's OWN legal cast zones: the card may be cast only from its owner's graveyard, never from hand, exile, library top or the command zone (as a commander it could never be cast at all), while the paired cast_from_graveyard permission grants the graveyard cast",
+      "why_existing_wont_do": "cast_from_graveyard with active_zones [graveyard] supplies the permission half but leaves the normal hand cast open; cant_cast_spells_from_zones / cant_cast_spells are player-wide and would stop every spell the player casts from those zones; no card_level_rider_key (cast_only_during, cant_cast_first_turns, graveyard_cast) limits which zone the card itself may be cast from. Note also the verification sandbox casts the card from hand, so the gate harness would need to place this card in the graveyard to prove it",
+      "closest_existing": ["cast_from_graveyard", "cant_cast_spells_from_zones", "cast_only_during"]
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "cant_cast_spells_from_zones"],
+  "confidence": "high"
+}

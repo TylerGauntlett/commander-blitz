@@ -1382,12 +1382,12 @@
     },
     "Acclaimed Contender": {
       "edhrec_rank": 6602,
-      "gate": "template",
+      "gate": null,
       "name": "Acclaimed Contender",
-      "reason": "no template for: When this creature enters, if you control another Knight, look at the top five cards of yo",
+      "reason": "",
       "scryfall_id": "a508ffbe-aa58-4dae-b366-fea688b60755",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Accomplished Alchemist": {
@@ -14202,12 +14202,12 @@
     },
     "Arvad the Cursed": {
       "edhrec_rank": 4958,
-      "gate": "template",
+      "gate": null,
       "name": "Arvad the Cursed",
-      "reason": "no template for: Other legendary creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "475d3d3a-8df7-42e8-adeb-5810e48ddaa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arvinox, the Mind Flail": {
@@ -14262,12 +14262,12 @@
     },
     "Aryel, Knight of Windgrace": {
       "edhrec_rank": 7772,
-      "gate": "template",
+      "gate": null,
       "name": "Aryel, Knight of Windgrace",
-      "reason": "no template for: {2}{W}, {T}: Create a 2/2 white Knight creature token with vigilance",
+      "reason": "",
       "scryfall_id": "216d7afe-3acf-4293-b474-8b27730cdefb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arzakon": {
@@ -51862,12 +51862,12 @@
     },
     "Conjurer's Mantle": {
       "edhrec_rank": 7665,
-      "gate": "template",
+      "gate": null,
       "name": "Conjurer's Mantle",
-      "reason": "no template for: Whenever equipped creature attacks, look at the top six cards of your library. You may rev",
+      "reason": "",
       "scryfall_id": "51ddebe2-aad6-4097-ac02-fa6c99f30de7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Connecting the Dots": {
@@ -80802,12 +80802,12 @@
     },
     "Elenda and Azor": {
       "edhrec_rank": 7467,
-      "gate": "template",
+      "gate": null,
       "name": "Elenda and Azor",
-      "reason": "no template for: Flying, ward {2}",
+      "reason": "",
       "scryfall_id": "35db4bfe-78e1-46b1-a70b-728ceede94b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elenda's Hierophant": {
@@ -86902,12 +86902,12 @@
     },
     "Ethersworn Adjudicator": {
       "edhrec_rank": 9095,
-      "gate": "template",
+      "gate": null,
       "name": "Ethersworn Adjudicator",
-      "reason": "no template for: {1}{W}{B}, {T}: Destroy target creature or enchantment",
+      "reason": "",
       "scryfall_id": "774ece27-ca6b-4e04-88ae-cfc774401bdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ethersworn Canonist": {
@@ -88822,12 +88822,12 @@
     },
     "Exsanguinator Cavalry": {
       "edhrec_rank": 6630,
-      "gate": "template",
+      "gate": null,
       "name": "Exsanguinator Cavalry",
-      "reason": "no template for: Whenever a Knight you control deals combat damage to a player, put a +1/+1 counter on that",
+      "reason": "",
       "scryfall_id": "0b359cc1-5518-4ef7-9f5c-4eaca6fb4674",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extended Absence": {
@@ -101202,12 +101202,12 @@
     },
     "Foulmire Knight // Profane Insight": {
       "edhrec_rank": 6533,
-      "gate": "template",
+      "gate": null,
       "name": "Foulmire Knight // Profane Insight",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "9a810932-7f59-461e-8cc4-6d7168c1f838",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Found Footage": {
@@ -126212,12 +126212,12 @@
     },
     "Herald of Hoofbeats": {
       "edhrec_rank": 4974,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Hoofbeats",
-      "reason": "no template for: Other Knights you control have horsemanship",
+      "reason": "",
       "scryfall_id": "7beebc99-b027-49e2-95ad-e51ce302457f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Ilharg": {
@@ -150402,12 +150402,12 @@
     },
     "Knight Exemplar": {
       "edhrec_rank": 3447,
-      "gate": "template",
+      "gate": null,
       "name": "Knight Exemplar",
-      "reason": "no template for: Other Knight creatures you control get +1/+1 and have indestructible",
+      "reason": "",
       "scryfall_id": "1bd946e7-b117-4c71-98c0-5c8a11fc54d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight Luminary": {
@@ -150702,12 +150702,12 @@
     },
     "Knight of the Last Breath": {
       "edhrec_rank": 22946,
-      "gate": "template",
+      "gate": null,
       "name": "Knight of the Last Breath",
-      "reason": "no template for: {3}, Sacrifice another nontoken creature: Create a 1/1 white and black Spirit creature tok",
+      "reason": "",
       "scryfall_id": "1438d850-1e08-4d75-a79c-d6a4738d5a67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight of the Mists": {
@@ -150892,12 +150892,12 @@
     },
     "Knights' Charge": {
       "edhrec_rank": 6191,
-      "gate": "template",
+      "gate": null,
       "name": "Knights' Charge",
-      "reason": "no template for: Whenever a Knight you control attacks, each opponent loses 1 life and you gain 1 life",
+      "reason": "",
       "scryfall_id": "53d74710-7396-4984-afd8-fe47059e3d12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knockout Blow": {
@@ -158892,12 +158892,12 @@
     },
     "Liliana's Standard Bearer": {
       "edhrec_rank": 5852,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana's Standard Bearer",
-      "reason": "no template for: When this creature enters, draw X cards, where X is the number of creatures that died unde",
+      "reason": "",
       "scryfall_id": "efe28fc7-c3ad-4f8a-80d0-cca333ffc3ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana's Steward": {
