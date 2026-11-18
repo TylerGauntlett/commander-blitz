@@ -160522,12 +160522,12 @@
     },
     "Locthwain Lancer": {
       "edhrec_rank": 9249,
-      "gate": "template",
+      "gate": null,
       "name": "Locthwain Lancer",
-      "reason": "no template for: Whenever a nontoken Knight you control dies, each opponent loses 1 life and you draw a car",
+      "reason": "",
       "scryfall_id": "7417067d-de28-404c-981e-e62b05d2bdf1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Locthwain Paladin": {
@@ -169592,12 +169592,12 @@
     },
     "Maul of the Skyclaves": {
       "edhrec_rank": 4052,
-      "gate": "template",
+      "gate": null,
       "name": "Maul of the Skyclaves",
-      "reason": "no template for: When this Equipment enters, attach it to target creature you control",
+      "reason": "",
       "scryfall_id": "213dd8d4-4be1-40ce-88a2-962056903282",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maular, the Next Evolution": {
@@ -194242,12 +194242,12 @@
     },
     "Order of Midnight // Alter Fate": {
       "edhrec_rank": 9917,
-      "gate": "template",
+      "gate": null,
       "name": "Order of Midnight // Alter Fate",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "8cbcebc2-e0f7-452a-9698-73e651095256",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Order of Sacred Dusk": {
@@ -246162,12 +246162,12 @@
     },
     "Sidar Jabari of Zhalfir": {
       "edhrec_rank": 7203,
-      "gate": "template",
+      "gate": null,
       "name": "Sidar Jabari of Zhalfir",
-      "reason": "no template for: Eminence — Whenever you attack with one or more Knights, if Sidar Jabari is in the command",
+      "reason": "",
       "scryfall_id": "2ccf3eea-a921-4db5-b071-4d9a53756863",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sidar Kondo of Jamuraa": {
@@ -246902,12 +246902,12 @@
     },
     "Sigiled Sword of Valeron": {
       "edhrec_rank": 8465,
-      "gate": "template",
+      "gate": null,
       "name": "Sigiled Sword of Valeron",
-      "reason": "no template for: Equipped creature gets +2/+0, has vigilance, and is a Knight in addition to its other type",
+      "reason": "",
       "scryfall_id": "4ce8022a-40f7-4f9d-8d2f-057e21798114",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sign in Blood": {
@@ -247962,12 +247962,12 @@
     },
     "Silverwing Squadron": {
       "edhrec_rank": 4875,
-      "gate": "template",
+      "gate": null,
       "name": "Silverwing Squadron",
-      "reason": "no template for: 's power and toughness are each equal to the number of creatures you control",
+      "reason": "",
       "scryfall_id": "4f674d39-e437-4efb-843b-30b18b567e98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silvos, Rogue Elemental": {
@@ -252872,12 +252872,12 @@
     },
     "Smitten Swordmaster // Curry Favor": {
       "edhrec_rank": 7999,
-      "gate": "template",
+      "gate": null,
       "name": "Smitten Swordmaster // Curry Favor",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "1cd477f5-53e9-446a-b717-5796d87672ba",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smog Elemental": {
@@ -273242,12 +273242,12 @@
     },
     "Syr Elenora, the Discerning": {
       "edhrec_rank": 13956,
-      "gate": "template",
+      "gate": null,
       "name": "Syr Elenora, the Discerning",
-      "reason": "no template for: Syr Elenora's power is equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "d0ab6308-f54a-4196-a2ce-b18ea08d6fb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syr Faren, the Hengehammer": {
@@ -300402,12 +300402,12 @@
     },
     "Valiant Knight": {
       "edhrec_rank": 6301,
-      "gate": "template",
+      "gate": null,
       "name": "Valiant Knight",
-      "reason": "no template for: Other Knights you control get +1/+1",
+      "reason": "",
       "scryfall_id": "5a85b8d6-36f7-4bde-a5f5-12509adac68f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Valiant Rescuer": {
@@ -306672,12 +306672,12 @@
     },
     "Vodalian Wave-Knight": {
       "edhrec_rank": 6042,
-      "gate": "template",
+      "gate": null,
       "name": "Vodalian Wave-Knight",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on each other Merfolk and/or Knight you cont",
+      "reason": "",
       "scryfall_id": "9889fe0b-d93f-4f84-9081-4bc4efc4127a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vodalian Zombie": {
@@ -316942,12 +316942,12 @@
     },
     "Wintermoor Commander": {
       "edhrec_rank": 7590,
-      "gate": "template",
+      "gate": null,
       "name": "Wintermoor Commander",
-      "reason": "no template for: 's toughness is equal to the number of Knights you control",
+      "reason": "",
       "scryfall_id": "414a25b5-2b4f-4935-8564-4b507db12dbc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winternight Stories": {
@@ -319262,12 +319262,12 @@
     },
     "Worthy Knight": {
       "edhrec_rank": 8274,
-      "gate": "template",
+      "gate": null,
       "name": "Worthy Knight",
-      "reason": "no template for: Whenever you cast a Knight spell, create a 1/1 white Human creature token",
+      "reason": "",
       "scryfall_id": "bdbfe895-f806-4490-9ae6-b39b28ea4e28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Worzel, the Protector": {
@@ -320272,12 +320272,12 @@
     },
     "Xerex Strobe-Knight": {
       "edhrec_rank": 14655,
-      "gate": "template",
+      "gate": null,
       "name": "Xerex Strobe-Knight",
-      "reason": "no template for: {T}: Create a 2/2 white and blue Knight creature token with vigilance. Activate only if yo",
+      "reason": "",
       "scryfall_id": "e38a32bc-133d-43d1-a6e3-80d39fe53d32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xiahou Dun, the One-Eyed": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**511 cards** blocked by **443** capabilities.
+**516 cards** blocked by **445** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,6 +18,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
+| [planechase](#planechase) | 6 | 5666 | engine |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
@@ -35,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
-| [planechase](#planechase) | 3 | 7274 | engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
@@ -78,6 +78,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [undaunted](#undaunted) | 2 | 3405 | value |
 | [venture](#venture) | 2 | 19644 | engine |
+| [voting](#voting) | 2 | 8294 | decision, op |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [wraith-token](#wraith-token) | 2 | 3658 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -129,6 +130,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
+| [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
 | [cast-only-if](#cast-only-if) | 1 | 12277 | engine |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
@@ -315,6 +317,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
+| [monarch-at-turn-start](#monarch-at-turn-start) | 1 | 11643 | value |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
@@ -448,7 +451,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
-| [voting](#voting) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
@@ -723,6 +725,40 @@ Blocks **9** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
+
+</details>
+
+## planechase
+
+Blocks **6** cards.
+
+- **(engine)** the Planechase subsystem (rule 901): a planar deck and a face-up plane or phenomenon in the command zone, plus a `roll_planar_die` op (901.9) that rolls the six-sided planar die -- on the planeswalker symbol the roller planeswalks (701.31), on the chaos symbol the face-up plane's chaos ability triggers, otherwise nothing; activated here as a sorcery-speed {T} ability, with the free-roll-cost escalation of 901.9b not applying to an effect-driven roll
+  <br>Why the existing vocabulary won't do: `roll_dice` rolls ordinary numbered dice and has no planeswalk or chaos outcome, and nothing in `ops` or the game setup knows planes, phenomena, a planar deck or chaos triggers. The rest of the card is expressible: '{T}: Add {C}.' is already the starting_point mana ability, and the activation limit is `sorcery_speed_only`
+- **(engine)** the Planechase subsystem (rule 901) with planar die rolls (901.9, 706): a roll-the-planar-die special action and event, plus a player-wide replacement static that rolls N+1 planar dice instead of N and lets the roller ignore one result
+  <br>Why the existing vocabulary won't do: Nothing in the reference knows planar dice, planes or a planar deck: no op rolls a planar die, no trigger event or replacement static intercepts a die roll, and the existing replace_* statics (replace_draw, replace_damage, replace_life_gain, replace_counters, replace_token_creation) each replace a different event. The {T}: Add {C}{C} line is already expressible as the starting_point's mana ability; only the replacement line is blocked
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane in the command zone, a `planeswalk` op (701.31) that moves the current plane to the bottom of the planar deck and turns over the next one, and a 'chaos ensues' op (701.32) that fires the face-up plane's chaos ability
+  <br>Why the existing vocabulary won't do: No op in the reference names planes, a planar deck, planeswalking or chaos; `must_attack_planeswalker` and `or_planeswalker` concern the Planeswalker card type. Writing `noop` would silently drop the clause
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
+- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
+  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
+- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
+  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fractured Powerstone** (rank 5666) — `fractured_powerstone`
+  - {T}: Roll the planar die. Activate only as a sorcery.
+- **TARDIS** (rank 7274) — `tardis`
+  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
+- **Ichor Elixir** (rank 10785) — `ichor_elixir`
+  - If you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one.
+- **Start the TARDIS** (rank 13326) — `start_the_tardis`
+  - You may planeswalk.
+- **Susan Foreman** (rank 18784) — `susan_foreman`
+  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 
 </details>
 
@@ -1189,28 +1225,6 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
-
-</details>
-
-## planechase
-
-Blocks **3** cards.
-
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "You may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. A `noop` in its place would silently drop the clause. The rest of the card is expressible: surveil + draw as spell_effects, and Jump-start as `graveyard_cost: {discard: 1, mana: "{1}{U}"}` as Radical Idea ships it
-- **(engine)** Planechase support: a per-player planar deck zone, the planeswalk action (rule 701.31) and a player-wide replacement static for 'if you would planeswalk' that lets the player look at the top two planar cards, put one on the bottom and the other on top, then planeswalk
-  <br>Why the existing vocabulary won't do: The reference has no planar deck zone, no planeswalk op or trigger event, and no replacement static keyed on planeswalking; look_at_top and put_on_top only address the library, and the replace_* statics cover draw, life gain, damage, counters and tokens only
-- **(engine)** the Planechase subsystem (rule 901): a planar deck per game, a face-up plane or phenomenon in the command zone, and a `planeswalk` op (701.31) that puts the current plane on the bottom of the planar deck and turns over the next one, firing its "When you planeswalk to/away from" triggers; wrapped in `may` for "you may planeswalk"
-  <br>Why the existing vocabulary won't do: No op, zone object or game setup in the reference knows planes, phenomena or a planar deck; `planeswalk` appears nowhere in `ops`, and the Planeswalker-related keys (`or_planeswalker`, `must_attack_planeswalker`) are about the card type, not the Planechase action. The rest of the card is expressible: Flying as a keyword, Crew 2 as `tap_permanents` with `total_power: 2`, the attack trigger with a Time Lord `exists` condition, and 'the next spell you cast this turn has cascade' as a once_this_turn `delayed_trigger` on spell_cast with a `cascade` effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **TARDIS** (rank 7274) — `tardis`
-  - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
-- **Start the TARDIS** (rank 13326) — `start_the_tardis`
-  - You may planeswalk.
-- **Susan Foreman** (rank 18784) — `susan_foreman`
-  - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
 
 </details>
 
@@ -2003,6 +2017,25 @@ Blocks **2** cards.
 
 </details>
 
+## voting
+
+Blocks **2** cards.
+
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+
+</details>
+
 ## wall-0-3-w-defender-token
 
 Blocks **2** cards.
@@ -2748,6 +2781,20 @@ Blocks **1** card.
 
 - **Mystic Forge** (rank 414) — `mystic_forge`
   - You may cast artifact spells and colorless spells from the top of your library.
+
+</details>
+
+## cast-only-from-graveyard
+
+Blocks **1** card.
+
+- **(static_effect)** a card-level restriction on the card's OWN legal cast zones: the card may be cast only from its owner's graveyard, never from hand, exile, library top or the command zone (as a commander it could never be cast at all), while the paired cast_from_graveyard permission grants the graveyard cast
+  <br>Why the existing vocabulary won't do: cast_from_graveyard with active_zones [graveyard] supplies the permission half but leaves the normal hand cast open; cant_cast_spells_from_zones / cant_cast_spells are player-wide and would stop every spell the player casts from those zones; no card_level_rider_key (cast_only_during, cant_cast_first_turns, graveyard_cast) limits which zone the card itself may be cast from. Note also the verification sandbox casts the card from hand, so the gate harness would need to place this card in the graveyard to prove it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Haakon, Stromgald Scourge** (rank 6819) — `haakon_stromgald_scourge`
+  - You may cast this card from your graveyard, but not from anywhere else.
 
 </details>
 
@@ -5406,6 +5453,20 @@ Blocks **1** card.
 
 </details>
 
+## monarch-at-turn-start
+
+Blocks **1** card.
+
+- **(value)** a condition that asks whether a given player was the monarch at the moment the current turn began (a per-turn snapshot of the monarch recorded at the start of the turn), usable as an intervening-if on a becomes_monarch trigger
+  <br>Why the existing vocabulary won't do: condition_keys has is_monarch and no_monarch, which read the monarch now; at resolution of a becomes_monarch trigger the opponent is already the monarch, so is_monarch cannot tell whether you held it when the turn began. has_turn_flag reads a flag on the source object, not who was monarch, and no value_key records the turn-start monarch
+
+<details><summary>Cards waiting on this</summary>
+
+- **Knights of the Black Rose** (rank 11643) — `knights_of_the_black_rose`
+  - Whenever an opponent becomes the monarch, if you were the monarch as the turn began, that player loses 2 life and you gain 2 life.
+
+</details>
+
 ## more-than-meets-the-eye
 
 Blocks **1** card.
@@ -7299,21 +7360,6 @@ Blocks **1** card.
 
 - **(op)** a villainous choice op (701.56: a player chooses one of two printed outcomes) plus a player-wide replacement static that makes an opponent face each villainous choice an additional time (repeating the choice, same or different answer)
   <br>Why the existing vocabulary won't do: No villainous choice op or event exists; choose_mode with chooser is the nearest but has no 'face a villainous choice' identity a static could replace, and no static_effect repeats a choice
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Valeyard** (rank 8294) — `the_valeyard`
-  - If an opponent would face a villainous choice, they face that choice an additional time
-  - While voting, you may vote an additional time
-
-</details>
-
-## voting
-
-Blocks **1** card.
-
-- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
-  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
 
 <details><summary>Cards waiting on this</summary>
 

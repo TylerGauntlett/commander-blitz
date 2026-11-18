@@ -84,7 +84,7 @@ each heading; this table is generated from them.
 | [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
 | [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | Voting: will of the council and council's dilemma, The Ring tempts you | 0 |
 | [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
-| [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | nothing | 0 |
 | [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | nothing | 0 |
 | [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | nothing | 0 |
@@ -147,7 +147,7 @@ each heading; this table is generated from them.
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
 | [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) | S | low | nothing | 0 |
-| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 2 |
+| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 3 |
 
 ## What to do next
 
@@ -155,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander).
 
 **Ready now, best first:**
 
@@ -258,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
 - [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [The Ring tempts you](#the-ring-tempts-you)
 - [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
+- [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -3450,7 +3449,7 @@ whole-game test able to draw the deck.
 
 ### Cavalry Charge (March of the Machine Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
 
 #### Today
 
@@ -3461,6 +3460,14 @@ coming-soon shell on the shelf: its row `moc_cavalry_charge` is in
 `python scripts/sync_precons.py --missing moc_cavalry_charge` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have:
+Fractured Powerstone rolls the planar die, Ichor Elixir replaces planar die
+rolls, and Path of the Enigma has the players vote to planeswalk or make chaos
+ensue, so the deck waits on
+[Planechase](planechase.md). The rest of its missing cards wait on smaller
+capabilities this batch builds once Planechase lands: Haakon, Stromgald
+Scourge (`cast_only_from_graveyard`), Knights of the Black Rose
+(`monarch_at_turn_start`) and Path of the Enigma's vote (`voting`).
 
 #### The change
 

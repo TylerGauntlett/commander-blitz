@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [planechase]
+status: proposed
 rank: 67
 ---
 
@@ -19,6 +19,14 @@ coming-soon shell on the shelf: its row `moc_cavalry_charge` is in
 `python scripts/sync_precons.py --missing moc_cavalry_charge` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have:
+Fractured Powerstone rolls the planar die, Ichor Elixir replaces planar die
+rolls, and Path of the Enigma has the players vote to planeswalk or make chaos
+ensue, so the deck waits on
+[Planechase](planechase.md). The rest of its missing cards wait on smaller
+capabilities this batch builds once Planechase lands: Haakon, Stromgald
+Scourge (`cast_only_from_graveyard`), Knights of the Black Rose
+(`monarch_at_turn_start`) and Path of the Enigma's vote (`voting`).
 
 ## The change
 
