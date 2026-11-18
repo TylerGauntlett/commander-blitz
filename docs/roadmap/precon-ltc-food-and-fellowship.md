@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [the-ring-tempts-you]
+status: proposed
 rank: 64
 ---
 
@@ -19,6 +19,12 @@ coming-soon shell on the shelf: its row `ltc_food_and_fellowship` is in
 `python scripts/sync_precons.py --missing ltc_food_and_fellowship` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)): the deck's own
+commander, Frodo, Adventurous Hobbit, attacks to have the Ring tempt you and
+reads whether it is your Ring-bearer, and nothing models the Ring. The deck
+waits on [the item that builds it](the-ring-tempts-you.md); the rest of its
+missing cards wait on tokens and smaller capabilities this batch builds.
 
 ## The change
 

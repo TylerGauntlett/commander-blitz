@@ -81,7 +81,7 @@ each heading; this table is generated from them.
 | [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
-| [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | nothing | 0 |
+| [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
 | [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | nothing | 0 |
 | [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | nothing | 0 |
 | [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | nothing | 0 |
@@ -113,6 +113,7 @@ each heading; this table is generated from them.
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
+| [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 1 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
@@ -155,8 +156,6 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander).
-
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
@@ -191,38 +190,39 @@ same list, and `/extend-roadmap` starts at the top of it.
 30. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
 31. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
 32. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-33. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-34. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-35. [Difficulty](#difficulty) — S, medium
-36. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-37. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-38. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-39. [Why a press is refused](#why-a-press-is-refused) — S, medium
-40. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-41. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-42. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-43. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-44. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-45. [Secret choices](#secret-choices) — M, medium
-46. [Experience counters](#experience-counters) — M, medium
-47. [Outcomes as data](#outcomes-as-data) — M, medium
-48. [Rad counters](#rad-counters) — M, medium
-49. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-50. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-51. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-52. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-53. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-54. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-55. [Replays and sharing](#replays-and-sharing) — M, medium
-56. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-57. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-58. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-59. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-60. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-61. [Archidekt import](#archidekt-import) — S, low
-62. [Sound](#sound) — S, low
-63. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-64. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+33. [The Ring tempts you](#the-ring-tempts-you) — M, high
+34. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+35. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+36. [Difficulty](#difficulty) — S, medium
+37. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+38. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+39. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+40. [Why a press is refused](#why-a-press-is-refused) — S, medium
+41. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+42. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+43. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+44. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+45. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+46. [Secret choices](#secret-choices) — M, medium
+47. [Experience counters](#experience-counters) — M, medium
+48. [Outcomes as data](#outcomes-as-data) — M, medium
+49. [Rad counters](#rad-counters) — M, medium
+50. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+51. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+52. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+53. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+54. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+55. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+56. [Replays and sharing](#replays-and-sharing) — M, medium
+57. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+58. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+59. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+60. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+61. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+62. [Archidekt import](#archidekt-import) — S, low
+63. [Sound](#sound) — S, low
+64. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+65. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -256,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type)
+- [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -410,6 +411,91 @@ cue that waits on a file load would be a lag the narration must never have;
 and the mute setting's e2e assertion still passes.
 
 ## Cards
+
+### The Ring tempts you
+
+Effort **M** · Impact **high**, Food and Fellowship's commander and every Ring card in the Lord of the Rings sets wait on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The engine has player designations that outlive what granted them: the
+monarch is one field, `GameState.monarch`, set through
+`primitives.become_monarch`, with its inherent triggers in the turn machine
+(`turn._monarch_draw`) and its readers as condition leaves (`is_monarch`)
+and a player spec (`monarch`). Emblems exist too: an object in the command
+zone whose `emblem` index names one of its card's `emblems`, which
+`GameState` resolves to a definition with abilities and nothing else.
+
+Nothing models 701.54. There is no op for "the Ring tempts you", no
+Ring-bearer designation on a permanent, no per-player count of how many
+times the Ring has tempted them, and no trigger event for "whenever the Ring
+tempts you". [rules-coverage.md](rules-coverage.md#not-implemented) does
+not mention the Ring at all. The
+[Food and Fellowship batch](precon-ltc-food-and-fellowship.md) found it
+through its own commander: `data/authoring/gaps/frodo_adventurous_hobbit.json`
+names `the-ring-tempts-you`, and Frodo cannot be authored without it.
+
+#### The change
+
+1. Per player, the Ring's level (how many times the Ring has tempted that
+   player this game, capped at the four abilities for what is unlocked but
+   counted in full, since "two or more times this game" reads the count) and
+   the oid of their Ring-bearer, if any. The Ring-bearer is cleared when that
+   permanent leaves the battlefield or changes control.
+2. A `the_ring_tempts_you` op: the player's count rises by one, then they
+   choose a creature they control as Ring-bearer, which may be the one
+   already chosen. A player with no creature is still tempted.
+3. The Ring's four abilities, unlocked in order, applied to that player's
+   Ring-bearer: legendary, and can't be blocked by creatures with greater
+   power; whenever it attacks, draw then discard; whenever it becomes
+   blocked by a creature, that creature's controller sacrifices it at end of
+   combat; whenever it deals combat damage to a player, each opponent loses
+   3 life. These are a characteristics layer and inherent triggers, in the
+   monarch's shape (no card to hang them on), not abilities granted by a card.
+4. The readers: a `ring_tempted_you` trigger event, a `ring_bearer` selector
+   key and `is_ring_bearer` condition, a `ring_tempt_count` value, and
+   "choose a Ring-bearer" as a decision the client already renders as an
+   object choice.
+5. Harvest: Frodo, Adventurous Hobbit through `/author-cards`, then one
+   wave over the catalog's other Ring cards.
+
+It does not build partner-with (Frodo's other blocked line, which belongs
+to the Food and Fellowship batch) and adds no client surface beyond the
+existing player readout, where the Ring's level and bearer show beside the
+monarch.
+
+#### Gate
+
+A unit test under `tests/unit/` for the Ring: tempting raises the count and
+asks for a Ring-bearer, a second temptation may move it, each level unlocks
+its ability on the bearer and only on the bearer, the bearer is legendary
+and evades bigger blockers, losing the bearer (dies, bounced, stolen) clears
+it without lowering the count, a player with no creature is still tempted
+and the `ring_tempted_you` trigger fires. Frodo's six gates pass, and the
+generated DSL reference (`tests/cards/test_dsl_reference.py`) lists the new
+op, event, selector key and value.
+
+#### Open questions
+
+- **Where the Ring lives.** Fields on `PlayerState` (count and bearer oid),
+  or an emblem object in the command zone? Recommended: fields on
+  `PlayerState`, the monarch's shape: an emblem object here is one of a
+  printed card's `emblems`, and the Ring belongs to no card, so it would need
+  a synthetic owner the engine has nowhere else.
+- **Inherent triggers on the stack or inline.** The Ring's attack, block and
+  damage abilities are triggered abilities that use the stack. Recommended:
+  on the stack, sourced from the Ring-bearer for targeting and "its
+  controller", because players respond to the loot and the 3 life; inline
+  only if the engine has no seam for it, recorded in rules-coverage.md as a
+  divergence beside the monarch's draw.
+- **The legend rule on the bearer.** "Your Ring-bearer is legendary" can
+  make two copies of one creature collide under 704.5j. Recommended: yes,
+  through the characteristics layer like any other type-changing effect, so
+  the legend rule sees it with no special case.
+- **Is it an ADR.** Recommended: yes, a short one, because the choice of
+  player fields over an emblem object, and of inherent triggers over
+  granted abilities, is a shape later designations (the initiative, rad
+  counters) will copy or reverse.
 
 ### Time Lord as one creature type
 
@@ -3195,7 +3281,7 @@ whole-game test able to draw the deck.
 
 ### Food and Fellowship (Tales of Middle-earth Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The Ring tempts you](#the-ring-tempts-you).
 
 #### Today
 
@@ -3206,6 +3292,12 @@ coming-soon shell on the shelf: its row `ltc_food_and_fellowship` is in
 `python scripts/sync_precons.py --missing ltc_food_and_fellowship` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](rules-coverage.md#not-implemented)): the deck's own
+commander, Frodo, Adventurous Hobbit, attacks to have the Ring tempt you and
+reads whether it is your Ring-bearer, and nothing models the Ring. The deck
+waits on [the item that builds it](the-ring-tempts-you.md); the rest of its
+missing cards wait on tokens and smaller capabilities this batch builds.
 
 #### The change
 
