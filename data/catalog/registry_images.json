@@ -923,6 +923,10 @@
     "artist": "Sara Winters",
     "scryfall_id": "f11222dc-0dd8-48df-8106-f9e99f0b6e11"
   },
+  "archivist_of_gondor": {
+    "artist": "Wisnu Tan",
+    "scryfall_id": "ec691418-1075-477f-b0df-f0d064588baf"
+  },
   "archivist_of_oghma": {
     "artist": "Cory Trego-Erdner",
     "scryfall_id": "a5100d6c-ca6e-40e5-8c55-50e74237ced4"
@@ -3863,6 +3867,10 @@
     "artist": "Denman Rooke",
     "scryfall_id": "4939bedb-c6e2-4eca-b6a3-e8d3c917c2fd"
   },
+  "court_of_ire": {
+    "artist": "Alexander Forssberg",
+    "scryfall_id": "73ca0dcc-7a87-49da-8011-8c11a8835df2"
+  },
   "court_street_denizen": {
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "c45b1d32-5a3a-4ec3-af11-d0ba947de175"
@@ -4451,6 +4459,10 @@
     "artist": "Warren Mahy",
     "scryfall_id": "d432d17e-052b-4a81-bad8-14babf6e593f"
   },
+  "dearly_departed": {
+    "artist": "Daniel Ljunggren",
+    "scryfall_id": "27c38500-1eb5-4ea5-8dcd-53bf4e1ee09c"
+  },
   "death_baron": {
     "artist": "Nils Hamm",
     "scryfall_id": "ddfc57da-6cfd-4b81-8fc0-51270edc0200"
@@ -4646,6 +4658,10 @@
   "den_protector": {
     "artist": "Viktor Titov",
     "scryfall_id": "c22d8b77-4274-48ae-a36f-5739d785b599"
+  },
+  "denethor_stone_seer": {
+    "artist": "Bruno Biazotto",
+    "scryfall_id": "d32d3d8a-7450-4a29-abc7-f472426f0c28"
   },
   "departed_deckhand": {
     "artist": "Zoltan Boros",
@@ -5422,6 +5438,10 @@
   "earth_elemental": {
     "artist": "Anthony S. Waters",
     "scryfall_id": "35c7490f-8651-4723-a1f5-9a1100c47f83"
+  },
+  "earthquake": {
+    "artist": "Jeffrey R. Busch",
+    "scryfall_id": "efdb0248-e37c-4ff3-9256-37ff343dd68a"
   },
   "earthshaker_dreadmaw": {
     "artist": "Sidharth Chaturvedi",
@@ -18465,6 +18485,10 @@
     "artist": "Sarah Finnigan",
     "scryfall_id": "eae999f9-9c58-4609-8ade-aca0acf07519"
   },
+  "sunset_revelry": {
+    "artist": "Antonio Jos\u00e9 Manzanedo",
+    "scryfall_id": "b982565f-f2ca-453d-99f6-9560123f7448"
+  },
   "sunspire_griffin": {
     "artist": "Johannes Voss",
     "scryfall_id": "1388ce6e-8199-46c1-8ee3-71266b0929bf"
@@ -21099,6 +21123,10 @@
   "vilis_broker_of_blood": {
     "artist": "Takeuchi Moto",
     "scryfall_id": "d68ce39b-0847-4132-b3b5-8bc25f2e7be9"
+  },
+  "village_bell_ringer": {
+    "artist": "David Palumbo",
+    "scryfall_id": "b72b39fd-507d-432b-b5b0-5657e5ed0a47"
   },
   "village_pillagers": {
     "artist": "Paolo Parente",

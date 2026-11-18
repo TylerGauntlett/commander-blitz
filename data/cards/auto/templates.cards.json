@@ -13142,6 +13142,72 @@
         {
           "effects": [
             {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When your commander deals combat damage to a player, if there is no monarch, you become the monarch.",
+          "trigger": {
+            "condition": {
+              "no_monarch": true
+            },
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "is_commander": true,
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "active_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of the monarch's end step, that player draws a card.",
+          "trigger": {
+            "condition": {
+              "is_monarch": "active_player"
+            },
+            "controller": "any",
+            "event": "end_step",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "archivist_of_gondor",
+      "mana_cost": "{2}{U}",
+      "name": "Archivist of Gondor",
+      "oracle_text": "When your commander deals combat damage to a player, if there is no monarch, you become the monarch.\nAt the beginning of the monarch's end step, that player draws a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -54422,6 +54488,79 @@
         {
           "effects": [
             {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "is_monarch": "you"
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 7
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "At the beginning of your upkeep, this enchantment deals 2 damage to any target. If you're the monarch, it deals 7 damage instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "court_of_ire",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Court of Ire",
+      "oracle_text": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, this enchantment deals 2 damage to any target. If you're the monarch, it deals 7 damage instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -62903,6 +63042,51 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Human"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": 1,
+          "counter": "+1/+1",
+          "effect": "enters_with_additional_counters",
+          "kind": "static",
+          "text": "As long as this creature is in your graveyard, each Human creature you control enters with an additional +1/+1 counter on it."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dearly_departed",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Dearly Departed",
+      "oracle_text": "Flying\nAs long as this creature is in your graveyard, each Human creature you control enters with an additional +1/+1 counter on it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "any_of": [
               {
@@ -65796,6 +65980,99 @@
         "Warrior"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Denethor enters, scry 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t2"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "{3}{R}, {T}, Sacrifice Denethor: Target player becomes the monarch. Denethor deals 3 damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "denethor_stone_seer",
+      "mana_cost": "{1}{U}",
+      "name": "Denethor, Stone Seer",
+      "oracle_text": "When Denethor enters, scry 2.\n{3}{R}, {T}, Sacrifice Denethor: Target player becomes the monarch. Denethor deals 3 damage to any target.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -75676,6 +75953,42 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "earthquake",
+      "mana_cost": "{X}{R}",
+      "name": "Earthquake",
+      "oracle_text": "Earthquake deals X damage to each creature without flying and each player.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -254828,6 +255141,106 @@
       "colors": [
         "W"
       ],
+      "id": "sunset_revelry",
+      "mana_cost": "{1}{W}",
+      "name": "Sunset Revelry",
+      "oracle_text": "If an opponent has more life than you, you gain 4 life.\nIf an opponent controls more creatures than you, create two 1/1 white Human creature tokens.\nIf an opponent has more cards in hand than you, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_life_of": "each_opponent"
+            },
+            "right": {
+              "life_of": "you"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "player": "each_opponent"
+              }
+            },
+            "right": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "human_1_1_w"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "zone": "hand"
+                },
+                "player": "each_opponent"
+              }
+            },
+            "right": {
+              "cards_in_hand": "you"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "sunspire_griffin",
       "keywords": [
         "flying"
@@ -293953,6 +294366,54 @@
         "Legendary"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, untap all creatures you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "village_bell_ringer",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Village Bell-Ringer",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nWhen this creature enters, untap all creatures you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

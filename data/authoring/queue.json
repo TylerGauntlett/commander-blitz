@@ -12142,12 +12142,12 @@
     },
     "Archivist of Gondor": {
       "edhrec_rank": 10014,
-      "gate": "template",
+      "gate": null,
       "name": "Archivist of Gondor",
-      "reason": "no template for: When your commander deals combat damage to a player, if there is no monarch, you become th",
+      "reason": "",
       "scryfall_id": "ec691418-1075-477f-b0df-f0d064588baf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archivist of Oghma": {
@@ -54632,12 +54632,12 @@
     },
     "Court of Ire": {
       "edhrec_rank": 3247,
-      "gate": "template",
+      "gate": null,
       "name": "Court of Ire",
-      "reason": "no template for: When this enchantment enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "73ca0dcc-7a87-49da-8011-8c11a8835df2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Court of Locthwain": {
@@ -63262,12 +63262,12 @@
     },
     "Dearly Departed": {
       "edhrec_rank": 15968,
-      "gate": "template",
+      "gate": null,
       "name": "Dearly Departed",
-      "reason": "no template for: As long as this creature is in your graveyard, each Human creature you control enters with",
+      "reason": "",
       "scryfall_id": "27c38500-1eb5-4ea5-8dcd-53bf4e1ee09c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death Baron": {
@@ -66462,12 +66462,12 @@
     },
     "Denethor, Stone Seer": {
       "edhrec_rank": 15367,
-      "gate": "template",
+      "gate": null,
       "name": "Denethor, Stone Seer",
-      "reason": "no template for: When Denethor enters, scry 2",
+      "reason": "",
       "scryfall_id": "d32d3d8a-7450-4a29-abc7-f472426f0c28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Denizen of the Deep": {
@@ -78602,12 +78602,12 @@
     },
     "Earthquake": {
       "edhrec_rank": 2802,
-      "gate": "template",
+      "gate": null,
       "name": "Earthquake",
-      "reason": "no template for: deals X damage to each creature without flying and each player",
+      "reason": "",
       "scryfall_id": "ac5d49b5-cf4d-48a4-b21d-0a3b7e6320a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Earthquake Dragon": {
@@ -270062,12 +270062,12 @@
     },
     "Sunset Revelry": {
       "edhrec_rank": 8487,
-      "gate": "template",
+      "gate": null,
       "name": "Sunset Revelry",
-      "reason": "no template for: If an opponent has more life than you, you gain 4 life",
+      "reason": "",
       "scryfall_id": "b982565f-f2ca-453d-99f6-9560123f7448",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunset Saboteur": {
@@ -304782,12 +304782,12 @@
     },
     "Village Bell-Ringer": {
       "edhrec_rank": 3611,
-      "gate": "template",
+      "gate": null,
       "name": "Village Bell-Ringer",
-      "reason": "no template for: When this creature enters, untap all creatures you control",
+      "reason": "",
       "scryfall_id": "b72b39fd-507d-432b-b5b0-5657e5ed0a47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Village Cannibals": {

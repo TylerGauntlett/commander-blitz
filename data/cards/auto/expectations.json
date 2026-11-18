@@ -1125,6 +1125,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "archivist_of_gondor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archivist_of_oghma": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4430,6 +4437,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "court_of_ire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "court_street_denizen": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -5174,6 +5185,13 @@
   "deadly_recluse": {
     "zone": "battlefield"
   },
+  "dearly_departed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "death_baron": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5426,6 +5444,16 @@
   },
   "den_protector": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "denethor_stone_seer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "departed_deckhand": {
@@ -6229,6 +6257,15 @@
   },
   "earth_elemental": {
     "zone": "battlefield"
+  },
+  "earthquake": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 20,
+      "1": 20
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "earthshaker_dreadmaw": {
     "battlefield_count": 33,
@@ -21167,6 +21204,16 @@
   "sunscorched_divide": {
     "zone": "battlefield"
   },
+  "sunset_revelry": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "sunspire_griffin": {
     "zone": "battlefield"
   },
@@ -24317,6 +24364,10 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "village_bell_ringer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "village_pillagers": {
