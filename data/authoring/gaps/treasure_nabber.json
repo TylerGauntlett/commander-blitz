@@ -1,0 +1,18 @@
+{
+  "card_id": "treasure_nabber",
+  "name": "Treasure Nabber",
+  "oracle_text": "Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.",
+  "blocked_sentences": [
+    "Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn."
+  ],
+  "needs": [
+    {
+      "capability": "tapped_for_mana_trigger",
+      "kind": "trigger_event",
+      "what": "a non-mana triggered ability (uses the stack) that fires whenever a player taps a permanent matching a filter for mana -- i.e. activates a mana ability whose cost includes {T} -- on EVERY mana activation, including the ones the payment solver auto-taps while paying for a spell, binding the tapped permanent as the subject so the effect can gain_control of it (duration end_of_your_next_turn already exists)",
+      "why_existing_wont_do": "The nearest is ability_activated with mana_ability: true, controller: opponent and filter types [Artifact]. But Game._activate_mana fires that event only on the by-hand path; mana abilities the payment solver taps for itself go through costs.pay_mana -> activate_mana_ability and emit nothing (documented as a known incompleteness beside that triggers.fire call), so the card would silently miss nearly every opponent tap, every CPU tap included. It also fires on any mana ability, not only ones that tap, and fires before the cost is paid, so a `tapped` filter cannot narrow it. add_mana_on_tap's tapped_permanent is the right 'tapped for mana' matcher, but it is a mana-adding static (a triggered mana ability), not a stack trigger that can run gain_control."
+    }
+  ],
+  "closest_existing": ["ability_activated", "add_mana_on_tap"],
+  "confidence": "high"
+}

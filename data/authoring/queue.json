@@ -21222,12 +21222,12 @@
     },
     "Basalt Monolith": {
       "edhrec_rank": 563,
-      "gate": "template",
+      "gate": null,
       "name": "Basalt Monolith",
-      "reason": "no template for: This artifact doesn't untap during your untap step",
+      "reason": "",
       "scryfall_id": "ff27694e-0381-4ac9-ba20-d631d468f275",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Basalt Ravager": {
@@ -53922,12 +53922,12 @@
     },
     "Corsairs of Umbar": {
       "edhrec_rank": 6217,
-      "gate": "template",
+      "gate": null,
       "name": "Corsairs of Umbar",
-      "reason": "no template for: {2}{U}: Target Goblin, Orc, or Pirate can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "159727a9-0bc4-497d-8fb2-4a66923726d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coruscation Mage": {
@@ -89002,12 +89002,12 @@
     },
     "Extract from Darkness": {
       "edhrec_rank": 3234,
-      "gate": "template",
+      "gate": null,
       "name": "Extract from Darkness",
-      "reason": "no template for: Each player mills two cards. Then you put a creature card from a graveyard onto the battle",
+      "reason": "",
       "scryfall_id": "e0769e3f-d27d-4aff-8da0-f03c10b8650b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extract the Truth": {
@@ -112672,22 +112672,22 @@
     },
     "Goblin Cratermaker": {
       "edhrec_rank": 6867,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Cratermaker",
-      "reason": "no template for: {1}, Sacrifice this creature: Choose one —",
+      "reason": "",
       "scryfall_id": "e37ae38f-ef93-4861-9a3a-49378a4d50b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Dark-Dwellers": {
       "edhrec_rank": 9071,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Dark-Dwellers",
-      "reason": "no template for: When this creature enters, you may cast target instant or sorcery card with mana value 3 o",
+      "reason": "",
       "scryfall_id": "5eacb8b6-996d-4fbe-89d7-bf070ace4f3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Deathraiders": {
@@ -118592,12 +118592,12 @@
     },
     "Grishnákh, Brash Instigator": {
       "edhrec_rank": 5826,
-      "gate": "template",
+      "gate": null,
       "name": "Grishnákh, Brash Instigator",
-      "reason": "no template for: When Grishnákh enters, amass Orcs 2. When you do, until end of turn, gain control of targe",
+      "reason": "",
       "scryfall_id": "6385e769-f805-499d-9f47-494533362152",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grisly Ritual": {
@@ -150922,12 +150922,12 @@
     },
     "Knollspine Dragon": {
       "edhrec_rank": 4442,
-      "gate": "template",
+      "gate": null,
       "name": "Knollspine Dragon",
-      "reason": "no template for: When this creature enters, you may discard your hand and draw cards equal to the damage de",
+      "reason": "",
       "scryfall_id": "6ef9795d-0936-4ebf-891e-3bfc4b6b0aeb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knollspine Invocation": {
@@ -154332,12 +154332,12 @@
     },
     "Languish": {
       "edhrec_rank": 5673,
-      "gate": "template",
+      "gate": null,
       "name": "Languish",
-      "reason": "no template for: All creatures get -4/-4 until end of turn",
+      "reason": "",
       "scryfall_id": "e8701682-5b74-4855-adcf-7a1cf0c8cb41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lantern Bearer // Lanterns' Lift": {
@@ -157522,12 +157522,12 @@
     },
     "Lidless Gaze": {
       "edhrec_rank": 11880,
-      "gate": "template",
+      "gate": null,
       "name": "Lidless Gaze",
-      "reason": "no template for: Exile the top card of each player's library. Until the end of your next turn, you may play",
+      "reason": "",
       "scryfall_id": "6937954b-353a-47ac-a0c0-f731fe3881a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lie in Wait": {
@@ -171372,12 +171372,12 @@
     },
     "Merciless Executioner": {
       "edhrec_rank": 2220,
-      "gate": "template",
+      "gate": null,
       "name": "Merciless Executioner",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature of their choice",
+      "reason": "",
       "scryfall_id": "7b135177-4786-4ebe-98cd-c1db9444e577",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merciless Harlequin": {
@@ -178422,12 +178422,12 @@
     },
     "Monstrosity of the Lake": {
       "edhrec_rank": 5654,
-      "gate": "template",
+      "gate": null,
       "name": "Monstrosity of the Lake",
-      "reason": "no template for: When enters, you may pay {5}. If you do, tap all creatures your opponents control, then pu",
+      "reason": "",
       "scryfall_id": "d72aa8fc-6808-4865-879e-417a300c40de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Monstrous Carabid": {
@@ -194102,12 +194102,12 @@
     },
     "Orcish Siegemaster": {
       "edhrec_rank": 4682,
-      "gate": "template",
+      "gate": null,
       "name": "Orcish Siegemaster",
-      "reason": "no template for: Other Orcs and Goblins you control have trample",
+      "reason": "",
       "scryfall_id": "dbce4474-7485-4ab7-8016-04f03bc90dc5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orcish Spy": {
@@ -214902,12 +214902,12 @@
     },
     "Rampaging War Mammoth": {
       "edhrec_rank": 8796,
-      "gate": "template",
+      "gate": null,
       "name": "Rampaging War Mammoth",
-      "reason": "no template for: When you cycle this card, destroy up to X target artifacts",
+      "reason": "",
       "scryfall_id": "dc13dbf0-c0ff-4c76-96c6-d3ee88ab2fce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampaging Yao Guai": {
@@ -219902,12 +219902,12 @@
     },
     "Relic of Sauron": {
       "edhrec_rank": 1779,
-      "gate": "template",
+      "gate": null,
       "name": "Relic of Sauron",
-      "reason": "no template for: {3}, {T}: Draw two cards, then discard a card",
+      "reason": "",
       "scryfall_id": "8caea27b-040e-43c6-a8e0-0f3c0e40f411",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic's Roar": {
@@ -222472,12 +222472,12 @@
     },
     "Revenge of Ravens": {
       "edhrec_rank": 2817,
-      "gate": "template",
+      "gate": null,
       "name": "Revenge of Ravens",
-      "reason": "no template for: Whenever a creature attacks you or a planeswalker you control, that creature's controller ",
+      "reason": "",
       "scryfall_id": "22379f55-dc70-4452-8efe-99fd05c4f6a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Revenge of the Drowned": {
@@ -233622,12 +233622,12 @@
     },
     "Saruman, the White Hand": {
       "edhrec_rank": 3814,
-      "gate": "template",
+      "gate": null,
       "name": "Saruman, the White Hand",
-      "reason": "no template for: Whenever you cast a noncreature spell, amass Orcs X, where X is that spell's mana value",
+      "reason": "",
       "scryfall_id": "6487ccbf-f6cd-45a6-8514-2c458b655ef2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saryth, the Viper's Fang": {
@@ -268022,12 +268022,12 @@
     },
     "Subjugate the Hobbits": {
       "edhrec_rank": 8826,
-      "gate": "template",
+      "gate": null,
       "name": "Subjugate the Hobbits",
-      "reason": "no template for: Gain control of each noncommander creature with mana value 3 or less",
+      "reason": "",
       "scryfall_id": "6206d9f1-6a57-46a2-942f-6f20e33e5d6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Subjugator Angel": {
@@ -279842,12 +279842,12 @@
     },
     "The Balrog of Moria": {
       "edhrec_rank": 4748,
-      "gate": "template",
+      "gate": null,
       "name": "The Balrog of Moria",
-      "reason": "no template for: When dies, you may exile it. When you do, for each opponent, exile up to one target creatu",
+      "reason": "",
       "scryfall_id": "2a3fcfdc-f2cf-42d8-8bb4-7308bc12746e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Balrog, Durin's Bane": {
@@ -281772,12 +281772,12 @@
     },
     "The Mouth of Sauron": {
       "edhrec_rank": 6629,
-      "gate": "template",
+      "gate": null,
       "name": "The Mouth of Sauron",
-      "reason": "no template for: When enters, target player mills three cards. Then amass Orcs X, where X is the number of ",
+      "reason": "",
       "scryfall_id": "76a88814-aa30-4297-b338-3d851bfe7256",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Muckslinger Gang": {
@@ -289142,12 +289142,12 @@
     },
     "Too Greedily, Too Deep": {
       "edhrec_rank": 7171,
-      "gate": "template",
+      "gate": null,
       "name": "Too Greedily, Too Deep",
-      "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. That cr",
+      "reason": "",
       "scryfall_id": "328b93f0-5078-4334-9c95-60ecdd17a388",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Toofer, Keeper of the Full Grip": {
@@ -291852,12 +291852,12 @@
     },
     "Treason of Isengard": {
       "edhrec_rank": 5947,
-      "gate": "template",
+      "gate": null,
       "name": "Treason of Isengard",
-      "reason": "no template for: Put up to one target instant or sorcery card from your graveyard on top of your library",
+      "reason": "",
       "scryfall_id": "8072a918-3f1a-42e1-8971-fd20ce6710de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasonous Ogre": {
@@ -307812,12 +307812,12 @@
     },
     "Voracious Fell Beast": {
       "edhrec_rank": 6675,
-      "gate": "template",
+      "gate": null,
       "name": "Voracious Fell Beast",
-      "reason": "no template for: When this creature enters, each opponent sacrifices a creature of their choice. Create a F",
+      "reason": "",
       "scryfall_id": "11603836-d1a3-4e95-a8cc-e6ca2c854309",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voracious Greatshark": {

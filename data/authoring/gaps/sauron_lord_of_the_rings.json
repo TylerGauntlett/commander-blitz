@@ -1,0 +1,18 @@
+{
+  "card_id": "sauron_lord_of_the_rings",
+  "name": "Sauron, Lord of the Rings",
+  "oracle_text": "When you cast this spell, amass Orcs 5, mill five cards, then return a creature card from your graveyard to the battlefield.\nTrample\nWhenever a commander an opponent controls dies, the Ring tempts you.",
+  "blocked_sentences": [
+    "Whenever a commander an opponent controls dies, the Ring tempts you."
+  ],
+  "needs": [
+    {
+      "capability": "the-ring-tempts-you",
+      "kind": "op",
+      "what": "an op for 701.54 'the Ring tempts you': the player gets The Ring emblem if they have none, chooses a creature they control as their Ring-bearer (it becomes legendary), and advances the emblem one level of the four printed Ring abilities (legendary + can't be blocked by greater power; loot on attack; blocker sacrificed at end of combat; each opponent loses 3 life on combat damage), plus a per-player tempt count other cards read and a 'the Ring tempts you' trigger event",
+      "why_existing_wont_do": "No op in reference names the Ring or tempting; the `emblem` op only hands over a fixed emblem written on the card, with no levelled state, no Ring-bearer choice that moves between creatures, and no tempt counter, so writing the four abilities as emblems would grant them all at once and never track the bearer"
+    }
+  ],
+  "closest_existing": ["emblem", "become_monarch"],
+  "confidence": "high"
+}

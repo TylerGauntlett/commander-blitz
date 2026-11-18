@@ -1,0 +1,18 @@
+{
+  "card_id": "summons_of_saruman",
+  "name": "Summons of Saruman",
+  "oracle_text": "Amass Orcs X. Mill X cards. You may cast an instant or sorcery spell with mana value X or less from among them without paying its mana cost. (To amass Orcs X, put X +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)\nFlashback—{3}{U}{R}, Exile X cards from your graveyard.",
+  "blocked_sentences": [
+    "Flashback—{3}{U}{R}, Exile X cards from your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "flashback_x",
+      "kind": "cost",
+      "what": "a flashback (graveyard) cost that announces X without paying {X} in mana: the caster chooses X when casting from the graveyard, pays the printed {3}{U}{R}, and exiles X other cards from their graveyard as part of the cost, with that X then read by the spell's effects (amass X, mill X, mana value X or less)",
+      "why_existing_wont_do": "The `flashback` card-level cost is a full Cost, but its `exile_from_graveyard` takes only a fixed integer `count`, and the loader refuses X on a graveyard cost outright ('a graveyard cost with X is not implemented', and 'x_value' is refused there too). Without it, X is 0 when the card is flashed back, so the flashback half would amass 0, mill 0 and exile nothing: a different card"
+    }
+  ],
+  "closest_existing": ["flashback", "exile_from_graveyard", "x_value"],
+  "confidence": "high"
+}

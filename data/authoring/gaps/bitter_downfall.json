@@ -1,0 +1,16 @@
+{
+  "card_id": "bitter_downfall",
+  "name": "Bitter Downfall",
+  "oracle_text": "This spell costs {3} less to cast if it targets a creature that was dealt damage this turn.\nDestroy target creature. Its controller loses 2 life.",
+  "blocked_sentences": [
+    "This spell costs {3} less to cast if it targets a creature that was dealt damage this turn."
+  ],
+  "needs": [{
+    "capability": "cost_reduction_targeting_damaged",
+    "kind": "selector",
+    "what": "a `damaged` (was dealt damage this turn) key in cost_reduction_filter_keys, so a card's `cost_reduction` of `{\"amount\": 3, \"targeting\": {\"types\": [\"Creature\"], \"damaged\": true}}` discounts the cast when its chosen creature target has been dealt damage this turn",
+    "why_existing_wont_do": "`targeting` reads only cost_reduction_filter_keys (attacking, tapped, entered_this_turn, ...), which has no damage-this-turn key; the effect selector key `damaged` exists but the notes say any key outside cost_reduction_filter_keys is a load error, and a `condition` with `exists` would discount regardless of what the spell targets"
+  }],
+  "closest_existing": ["cost_reduction.targeting", "damaged"],
+  "confidence": "high"
+}

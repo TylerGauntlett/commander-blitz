@@ -1871,6 +1871,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "basalt_monolith": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "basilisk_collar": {
     "zone": "battlefield"
   },
@@ -4424,6 +4431,10 @@
       "count": 1,
       "id": "treasure_token"
     },
+    "zone": "battlefield"
+  },
+  "corsairs_of_umbar": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "cosmic_crucible": {
@@ -7348,6 +7359,14 @@
     },
     "zone": "graveyard"
   },
+  "extract_from_darkness": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 38,
+      "1": 18
+    },
+    "zone": "graveyard"
+  },
   "extract_power": {
     "graveyard_size": {
       "0": 3
@@ -9223,6 +9242,20 @@
   "goblin_chariot": {
     "zone": "battlefield"
   },
+  "goblin_cratermaker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "goblin_dark_dwellers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "goblin_deathraiders": {
     "zone": "battlefield"
   },
@@ -9684,6 +9717,13 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "grishnakh_brash_instigator": {
+    "tokens": {
+      "count": 1,
+      "id": "orc_army_0_0_b"
     },
     "zone": "battlefield"
   },
@@ -12205,6 +12245,13 @@
       "graveyard"
     ]
   },
+  "knollspine_dragon": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "knotvine_mystic": {
     "zone": "battlefield"
   },
@@ -12417,6 +12464,9 @@
   "landroval_horizon_witness": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "languish": {
+    "zone": "graveyard"
   },
   "lantern_kami": {
     "zone": "battlefield"
@@ -12633,6 +12683,18 @@
   "liberty_prime_recharged": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "lidless_gaze": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "lier_disciple_of_the_drowned": {
     "battlefield_count": 33,
@@ -13886,6 +13948,17 @@
     },
     "zone": "graveyard"
   },
+  "merciless_executioner": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "merfolk_cave_diver": {
     "zone": "battlefield"
   },
@@ -14362,6 +14435,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "monstrosity_of_the_lake": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "monstrous_onslaught": {
     "zone": "graveyard"
@@ -15692,6 +15772,10 @@
       "count": 2,
       "id": "food_token"
     },
+    "zone": "battlefield"
+  },
+  "orcish_siegemaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "order_of_sacred_dusk": {
@@ -17292,6 +17376,13 @@
   "rampaging_hippo": {
     "zone": "battlefield"
   },
+  "rampaging_war_mammoth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "rampant_rejuvenator": {
     "battlefield_count": 33,
     "counters": {
@@ -17673,6 +17764,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "relic_of_sauron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_retriever": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17907,6 +18002,14 @@
   },
   "rev_tithe_extractor": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "revenge_of_ravens": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "reverse_engineer": {
@@ -18686,6 +18789,10 @@
     "zone": "battlefield"
   },
   "sarkhan_soul_aflame": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "saruman_the_white_hand": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21306,6 +21413,15 @@
     },
     "zone": "battlefield"
   },
+  "subjugate_the_hobbits": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "sublime_archangel": {
     "battlefield_count": 33,
     "granted": {
@@ -22423,6 +22539,13 @@
   "thaumaturge_s_familiar": {
     "zone": "battlefield"
   },
+  "the_balrog_of_moria": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_chain_veil": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22594,6 +22717,9 @@
   },
   "the_moment": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_mouth_of_sauron": {
     "zone": "battlefield"
   },
   "the_mycosynth_gardens": {
@@ -23377,6 +23503,15 @@
     },
     "zone": "battlefield"
   },
+  "too_greedily_too_deep": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "topiary_stomper": {
     "battlefield_count": 34,
     "hand_size": {
@@ -23586,6 +23721,20 @@
   },
   "treachery": {
     "zone": "battlefield"
+  },
+  "treason_of_isengard": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 40
+    },
+    "tokens": {
+      "count": 1,
+      "id": "orc_army_0_0_b"
+    },
+    "zone": "graveyard"
   },
   "treasonous_ogre": {
     "zone": "battlefield"
@@ -24906,6 +25055,15 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "voracious_fell_beast": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
     },
     "zone": "battlefield"
   },

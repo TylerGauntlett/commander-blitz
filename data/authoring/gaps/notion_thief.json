@@ -1,0 +1,18 @@
+{
+  "card_id": "notion_thief",
+  "name": "Notion Thief",
+  "oracle_text": "Flash\nIf an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card.",
+  "blocked_sentences": [
+    "If an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "draw_redirection",
+      "kind": "replacement",
+      "what": "a replace_draw mode that, for each draw by an affected player (affects_player: opponent, honouring except_first_in_draw_step), cancels that player's draw and has the static's controller draw a card instead -- e.g. a `draw_instead_by: \"controller\"` key beside affects_player",
+      "why_existing_wont_do": "replace_draw only carries draw_multiplier (loader refuses below 2) and replacements.draw multiplies the same player's draw; nothing skips the drawer's draw and gives the card draw to a different player. draw_limit drops draws past a cap but gives nothing to the controller, and a draw trigger would not stop the opponent's draw"
+    }
+  ],
+  "closest_existing": ["replace_draw", "draw_limit"],
+  "confidence": "high"
+}

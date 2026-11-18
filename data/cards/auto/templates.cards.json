@@ -22361,6 +22361,58 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "This artifact doesn't untap during your untap step."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}{C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}: Untap this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "basalt_monolith",
+      "mana_cost": "{3}",
+      "name": "Basalt Monolith",
+      "oracle_text": "This artifact doesn't untap during your untap step.\n{T}: Add {C}{C}{C}.\n{3}: Untap this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "grant_keyword",
@@ -54405,6 +54457,79 @@
         "Pirate"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Goblin",
+                  "Orc",
+                  "Pirate"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{U}: Target Goblin, Orc, or Pirate can't be blocked this turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "amass",
+              "subtype": "Orc"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, amass Orcs 3. (Put three +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "corsairs_of_umbar",
+      "mana_cost": "{3}{U}",
+      "name": "Corsairs of Umbar",
+      "oracle_text": "{2}{U}: Target Goblin, Orc, or Pirate can't be blocked this turn.\nWhenever this creature deals combat damage to a player, amass Orcs 3. (Put three +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -87440,6 +87565,46 @@
     },
     {
       "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "extract_from_darkness",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Extract from Darkness",
+      "oracle_text": "Each player mills two cards. Then you put a creature card from a graveyard onto the battlefield under your control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "mill",
+          "player": "each_player"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "any",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -109241,6 +109406,164 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "This creature deals 2 damage to target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t2"
+                      },
+                      "op": "destroy"
+                    }
+                  ],
+                  "label": "Destroy target colorless nonland permanent."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "colorless": true,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice this creature: Choose one —\n• This creature deals 2 damage to target creature.\n• Destroy target colorless nonland permanent."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_cratermaker",
+      "mana_cost": "{1}{R}",
+      "name": "Goblin Cratermaker",
+      "oracle_text": "{1}, Sacrifice this creature: Choose one —\n• This creature deals 2 damage to target creature.\n• Destroy target colorless nonland permanent.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may cast target instant or sorcery card with mana value 3 or less from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_dark_dwellers",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Goblin Dark-Dwellers",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhen this creature enters, you may cast target instant or sorcery card with mana value 3 or less from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Goblin"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "R"
@@ -114896,6 +115219,108 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "army",
+              "op": "amass",
+              "subtype": "Orc"
+            },
+            {
+              "ability": "grishnakh_steal",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Grishnákh enters, amass Orcs 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "stolen",
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "objects": {
+                "binding": "stolen"
+              },
+              "op": "untap"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "binding": "stolen"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "id": "grishnakh_steal",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "binding": "army"
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, until end of turn, gain control of target nonlegendary creature an opponent controls with power less than or equal to the amassed Army's power. Untap that creature. It gains haste until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "grishnakh_brash_instigator",
+      "mana_cost": "{2}{R}",
+      "name": "Grishnákh, Brash Instigator",
+      "oracle_text": "When Grishnákh enters, amass Orcs 2. When you do, until end of turn, gain control of target nonlegendary creature an opponent controls with power less than or equal to the amassed Army's power. Untap that creature. It gains haste until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -146558,6 +146983,73 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "damage_taken_this_turn": {
+                      "target": "t1"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Discard your hand and draw cards equal to the damage dealt to that opponent this turn?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may discard your hand and draw cards equal to the damage dealt to target opponent this turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "knollspine_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Knollspine Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, you may discard your hand and draw cards equal to the damage dealt to target opponent this turn.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true
@@ -149204,6 +149696,42 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "languish",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Languish",
+      "oracle_text": "All creatures get -4/-4 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -4
+          },
+          "toughness": {
+            "const": -4
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -152244,6 +152772,42 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "flashback": {
+        "mana": "{2}{B}{R}"
+      },
+      "id": "lidless_gaze",
+      "mana_cost": "{2}{B}{R}",
+      "name": "Lidless Gaze",
+      "oracle_text": "Exile the top card of each player's library. Until the end of your next turn, you may play those cards, and mana of any type can be spent to cast those spells.\nFlashback {2}{B}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "any_type": true,
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "end_of_your_next_turn",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -166855,6 +167419,60 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player sacrifices a creature of their choice.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "merciless_executioner",
+      "mana_cost": "{2}{B}",
+      "name": "Merciless Executioner",
+      "oracle_text": "When this creature enters, each player sacrifices a creature of their choice.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "self_only": true,
                 "zone": "battlefield"
@@ -172578,6 +173196,105 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "opponent",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "tap"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "stun",
+                  "objects": {
+                    "controller": "opponent",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{5}"
+              },
+              "prompt": "Pay {5} to tap and stun all creatures your opponents control?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Monstrosity of the Lake enters, you may pay {5}. If you do, tap all creatures your opponents control, then put a stun counter on each of those creatures. (If a permanent with a stun counter would become untapped, remove one from it instead.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Island"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Islandcycling {2} ({2}, Discard this card: Search your library for an Island card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "monstrosity_of_the_lake",
+      "mana_cost": "{4}{U}",
+      "name": "Monstrosity of the Lake",
+      "oracle_text": "When Monstrosity of the Lake enters, you may pay {5}. If you do, tap all creatures your opponents control, then put a stun counter on each of those creatures. (If a permanent with a stun counter would become untapped, remove one from it instead.)\nIslandcycling {2} ({2}, Discard this card: Search your library for an Island card, reveal it, put it into your hand, then shuffle.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -189231,6 +189948,82 @@
         "Treefolk"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Orc",
+              "Goblin"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Other Orcs and Goblins you control have trample."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "power",
+                  "pick": "greatest"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the greatest power among creatures you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "orcish_siegemaster",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Orcish Siegemaster",
+      "oracle_text": "Trample\nOther Orcs and Goblins you control have trample.\nWhenever this creature attacks, it gets +X/+0 until end of turn, where X is the greatest power among creatures you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Soldier"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -208946,6 +209739,89 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{X}{2}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {X}{2}{R} ({X}{2}{R}, Discard this card: Draw a card.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": {
+                "x": true
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you cycle this card, destroy up to X target artifacts.",
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rampaging_war_mammoth",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Rampaging War Mammoth",
+      "oracle_text": "Trample\nCycling {X}{2}{R} ({X}{2}{R}, Discard this card: Draw a card.)\nWhen you cycle this card, destroy up to X target artifacts.",
+      "power": 9,
+      "source": "auto",
+      "subtypes": [
+        "Elephant"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "count": {
@@ -213023,6 +213899,69 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "add_mana",
+              "split": [
+                "U",
+                "B",
+                "R"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add two mana in any combination of {U}, {B}, and/or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Draw two cards, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "relic_of_sauron",
+      "mana_cost": "{4}",
+      "name": "Relic of Sauron",
+      "oracle_text": "{T}: Add two mana in any combination of {U}, {B}, and/or {R}.\n{3}, {T}: Draw two cards, then discard a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "create_token",
@@ -215819,6 +216758,51 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature attacks you or a planeswalker you control, that creature's controller loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "any",
+            "defending": "you",
+            "event": "attacks"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "revenge_of_ravens",
+      "mana_cost": "{3}{B}",
+      "name": "Revenge of Ravens",
+      "oracle_text": "Whenever a creature attacks you or a planeswalker you control, that creature's controller loses 1 life and you gain 1 life.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -225071,6 +226055,76 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "amass",
+              "subtype": "Orc"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, amass Orcs X, where X is that spell's mana value.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Goblin",
+              "Orc"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Goblins and Orcs you control have ward {2}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "saruman_the_white_hand",
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Saruman, the White Hand",
+      "oracle_text": "Whenever you cast a noncreature spell, amass Orcs X, where X is that spell's mana value. (Put X +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)\nGoblins and Orcs you control have ward {2}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -255449,6 +256503,44 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "subjugate_the_hobbits",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Subjugate the Hobbits",
+      "oracle_text": "Gain control of each noncommander creature with mana value 3 or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "permanent",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "is_commander": false,
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "gain_control",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -270971,6 +272063,141 @@
         {
           "effects": [
             {
+              "condition": {
+                "exists": {
+                  "self_only": true,
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "ability": "balrog_exile",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The Balrog of Moria dies, you may exile it.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "id": "balrog_exile",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, for each opponent, exile up to one target creature that player controls."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {3}{R} ({3}{R}, Discard this card: Draw a card.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cycle this card, create two Treasure tokens.",
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "the_balrog_of_moria",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{4}{B}{B}{R}",
+      "name": "The Balrog of Moria",
+      "oracle_text": "Trample, haste\nWhen The Balrog of Moria dies, you may exile it. When you do, for each opponent, exile up to one target creature that player controls.\nCycling {3}{R} ({3}{R}, Discard this card: Draw a card.)\nWhen you cycle this card, create two Treasure tokens.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -273803,6 +275030,79 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "count": {
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ],
+                  "controller": {
+                    "target": "t1"
+                  },
+                  "zone": "graveyard"
+                }
+              },
+              "op": "amass",
+              "subtype": "Orc"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When The Mouth of Sauron enters, target player mills three cards. Then amass Orcs X, where X is the number of instant and sorcery cards in that player's graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "the_mouth_of_sauron",
+      "mana_cost": "{3}{U}{B}",
+      "name": "The Mouth of Sauron",
+      "oracle_text": "When The Mouth of Sauron enters, target player mills three cards. Then amass Orcs X, where X is the number of instant and sorcery cards in that player's graveyard. (Put X +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -283473,6 +284773,69 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "too_greedily_too_deep",
+      "mana_cost": "{5}{B}{R}",
+      "name": "Too Greedily, Too Deep",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. That creature deals damage equal to its power to each other creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "risen",
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        },
+        {
+          "amount": {
+            "power_of": {
+              "objects": {
+                "binding": "risen"
+              }
+            }
+          },
+          "objects": {
+            "count": "all",
+            "exclude_binding": "risen",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "source_object": {
+            "binding": "risen"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -285444,6 +286807,53 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "treason_of_isengard",
+      "mana_cost": "{2}{U}",
+      "name": "Treason of Isengard",
+      "oracle_text": "Put up to one target instant or sorcery card from your graveyard on top of your library.\nAmass Orcs 2. (To amass Orcs 2, put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "amass",
+          "subtype": "Orc"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -300852,6 +302262,73 @@
         "Dragon"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "sacrificed",
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "sacrificed"
+                    }
+                  },
+                  "op": "create_token",
+                  "token": "food_token"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent sacrifices a creature of their choice. Create a Food token for each creature sacrificed this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "voracious_fell_beast",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Voracious Fell Beast",
+      "oracle_text": "Flying\nWhen this creature enters, each opponent sacrifices a creature of their choice. Create a Food token for each creature sacrificed this way. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Drake",
+        "Beast"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

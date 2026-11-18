@@ -1,0 +1,18 @@
+{
+  "card_id": "the_black_gate",
+  "name": "The Black Gate",
+  "oracle_text": "As The Black Gate enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {B}.\n{1}{B}, {T}: Choose a player with the most life or tied for most life. Target creature can't be blocked by creatures that player controls this turn.",
+  "blocked_sentences": [
+    "{1}{B}, {T}: Choose a player with the most life or tied for most life. Target creature can't be blocked by creatures that player controls this turn."
+  ],
+  "needs": [
+    {
+      "capability": "unblockable_by_player",
+      "kind": "op",
+      "what": "a `blocked_by_player` (player spec / binding) option on the `unblockable` op, so an attacker can't be blocked this turn by creatures one named seat controls, paired with a `choose_player` whose `players` can be \"each player with the most life or tied for most life\" (GameState.has_most_life) -- the chosen seat may be the activator themself",
+      "why_existing_wont_do": "`unblockable` offers only `by_opponents` (every opponent of the effect controller, never one chosen seat and never you) and `except_blockers`, whose filter the loader refuses `controller` on; `block_restriction` is a static with no clock and no way to name the targeted creature; `most_life` exists only as `attacking_player`/dethrone `defending`, not as a `choose_player` players spec"
+    }
+  ],
+  "closest_existing": ["unblockable", "choose_player", "block_restriction"],
+  "confidence": "high"
+}
