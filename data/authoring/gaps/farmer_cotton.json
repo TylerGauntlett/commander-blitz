@@ -1,0 +1,22 @@
+{
+  "card_id": "farmer_cotton",
+  "name": "Farmer Cotton",
+  "oracle_text": "When this creature enters, create X 1/1 white Halfling creature tokens and X Food tokens. (They're artifacts with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+  "blocked_sentences": [
+    "When this creature enters, create X 1/1 white Halfling creature tokens and X Food tokens"
+  ],
+  "needs": [
+    {
+      "capability": "token-halfling-1-1-w",
+      "kind": "token",
+      "what": "a 1/1 white Halfling creature token",
+      "why_existing_wont_do": "create_token and food_token exist, but token_ids has no Halfling; the other 1/1 white tokens (human_1_1_w, rabbit_1_1_w, ...) carry a different creature type, which matters for type-matters cards"
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "human_1_1_w",
+    "food_token"
+  ],
+  "confidence": "high"
+}

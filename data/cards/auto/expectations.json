@@ -1764,6 +1764,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "banquet_guests": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bant_panorama": {
     "zone": "battlefield"
   },
@@ -2122,6 +2126,13 @@
     "zone": "graveyard"
   },
   "bighorner_rancher": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "bilbo_birthday_celebrant": {
     "battlefield_count": 33,
     "life": {
       "0": 40
@@ -3019,6 +3030,10 @@
     "zone": "battlefield"
   },
   "butcher_of_malakir": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "butterbur_bree_innkeeper": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4652,6 +4667,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "crypt_incursion": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 46
+    },
+    "zone": "graveyard"
+  },
   "crypt_of_agadeem": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6265,6 +6289,16 @@
   "eagle_of_the_watch": {
     "zone": "battlefield"
   },
+  "eagles_of_the_north": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "earth_elemental": {
     "zone": "battlefield"
   },
@@ -6939,6 +6973,13 @@
   "espers_to_magicite": {
     "zone": "graveyard"
   },
+  "essence_warden": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "estinien_varlineau": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7515,6 +7556,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "feasting_hobbit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "feebleness": {
     "zone": [
@@ -8630,6 +8675,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "generous_ent": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "generous_gift": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -9463,6 +9516,10 @@
       "0": 37
     },
     "zone": "graveyard"
+  },
+  "great_oak_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "greataxe": {
     "zone": "battlefield"
@@ -12297,6 +12354,10 @@
     },
     "zone": "battlefield"
   },
+  "landroval_horizon_witness": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lantern_kami": {
     "zone": "battlefield"
   },
@@ -12717,6 +12778,18 @@
     }
   },
   "loamdragger_giant": {
+    "zone": "battlefield"
+  },
+  "lobelia_defender_of_bag_end": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40,
+      "1": 19
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "localized_destruction": {
@@ -13685,6 +13758,10 @@
     },
     "zone": "graveyard"
   },
+  "mentor_of_the_meek": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "merchant_of_secrets": {
     "hand_size": {
       "0": 2
@@ -13746,6 +13823,10 @@
     "zone": "battlefield"
   },
   "merrow_reejerey": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "merry_warden_of_isengard": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14323,6 +14404,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "motivated_pony": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mount_doom": {
@@ -15498,6 +15583,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "orchard_strider": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "order_of_sacred_dusk": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16139,6 +16232,10 @@
     },
     "zone": "battlefield"
   },
+  "pippin_warden_of_isengard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "piranha_fly": {
     "zone": "battlefield"
   },
@@ -16529,6 +16626,10 @@
     "zone": "battlefield"
   },
   "pristine_talisman": {
+    "zone": "battlefield"
+  },
+  "prize_pig": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "prized_amalgam": {
@@ -17140,6 +17241,10 @@
     },
     "zone": "battlefield"
   },
+  "rapacious_guest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "raptor_companion": {
     "zone": "battlefield"
   },
@@ -17699,6 +17804,20 @@
       "0": 43
     }
   },
+  "revive_the_shire": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "graveyard"
+  },
   "reviving_dose": {
     "hand_size": {
       "0": 2
@@ -18079,6 +18198,14 @@
   },
   "rose_tyler": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "rosie_cotton_of_south_lane": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
     "zone": "battlefield"
   },
   "rot_hulk": {
@@ -18515,6 +18642,13 @@
     "life": {
       "0": 42
     }
+  },
+  "savvy_hunter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "savvy_trader": {
     "battlefield_count": 33,
@@ -19366,6 +19500,11 @@
     "zone": "battlefield"
   },
   "shipwreck_marsh": {
+    "zone": "battlefield"
+  },
+  "shire_shirriff": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "shire_terrace": {
@@ -22245,6 +22384,13 @@
     },
     "zone": "battlefield"
   },
+  "the_gaffer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_gitrog_monster": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -23344,6 +23490,14 @@
     "zone": "battlefield"
   },
   "tree_of_tales": {
+    "zone": "battlefield"
+  },
+  "treebeard_gracious_host": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "food_token"
+    },
     "zone": "battlefield"
   },
   "treetop_village": {
@@ -25577,6 +25731,9 @@
     "zone": "battlefield"
   },
   "wooded_ridgeline": {
+    "zone": "battlefield"
+  },
+  "woodfall_primus": {
     "zone": "battlefield"
   },
   "woodland_acolyte_mend_the_wilds": {

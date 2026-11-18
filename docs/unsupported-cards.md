@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**473 cards** blocked by **422** capabilities.
+**483 cards** blocked by **430** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,6 +37,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
+| [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
@@ -57,6 +58,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
+| [partner-with](#partner-with) | 2 | 4906 | keyword |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -165,6 +167,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
+| [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
@@ -334,6 +337,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
+| [player-to-your-right](#player-to-your-right) | 1 | 5281 | selector |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
@@ -368,6 +372,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
+| [revolt](#revolt) | 1 | 8154 | value |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
@@ -403,12 +408,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [the-ring-tempts-you](#the-ring-tempts-you) | 1 | 4906 | op |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
+| [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
+| [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
@@ -1160,6 +1168,28 @@ Blocks **3** cards.
 
 </details>
 
+## token-halfling-1-1-w
+
+Blocks **3** cards.
+
+- **(token)** a 1/1 white Halfling creature token
+  <br>Why the existing vocabulary won't do: create_token and food_token exist, but token_ids has no Halfling; the other 1/1 white tokens (human_1_1_w, rabbit_1_1_w, ...) carry a different creature type, which matters for type-matters cards
+- **(token)** a 1/1 white Halfling creature token (no abilities), e.g. id halfling_1_1_w
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Halfling; the nearest 1/1 white tokens (human_1_1_w, soldier_1_1_w, cat_1_1_w) carry the wrong creature type. food_token exists and create_token takes attached_to, so the rest of the line is expressible once the token is defined
+- **(token)** a 1/1 white Halfling creature token
+  <br>Why the existing vocabulary won't do: token_ids has food_token and many 1/1 white creature tokens (human_1_1_w, rabbit_1_1_w, soldier_1_1_w) but none with the Halfling subtype; substituting another creature type would change type-matters interactions
+
+<details><summary>Cards waiting on this</summary>
+
+- **Farmer Cotton** (rank 2910) — `farmer_cotton`
+  - When this creature enters, create X 1/1 white Halfling creature tokens and X Food tokens
+- **Of Herbs and Stewed Rabbit** (rank 4742) — `of_herbs_and_stewed_rabbit`
+  - III — Create a 1/1 white Halfling creature token for each Food you control.
+- **Field-Tested Frying Pan** (rank 6851) — `field_tested_frying_pan`
+  - When this Equipment enters, create a Food token, then create a 1/1 white Halfling creature token and attach this Equipment to it.
+
+</details>
+
 ## add-color
 
 Blocks **2** cards.
@@ -1525,6 +1555,25 @@ Blocks **2** cards.
   - Paradox — Draw a card for each spell you've cast this turn from anywhere other than your hand.
 - **Impending Flux** (rank 9179) — `impending_flux`
   - Paradox — Impending Flux deals X damage to each opponent and each creature they control, where X is 1 plus the number of spells you've cast from anywhere other than your hand this turn.
+
+</details>
+
+## partner-with
+
+Blocks **2** cards.
+
+- **(keyword)** 'Partner with <name>': deck-building pairing with that specific card, plus 'When this creature enters, target player may search their library for <name>, reveal it, put it into their hand, then shuffle'
+  <br>Why the existing vocabulary won't do: The 'partner' keyword is generic partner with no named-partner restriction or enters tutor trigger
+- **(keyword)** 'Partner with <name>': deck-building pairing with that one named card as co-commander, plus the enters trigger 'target player may search their library for <name>, reveal it, put it into their hand, then shuffle'
+  <br>Why the existing vocabulary won't do: The 'partner' keyword is generic partner with no named-partner restriction and no enters tutor trigger; no keyword or card-level key carries a partner name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
+  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
+  - Partner with Sam, Loyal Attendant
+- **Sam, Loyal Attendant** (rank 6545) — `sam_loyal_attendant`
+  - Partner with Frodo, Adventurous Hobbit (When this creature enters, target player may put Frodo into their hand from their library, then shuffle.)
 
 </details>
 
@@ -3144,6 +3193,20 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+
+</details>
+
+## dealt-combat-damage-this-game-by-name
+
+Blocks **1** card.
+
+- **(selector)** a player selector for 'each opponent dealt combat damage this game by a creature named <name>': a per-game ledger of seats dealt combat damage, keyed by the dealing creature's name (any object with that name, across zone changes and across turns), never cleared at end of turn
+  <br>Why the existing vocabulary won't do: The closest is the player spec dealt_combat_damage_by (not even in the packet reference), which reads TurnLedger.players_dealt_combat_damage_by / _by_subtype -- keyed by oid or subtype and cleared every turn, so it answers 'this turn' by 'self' or a subtype, never 'this game' by a card name. The condition combat_damage_by is likewise per-turn and subtype-only. life_gained_this_turn covers the amount and lose_life the effect; only the player set is missing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gollum, Obsessed Stalker** (rank 5080) — `gollum_obsessed_stalker`
+  - At the beginning of your end step, each opponent dealt combat damage this game by a creature named Gollum, Obsessed Stalker loses life equal to the amount of life you gained this turn.
 
 </details>
 
@@ -5560,6 +5623,21 @@ Blocks **1** card.
 
 </details>
 
+## player-to-your-right
+
+Blocks **1** card.
+
+- **(selector)** a player spec naming the next living seat to the right of the ability controller (the seat before them in turn order, engine.effects.ops_control.neighbour with direction "right"), usable as gain_control.player so "The player to your right gains control of this artifact" gives the source to that seat permanently
+  <br>Why the existing vocabulary won't do: gain_control.player resolves through select_players, whose specs are you/opponent/each_opponent/target/controller/active_player/monarch and the like, with no seat-relative neighbour; choose_player cannot restrict its pool to one neighbour either. rotate_control with direction "left" and a self_only pool happens to hand the source to the seat whose left neighbour currently controls it, but it is keyed on the permanent current controller rather than the ability controller ("your"), so a second activation resolving after the first already moved the rope sends it one seat further instead of leaving it with the player to the activator right; it is a rotation op, not this sentence
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hithlain Rope** (rank 5281) — `hithlain_rope`
+  - {1}, {T}: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. The player to your right gains control of this artifact.
+  - {2}, {T}: Draw a card. The player to your right gains control of this artifact.
+
+</details>
+
 ## players-attacked-last-combat
 
 Blocks **1** card.
@@ -6047,6 +6125,20 @@ Blocks **1** card.
 - **Stalking Leonin** (rank 9335) — `stalking_leonin`
   - When this creature enters, secretly choose an opponent.
   - Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.
+
+</details>
+
+## revolt
+
+Blocks **1** card.
+
+- **(value)** a per-turn tracker of permanents that left the battlefield under a player's control this turn (any destination: graveyard, exile, hand, library; tokens included), readable as a condition or value such as permanents_left_battlefield_this_turn for 'you', so an end_step trigger's intervening-if can test it
+  <br>Why the existing vocabulary won't do: value_keys has permanents_entered_this_turn, creatures_died_this_turn and permanents_to_graveyard_this_turn, but nothing counts permanents that left to exile or hand (or tokens that ceased to exist); permanents_to_graveyard_this_turn would miss flicker/bounce/exile and so changes the card. condition_keys has no revolt flag, and has_turn_flag reads flags set on the source, not a zone-change history
+
+<details><summary>Cards waiting on this</summary>
+
+- **Call for Unity** (rank 8154) — `call_for_unity`
+  - Revolt — At the beginning of your end step, if a permanent left the battlefield under your control this turn, put a unity counter on this enchantment
 
 </details>
 
@@ -6554,6 +6646,21 @@ Blocks **1** card.
 
 </details>
 
+## the-ring-tempts-you
+
+Blocks **1** card.
+
+- **(op)** an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'
+  <br>Why the existing vocabulary won't do: No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to
+
+<details><summary>Cards waiting on this</summary>
+
+- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
+  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
+  - Partner with Sam, Loyal Attendant
+
+</details>
+
 ## this-combat-duration
 
 Blocks **1** card.
@@ -6624,6 +6731,20 @@ Blocks **1** card.
 
 </details>
 
+## token-bird-3-3-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 3/3 white Bird creature token with flying and "Whenever this token attacks, target attacking creature gains flying until end of turn."
+  <br>Why the existing vocabulary won't do: token_ids has no 3/3 white Bird; the closest are bird_soldier_4_4_w_flying, bird_1_1_w_flying and angel_3_3_w_flying, none of which is a 3/3 Bird or carries the attack trigger granting flying to a target attacking creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gwaihir, Greatest of the Eagles** (rank 5992) — `gwaihir_greatest_of_the_eagles`
+  - At the beginning of each end step, if you gained 3 or more life this turn, create a 3/3 white Bird creature token with flying and "Whenever this token attacks, target attacking creature gains flying until end of turn."
+
+</details>
+
 ## token-copy-attached
 
 Blocks **1** card.
@@ -6635,6 +6756,20 @@ Blocks **1** card.
 
 - **Three Dog, Galaxy News DJ** (rank 11547) — `three_dog_galaxy_news_dj`
   - Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.
+
+</details>
+
+## token-treefolk-0-0-g
+
+Blocks **1** card.
+
+- **(token)** a 0/0 green Treefolk creature token (X/X, sized by create_token's power/toughness from life_gained_this_turn)
+  <br>Why the existing vocabulary won't do: token_ids has 0/0 green Hydra, Ooze and Dinosaur Beast tokens but no Treefolk; the token list is closed and a different creature type is a different token. create_token's tapped/power/toughness/counters options and the life_gained_this_turn value would otherwise cover the sentence, provided a reach counter grants reach as a keyword counter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
+  - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
 
 </details>
 

@@ -1,0 +1,20 @@
+{
+  "card_id": "sam_loyal_attendant",
+  "name": "Sam, Loyal Attendant",
+  "oracle_text": "Partner with Frodo, Adventurous Hobbit (When this creature enters, target player may put Frodo into their hand from their library, then shuffle.)\nAt the beginning of combat on your turn, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nActivated abilities of Foods you control cost {1} less to activate.",
+  "blocked_sentences": [
+    "Partner with Frodo, Adventurous Hobbit (When this creature enters, target player may put Frodo into their hand from their library, then shuffle.)"
+  ],
+  "needs": [
+    {
+      "capability": "partner-with",
+      "kind": "keyword",
+      "what": "'Partner with <name>': deck-building pairing with that one named card as co-commander, plus the enters trigger 'target player may search their library for <name>, reveal it, put it into their hand, then shuffle'",
+      "why_existing_wont_do": "The 'partner' keyword is generic partner with no named-partner restriction and no enters tutor trigger; no keyword or card-level key carries a partner name"
+    }
+  ],
+  "closest_existing": [
+    "partner"
+  ],
+  "confidence": "high"
+}
