@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**498 cards** blocked by **434** capabilities.
+**511 cards** blocked by **443** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,6 +19,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
+| [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -71,13 +72,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspect](#suspect) | 2 | 4851 | op |
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
+| [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
-| [the-ring-tempts-you](#the-ring-tempts-you) | 2 | 4906 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [undaunted](#undaunted) | 2 | 3405 | value |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
+| [wraith-token](#wraith-token) | 2 | 3658 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
@@ -162,6 +164,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
+| [cost-reduction-targeting-damaged](#cost-reduction-targeting-damaged) | 1 | 10619 | selector |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
@@ -179,12 +182,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
 | [died-attacking-or-blocking-alone](#died-attacking-or-blocking-alone) | 1 | 22760 | selector |
 | [dinosaur-2-2-rw-flying-haste-token](#dinosaur-2-2-rw-flying-haste-token) | 1 | 5193 | token |
+| [discard-cost-binding](#discard-cost-binding) | 1 | 5635 | cost |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
+| [dragon-6-6-br-flying-menace-steal-artifact-token](#dragon-6-6-br-flying-menace-steal-artifact-token) | 1 | 8277 | token |
 | [draw-from-bottom](#draw-from-bottom) | 1 | 10400 | static_effect |
+| [draw-redirection](#draw-redirection) | 1 | 1178 | replacement |
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
@@ -215,6 +221,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-card-mana-value](#exiled-card-mana-value) | 1 | 20131 | value |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
+| [exiled-with-source-cost](#exiled-with-source-cost) | 1 | 5767 | cost |
 | [exploit](#exploit) | 1 | 8043 | keyword, trigger_event |
 | [extra-combat-attacker-restriction](#extra-combat-attacker-restriction) | 1 | 8880 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -233,6 +240,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flashback](#flashback) | 1 | 14595 | op |
+| [flashback-x](#flashback-x) | 1 | 5811 | cost |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretell](#foretell) | 1 | 9914 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
@@ -302,6 +310,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [min-blockers](#min-blockers) | 1 | 2786 | static_effect |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -407,7 +416,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
-| [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 1 | 13900 | trigger_event |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
@@ -434,6 +442,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
 | [unleash](#unleash) | 1 | 12169 | keyword |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
@@ -760,6 +769,43 @@ Blocks **6** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
+
+</details>
+
+## the-ring-tempts-you
+
+Blocks **6** cards.
+
+- **(op)** 'the Ring tempts you' (rule 701.54): the player gets The Ring emblem if they lack it, its level advances (up to four abilities), and they choose a creature they control as their Ring-bearer (legendary, with the emblem's skulk-style and loot/sacrifice abilities by level)
+  <br>Why the existing vocabulary won't do: no op in reference tempts a player or designates a Ring-bearer; `emblem` only gives a card-authored emblem with fixed abilities and no level progression or shared per-player Ring state, so writing it would drop the clause
+- **(op)** an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'
+  <br>Why the existing vocabulary won't do: No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to
+- **(op)** 'the Ring tempts you' (rule 701.54): the player gets the Ring emblem if they lack it, advances its level, and chooses a creature they control as their Ring-bearer; plus a selector naming 'your Ring-bearer' so add_counters can put a +1/+1 counter on it
+  <br>Why the existing vocabulary won't do: no op in reference tempts a player or designates a Ring-bearer, emblem only gives a card-authored emblem with no level progression, and no selector key reads a Ring-bearer designation
+- **(op)** an op for 'the Ring tempts you' (701.52): the player gets the Ring emblem if they have none, chooses a creature they control as their Ring-bearer (legendary, can't be blocked by greater power), advances the Ring's level through its four cumulative abilities, and fires 'whenever the Ring tempts you' triggers
+  <br>Why the existing vocabulary won't do: No op, emblem, value or trigger event in reference tracks a Ring level or a Ring-bearer designation; the emblem op gives a fixed emblem and cannot level up or re-pick a bearer each time
+- **(engine)** the Ring-bearer designation (701.54, set when the Ring tempts a player) readable as a quality, so a static `protection` granted to Wraiths you control can name 'Ring-bearers' (any player's Ring-bearer creature) as the quality protected from
+  <br>Why the existing vocabulary won't do: The `protection` static and `grant_protection` op only take from_colors, from_colorless, from_types, from_subtypes or from_everything; no selector, filter or designation in reference mentions a Ring-bearer, and the engine has no Ring-tempts mechanic to set one
+- **(op)** an op for 701.54 'the Ring tempts you': the player gets The Ring emblem if they have none, chooses a creature they control as their Ring-bearer (it becomes legendary), and advances the emblem one level of the four printed Ring abilities (legendary + can't be blocked by greater power; loot on attack; blocker sacrificed at end of combat; each opponent loses 3 life on combat damage), plus a per-player tempt count other cards read and a 'the Ring tempts you' trigger event
+  <br>Why the existing vocabulary won't do: No op in reference names the Ring or tempting; the `emblem` op only hands over a fixed emblem written on the card, with no levelled state, no Ring-bearer choice that moves between creatures, and no tempt counter, so writing the four abilities as emblems would grant them all at once and never track the bearer
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fiery Inscription** (rank 1136) — `fiery_inscription`
+  - When this enchantment enters, the Ring tempts you.
+- **Lord of the Nazgûl** (rank 3658) — `lord_of_the_nazgul`
+  - Wraiths you control have protection from Ring-bearers.
+  - Whenever you cast an instant or sorcery spell, create a 3/3 black Wraith creature token with menace. Then if you control nine or more Wraiths, Wraiths you control have base power and toughness 9/9 until end of turn.
+- **In the Darkness Bind Them** (rank 4120) — `in_the_darkness_bind_them`
+  - I, II, III — Create a 3/3 black Wraith creature token with menace. The Ring tempts you.
+  - IV — For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain haste until end of turn. The Ring tempts you.
+- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
+  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
+  - Partner with Sam, Loyal Attendant
+- **Sauron, Lord of the Rings** (rank 5306) — `sauron_lord_of_the_rings`
+  - Whenever a commander an opponent controls dies, the Ring tempts you.
+- **Galadriel, Elven-Queen** (rank 11138) — `galadriel_elven_queen`
+  - Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.
 
 </details>
 
@@ -1847,6 +1893,24 @@ Blocks **2** cards.
 
 </details>
 
+## tapped-for-mana-trigger
+
+Blocks **2** cards.
+
+- **(trigger_event)** a non-mana triggered ability (uses the stack, may target) that fires whenever the permanent this source is attached to is tapped for mana -- on every tap, including the lands the payment solver taps -- and binds the mana that tap produced so effects can read its colors
+  <br>Why the existing vocabulary won't do: The `tapped_permanent` key with `attached`/`produced` only drives the inline added-mana statics (Wild Growth style) that resolve inside payment and can only add mana; `becomes_tapped` is any tap, and `ability_activated` with `mana_ability: true` is fired only on the by-hand mana path (game.py says solver-tapped lands emit nothing) and carries no produced mana
+- **(trigger_event)** a non-mana triggered ability (uses the stack) that fires whenever a player taps a permanent matching a filter for mana -- i.e. activates a mana ability whose cost includes {T} -- on EVERY mana activation, including the ones the payment solver auto-taps while paying for a spell, binding the tapped permanent as the subject so the effect can gain_control of it (duration end_of_your_next_turn already exists)
+  <br>Why the existing vocabulary won't do: The nearest is ability_activated with mana_ability: true, controller: opponent and filter types [Artifact]. But Game._activate_mana fires that event only on the by-hand path; mana abilities the payment solver taps for itself go through costs.pay_mana -> activate_mana_ability and emit nothing (documented as a known incompleteness beside that triggers.fire call), so the card would silently miss nearly every opponent tap, every CPU tap included. It also fires on any mana ability, not only ones that tap, and fires before the cost is paid, so a `tapped` filter cannot narrow it. add_mana_on_tap's tapped_permanent is the right 'tapped for mana' matcher, but it is a mana-adding static (a triggered mana ability), not a stack trigger that can run gain_control.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Treasure Nabber** (rank 1457) — `treasure_nabber`
+  - Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.
+- **C.A.M.P.** (rank 13900) — `c_a_m_p`
+  - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -1863,25 +1927,6 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
-
-</details>
-
-## the-ring-tempts-you
-
-Blocks **2** cards.
-
-- **(op)** an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'
-  <br>Why the existing vocabulary won't do: No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to
-- **(op)** 'the Ring tempts you' (rule 701.54): the player gets the Ring emblem if they lack it, advances its level, and chooses a creature they control as their Ring-bearer; plus a selector naming 'your Ring-bearer' so add_counters can put a +1/+1 counter on it
-  <br>Why the existing vocabulary won't do: no op in reference tempts a player or designates a Ring-bearer, emblem only gives a card-authored emblem with no level progression, and no selector key reads a Ring-bearer designation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Frodo, Adventurous Hobbit** (rank 4906) — `frodo_adventurous_hobbit`
-  - Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.
-  - Partner with Sam, Loyal Attendant
-- **Galadriel, Elven-Queen** (rank 11138) — `galadriel_elven_queen`
-  - Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.
 
 </details>
 
@@ -1973,6 +2018,26 @@ Blocks **2** cards.
   - Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender
 - **Teyo, the Shieldmage** (rank 9030) — `teyo_the_shieldmage`
   - −2: Create a 0/3 white Wall creature token with defender.
+
+</details>
+
+## wraith-token
+
+Blocks **2** cards.
+
+- **(token)** a 3/3 black Wraith creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids has 3/3 black menace only as dalek_3_3_b_artifact_menace, an artifact Dalek, which is not a Wraith
+- **(token)** a 3/3 black Wraith creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids has no Wraith token; the nearest 3/3 black tokens are beast_3_3_b_deathtouch (deathtouch, Beast) and dalek_3_3_b_artifact_menace (an artifact Dalek), neither of which is this token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lord of the Nazgûl** (rank 3658) — `lord_of_the_nazgul`
+  - Wraiths you control have protection from Ring-bearers.
+  - Whenever you cast an instant or sorcery spell, create a 3/3 black Wraith creature token with menace. Then if you control nine or more Wraiths, Wraiths you control have base power and toughness 9/9 until end of turn.
+- **In the Darkness Bind Them** (rank 4120) — `in_the_darkness_bind_them`
+  - I, II, III — Create a 3/3 black Wraith creature token with menace. The Ring tempts you.
+  - IV — For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain haste until end of turn. The Ring tempts you.
 
 </details>
 
@@ -3188,6 +3253,20 @@ Blocks **1** card.
 
 </details>
 
+## cost-reduction-targeting-damaged
+
+Blocks **1** card.
+
+- **(selector)** a `damaged` (was dealt damage this turn) key in cost_reduction_filter_keys, so a card's `cost_reduction` of `{"amount": 3, "targeting": {"types": ["Creature"], "damaged": true}}` discounts the cast when its chosen creature target has been dealt damage this turn
+  <br>Why the existing vocabulary won't do: `targeting` reads only cost_reduction_filter_keys (attacking, tapped, entered_this_turn, ...), which has no damage-this-turn key; the effect selector key `damaged` exists but the notes say any key outside cost_reduction_filter_keys is a load error, and a `condition` with `exists` would discount regardless of what the spell targets
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bitter Downfall** (rank 10619) — `bitter_downfall`
+  - This spell costs {3} less to cast if it targets a creature that was dealt damage this turn.
+
+</details>
+
 ## cost-reduction-targeting-stack-object-targets
 
 Blocks **1** card.
@@ -3430,6 +3509,20 @@ Blocks **1** card.
 
 </details>
 
+## discard-cost-binding
+
+Blocks **1** card.
+
+- **(cost)** an `as` key on the `discard` cost (as `tap_permanents`, `sacrifice` and `exile_from_graveyard` already carry) that binds the card discarded to pay the cost, so the ability's effects can test it with an `if` on `exists` over `{"binding": <name>, "types": ["Creature"]}` ("If the discarded card was a creature card")
+  <br>Why the existing vocabulary won't do: The `discard` cost (with `discard_selector`) pays through `costs._discard` and writes nothing into `bindings`; only tap_permanents, sacrifice, return_to_hand and exile_from_graveyard name what paid them. Moving the discard into the `discard` op (which does take `as`) would pay at resolution, letting the ability be activated with an empty hand. Conditioning on `discard_selector` would make two abilities and change what may be discarded. `amass` with `subtype: Orc` and the `orc_army_0_0_b` token are otherwise available.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Moria Scavenger** (rank 5635) — `moria_scavenger`
+  - {T}, Discard a card: Draw a card. If the discarded card was a creature card, amass Orcs 1
+
+</details>
+
 ## discard-first-time-each-turn
 
 Blocks **1** card.
@@ -3501,6 +3594,20 @@ Blocks **1** card.
 
 </details>
 
+## dragon-6-6-br-flying-menace-steal-artifact-token
+
+Blocks **1** card.
+
+- **(token)** a 6/6 black and red Dragon creature token with flying, menace, and "Whenever this token deals combat damage to a player, gain control of target artifact that player controls."
+  <br>Why the existing vocabulary won't do: token_ids has dragon_6_6_r_flying, but it is red only, lacks menace and lacks the combat-damage trigger that gains control of an artifact the damaged player controls; create_token cannot add colors, keywords or abilities to a pooled token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wake the Dragon** (rank 8277) — `wake_the_dragon`
+  - Create a 6/6 black and red Dragon creature token with flying, menace, and "Whenever this token deals combat damage to a player, gain control of target artifact that player controls."
+
+</details>
+
 ## draw-from-bottom
 
 Blocks **1** card.
@@ -3513,6 +3620,20 @@ Blocks **1** card.
 - **River Song** (rank 10400) — `river_song`
   - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
   - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
+
+</details>
+
+## draw-redirection
+
+Blocks **1** card.
+
+- **(replacement)** a replace_draw mode that, for each draw by an affected player (affects_player: opponent, honouring except_first_in_draw_step), cancels that player's draw and has the static's controller draw a card instead -- e.g. a `draw_instead_by: "controller"` key beside affects_player
+  <br>Why the existing vocabulary won't do: replace_draw only carries draw_multiplier (loader refuses below 2) and replacements.draw multiplies the same player's draw; nothing skips the drawer's draw and gives the card draw to a different player. draw_limit drops draws past a cap but gives nothing to the controller, and a draw trigger would not stop the opponent's draw
+
+<details><summary>Cards waiting on this</summary>
+
+- **Notion Thief** (rank 1178) — `notion_thief`
+  - If an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card.
 
 </details>
 
@@ -3940,6 +4061,20 @@ Blocks **1** card.
 
 </details>
 
+## exiled-with-source-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that puts a card matching a selector from among the cards exiled with (linked to) the source into its owner's graveyard -- here `{types: [Creature], zone: exile, exiled_with: self}` -- unpayable when no such card exists
+  <br>Why the existing vocabulary won't do: The `process` cost is a bare integer (carddef reads `int(spec['process'])`): it takes any card an opponent owns from any exile, with no selector, so it cannot restrict to creature cards nor to cards exiled with this source. The `put_exiled_into_graveyard` op with an `exiled_with: self` selector would move the payment to resolution, letting the ability be activated (and draw a card) with nothing exiled, which the notes forbid
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shelob, Dread Weaver** (rank 5767) — `shelob_dread_weaver`
+  - {2}{B}, Put a creature card exiled with Shelob into its owner's graveyard: Put two +1/+1 counters on Shelob. Draw a card.
+
+</details>
+
 ## exploit
 
 Blocks **1** card.
@@ -4201,6 +4336,20 @@ Blocks **1** card.
 
 - **The Fugitive Doctor** (rank 14595) — `the_fugitive_doctor`
   - Whenever The Fugitive Doctor attacks, you may sacrifice a Clue. When you do, target instant or sorcery card in your graveyard gains flashback {2}{R}{G} until end of turn. (You may cast that card from your graveyard for its flashback cost. Then exile it.)
+
+</details>
+
+## flashback-x
+
+Blocks **1** card.
+
+- **(cost)** a flashback (graveyard) cost that announces X without paying {X} in mana: the caster chooses X when casting from the graveyard, pays the printed {3}{U}{R}, and exiles X other cards from their graveyard as part of the cost, with that X then read by the spell's effects (amass X, mill X, mana value X or less)
+  <br>Why the existing vocabulary won't do: The `flashback` card-level cost is a full Cost, but its `exile_from_graveyard` takes only a fixed integer `count`, and the loader refuses X on a graveyard cost outright ('a graveyard cost with X is not implemented', and 'x_value' is refused there too). Without it, X is 0 when the card is flashed back, so the flashback half would amass 0, mill 0 and exile nothing: a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summons of Saruman** (rank 5811) — `summons_of_saruman`
+  - Flashback—{3}{U}{R}, Exile X cards from your graveyard.
 
 </details>
 
@@ -5184,6 +5333,20 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## min-blockers
+
+Blocks **1** card.
+
+- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 3` with `affects: {self_only: true}`), checked in combat.blocks_valid on the complete declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
+  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap, Challenger Troll) and `require_all` (Tromokratis), but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Troll of Khazad-dûm** (rank 2786) — `troll_of_khazad_dum`
+  - This creature can't be blocked except by three or more creatures.
 
 </details>
 
@@ -6694,20 +6857,6 @@ Blocks **1** card.
 
 </details>
 
-## tapped-for-mana-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a non-mana triggered ability (uses the stack, may target) that fires whenever the permanent this source is attached to is tapped for mana -- on every tap, including the lands the payment solver taps -- and binds the mana that tap produced so effects can read its colors
-  <br>Why the existing vocabulary won't do: The `tapped_permanent` key with `attached`/`produced` only drives the inline added-mana statics (Wild Growth style) that resolve inside payment and can only add mana; `becomes_tapped` is any tap, and `ability_activated` with `mana_ability: true` is fired only on the by-hand mana path (game.py says solver-tapped lands emit nothing) and carries no produced mana
-
-<details><summary>Cards waiting on this</summary>
-
-- **C.A.M.P.** (rank 13900) — `c_a_m_p`
-  - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
-
-</details>
-
 ## target-opponent-or-planeswalker
 
 Blocks **1** card.
@@ -7070,6 +7219,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## unblockable-by-player
+
+Blocks **1** card.
+
+- **(op)** a `blocked_by_player` (player spec / binding) option on the `unblockable` op, so an attacker can't be blocked this turn by creatures one named seat controls, paired with a `choose_player` whose `players` can be "each player with the most life or tied for most life" (GameState.has_most_life) -- the chosen seat may be the activator themself
+  <br>Why the existing vocabulary won't do: `unblockable` offers only `by_opponents` (every opponent of the effect controller, never one chosen seat and never you) and `except_blockers`, whose filter the loader refuses `controller` on; `block_restriction` is a static with no clock and no way to name the targeted creature; `most_life` exists only as `attacking_player`/dethrone `defending`, not as a `choose_player` players spec
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Black Gate** (rank 1205) — `the_black_gate`
+  - {1}{B}, {T}: Choose a player with the most life or tied for most life. Target creature can't be blocked by creatures that player controls this turn.
 
 </details>
 
