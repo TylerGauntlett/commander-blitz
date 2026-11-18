@@ -8769,6 +8769,16 @@
     },
     "zone": "exile"
   },
+  "genesis_wave": {
+    "battlefield_count": 51,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
+  },
   "genji_glove": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9839,6 +9849,10 @@
     "zone": "battlefield"
   },
   "halberdier": {
+    "zone": "battlefield"
+  },
+  "haldir_lorien_lieutenant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "halimar_depths": {
@@ -12511,6 +12525,12 @@
   "leafkin_druid": {
     "zone": "battlefield"
   },
+  "learn_from_the_past": {
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "leatherback_baloth": {
     "zone": "battlefield"
   },
@@ -12540,6 +12560,13 @@
   "legions_to_ashes": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "legolas_greenleaf": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "legolas_s_quick_reflexes": {
     "granted": {

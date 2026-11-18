@@ -106782,12 +106782,12 @@
     },
     "Genesis Wave": {
       "edhrec_rank": 1380,
-      "gate": "template",
+      "gate": null,
       "name": "Genesis Wave",
-      "reason": "no template for: Reveal the top X cards of your library. You may put any number of permanent cards with man",
+      "reason": "",
       "scryfall_id": "4b51445b-1590-4072-9712-5ca344b25e3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genesis of the Daleks": {
@@ -121382,12 +121382,12 @@
     },
     "Haldir, Lórien Lieutenant": {
       "edhrec_rank": 6783,
-      "gate": "template",
+      "gate": null,
       "name": "Haldir, Lórien Lieutenant",
-      "reason": "no template for: Haldir enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "440e5796-9264-4649-bf2f-58826dd0352c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Half-Elf Monk": {
@@ -155862,12 +155862,12 @@
     },
     "Learn from the Past": {
       "edhrec_rank": 10625,
-      "gate": "template",
+      "gate": null,
       "name": "Learn from the Past",
-      "reason": "no template for: Target player shuffles their graveyard into their library",
+      "reason": "",
       "scryfall_id": "347c6e76-dba4-4448-a4f4-d9591d4539c7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leashling": {
@@ -156332,12 +156332,12 @@
     },
     "Legolas Greenleaf": {
       "edhrec_rank": 5850,
-      "gate": "template",
+      "gate": null,
       "name": "Legolas Greenleaf",
-      "reason": "no template for: Legolas can't be blocked by creatures with power 2 or less",
+      "reason": "",
       "scryfall_id": "130237e7-6f45-4b92-b49d-12f10db29bb8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legolas's Quick Reflexes": {

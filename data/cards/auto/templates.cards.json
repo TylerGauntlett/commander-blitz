@@ -103747,6 +103747,49 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "genesis_wave",
+      "mana_cost": "{X}{G}{G}{G}",
+      "name": "Genesis Wave",
+      "oracle_text": "Reveal the top X cards of your library. You may put any number of permanent cards with mana value X or less from among them onto the battlefield. Then put all cards revealed this way that weren't put onto the battlefield into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "destination": "battlefield",
+          "objects": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "count": "any",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            }
+          },
+          "op": "look_at_top",
+          "rest_to": "graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -116736,6 +116779,103 @@
         "Barbarian"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{5}{G}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Elf"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Elf"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "toughness": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{G}: Until end of turn, other Elves you control gain vigilance and get +1/+1 for each +1/+1 counter on Haldir."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "haldir_lorien_lieutenant",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{X}{G}",
+      "name": "Haldir, Lórien Lieutenant",
+      "oracle_text": "Haldir enters with X +1/+1 counters on it.\nVigilance\n{5}{G}: Until end of turn, other Elves you control gain vigilance and get +1/+1 for each +1/+1 counter on Haldir.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -150461,6 +150601,55 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "learn_from_the_past",
+      "mana_cost": "{3}{U}",
+      "name": "Learn from the Past",
+      "oracle_text": "Target player shuffles their graveyard into their library.\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "player": {
+              "target": "t1"
+            },
+            "zone": "graveyard"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -150927,6 +151116,100 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<=",
+              "value": 2
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Legolas can't be blocked by creatures with power 2 or less."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another legendary creature you control enters, put a +1/+1 counter on Legolas.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Legolas deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "legolas_greenleaf",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Legolas Greenleaf",
+      "oracle_text": "Reach\nLegolas can't be blocked by creatures with power 2 or less.\nWhenever another legendary creature you control enters, put a +1/+1 counter on Legolas.\nWhenever Legolas deals combat damage to a player, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Archer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
