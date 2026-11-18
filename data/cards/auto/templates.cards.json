@@ -51710,6 +51710,45 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted permanent."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "confiscate",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Confiscate",
+      "oracle_text": "Enchant permanent\nYou control enchanted permanent.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -52741,6 +52780,48 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "control_magic",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Control Magic",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -166831,6 +166912,48 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mind_control",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Mind Control",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -192936,6 +193059,48 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "persuasion",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Persuasion",
+      "oracle_text": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nYou control enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -245356,6 +245521,73 @@
           "affects": {
             "attached": true
           },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted creature."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has flying.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spirit_away",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Spirit Away",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.\nEnchanted creature gets +2/+2 and has flying.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
           "effect": "buff",
           "kind": "static",
           "power": 1,
@@ -281716,6 +281948,69 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "count": 5,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, untap up to five lands.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "treachery",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Treachery",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, untap up to five lands.\nYou control enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

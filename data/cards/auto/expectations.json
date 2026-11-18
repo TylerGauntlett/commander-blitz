@@ -4209,6 +4209,11 @@
     },
     "zone": "graveyard"
   },
+  "confiscate": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "confiscation_coup": {
     "zone": "graveyard"
   },
@@ -4292,6 +4297,11 @@
   },
   "contingency_plan": {
     "zone": "graveyard"
+  },
+  "control_magic": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "conversion_apparatus": {
     "battlefield_count": 33,
@@ -13869,6 +13879,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mind_control": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "mind_maggots": {
     "graveyard_size": {
       "0": 2
@@ -15968,6 +15983,11 @@
   },
   "persistent_petitioners": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "persuasion": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "pest_infestation": {
@@ -20443,6 +20463,14 @@
   "spirebluff_canal": {
     "zone": "battlefield"
   },
+  "spirit_away": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "spirit_mantle": {
     "target_pt_delta": {
       "power": 1,
@@ -23277,6 +23305,9 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "treachery": {
+    "zone": "battlefield"
   },
   "treasonous_ogre": {
     "zone": "battlefield"

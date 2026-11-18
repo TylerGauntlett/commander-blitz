@@ -51652,12 +51652,12 @@
     },
     "Confiscate": {
       "edhrec_rank": 10664,
-      "gate": "template",
+      "gate": null,
       "name": "Confiscate",
-      "reason": "no template for: You control enchanted permanent",
+      "reason": "",
       "scryfall_id": "a98a1553-e5f3-4c9c-833d-579e82e1708f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Confiscation Coup": {
@@ -52782,12 +52782,12 @@
     },
     "Control Magic": {
       "edhrec_rank": 6985,
-      "gate": "template",
+      "gate": null,
       "name": "Control Magic",
-      "reason": "no template for: You control enchanted creature",
+      "reason": "",
       "scryfall_id": "ca43856b-9de8-430a-9a7b-04a33025bf44",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Control of the Court": {
@@ -173572,12 +173572,12 @@
     },
     "Mind Control": {
       "edhrec_rank": 12693,
-      "gate": "template",
+      "gate": null,
       "name": "Mind Control",
-      "reason": "no template for: You control enchanted creature",
+      "reason": "",
       "scryfall_id": "ec7f77af-17d7-4746-bc83-f455b9b6f9ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mind Drain": {
@@ -200192,12 +200192,12 @@
     },
     "Persuasion": {
       "edhrec_rank": 20925,
-      "gate": "template",
+      "gate": null,
       "name": "Persuasion",
-      "reason": "no template for: You control enchanted creature",
+      "reason": "",
       "scryfall_id": "3ab3611c-b0ab-48ea-8c64-e7c500e95fc5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persuasive Interrogators": {
@@ -259842,12 +259842,12 @@
     },
     "Spirit Away": {
       "edhrec_rank": 23995,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit Away",
-      "reason": "no template for: You control enchanted creature",
+      "reason": "",
       "scryfall_id": "d8823bdc-0467-47f1-9bef-a281b4a7071d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spirit Bonds": {
@@ -291832,12 +291832,12 @@
     },
     "Treachery": {
       "edhrec_rank": 8034,
-      "gate": "template",
+      "gate": null,
       "name": "Treachery",
-      "reason": "no template for: When this Aura enters, untap up to five lands",
+      "reason": "",
       "scryfall_id": "613694aa-b169-400d-8063-2b83d8303611",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tread Upon": {
