@@ -1,0 +1,14 @@
+{
+  "card_id": "moria_scavenger",
+  "name": "Moria Scavenger",
+  "oracle_text": "Deathtouch, haste\n{T}, Discard a card: Draw a card. If the discarded card was a creature card, amass Orcs 1. (Put a +1/+1 counter on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+  "blocked_sentences": ["{T}, Discard a card: Draw a card. If the discarded card was a creature card, amass Orcs 1"],
+  "needs": [{
+    "capability": "discard_cost_binding",
+    "kind": "cost",
+    "what": "an `as` key on the `discard` cost (as `tap_permanents`, `sacrifice` and `exile_from_graveyard` already carry) that binds the card discarded to pay the cost, so the ability's effects can test it with an `if` on `exists` over `{\"binding\": <name>, \"types\": [\"Creature\"]}` (\"If the discarded card was a creature card\")",
+    "why_existing_wont_do": "The `discard` cost (with `discard_selector`) pays through `costs._discard` and writes nothing into `bindings`; only tap_permanents, sacrifice, return_to_hand and exile_from_graveyard name what paid them. Moving the discard into the `discard` op (which does take `as`) would pay at resolution, letting the ability be activated with an empty hand. Conditioning on `discard_selector` would make two abilities and change what may be discarded. `amass` with `subtype: Orc` and the `orc_army_0_0_b` token are otherwise available."
+  }],
+  "closest_existing": ["discard", "discard_selector", "tap_permanents.as", "sacrifice.as"],
+  "confidence": "high"
+}

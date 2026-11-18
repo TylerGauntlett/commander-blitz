@@ -1,0 +1,18 @@
+{
+  "card_id": "shelob_dread_weaver",
+  "name": "Shelob, Dread Weaver",
+  "oracle_text": "Whenever a nontoken creature an opponent controls dies, exile it.\n{2}{B}, Put a creature card exiled with Shelob into its owner's graveyard: Put two +1/+1 counters on Shelob. Draw a card.\n{X}{1}{B}: Put target creature card with mana value X exiled with Shelob onto the battlefield tapped under your control.",
+  "blocked_sentences": [
+    "{2}{B}, Put a creature card exiled with Shelob into its owner's graveyard: Put two +1/+1 counters on Shelob. Draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "exiled_with_source_cost",
+      "kind": "cost",
+      "what": "an activated-ability cost that puts a card matching a selector from among the cards exiled with (linked to) the source into its owner's graveyard -- here `{types: [Creature], zone: exile, exiled_with: self}` -- unpayable when no such card exists",
+      "why_existing_wont_do": "The `process` cost is a bare integer (carddef reads `int(spec['process'])`): it takes any card an opponent owns from any exile, with no selector, so it cannot restrict to creature cards nor to cards exiled with this source. The `put_exiled_into_graveyard` op with an `exiled_with: self` selector would move the payment to resolution, letting the ability be activated (and draw a card) with nothing exiled, which the notes forbid"
+    }
+  ],
+  "closest_existing": ["process", "put_exiled_into_graveyard"],
+  "confidence": "high"
+}

@@ -9249,6 +9249,13 @@
     },
     "zone": "battlefield"
   },
+  "goblin_dark_dwellers": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "goblin_deathraiders": {
     "zone": "battlefield"
   },
@@ -9710,6 +9717,13 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "grishnakh_brash_instigator": {
+    "tokens": {
+      "count": 1,
+      "id": "orc_army_0_0_b"
     },
     "zone": "battlefield"
   },
@@ -12231,6 +12245,13 @@
       "graveyard"
     ]
   },
+  "knollspine_dragon": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "knotvine_mystic": {
     "zone": "battlefield"
   },
@@ -12443,6 +12464,9 @@
   "landroval_horizon_witness": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "languish": {
+    "zone": "graveyard"
   },
   "lantern_kami": {
     "zone": "battlefield"
@@ -12659,6 +12683,18 @@
   "liberty_prime_recharged": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "lidless_gaze": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "lier_disciple_of_the_drowned": {
     "battlefield_count": 33,
@@ -13912,6 +13948,17 @@
     },
     "zone": "graveyard"
   },
+  "merciless_executioner": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "merfolk_cave_diver": {
     "zone": "battlefield"
   },
@@ -14388,6 +14435,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "monstrosity_of_the_lake": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "monstrous_onslaught": {
     "zone": "graveyard"
@@ -15718,6 +15772,10 @@
       "count": 2,
       "id": "food_token"
     },
+    "zone": "battlefield"
+  },
+  "orcish_siegemaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "order_of_sacred_dusk": {
@@ -17318,6 +17376,13 @@
   "rampaging_hippo": {
     "zone": "battlefield"
   },
+  "rampaging_war_mammoth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "rampant_rejuvenator": {
     "battlefield_count": 33,
     "counters": {
@@ -17699,6 +17764,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "relic_of_sauron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_retriever": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17933,6 +18002,14 @@
   },
   "rev_tithe_extractor": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "revenge_of_ravens": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "reverse_engineer": {
@@ -18712,6 +18789,10 @@
     "zone": "battlefield"
   },
   "sarkhan_soul_aflame": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "saruman_the_white_hand": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21331,6 +21412,15 @@
       "kind": "+1/+1"
     },
     "zone": "battlefield"
+  },
+  "subjugate_the_hobbits": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "sublime_archangel": {
     "battlefield_count": 33,
