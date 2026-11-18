@@ -89013,6 +89013,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "monarch",
+          "effect": "control",
+          "kind": "static",
+          "text": "The monarch controls enchanted creature."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Enchanted creature attacks each combat if able and can't attack you."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Enchanted creature attacks each combat if able and can't attack you."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fealty_to_the_realm",
+      "mana_cost": "{4}{U}",
+      "name": "Fealty to the Realm",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, you become the monarch.\nThe monarch controls enchanted creature.\nEnchanted creature attacks each combat if able and can't attack you.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

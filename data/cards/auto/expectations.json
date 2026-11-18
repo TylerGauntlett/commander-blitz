@@ -7488,6 +7488,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "fealty_to_the_realm": {
+    "zone": "battlefield"
+  },
   "fear": {
     "zone": [
       "battlefield",

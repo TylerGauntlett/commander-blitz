@@ -92292,12 +92292,12 @@
     },
     "Fealty to the Realm": {
       "edhrec_rank": 10423,
-      "gate": "template",
+      "gate": null,
       "name": "Fealty to the Realm",
-      "reason": "no template for: When this Aura enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "017a5dbf-5773-448d-abf3-9a3d42bde9e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fear": {
