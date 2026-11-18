@@ -98182,12 +98182,12 @@
     },
     "Flight of Equenauts": {
       "edhrec_rank": 24004,
-      "gate": "template",
+      "gate": null,
       "name": "Flight of Equenauts",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "d8b8aaf0-909e-49b7-9360-a99b68a0f414",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flight of Fancy": {
@@ -113052,12 +113052,12 @@
     },
     "Goblin Instigator": {
       "edhrec_rank": 3223,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Instigator",
-      "reason": "no template for: When this creature enters, create a 1/1 red Goblin creature token",
+      "reason": "",
       "scryfall_id": "71c818eb-3846-471f-967a-76e1cb809b9f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Javelineer": {
@@ -113212,12 +113212,12 @@
     },
     "Goblin Medics": {
       "edhrec_rank": 18042,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Medics",
-      "reason": "no template for: Whenever this creature becomes tapped, it deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "deda9adf-43db-481b-840d-518a12873782",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Mime": {
@@ -135002,12 +135002,12 @@
     },
     "Improbable Alliance": {
       "edhrec_rank": 11038,
-      "gate": "template",
+      "gate": null,
       "name": "Improbable Alliance",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with",
+      "reason": "",
       "scryfall_id": "29ab3610-342d-4a67-9be8-a7efb89a4b46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Impromptu Raid": {

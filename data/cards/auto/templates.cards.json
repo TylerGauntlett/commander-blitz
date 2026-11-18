@@ -96799,6 +96799,32 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "flight_of_equenauts",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{7}{W}",
+      "name": "Flight of Equenauts",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFlying",
+      "pay_generic_with": "tap_creatures",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -110841,6 +110867,102 @@
         "Goblin"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/1 red Goblin creature token",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_instigator",
+      "mana_cost": "{1}{R}",
+      "name": "Goblin Instigator",
+      "oracle_text": "When this creature enters, create a 1/1 red Goblin creature token.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature becomes tapped, it deals 1 damage to any target.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_medics",
+      "mana_cost": "{2}{R}",
+      "name": "Goblin Medics",
+      "oracle_text": "Whenever this creature becomes tapped, it deals 1 damage to any target.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Shaman"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -131492,6 +131614,68 @@
           }
         }
       ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "faerie_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{U}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{U}{R}: Draw a card, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "improbable_alliance",
+      "mana_cost": "{U}{R}",
+      "name": "Improbable Alliance",
+      "oracle_text": "Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.\n{4}{U}{R}: Draw a card, then discard a card.",
+      "source": "auto",
       "types": [
         "Enchantment"
       ]

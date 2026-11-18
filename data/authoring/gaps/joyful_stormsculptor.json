@@ -1,0 +1,24 @@
+{
+  "card_id": "joyful_stormsculptor",
+  "name": "Joyful Stormsculptor",
+  "oracle_text": "When this creature enters, create two 1/1 blue and red Elemental creature tokens.\nWhenever you cast a spell that has convoke, this creature deals 1 damage to each opponent and each battle they protect.",
+  "blocked_sentences": [
+    "Whenever you cast a spell that has convoke, this creature deals 1 damage to each opponent and each battle they protect."
+  ],
+  "needs": [
+    {
+      "capability": "convoke",
+      "kind": "selector",
+      "what": "a spell_cast trigger filter key matching a spell that has convoke (a card whose pay_generic_with is \"tap_creatures\"), e.g. filter {\"has_convoke\": true}",
+      "why_existing_wont_do": "Convoke is carried as the card-level pay_generic_with: \"tap_creatures\", not as a keyword, so the filter's `keywords` key cannot name it (convoke is not in the keyword list); `convoked` is a selector over the creatures that tapped to pay for a spell, not a test of whether a spell has convoke, and it must be true on a card that itself has convoke. No trigger_filter_key reads pay_generic_with."
+    },
+    {
+      "capability": "battle_protector",
+      "kind": "selector",
+      "what": "a selector for battles a given player protects (\"each battle they protect\"), so a damage op can hit each opponent and each battle protected by an opponent",
+      "why_existing_wont_do": "The damage op's objects selector has types: [\"Battle\"] and controller, but a battle's protector is not its controller and no selector key reads protector; `or_battle` exists only as a trigger key, not on damage targets"
+    }
+  ],
+  "closest_existing": ["spell_cast", "damage", "pay_generic_with", "convoked"],
+  "confidence": "high"
+}

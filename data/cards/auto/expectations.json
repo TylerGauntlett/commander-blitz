@@ -8161,6 +8161,13 @@
       "graveyard"
     ]
   },
+  "flight_of_equenauts": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "flood_plain": {
     "zone": "battlefield"
   },
@@ -9355,6 +9362,22 @@
     "zone": "battlefield"
   },
   "goblin_hero": {
+    "zone": "battlefield"
+  },
+  "goblin_instigator": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "goblin_1_1_r"
+    },
+    "zone": "battlefield"
+  },
+  "goblin_medics": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "goblin_mountaineer": {
@@ -11010,6 +11033,13 @@
   },
   "imprisoned_in_the_moon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "improbable_alliance": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "improvised_armor": {
