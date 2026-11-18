@@ -754,6 +754,14 @@ def _provide_one_sacrifice(game: Game, registry, spec) -> None:
     # Sophia, Dogged Detective sacrifices *an artifact token*: no printed card
     # is a token, so the search over printed cards can never match.
     match = None if spec.get("is_token") else _fodder_for(registry, spec, wanted)
+    # Pippin, Warden of Isengard sacrifices *four Foods*, and the only Food
+    # creature card is legendary (Ginger, Queen of Sweets): four copies are one
+    # after the legend rule. `_fodder_for` takes a legend only as a last resort,
+    # so a legend here means the printed cards ran out -- the token below is the
+    # better fodder when it exists, and the legend stays the fallback.
+    legend = match if (match is not None and wanted > 1 and match.is_legendary) else None
+    if legend is not None and spec.get("subtypes") and not spec.get("types"):
+        match = None
     # Professional Face-Breaker sacrifices *a Treasure*, and the only Treasures
     # are tokens: no printed card has the subtype, so the creature-shaped search
     # above finds nothing. A subtype with no card type names its own kind, so
@@ -781,6 +789,8 @@ def _provide_one_sacrifice(game: Game, registry, spec) -> None:
             ),
             None,
         )
+    if match is None:
+        match = legend
     if match is None:
         return
     for _ in range(wanted):
@@ -1008,6 +1018,15 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         amount = int(right["const"]) + (1 if condition.get("cmp") == ">" else 0)
         for pid in pids:
             gain_life(game.state, pid, max(1, amount))
+        return
+
+    # "Activate only if you have 111 or more life" -- Bilbo, Birthday
+    # Celebrant. The life total itself is the thing read, so the sandbox's
+    # player is simply given that much; a card naming another player's life,
+    # or the wrong comparison, still fails.
+    if left.get("life_of") == "you":
+        amount = int(right["const"]) + (1 if condition.get("cmp") == ">" else 0)
+        game.state.players[0].life = max(game.state.players[0].life, amount)
         return
 
     # "Activate only if you've paid or lost four or more {E} this turn" --
