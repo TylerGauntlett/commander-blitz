@@ -1,0 +1,18 @@
+{
+  "card_id": "cut_short",
+  "name": "Cut Short",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDestroy target planeswalker that was activated this turn or tapped creature.",
+  "blocked_sentences": [
+    "Destroy target planeswalker that was activated this turn or tapped creature."
+  ],
+  "needs": [
+    {
+      "capability": "activated_this_turn",
+      "kind": "selector",
+      "what": "a selector key matching a permanent one of whose abilities (here, a planeswalker's loyalty ability) was activated this turn, read from the per-turn activation ledger (turn_ledger.activated / the per-object record of activations), so a target can be 'planeswalker that was activated this turn'; combined via any_of with {types: [Creature], tapped: true}",
+      "why_existing_wont_do": "selector_keys has entered_this_turn, attacked_this_turn, drawn_this_turn, surveilled_this_turn and tapped, but nothing about activations; the turn ledger records activations per object and loyalty_activations per player, yet no selector exposes it. Dropping the clause (any planeswalker) or the planeswalker half would change which targets are legal. Convoke itself is expressible as pay_generic_with: tap_creatures"
+    }
+  ],
+  "closest_existing": ["entered_this_turn", "attacked_this_turn", "any_of", "tapped", "pay_generic_with"],
+  "confidence": "high"
+}
