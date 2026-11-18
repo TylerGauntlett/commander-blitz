@@ -1,0 +1,18 @@
+{
+  "card_id": "angel_of_salvation",
+  "name": "Angel of Salvation",
+  "oracle_text": "Flash; convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFlying\nWhen this creature enters, prevent the next 5 damage that would be dealt this turn to any number of targets, divided as you choose.",
+  "blocked_sentences": [
+    "When this creature enters, prevent the next 5 damage that would be dealt this turn to any number of targets, divided as you choose."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_next_n_damage_divided",
+      "kind": "op",
+      "what": "a prevention op that installs an absorb-N shield (a pool that drains as it prevents: 'prevent the next N damage that would be dealt this turn') on players and/or permanents, with the total N divided among any number of 'any target' targets as the controller chooses on putting the trigger on the stack (601.2d division, as damage's `divided` does), each target's shield preventing only its own share",
+      "why_existing_wont_do": "prevent_damage (players) and prevent_damage_permanent (permanents) only prevent ALL damage for a duration -- the engine docstring says there is deliberately no `amount` and the loader refuses one; neither can be divided across targets or mix a player and a permanent target. `damage` has `divided` but deals damage, it does not prevent it. Flash (keyword), convoke (`pay_generic_with: \"tap_creatures\"`, which honours coloured pips) and flying are all expressible; only this line is blocked"
+    }
+  ],
+  "closest_existing": ["prevent_damage_permanent", "prevent_damage", "damage"],
+  "confidence": "high"
+}

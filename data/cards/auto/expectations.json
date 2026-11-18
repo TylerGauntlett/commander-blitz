@@ -1322,6 +1322,18 @@
   "artisan_of_kozilek": {
     "zone": "battlefield"
   },
+  "artistic_refusal": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "arvad_the_cursed": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1778,6 +1790,11 @@
     "zone": "battlefield"
   },
   "banish_to_another_universe": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "banisher_priest": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
@@ -4238,6 +4255,11 @@
     "zone": "graveyard"
   },
   "concealed_courtyard": {
+    "zone": "battlefield"
+  },
+  "conclave_tribunal": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "concordia_pegasus": {

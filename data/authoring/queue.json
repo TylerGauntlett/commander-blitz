@@ -14192,12 +14192,12 @@
     },
     "Artistic Refusal": {
       "edhrec_rank": 7310,
-      "gate": "template",
+      "gate": null,
       "name": "Artistic Refusal",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "2bd05f97-ef8b-4cbe-a44b-6501aa5895b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arvad the Cursed": {
@@ -20012,12 +20012,12 @@
     },
     "Banisher Priest": {
       "edhrec_rank": 11389,
-      "gate": "template",
+      "gate": null,
       "name": "Banisher Priest",
-      "reason": "no template for: When this creature enters, exile target creature an opponent controls until this creature ",
+      "reason": "",
       "scryfall_id": "df4615ca-f536-461c-b5a9-156f929d64ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banishing Betrayal": {
@@ -21882,12 +21882,12 @@
     },
     "Battle Screech": {
       "edhrec_rank": 7468,
-      "gate": "template",
+      "gate": "compile",
       "name": "Battle Screech",
-      "reason": "no template for: Create two 1/1 white Bird creature tokens with flying",
+      "reason": "battle_screech: a graveyard cost needs mana",
       "scryfall_id": "1c71de34-fb9c-47f6-8586-e45d897d0f85",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Battle Sliver": {
@@ -51432,12 +51432,12 @@
     },
     "Conclave Tribunal": {
       "edhrec_rank": 9162,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Tribunal",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "d6684f9a-c97b-4f1c-887d-6e5824c40916",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave's Blessing": {
