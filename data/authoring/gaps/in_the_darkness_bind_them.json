@@ -1,0 +1,29 @@
+{
+  "card_id": "in_the_darkness_bind_them",
+  "name": "In the Darkness Bind Them",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Create a 3/3 black Wraith creature token with menace. The Ring tempts you.\nIV — For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain haste until end of turn. The Ring tempts you.",
+  "blocked_sentences": [
+    "I, II, III — Create a 3/3 black Wraith creature token with menace. The Ring tempts you.",
+    "IV — For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those creatures. They gain haste until end of turn. The Ring tempts you."
+  ],
+  "needs": [
+    {
+      "capability": "the-ring-tempts-you",
+      "kind": "op",
+      "what": "an op for 'the Ring tempts you' (701.52): the player gets the Ring emblem if they have none, chooses a creature they control as their Ring-bearer (legendary, can't be blocked by greater power), advances the Ring's level through its four cumulative abilities, and fires 'whenever the Ring tempts you' triggers",
+      "why_existing_wont_do": "No op, emblem, value or trigger event in reference tracks a Ring level or a Ring-bearer designation; the emblem op gives a fixed emblem and cannot level up or re-pick a bearer each time"
+    },
+    {
+      "capability": "wraith-token",
+      "kind": "token",
+      "what": "a 3/3 black Wraith creature token with menace",
+      "why_existing_wont_do": "token_ids has 3/3 black menace only as dalek_3_3_b_artifact_menace, an artifact Dalek, which is not a Wraith"
+    }
+  ],
+  "closest_existing": [
+    "emblem",
+    "create_token",
+    "gain_control"
+  ],
+  "confidence": "high"
+}

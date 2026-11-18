@@ -21222,12 +21222,12 @@
     },
     "Basalt Monolith": {
       "edhrec_rank": 563,
-      "gate": "template",
+      "gate": null,
       "name": "Basalt Monolith",
-      "reason": "no template for: This artifact doesn't untap during your untap step",
+      "reason": "",
       "scryfall_id": "ff27694e-0381-4ac9-ba20-d631d468f275",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Basalt Ravager": {
@@ -53922,12 +53922,12 @@
     },
     "Corsairs of Umbar": {
       "edhrec_rank": 6217,
-      "gate": "template",
+      "gate": null,
       "name": "Corsairs of Umbar",
-      "reason": "no template for: {2}{U}: Target Goblin, Orc, or Pirate can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "159727a9-0bc4-497d-8fb2-4a66923726d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coruscation Mage": {
@@ -89002,12 +89002,12 @@
     },
     "Extract from Darkness": {
       "edhrec_rank": 3234,
-      "gate": "template",
+      "gate": null,
       "name": "Extract from Darkness",
-      "reason": "no template for: Each player mills two cards. Then you put a creature card from a graveyard onto the battle",
+      "reason": "",
       "scryfall_id": "e0769e3f-d27d-4aff-8da0-f03c10b8650b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extract the Truth": {
@@ -112672,12 +112672,12 @@
     },
     "Goblin Cratermaker": {
       "edhrec_rank": 6867,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Cratermaker",
-      "reason": "no template for: {1}, Sacrifice this creature: Choose one —",
+      "reason": "",
       "scryfall_id": "e37ae38f-ef93-4861-9a3a-49378a4d50b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Dark-Dwellers": {
