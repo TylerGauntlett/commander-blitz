@@ -2221,6 +2221,49 @@ def goaders(state: GameState, oid: int) -> set[int]:
     return out
 
 
+def static_control_claims(state: GameState) -> list[tuple[int, int, int | None, int]]:
+    """Every ``(source, permanent, seat, timestamp)`` a `control` static claims now.
+
+    "You control enchanted creature" (Control Magic, Become the Pilot) and "The
+    monarch controls enchanted creature" (Fealty to the Realm): a layer-2
+    control effect (613.1b) for as long as the static applies. ``seat`` is the
+    static's ``controller`` spec read now -- ``"you"`` the source's controller,
+    ``"monarch"`` whoever holds `GameState.monarch` -- and ``None`` when it
+    names nobody: no monarch, or a seat that has left the game. The static
+    still applies then; it just gives the permanent to nobody.
+
+    ``timestamp`` is the effect's (613.7, `static_timestamp`: an Aura's is
+    when it became attached), and the claims come oldest first, because effects
+    in one layer apply in timestamp order. Only
+    a permanent on the battlefield and phased in is ever claimed: the walk is
+    `_battlefield_statics`, and `_matches` refuses everything else.
+
+    Read by `primitives.reconcile_static_control` and by nothing else -- the
+    field `GameObject.controller` is what every other reader asks.
+    """
+    claims: list[tuple[int, int, int | None, int]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "control":
+            continue
+        spec = static.get("controller")
+        if spec == "you":
+            seat: int | None = source_obj.controller
+        elif spec == "monarch":
+            seat = state.monarch
+        else:  # pragma: no cover - the loader guards
+            raise ValueError(f"unknown control static controller {spec!r}")
+        if seat is not None and not state.is_alive(seat):
+            seat = None
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None or oid == source_obj.oid:
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                claims.append((source_obj.oid, oid, seat, static_timestamp(source_obj)))
+    claims.sort(key=lambda claim: claim[3])
+    return claims
+
+
 def _defending_seats(state: GameState, pid: int, word: str) -> frozenset[int]:
     """The seats a static's ``defending`` word names, relative to ``pid``."""
     opponents = state.opponents(pid)

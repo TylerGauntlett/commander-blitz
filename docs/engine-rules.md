@@ -240,6 +240,9 @@ pass does:
 9. The Role rule: one Role per controller per permanent, the newest kept.
 10. Ascend: a player controlling `ASCEND_THRESHOLD` permanents while they control an
     Ascend card gets the city's blessing, a state trigger rather than an event.
+11. Not one of 704's, but checked with them: every `control` static's claim is made
+    true on `GameObject.controller` (613.1b, `primitives.reconcile_static_control`,
+    [ADR 0030](adr/0030-static-control-at-state-checks.md)).
 
 When a player loses, their permanents are exiled, their stack objects and pending
 triggers dropped, and their commander goes to the command zone. The game ends when

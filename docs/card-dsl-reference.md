@@ -17,7 +17,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 63 |
 | [Trigger filters](#trigger-filters) | 37 |
-| [Static effects](#static-effects) | 103 |
+| [Static effects](#static-effects) | 104 |
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
@@ -614,6 +614,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
 | `combat_damage_by_toughness` |  | yes | Matching creatures assign combat damage equal to their toughness rather than their power. | [Combat damage equal to toughness](card-dsl-cookbook.md#combat-damage-equal-to-toughness) |
+| `control` |  |  | The `controller` seat (`you`, `monarch`) controls the enchanted permanent while it applies. | ["You control enchanted creature" — the control static](card-dsl-cookbook.md#you-control-enchanted-creature--the-control-static) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_cant_be_prevented` |  |  | No damage can be prevented: every prevention effect is skipped. | ["Damage can't be prevented"](card-dsl-cookbook.md#damage-cant-be-prevented) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |

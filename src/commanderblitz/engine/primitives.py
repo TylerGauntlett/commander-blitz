@@ -41,6 +41,7 @@ from .player_statics import (
     printed_token_matches,
     replaced_damage,
     static_cast_locked_zones,
+    static_control_claims,
     token_creation_replacements,
     untap_held,
 )
@@ -2753,7 +2754,8 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     as long as you control" its source or "for as long as" the source "remains
     on the battlefield" (`temp_effects.end_source_bound`), nor "for as long as
     it has a <kind> counter on it"
-    (`GameObject._last_counter_gone`). "Until the end of your
+    (`GameObject._last_counter_gone`), nor a `control` static's hold
+    (`reconcile_static_control`). "Until the end of your
     next turn" ends in the cleanup of the first of its seat's turns to *begin*
     after it was made, so the turn check is strict: made during that seat's own
     turn, this cleanup ends the turn it was made in, which is not "your next
@@ -2766,6 +2768,7 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
         or temp.while_controller is not None
         or temp.while_source_on_battlefield
         or temp.while_counter is not None
+        or temp.while_static
     ):
         return False
     if temp.until_end_of_turn_of is None:
@@ -2900,6 +2903,109 @@ def _hand_back_control(state: GameState, handbacks: list[tuple[int, TempEffect]]
         # home as well.  `permanent` because this handback is the end of the
         # duration, not a new one to unwind next turn.
         change_control(state, oid, previous, source=temp.source, duration="permanent")
+
+
+def reconcile_static_control(state: GameState) -> bool:
+    """Make every `control` static's claim true: "You control enchanted creature."
+
+    Rule 613.1b puts control-changing effects in layer 2, and a static one
+    (Control Magic, Become the Pilot; Fealty to the Realm's "The monarch
+    controls enchanted creature") applies for as long as the static does. Here
+    control is the field `GameObject.controller`, not a characteristic `chars`
+    derives, so the static is enforced by writing the field: this runs inside
+    `sba.check`, so every state-based-action pass -- before any player gets
+    priority, and after anything resolves -- leaves each claim true (ADR 0030).
+    It returns whether it changed anything, and a second call on the same state
+    changes nothing, so the SBA loop reaches its fixpoint.
+
+    Each (static source, permanent) pair owns one `TempEffect(kind="control",
+    while_static=True)` on the permanent, stamped with the effect's 613.7
+    timestamp, recording the seat the static took it from
+    (``previous_controller``) and the seat it last gave it to
+    (``new_controller``). Three things are read off it:
+
+    * **A new pair takes the permanent.** Created when the static starts to
+      apply, and the move goes through `change_control`, so 302.6 summoning
+      sickness, 506.4 removal from combat, the ``control_changed`` event and the
+      characteristics drop all apply. Created even when the seat is nobody (no
+      monarch) or is already the controller, because the entry is also the
+      record that this effect predates what comes later.
+    * **The newest pair on a permanent is the one in force, while the static is
+      still the reason.** 613.7: the later timestamp wins. A pair moves control
+      only while ``controller == new_controller``; anything else means a later
+      effect (Act of Treason, a permanent steal) holds the permanent, and the
+      pair waits -- and resumes when that effect hands it back to its seat. It
+      follows its seat as the seat changes (the crown moving), and with nobody to
+      give it to it hands the permanent back to ``previous_controller``. An
+      older pair under a newer one does nothing until the newer one ends.
+    * **A pair that no longer holds ends.** The source left the battlefield, was
+      moved or re-attached (a new timestamp), or lost the static. Ending a
+      control effect is the handback, through `_hand_back_control` and its
+      still-the-reason check, so a permanent a later effect holds stays where it
+      is. Ended while held by a later control effect, the entry is spliced out
+      of the chain instead: a later entry that took the permanent from this
+      one's seat takes it from this one's ``previous_controller`` now, so an Act
+      of Treason over a Control Magic that left goes home to the owner.
+
+    A phased-out permanent is never walked (702.26d keeps its effects), and one
+    that left the battlefield had ``until_eot`` emptied by
+    `reset_permanent_state`.
+    """
+    claims = static_control_claims(state)
+    live = {(source, oid): timestamp for source, oid, _, timestamp in claims}
+    changed = False
+    for oid in list(state.battlefield):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.until_eot:
+            continue
+        dead = [
+            temp
+            for temp in obj.until_eot
+            if temp.kind == "control"
+            and temp.while_static
+            and live.get((temp.source, oid)) != temp.timestamp
+        ]
+        for temp in reversed(dead):
+            index = next(i for i, t in enumerate(obj.until_eot) if t is temp)
+            later = obj.until_eot[index + 1 :]
+            del obj.until_eot[index]
+            changed = True
+            if obj.controller == temp.new_controller:
+                _hand_back_control(state, [(oid, temp)])
+                continue
+            for above in later:
+                if above.kind == "control" and above.previous_controller == temp.new_controller:
+                    above.previous_controller = temp.previous_controller
+    for source, oid, seat, timestamp in claims:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        holds = [t for t in obj.until_eot if t.kind == "control" and t.while_static]
+        entry = next((t for t in holds if t.source == source), None)
+        if entry is None:
+            entry = TempEffect(
+                kind="control",
+                source=source,
+                previous_controller=obj.controller,
+                new_controller=obj.controller,
+                timestamp=timestamp,
+                while_static=True,
+            )
+            obj.until_eot.append(entry)
+            changed = True
+        elif entry is not holds[-1]:
+            continue
+        if obj.controller != entry.new_controller:
+            continue
+        target = entry.previous_controller if seat is None else seat
+        if target is None or target == entry.new_controller or not state.is_alive(target):
+            continue
+        change_control(state, oid, target, source=source)
+        entry.new_controller = target
+        changed = True
+    if changed:
+        state.bump_chars()
+    return changed
 
 
 def untap_all(state: GameState, pid: int, *, capped_out: set[int] | None = None) -> list[int]:

@@ -42,7 +42,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
-| [aura-control](#aura-control) | 2 | 10423 | static_effect |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
@@ -100,6 +99,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
+| [aura-control](#aura-control) | 1 | 10423 | static_effect |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -1252,25 +1252,6 @@ Blocks **2** cards.
 
 </details>
 
-## aura-control
-
-Blocks **2** cards.
-
-- **(static_effect)** a static control-changing effect (Control Magic) whose affects is the attached permanent: the Aura's controller controls the enchanted creature for as long as the Aura is attached to it, and control reverts when the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: static_effects has no control-changing effect; the gain_control op is one-shot and its durations (permanent, until_end_of_turn, as_long_as_you_control_source) do not end when the Aura becomes unattached, and an enters trigger would miss a later re-attach and leave control behind when the Aura moves
-- **(static_effect)** a static control-changing effect (Control Magic) whose affects is the attached permanent, with the controlling player given by a player spec rather than fixed to the Aura's controller: here whoever is currently the monarch controls the enchanted creature, so control follows the monarchy as it moves between players, and reverts when the Aura leaves or becomes unattached (or when there is no monarch)
-  <br>Why the existing vocabulary won't do: static_effects has no control-changing effect; the gain_control op is one-shot and its durations (permanent, until_end_of_turn, end_of_your_next_turn, as_long_as_you_control_source, while_source_on_battlefield) neither end when the Aura becomes unattached nor move control to a new monarch, and the is_monarch condition can only gate a static, not name who controls the creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fealty to the Realm** (rank 10423) — `fealty_to_the_realm`
-  - The monarch controls enchanted creature.
-- **Become the Pilot** (rank 16395) — `become_the_pilot`
-  - You control enchanted creature.
-  - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
-
-</details>
-
 ## batched-trigger-objects
 
 Blocks **2** cards.
@@ -2222,6 +2203,20 @@ Blocks **1** card.
 
 - **Soul Snare** (rank 6445) — `soul_snare`
   - {W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control.
+
+</details>
+
+## aura-control
+
+Blocks **1** card.
+
+- **(static_effect)** a static control-changing effect (Control Magic) whose affects is the attached permanent, with the controlling player given by a player spec rather than fixed to the Aura's controller: here whoever is currently the monarch controls the enchanted creature, so control follows the monarchy as it moves between players, and reverts when the Aura leaves or becomes unattached (or when there is no monarch)
+  <br>Why the existing vocabulary won't do: static_effects has no control-changing effect; the gain_control op is one-shot and its durations (permanent, until_end_of_turn, end_of_your_next_turn, as_long_as_you_control_source, while_source_on_battlefield) neither end when the Aura becomes unattached nor move control to a new monarch, and the is_monarch condition can only gate a static, not name who controls the creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fealty to the Realm** (rank 10423) — `fealty_to_the_realm`
+  - The monarch controls enchanted creature.
 
 </details>
 
@@ -6837,7 +6832,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Become the Pilot** (rank 16395) — `become_the_pilot`
-  - You control enchanted creature.
   - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
 
 </details>

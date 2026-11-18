@@ -172,6 +172,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
+    STATIC_CONTROL_PLAYERS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
     STATIC_DEATHS_KEYS,
@@ -4973,6 +4974,38 @@ def _validate_off_battlefield(model: AbilityModel, where: str) -> None:
             )
 
 
+def _validate_control_static(model: AbilityModel, where: str) -> None:
+    """ "You control enchanted creature." -- the `control` static's three refusals.
+
+    - **`controller` is required** and is one of `STATIC_CONTROL_PLAYERS`: a
+      static that names no seat would load, print "you control" and move
+      nothing.
+    - **`affects` is exactly ``{"attached": true}``**, the shape of every
+      printed one. A filter that reads who controls a permanent ("creatures your
+      opponents control") would stop matching the moment the static took the
+      permanent, hand it back, match again and take it again: a state-based
+      action loop. `_matches` reads ``attached`` before every other key, so
+      anything written beside it would be ignored.
+    - **No `condition`**, for the same loop: a condition that counts what its
+      controller controls changes when the static moves a permanent.
+    """
+    if model.controller is None or model.controller not in STATIC_CONTROL_PLAYERS:
+        raise DslError(
+            f"{where}: control needs a 'controller' naming who controls what it "
+            f"affects, one of {sorted(STATIC_CONTROL_PLAYERS)}, got {model.controller!r}"
+        )
+    if model.affects != {"attached": True}:
+        raise DslError(
+            f"{where}: control takes 'affects': {{\"attached\": true}} -- the "
+            f"enchanted permanent -- and nothing else, got {model.affects!r}"
+        )
+    if model.condition:
+        raise DslError(
+            f"{where}: control takes no 'condition' -- a condition reading what "
+            f"its controller controls would change as the static moved a permanent"
+        )
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -5252,6 +5285,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: goaded needs an 'affects' filter naming the creatures it "
             f'goads -- e.g. {{"attached": true}} for the enchanted creature'
+        )
+    if model.effect == "control":
+        _validate_control_static(model, where)
+    elif model.controller is not None:
+        # A seat nothing reads is a printed line that does nothing.
+        raise DslError(
+            f"{where}: 'controller' only means anything on a control static, "
+            f"not on {model.effect!r}"
         )
     if model.effect == "cant_sacrifice" and model.affects is None:
         # A missing filter matches nothing, so a filterless prohibition protects
@@ -7619,6 +7660,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["player_only"] = True
     if model.defending is not None:
         static["defending"] = model.defending
+    if model.controller is not None:
+        static["controller"] = model.controller
     if model.effect in ("spell_cost_increase", "ability_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # and `player_statics.granted_alternative_cost` read carries nothing the

@@ -491,6 +491,10 @@
    ">",
    ">="
   ],
+  "STATIC_CONTROL_PLAYERS": [
+   "monarch",
+   "you"
+  ],
   "STATIC_COUNT_FILTER_KEYS": [
    "any_types",
    "attached",
@@ -578,6 +582,7 @@
    "cast_from_library_top",
    "cast_only_at_sorcery_speed",
    "combat_damage_by_toughness",
+   "control",
    "crew_power_bonus",
    "damage_cant_be_prevented",
    "damage_life_floor",
@@ -797,6 +802,7 @@
    "cast_from_graveyard",
    "cast_from_library_top",
    "cast_only_at_sorcery_speed",
+   "control",
    "damage_cant_be_prevented",
    "damage_life_floor",
    "double_land_mana",

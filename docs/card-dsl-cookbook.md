@@ -14619,6 +14619,55 @@ the same way.
 The near miss is `as_long_as_you_control_source` (Yuffie's wording), which
 also ends when the source changes controller — a weaker card.
 
+### "You control enchanted creature" — the `control` static
+
+    Control Magic — "Enchant creature / You control enchanted creature."
+    Fealty to the Realm — "… The monarch controls enchanted creature. …"
+
+```jsonc
+{ "kind": "static", "text": "You control enchanted creature.",
+  "effect": "control", "affects": { "attached": true }, "controller": "you" }
+
+{ "kind": "static", "text": "The monarch controls enchanted creature.",
+  "effect": "control", "affects": { "attached": true }, "controller": "monarch" }
+```
+
+A layer-2 control effect (613.1b) for exactly as long as the static applies.
+`controller` names the seat: `"you"` is the static's controller (Control Magic,
+Mind Control, Become the Pilot), `"monarch"` is whoever holds the crown as it is
+read (Fealty to the Realm). With no monarch, or a seat that has left the game,
+the static gives the creature to nobody and it stays with — or goes back to —
+the seat it was taken from.
+
+`chars` does not compute control; `GameObject.controller` is a field. So
+`primitives.reconcile_static_control` makes the static true in every
+state-based-action pass ([ADR 0030](adr/0030-static-control-at-state-checks.md)):
+the Aura arriving takes the creature, the Aura leaving, moving to another
+creature or losing its abilities hands it back, and the crown moving moves the
+creature. Every move is `change_control`, so 302.6 summoning sickness, 506.4
+removal from combat and the `control_changed` event apply in both directions.
+Each Aura and creature pair keeps one `TempEffect(kind="control",
+while_static=True)` on the creature recording where it came from; no cleanup or
+untap step ends it.
+
+613.7 orders it against every other control effect: the later one wins. A
+permanent steal made after the Aura holds the creature, and the Aura leaving
+then hands it to nobody. An until-end-of-turn steal on top holds it until
+cleanup, after which the static takes it again — for the monarch of that moment.
+A second control Aura beats the first, and the first resumes when the second
+leaves.
+
+The loader refuses a `controller` other than `"you"` or `"monarch"`, an
+`affects` other than exactly `{"attached": true}` (a filter that reads who
+controls a permanent would stop matching the creature the static had just
+taken), a `condition`, `controller` on any other static, and granting the static
+with `grant_ability`.
+
+| Near miss | Why not |
+|---|---|
+| `gain_control` on an enters trigger | one-shot: the creature stays stolen when the Aura leaves or moves, an Aura attached later takes nothing, and the crown is read once |
+| `gain_control` with `while_source_on_battlefield` | ends when the Aura leaves, but not when it moves to another creature or loses its abilities, and never follows the monarch |
+
 ### "Choose left or right" — passing the board around the table
 
 ```jsonc
