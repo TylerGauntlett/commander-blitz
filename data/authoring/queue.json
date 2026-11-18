@@ -212642,12 +212642,12 @@
     },
     "Radagast, Wizard of Wilds": {
       "edhrec_rank": 13286,
-      "gate": "template",
+      "gate": null,
       "name": "Radagast, Wizard of Wilds",
-      "reason": "no template for: Ward {1}",
+      "reason": "",
       "scryfall_id": "9573ee62-4fdf-4fca-90e2-10a7d8161764",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radha's Firebrand": {
@@ -217182,12 +217182,12 @@
     },
     "Realm Seekers": {
       "edhrec_rank": 9308,
-      "gate": "template",
+      "gate": null,
       "name": "Realm Seekers",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the total number of cards in ",
+      "reason": "",
       "scryfall_id": "fd6c8785-7fae-43e1-873d-c2ebea217e2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Realm of Koh": {

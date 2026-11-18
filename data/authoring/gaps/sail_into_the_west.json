@@ -1,0 +1,18 @@
+{
+  "card_id": "sail_into_the_west",
+  "name": "Sail into the West",
+  "oracle_text": "Will of the council — Starting with you, each player votes for return or embark. If return gets more votes, each player returns up to two cards from their graveyard to their hand, then you exile Sail into the West. If embark gets more votes or the vote is tied, each player may discard their hand and draw seven cards.",
+  "blocked_sentences": [
+    "Will of the council — Starting with you, each player votes for return or embark.",
+    "If return gets more votes, each player returns up to two cards from their graveyard to their hand, then you exile Sail into the West.",
+    "If embark gets more votes or the vote is tied, each player may discard their hand and draw seven cards."
+  ],
+  "needs": [{
+    "capability": "council_s_dilemma",
+    "kind": "op",
+    "what": "a vote op (rule 701.38) over named options: starting with the spell's controller and going in turn order, each player votes for one of a fixed list of words (here 'return' or 'embark'); the tally per option is bound under an `as` so a following `if` can compare option counts (return > embark, else embark-or-tie branch)",
+    "why_existing_wont_do": "for_each_player with starting_with can walk the players and choose_mode has a `chooser`, but nothing records each player's chosen mode as a tally and no condition or value key reads 'how many players voted for option X', so the two outcome branches cannot be selected; running each player's choice as an immediate choose_mode would apply per-voter effects instead of the majority outcome"
+  }],
+  "closest_existing": ["for_each_player", "choose_mode", "join_forces"],
+  "confidence": "high"
+}
