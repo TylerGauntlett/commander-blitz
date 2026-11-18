@@ -5520,6 +5520,10 @@
     },
     "zone": "graveyard"
   },
+  "deluxe_dragster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "demolisher_spawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6250,6 +6254,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "duergar_hedge_mage": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "duggan_private_detective": {
     "battlefield_count": 34,
     "tokens": {
@@ -6976,6 +6985,15 @@
     },
     "zone": "graveyard"
   },
+  "ephemeral_shields": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "epic_experiment": {
     "graveyard_size": {
       "0": 23
@@ -7555,6 +7573,16 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "fallowsage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "battlefield"
   },

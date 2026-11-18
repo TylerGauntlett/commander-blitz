@@ -65862,12 +65862,12 @@
     },
     "Deluxe Dragster": {
       "edhrec_rank": 6969,
-      "gate": "template",
+      "gate": null,
       "name": "Deluxe Dragster",
-      "reason": "no template for: This Vehicle can't be blocked except by Vehicles",
+      "reason": "",
       "scryfall_id": "4b90313d-9f61-4788-a55e-1f8189bf1ef5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Delver of Secrets // Insectile Aberration": {
@@ -76662,12 +76662,12 @@
     },
     "Duergar Hedge-Mage": {
       "edhrec_rank": 8985,
-      "gate": "template",
+      "gate": null,
       "name": "Duergar Hedge-Mage",
-      "reason": "no template for: When this creature enters, if you control two or more Mountains, you may destroy target ar",
+      "reason": "",
       "scryfall_id": "8614ad95-c1d5-426c-a195-86c195653f5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duergar Mine-Captain": {
@@ -85022,12 +85022,12 @@
     },
     "Ephemeral Shields": {
       "edhrec_rank": 11197,
-      "gate": "template",
+      "gate": null,
       "name": "Ephemeral Shields",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "60fcd11e-9bc3-4a27-966c-42767bac3223",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ephemerate": {
@@ -90812,12 +90812,12 @@
     },
     "Fallowsage": {
       "edhrec_rank": 9954,
-      "gate": "template",
+      "gate": null,
       "name": "Fallowsage",
-      "reason": "no template for: Whenever this creature becomes tapped, you may draw a card",
+      "reason": "",
       "scryfall_id": "075b8e5e-464b-4ea6-b380-f73aa9c8e5ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "False Cure": {
