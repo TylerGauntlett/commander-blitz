@@ -1,0 +1,21 @@
+{
+  "card_id": "travel_through_caradhras",
+  "name": "Travel Through Caradhras",
+  "oracle_text": "Council's dilemma — Starting with you, each player votes for Redhorn Pass or Mines of Moria. For each Redhorn Pass vote, search your library for a basic land card and put it onto the battlefield tapped. If you search your library this way, shuffle. For each Mines of Moria vote, return a card from your graveyard to your hand.\nExile Travel Through Caradhras.",
+  "blocked_sentences": [
+    "Council's dilemma — Starting with you, each player votes for Redhorn Pass or Mines of Moria.",
+    "For each Redhorn Pass vote, search your library for a basic land card and put it onto the battlefield tapped.",
+    "If you search your library this way, shuffle.",
+    "For each Mines of Moria vote, return a card from your graveyard to your hand."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "decision",
+      "what": "a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'Redhorn Pass' or 'Mines of Moria'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.redhorn_pass'} / {binding: 'votes.mines_of_moria'}) so later effects in the same spell can use each count as an amount -- here a search_library of basic lands to the battlefield tapped with count = the Redhorn tally (shuffle only if that tally > 0), and a return of that many chosen cards from your graveyard to hand",
+      "why_existing_wont_do": "No op in reference casts a vote and value_keys has no vote count; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists the rest looks expressible: search_library (selector basic Land, destination battlefield, tapped, shuffle) with count from the binding inside an if on tally > 0, a return_from_graveyard/search_zones over your graveyard to hand for the other tally, and exiles_itself for the last line"
+    }
+  ],
+  "closest_existing": ["choose_mode", "for_each_player", "join_forces"],
+  "confidence": "high"
+}

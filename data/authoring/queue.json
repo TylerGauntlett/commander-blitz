@@ -14392,12 +14392,12 @@
     },
     "Asceticism": {
       "edhrec_rank": 1306,
-      "gate": "template",
+      "gate": null,
       "name": "Asceticism",
-      "reason": "no template for: Creatures you control have hexproof",
+      "reason": "",
       "scryfall_id": "72eefa85-39de-4f9f-aba1-7520b358c6c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Asgardian Citadel": {
@@ -50312,12 +50312,12 @@
     },
     "Colossal Whale": {
       "edhrec_rank": 12506,
-      "gate": "template",
+      "gate": null,
       "name": "Colossal Whale",
-      "reason": "no template for: Whenever this creature attacks, you may exile target creature defending player controls un",
+      "reason": "",
       "scryfall_id": "a4d35a18-1c3c-4882-a318-5cf323350417",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossapede": {
@@ -81682,12 +81682,12 @@
     },
     "Elven Farsight": {
       "edhrec_rank": 5814,
-      "gate": "template",
+      "gate": null,
       "name": "Elven Farsight",
-      "reason": "no template for: Scry 3, then you may reveal the top card of your library. If a creature card is revealed t",
+      "reason": "",
       "scryfall_id": "73d135b2-d2b8-499c-84d9-824370c19ccc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elven Fortress": {
@@ -81812,12 +81812,12 @@
     },
     "Elvish Archdruid": {
       "edhrec_rank": 926,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Archdruid",
-      "reason": "no template for: Other Elf creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "006ff5a3-355b-4a7d-b402-bb3c8d32a585",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Archers": {
@@ -82072,12 +82072,12 @@
     },
     "Elvish Piper": {
       "edhrec_rank": 3155,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Piper",
-      "reason": "no template for: {G}, {T}: You may put a creature card from your hand onto the battlefield",
+      "reason": "",
       "scryfall_id": "1a8e47b9-6735-4e46-b3fd-ac69edc39745",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Promenade": {
@@ -82212,12 +82212,12 @@
     },
     "Elvish Warmaster": {
       "edhrec_rank": 1707,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Warmaster",
-      "reason": "no template for: Whenever one or more other Elves you control enter, create a 1/1 green Elf Warrior creatur",
+      "reason": "",
       "scryfall_id": "3bc94b52-1cb1-4c1e-8b17-5632abc2490d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Warrior": {
@@ -104272,12 +104272,12 @@
     },
     "Galadhrim Ambush": {
       "edhrec_rank": 2234,
-      "gate": "template",
+      "gate": null,
       "name": "Galadhrim Ambush",
-      "reason": "no template for: Create X 1/1 green Elf Warrior creature tokens, where X is the number of attacking creatur",
+      "reason": "",
       "scryfall_id": "e69e06f0-6142-4f80-9208-362b3e74d51d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galadhrim Bow": {
@@ -106782,12 +106782,12 @@
     },
     "Genesis Wave": {
       "edhrec_rank": 1380,
-      "gate": "template",
+      "gate": null,
       "name": "Genesis Wave",
-      "reason": "no template for: Reveal the top X cards of your library. You may put any number of permanent cards with man",
+      "reason": "",
       "scryfall_id": "4b51445b-1590-4072-9712-5ca344b25e3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genesis of the Daleks": {
@@ -121382,12 +121382,12 @@
     },
     "Haldir, Lórien Lieutenant": {
       "edhrec_rank": 6783,
-      "gate": "template",
+      "gate": null,
       "name": "Haldir, Lórien Lieutenant",
-      "reason": "no template for: Haldir enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "440e5796-9264-4649-bf2f-58826dd0352c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Half-Elf Monk": {
@@ -155862,12 +155862,12 @@
     },
     "Learn from the Past": {
       "edhrec_rank": 10625,
-      "gate": "template",
+      "gate": null,
       "name": "Learn from the Past",
-      "reason": "no template for: Target player shuffles their graveyard into their library",
+      "reason": "",
       "scryfall_id": "347c6e76-dba4-4448-a4f4-d9591d4539c7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leashling": {
@@ -156332,12 +156332,12 @@
     },
     "Legolas Greenleaf": {
       "edhrec_rank": 5850,
-      "gate": "template",
+      "gate": null,
       "name": "Legolas Greenleaf",
-      "reason": "no template for: Legolas can't be blocked by creatures with power 2 or less",
+      "reason": "",
       "scryfall_id": "130237e7-6f45-4b92-b49d-12f10db29bb8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legolas's Quick Reflexes": {
@@ -158642,12 +158642,12 @@
     },
     "Lignify": {
       "edhrec_rank": 2273,
-      "gate": "template",
+      "gate": null,
       "name": "Lignify",
-      "reason": "no template for: Enchanted creature is a Treefolk with base power and toughness 0/4 and loses all abilities",
+      "reason": "",
       "scryfall_id": "d1be11fa-d87f-465f-b036-0b6cb2145a66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Likeness Looter": {
@@ -161822,12 +161822,12 @@
     },
     "Lothlórien Blade": {
       "edhrec_rank": 9354,
-      "gate": "template",
+      "gate": null,
       "name": "Lothlórien Blade",
-      "reason": "no template for: Whenever equipped creature attacks, it deals damage equal to its power to target creature ",
+      "reason": "",
       "scryfall_id": "3f7f1d3b-d6bb-4ddb-81d8-12f7aaaec49e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lothlórien Lookout": {
@@ -163672,12 +163672,12 @@
     },
     "Lórien Revealed": {
       "edhrec_rank": 1211,
-      "gate": "template",
+      "gate": null,
       "name": "Lórien Revealed",
-      "reason": "no template for: Islandcycling {1}",
+      "reason": "",
       "scryfall_id": "209204c7-aae5-4768-91b8-89c8c4d4a97f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "M'Baku, Jabari Chieftain": {
@@ -174982,12 +174982,12 @@
     },
     "Mirkwood Elk": {
       "edhrec_rank": 14668,
-      "gate": "template",
+      "gate": null,
       "name": "Mirkwood Elk",
-      "reason": "no template for: Whenever this creature enters or attacks, return target Elf card from your graveyard to yo",
+      "reason": "",
       "scryfall_id": "eda8bfa5-1e7d-442d-9d8c-651eb5630124",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirkwood Meditator": {
@@ -175032,12 +175032,12 @@
     },
     "Mirkwood Trapper": {
       "edhrec_rank": 13895,
-      "gate": "template",
+      "gate": null,
       "name": "Mirkwood Trapper",
-      "reason": "no template for: Whenever a player attacks you, target attacking creature gets -2/-0 until end of turn",
+      "reason": "",
       "scryfall_id": "ca079e59-4433-49c7-9001-abac20b776e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirozel": {
@@ -175342,12 +175342,12 @@
     },
     "Mirror of Galadriel": {
       "edhrec_rank": 5729,
-      "gate": "template",
+      "gate": null,
       "name": "Mirror of Galadriel",
-      "reason": "no template for: {5}, {T}: Scry 1, then draw a card. This ability costs {1} less to activate for each legen",
+      "reason": "",
       "scryfall_id": "f6d04970-12c7-460f-a7bc-beb97b161246",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirror of Life Trapping": {
@@ -212642,12 +212642,12 @@
     },
     "Radagast, Wizard of Wilds": {
       "edhrec_rank": 13286,
-      "gate": "template",
+      "gate": null,
       "name": "Radagast, Wizard of Wilds",
-      "reason": "no template for: Ward {1}",
+      "reason": "",
       "scryfall_id": "9573ee62-4fdf-4fca-90e2-10a7d8161764",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radha's Firebrand": {
@@ -217182,12 +217182,12 @@
     },
     "Realm Seekers": {
       "edhrec_rank": 9308,
-      "gate": "template",
+      "gate": null,
       "name": "Realm Seekers",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the total number of cards in ",
+      "reason": "",
       "scryfall_id": "fd6c8785-7fae-43e1-873d-c2ebea217e2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Realm of Koh": {
@@ -254812,12 +254812,12 @@
     },
     "Song of Eärendil": {
       "edhrec_rank": 7435,
-      "gate": "template",
+      "gate": null,
       "name": "Song of Eärendil",
-      "reason": "no template for: I — Scry 2, then draw two cards",
+      "reason": "",
       "scryfall_id": "325bb6b7-6d19-48b5-82dd-2759d4fc3144",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Song of Freyalise": {
@@ -319282,12 +319282,12 @@
     },
     "Wose Pathfinder": {
       "edhrec_rank": 8494,
-      "gate": "template",
+      "gate": null,
       "name": "Wose Pathfinder",
-      "reason": "no template for: {6}{G}, {T}: Another target creature gets +3/+3 and gains trample until end of turn",
+      "reason": "",
       "scryfall_id": "6589b339-9067-4e9b-bfdb-c49f8b3ef2d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wound Reflection": {

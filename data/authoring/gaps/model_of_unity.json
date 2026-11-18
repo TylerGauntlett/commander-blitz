@@ -1,0 +1,18 @@
+{
+  "card_id": "model_of_unity",
+  "name": "Model of Unity",
+  "oracle_text": "Whenever players finish voting, you and each opponent who voted for a choice you voted for may scry 2.\n{T}: Add one mana of any color.",
+  "blocked_sentences": [
+    "Whenever players finish voting, you and each opponent who voted for a choice you voted for may scry 2."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "trigger_event",
+      "what": "a vote mechanic (701.38) that records each player's votes per vote, plus a 'players_finish_voting' trigger event fired when any vote completes, binding the vote record so the effect can select 'you and each opponent who voted for a choice you voted for' (a player filter reading shared vote choices) and have each of them may-scry 2",
+      "why_existing_wont_do": "There is no vote op in op_options and no voting event among trigger_events; choose_player/choose_mode are single-chooser decisions that produce no vote record, so neither the trigger nor the 'voted for a choice you voted for' player filter can be expressed. scry exists, but nothing selects which players scry"
+    }
+  ],
+  "closest_existing": ["choose_mode", "choose_player", "for_each_player", "scry"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "elrond_of_the_white_council",
+  "name": "Elrond of the White Council",
+  "oracle_text": "Secret council — When Elrond enters, each player secretly votes for fellowship or aid, then those votes are revealed. For each fellowship vote, the voter chooses a creature they control. You gain control of each creature chosen this way, and they gain \"This creature can't attack its owner.\" Then for each aid vote, put a +1/+1 counter on each creature you control.",
+  "blocked_sentences": [
+    "Secret council — When Elrond enters, each player secretly votes for fellowship or aid, then those votes are revealed. For each fellowship vote, the voter chooses a creature they control. You gain control of each creature chosen this way, and they gain \"This creature can't attack its owner.\" Then for each aid vote, put a +1/+1 counter on each creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op over named options (here 'fellowship' / 'aid'), every player voting, secretly and revealed simultaneously (secret council), that binds each voter's choice so later effects can (a) run per fellowship voter, with that voter choosing a creature they control, and (b) read the count of aid votes as an amount (repeat add_counters of +1/+1 on each creature you control once per aid vote)",
+      "why_existing_wont_do": "choose_mode and choose_player are one player's choice; for_each_player wrapping choose_mode has no way to bind each player's chosen option for later reading, and no value_key counts votes for an option; join_forces collects mana payments, not choices"
+    }
+  ],
+  "closest_existing": ["choose_mode", "for_each_player", "choose_permanents", "gain_control", "cant_attack_player", "add_counters"],
+  "confidence": "high"
+}

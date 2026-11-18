@@ -1321,6 +1321,16 @@
   "ascended_lawmage": {
     "zone": "battlefield"
   },
+  "asceticism": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "asgardian_citadel": {
     "life": {
       "0": 41
@@ -4092,6 +4102,11 @@
     },
     "zone": "battlefield"
   },
+  "colossal_whale": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "colossapede": {
     "zone": "battlefield"
   },
@@ -6623,11 +6638,24 @@
     },
     "zone": "battlefield"
   },
+  "elven_farsight": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "elven_passage": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elves_of_deep_shadow": {
+    "zone": "battlefield"
+  },
+  "elvish_archdruid": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elvish_archers": {
@@ -6639,6 +6667,13 @@
   "elvish_pioneer": {
     "zone": "battlefield"
   },
+  "elvish_piper": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "elvish_ranger": {
     "zone": "battlefield"
   },
@@ -6647,6 +6682,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "elvish_warmaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elvish_warrior": {
@@ -8469,6 +8508,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "galadhrim_ambush": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "galadhrim_guide": {
     "zone": "battlefield"
   },
@@ -8722,6 +8768,16 @@
       "0": 35
     },
     "zone": "exile"
+  },
+  "genesis_wave": {
+    "battlefield_count": 51,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
   },
   "genji_glove": {
     "battlefield_count": 33,
@@ -9793,6 +9849,10 @@
     "zone": "battlefield"
   },
   "halberdier": {
+    "zone": "battlefield"
+  },
+  "haldir_lorien_lieutenant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "halimar_depths": {
@@ -12465,6 +12525,12 @@
   "leafkin_druid": {
     "zone": "battlefield"
   },
+  "learn_from_the_past": {
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "leatherback_baloth": {
     "zone": "battlefield"
   },
@@ -12494,6 +12560,13 @@
   "legions_to_ashes": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "legolas_greenleaf": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "legolas_s_quick_reflexes": {
     "granted": {
@@ -12663,6 +12736,11 @@
     "zone": "battlefield"
   },
   "lightshell_duo": {
+    "zone": "battlefield"
+  },
+  "lignify": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "lilah_undefeated_slickshot": {
@@ -12900,6 +12978,15 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "lorien_revealed": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "los_diablos_missile_base": {
     "life": {
       "0": 41
@@ -12942,6 +13029,10 @@
     },
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "lothlorien_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "lotus_cobra": {
     "zone": "battlefield"
@@ -14047,7 +14138,19 @@
     },
     "zone": "battlefield"
   },
+  "mirkwood_elk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mirkwood_trapper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mirri_cat_warrior": {
+    "zone": "battlefield"
+  },
+  "mirror_of_galadriel": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mirrormade": {
@@ -17012,6 +17115,13 @@
     },
     "zone": "battlefield"
   },
+  "radagast_wizard_of_wilds": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "radiant_destiny": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17334,6 +17444,14 @@
   "realm_cloaked_giant_cast_off": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "realm_seekers": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "realmwalker": {
@@ -20316,6 +20434,20 @@
     "zone": "graveyard"
   },
   "somberwald_dryad": {
+    "zone": "battlefield"
+  },
+  "song_of_earendil": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
     "zone": "battlefield"
   },
   "song_of_the_dryads": {
@@ -25785,6 +25917,10 @@
     "zone": "graveyard"
   },
   "worn_powerstone": {
+    "zone": "battlefield"
+  },
+  "wose_pathfinder": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wound_reflection": {

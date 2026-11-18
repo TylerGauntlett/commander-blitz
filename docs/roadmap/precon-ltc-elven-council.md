@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [voting, the-ring-tempts-you]
 status: proposed
 rank: 65
 ---
@@ -19,6 +19,14 @@ coming-soon shell on the shelf: its row `ltc_elven_council` is in
 `python scripts/sync_precons.py --missing ltc_elven_council` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Two of those capabilities are rules subsystems the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)). The deck is built
+around voting: its commander, Galadriel, Elven-Queen, is a will of the council
+trigger, and Elrond, Erestor, Círdan and the council spells vote or read a vote,
+so the deck waits on [voting](voting.md). Galadriel's dominion result also has
+the Ring tempt you and counts on your Ring-bearer, so it waits on
+[the Ring](the-ring-tempts-you.md) as well. The rest of its missing cards wait
+on a token and smaller capabilities this batch builds.
 
 ## The change
 

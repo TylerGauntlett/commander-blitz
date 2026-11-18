@@ -1,0 +1,18 @@
+{
+  "card_id": "cirdan_the_shipwright",
+  "name": "Círdan the Shipwright",
+  "oracle_text": "Vigilance\nSecret council — Whenever Círdan enters or attacks, each player secretly votes for a player, then those votes are revealed. Each player draws a card for each vote they received. Each player who received no votes may put a permanent card from their hand onto the battlefield.",
+  "blocked_sentences": [
+    "Secret council — Whenever Círdan enters or attacks, each player secretly votes for a player, then those votes are revealed. Each player draws a card for each vote they received. Each player who received no votes may put a permanent card from their hand onto the battlefield"
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op where each player (here secretly, revealed simultaneously) votes for a player, with the tally bound so later effects can read it per player: a value 'votes received by <each_player>' for 'draws a card for each vote they received', and a condition/player filter for 'received no votes' feeding a for_each_player whose may lets that player put a permanent card from their hand onto the battlefield",
+      "why_existing_wont_do": "choose_player is made by one player only and binds a single choice; for_each_player wrapping choose_player has no way to aggregate the choices into a per-player vote count, and no value_key or condition reads votes received; join_forces collects payments, not choices"
+    }
+  ],
+  "closest_existing": ["choose_player", "for_each_player", "join_forces", "put_onto_battlefield"],
+  "confidence": "high"
+}

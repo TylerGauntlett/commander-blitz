@@ -1,0 +1,24 @@
+{
+  "card_id": "gandalf_westward_voyager",
+  "name": "Gandalf, Westward Voyager",
+  "oracle_text": "Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card. (A copy of a permanent spell becomes a token.)",
+  "blocked_sentences": [
+    "Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card"
+  ],
+  "needs": [
+    {
+      "capability": "shares_card_type_with",
+      "kind": "selector",
+      "what": "a selector clause matching cards that share ANY card type (205.2a: Artifact, Battle, Creature, Enchantment, Instant, Kindred, Land, Planeswalker, Sorcery) with a bound object, where the bound object may be a spell on the stack (the trigger's `subject`) -- so an `exists` condition over the cards each opponent revealed (bound with `reveal`'s `as`) can ask 'if any of those cards shares a card type with that spell'",
+      "why_existing_wont_do": "`shares_a_type_with` intersects SUBTYPES (Heirloom Blade, Shared Animosity), not card types; `shares_permanent_type_with` intersects card types but deliberately drops everything outside the permanent types, so an instant or sorcery spell would never match a revealed instant or sorcery -- quietly narrower than printed; `shares_a_type_with_commander` reads the commander, not the cast spell"
+    },
+    {
+      "capability": "reveal_top_of_library",
+      "kind": "selector",
+      "what": "a way for `reveal` (or a `for_each_player` over opponents) to name 'the top card of <player>'s library' as its objects and bind the revealed cards across all opponents under one `as`, so the following condition reads the union",
+      "why_existing_wont_do": "`selector_keys` has no top-of-library position key; `look_at_top`/`reveal_until` move cards to a destination and are the revealing player's own library effects, while this reveal leaves each card in place on top of its owner's library; `reveal_library_top` is a static (play with the top card revealed), not a one-shot"
+    }
+  ],
+  "closest_existing": ["reveal", "shares_permanent_type_with", "shares_a_type_with", "copy_spell", "exists"],
+  "confidence": "high"
+}

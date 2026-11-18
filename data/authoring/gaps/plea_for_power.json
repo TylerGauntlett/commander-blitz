@@ -1,0 +1,16 @@
+{
+  "card_id": "plea_for_power",
+  "name": "Plea for Power",
+  "oracle_text": "Will of the council — Starting with you, each player votes for time or knowledge. If time gets more votes, take an extra turn after this one. If knowledge gets more votes or the vote is tied, draw three cards.",
+  "blocked_sentences": [
+    "Will of the council — Starting with you, each player votes for time or knowledge. If time gets more votes, take an extra turn after this one. If knowledge gets more votes or the vote is tied, draw three cards."
+  ],
+  "needs": [{
+    "capability": "council_s_dilemma",
+    "kind": "op",
+    "what": "a vote op (rule 701.38) over named options: starting with the spell's controller and going in turn order, each player picks one of a fixed list of words (here 'time' or 'knowledge') as a vote; the tally per option is bound under an `as` so a following `if` can compare the counts (time > knowledge -> extra_turn for you; otherwise, including a tie -> draw 3)",
+    "why_existing_wont_do": "for_each_player with starting_with can walk the players and choose_mode has a `chooser`, but nothing records which mode each player picked and no value key counts votes for an option, so 'gets more votes' and 'the vote is tied' cannot be compared; set_flag/set_turn_flag are booleans, not tallies, and extra_turn and draw themselves already exist"
+  }],
+  "closest_existing": ["for_each_player", "choose_mode", "extra_turn", "draw"],
+  "confidence": "high"
+}

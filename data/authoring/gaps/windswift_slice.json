@@ -1,0 +1,18 @@
+{
+  "card_id": "windswift_slice",
+  "name": "Windswift Slice",
+  "oracle_text": "Target creature you control deals damage equal to its power to target creature you don't control. Create a number of 1/1 green Elf Warrior creature tokens equal to the amount of excess damage dealt this way.",
+  "blocked_sentences": [
+    "Create a number of 1/1 green Elf Warrior creature tokens equal to the amount of excess damage dealt this way."
+  ],
+  "needs": [
+    {
+      "capability": "excess_damage",
+      "kind": "value",
+      "what": "a value reading how much excess damage (120.4a: damage beyond lethal, i.e. toughness minus damage already marked, or beyond 1 from a deathtouch source) the preceding damage effect dealt to the creature it hit, bindable (e.g. `as` on the `damage` op, read as {\"binding\": ...}) so a following create_token of elf_warrior_1_1_g can take it as its amount; 0 when no excess was dealt or the target left before damage",
+      "why_existing_wont_do": "The first sentence is expressible as `damage` with amount power_of t1, source_object t1 and target t2, and the token elf_warrior_1_1_g exists. But the damage op's `excess_to` only accepts 'controller' and redirects the remainder to a player (Gandalf's Sanction), splitting the event; here all the damage is dealt to the creature and the excess is only measured. No value_key reports excess damage, and minus(power_of t1, toughness_of t2) ignores damage already marked on t2 and deathtouch on the dealing creature, and goes wrong once t2 has left"
+    }
+  ],
+  "closest_existing": ["damage.excess_to", "damage.source_object", "power_of", "minus", "snapshot"],
+  "confidence": "high"
+}

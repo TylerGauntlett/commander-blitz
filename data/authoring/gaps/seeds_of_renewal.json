@@ -1,0 +1,14 @@
+{
+  "card_id": "seeds_of_renewal",
+  "name": "Seeds of Renewal",
+  "oracle_text": "Undaunted (This spell costs {1} less to cast for each opponent.)\nReturn up to two target cards from your graveyard to your hand. Exile Seeds of Renewal.",
+  "blocked_sentences": ["Undaunted (This spell costs {1} less to cast for each opponent.)"],
+  "needs": [{
+    "capability": "undaunted",
+    "kind": "value",
+    "what": "a card-level cost_reduction head that counts players rather than objects: {1} less for each opponent the caster has (e.g. {\"opponents\": \"you\"}, or a player_count head in cost_reduction_keys), read at pricing time, so a four-player pod discounts {3}",
+    "why_existing_wont_do": "cost_reduction_keys (amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power) all count objects matched by a filter or a turn ledger; none counts players. `amount` is a flat number, so it would be right only at one pod size. The value leaf `player_count` exists in value_keys but cost_reduction cannot read an arbitrary value. The rest of the card (return_to_hand over an up-to-two card_in_graveyard target, exiles_itself) is expressible."
+  }],
+  "closest_existing": ["cost_reduction", "player_count"],
+  "confidence": "high"
+}

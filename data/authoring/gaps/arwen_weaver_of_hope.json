@@ -1,0 +1,18 @@
+{
+  "card_id": "arwen_weaver_of_hope",
+  "name": "Arwen, Weaver of Hope",
+  "oracle_text": "Each other creature you control enters with a number of additional +1/+1 counters on it equal to Arwen's toughness.",
+  "blocked_sentences": [
+    "Each other creature you control enters with a number of additional +1/+1 counters on it equal to Arwen's toughness."
+  ],
+  "needs": [
+    {
+      "capability": "enters_with_counters_equal_to_source_toughness",
+      "kind": "value",
+      "what": "an 'amount' for the enters_with_additional_counters static that reads the source permanent's current toughness (e.g. {\"toughness_of\": {\"self_only\": true}}), evaluated as each other creature enters",
+      "why_existing_wont_do": "The static enters_with_additional_counters exists and handles 'each other creature you control' via affects with exclude_self, but the loader (cards/loader/__init__.py) accepts its amount only as a whole number, {'count': <battlefield filter>} or a creatures_died_this_turn tally; static_value_keys has no toughness_of, and a const would ignore Arwen's toughness changing (buffs, counters)"
+    }
+  ],
+  "closest_existing": ["enters_with_additional_counters"],
+  "confidence": "high"
+}

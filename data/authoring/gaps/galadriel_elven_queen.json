@@ -1,0 +1,24 @@
+{
+  "card_id": "galadriel_elven_queen",
+  "name": "Galadriel, Elven-Queen",
+  "oracle_text": "Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.",
+  "blocked_sentences": [
+    "Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "op",
+      "what": "a vote op (rule 701.38) over named word options: starting with the ability's controller and in turn order, each player votes for one of a fixed list of words (here 'dominion' or 'guidance'); the per-option tally is kept and exposed so a following `if` can compare 'dominion gets more votes' against 'guidance gets more votes or the vote is tied'",
+      "why_existing_wont_do": "for_each_player with starting_with walks the players, but choose_mode has a single chooser per resolution and records no tally; no value key counts votes per option, so neither the vote nor the 'more votes / tied' comparison can be said"
+    },
+    {
+      "capability": "the-ring-tempts-you",
+      "kind": "op",
+      "what": "'the Ring tempts you' (rule 701.54): the player gets the Ring emblem if they lack it, advances its level, and chooses a creature they control as their Ring-bearer; plus a selector naming 'your Ring-bearer' so add_counters can put a +1/+1 counter on it",
+      "why_existing_wont_do": "no op in reference tempts a player or designates a Ring-bearer, emblem only gives a card-authored emblem with no level progression, and no selector key reads a Ring-bearer designation"
+    }
+  ],
+  "closest_existing": ["for_each_player", "choose_mode", "emblem", "add_counters"],
+  "confidence": "high"
+}
