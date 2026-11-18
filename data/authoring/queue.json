@@ -158642,12 +158642,12 @@
     },
     "Lignify": {
       "edhrec_rank": 2273,
-      "gate": "template",
+      "gate": null,
       "name": "Lignify",
-      "reason": "no template for: Enchanted creature is a Treefolk with base power and toughness 0/4 and loses all abilities",
+      "reason": "",
       "scryfall_id": "d1be11fa-d87f-465f-b036-0b6cb2145a66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Likeness Looter": {
@@ -161822,12 +161822,12 @@
     },
     "Lothlórien Blade": {
       "edhrec_rank": 9354,
-      "gate": "template",
+      "gate": null,
       "name": "Lothlórien Blade",
-      "reason": "no template for: Whenever equipped creature attacks, it deals damage equal to its power to target creature ",
+      "reason": "",
       "scryfall_id": "3f7f1d3b-d6bb-4ddb-81d8-12f7aaaec49e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lothlórien Lookout": {
@@ -163672,12 +163672,12 @@
     },
     "Lórien Revealed": {
       "edhrec_rank": 1211,
-      "gate": "template",
+      "gate": null,
       "name": "Lórien Revealed",
-      "reason": "no template for: Islandcycling {1}",
+      "reason": "",
       "scryfall_id": "209204c7-aae5-4768-91b8-89c8c4d4a97f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "M'Baku, Jabari Chieftain": {
@@ -174982,12 +174982,12 @@
     },
     "Mirkwood Elk": {
       "edhrec_rank": 14668,
-      "gate": "template",
+      "gate": null,
       "name": "Mirkwood Elk",
-      "reason": "no template for: Whenever this creature enters or attacks, return target Elf card from your graveyard to yo",
+      "reason": "",
       "scryfall_id": "eda8bfa5-1e7d-442d-9d8c-651eb5630124",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirkwood Meditator": {
@@ -175032,12 +175032,12 @@
     },
     "Mirkwood Trapper": {
       "edhrec_rank": 13895,
-      "gate": "template",
+      "gate": null,
       "name": "Mirkwood Trapper",
-      "reason": "no template for: Whenever a player attacks you, target attacking creature gets -2/-0 until end of turn",
+      "reason": "",
       "scryfall_id": "ca079e59-4433-49c7-9001-abac20b776e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirozel": {
@@ -175342,12 +175342,12 @@
     },
     "Mirror of Galadriel": {
       "edhrec_rank": 5729,
-      "gate": "template",
+      "gate": null,
       "name": "Mirror of Galadriel",
-      "reason": "no template for: {5}, {T}: Scry 1, then draw a card. This ability costs {1} less to activate for each legen",
+      "reason": "",
       "scryfall_id": "f6d04970-12c7-460f-a7bc-beb97b161246",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirror of Life Trapping": {

@@ -12738,6 +12738,11 @@
   "lightshell_duo": {
     "zone": "battlefield"
   },
+  "lignify": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "lilah_undefeated_slickshot": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12973,6 +12978,15 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "lorien_revealed": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "los_diablos_missile_base": {
     "life": {
       "0": 41
@@ -13015,6 +13029,10 @@
     },
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "lothlorien_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "lotus_cobra": {
     "zone": "battlefield"
@@ -14120,7 +14138,19 @@
     },
     "zone": "battlefield"
   },
+  "mirkwood_elk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mirkwood_trapper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mirri_cat_warrior": {
+    "zone": "battlefield"
+  },
+  "mirror_of_galadriel": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mirrormade": {
