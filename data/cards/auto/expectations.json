@@ -22539,6 +22539,13 @@
   "thaumaturge_s_familiar": {
     "zone": "battlefield"
   },
+  "the_balrog_of_moria": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_chain_veil": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22710,6 +22717,9 @@
   },
   "the_moment": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_mouth_of_sauron": {
     "zone": "battlefield"
   },
   "the_mycosynth_gardens": {

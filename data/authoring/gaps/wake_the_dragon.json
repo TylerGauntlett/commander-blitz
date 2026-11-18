@@ -1,0 +1,20 @@
+{
+  "card_id": "wake_the_dragon",
+  "name": "Wake the Dragon",
+  "oracle_text": "Create a 6/6 black and red Dragon creature token with flying, menace, and \"Whenever this token deals combat damage to a player, gain control of target artifact that player controls.\"\nFlashback {6}{B}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Create a 6/6 black and red Dragon creature token with flying, menace, and \"Whenever this token deals combat damage to a player, gain control of target artifact that player controls.\""
+  ],
+  "needs": [
+    {
+      "capability": "dragon_6_6_br_flying_menace_steal_artifact_token",
+      "kind": "token",
+      "what": "a 6/6 black and red Dragon creature token with flying, menace, and \"Whenever this token deals combat damage to a player, gain control of target artifact that player controls.\"",
+      "why_existing_wont_do": "token_ids has dragon_6_6_r_flying, but it is red only, lacks menace and lacks the combat-damage trigger that gains control of an artifact the damaged player controls; create_token cannot add colors, keywords or abilities to a pooled token"
+    }
+  ],
+  "closest_existing": [
+    "dragon_6_6_r_flying"
+  ],
+  "confidence": "high"
+}

@@ -279842,12 +279842,12 @@
     },
     "The Balrog of Moria": {
       "edhrec_rank": 4748,
-      "gate": "template",
+      "gate": null,
       "name": "The Balrog of Moria",
-      "reason": "no template for: When dies, you may exile it. When you do, for each opponent, exile up to one target creatu",
+      "reason": "",
       "scryfall_id": "2a3fcfdc-f2cf-42d8-8bb4-7308bc12746e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Balrog, Durin's Bane": {
@@ -281772,12 +281772,12 @@
     },
     "The Mouth of Sauron": {
       "edhrec_rank": 6629,
-      "gate": "template",
+      "gate": null,
       "name": "The Mouth of Sauron",
-      "reason": "no template for: When enters, target player mills three cards. Then amass Orcs X, where X is the number of ",
+      "reason": "",
       "scryfall_id": "76a88814-aa30-4297-b338-3d851bfe7256",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Muckslinger Gang": {
