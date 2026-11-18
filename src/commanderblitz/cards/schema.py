@@ -1222,6 +1222,12 @@ class AbilityModel(BaseModel):
     #: Not their planeswalkers or battles (506.2). Omitted, it may attack
     #: anything it otherwise could.
     defending: Literal["opponent_most_life", "attacked_you_last_turn"] | None = None
+    #: ``control``: the seat that controls what the static ``affects`` --
+    #: ``"you"`` for Control Magic's "**You** control enchanted creature",
+    #: ``"monarch"`` for Fealty to the Realm's "**The monarch** controls
+    #: enchanted creature" (`loader.vocabulary.STATIC_CONTROL_PLAYERS`).
+    #: Required there and refused on every other effect.
+    controller: str | None = None
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

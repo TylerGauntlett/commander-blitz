@@ -1010,6 +1010,8 @@ STATICS: dict[str, Entry] = {
                               "cost, granting `cast_gains_keywords` to what is cast that way.",
                               None),
     "cast_only_at_sorcery_speed": ("The player may cast matching spells only at sorcery speed.", None),
+    "control": ("The `controller` seat (`you`, `monarch`) controls the enchanted permanent while it applies.",
+                "\"You control enchanted creature\" — the `control` static"),
     "crew_power_bonus": ("Matching creatures crew as though their power were N greater.",
                          "Crews Vehicles as though its power were N greater"),
     "damage_life_floor": ("Damage can't reduce the player's life below N.", H_FLOOR),

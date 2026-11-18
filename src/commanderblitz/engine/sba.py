@@ -16,7 +16,12 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .player_statics import legend_rule_exempt, outcome_barred_by_static
-from .primitives import become_monarch, clear_until_next_turn, end_effects_of_leaving_player
+from .primitives import (
+    become_monarch,
+    clear_until_next_turn,
+    end_effects_of_leaving_player,
+    reconcile_static_control,
+)
 from .temp_effects import (
     clear_attack_taxes,
     clear_flash_permissions,
@@ -69,6 +74,12 @@ def check(state: GameState) -> bool:
     changed |= _legend_rule(state)
     changed |= _role_rule(state)
     changed |= _ascend(state)
+    # Not a state-based action of 704 but checked with them: a `control`
+    # static's layer-2 effect (613.1b) written onto `GameObject.controller`,
+    # so it is true whenever a player would receive priority, and anything it
+    # moves -- a legend now beside its twin, an Aura whose enchant clause reads
+    # "you control" -- is caught by the next pass (ADR 0030).
+    changed |= reconcile_static_control(state)
     return changed
 
 

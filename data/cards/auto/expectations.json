@@ -1125,6 +1125,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "archivist_of_gondor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archivist_of_oghma": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4202,6 +4209,11 @@
     },
     "zone": "graveyard"
   },
+  "confiscate": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "confiscation_coup": {
     "zone": "graveyard"
   },
@@ -4285,6 +4297,11 @@
   },
   "contingency_plan": {
     "zone": "graveyard"
+  },
+  "control_magic": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "conversion_apparatus": {
     "battlefield_count": 33,
@@ -4427,6 +4444,10 @@
     "zone": "battlefield"
   },
   "court_of_grace": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "court_of_ire": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5174,6 +5195,13 @@
   "deadly_recluse": {
     "zone": "battlefield"
   },
+  "dearly_departed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "death_baron": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5426,6 +5454,16 @@
   },
   "den_protector": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "denethor_stone_seer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "departed_deckhand": {
@@ -6229,6 +6267,15 @@
   },
   "earth_elemental": {
     "zone": "battlefield"
+  },
+  "earthquake": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 20,
+      "1": 20
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "earthshaker_dreadmaw": {
     "battlefield_count": 33,
@@ -7449,6 +7496,9 @@
   },
   "fathom_mage": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fealty_to_the_realm": {
     "zone": "battlefield"
   },
   "fear": {
@@ -13829,6 +13879,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mind_control": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "mind_maggots": {
     "graveyard_size": {
       "0": 2
@@ -15928,6 +15983,11 @@
   },
   "persistent_petitioners": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "persuasion": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "pest_infestation": {
@@ -20403,6 +20463,14 @@
   "spirebluff_canal": {
     "zone": "battlefield"
   },
+  "spirit_away": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "spirit_mantle": {
     "target_pt_delta": {
       "power": 1,
@@ -21166,6 +21234,16 @@
   },
   "sunscorched_divide": {
     "zone": "battlefield"
+  },
+  "sunset_revelry": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "sunspire_griffin": {
     "zone": "battlefield"
@@ -23228,6 +23306,9 @@
     },
     "zone": "graveyard"
   },
+  "treachery": {
+    "zone": "battlefield"
+  },
   "treasonous_ogre": {
     "zone": "battlefield"
   },
@@ -24317,6 +24398,10 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "village_bell_ringer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "village_pillagers": {

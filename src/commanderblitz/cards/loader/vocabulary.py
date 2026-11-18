@@ -572,6 +572,16 @@ STATIC_EFFECTS = frozenset(
         # the goader outright where goad only steers away "if able", and names
         # no goader for the `goaded` filter.
         "goaded",
+        # Control Magic, Become the Pilot, Fealty to the Realm: "**You** control
+        # enchanted creature" and "**The monarch** controls enchanted creature."
+        # A layer-2 control effect (613.1b) held for as long as the static
+        # applies, with `controller` naming the seat (`STATIC_CONTROL_PLAYERS`).
+        # Not read by `chars`: `GameObject.controller` is a field, so
+        # `primitives.reconcile_static_control` moves it where state-based
+        # actions are checked (docs/adr/0030). The `gain_control` op is the near
+        # miss: one-shot, so it neither ends when the Aura moves nor follows the
+        # crown.
+        "control",
         # Propaganda, and the pillowfort family behind it. Parameterised on a
         # `cost` like `ward`, and for the same reason it cannot be a keyword.
         # Read by `characteristics.attack_tax` at declare-attackers, where it
@@ -1013,6 +1023,10 @@ UNGRANTABLE_STATIC_EFFECTS = (
     # (`characteristics.static_timestamp`), and this one is nothing but a
     # timestamp comparison.
     | {"lose_keyword_timestamped"}
+    # A granted control static would be sourced on its recipient, so "you"
+    # would be the stolen creature's controller and `attached` would point at
+    # whatever the recipient is attached to. No printed card grants one.
+    | {"control"}
 )
 
 #: Statics a `grant_ability` static may hand to another permanent.
@@ -1633,6 +1647,11 @@ STATIC_AFFECTED_CONDITION_EFFECTS = frozenset({"skip_untap_step"})
 STATIC_MONARCH_PLAYERS = frozenset(
     {"you", "opponent", "each_opponent", "each_player", "all", AFFECTED_CONTROLLER}
 )
+
+#: Player specs a `control` static's `controller` may name: ``"you"`` is the
+#: static's controller (Control Magic), ``"monarch"`` whoever holds
+#: `GameState.monarch` as the static is read (Fealty to the Realm).
+STATIC_CONTROL_PLAYERS = frozenset({"you", "monarch"})
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static
 #: is read while the pipeline computes characteristics, including for objects

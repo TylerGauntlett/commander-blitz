@@ -143,7 +143,10 @@ class TempEffect:
     #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
     #: later one wins, which has to be decidable across the two lists an
     #: animation can live in -- `until_eot`, and `GameObject.animations` for one
-    #: with no duration -- so list order alone cannot answer it.
+    #: with no duration -- so list order alone cannot answer it. On a
+    #: :attr:`while_static` control entry it is the static's timestamp as the
+    #: entry began (`characteristics.static_timestamp`), so an Aura moved or
+    #: blinked onto the same permanent is a new effect rather than this one.
     timestamp: int = 0
     #: "…**until your next turn**" (611.2b) rather than until end of turn: the
     #: seat whose next turn ends it, and ``None`` for the ordinary cleanup
@@ -195,6 +198,16 @@ class TempEffect:
     #: kind is removed, so a counter put on again later does not revive it --
     #: `AttackMark.while_counter`'s clock, on a characteristic.
     while_counter: str | None = None
+    #: For ``kind == "control"``: the entry is a ``control`` **static's** hold
+    #: on this permanent (Control Magic, Fealty to the Realm) rather than a
+    #: steal made by an effect, and :attr:`source` is the permanent with the
+    #: static. No clock ends it: `primitives.reconcile_static_control` owns it
+    #: wholesale -- creates it when the static starts applying, moves control
+    #: as the static's seat changes (:attr:`new_controller` is the seat it last
+    #: gave the permanent to, :attr:`previous_controller` the one it took it
+    #: from), and ends it, with the handback, once the static no longer applies
+    #: to this permanent.
+    while_static: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -217,6 +230,7 @@ class TempEffect:
             "while_controller": self.while_controller,
             "while_source_on_battlefield": self.while_source_on_battlefield,
             "while_counter": self.while_counter,
+            "while_static": self.while_static,
         }
 
 

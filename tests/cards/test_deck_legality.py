@@ -50,6 +50,7 @@ PRECONS = {
     "lcc_blood_rites",
     "lcc_explorers_of_the_deep",
     "lcc_veloci_ramp_tor",
+    "ltc_riders_of_rohan",
     "mkc_deep_clue_sea",
     "mkc_revenant_recon",
     "msc_avengers_assemble",

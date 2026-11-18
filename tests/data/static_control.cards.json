@@ -1,0 +1,69 @@
+{
+  "_comment": "Cards for tests/unit/effects/test_static_control.py. Never part of a deck list. `t_scm_magic` is Control Magic's (and Become the Pilot's) control line alone at no cost; `t_scm_fealty` is Fealty to the Realm's \"The monarch controls enchanted creature\" alone, without its enters trigger or its attack clauses, so the tests set the crown by hand; `t_scm_bear` is a vanilla creature for them to take.",
+  "cards": [
+    {
+      "id": "t_scm_magic",
+      "name": "Test Control Charm",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "mana_cost": "{0}",
+      "colors": [],
+      "color_identity": [],
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"zone": "battlefield", "types": ["Creature"]}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You control enchanted creature.",
+          "effect": "control",
+          "affects": {"attached": true},
+          "controller": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_scm_fealty",
+      "name": "Test Fealty Charm",
+      "oracle_text": "Enchant creature\nThe monarch controls enchanted creature.",
+      "mana_cost": "{0}",
+      "colors": [],
+      "color_identity": [],
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"zone": "battlefield", "types": ["Creature"]}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "The monarch controls enchanted creature.",
+          "effect": "control",
+          "affects": {"attached": true},
+          "controller": "monarch"
+        }
+      ]
+    },
+    {
+      "id": "t_scm_bear",
+      "name": "Test Coveted Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}
