@@ -19544,6 +19544,10 @@
   "seraph_of_dawn": {
     "zone": "battlefield"
   },
+  "seraph_of_the_masses": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seraph_of_the_suns": {
     "zone": "battlefield"
   },
@@ -21941,6 +21945,14 @@
   },
   "suspicious_bookcase": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "suture_priest": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "svyelun_of_sea_and_sky": {
