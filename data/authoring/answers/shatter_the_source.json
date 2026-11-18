@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "shatter_the_source",
+    "name": "Shatter the Source",
+    "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nChoose one —\n• Shatter the Source deals 6 damage to target creature, planeswalker, or battle.\n• Destroy target artifact.",
+    "mana_cost": "{5}{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "pay_generic_with": "tap_creatures",
+    "targets": [
+      {
+        "id": "burned",
+        "kind": "permanent",
+        "mode": 0,
+        "selector": {"any_types": ["Creature", "Planeswalker", "Battle"], "zone": "battlefield"}
+      },
+      {
+        "id": "shattered",
+        "kind": "permanent",
+        "mode": 1,
+        "selector": {"types": ["Artifact"], "zone": "battlefield"}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {
+            "label": "Shatter the Source deals 6 damage to target creature, planeswalker, or battle.",
+            "effects": [{"op": "damage", "amount": {"const": 6}, "target": "burned"}]
+          },
+          {
+            "label": "Destroy target artifact.",
+            "effects": [{"op": "destroy", "objects": {"target": "shattered"}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard", "opponent_battlefield_count": 5}
+}
