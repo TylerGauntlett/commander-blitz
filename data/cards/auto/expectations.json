@@ -19787,6 +19787,12 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "shatter_the_source": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "shattered_landscape": {
     "zone": "battlefield"
   },
@@ -22569,6 +22575,13 @@
   },
   "temple_of_triumph": {
     "zone": "battlefield"
+  },
+  "temporal_cleansing": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "graveyard"
   },
   "temporal_mastery": {
     "hand_size": {

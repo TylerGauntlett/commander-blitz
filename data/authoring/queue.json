@@ -243112,12 +243112,12 @@
     },
     "Shatter the Source": {
       "edhrec_rank": 14001,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Shatter the Source",
-      "reason": "opponent battlefield is 6, expected 5",
+      "reason": "",
       "scryfall_id": "032720a1-410b-4638-9294-35fd8e27375f",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shattered Acolyte": {
@@ -277372,12 +277372,12 @@
     },
     "Temporal Cleansing": {
       "edhrec_rank": 12722,
-      "gate": "template",
+      "gate": null,
       "name": "Temporal Cleansing",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "50ee7315-ec53-43d2-841e-8ec192b850f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temporal Distortion": {
