@@ -1,0 +1,18 @@
+{
+  "card_id": "kasla_the_broken_halo",
+  "name": "Kasla, the Broken Halo",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFlying, vigilance, haste\nWhenever you cast another spell that has convoke, scry 2, then draw a card.",
+  "blocked_sentences": [
+    "Whenever you cast another spell that has convoke, scry 2, then draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "convoke",
+      "kind": "selector",
+      "what": "a spell_cast trigger filter key matching a spell that has convoke (a card whose pay_generic_with is \"tap_creatures\", printed or granted), e.g. filter {\"has_convoke\": true}, combined with exclude_self for \"another spell\"",
+      "why_existing_wont_do": "Convoke is carried as the card-level pay_generic_with: \"tap_creatures\", not as a keyword, so the trigger filter's `keywords` key cannot name it (convoke is not in the keyword list); `convoked` is a selector over the creatures that tapped to pay for a spell, not a test of whether a spell has convoke, and it is not in trigger_filter_keys. No trigger_filter_key reads pay_generic_with. The Convoke line itself and the scry/draw effects are expressible (pay_generic_with, scry, draw)."
+    }
+  ],
+  "closest_existing": ["spell_cast", "pay_generic_with", "convoked", "scry", "draw"],
+  "confidence": "high"
+}

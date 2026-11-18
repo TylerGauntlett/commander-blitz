@@ -150598,6 +150598,83 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Spirit"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Sacrifice a Spirit: Add {R}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "kykar_wind_s_fury",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Kykar, Wind's Fury",
+      "oracle_text": "Flying\nWhenever you cast a noncreature spell, create a 1/1 white Spirit creature token with flying.\nSacrifice a Spirit: Add {R}.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -168378,6 +168455,32 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "meeting_of_minds",
+      "mana_cost": "{3}{U}",
+      "name": "Meeting of Minds",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDraw two cards.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -171106,6 +171209,66 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Basic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "migratory_route",
+      "mana_cost": "{3}{W}{U}",
+      "name": "Migratory Route",
+      "oracle_text": "Create four 1/1 white Bird creature tokens with flying.\nBasic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "create_token",
+          "token": "bird_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -173501,6 +173664,78 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "vanished",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "controller": "owner",
+                  "objects": {
+                    "binding": "vanished"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return that card to the battlefield under its owner's control at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "is_token": false,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature becomes tapped, exile up to one target nonland, nontoken permanent. Return that card to the battlefield under its owner's control at the beginning of the next end step.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "mistmeadow_vanisher",
+      "mana_cost": "{2}{W/U}",
+      "name": "Mistmeadow Vanisher",
+      "oracle_text": "Whenever this creature becomes tapped, exile up to one target nonland, nontoken permanent. Return that card to the battlefield under its owner's control at the beginning of the next end step.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Kithkin",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -182038,6 +182273,89 @@
         "Zombie"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "populate_original",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Populate: choose a creature token you control to copy"
+            },
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "populate_original"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, populate. (Create a token that's a copy of a creature token you control.)",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature token you control enters, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "nesting_dovehawk",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Nesting Dovehawk",
+      "oracle_text": "Flying\nAt the beginning of combat on your turn, populate. (Create a token that's a copy of a creature token you control.)\nWhenever a creature token you control enters, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

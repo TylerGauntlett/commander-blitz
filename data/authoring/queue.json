@@ -153362,12 +153362,12 @@
     },
     "Kykar, Wind's Fury": {
       "edhrec_rank": 3124,
-      "gate": "template",
+      "gate": null,
       "name": "Kykar, Wind's Fury",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 white Spirit creature token with flyin",
+      "reason": "",
       "scryfall_id": "013fdf2d-8fa5-4d84-9a4d-e39dbed1c31b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kykar, Zephyr Awakener": {
@@ -170352,12 +170352,12 @@
     },
     "Meeting of Minds": {
       "edhrec_rank": 5722,
-      "gate": "template",
+      "gate": null,
       "name": "Meeting of Minds",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "e2656fc4-5866-4792-a5dc-be29d166a105",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meeting of the Five": {
@@ -173152,12 +173152,12 @@
     },
     "Migratory Route": {
       "edhrec_rank": 6981,
-      "gate": "template",
+      "gate": null,
       "name": "Migratory Route",
-      "reason": "no template for: Create four 1/1 white Bird creature tokens with flying",
+      "reason": "",
       "scryfall_id": "e8c8f35e-faa8-4537-b320-c84ebe8e71e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miirym, Sentinel Wyrm": {
@@ -176382,12 +176382,12 @@
     },
     "Mistmeadow Vanisher": {
       "edhrec_rank": 15705,
-      "gate": "template",
+      "gate": null,
       "name": "Mistmeadow Vanisher",
-      "reason": "no template for: Whenever this creature becomes tapped, exile up to one target nonland, nontoken permanent.",
+      "reason": "",
       "scryfall_id": "13e9382c-f3c8-4b30-99cb-87f69f5828c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mistmeadow Witch": {
@@ -185382,12 +185382,12 @@
     },
     "Nesting Dovehawk": {
       "edhrec_rank": 3107,
-      "gate": "template",
+      "gate": null,
       "name": "Nesting Dovehawk",
-      "reason": "no template for: At the beginning of combat on your turn, populate",
+      "reason": "",
       "scryfall_id": "5d7b2638-2e6b-49c4-b716-9286ee0866d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Dragon": {
