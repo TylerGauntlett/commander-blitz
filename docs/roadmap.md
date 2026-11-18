@@ -83,7 +83,7 @@ each heading; this table is generated from them.
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
 | [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
 | [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | Voting: will of the council and council's dilemma, The Ring tempts you | 0 |
-| [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | nothing | 0 |
+| [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
 | [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | nothing | 0 |
 | [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | nothing | 0 |
 | [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | nothing | 0 |
@@ -113,7 +113,7 @@ each heading; this table is generated from them.
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
-| [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 2 |
+| [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
@@ -155,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander).
 
 **Ready now, best first:**
 
@@ -258,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type)
 - [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
 - [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [The Ring tempts you](#the-ring-tempts-you)
+- [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -3394,7 +3393,7 @@ whole-game test able to draw the deck.
 
 ### The Hosts of Mordor (Tales of Middle-earth Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The Ring tempts you](#the-ring-tempts-you).
 
 #### Today
 
@@ -3405,6 +3404,13 @@ coming-soon shell on the shelf: its row `ltc_the_hosts_of_mordor` is in
 `python scripts/sync_precons.py --missing ltc_the_hosts_of_mordor` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](rules-coverage.md#not-implemented)). The deck's
+commander, Sauron, Lord of the Rings, has the Ring tempt you whenever an
+opponent's commander dies, and Fiery Inscription, In the Darkness Bind Them and
+Lord of the Nazgûl tempt you too, so the deck waits on
+[the Ring](the-ring-tempts-you.md). The rest of its missing cards wait on
+tokens and smaller capabilities this batch builds once the Ring lands.
 
 #### The change
 

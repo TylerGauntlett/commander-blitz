@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [the-ring-tempts-you]
+status: proposed
 rank: 66
 ---
 
@@ -19,6 +19,13 @@ coming-soon shell on the shelf: its row `ltc_the_hosts_of_mordor` is in
 `python scripts/sync_precons.py --missing ltc_the_hosts_of_mordor` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](../rules-coverage.md#not-implemented)). The deck's
+commander, Sauron, Lord of the Rings, has the Ring tempt you whenever an
+opponent's commander dies, and Fiery Inscription, In the Darkness Bind Them and
+Lord of the Nazgûl tempt you too, so the deck waits on
+[the Ring](the-ring-tempts-you.md). The rest of its missing cards wait on
+tokens and smaller capabilities this batch builds once the Ring lands.
 
 ## The change
 
