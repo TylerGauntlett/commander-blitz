@@ -1,0 +1,29 @@
+{
+  "card_id": "frodo_adventurous_hobbit",
+  "name": "Frodo, Adventurous Hobbit",
+  "oracle_text": "Partner with Sam, Loyal Attendant\nVigilance\nWhenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.",
+  "blocked_sentences": [
+    "Whenever Frodo attacks, if you gained 3 or more life this turn, the Ring tempts you. Then if Frodo is your Ring-bearer and the Ring has tempted you two or more times this game, draw a card.",
+    "Partner with Sam, Loyal Attendant"
+  ],
+  "needs": [
+    {
+      "capability": "the-ring-tempts-you",
+      "kind": "op",
+      "what": "an op 'the Ring tempts you' (701.54): the player gets the emblem-level Ring with its next ability unlocked and chooses a creature they control as Ring-bearer; plus a per-game count of how many times the Ring has tempted a player and a condition 'this permanent is your Ring-bearer'",
+      "why_existing_wont_do": "No ring/tempt op, Ring-bearer designation, or tempt counter exists in ops, condition_keys or value_keys; life_gained_this_turn covers the intervening-if, but the effect and the follow-up condition have nothing to map to"
+    },
+    {
+      "capability": "partner-with",
+      "kind": "keyword",
+      "what": "'Partner with <name>': deck-building pairing with that specific card, plus 'When this creature enters, target player may search their library for <name>, reveal it, put it into their hand, then shuffle'",
+      "why_existing_wont_do": "The 'partner' keyword is generic partner with no named-partner restriction or enters tutor trigger"
+    }
+  ],
+  "closest_existing": [
+    "partner",
+    "life_gained_this_turn",
+    "draw"
+  ],
+  "confidence": "high"
+}

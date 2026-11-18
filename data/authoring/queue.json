@@ -20132,12 +20132,12 @@
     },
     "Banquet Guests": {
       "edhrec_rank": 4658,
-      "gate": "template",
+      "gate": null,
       "name": "Banquet Guests",
-      "reason": "no template for: Affinity for Foods",
+      "reason": "",
       "scryfall_id": "f4994a52-667f-46cf-9893-2f18b1f8bea2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banshee": {
@@ -24662,12 +24662,12 @@
     },
     "Bilbo, Birthday Celebrant": {
       "edhrec_rank": 7195,
-      "gate": "template",
+      "gate": null,
       "name": "Bilbo, Birthday Celebrant",
-      "reason": "no template for: If you would gain life, you gain that much life plus 1 instead",
+      "reason": "",
       "scryfall_id": "4cf6c13b-d898-4066-b006-9a7fa896d55a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bilbo, Fellow Conspirator": {
@@ -37062,12 +37062,12 @@
     },
     "Butterbur, Bree Innkeeper": {
       "edhrec_rank": 12475,
-      "gate": "template",
+      "gate": null,
       "name": "Butterbur, Bree Innkeeper",
-      "reason": "no template for: At the beginning of your end step, if you don't control a Food, create a Food token",
+      "reason": "",
       "scryfall_id": "f3fd9ff1-278b-4e6a-b30b-90250d8b5762",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Buy Your Silence": {
@@ -57392,12 +57392,12 @@
     },
     "Crypt Incursion": {
       "edhrec_rank": 4412,
-      "gate": "template",
+      "gate": null,
       "name": "Crypt Incursion",
-      "reason": "no template for: Exile all creature cards from target player's graveyard. You gain 3 life for each card exi",
+      "reason": "",
       "scryfall_id": "c3b71cc5-0a81-4cab-bae3-49335c04aaaa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crypt Lurker": {
@@ -78242,12 +78242,12 @@
     },
     "Eagles of the North": {
       "edhrec_rank": 6810,
-      "gate": "template",
+      "gate": null,
       "name": "Eagles of the North",
-      "reason": "no template for: When this creature enters, creatures you control get +1/+0 and gain first strike until end",
+      "reason": "",
       "scryfall_id": "068a5bf7-6faf-41d5-924d-cdf387c1a193",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eardrum Rattler": {
@@ -86322,12 +86322,12 @@
     },
     "Essence Warden": {
       "edhrec_rank": 1197,
-      "gate": "template",
+      "gate": null,
       "name": "Essence Warden",
-      "reason": "no template for: Whenever another creature enters, you gain 1 life",
+      "reason": "",
       "scryfall_id": "48431d2f-4011-48d2-b556-2078c1a45d85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Essence of Ajani": {
@@ -92692,12 +92692,12 @@
     },
     "Feasting Hobbit": {
       "edhrec_rank": 4066,
-      "gate": "template",
+      "gate": null,
       "name": "Feasting Hobbit",
-      "reason": "no template for: Devour Food 3",
+      "reason": "",
       "scryfall_id": "17662301-7284-40d4-af51-45a496c0eac0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feasting Troll King": {
@@ -106652,12 +106652,12 @@
     },
     "Generous Ent": {
       "edhrec_rank": 5071,
-      "gate": "template",
+      "gate": null,
       "name": "Generous Ent",
-      "reason": "no template for: When this creature enters, create a Food token",
+      "reason": "",
       "scryfall_id": "85d22d5d-3875-42ff-b51e-c6e21db201f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Generous Gift": {
@@ -117182,12 +117182,12 @@
     },
     "Great Oak Guardian": {
       "edhrec_rank": 6787,
-      "gate": "template",
+      "gate": null,
       "name": "Great Oak Guardian",
-      "reason": "no template for: When this creature enters, creatures target player controls get +2/+2 until end of turn. U",
+      "reason": "",
       "scryfall_id": "81b6f0ba-b325-48ed-899a-4a7db7944102",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Great Sable Stag": {
@@ -154292,12 +154292,12 @@
     },
     "Landroval, Horizon Witness": {
       "edhrec_rank": 13563,
-      "gate": "template",
+      "gate": null,
       "name": "Landroval, Horizon Witness",
-      "reason": "no template for: Whenever two or more creatures you control attack a player, target attacking creature with",
+      "reason": "",
       "scryfall_id": "808029df-e1db-4fe0-b1ed-a75f8d496aa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Landscape Painter // Vibrant Idea": {
@@ -160372,12 +160372,12 @@
     },
     "Lobelia, Defender of Bag End": {
       "edhrec_rank": 7298,
-      "gate": "template",
+      "gate": null,
       "name": "Lobelia, Defender of Bag End",
-      "reason": "no template for: When Lobelia enters, look at the top card of each opponent's library and exile those cards",
+      "reason": "",
       "scryfall_id": "6d67a523-bda9-4f8b-bd50-dc015f9b4b7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lobotomy": {
@@ -171112,12 +171112,12 @@
     },
     "Mentor of the Meek": {
       "edhrec_rank": 635,
-      "gate": "template",
+      "gate": null,
       "name": "Mentor of the Meek",
-      "reason": "no template for: Whenever another creature you control with power 2 or less enters, you may pay {1}. If you",
+      "reason": "",
       "scryfall_id": "05b6a101-4d12-4f50-8f02-5c778e08b149",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mentor's Guidance": {
@@ -171902,12 +171902,12 @@
     },
     "Merry, Warden of Isengard": {
       "edhrec_rank": 5382,
-      "gate": "template",
+      "gate": null,
       "name": "Merry, Warden of Isengard",
-      "reason": "no template for: Partner with Pippin, Warden of Isengard",
+      "reason": "",
       "scryfall_id": "56a66d3b-3308-4db7-8fc1-97bb85bdcbf3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merseine": {
@@ -179972,12 +179972,12 @@
     },
     "Motivated Pony": {
       "edhrec_rank": 7955,
-      "gate": "template",
+      "gate": null,
       "name": "Motivated Pony",
-      "reason": "no template for: Whenever this creature attacks, attacking creatures get +1/+1 until end of turn. If a Food",
+      "reason": "",
       "scryfall_id": "9be4f8b6-90ef-4c77-ae70-bffae229d243",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mount Doom": {
@@ -193912,12 +193912,12 @@
     },
     "Orchard Strider": {
       "edhrec_rank": 11484,
-      "gate": "template",
+      "gate": null,
       "name": "Orchard Strider",
-      "reason": "no template for: When this creature enters, create two Food tokens",
+      "reason": "",
       "scryfall_id": "acdab158-3e36-42cd-9fda-e8282dbafeb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orchard Warden": {
@@ -202922,12 +202922,12 @@
     },
     "Pippin, Warden of Isengard": {
       "edhrec_rank": 4259,
-      "gate": "template",
+      "gate": null,
       "name": "Pippin, Warden of Isengard",
-      "reason": "no template for: Partner with Merry, Warden of Isengard",
+      "reason": "",
       "scryfall_id": "a0a7a648-125a-4cf4-bf8b-e1773d8723ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pipsqueak, Rebel Strongarm": {
@@ -207792,12 +207792,12 @@
     },
     "Prize Pig": {
       "edhrec_rank": 5413,
-      "gate": "template",
+      "gate": null,
       "name": "Prize Pig",
-      "reason": "no template for: Whenever you gain life, put that many ribbon counters on this creature. Then if there are ",
+      "reason": "",
       "scryfall_id": "a0b202d8-3c25-467e-86ed-6bea19bb869f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prized Amalgam": {
@@ -215352,12 +215352,12 @@
     },
     "Rapacious Guest": {
       "edhrec_rank": 3276,
-      "gate": "template",
+      "gate": null,
       "name": "Rapacious Guest",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, create a Food t",
+      "reason": "",
       "scryfall_id": "ff9dfba4-07d2-4407-a441-88acc7284d43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rapacious One": {
@@ -222762,12 +222762,12 @@
     },
     "Revive the Shire": {
       "edhrec_rank": 2931,
-      "gate": "template",
+      "gate": null,
       "name": "Revive the Shire",
-      "reason": "no template for: Return target permanent card from your graveyard to your hand. Create a Food token",
+      "reason": "",
       "scryfall_id": "46b7f493-1b57-4b07-8510-30703282f879",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Revivify": {
@@ -227712,12 +227712,12 @@
     },
     "Rosie Cotton of South Lane": {
       "edhrec_rank": 1250,
-      "gate": "template",
+      "gate": null,
       "name": "Rosie Cotton of South Lane",
-      "reason": "no template for: When Rosie Cotton enters, create a Food token",
+      "reason": "",
       "scryfall_id": "75338f49-1f02-4333-87e4-5779ef14e688",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rosnakht, Heir of Rohgahh": {
@@ -234332,12 +234332,12 @@
     },
     "Savvy Hunter": {
       "edhrec_rank": 3165,
-      "gate": "template",
+      "gate": null,
       "name": "Savvy Hunter",
-      "reason": "no template for: Whenever this creature attacks or blocks, create a Food token",
+      "reason": "",
       "scryfall_id": "15c98441-2b31-4e48-a399-f36dffcfa41d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savvy Trader": {
@@ -244682,12 +244682,12 @@
     },
     "Shire Shirriff": {
       "edhrec_rank": 10280,
-      "gate": "template",
+      "gate": null,
       "name": "Shire Shirriff",
-      "reason": "no template for: When this creature enters, you may sacrifice a token. When you do, exile target creature a",
+      "reason": "",
       "scryfall_id": "444b687f-2571-4c55-a497-d24b9e18bc0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shire Terrace": {
@@ -280952,12 +280952,12 @@
     },
     "The Gaffer": {
       "edhrec_rank": 1706,
-      "gate": "template",
+      "gate": null,
       "name": "The Gaffer",
-      "reason": "no template for: At the beginning of each end step, if you gained 3 or more life this turn, draw a card",
+      "reason": "",
       "scryfall_id": "4b4db080-dc29-40ca-a8ff-a7c8d5f87853",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Ghoul, Gunslinger": {
@@ -292042,12 +292042,12 @@
     },
     "Treebeard, Gracious Host": {
       "edhrec_rank": 3563,
-      "gate": "template",
+      "gate": null,
       "name": "Treebeard, Gracious Host",
-      "reason": "no template for: Trample, ward {2}",
+      "reason": "",
       "scryfall_id": "cf6be41a-1acd-4668-8f13-ccd495fbc7bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treefolk Harbinger": {
@@ -318422,12 +318422,12 @@
     },
     "Woodfall Primus": {
       "edhrec_rank": 3939,
-      "gate": "template",
+      "gate": null,
       "name": "Woodfall Primus",
-      "reason": "no template for: When this creature enters, destroy target noncreature permanent",
+      "reason": "",
       "scryfall_id": "97914abe-71d5-4bd6-87d7-8e7379abf1aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Woodland Acolyte // Mend the Wilds": {

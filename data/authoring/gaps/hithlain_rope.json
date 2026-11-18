@@ -1,0 +1,23 @@
+{
+  "card_id": "hithlain_rope",
+  "name": "Hithlain Rope",
+  "oracle_text": "This artifact can't be sacrificed.\n{1}, {T}: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. The player to your right gains control of this artifact.\n{2}, {T}: Draw a card. The player to your right gains control of this artifact.",
+  "blocked_sentences": [
+    "{1}, {T}: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. The player to your right gains control of this artifact.",
+    "{2}, {T}: Draw a card. The player to your right gains control of this artifact."
+  ],
+  "needs": [
+    {
+      "capability": "player_to_your_right",
+      "kind": "selector",
+      "what": "a player spec naming the next living seat to the right of the ability controller (the seat before them in turn order, engine.effects.ops_control.neighbour with direction \"right\"), usable as gain_control.player so \"The player to your right gains control of this artifact\" gives the source to that seat permanently",
+      "why_existing_wont_do": "gain_control.player resolves through select_players, whose specs are you/opponent/each_opponent/target/controller/active_player/monarch and the like, with no seat-relative neighbour; choose_player cannot restrict its pool to one neighbour either. rotate_control with direction \"left\" and a self_only pool happens to hand the source to the seat whose left neighbour currently controls it, but it is keyed on the permanent current controller rather than the ability controller (\"your\"), so a second activation resolving after the first already moved the rope sends it one seat further instead of leaving it with the player to the activator right; it is a rotation op, not this sentence"
+    }
+  ],
+  "closest_existing": [
+    "gain_control",
+    "rotate_control",
+    "cant_sacrifice"
+  ],
+  "confidence": "high"
+}

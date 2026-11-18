@@ -1,0 +1,16 @@
+{
+  "card_id": "call_for_unity",
+  "name": "Call for Unity",
+  "oracle_text": "Revolt — At the beginning of your end step, if a permanent left the battlefield under your control this turn, put a unity counter on this enchantment.\nCreatures you control get +1/+1 for each unity counter on this enchantment.",
+  "blocked_sentences": [
+    "Revolt — At the beginning of your end step, if a permanent left the battlefield under your control this turn, put a unity counter on this enchantment"
+  ],
+  "needs": [{
+    "capability": "revolt",
+    "kind": "value",
+    "what": "a per-turn tracker of permanents that left the battlefield under a player's control this turn (any destination: graveyard, exile, hand, library; tokens included), readable as a condition or value such as permanents_left_battlefield_this_turn for 'you', so an end_step trigger's intervening-if can test it",
+    "why_existing_wont_do": "value_keys has permanents_entered_this_turn, creatures_died_this_turn and permanents_to_graveyard_this_turn, but nothing counts permanents that left to exile or hand (or tokens that ceased to exist); permanents_to_graveyard_this_turn would miss flicker/bounce/exile and so changes the card. condition_keys has no revolt flag, and has_turn_flag reads flags set on the source, not a zone-change history"
+  }],
+  "closest_existing": ["permanents_to_graveyard_this_turn", "has_turn_flag"],
+  "confidence": "high"
+}

@@ -1,0 +1,16 @@
+{
+  "card_id": "gollum_obsessed_stalker",
+  "name": "Gollum, Obsessed Stalker",
+  "oracle_text": "Skulk (This creature can't be blocked by creatures with greater power.)\nAt the beginning of your end step, each opponent dealt combat damage this game by a creature named Gollum, Obsessed Stalker loses life equal to the amount of life you gained this turn.",
+  "blocked_sentences": [
+    "At the beginning of your end step, each opponent dealt combat damage this game by a creature named Gollum, Obsessed Stalker loses life equal to the amount of life you gained this turn."
+  ],
+  "needs": [{
+    "capability": "dealt_combat_damage_this_game_by_name",
+    "kind": "selector",
+    "what": "a player selector for 'each opponent dealt combat damage this game by a creature named <name>': a per-game ledger of seats dealt combat damage, keyed by the dealing creature's name (any object with that name, across zone changes and across turns), never cleared at end of turn",
+    "why_existing_wont_do": "The closest is the player spec dealt_combat_damage_by (not even in the packet reference), which reads TurnLedger.players_dealt_combat_damage_by / _by_subtype -- keyed by oid or subtype and cleared every turn, so it answers 'this turn' by 'self' or a subtype, never 'this game' by a card name. The condition combat_damage_by is likewise per-turn and subtype-only. life_gained_this_turn covers the amount and lose_life the effect; only the player set is missing."
+  }],
+  "closest_existing": ["dealt_combat_damage_by", "combat_damage_by", "life_gained_this_turn"],
+  "confidence": "high"
+}
