@@ -1,0 +1,18 @@
+{
+  "card_id": "the_locust_god",
+  "name": "The Locust God",
+  "oracle_text": "Flying\nWhenever you draw a card, create a 1/1 blue and red Insect creature token with flying and haste.\n{2}{U}{R}: Draw a card, then discard a card.\nWhen The Locust God dies, return it to its owner's hand at the beginning of the next end step.",
+  "blocked_sentences": [
+    "Whenever you draw a card, create a 1/1 blue and red Insect creature token with flying and haste."
+  ],
+  "needs": [
+    {
+      "capability": "insect_1_1_ur_flying_haste",
+      "kind": "token",
+      "what": "a 1/1 blue and red Insect creature token with flying and haste",
+      "why_existing_wont_do": "token_ids has Insects only as insect_1_1_b_flying, insect_1_1_bg, insect_1_1_g, insect_1_1_g_flying_deathtouch and insect_2_1_w_flying; none is blue and red, and none has haste. The draw trigger, the loot ability (draw then discard) and the dies trigger with a delayed end-step return look expressible with draw/discard/delay ops once the token exists."
+    }
+  ],
+  "closest_existing": ["insect_1_1_b_flying", "elemental_1_1_ur"],
+  "confidence": "high"
+}

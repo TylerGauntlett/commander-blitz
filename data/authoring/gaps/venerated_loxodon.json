@@ -1,0 +1,18 @@
+{
+  "card_id": "venerated_loxodon",
+  "name": "Venerated Loxodon",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nWhen this creature enters, put a +1/+1 counter on each creature that convoked it.",
+  "blocked_sentences": [
+    "When this creature enters, put a +1/+1 counter on each creature that convoked it."
+  ],
+  "needs": [
+    {
+      "capability": "convoke",
+      "kind": "engine",
+      "what": "carry the creatures that convoked a permanent spell (the spell's 'convoked' StackItem binding, 702.51c) onto the permanent it becomes, so the permanent's own self_enters trigger can read them with the {\"convoked\": true} selector key; creatures that left the battlefield in between must still be struck out",
+      "why_existing_wont_do": "pay_generic_with: 'tap_creatures' expresses Convoke, and the 'convoked' selector key reads CONVOKED_BINDING, but that binding lives only on the spell's StackItem (written in game.py at cast, read while the spell itself resolves, as Lethal Scheme does). Permanent resolution in stack.py does not copy it onto the entering object or into the ETB TriggerInstance bindings, so on a creature's enters trigger the selector would match nothing and the card would silently put no counters"
+    }
+  ],
+  "closest_existing": ["convoked", "add_counters", "pay_generic_with"],
+  "confidence": "high"
+}

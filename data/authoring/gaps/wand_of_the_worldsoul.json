@@ -1,0 +1,14 @@
+{
+  "card_id": "wand_of_the_worldsoul",
+  "name": "Wand of the Worldsoul",
+  "oracle_text": "This artifact enters tapped.\n{T}: Add {W}.\n{T}: The next spell you cast this turn has convoke.",
+  "blocked_sentences": ["{T}: The next spell you cast this turn has convoke."],
+  "needs": [{
+    "capability": "convoke",
+    "kind": "op",
+    "what": "a one-shot op (or a `next_spell` option on a grant op) that gives the next spell its controller casts this turn a pay_generic_with currency -- here tap_creatures (convoke) -- consumed by that one cast and expiring at end of turn",
+    "why_existing_wont_do": "Convoke exists only as the card-level `pay_generic_with` and the permanent static `grant_pay_generic_with`, which lasts while the source is on the battlefield and covers every matching spell, not just the next one this turn. The `next_spell` one-shots (`grant_flash_permission`, `next_spell_cost_reduction`, `uncounterable_this_turn`) grant flash, a discount or uncounterability, never a pay_generic_with currency"
+  }],
+  "closest_existing": ["grant_pay_generic_with", "grant_flash_permission", "next_spell_cost_reduction"],
+  "confidence": "high"
+}

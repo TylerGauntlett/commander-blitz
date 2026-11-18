@@ -1,0 +1,22 @@
+{
+  "card_id": "chant_of_vitu_ghazi",
+  "name": "Chant of Vitu-Ghazi",
+  "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nPrevent all damage that would be dealt by creatures this turn. You gain life equal to the damage prevented this way.",
+  "blocked_sentences": [
+    "Prevent all damage that would be dealt by creatures this turn. You gain life equal to the damage prevented this way."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "op",
+      "what": "a this-turn prevention op keyed to the damage's SOURCE by an effect-side selector (here {types: [Creature]}), matched against the dealer's current characteristics each time damage would be dealt, so creatures that enter or become creatures later in the turn are covered; it must stop combat AND noncombat damage to any recipient (players and permanents), and take the 615.5 `effects` rider with the prevented amount as {binding: amount} so 'You gain life equal to the damage prevented this way' is a gain_life of that binding for the spell's controller",
+      "why_existing_wont_do": "`prevent_combat_damage` has the right `by` dealer filter and the right clock but only ever touches combat damage and takes no `effects` rider, so a creature's fight, ping or ETB damage would get through and no life would be gained. `prevent_damage_permanent` with `dealt: \"by\"` over all creatures carries the rider and stops both kinds, but it shields only the objects matched at resolution, so a creature that enters, or a permanent that becomes a creature, later this turn still deals damage. `prevent_damage` (op) shields seats, not by source, and misses damage to creatures. The `prevent_damage` static is continuous on a permanent, not a spell's one-turn effect."
+    }
+  ],
+  "closest_existing": [
+    "prevent_combat_damage",
+    "prevent_damage_permanent",
+    "prevent_damage"
+  ],
+  "confidence": "high"
+}

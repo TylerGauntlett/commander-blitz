@@ -10,15 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**516 cards** blocked by **445** capabilities.
+**530 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
-| [prevent-damage-by-source](#prevent-damage-by-source) | 9 | 2713 | replacement, static_effect |
-| [planechase](#planechase) | 6 | 5666 | engine |
+| [prevent-damage-by-source](#prevent-damage-by-source) | 10 | 2713 | op, replacement, static_effect |
+| [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
+| [planechase](#planechase) | 7 | 5666 | engine |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
@@ -40,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
+| [voting](#voting) | 3 | 8294 | decision, op |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
@@ -78,7 +80,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [undaunted](#undaunted) | 2 | 3405 | value |
 | [venture](#venture) | 2 | 19644 | engine |
-| [voting](#voting) | 2 | 8294 | decision, op |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [wraith-token](#wraith-token) | 2 | 3658 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
@@ -86,6 +87,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
+| [activated-this-turn](#activated-this-turn) | 1 | 13487 | selector |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
@@ -112,6 +114,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
+| [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
@@ -157,7 +160,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
-| [convoke](#convoke) | 1 | 13212 | static_effect |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -196,6 +198,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [emerge](#emerge) | 1 | 17443 | value |
@@ -242,6 +245,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flashback](#flashback) | 1 | 14595 | op |
+| [flashback-nonmana-cost](#flashback-nonmana-cost) | 1 | 7468 | cost |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretell](#foretell) | 1 | 9914 | op |
@@ -275,11 +279,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
 | [horse-2-2-w-horsemanship-lord-token](#horse-2-2-w-horsemanship-lord-token) | 1 | 13482 | token |
+| [human-1-1-r](#human-1-1-r) | 1 | 13814 | token |
 | [human-1-1-w-ward2-token](#human-1-1-w-ward2-token) | 1 | 18598 | token |
 | [human-doctor-discount-token](#human-doctor-discount-token) | 1 | 12626 | token |
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [human-noble-1-1-w-vanishing-token](#human-noble-1-1-w-vanishing-token) | 1 | 13482 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [insect-1-1-ur-flying-haste](#insect-1-1-ur-flying-haste) | 1 | 1699 | token |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -363,6 +369,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
+| [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -393,6 +400,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
+| [sandbox-combat-targets](#sandbox-combat-targets) | 1 | 9654 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -411,6 +419,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
@@ -683,10 +692,12 @@ Blocks **15** cards.
 
 ## prevent-damage-by-source
 
-Blocks **9** cards.
+Blocks **10** cards.
 
 - **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
+- **(op)** a this-turn prevention op keyed to the damage's SOURCE by an effect-side selector (here {types: [Creature]}), matched against the dealer's current characteristics each time damage would be dealt, so creatures that enter or become creatures later in the turn are covered; it must stop combat AND noncombat damage to any recipient (players and permanents), and take the 615.5 `effects` rider with the prevented amount as {binding: amount} so 'You gain life equal to the damage prevented this way' is a gain_life of that binding for the spell's controller
+  <br>Why the existing vocabulary won't do: `prevent_combat_damage` has the right `by` dealer filter and the right clock but only ever touches combat damage and takes no `effects` rider, so a creature's fight, ping or ETB damage would get through and no life would be gained. `prevent_damage_permanent` with `dealt: "by"` over all creatures carries the rider and stops both kinds, but it shields only the objects matched at resolution, so a creature that enters, or a permanent that becomes a creature, later this turn still deals damage. `prevent_damage` (op) shields seats, not by source, and misses damage to creatures. The `prevent_damage` static is continuous on a permanent, not a spell's one-turn effect.
 - **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, e.g. a dealer filter of {"enchanted_by": true} (a creature with at least one Aura attached to it)
   <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. The `enchanted_by` filter key says 'enchanted creatures'; nothing lets the prevention shield read it of the dealer.
 - **(static_effect)** a dealer-side total shield on the `prevent_damage` static: `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` preventing all combat damage this creature would deal to any recipient (creatures, players and planeswalkers). The 'dealt to' half is already expressible as a second `prevent_damage` static with `prevent_all`, `combat_only` and `affects: {"self_only": true}`
@@ -710,6 +721,8 @@ Blocks **9** cards.
   - Prevent all combat damage that would be dealt to and dealt by this creature.
 - **Weeping Angel** (rank 9247) — `weeping_angel`
   - If this creature would deal combat damage to a creature, prevent that damage and that creature's owner shuffles it into their library.
+- **Chant of Vitu-Ghazi** (rank 12136) — `chant_of_vitu_ghazi`
+  - Prevent all damage that would be dealt by creatures this turn. You gain life equal to the damage prevented this way.
 - **Statecraft** (rank 14038) — `statecraft`
   - Prevent all combat damage that would be dealt to and dealt by creatures you control.
 - **Armored Transport** (rank 22151) — `armored_transport`
@@ -728,9 +741,48 @@ Blocks **9** cards.
 
 </details>
 
+## convoke
+
+Blocks **7** cards.
+
+- **(op)** a one-shot op that grants a pay_generic_with currency (convoke, i.e. tap_creatures) to the next spell a player casts this turn, consumed by that cast -- the next_spell shape of grant_flash_permission / next_spell_cost_reduction / uncounterable_this_turn, but handing over a pay_generic_with currency
+  <br>Why the existing vocabulary won't do: Convoke itself is the card-level pay_generic_with "tap_creatures", and grant_pay_generic_with is only a player-wide static that lasts while its source is on the battlefield and covers every matching spell, not a one-shot grant for the next spell this turn; next_spell_cost_reduction gives a flat generic discount, not a tap-creatures payment, and grant_flash_permission / uncounterable_this_turn carry next_spell but grant other things
+- **(selector)** a spell_cast trigger filter key matching a spell that has convoke (a card whose pay_generic_with is "tap_creatures"), e.g. filter {"has_convoke": true}
+  <br>Why the existing vocabulary won't do: Convoke is carried as the card-level pay_generic_with: "tap_creatures", not as a keyword, so the filter's `keywords` key cannot name it (convoke is not in the keyword list); `convoked` is a selector over the creatures that tapped to pay for a spell, not a test of whether a spell has convoke, and it must be true on a card that itself has convoke. No trigger_filter_key reads pay_generic_with.
+- **(selector)** a spell_cast trigger filter key matching a spell that has convoke (a card whose pay_generic_with is "tap_creatures", printed or granted), e.g. filter {"has_convoke": true}, combined with exclude_self for "another spell"
+  <br>Why the existing vocabulary won't do: Convoke is carried as the card-level pay_generic_with: "tap_creatures", not as a keyword, so the trigger filter's `keywords` key cannot name it (convoke is not in the keyword list); `convoked` is a selector over the creatures that tapped to pay for a spell, not a test of whether a spell has convoke, and it is not in trigger_filter_keys. No trigger_filter_key reads pay_generic_with. The Convoke line itself and the scry/draw effects are expressible (pay_generic_with, scry, draw).
+- **(static_effect)** a per-turn 'first spell' limit on the grant_pay_generic_with static (pay_generic_with: tap_creatures): only the first spell matching affects_spells that you cast each turn gains convoke, counted over the turn's casts (spells cast before the granter arrived included), with a historic spell filter (Artifact OR Legendary supertype OR Saga subtype, a union over affects_spells)
+  <br>Why the existing vocabulary won't do: grant_pay_generic_with hands convoke to every spell matching affects_spells with no turn counter (player_statics.granted_pay_generic_with); static_max_per_turn is accepted only on cast_from_graveyard and first_each_turn only on ability_cost_reduction; and affects_spells has no any_of union to say 'artifact or legendary or Saga', so writing it would grant convoke to every historic spell (or only one of the three kinds)
+- **(selector)** a spell_cast trigger filter key matching a spell that has convoke (e.g. filter {"has_convoke": true}), reading the card-level convoke flag of the cast spell
+  <br>Why the existing vocabulary won't do: Convoke is a card-level cost field, not one of the keywords, so filter `keywords` cannot name it; trigger_filter_keys has nothing that reads it, and the `convoked` selector key matches creatures that convoked a spell, not spells that have convoke
+- **(engine)** carry the creatures that convoked a permanent spell (the spell's 'convoked' StackItem binding, 702.51c) onto the permanent it becomes, so the permanent's own self_enters trigger can read them with the {"convoked": true} selector key; creatures that left the battlefield in between must still be struck out
+  <br>Why the existing vocabulary won't do: pay_generic_with: 'tap_creatures' expresses Convoke, and the 'convoked' selector key reads CONVOKED_BINDING, but that binding lives only on the spell's StackItem (written in game.py at cast, read while the spell itself resolves, as Lethal Scheme does). Permanent resolution in stack.py does not copy it onto the entering object or into the ETB TriggerInstance bindings, so on a creature's enters trigger the selector would match nothing and the card would silently put no counters
+- **(op)** a one-shot op (or a `next_spell` option on a grant op) that gives the next spell its controller casts this turn a pay_generic_with currency -- here tap_creatures (convoke) -- consumed by that one cast and expiring at end of turn
+  <br>Why the existing vocabulary won't do: Convoke exists only as the card-level `pay_generic_with` and the permanent static `grant_pay_generic_with`, which lasts while the source is on the battlefield and covers every matching spell, not just the next one this turn. The `next_spell` one-shots (`grant_flash_permission`, `next_spell_cost_reduction`, `uncounterable_this_turn`) grant flash, a discount or uncounterability, never a pay_generic_with currency
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wand of the Worldsoul** (rank 5528) — `wand_of_the_worldsoul`
+  - {T}: The next spell you cast this turn has convoke.
+- **Peri Brown** (rank 13212) — `peri_brown`
+  - The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)
+- **Flockchaser Phantom** (rank 13315) — `flockchaser_phantom`
+  - Whenever this creature attacks, the next spell you cast this turn has convoke.
+- **Kasla, the Broken Halo** (rank 13620) — `kasla_the_broken_halo`
+  - Whenever you cast another spell that has convoke, scry 2, then draw a card.
+- **Saint Traft and Rem Karolus** (rank 13814) — `saint_traft_and_rem_karolus`
+  - Whenever Saint Traft and Rem Karolus becomes tapped, create a 1/1 red Human creature token if this is the first time this ability has resolved this turn. If it's the second time, create a 1/1 blue Spirit creature token with flying. If it's the third time, create a 4/4 white Angel creature token with flying.
+  - Whenever you cast a spell that has convoke, untap Saint Traft and Rem Karolus.
+- **Venerated Loxodon** (rank 14335) — `venerated_loxodon`
+  - When this creature enters, put a +1/+1 counter on each creature that convoked it.
+- **Joyful Stormsculptor** (rank 17299) — `joyful_stormsculptor`
+  - Whenever you cast a spell that has convoke, this creature deals 1 damage to each opponent and each battle they protect.
+
+</details>
+
 ## planechase
 
-Blocks **6** cards.
+Blocks **7** cards.
 
 - **(engine)** the Planechase subsystem (rule 901): a planar deck and a face-up plane or phenomenon in the command zone, plus a `roll_planar_die` op (901.9) that rolls the six-sided planar die -- on the planeswalker symbol the roller planeswalks (701.31), on the chaos symbol the face-up plane's chaos ability triggers, otherwise nothing; activated here as a sorcery-speed {T} ability, with the free-roll-cost escalation of 901.9b not applying to an effect-driven roll
   <br>Why the existing vocabulary won't do: `roll_dice` rolls ordinary numbered dice and has no planeswalk or chaos outcome, and nothing in `ops` or the game setup knows planes, phenomena, a planar deck or chaos triggers. The rest of the card is expressible: '{T}: Add {C}.' is already the starting_point mana ability, and the activation limit is `sorcery_speed_only`
@@ -755,6 +807,8 @@ Blocks **6** cards.
   - If you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one.
 - **Start the TARDIS** (rank 13326) — `start_the_tardis`
   - You may planeswalk.
+- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 - **Susan Foreman** (rank 18784) — `susan_foreman`
   - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
 - **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
@@ -1314,6 +1368,27 @@ Blocks **3** cards.
   - III — Create a 1/1 white Halfling creature token for each Food you control.
 - **Field-Tested Frying Pan** (rank 6851) — `field_tested_frying_pan`
   - When this Equipment enters, create a Food token, then create a 1/1 white Halfling creature token and attach this Equipment to it.
+
+</details>
+
+## voting
+
+Blocks **3** cards.
+
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 
 </details>
 
@@ -2017,25 +2092,6 @@ Blocks **2** cards.
 
 </details>
 
-## voting
-
-Blocks **2** cards.
-
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
-  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Valeyard** (rank 8294) — `the_valeyard`
-  - If an opponent would face a villainous choice, they face that choice an additional time
-  - While voting, you may vote an additional time
-- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-
-</details>
-
 ## wall-0-3-w-defender-token
 
 Blocks **2** cards.
@@ -2156,6 +2212,20 @@ Blocks **1** card.
 - **Stalking Leonin** (rank 9335) — `stalking_leonin`
   - When this creature enters, secretly choose an opponent.
   - Reveal the player you chose: Exile target creature that's attacking you if it's controlled by the chosen player. Activate only once.
+
+</details>
+
+## activated-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching a permanent one of whose abilities (here, a planeswalker's loyalty ability) was activated this turn, read from the per-turn activation ledger (turn_ledger.activated / the per-object record of activations), so a target can be 'planeswalker that was activated this turn'; combined via any_of with {types: [Creature], tapped: true}
+  <br>Why the existing vocabulary won't do: selector_keys has entered_this_turn, attacked_this_turn, drawn_this_turn, surveilled_this_turn and tapped, but nothing about activations; the turn ledger records activations per object and loyalty_activations per player, yet no selector exposes it. Dropping the clause (any planeswalker) or the planeswalker half would change which targets are legal. Convoke itself is expressible as pay_generic_with: tap_creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cut Short** (rank 13487) — `cut_short`
+  - Destroy target planeswalker that was activated this turn or tapped creature.
 
 </details>
 
@@ -2525,6 +2595,20 @@ Blocks **1** card.
 
 - **Regenerations Restored** (rank 11093) — `regenerations_restored`
   - Whenever one or more time counters are removed from this enchantment, scry 1 and you gain 1 life. Then if this enchantment has no time counters on it, exile it. When you do, take an extra turn after this one.
+
+</details>
+
+## battle-protector
+
+Blocks **1** card.
+
+- **(selector)** a selector for battles a given player protects ("each battle they protect"), so a damage op can hit each opponent and each battle protected by an opponent
+  <br>Why the existing vocabulary won't do: The damage op's objects selector has types: ["Battle"] and controller, but a battle's protector is not its controller and no selector key reads protector; `or_battle` exists only as a trigger key, not on damage targets
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joyful Stormsculptor** (rank 17299) — `joyful_stormsculptor`
+  - Whenever you cast a spell that has convoke, this creature deals 1 damage to each opponent and each battle they protect.
 
 </details>
 
@@ -3173,20 +3257,6 @@ Blocks **1** card.
 
 </details>
 
-## convoke
-
-Blocks **1** card.
-
-- **(static_effect)** a per-turn 'first spell' limit on the grant_pay_generic_with static (pay_generic_with: tap_creatures): only the first spell matching affects_spells that you cast each turn gains convoke, counted over the turn's casts (spells cast before the granter arrived included), with a historic spell filter (Artifact OR Legendary supertype OR Saga subtype, a union over affects_spells)
-  <br>Why the existing vocabulary won't do: grant_pay_generic_with hands convoke to every spell matching affects_spells with no turn counter (player_statics.granted_pay_generic_with); static_max_per_turn is accepted only on cast_from_graveyard and first_each_turn only on ability_cost_reduction; and affects_spells has no any_of union to say 'artifact or legendary or Saga', so writing it would grant convoke to every historic spell (or only one of the three kinds)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Peri Brown** (rank 13212) — `peri_brown`
-  - The first historic spell you cast each turn has convoke. (Your creatures can help cast it. Each creature you tap while casting it pays for {1} or one mana of that creature's color.)
-
-</details>
-
 ## copy-all-on-stack
 
 Blocks **1** card.
@@ -3723,6 +3793,20 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+
+</details>
+
+## elemental-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Elemental creature token with "Whenever this token becomes tapped, it deals 1 damage to target player." (e.g. elemental_1_1_r_tapped_ping): a self becomes_tapped trigger whose effect is damage 1 from the token to a target player
+  <br>Why the existing vocabulary won't do: token_ids has elemental_1_1_r (a vanilla 1/1 red Elemental) and elemental_1_1_r_haste, but no Elemental carrying the becomes-tapped damage trigger; giving elemental_1_1_r the trigger with a permanent grant_ability after creation would make the ability a granted effect rather than a copiable printed characteristic of the token, which is not the printed card. Convoke itself is expressible as card-level pay_generic_with "tap_creatures", and X is fine as the token amount
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wildfire Awakener** (rank 5906) — `wildfire_awakener`
+  - When this creature enters, create X 1/1 red Elemental creature tokens with "Whenever this token becomes tapped, it deals 1 damage to target player."
 
 </details>
 
@@ -4386,6 +4470,20 @@ Blocks **1** card.
 
 </details>
 
+## flashback-nonmana-cost
+
+Blocks **1** card.
+
+- **(cost)** a flashback cost with no mana half, here only a tap_permanents cost (three untapped white creatures you control), so the spell's mana cost is replaced by nothing and the tapping is the whole price
+  <br>Why the existing vocabulary won't do: The card-level flashback node is a full Cost and Game._cast already pays its non-mana part (tap_permanents with colors works as a selector), but the loader refuses any graveyard cost whose mana is empty ('a graveyard cost needs mana', cards/loader) to stop free graveyard casts; writing {0} would only dodge that guard rather than express the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Battle Screech** (rank 7468) — `battle_screech`
+  - Flashback—Tap three untapped white creatures you control
+
+</details>
+
 ## flashback-x
 
 Blocks **1** card.
@@ -4856,6 +4954,21 @@ Blocks **1** card.
 
 </details>
 
+## human-1-1-r
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Human creature token
+  <br>Why the existing vocabulary won't do: token_ids has human_1_1_w (white) and human_soldier_1_1_w, but no red 1/1 Human
+
+<details><summary>Cards waiting on this</summary>
+
+- **Saint Traft and Rem Karolus** (rank 13814) — `saint_traft_and_rem_karolus`
+  - Whenever Saint Traft and Rem Karolus becomes tapped, create a 1/1 red Human creature token if this is the first time this ability has resolved this turn. If it's the second time, create a 1/1 blue Spirit creature token with flying. If it's the third time, create a 4/4 white Angel creature token with flying.
+  - Whenever you cast a spell that has convoke, untap Saint Traft and Rem Karolus.
+
+</details>
+
 ## human-1-1-w-ward2-token
 
 Blocks **1** card.
@@ -4924,6 +5037,20 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
+
+</details>
+
+## insect-1-1-ur-flying-haste
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue and red Insect creature token with flying and haste
+  <br>Why the existing vocabulary won't do: token_ids has Insects only as insect_1_1_b_flying, insect_1_1_bg, insect_1_1_g, insect_1_1_g_flying_deathtouch and insect_2_1_w_flying; none is blue and red, and none has haste. The draw trigger, the loot ability (draw then discard) and the dies trigger with a delayed end-step return look expressible with draw/discard/delay ops once the token exists.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Locust God** (rank 1699) — `the_locust_god`
+  - Whenever you draw a card, create a 1/1 blue and red Insect creature token with flying and haste.
 
 </details>
 
@@ -6111,6 +6238,20 @@ Blocks **1** card.
 
 </details>
 
+## prevent-next-n-damage-divided
+
+Blocks **1** card.
+
+- **(op)** a prevention op that installs an absorb-N shield (a pool that drains as it prevents: 'prevent the next N damage that would be dealt this turn') on players and/or permanents, with the total N divided among any number of 'any target' targets as the controller chooses on putting the trigger on the stack (601.2d division, as damage's `divided` does), each target's shield preventing only its own share
+  <br>Why the existing vocabulary won't do: prevent_damage (players) and prevent_damage_permanent (permanents) only prevent ALL damage for a duration -- the engine docstring says there is deliberately no `amount` and the loader refuses one; neither can be divided across targets or mix a player and a permanent target. `damage` has `divided` but deals damage, it does not prevent it. Flash (keyword), convoke (`pay_generic_with: "tap_creatures"`, which honours coloured pips) and flying are all expressible; only this line is blocked
+
+<details><summary>Cards waiting on this</summary>
+
+- **Angel of Salvation** (rank 17017) — `angel_of_salvation`
+  - When this creature enters, prevent the next 5 damage that would be dealt this turn to any number of targets, divided as you choose.
+
+</details>
+
 ## prevent-noncombat-damage
 
 Blocks **1** card.
@@ -6543,6 +6684,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-combat-targets
+
+Blocks **1** card.
+
+- **(engine)** The authoring verification sandbox (cards/authoring/verify.py build_sandbox / _cast) must be able to cast an instant whose only target must be an attacking or blocking creature: move the sandbox into a combat (e.g. player 0 declares one of its creatures as an attacker and the spell is cast in declare attackers or declare blockers) when a card-level target selector, or one of its any_of branches, carries attacking/blocking -- the way tests/cards/test_every_card_works.py _selector_branches already drives a game to declare-attackers for such targets
+  <br>Why the existing vocabulary won't do: Every printed word is expressible: card-level `pay_generic_with: "tap_creatures"` (convoke), a `permanent` target t1 with selector {zone: battlefield, controller: any, types: [Creature], any_of: [{attacking: true}, {blocking: true}]} (the shape dawnray_archer ships), and spell_effects [{op: exile, objects: {target: t1}}]. But the sandbox is fixed at precombat main with combat declined, so no creature is attacking or blocking. Verified with a scratch run of verify(): the draft FAILED at the playable gate -- 'devouring_light is not playable in the sandbox; offered: [Pass, Play Forest]' (601.2c, no legal target). No expectation key can be satisfied by a card that cannot be cast, and adding an unprinted cast_only_during or widening the target to any creature would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Devouring Light** (rank 9654) — `devouring_light`
+  - Exile target attacking or blocking creature.
+
+</details>
+
 ## sandbox-low-mana-value-permanent
 
 Blocks **1** card.
@@ -6800,6 +6955,21 @@ Blocks **1** card.
 
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
+
+</details>
+
+## spirit-1-1-u-flying
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue Spirit creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has spirit_1_1_w_flying and spirit_1_1_wb_flying, but no blue 1/1 flying Spirit
+
+<details><summary>Cards waiting on this</summary>
+
+- **Saint Traft and Rem Karolus** (rank 13814) — `saint_traft_and_rem_karolus`
+  - Whenever Saint Traft and Rem Karolus becomes tapped, create a 1/1 red Human creature token if this is the first time this ability has resolved this turn. If it's the second time, create a 1/1 blue Spirit creature token with flying. If it's the third time, create a 4/4 white Angel creature token with flying.
+  - Whenever you cast a spell that has convoke, untap Saint Traft and Rem Karolus.
 
 </details>
 

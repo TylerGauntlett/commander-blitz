@@ -1,0 +1,14 @@
+{
+  "card_id": "battle_screech",
+  "name": "Battle Screech",
+  "oracle_text": "Create two 1/1 white Bird creature tokens with flying.\nFlashback—Tap three untapped white creatures you control. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": ["Flashback—Tap three untapped white creatures you control"],
+  "needs": [{
+    "capability": "flashback-nonmana-cost",
+    "kind": "cost",
+    "what": "a flashback cost with no mana half, here only a tap_permanents cost (three untapped white creatures you control), so the spell's mana cost is replaced by nothing and the tapping is the whole price",
+    "why_existing_wont_do": "The card-level flashback node is a full Cost and Game._cast already pays its non-mana part (tap_permanents with colors works as a selector), but the loader refuses any graveyard cost whose mana is empty ('a graveyard cost needs mana', cards/loader) to stop free graveyard casts; writing {0} would only dodge that guard rather than express the card"
+  }],
+  "closest_existing": ["flashback", "tap_permanents"],
+  "confidence": "high"
+}

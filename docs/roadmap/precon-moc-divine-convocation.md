@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [planechase]
 status: proposed
 rank: 68
 ---
@@ -19,6 +19,17 @@ coming-soon shell on the shelf: its row `moc_divine_convocation` is in
 `python scripts/sync_precons.py --missing moc_divine_convocation` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have:
+Fractured Powerstone rolls the planar die, Ichor Elixir replaces planar die
+rolls, and Path of the Ghosthunter has the players vote to planeswalk or make
+chaos ensue, so the deck waits on [Planechase](planechase.md). The rest of its
+missing cards wait on smaller capabilities this batch builds once Planechase
+lands, `convoke` above all (Flockchaser Phantom, Joyful Stormsculptor, Kasla,
+the Broken Halo, Saint Traft and Rem Karolus, Venerated Loxodon, Wand of the
+Worldsoul), then three tokens (The Locust God, Saint Traft and Rem Karolus,
+Wildfire Awakener), Path of the Ghosthunter's `voting`, and one card each for
+`prevent-damage-by-source`, `prevent_next_n_damage_divided`,
+`flashback-nonmana-cost`, `activated_this_turn` and `sandbox_combat_targets`.
 
 ## The change
 

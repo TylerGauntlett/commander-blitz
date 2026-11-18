@@ -14192,12 +14192,12 @@
     },
     "Artistic Refusal": {
       "edhrec_rank": 7310,
-      "gate": "template",
+      "gate": null,
       "name": "Artistic Refusal",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "2bd05f97-ef8b-4cbe-a44b-6501aa5895b0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arvad the Cursed": {
@@ -20012,12 +20012,12 @@
     },
     "Banisher Priest": {
       "edhrec_rank": 11389,
-      "gate": "template",
+      "gate": null,
       "name": "Banisher Priest",
-      "reason": "no template for: When this creature enters, exile target creature an opponent controls until this creature ",
+      "reason": "",
       "scryfall_id": "df4615ca-f536-461c-b5a9-156f929d64ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banishing Betrayal": {
@@ -21882,12 +21882,12 @@
     },
     "Battle Screech": {
       "edhrec_rank": 7468,
-      "gate": "template",
+      "gate": "compile",
       "name": "Battle Screech",
-      "reason": "no template for: Create two 1/1 white Bird creature tokens with flying",
+      "reason": "battle_screech: a graveyard cost needs mana",
       "scryfall_id": "1c71de34-fb9c-47f6-8586-e45d897d0f85",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Battle Sliver": {
@@ -51432,12 +51432,12 @@
     },
     "Conclave Tribunal": {
       "edhrec_rank": 9162,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Tribunal",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "d6684f9a-c97b-4f1c-887d-6e5824c40916",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave's Blessing": {
@@ -65862,12 +65862,12 @@
     },
     "Deluxe Dragster": {
       "edhrec_rank": 6969,
-      "gate": "template",
+      "gate": null,
       "name": "Deluxe Dragster",
-      "reason": "no template for: This Vehicle can't be blocked except by Vehicles",
+      "reason": "",
       "scryfall_id": "4b90313d-9f61-4788-a55e-1f8189bf1ef5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Delver of Secrets // Insectile Aberration": {
@@ -76662,12 +76662,12 @@
     },
     "Duergar Hedge-Mage": {
       "edhrec_rank": 8985,
-      "gate": "template",
+      "gate": null,
       "name": "Duergar Hedge-Mage",
-      "reason": "no template for: When this creature enters, if you control two or more Mountains, you may destroy target ar",
+      "reason": "",
       "scryfall_id": "8614ad95-c1d5-426c-a195-86c195653f5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duergar Mine-Captain": {
@@ -85022,12 +85022,12 @@
     },
     "Ephemeral Shields": {
       "edhrec_rank": 11197,
-      "gate": "template",
+      "gate": null,
       "name": "Ephemeral Shields",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "60fcd11e-9bc3-4a27-966c-42767bac3223",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ephemerate": {
@@ -90812,12 +90812,12 @@
     },
     "Fallowsage": {
       "edhrec_rank": 9954,
-      "gate": "template",
+      "gate": null,
       "name": "Fallowsage",
-      "reason": "no template for: Whenever this creature becomes tapped, you may draw a card",
+      "reason": "",
       "scryfall_id": "075b8e5e-464b-4ea6-b380-f73aa9c8e5ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "False Cure": {
@@ -98182,12 +98182,12 @@
     },
     "Flight of Equenauts": {
       "edhrec_rank": 24004,
-      "gate": "template",
+      "gate": null,
       "name": "Flight of Equenauts",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "d8b8aaf0-909e-49b7-9360-a99b68a0f414",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flight of Fancy": {
@@ -113052,12 +113052,12 @@
     },
     "Goblin Instigator": {
       "edhrec_rank": 3223,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Instigator",
-      "reason": "no template for: When this creature enters, create a 1/1 red Goblin creature token",
+      "reason": "",
       "scryfall_id": "71c818eb-3846-471f-967a-76e1cb809b9f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Javelineer": {
@@ -113212,12 +113212,12 @@
     },
     "Goblin Medics": {
       "edhrec_rank": 18042,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Medics",
-      "reason": "no template for: Whenever this creature becomes tapped, it deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "deda9adf-43db-481b-840d-518a12873782",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Mime": {
@@ -135002,12 +135002,12 @@
     },
     "Improbable Alliance": {
       "edhrec_rank": 11038,
-      "gate": "template",
+      "gate": null,
       "name": "Improbable Alliance",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with",
+      "reason": "",
       "scryfall_id": "29ab3610-342d-4a67-9be8-a7efb89a4b46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Impromptu Raid": {
@@ -153362,12 +153362,12 @@
     },
     "Kykar, Wind's Fury": {
       "edhrec_rank": 3124,
-      "gate": "template",
+      "gate": null,
       "name": "Kykar, Wind's Fury",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 white Spirit creature token with flyin",
+      "reason": "",
       "scryfall_id": "013fdf2d-8fa5-4d84-9a4d-e39dbed1c31b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kykar, Zephyr Awakener": {
@@ -170352,12 +170352,12 @@
     },
     "Meeting of Minds": {
       "edhrec_rank": 5722,
-      "gate": "template",
+      "gate": null,
       "name": "Meeting of Minds",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "e2656fc4-5866-4792-a5dc-be29d166a105",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meeting of the Five": {
@@ -173152,12 +173152,12 @@
     },
     "Migratory Route": {
       "edhrec_rank": 6981,
-      "gate": "template",
+      "gate": null,
       "name": "Migratory Route",
-      "reason": "no template for: Create four 1/1 white Bird creature tokens with flying",
+      "reason": "",
       "scryfall_id": "e8c8f35e-faa8-4537-b320-c84ebe8e71e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miirym, Sentinel Wyrm": {
@@ -176382,12 +176382,12 @@
     },
     "Mistmeadow Vanisher": {
       "edhrec_rank": 15705,
-      "gate": "template",
+      "gate": null,
       "name": "Mistmeadow Vanisher",
-      "reason": "no template for: Whenever this creature becomes tapped, exile up to one target nonland, nontoken permanent.",
+      "reason": "",
       "scryfall_id": "13e9382c-f3c8-4b30-99cb-87f69f5828c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mistmeadow Witch": {
@@ -185382,12 +185382,12 @@
     },
     "Nesting Dovehawk": {
       "edhrec_rank": 3107,
-      "gate": "template",
+      "gate": null,
       "name": "Nesting Dovehawk",
-      "reason": "no template for: At the beginning of combat on your turn, populate",
+      "reason": "",
       "scryfall_id": "5d7b2638-2e6b-49c4-b716-9286ee0866d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Dragon": {
@@ -240522,12 +240522,12 @@
     },
     "Seraph of the Masses": {
       "edhrec_rank": 14071,
-      "gate": "template",
+      "gate": null,
       "name": "Seraph of the Masses",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "6bc2ee43-7f99-46d5-b3da-7258d83ab2c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seraph of the Scales": {
@@ -243112,12 +243112,12 @@
     },
     "Shatter the Source": {
       "edhrec_rank": 14001,
-      "gate": "template",
+      "gate": null,
       "name": "Shatter the Source",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "032720a1-410b-4638-9294-35fd8e27375f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shattered Acolyte": {
@@ -265022,12 +265022,12 @@
     },
     "Stoke the Flames": {
       "edhrec_rank": 10067,
-      "gate": "template",
+      "gate": null,
       "name": "Stoke the Flames",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "e59ba241-49c8-4913-9226-2eb384ef73df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stolen Goods": {
@@ -271382,12 +271382,12 @@
     },
     "Suture Priest": {
       "edhrec_rank": 1193,
-      "gate": "template",
+      "gate": null,
       "name": "Suture Priest",
-      "reason": "no template for: Whenever another creature you control enters, you may gain 1 life",
+      "reason": "",
       "scryfall_id": "609ec229-702b-4908-add1-be65c05ecb3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Suture Spirit": {
@@ -277372,12 +277372,12 @@
     },
     "Temporal Cleansing": {
       "edhrec_rank": 12722,
-      "gate": "template",
+      "gate": null,
       "name": "Temporal Cleansing",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "50ee7315-ec53-43d2-841e-8ec192b850f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temporal Distortion": {
@@ -319672,12 +319672,12 @@
     },
     "Wrenn's Resolve": {
       "edhrec_rank": 2118,
-      "gate": "template",
+      "gate": null,
       "name": "Wrenn's Resolve",
-      "reason": "no template for: Exile the top two cards of your library. Until the end of your next turn, you may play tho",
+      "reason": "",
       "scryfall_id": "763881c0-c8aa-4955-9d71-3049f982032c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wretched Anurid": {

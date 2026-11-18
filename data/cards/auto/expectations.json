@@ -1322,6 +1322,18 @@
   "artisan_of_kozilek": {
     "zone": "battlefield"
   },
+  "artistic_refusal": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "arvad_the_cursed": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1778,6 +1790,11 @@
     "zone": "battlefield"
   },
   "banish_to_another_universe": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "banisher_priest": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
@@ -4240,6 +4257,11 @@
   "concealed_courtyard": {
     "zone": "battlefield"
   },
+  "conclave_tribunal": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "concordia_pegasus": {
     "zone": "battlefield"
   },
@@ -5498,6 +5520,10 @@
     },
     "zone": "graveyard"
   },
+  "deluxe_dragster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "demolisher_spawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6228,6 +6254,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "duergar_hedge_mage": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "duggan_private_detective": {
     "battlefield_count": 34,
     "tokens": {
@@ -6954,6 +6985,15 @@
     },
     "zone": "graveyard"
   },
+  "ephemeral_shields": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "epic_experiment": {
     "graveyard_size": {
       "0": 23
@@ -7536,6 +7576,16 @@
     },
     "zone": "battlefield"
   },
+  "fallowsage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "fanatic_of_rhonas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8110,6 +8160,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "flight_of_equenauts": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "flood_plain": {
     "zone": "battlefield"
@@ -9305,6 +9362,22 @@
     "zone": "battlefield"
   },
   "goblin_hero": {
+    "zone": "battlefield"
+  },
+  "goblin_instigator": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "goblin_1_1_r"
+    },
+    "zone": "battlefield"
+  },
+  "goblin_medics": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "goblin_mountaineer": {
@@ -10962,6 +11035,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "improbable_alliance": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "improvised_armor": {
     "zone": [
       "battlefield",
@@ -12474,6 +12554,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kykar_wind_s_fury": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kyoshi_warrior_guard": {
     "zone": "battlefield"
   },
@@ -13937,6 +14024,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "meeting_of_minds": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },
@@ -14191,6 +14287,14 @@
     },
     "zone": "graveyard"
   },
+  "migratory_route": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 4,
+      "id": "bird_1_1_w_flying"
+    },
+    "zone": "graveyard"
+  },
   "miirym_sentinel_wyrm": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14380,6 +14484,10 @@
     "zone": "battlefield"
   },
   "mister_gutsy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mistmeadow_vanisher": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15130,6 +15238,10 @@
     "zone": "battlefield"
   },
   "nested_shambler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nesting_dovehawk": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -19432,6 +19544,10 @@
   "seraph_of_dawn": {
     "zone": "battlefield"
   },
+  "seraph_of_the_masses": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seraph_of_the_suns": {
     "zone": "battlefield"
   },
@@ -19669,6 +19785,12 @@
   "shatter_the_sky": {
     "battlefield_count": 30,
     "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "shatter_the_source": {
+    "hand_size": {
+      "0": 1
+    },
     "zone": "graveyard"
   },
   "shattered_landscape": {
@@ -21305,6 +21427,13 @@
     },
     "zone": "battlefield"
   },
+  "stoke_the_flames": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "stolen_goods": {
     "library_size": {
       "0": 40,
@@ -21829,6 +21958,14 @@
   },
   "suspicious_bookcase": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "suture_priest": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "svyelun_of_sea_and_sky": {
@@ -22438,6 +22575,13 @@
   },
   "temple_of_triumph": {
     "zone": "battlefield"
+  },
+  "temporal_cleansing": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "graveyard"
   },
   "temporal_mastery": {
     "hand_size": {
@@ -26252,6 +26396,18 @@
   },
   "wrecking_crew": {
     "zone": "battlefield"
+  },
+  "wrenn_s_resolve": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "wu_elite_cavalry": {
     "zone": "battlefield"
