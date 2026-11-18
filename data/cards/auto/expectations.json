@@ -1321,6 +1321,16 @@
   "ascended_lawmage": {
     "zone": "battlefield"
   },
+  "asceticism": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "asgardian_citadel": {
     "life": {
       "0": 41
@@ -4092,6 +4102,11 @@
     },
     "zone": "battlefield"
   },
+  "colossal_whale": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "colossapede": {
     "zone": "battlefield"
   },
@@ -6623,11 +6638,24 @@
     },
     "zone": "battlefield"
   },
+  "elven_farsight": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "elven_passage": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elves_of_deep_shadow": {
+    "zone": "battlefield"
+  },
+  "elvish_archdruid": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elvish_archers": {
@@ -6639,6 +6667,13 @@
   "elvish_pioneer": {
     "zone": "battlefield"
   },
+  "elvish_piper": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "elvish_ranger": {
     "zone": "battlefield"
   },
@@ -6647,6 +6682,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "elvish_warmaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elvish_warrior": {
@@ -8468,6 +8507,13 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "galadhrim_ambush": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "galadhrim_guide": {
     "zone": "battlefield"

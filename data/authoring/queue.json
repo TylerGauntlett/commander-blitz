@@ -14392,12 +14392,12 @@
     },
     "Asceticism": {
       "edhrec_rank": 1306,
-      "gate": "template",
+      "gate": null,
       "name": "Asceticism",
-      "reason": "no template for: Creatures you control have hexproof",
+      "reason": "",
       "scryfall_id": "72eefa85-39de-4f9f-aba1-7520b358c6c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Asgardian Citadel": {
@@ -50312,12 +50312,12 @@
     },
     "Colossal Whale": {
       "edhrec_rank": 12506,
-      "gate": "template",
+      "gate": null,
       "name": "Colossal Whale",
-      "reason": "no template for: Whenever this creature attacks, you may exile target creature defending player controls un",
+      "reason": "",
       "scryfall_id": "a4d35a18-1c3c-4882-a318-5cf323350417",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossapede": {
@@ -81682,12 +81682,12 @@
     },
     "Elven Farsight": {
       "edhrec_rank": 5814,
-      "gate": "template",
+      "gate": null,
       "name": "Elven Farsight",
-      "reason": "no template for: Scry 3, then you may reveal the top card of your library. If a creature card is revealed t",
+      "reason": "",
       "scryfall_id": "73d135b2-d2b8-499c-84d9-824370c19ccc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elven Fortress": {
@@ -81812,12 +81812,12 @@
     },
     "Elvish Archdruid": {
       "edhrec_rank": 926,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Archdruid",
-      "reason": "no template for: Other Elf creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "006ff5a3-355b-4a7d-b402-bb3c8d32a585",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Archers": {
@@ -82072,12 +82072,12 @@
     },
     "Elvish Piper": {
       "edhrec_rank": 3155,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Piper",
-      "reason": "no template for: {G}, {T}: You may put a creature card from your hand onto the battlefield",
+      "reason": "",
       "scryfall_id": "1a8e47b9-6735-4e46-b3fd-ac69edc39745",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Promenade": {
@@ -82212,12 +82212,12 @@
     },
     "Elvish Warmaster": {
       "edhrec_rank": 1707,
-      "gate": "template",
+      "gate": null,
       "name": "Elvish Warmaster",
-      "reason": "no template for: Whenever one or more other Elves you control enter, create a 1/1 green Elf Warrior creatur",
+      "reason": "",
       "scryfall_id": "3bc94b52-1cb1-4c1e-8b17-5632abc2490d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elvish Warrior": {
@@ -104272,12 +104272,12 @@
     },
     "Galadhrim Ambush": {
       "edhrec_rank": 2234,
-      "gate": "template",
+      "gate": null,
       "name": "Galadhrim Ambush",
-      "reason": "no template for: Create X 1/1 green Elf Warrior creature tokens, where X is the number of attacking creatur",
+      "reason": "",
       "scryfall_id": "e69e06f0-6142-4f80-9208-362b3e74d51d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galadhrim Bow": {

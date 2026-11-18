@@ -1,0 +1,18 @@
+{
+  "card_id": "celeborn_the_wise",
+  "name": "Celeborn the Wise",
+  "oracle_text": "Whenever you attack with one or more Elves, scry 1.\nWhenever you scry, Celeborn gets +1/+1 until end of turn for each card looked at while scrying this way.",
+  "blocked_sentences": [
+    "Whenever you scry, Celeborn gets +1/+1 until end of turn for each card looked at while scrying this way."
+  ],
+  "needs": [
+    {
+      "capability": "scry_trigger",
+      "kind": "trigger_event",
+      "what": "a trigger event fired when a player scries (controller-filterable, e.g. controller: you), whose event carries the number of cards looked at during that scry as a bindable value, so the effect can be pump on self_only with power and toughness equal to that count until end of turn",
+      "why_existing_wont_do": "trigger_events has surveils and searches_library but no scry event, and value_keys has nothing that reads how many cards a scry looked at; pumping a flat +1/+1 per trigger would be wrong for any scry N greater than 1 (e.g. from other cards)"
+    }
+  ],
+  "closest_existing": ["surveils", "pump", "you_attack"],
+  "confidence": "high"
+}

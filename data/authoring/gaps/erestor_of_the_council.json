@@ -1,0 +1,18 @@
+{
+  "card_id": "erestor_of_the_council",
+  "name": "Erestor of the Council",
+  "oracle_text": "Whenever players finish voting, each opponent who voted for a choice you voted for creates a Treasure token. You scry X, where X is the number of opponents who voted for a choice you didn't vote for. Draw a card.",
+  "blocked_sentences": [
+    "Whenever players finish voting, each opponent who voted for a choice you voted for creates a Treasure token. You scry X, where X is the number of opponents who voted for a choice you didn't vote for. Draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "voting",
+      "kind": "trigger_event",
+      "what": "a 'players finish voting' trigger event fired after any vote (council's dilemma / will of the council) completes, which binds the vote's record: each player's chosen option(s), so an effect can select 'each opponent who voted for a choice you voted for' (a player filter for for_each_player) and a value can count 'opponents who voted for a choice you didn't vote for' (the scry amount)",
+      "why_existing_wont_do": "trigger_events has no voting event (nearest are spell_cast/ability_activated, which do not fire on a vote), there is no vote op in reference ops for a vote to come from, and value_keys/player specs have nothing that reads per-player vote choices; for_each_player plus create_token treasure_token and scry/draw cover the effects only once the vote record exists"
+    }
+  ],
+  "closest_existing": ["for_each_player", "join_forces", "choose_mode"],
+  "confidence": "high"
+}
