@@ -489,6 +489,16 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: Aura moved by an equip or an `attach`, fires for an Aura entering
     #: attached to an opponent's creature, and cannot ask what it entered on.
     "becomes_attached": EventType.ATTACHED,
+    #: "Whenever this Equipment **becomes unattached from a permanent**,
+    #: sacrifice that permanent" (Grafted Wargear, Grafted Exoskeleton,
+    #: Stitcher's Graft, Captain's Hook). The subject is the attachment, as on
+    #: `becomes_attached`; ``{"binding": "host"}`` is the permanent it came off.
+    #: Every way off is one event: moved by an equip, unattached by an effect,
+    #: its host leaving the battlefield or failing a state-based action, and the
+    #: attachment itself leaving, which its own ability looks back to see
+    #: (603.10a). `leaves_battlefield` is the near miss and misses the equip
+    #: that moves it -- the commonest way a Wargear's creature is lost.
+    "becomes_unattached": EventType.UNATTACHED,
     #: "…until an opponent becomes the monarch" (Palace Jailer). The one monarch
     #: card that must be *woken up* by the designation moving rather than merely
     #: asking about it with `is_monarch`.
@@ -749,6 +759,8 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # the event carries as `source`. Its `oid` is the host, so
         # `_subject_oid` reads `source` by name.
         "becomes_attached",
+        # The attachment again, for the same reason: `oid` is the host it left.
+        "becomes_unattached",
         # The permanent whose ability was activated, so a filter can ask what it
         # was -- "an ability of an artifact, creature, or land **on the
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
@@ -1588,6 +1600,24 @@ def _candidate_abilities(state: GameState, event: GameEvent):
     # before firing the event, so by the time this walk runs the hand no longer
     # holds it and `active_zones: ["hand"]` matches nothing. Exactly the reason
     # this branch exists for the battlefield.
+    if event.type is EventType.UNATTACHED and event.data.get("attachment_left"):
+        # The attachment left the battlefield, and is no longer there to be
+        # walked: its own "whenever this Equipment becomes unattached" looks
+        # back at it as it left (603.10a), as a dies trigger does.
+        left = state.objects.get(event.source) if event.source is not None else None
+        if left is not None and event.source not in seen and not left.left_face_down:
+            seen.add(int(event.source))
+            for ability in abilities_of(state, left.oid):
+                if (
+                    ability.is_triggered
+                    and ability.trigger is not None
+                    and ability.trigger.event == "becomes_unattached"
+                    and Zone.BATTLEFIELD in ability.active_zones
+                    and left.zone not in ability.active_zones
+                ):
+                    yield left, ability
+        return
+
     subject = (
         event.data.get("oid")
         if event.type in (EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.DISCARD)
@@ -2249,6 +2279,15 @@ def event_bindings(
 #: Event payload keys carried into a trigger's bindings.
 EVENT_BINDING_KEYS = (
     "amount",
+    # "…sacrifice **that permanent**" -- the host an attachment came off, on
+    # `becomes_unattached`. Its own name, because the event's `oid` is not a
+    # binding and `subject` is the attachment.
+    "host",
+    # "…if one or more **players being attacked** are poisoned" -- Norn's
+    # Decree, on `you_attack`. The seats the declaration attacks directly, a
+    # list a player spec reads as ``{"binding": "attacked_players"}``; the
+    # event's `defenders` folds in a planeswalker's or battle's controller.
+    "attacked_players",
     # Which zone the permanent came from -- Celes, Rune Knight: "if one or more
     # of them **entered from a graveyard**". `cause` names the *mechanism*
     # (`put_onto_battlefield`, `manifest`, `meld`) and the same mechanism
@@ -2488,7 +2527,7 @@ def validate_host_filter(event: str, filt: Mapping[str, Any] | None, where: str)
 def _subject_oid(dsl_event: str, event: GameEvent) -> int | None:
     if dsl_event not in OBJECT_SUBJECT_TRIGGERS:
         return None
-    if dsl_event in ("deals_damage", "becomes_attached"):
+    if dsl_event in ("deals_damage", "becomes_attached", "becomes_unattached"):
         # The dealer, on either half: on the permanent half `oid` is the victim.
         # And the attachment, never the host that is an ATTACHED event's `oid`.
         return event.source

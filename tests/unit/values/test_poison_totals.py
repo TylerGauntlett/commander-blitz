@@ -161,3 +161,44 @@ class TestTheLoader:
             validate_value({"players_with_poison": spec}, "probe")
         with pytest.raises(DslError, match="players_with_poison"):
             compile_card(self.anthem({"players_with_poison": spec}))
+
+
+class TestTheSeatsThemselves:
+    """Geth's Summons: "for each opponent who has three or more poison counters
+    ..., put up to one target creature card from **that player's** graveyard".
+    The same spec as a player spec names the seats the headcount counts, so a
+    target's ``owner`` can be restricted to them."""
+
+    SEATS = {"players_with_poison": {"player": "each_opponent", "at_least": 3}}
+
+    def test_it_names_each_opponent_at_the_floor(self, builder):
+        from commanderblitz.engine.effects.selectors import select_players
+
+        game = table(builder, [5, 3, 2, 4])
+        ctx = EffectContext(state=game.state, controller=0)
+        assert select_players(ctx, self.SEATS) == [1, 3]
+
+    def test_a_graveyard_selector_takes_it_as_owner(self, builder):
+        from commanderblitz.engine.effects.selectors import resolve_pool, validate_selector
+
+        game = (
+            builder(players=3)
+            .graveyard(1, ["t_bear"])
+            .graveyard(2, ["t_bear"])
+            .build(advance=False)
+        )
+        game.state.players[1].poison = 3
+        selector = {"zone": "graveyard", "types": ["Creature"], "owner": self.SEATS}
+        validate_selector(selector, "probe")
+        ctx = EffectContext(state=game.state, controller=0)
+        owners = {game.state.objects[oid].owner for oid in resolve_pool(ctx, selector)}
+        assert owners == {1}
+
+    def test_a_loose_owner_spec_is_refused(self):
+        from commanderblitz.engine.effects.selectors import validate_selector
+
+        with pytest.raises(DslError, match="players_with_poison"):
+            validate_selector(
+                {"zone": "graveyard", "owner": {"players_with_poison": {"player": "each_opponent"}}},
+                "probe",
+            )

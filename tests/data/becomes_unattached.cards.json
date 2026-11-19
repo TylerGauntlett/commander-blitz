@@ -1,0 +1,99 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_unattached.py. t_bu_wargear is Grafted Wargear's drawback on a vanilla Equipment with Equip {0}; t_bu_hook is Captain's Hook's 'destroy that permanent' on the same body.",
+  "cards": [
+    {
+      "id": "t_bu_wargear",
+      "name": "Test Unattach Wargear",
+      "oracle_text": "Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent.\nEquip {0}",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent.",
+          "trigger": {
+            "event": "becomes_unattached",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "objects": {
+                "binding": "host"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {0}",
+          "cost": {
+            "mana": "{0}"
+          },
+          "is_equip": true,
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "attach",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_bu_hook",
+      "name": "Test Unattach Hook",
+      "oracle_text": "Whenever this Equipment becomes unattached from a permanent, destroy that permanent.",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this Equipment becomes unattached from a permanent, destroy that permanent.",
+          "trigger": {
+            "event": "becomes_unattached",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "destroy",
+              "objects": {
+                "binding": "host"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

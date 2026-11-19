@@ -24,6 +24,7 @@ from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
+    validate_players_with_poison,
     validate_value,
 )
 from commanderblitz.engine.enums import SUBTYPE_CLASS
@@ -715,6 +716,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
         _validate_player_spec(rest, where, target_kinds)
         return
+    if "players_with_poison" in who:
+        # "For each opponent who has three or more poison counters" -- Geth's
+        # Summons. The value's spec, naming the seats it would count.
+        if len(who) > 1:
+            raise DslError(
+                f"{where}: 'players_with_poison' stands alone, got {dict(who)!r}"
+            )
+        validate_players_with_poison(
+            who["players_with_poison"], f"{where}.players_with_poison", PLAYER_SPEC_NAMES
+        )
+        return
     if "attacked_by" in who:
         # "Each player this creature attacked this turn" -- Angel of Destiny.
         # "self" is the only subject a card prints, and anything else would
@@ -845,7 +857,9 @@ def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[st
                 # The comparing form is not a seat spec: its `player` is one of
                 # the per-player words, and `than` may carry a nested one.
                 _validate_nested_player_refs(value, path, target_kinds)
-            elif key in ("controller", "player", "player_count") and isinstance(value, Mapping):
+            elif key in ("controller", "owner", "player", "player_count") and isinstance(
+                value, Mapping
+            ):
                 _validate_player_spec(value, path, target_kinds)
             else:
                 _validate_nested_player_refs(value, path, target_kinds)

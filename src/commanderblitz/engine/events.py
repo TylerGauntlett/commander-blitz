@@ -227,6 +227,12 @@ class EventType:
     #: what is left. Both carry the ``counter`` kind and the ``amount`` taken.
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
+    #: An Aura or Equipment stopped being attached to a permanent: moved to
+    #: another, unattached by an effect, left behind by a host that left the
+    #: battlefield or by a state-based action, or leaving the battlefield itself
+    #: (``attachment_left``). ``source`` is the attachment, ``oid`` and ``host``
+    #: the permanent it came off -- "sacrifice **that permanent**".
+    UNATTACHED = "unattached"
     #: A permanent changed controller without changing zones. Its own type,
     #: because every other way a permanent arrives on somebody's side of the
     #: board is a ZONE_CHANGE and this one is not: the object never moves, so a

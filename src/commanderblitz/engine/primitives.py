@@ -1872,6 +1872,7 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
         # `becomes_attached` trigger to mistake for becoming attached. True,
         # because it is attached there: the refusals above are False.
         return True
+    was = aura.attached_to
     aura.attached_to = target_oid
     aura.attached_timestamp = state.alloc_timestamp()
     # A fresh attachment supersedes the remembered one, so an Equipment moved to
@@ -1884,8 +1885,35 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     # hosts, where every reader would get a different answer.
     aura.attached_to_player = None
     state.bump_chars()
+    if was is not None:
+        # Moving it is becoming unattached from the first (701.3a's "attach
+        # it to another"), heard before it is heard arriving.
+        fire_unattached(state, aura_oid, was)
     fire(state, EventType.ATTACHED, player=aura.controller, source=aura_oid, oid=target_oid)
     return True
+
+
+def fire_unattached(
+    state: GameState, attachment_oid: int, host_oid: int, *, attachment_left: bool = False
+) -> None:
+    """Announce that ``attachment_oid`` stopped being attached to ``host_oid``.
+
+    "Whenever this Equipment becomes unattached from a permanent, sacrifice
+    that permanent" (Grafted Wargear). Every funnel that clears a permanent
+    host calls this, after the field is cleared, so the event names the host
+    it came off. ``attachment_left`` is the attachment itself leaving the
+    battlefield, whose own trigger looks back (603.10a).
+    """
+    attachment = state.objects.get(attachment_oid)
+    fire(
+        state,
+        EventType.UNATTACHED,
+        player=attachment.controller if attachment is not None else None,
+        source=attachment_oid,
+        oid=host_oid,
+        host=host_oid,
+        attachment_left=attachment_left,
+    )
 
 
 def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
@@ -1924,10 +1952,13 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
         # 701.3b: attaching an Aura to the player it is already on does
         # nothing -- no ATTACHED event for a trigger to mistake for a move.
         return False
+    was = aura.attached_to
     aura.attached_to_player = player
     aura.attached_to = None
     aura.last_attached_to = None
     state.bump_chars()
+    if was is not None:
+        fire_unattached(state, aura_oid, was)
     fire(
         state,
         EventType.ATTACHED,

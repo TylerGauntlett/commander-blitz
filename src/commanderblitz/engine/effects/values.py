@@ -81,6 +81,7 @@ from .selectors import (
     PLAYER_SPEC_NAMES,
     resolve_pool,
     select_players,
+    validate_players_with_poison,
     validate_selector,
 )
 
@@ -1695,29 +1696,6 @@ def validate_player_count_where(spec: Mapping[str, Any], where: str) -> None:
             f"{where}: needs 'than' -- what each player's count is compared with"
         )
     validate_value(spec["than"], f"{where}.than")
-
-
-def validate_players_with_poison(spec: Any, where: str, players: Any) -> None:
-    """Shared by the effect-side and static-side value validators.
-
-    ``player`` is not defaulted, for `validate_per_player_count`'s reason, and
-    ``at_least`` is required: corrupted prints three, but the threshold is the
-    card's, and a default would read the same in a file that meant another.
-    """
-    if not isinstance(spec, Mapping):
-        raise DslError(f"{where}: must be an object")
-    unknown = set(spec) - {"player", "at_least"}
-    if unknown:
-        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
-    who = spec.get("player")
-    if not isinstance(who, str) or who not in players:
-        raise DslError(f"{where}.player: must name one of {sorted(players)}, got {who!r}")
-    floor = spec.get("at_least")
-    if not isinstance(floor, int) or isinstance(floor, bool) or floor < 1:
-        raise DslError(
-            f"{where}.at_least: needs a whole number of poison counters, at least 1, "
-            f"got {floor!r}"
-        )
 
 
 def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = None) -> None:

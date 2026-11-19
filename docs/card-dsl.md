@@ -1800,6 +1800,23 @@ the question asked of the declaration, checked as it triggers only:
                                         "enchanted_by": { "controller": "you" } } } }
 ```
 
+`you_attack` also binds `attacked_players`, the seats the declaration attacks
+**directly**, as a list a player spec reads: "whenever a player attacks, if one
+or more players being attacked are poisoned, the attacking player draws a card"
+(Norn's Decree) is
+
+```jsonc
+"trigger": { "event": "you_attack", "controller": "any",
+             "condition": { "cmp": ">", "left": { "max_poison_of": { "binding": "attacked_players" } },
+                            "right": { "const": 0 } } },
+"effects": [ { "op": "draw", "amount": { "const": 1 }, "player": { "binding": "event_player" } } ]
+```
+
+A seat whose planeswalker or battle alone is attacked is a defending player and
+not a player being attacked (506.2), so it is not in the list. One card however
+many poisoned players are attacked, because the event is the declaration;
+`creatures_attack_player`'s `defender` is the near miss and fires once per seat.
+
 | Near miss | Why not |
 |---|---|
 | `modified` | also counts counters and Equipment, and only Auras you control |
@@ -6442,7 +6459,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
@@ -7922,6 +7939,13 @@ Two more questions of `PlayerState.poison`, each a different number from
 { "count": { "players_with_poison": { "player": "each_opponent", "at_least": 3 } },
   "up_to": true }
 ```
+
+The same mapping is also a **player spec**, naming the seats it would count:
+"for each opponent who has three or more poison counters as you cast this
+spell, put up to one target creature card from **that player's** graveyard"
+(Geth's Summons) restricts a target's `owner` to
+`{"players_with_poison": {"player": "each_opponent", "at_least": 3}}`, so the
+targets are chosen, as the spell is cast, only from those graveyards.
 
 Both are pipeline inputs on `max_poison_of`'s terms and work in both
 languages; in a static they take the life leaves' player specs. `player_count`'s

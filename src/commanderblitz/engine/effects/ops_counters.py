@@ -20,6 +20,7 @@ from ..primitives import (
     attach_to_player,
     change_control,
     create_token,
+    fire_unattached,
     remove_counters,
     tap_permanent,
     transform,
@@ -1452,4 +1453,4 @@ def op_unattach(ctx: EffectContext, spec: Mapping[str, Any]):
         # Every static filtered on `attached` reads differently afterwards, and
         # so does the source's own type line while it is a reconfigure card.
         ctx.state.bump_chars()
-        ctx.state.emit("unattached", player=obj.controller, source=oid, oid=was)
+        fire_unattached(ctx.state, oid, was)

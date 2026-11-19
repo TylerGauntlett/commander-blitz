@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 78 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 63 |
+| [Trigger events](#trigger-events) | 64 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 104 |
 | [Player-wide statics](#player-wide-statics) | 48 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 24 |
-| [Engine events](#engine-events) | 85 |
+| [Engine events](#engine-events) | 86 |
 
 ## Effect ops
 
@@ -477,6 +477,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `becomes_tapped` | `tapped` | A permanent becomes tapped. | [Triggers](card-dsl.md#triggers) |
 | `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability. | [Triggers](card-dsl.md#triggers) |
+| `becomes_unattached` | `unattached` | An Aura or Equipment stops being attached to a permanent, however it came off, its own departure included; the subject is the attachment, and `{"binding": "host"}` the permanent it came off. | ["Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"](card-dsl-cookbook.md#whenever-this-equipment-becomes-unattached-from-a-permanent-sacrifice-that-permanent) |
 | `becomes_untapped` | `untapped` | A permanent becomes untapped. | [Triggers](card-dsl.md#triggers) |
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |
@@ -1292,6 +1293,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `turn_began` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turn_skipped` |  |  | [Triggers](card-dsl.md#triggers) |
 | `turned_face_up` | `turned_face_up` |  | [Triggers](card-dsl.md#triggers) |
+| `unattached` | `becomes_unattached` |  | [Triggers](card-dsl.md#triggers) |
 | `untapped` | `becomes_untapped` |  | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` |  | [Triggers](card-dsl.md#triggers) |
 | `zone_change` |  |  | [Triggers](card-dsl.md#triggers) |

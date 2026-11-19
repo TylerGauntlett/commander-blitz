@@ -20,6 +20,7 @@ from .primitives import (
     become_monarch,
     clear_until_next_turn,
     end_effects_of_leaving_player,
+    fire_unattached,
     reconcile_static_control,
 )
 from .temp_effects import (
@@ -519,7 +520,9 @@ def _tokens_and_attachments(state: GameState) -> bool:
             continue
         if target is None or not target.on_battlefield:
             if obj.attached_to is not None:
+                was = obj.attached_to
                 obj.attached_to = None
+                fire_unattached(state, oid, was)
                 changed = True
             if aura:
                 move_object(state, oid, Zone.GRAVEYARD, cause="aura_unattached")

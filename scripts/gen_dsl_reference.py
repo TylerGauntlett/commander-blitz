@@ -853,6 +853,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "becomes_attached": ("An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host.",
                          '"Whenever an Aura you control becomes attached to a creature you control"'),
     "becomes_blocked": ("An attacking creature becomes blocked.", None),
+    "becomes_unattached": ("An Aura or Equipment stops being attached to a permanent, however it came off, its own departure included; the subject is the attachment, and `{\"binding\": \"host\"}` the permanent it came off.",
+                           '"Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"'),
     "becomes_level": ("A Class reaches a level.", '"When this Class becomes level N"'),
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),
     "becomes_monstrous": ("A creature becomes monstrous.", H_MONSTROSITY),
