@@ -1,0 +1,23 @@
+{
+  "card_id": "glissa_s_retriever",
+  "name": "Glissa's Retriever",
+  "oracle_text": "Haste, toxic 3 (Players dealt combat damage by this creature also get three poison counters.)\nThis creature can't be blocked by creatures with power 2 or less.\nCorrupted — When this creature dies, exile it. When you do, return up to X target cards from your graveyard to your hand, where X is the number of opponents who have three or more poison counters.",
+  "blocked_sentences": [
+    "Corrupted — When this creature dies, exile it. When you do, return up to X target cards from your graveyard to your hand, where X is the number of opponents who have three or more poison counters."
+  ],
+  "needs": [
+    {
+      "capability": "poisoned_opponent_count",
+      "kind": "value",
+      "what": "a value counting the players a spec names who EACH have at least N poison counters -- e.g. {\"player_count\": {\"player\": \"each_opponent\", \"poison\": {\">=\": 3}}} or a player-spec filter {\"each_opponent\", \"min_poison\": 3} -- so a reflexive trigger's card_in_graveyard target can be `count: <that value>, up_to: true` (\"up to X target cards, where X is the number of opponents who have three or more poison counters\")",
+      "why_existing_wont_do": "max_poison_of gives only the single highest poison total (so it can say 'an opponent has 3+ poison', not how many do); player_count's comparing form compares a count of OBJECTS per player (validate_per_player_count accepts only player/objects), and poison counters live on PlayerState, not on objects; select_players has no poison filter. In a multiplayer pod, a max_poison_of>=3 -> 1 stand-in would cap X at 1 when two or three opponents are corrupted"
+    }
+  ],
+  "closest_existing": [
+    "max_poison_of",
+    "player_count",
+    "reflexive_trigger",
+    "return_from_graveyard"
+  ],
+  "confidence": "high"
+}

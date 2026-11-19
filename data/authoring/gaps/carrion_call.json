@@ -1,0 +1,14 @@
+{
+  "card_id": "carrion_call",
+  "name": "Carrion Call",
+  "oracle_text": "Create two 1/1 green Phyrexian Insect creature tokens with infect. (They deal damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+  "blocked_sentences": ["Create two 1/1 green Phyrexian Insect creature tokens with infect"],
+  "needs": [{
+    "capability": "phyrexian_insect_infect_token",
+    "kind": "token",
+    "what": "a 1/1 green Phyrexian Insect creature token with infect (subtypes Phyrexian, Insect; keywords [infect])",
+    "why_existing_wont_do": "The token pool has insect_1_1_g (plain green Insect, no Phyrexian subtype, no infect) and phyrexian_mite_1_1_c_toxic, but no Phyrexian Insect with infect; create_token's options (amount, counters, tapped, ...) cannot add a subtype or a keyword to an existing token, though the infect keyword itself exists"
+  }],
+  "closest_existing": ["insect_1_1_g"],
+  "confidence": "high"
+}

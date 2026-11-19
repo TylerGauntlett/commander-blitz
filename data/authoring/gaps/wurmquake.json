@@ -1,0 +1,22 @@
+{
+  "card_id": "wurmquake",
+  "name": "Wurmquake",
+  "oracle_text": "Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, where X is the amount of mana spent to cast this spell. Then for each opponent with three or more poison counters, you create another one of those tokens.\nFlashback {8}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, where X is the amount of mana spent to cast this spell. Then for each opponent with three or more poison counters, you create another one of those tokens."
+  ],
+  "needs": [
+    {
+      "capability": "phyrexian_wurm_token",
+      "kind": "token",
+      "what": "an X/X green Phyrexian Wurm creature token with trample and toxic 1 (0/0 base, power/toughness set by create_token's power/toughness), e.g. phyrexian_wurm_x_x_g_trample_toxic1",
+      "why_existing_wont_do": "token_ids has wurm_5_5_g (fixed 5/5, no Phyrexian subtype, no trample or toxic) and dinosaur_beast_x_x_g_trample / hydra_x_x_g / ooze_x_x_g (wrong creature types, no toxic); create_token takes power/toughness but no keywords or subtypes, so none of them is the printed token"
+    }
+  ],
+  "closest_existing": [
+    "wurm_5_5_g",
+    "dinosaur_beast_x_x_g_trample",
+    "phyrexian_mite_1_1_c_toxic"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "geth_s_summons",
+  "name": "Geth's Summons",
+  "oracle_text": "Return up to one target creature card from your graveyard to the battlefield.\nCorrupted — For each opponent who has three or more poison counters as you cast this spell, put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+  "blocked_sentences": [
+    "Corrupted — For each opponent who has three or more poison counters as you cast this spell, put up to one target creature card from that player's graveyard onto the battlefield under your control"
+  ],
+  "needs": [
+    {
+      "capability": "corrupted_target_per_opponent",
+      "kind": "selector",
+      "what": "a card-in-graveyard target slot, one per opponent (one_per_player, up to one each), whose candidates are limited to graveyards of opponents who individually had three or more poison counters as the spell was cast (601.2c), i.e. a target selector clause on the owning player's poison count",
+      "why_existing_wont_do": "The only poison reader is the value max_poison_of, which with cmp gives a table-wide 'an opponent has 3+ poison' condition, not a per-opponent one; selector owner/controller accept only you/opponent/any, so with several opponents the spell could take a creature from an opponent with fewer than three poison counters"
+    }
+  ],
+  "closest_existing": [
+    "max_poison_of",
+    "one_per_player",
+    "return_from_graveyard"
+  ],
+  "confidence": "high"
+}

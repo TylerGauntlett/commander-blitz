@@ -1,0 +1,18 @@
+{
+  "card_id": "norn_s_decree",
+  "name": "Norn's Decree",
+  "oracle_text": "Whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter.\nWhenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card.",
+  "blocked_sentences": [
+    "Whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card."
+  ],
+  "needs": [
+    {
+      "capability": "attacked_players_binding",
+      "kind": "selector",
+      "what": "a player-spec binding on the `you_attack` (ATTACKERS_DECLARED) trigger naming the players being attacked directly (not via a planeswalker or battle), so an intervening-if can read `{\"cmp\": \">\", \"left\": {\"max_poison_of\": {\"binding\": \"attacked_players\"}}, \"right\": {\"const\": 0}}` and the trigger fires once per declaration with `controller: \"any\"` and draws for `event_player`",
+      "why_existing_wont_do": "`combat.declare_attackers` puts `defenders` on ATTACKERS_DECLARED but `triggers.EVENT_BINDING_KEYS` does not carry it into bindings, so no condition can name the attacked seats; `max_poison_of` over `each_opponent`/`each_player` asks about the trigger controller's opponents or the whole table, not the defenders; `creatures_attack_player` with `defending` binds one `defender` but fires once per defending seat, drawing two cards when two poisoned players are attacked, and it also counts seats attacked only through a planeswalker"
+    }
+  ],
+  "closest_existing": ["you_attack", "creatures_attack_player", "max_poison_of"],
+  "confidence": "high"
+}
