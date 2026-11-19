@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**551 cards** blocked by **466** capabilities.
+**545 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
-| [total-poison-of](#total-poison-of) | 3 | 4876 | value |
 | [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
@@ -66,7 +65,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
-| [phyrexian-insect-infect-token](#phyrexian-insect-infect-token) | 2 | 4876 | token |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
@@ -359,7 +357,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
-| [phyrexian-wurm-token](#phyrexian-wurm-token) | 1 | 13547 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
@@ -375,7 +372,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
-| [poisoned-opponent-count](#poisoned-opponent-count) | 1 | 9342 | value |
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [pregame-commander-color-choice](#pregame-commander-color-choice) | 1 | 12969 | engine |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
@@ -1446,28 +1442,6 @@ Blocks **3** cards.
 
 </details>
 
-## total-poison-of
-
-Blocks **3** cards.
-
-- **(value)** a static value leaf (e.g. {"poison_of": "each_opponent"}) that SUMS PlayerState.poison over a player spec, usable as a buff's power/toughness magnitude, so the creature gets +1/+1 per poison counter across all opponents combined
-  <br>Why the existing vocabulary won't do: The only poison leaf in static_value_keys is max_poison_of, which takes the most poison on ONE opponent (the corrupted threshold reading); at a multiplayer table with opponents at 2 and 3 poison it gives +3/+3 instead of the printed +5/+5. counters_on cannot reach player counters, and sum cannot iterate per-opponent because no single-opponent player spec exists
-- **(value)** a value summing the poison counters across a player set, e.g. {"total_poison_of": "each_opponent"} = the total number of poison counters your opponents have
-  <br>Why the existing vocabulary won't do: max_poison_of returns only the most poison counters on one opponent, and sum takes a fixed list of value expressions rather than iterating a player set, so in multiplayer Commander the total across opponents cannot be said
-- **(value)** a static (and effect) value leaf that sums the poison counters across a player spec, e.g. {"poison_of": "each_opponent"} returning the total of PlayerState.poison over every opponent, usable as a self-only buff's power and toughness
-  <br>Why the existing vocabulary won't do: The only poison leaf in static_value_keys is max_poison_of, which returns the most poison on ONE opponent (Corrupted's existential reading); 'for each poison counter your opponents have' is the total across all opponents, which differs in any pod with poison on two or more opponents. sum takes a list of fixed terms and cannot iterate players, and counters_on reads objects, not players.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phyrexian Swarmlord** (rank 4876) — `phyrexian_swarmlord`
-  - At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with infect for each poison counter your opponents have
-- **Vishgraz, the Doomhive** (rank 6734) — `vishgraz_the_doomhive`
-  - Vishgraz gets +1/+1 for each poison counter your opponents have.
-- **Mycosynth Fiend** (rank 18673) — `mycosynth_fiend`
-  - This creature gets +1/+1 for each poison counter your opponents have.
-
-</details>
-
 ## add-color
 
 Blocks **2** cards.
@@ -1868,24 +1842,6 @@ Blocks **2** cards.
   - {3}, {T}, Pay X {E}, Sacrifice this land: Destroy target nonland permanent with mana value X. Activate only as a sorcery.
 - **Sphinx of the Revelation** (rank 5591) — `sphinx_of_the_revelation`
   - {W}{U}{U}, {T}, Pay X {E}: Draw X cards.
-
-</details>
-
-## phyrexian-insect-infect-token
-
-Blocks **2** cards.
-
-- **(token)** a 1/1 green Phyrexian Insect creature token with infect (subtypes Phyrexian, Insect; keywords [infect])
-  <br>Why the existing vocabulary won't do: The token pool has insect_1_1_g (plain green Insect, no Phyrexian subtype, no infect) and phyrexian_mite_1_1_c_toxic, but no Phyrexian Insect with infect; create_token's options (amount, counters, tapped, ...) cannot add a subtype or a keyword to an existing token, though the infect keyword itself exists
-- **(token)** a 1/1 green Phyrexian Insect creature token with infect (subtypes Phyrexian, Insect; keywords [infect])
-  <br>Why the existing vocabulary won't do: The token pool has insect_1_1_g (plain green Insect, no Phyrexian subtype, no infect) and phyrexian_mite_1_1_c_toxic, but no Phyrexian Insect with infect; create_token cannot add a subtype or keyword to an existing token id
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phyrexian Swarmlord** (rank 4876) — `phyrexian_swarmlord`
-  - At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with infect for each poison counter your opponents have
-- **Carrion Call** (rank 16360) — `carrion_call`
-  - Create two 1/1 green Phyrexian Insect creature tokens with infect
 
 </details>
 
@@ -6147,20 +6103,6 @@ Blocks **1** card.
 
 </details>
 
-## phyrexian-wurm-token
-
-Blocks **1** card.
-
-- **(token)** an X/X green Phyrexian Wurm creature token with trample and toxic 1 (0/0 base, power/toughness set by create_token's power/toughness), e.g. phyrexian_wurm_x_x_g_trample_toxic1
-  <br>Why the existing vocabulary won't do: token_ids has wurm_5_5_g (fixed 5/5, no Phyrexian subtype, no trample or toxic) and dinosaur_beast_x_x_g_trample / hydra_x_x_g / ooze_x_x_g (wrong creature types, no toxic); create_token takes power/toughness but no keywords or subtypes, so none of them is the printed token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wurmquake** (rank 13547) — `wurmquake`
-  - Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, where X is the amount of mana spent to cast this spell. Then for each opponent with three or more poison counters, you create another one of those tokens.
-
-</details>
-
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -6371,20 +6313,6 @@ Blocks **1** card.
 
 - **Rampant Frogantua** (rank 4941) — `rampant_frogantua`
   - This creature gets +10/+10 for each player who has lost the game.
-
-</details>
-
-## poisoned-opponent-count
-
-Blocks **1** card.
-
-- **(value)** a value counting the players a spec names who EACH have at least N poison counters -- e.g. {"player_count": {"player": "each_opponent", "poison": {">=": 3}}} or a player-spec filter {"each_opponent", "min_poison": 3} -- so a reflexive trigger's card_in_graveyard target can be `count: <that value>, up_to: true` ("up to X target cards, where X is the number of opponents who have three or more poison counters")
-  <br>Why the existing vocabulary won't do: max_poison_of gives only the single highest poison total (so it can say 'an opponent has 3+ poison', not how many do); player_count's comparing form compares a count of OBJECTS per player (validate_per_player_count accepts only player/objects), and poison counters live on PlayerState, not on objects; select_players has no poison filter. In a multiplayer pod, a max_poison_of>=3 -> 1 stand-in would cap X at 1 when two or three opponents are corrupted
-
-<details><summary>Cards waiting on this</summary>
-
-- **Glissa's Retriever** (rank 9342) — `glissa_s_retriever`
-  - Corrupted — When this creature dies, exile it. When you do, return up to X target cards from your graveyard to your hand, where X is the number of opponents who have three or more poison counters.
 
 </details>
 

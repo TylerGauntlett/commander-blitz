@@ -3467,6 +3467,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "carrion_call": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "phyrexian_insect_1_1_g_infect"
+    },
+    "zone": "graveyard"
+  },
   "carrion_crow": {
     "zone": "battlefield"
   },
@@ -9564,6 +9572,13 @@
   "glissa_s_courier": {
     "zone": "battlefield"
   },
+  "glissa_s_retriever": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "glissa_sunseeker": {
     "zone": "battlefield"
   },
@@ -15448,6 +15463,10 @@
     },
     "zone": "battlefield"
   },
+  "mycosynth_fiend": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "myr_battlesphere": {
     "battlefield_count": 37,
     "tokens": {
@@ -17147,6 +17166,10 @@
       "amount": 1,
       "kind": "lore"
     },
+    "zone": "battlefield"
+  },
+  "phyrexian_swarmlord": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phyrexian_tower": {
@@ -25938,6 +25961,14 @@
     },
     "zone": "battlefield"
   },
+  "vishgraz_the_doomhive": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 3,
+      "id": "phyrexian_mite_1_1_c_toxic"
+    },
+    "zone": "battlefield"
+  },
   "vision_synthezoid_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -27237,6 +27268,14 @@
   },
   "wu_light_cavalry": {
     "zone": "battlefield"
+  },
+  "wurmquake": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_wurm_x_x_g_trample_toxic"
+    },
+    "zone": "graveyard"
   },
   "xander_s_lounge": {
     "zone": "battlefield"

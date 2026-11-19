@@ -40212,12 +40212,12 @@
     },
     "Carrion Call": {
       "edhrec_rank": 16360,
-      "gate": "template",
+      "gate": null,
       "name": "Carrion Call",
-      "reason": "no template for: Create two 1/1 green Phyrexian Insect creature tokens with infect",
+      "reason": "",
       "scryfall_id": "225ff048-fb4b-4801-8db6-b1136a1935a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carrion Crow": {
@@ -111062,12 +111062,12 @@
     },
     "Glissa's Retriever": {
       "edhrec_rank": 9342,
-      "gate": "template",
+      "gate": null,
       "name": "Glissa's Retriever",
-      "reason": "no template for: Haste, toxic 3",
+      "reason": "",
       "scryfall_id": "81836d7f-ba8d-4c52-8b1f-c86b422e23b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glissa's Scorn": {
@@ -181632,12 +181632,12 @@
     },
     "Mycosynth Fiend": {
       "edhrec_rank": 18673,
-      "gate": "template",
+      "gate": null,
       "name": "Mycosynth Fiend",
-      "reason": "no template for: This creature gets +1/+1 for each poison counter your opponents have",
+      "reason": "",
       "scryfall_id": "9e60dd79-cc2f-4f53-afe3-cd8ab91005cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mycosynth Golem": {
@@ -201932,12 +201932,12 @@
     },
     "Phyrexian Swarmlord": {
       "edhrec_rank": 4876,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Swarmlord",
-      "reason": "no template for: At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with i",
+      "reason": "",
       "scryfall_id": "715565be-0c97-4f06-8e89-2ea44c6007c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Totem": {
@@ -305762,12 +305762,12 @@
     },
     "Vishgraz, the Doomhive": {
       "edhrec_rank": 6734,
-      "gate": "template",
+      "gate": null,
       "name": "Vishgraz, the Doomhive",
-      "reason": "no template for: Menace, toxic 1",
+      "reason": "",
       "scryfall_id": "6d97fa12-b4c0-49fe-98fd-dc560f43a79c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vision Charm": {
@@ -319982,12 +319982,12 @@
     },
     "Wurmquake": {
       "edhrec_rank": 13547,
-      "gate": "template",
+      "gate": null,
       "name": "Wurmquake",
-      "reason": "no template for: Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, wh",
+      "reason": "",
       "scryfall_id": "94f0a15e-9437-4aa9-86c5-482008124617",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wurmskin Forger": {

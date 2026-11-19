@@ -42096,6 +42096,31 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "carrion_call",
+      "mana_cost": "{3}{G}",
+      "name": "Carrion Call",
+      "oracle_text": "Create two 1/1 green Phyrexian Insect creature tokens with infect. (They deal damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "phyrexian_insect_1_1_g_infect"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -113523,6 +113548,112 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked by creatures with power 2 or less."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "self_only": true,
+                  "zone": "graveyard"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "ability": "glissa_s_retriever_return",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Corrupted — When this creature dies, exile it.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "glissa_s_retriever_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": {
+                "players_with_poison": {
+                  "at_least": 3,
+                  "player": "each_opponent"
+                }
+              },
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When you do, return up to X target cards from your graveyard to your hand, where X is the number of opponents who have three or more poison counters."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "glissa_s_retriever",
+      "keywords": [
+        "haste",
+        "toxic"
+      ],
+      "mana_cost": "{5}{G}",
+      "name": "Glissa's Retriever",
+      "oracle_text": "Haste, toxic 3 (Players dealt combat damage by this creature also get three poison counters.)\nThis creature can't be blocked by creatures with power 2 or less.\nCorrupted — When this creature dies, exile it. When you do, return up to X target cards from your graveyard to your hand, where X is the number of opponents who have three or more poison counters.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Beast"
+      ],
+      "toughness": 6,
+      "toxic": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -184891,6 +185022,44 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "total_poison_of": "each_opponent"
+          },
+          "text": "This creature gets +1/+1 for each poison counter your opponents have.",
+          "toughness": {
+            "total_poison_of": "each_opponent"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "mycosynth_fiend",
+      "mana_cost": "{2}{G}",
+      "name": "Mycosynth Fiend",
+      "oracle_text": "This creature gets +1/+1 for each poison counter your opponents have.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -206400,6 +206569,52 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "total_poison_of": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "phyrexian_insect_1_1_g_infect"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with infect for each poison counter your opponents have.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "phyrexian_swarmlord",
+      "keywords": [
+        "infect"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Phyrexian Swarmlord",
+      "oracle_text": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\nAt the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with infect for each poison counter your opponents have.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Insect",
+        "Horror"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -312687,6 +312902,74 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "phyrexian_mite_1_1_c_toxic"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Vishgraz enters, create three 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\"",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "total_poison_of": "each_opponent"
+          },
+          "text": "Vishgraz gets +1/+1 for each poison counter your opponents have.",
+          "toughness": {
+            "total_poison_of": "each_opponent"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "vishgraz_the_doomhive",
+      "keywords": [
+        "menace",
+        "toxic"
+      ],
+      "mana_cost": "{2}{W}{B}{G}",
+      "name": "Vishgraz, the Doomhive",
+      "oracle_text": "Menace, toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nWhen Vishgraz enters, create three 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\"\nVishgraz gets +1/+1 for each poison counter your opponents have.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Insect"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "toxic": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "modes": [
                 {
@@ -327061,6 +327344,64 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flashback": {
+        "mana": "{8}{G}{G}"
+      },
+      "id": "wurmquake",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Wurmquake",
+      "oracle_text": "Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, where X is the amount of mana spent to cast this spell. Then for each opponent with three or more poison counters, you create another one of those tokens.\nFlashback {8}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "power": {
+            "mana_spent_of": {
+              "self": true
+            }
+          },
+          "token": "phyrexian_wurm_x_x_g_trample_toxic",
+          "toughness": {
+            "mana_spent_of": {
+              "self": true
+            }
+          }
+        },
+        {
+          "amount": {
+            "players_with_poison": {
+              "at_least": 3,
+              "player": "each_opponent"
+            }
+          },
+          "op": "create_token",
+          "power": {
+            "mana_spent_of": {
+              "self": true
+            }
+          },
+          "token": "phyrexian_wurm_x_x_g_trample_toxic",
+          "toughness": {
+            "mana_spent_of": {
+              "self": true
+            }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
