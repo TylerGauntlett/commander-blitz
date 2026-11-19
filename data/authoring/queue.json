@@ -1092,12 +1092,12 @@
     },
     "Abzan Battle Priest": {
       "edhrec_rank": 3620,
-      "gate": "template",
+      "gate": null,
       "name": "Abzan Battle Priest",
-      "reason": "no template for: Outlast {W}",
+      "reason": "",
       "scryfall_id": "a424dafb-c77a-46a7-b1dc-cf04e88bb938",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abzan Beastmaster": {
@@ -1132,12 +1132,12 @@
     },
     "Abzan Falconer": {
       "edhrec_rank": 1398,
-      "gate": "template",
+      "gate": null,
       "name": "Abzan Falconer",
-      "reason": "no template for: Outlast {W}",
+      "reason": "",
       "scryfall_id": "f7e2b0e1-c9ea-4f91-b19e-73b1bd6a0884",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abzan Guide": {
@@ -6042,12 +6042,12 @@
     },
     "Alharu, Solemn Ritualist": {
       "edhrec_rank": 14598,
-      "gate": "template",
+      "gate": null,
       "name": "Alharu, Solemn Ritualist",
-      "reason": "no template for: When Alharu enters, put a +1/+1 counter on each of up to two other target creatures",
+      "reason": "",
       "scryfall_id": "f699f8d9-8708-44ca-8d14-1ca93aa68c9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ali Baba": {
@@ -13422,12 +13422,12 @@
     },
     "Armorcraft Judge": {
       "edhrec_rank": 3503,
-      "gate": "template",
+      "gate": null,
       "name": "Armorcraft Judge",
-      "reason": "no template for: When this creature enters, draw a card for each creature you control with a +1/+1 counter ",
+      "reason": "",
       "scryfall_id": "73ce0c46-689c-41e5-b95c-39e9bcd51100",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armored Armadillo": {
@@ -33992,12 +33992,12 @@
     },
     "Bretagard Stronghold": {
       "edhrec_rank": 10509,
-      "gate": "template",
+      "gate": null,
       "name": "Bretagard Stronghold",
-      "reason": "no template for: {G}{W}{W}, {T}, Sacrifice this land: Put a +1/+1 counter on each of up to two target creat",
+      "reason": "",
       "scryfall_id": "67733bb9-9151-4ddc-b104-e48328bd1b28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breya's Apprentice": {
@@ -34212,12 +34212,12 @@
     },
     "Bright-Palm, Soul Awakener": {
       "edhrec_rank": 9373,
-      "gate": "template",
+      "gate": null,
       "name": "Bright-Palm, Soul Awakener",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "03056df6-ae03-40ce-be4b-96d8061b12d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brightblade Stoat": {
@@ -43362,12 +43362,12 @@
     },
     "Champion of Lambholt": {
       "edhrec_rank": 557,
-      "gate": "template",
+      "gate": null,
       "name": "Champion of Lambholt",
-      "reason": "no template for: Creatures with power less than this creature's power can't block creatures you control",
+      "reason": "",
       "scryfall_id": "5d5f0288-480b-4c68-957f-2f2db04d25c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion of Rhonas": {
@@ -51392,12 +51392,12 @@
     },
     "Conclave Mentor": {
       "edhrec_rank": 2312,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Mentor",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, that many plus one +",
+      "reason": "",
       "scryfall_id": "93cc7133-1814-4a77-95cc-22b93e63db50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave Naturalists": {
@@ -63652,12 +63652,12 @@
     },
     "Death-Greeter's Champion": {
       "edhrec_rank": 12650,
-      "gate": "template",
+      "gate": null,
       "name": "Death-Greeter's Champion",
-      "reason": "no template for: Dash {3}{R}",
+      "reason": "",
       "scryfall_id": "7cb2b582-1c45-4bb2-8aef-59a71a5a9e94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death-Hood Cobra": {
