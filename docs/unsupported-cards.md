@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**539 cards** blocked by **458** capabilities.
+**538 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -354,7 +354,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
-| [phyrexian-horror-token](#phyrexian-horror-token) | 1 | 4201 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
@@ -6046,20 +6045,6 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
-
-</details>
-
-## phyrexian-horror-token
-
-Blocks **1** card.
-
-- **(token)** an X/X (0/0 base, sized by create_token power/toughness) colorless Phyrexian Horror artifact creature token
-  <br>Why the existing vocabulary won't do: token_ids has no Phyrexian Horror; the nearest are phyrexian_0_0_c_artifact (a Phyrexian with no Horror subtype) and horror_2_2_b_enchantment (black 2/2 enchantment Horror), both different tokens. The rest of the sentence looks expressible: destroy with `as` binding all creatures, then create_token with power/toughness reading the count of that binding
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phyrexian Rebirth** (rank 4201) — `phyrexian_rebirth`
-  - Destroy all creatures, then create an X/X colorless Phyrexian Horror artifact creature token, where X is the number of creatures destroyed this way.
 
 </details>
 

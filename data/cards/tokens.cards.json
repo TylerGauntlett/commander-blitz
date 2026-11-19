@@ -2529,6 +2529,25 @@
       "is_token": true
     },
     {
+      "id": "phyrexian_horror_x_x_c_artifact",
+      "name": "Phyrexian Horror Token",
+      "oracle_text": "X/X colorless Phyrexian Horror artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "inkling_2_1_wb_flying",
       "name": "Inkling Token",
       "oracle_text": "",

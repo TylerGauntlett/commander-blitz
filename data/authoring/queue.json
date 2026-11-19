@@ -201832,12 +201832,12 @@
     },
     "Phyrexian Rebirth": {
       "edhrec_rank": 4201,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Rebirth",
-      "reason": "no template for: Destroy all creatures, then create an X/X colorless Phyrexian Horror artifact creature tok",
+      "reason": "",
       "scryfall_id": "5516854d-ace3-4e02-a2d1-f780c3b15e37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Reclamation": {
@@ -236412,12 +236412,12 @@
     },
     "Scrap Trawler": {
       "edhrec_rank": 862,
-      "gate": "template",
+      "gate": null,
       "name": "Scrap Trawler",
-      "reason": "no template for: Whenever this creature dies or another artifact you control is put into a graveyard from t",
+      "reason": "",
       "scryfall_id": "614be454-3829-4c3b-9485-930755dfa16d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scrap Welder": {
@@ -308482,12 +308482,12 @@
     },
     "Vulpine Harvester": {
       "edhrec_rank": 10605,
-      "gate": "template",
+      "gate": null,
       "name": "Vulpine Harvester",
-      "reason": "no template for: Whenever one or more Phyrexians you control attack, return target artifact card from your ",
+      "reason": "",
       "scryfall_id": "031fbbcc-6d87-4b4d-b406-687c878e8a78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vulshok Battlegear": {

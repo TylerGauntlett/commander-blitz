@@ -201351,6 +201351,54 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "phyrexian_rebirth",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Phyrexian Rebirth",
+      "oracle_text": "Destroy all creatures, then create an X/X colorless Phyrexian Horror artifact creature token, where X is the number of creatures destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "player": "you",
+          "power": {
+            "count": {
+              "binding": "destroyed"
+            }
+          },
+          "token": "phyrexian_horror_x_x_c_artifact",
+          "toughness": {
+            "count": {
+              "binding": "destroyed"
+            }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -233773,6 +233821,81 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature dies or another artifact you control is put into a graveyard from the battlefield, return to your hand target artifact card in your graveyard with lesser mana value.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "any_of": [
+                {
+                  "self_only": true
+                },
+                {
+                  "exclude_self": true,
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "scrap_trawler",
+      "mana_cost": "{3}",
+      "name": "Scrap Trawler",
+      "oracle_text": "Whenever this creature dies or another artifact you control is put into a graveyard from the battlefield, return to your hand target artifact card in your graveyard with lesser mana value.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -309521,6 +309644,93 @@
         "Fox"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "<=",
+                "left": {
+                  "mana_value_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "power_of": {
+                    "objects": {
+                      "binding": "attackers",
+                      "subtypes": [
+                        "Phyrexian"
+                      ]
+                    }
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever one or more Phyrexians you control attack, return target artifact card from your graveyard to the battlefield if its mana value is less than or equal to their total power.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Phyrexian"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "vulpine_harvester",
+      "mana_cost": "{3}{W}",
+      "name": "Vulpine Harvester",
+      "oracle_text": "Whenever one or more Phyrexians you control attack, return target artifact card from your graveyard to the battlefield if its mana value is less than or equal to their total power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Fox"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

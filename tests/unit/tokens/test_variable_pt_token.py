@@ -146,6 +146,7 @@ class TestTheToken:
                 "illusion_x_x_u",
                 "nalaar_aetherjet_x_x_c_flying_crew2",
                 "ooze_x_x_g",
+                "phyrexian_horror_x_x_c_artifact",
                 "shapeshifter_x_x_c_changeling_deathtouch",
             ]
         )
