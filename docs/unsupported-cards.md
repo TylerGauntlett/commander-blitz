@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**544 cards** blocked by **461** capabilities.
+**543 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -290,7 +290,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [incubate](#incubate) | 1 | 7135 | op |
 | [insect-1-1-ur-flying-haste](#insect-1-1-ur-flying-haste) | 1 | 1699 | token |
 | [jump-start](#jump-start) | 1 | 14777 | op |
-| [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
@@ -5144,20 +5143,6 @@ Blocks **1** card.
 
 - **Filigree Racer** (rank 14777) — `filigree_racer`
   - Whenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)
-
-</details>
-
-## karox-bladewing
-
-Blocks **1** card.
-
-- **(token)** Karox Bladewing, a legendary 4/4 red Dragon creature token with flying (named token, supertype Legendary)
-  <br>Why the existing vocabulary won't do: dragon_4_4_r_flying exists in token_ids but is neither named Karox Bladewing nor legendary, so the legend rule would not apply to it; kicker and the kicked condition are otherwise expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verix Bladewing** (rank 8889) — `verix_bladewing`
-  - When Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.
 
 </details>
 

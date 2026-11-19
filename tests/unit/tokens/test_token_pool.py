@@ -3388,3 +3388,27 @@ class TestWurmquakesWurmIsAnXXWithTrampleAndToxic:
     def test_the_fixed_wurm_is_still_separate(self, pool):
         wurm = pool.get("wurm_5_5_g")
         assert (wurm.power, wurm.toughness) == (5, 5) and not wurm.keywords
+
+
+class TestVerixsKaroxIsALegendaryDragon:
+    """Verix Bladewing: *"create **Karox Bladewing**, a **legendary** 4/4 red
+    Dragon creature token with flying."*
+
+    Its near miss is `dragon_4_4_r_flying`, the same body without the name or
+    the supertype, which the legend rule (704.5j) never touches (111.4: a
+    token is exactly what its creating effect says).
+    """
+
+    def test_karox_is_a_legendary_red_four_four_dragon_with_flying(self, pool):
+        token = pool.get("karox_bladewing_4_4_r_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Karox Bladewing"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert (token.power, token.toughness) == (4, 4)
+        assert list(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Dragon"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_miss_is_still_separate(self, pool):
+        assert not pool.get("dragon_4_4_r_flying").supertypes

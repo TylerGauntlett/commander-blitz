@@ -10629,6 +10629,10 @@
     "artist": "Adam Paquette",
     "scryfall_id": "22017ec2-3552-4865-af76-dba042b141f5"
   },
+  "karox_bladewing_4_4_r_flying": {
+    "artist": "Alex Konstad",
+    "scryfall_id": "4fbb6ef8-cf45-476b-8985-36023b6884ee"
+  },
   "karplusan_forest": {
     "artist": "Sam Burley",
     "scryfall_id": "67198b97-bac2-480f-aea8-12841e8884de"
@@ -22159,6 +22163,10 @@
   "verge_rangers": {
     "artist": "Livia Prima",
     "scryfall_id": "c63a5253-b3b7-48d0-8c2c-700fbd0e4c3f"
+  },
+  "verix_bladewing": {
+    "artist": "XiaoDi Jin",
+    "scryfall_id": "359be9e6-0770-43e3-853c-95e5317e9d30"
   },
   "vernadi_shieldmate": {
     "artist": "Matt Stewart",

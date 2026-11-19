@@ -6073,6 +6073,32 @@
         "toxic"
       ],
       "toxic": 1
+    },
+    {
+      "id": "karox_bladewing_4_4_r_flying",
+      "name": "Karox Bladewing",
+      "oracle_text": "Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     }
   ]
 }

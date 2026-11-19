@@ -312793,6 +312793,55 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "karox_bladewing_4_4_r_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "verix_bladewing",
+      "keywords": [
+        "flying"
+      ],
+      "kicker": "{3}",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Verix Bladewing",
+      "oracle_text": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nFlying\nWhen Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "W"

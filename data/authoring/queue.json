@@ -303242,12 +303242,12 @@
     },
     "Verix Bladewing": {
       "edhrec_rank": 8889,
-      "gate": "template",
+      "gate": null,
       "name": "Verix Bladewing",
-      "reason": "no template for: Kicker {3}",
+      "reason": "",
       "scryfall_id": "359be9e6-0770-43e3-853c-95e5317e9d30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vermiculos": {

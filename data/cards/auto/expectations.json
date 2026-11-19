@@ -25967,6 +25967,14 @@
     },
     "zone": "battlefield"
   },
+  "verix_bladewing": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "karox_bladewing_4_4_r_flying"
+    },
+    "zone": "battlefield"
+  },
   "vernadi_shieldmate": {
     "zone": "battlefield"
   },
