@@ -2820,6 +2820,17 @@
     "battlefield_count": 34,
     "zone": "battlefield"
   },
+  "brass_s_bounty": {
+    "battlefield_count": 62,
+    "graveyard_size": {
+      "0": 3
+    },
+    "tokens": {
+      "count": 30,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "brave_the_elements": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -4174,6 +4185,10 @@
   "combat_celebrant": {
     "zone": "battlefield"
   },
+  "combine_chrysalis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "combustible_gearhulk": {
     "battlefield_count": 33,
     "library_size": {
@@ -4564,6 +4579,15 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "crack_open": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "crackle_with_power": {
     "hand_size": {
       "0": 1
@@ -4883,6 +4907,13 @@
       "1": 19
     },
     "zone": "graveyard"
+  },
+  "cutthroat_negotiator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "cyan_vengeful_samurai": {
     "battlefield_count": 33,
@@ -6405,6 +6436,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "echo_storm": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "echoing_assault": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7227,6 +7263,10 @@
     },
     "zone": "battlefield"
   },
+  "everquill_phoenix": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "evolution_sage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7720,6 +7760,10 @@
     "zone": "graveyard"
   },
   "feiyi_snake": {
+    "zone": "battlefield"
+  },
+  "feldon_of_the_third_path": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "felhide_minotaur": {
@@ -8917,6 +8961,10 @@
   "ghalta_primal_hunger": {
     "zone": "battlefield"
   },
+  "ghirapur_aether_grid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ghirapur_orrery": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9104,6 +9152,10 @@
     "zone": "battlefield"
   },
   "gilt_leaf_palace": {
+    "zone": "battlefield"
+  },
+  "gimbal_gremlin_prodigy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gimli_of_the_glittering_caves": {
@@ -10321,6 +10373,17 @@
   "hedron_crawler": {
     "zone": "battlefield"
   },
+  "hedron_detonator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "heidegger_shinra_executive": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10357,6 +10420,10 @@
     "zone": "battlefield"
   },
   "hellkite_courser": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hellkite_igniter": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13977,6 +14044,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "masterful_replication": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "golem_3_3_c_artifact"
+    },
+    "zone": "graveyard"
+  },
   "masterwork_of_ingenuity": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16208,6 +16283,13 @@
     },
     "zone": "battlefield"
   },
+  "pain_distributor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "painful_truths": {
     "graveyard_size": {
       "0": 3
@@ -17658,6 +17740,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "rashmi_and_ragavan": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rashmi_eternities_crafter": {
     "battlefield_count": 33,
     "hand_size": {
@@ -18012,6 +18098,10 @@
     "zone": "battlefield"
   },
   "renewed_solidarity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "replicating_ring": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18398,6 +18488,11 @@
   "riptide_turtle": {
     "zone": "battlefield"
   },
+  "rise_and_shine": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "rise_of_the_dark_realms": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -18581,6 +18676,15 @@
   },
   "root_maze": {
     "zone": "battlefield"
+  },
+  "root_out": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
   },
   "rootbound_crag": {
     "zone": "battlefield"
@@ -18899,6 +19003,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "saheeli_s_artistry": {
+    "battlefield_count": 34,
+    "zone": "graveyard"
+  },
   "saheeli_sublime_artificer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18950,6 +19058,10 @@
     "zone": "battlefield"
   },
   "sandsteppe_citadel": {
+    "zone": "battlefield"
+  },
+  "sandsteppe_war_riders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sandwurm_convergence": {
@@ -19144,6 +19256,10 @@
     "zone": "battlefield"
   },
   "scavenging_ooze": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "schema_thief": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -19762,6 +19878,10 @@
     "zone": "battlefield"
   },
   "shanodin_dryads": {
+    "zone": "battlefield"
+  },
+  "sharding_sphinx": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shared_animosity": {
@@ -20464,6 +20584,10 @@
       "0": 42
     }
   },
+  "skyclave_relic": {
+    "battlefield_count": 35,
+    "zone": "battlefield"
+  },
   "skycloud_expanse": {
     "zone": "battlefield"
   },
@@ -20987,6 +21111,9 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "graveyard"
+  },
+  "spell_swindle": {
     "zone": "graveyard"
   },
   "spellscorn_coven_take_it_back": {
@@ -21638,6 +21765,9 @@
   "strong_back": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "struggle_survive": {
+    "zone": "graveyard"
   },
   "stubborn_denial": {
     "hand_size": {
@@ -23271,6 +23401,10 @@
   "this_is_how_it_ends": {
     "zone": "graveyard"
   },
+  "thopter_assembly": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thopter_engineer": {
     "battlefield_count": 34,
     "granted": {
@@ -24802,6 +24936,13 @@
   "vampire_revenant": {
     "zone": "battlefield"
   },
+  "vampires_vengeance": {
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
+    "zone": "graveyard"
+  },
   "vandalblast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -24893,6 +25034,10 @@
     "zone": "battlefield"
   },
   "vedalken_engineer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vedalken_humiliator": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25765,6 +25910,14 @@
       "graveyard"
     ]
   },
+  "weirding_wood": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
   "welcoming_vampire": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26337,6 +26490,10 @@
     "zone": "battlefield"
   },
   "worf_chief_tactical_officer": {
+    "zone": "battlefield"
+  },
+  "workshop_elders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "world_breaker": {

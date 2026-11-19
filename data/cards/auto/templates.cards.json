@@ -34055,6 +34055,31 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "brass_s_bounty",
+      "mana_cost": "{6}{R}",
+      "name": "Brass's Bounty",
+      "oracle_text": "For each land you control, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "lands_you_control": true
+          },
+          "op": "create_token",
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -51395,6 +51420,65 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Creature tokens you control have flying."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{U}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "is_token": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "beast_4_4_g"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}{G}{U}, {T}, Sacrifice a token: Create a 4/4 green Beast creature token. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "combine_chrysalis",
+      "mana_cost": "{G}{U}",
+      "name": "Combine Chrysalis",
+      "oracle_text": "Creature tokens you control have flying.\n{2}{G}{U}, {T}, Sacrifice a token: Create a 4/4 green Beast creature token. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -56116,6 +56200,52 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "crack_open",
+      "mana_cost": "{2}{G}",
+      "name": "Crack Open",
+      "oracle_text": "Destroy target artifact or enchantment. Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "treasure_token"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -60061,6 +60191,94 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "parley_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "not_types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "tapped": true,
+                      "token": "treasure_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a tapped Treasure token. Then each player draws a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "cutthroat_negotiator",
+      "mana_cost": "{2}{U}{R}",
+      "name": "Cutthroat Negotiator",
+      "oracle_text": "Parley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, you create a tapped Treasure token. Then each player draws a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Pirate"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -77753,6 +77971,68 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "commander_casts_this_game": "you"
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "echo_storm",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Echo Storm",
+      "oracle_text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies.\nCreate a token that's a copy of target artifact.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "is_token": true,
@@ -86971,6 +87251,51 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "feather_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature mutates, create a red artifact token named Feather with \"{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "mutates",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "everquill_phoenix",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "mutate": "{3}{R}",
+      "name": "Everquill Phoenix",
+      "oracle_text": "Mutate {3}{R} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nFlying\nWhenever this creature mutates, create a red artifact token named Feather with \"{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phoenix"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "proliferate"
             }
           ],
@@ -91719,6 +92044,95 @@
         "Snake"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "feldon_copy",
+              "controller": "you",
+              "except_": {
+                "add_types": [
+                  "Artifact"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "feldon_copy",
+                "count": "all"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "feldon_copy",
+                    "count": "all"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}{R}, {T}: Create a token that's a copy of target creature card in your graveyard, except it's an artifact in addition to its other types. It gains haste. Sacrifice it at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "feldon_of_the_third_path",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Feldon of the Third Path",
+      "oracle_text": "{2}{R}, {T}: Create a token that's a copy of target creature card in your graveyard, except it's an artifact in addition to its other types. It gains haste. Sacrifice it at the beginning of the next end step.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -105468,6 +105882,60 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 2,
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Tap two untapped artifacts you control: This enchantment deals 1 damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ghirapur_aether_grid",
+      "mana_cost": "{2}{R}",
+      "name": "Ghirapur Aether Grid",
+      "oracle_text": "Tap two untapped artifacts you control: This enchantment deals 1 damage to any target.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "any",
           "amount": {
             "const": 1
@@ -107824,6 +108292,90 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have trample."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "gremlin",
+              "op": "create_token",
+              "token": "gremlin_0_0_r_artifact"
+            },
+            {
+              "amount": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "is_token": true,
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "name"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "gremlin"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 0/0 red Gremlin artifact creature token. Put X +1/+1 counters on it, where X is the number of differently named artifact tokens you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "gimbal_gremlin_prodigy",
+      "mana_cost": "{2}{G}{U}{R}",
+      "name": "Gimbal, Gremlin Prodigy",
+      "oracle_text": "Artifact creatures you control have trample.\nAt the beginning of your end step, create a 0/0 red Gremlin artifact creature token. Put X +1/+1 counters on it, where X is the number of differently named artifact tokens you control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Gremlin",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -122501,6 +123053,91 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever an artifact you control enters, this creature deals 1 damage to target opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 2,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice two artifacts: Exile the top card of your library. You may play that card this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hedron_detonator",
+      "mana_cost": "{2}{R}",
+      "name": "Hedron Detonator",
+      "oracle_text": "Whenever an artifact you control enters, this creature deals 1 damage to target opponent.\n{T}, Sacrifice two artifacts: Exile the top card of your library. You may play that card this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -123162,6 +123799,61 @@
       "name": "Hellkite Courser",
       "oracle_text": "Flying\nWhen this creature enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step.",
       "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}: This creature gets +X/+0 until end of turn, where X is the number of artifacts you control."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hellkite_igniter",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Hellkite Igniter",
+      "oracle_text": "Flying, haste\n{1}{R}: This creature gets +X/+0 until end of turn, where X is the number of artifacts you control.",
+      "power": 5,
       "source": "auto",
       "subtypes": [
         "Dragon"
@@ -167910,6 +168602,83 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "masterful_replication",
+      "mana_cost": "{5}{U}",
+      "name": "Masterful Replication",
+      "oracle_text": "Choose one —\n• Create two 3/3 colorless Golem artifact creature tokens.\n• Choose target artifact you control. Each other artifact you control becomes a copy of that artifact until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "create_token",
+                  "token": "golem_3_3_c_artifact"
+                }
+              ],
+              "label": "Create two 3/3 colorless Golem artifact creature tokens."
+            },
+            {
+              "effects": [
+                {
+                  "as": "model_artifact",
+                  "op": "snapshot",
+                  "target": "model"
+                },
+                {
+                  "copying": {
+                    "target": "model"
+                  },
+                  "duration": "end_of_turn",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "exclude_binding": "model_artifact",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                }
+              ],
+              "label": "Choose target artifact you control. Each other artifact you control becomes a copy of that artifact until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "model",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "masterwork_of_ingenuity",
@@ -195143,6 +195912,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player casts their first spell each turn, they create a Treasure token.",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "controller_of": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact an opponent controls is put into a graveyard from the battlefield, this creature deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pain_distributor",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Pain Distributor",
+      "oracle_text": "Menace\nWhenever a player casts their first spell each turn, they create a Treasure token.\nWhenever an artifact an opponent controls is put into a graveyard from the battlefield, this creature deals 1 damage to that player.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Devil",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -212977,6 +213821,107 @@
               "amount": {
                 "const": 1
               },
+              "as": "rashmi_ragavan_exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_cast_only": true,
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            },
+            {
+              "objects": {
+                "binding": "rashmi_ragavan_exiled",
+                "count": 1,
+                "mana_value": {
+                  "op": "<",
+                  "value": {
+                    "count": {
+                      "controller": "you",
+                      "types": [
+                        "Artifact"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "optional": true
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever you cast your first spell during each of your turns, exile the top card of target opponent's library and create a Treasure token. Then you may cast the exiled card without paying its mana cost if it's a spell with mana value less than the number of artifacts you control. If you don't cast it this way, you may cast it this turn.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": true
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "rashmi_and_ragavan",
+      "mana_cost": "{1}{G}{U}{R}",
+      "name": "Rashmi and Ragavan",
+      "oracle_text": "Whenever you cast your first spell during each of your turns, exile the top card of target opponent's library and create a Treasure token. Then you may cast the exiled card without paying its mana cost if it's a spell with mana value less than the number of artifacts you control. If you don't cast it this way, you may cast it this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Monkey"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "as": "rashmi_cast",
               "cast_free": true,
               "objects": {
@@ -216914,6 +217859,139 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "night",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "night",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 8
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "night",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "counter": "night",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "remove_counters"
+                },
+                {
+                  "amount": {
+                    "const": 8
+                  },
+                  "op": "create_token",
+                  "token": "replicated_ring_token"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a night counter on this artifact. Then if it has eight or more night counters on it, remove all of them and create eight colorless snow artifact tokens named Replicated Ring with \"{T}: Add one mana of any color.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "replicating_ring",
+      "mana_cost": "{3}",
+      "name": "Replicating Ring",
+      "oracle_text": "{T}: Add one mana of any color.\nAt the beginning of your upkeep, put a night counter on this artifact. Then if it has eight or more night counters on it, remove all of them and create eight colorless snow artifact tokens named Replicated Ring with \"{T}: Add one mana of any color.\"",
+      "source": "auto",
+      "supertypes": [
+        "Snow"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -220887,6 +221965,131 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "rise_and_shine",
+      "mana_cost": "{1}{U}",
+      "name": "Rise and Shine",
+      "oracle_text": "Target noncreature artifact you control becomes a 0/0 artifact creature. Put four +1/+1 counters on each artifact that became a creature this way.\nOverload {4}{U}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{4}{U}{U}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "effects": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 0
+                  },
+                  "toughness": {
+                    "const": 0
+                  },
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                },
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 0
+                  },
+                  "toughness": {
+                    "const": 0
+                  },
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                },
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "not_types": [
+              "Creature"
+            ],
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -222855,6 +224058,48 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "root_out",
+      "mana_cost": "{2}{G}",
+      "name": "Root Out",
+      "oracle_text": "Destroy target artifact or enchantment.\nInvestigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "op": "investigate",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -226901,6 +228146,86 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "saheeli_s_artistry",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Saheeli's Artistry",
+      "oracle_text": "Choose one or both —\n• Create a token that's a copy of target artifact.\n• Create a token that's a copy of target creature, except it's an artifact in addition to its other types.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "except_": {
+                    "add_types": [
+                      "Artifact"
+                    ]
+                  },
+                  "objects": {
+                    "target": "creature"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target creature, except it's an artifact in addition to its other types."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creature",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -227769,6 +229094,72 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "is_token": true,
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "name"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "extreme": {
+                  "of": "toughness",
+                  "pick": "least"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, bolster X, where X is the number of differently named artifact tokens you control",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sandsteppe_war_riders",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Sandsteppe War Riders",
+      "oracle_text": "Trample\nAt the beginning of combat on your turn, bolster X, where X is the number of differently named artifact tokens you control. (Choose a creature with the least toughness among creatures you control and put X +1/+1 counters on it.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -230163,6 +231554,66 @@
         "Ooze"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, create a token that's a copy of target artifact that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "schema_thief",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Schema Thief",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, create a token that's a copy of target artifact that player controls.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Rogue",
+        "Artificer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -236828,6 +238279,64 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "thopter_1_1_u_flying"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Create a 1/1 blue Thopter token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact creature you control deals combat damage to a player, you may create a 1/1 blue Thopter artifact creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sharding_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Sharding Sphinx",
+      "oracle_text": "Flying\nWhenever an artifact creature you control deals combat damage to a player, you may create a 1/1 blue Thopter artifact creature token with flying.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -245157,6 +246666,102 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, if it was kicked, create two tapped tokens that are copies of this artifact.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "skyclave_relic",
+      "keywords": [
+        "indestructible"
+      ],
+      "kicker": "{3}",
+      "mana_cost": "{3}",
+      "name": "Skyclave Relic",
+      "oracle_text": "Kicker {3}\nIndestructible\nWhen this artifact enters, if it was kicked, create two tapped tokens that are copies of this artifact.\n{T}: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true
@@ -251646,6 +253251,49 @@
           "id": "t1",
           "kind": "spell",
           "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spell_swindle",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Spell Swindle",
+      "oracle_text": "Counter target spell. Create X Treasure tokens, where X is that spell's mana value. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "binding": "countered"
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "treasure_token"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
         }
       ],
       "types": [
@@ -258973,6 +260621,77 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "struggle_survive",
+      "mana_cost": "{2}{R}",
+      "name": "Struggle // Survive",
+      "oracle_text": "Struggle deals damage to target creature equal to the number of lands you control.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their graveyard into their library.",
+      "second_face": "struggle_survive_survive",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "lands_you_control": true
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "struggle_survive_survive",
+      "mana_cost": "{1}{G}",
+      "name": "Survive",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their graveyard into their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "player": "each_player",
+            "zone": "graveyard"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -282069,6 +283788,66 @@
         {
           "effects": [
             {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "amount": {
+                "const": 5
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you control no Thopters other than this creature, return this creature to its owner's hand and create five 1/1 colorless Thopter artifact creature tokens with flying.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "exists": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Thopter"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "thopter_assembly",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}",
+      "name": "Thopter Assembly",
+      "oracle_text": "Flying\nAt the beginning of your upkeep, if you control no Thopters other than this creature, return this creature to its owner's hand and create five 1/1 colorless Thopter artifact creature tokens with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Thopter"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "create_token",
               "token": "thopter_1_1_c_flying"
             }
@@ -298926,6 +300705,46 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "vampires_vengeance",
+      "mana_cost": "{2}{R}",
+      "name": "Vampires' Vengeance",
+      "oracle_text": "Vampires' Vengeance deals 2 damage to each non-Vampire creature. Create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "objects": {
+            "controller": "any",
+            "not_subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "blood_token"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "W"
       ],
@@ -300198,6 +302017,87 @@
         "Artificer"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "lose_all_abilities"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creatures your opponents control lose all abilities and have base power and toughness 1/1 until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "vedalken_humiliator",
+      "mana_cost": "{3}{U}",
+      "name": "Vedalken Humiliator",
+      "oracle_text": "Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creatures your opponents control lose all abilities and have base power and toughness 1/1 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Wizard"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -310174,6 +312074,77 @@
         {
           "effects": [
             {
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, investigate.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}: Add two mana of any one color.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": 2,
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add two mana of any one color."
+        }
+      ],
+      "id": "weirding_wood",
+      "mana_cost": "{2}{G}",
+      "name": "Weirding Wood",
+      "oracle_text": "Enchant land\nWhen this Aura enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nEnchanted land has \"{T}: Add two mana of any one color.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -316557,6 +318528,105 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have flying."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 0
+                  },
+                  "toughness": {
+                    "const": 0
+                  },
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                },
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have the target artifact become a 0/0 artifact creature with four +1/+1 counters?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may have target noncreature artifact you control become a 0/0 artifact creature. If you do, put four +1/+1 counters on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "workshop_elders",
+      "mana_cost": "{6}{U}",
+      "name": "Workshop Elders",
+      "oracle_text": "Artifact creatures you control have flying.\nAt the beginning of combat on your turn, you may have target noncreature artifact you control become a 0/0 artifact creature. If you do, put four +1/+1 counters on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

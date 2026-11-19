@@ -2645,7 +2645,7 @@
     {
       "id": "jace_planeswalker_u",
       "name": "Jace",
-      "oracle_text": "−1: Surveil 1.\n−3: Draw a card.",
+      "oracle_text": "\u22121: Surveil 1.\n\u22123: Draw a card.",
       "types": [
         "Planeswalker"
       ],
@@ -2663,7 +2663,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "−1: Surveil 1.",
+          "text": "\u22121: Surveil 1.",
           "cost": {
             "loyalty": -1
           },
@@ -2679,7 +2679,7 @@
         },
         {
           "kind": "activated",
-          "text": "−3: Draw a card.",
+          "text": "\u22123: Draw a card.",
           "cost": {
             "loyalty": -3
           },
@@ -5757,6 +5757,183 @@
         "trample"
       ],
       "is_token": true
+    },
+    {
+      "id": "feather_token",
+      "name": "Feather",
+      "oracle_text": "{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped.",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped.",
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "zone": "graveyard",
+                "controller": "you",
+                "subtypes": [
+                  "Phoenix"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "objects": {
+                "target": "t1"
+              },
+              "destination": "battlefield",
+              "controller": "you",
+              "tapped": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gremlin_0_0_r_artifact",
+      "name": "Gremlin Token",
+      "oracle_text": "0/0 red Gremlin artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Gremlin"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "replicated_ring_token",
+      "name": "Replicated Ring",
+      "oracle_text": "{T}: Add one mana of any color.",
+      "supertypes": [
+        "Snow"
+      ],
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thopter_1_1_u_flying",
+      "name": "Thopter Token",
+      "oracle_text": "1/1 blue Thopter artifact creature token with flying.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Thopter"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     }
   ]
 }

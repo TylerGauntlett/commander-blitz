@@ -3218,3 +3218,63 @@ class TestLiberatedLivestocksCatHasLifelink:
 
     def test_the_plain_cat_is_still_a_separate_token(self, pool):
         assert not pool.get("cat_1_1_w").keywords
+
+
+class TestShardingSphinxsThopterIsBlue:
+    """Sharding Sphinx: *"create a 1/1 **blue** Thopter artifact creature token
+    with flying."* `thopter_1_1_c_flying` is the near miss: the same body, but
+    colorless, and a blue deck counting blue permanents would not see it."""
+
+    def test_it_is_a_one_one_blue_flying_artifact_thopter(self, pool):
+        token = pool.get("thopter_1_1_u_flying")
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["U"] and list(token.subtypes) == ["Thopter"]
+        assert "Artifact" in token.types and list(token.keywords) == ["flying"]
+
+    def test_the_colorless_thopter_is_still_a_separate_token(self, pool):
+        assert not pool.get("thopter_1_1_c_flying").colors
+
+
+class TestGimbalsGremlinIsAZeroZeroArtifact:
+    """Gimbal, Gremlin Prodigy: *"create a **0/0** red Gremlin **artifact**
+    creature token."* `gremlin_1_1_r` is a 1/1 that is not an artifact, so it
+    would survive with no counters and would not count toward Gimbal's own
+    trample grant."""
+
+    def test_it_is_a_zero_zero_red_artifact_gremlin(self, pool):
+        token = pool.get("gremlin_0_0_r_artifact")
+        assert (token.power, token.toughness) == (0, 0)
+        assert list(token.colors) == ["R"] and list(token.subtypes) == ["Gremlin"]
+        assert "Artifact" in token.types and "Creature" in token.types
+
+    def test_the_one_one_gremlin_is_still_a_separate_token(self, pool):
+        assert "Artifact" not in pool.get("gremlin_1_1_r").types
+
+
+class TestTheReplicatedRingIsASnowManaRock:
+    """Replicating Ring: *"colorless **snow** artifact tokens named Replicated
+    Ring with '{T}: Add one mana of any color.'"* `treasure_token` is the near
+    miss: it sacrifices itself and is not snow."""
+
+    def test_it_is_a_snow_artifact_that_taps_for_mana(self, pool):
+        token = pool.get("replicated_ring_token")
+        assert list(token.supertypes) == ["Snow"] and list(token.types) == ["Artifact"]
+        assert not token.colors
+        (ability,) = token.abilities
+        assert ability.is_mana_ability and ability.cost.sacrifice is None
+
+
+class TestEverquillsFeatherReturnsAPhoenix:
+    """Everquill Phoenix: *"a red artifact token named Feather with '{1},
+    Sacrifice this token: Return target Phoenix card from your graveyard to the
+    battlefield tapped.'"* No other token in the pool returns a card."""
+
+    def test_it_is_a_red_noncreature_artifact(self, pool):
+        token = pool.get("feather_token")
+        assert list(token.types) == ["Artifact"] and list(token.colors) == ["R"]
+
+    def test_its_ability_targets_a_phoenix_in_your_graveyard(self, pool):
+        (ability,) = pool.get("feather_token").abilities
+        (target,) = ability.targets
+        assert target.kind == "card_in_graveyard"
+        assert target.selector["subtypes"] == ["Phoenix"]

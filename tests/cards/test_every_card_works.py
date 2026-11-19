@@ -779,6 +779,9 @@ def _provide_one_sacrifice(game: Game, registry, spec) -> None:
             ),
             None,
         )
+    # Combine Chrysalis sacrifices *a token* of any kind, and the first token by
+    # id is the X/X Aetherborn: a 0/0 creature dies to state-based actions
+    # before the cost can be paid, so fodder that cannot survive is skipped.
     if match is None and spec.get("is_token"):
         wanted_types = {str(t) for t in spec.get("types") or []}
         wanted_subtypes = {str(s) for s in spec.get("subtypes") or []}
@@ -789,6 +792,7 @@ def _provide_one_sacrifice(game: Game, registry, spec) -> None:
                 if c.is_token
                 and wanted_types <= set(c.types)
                 and wanted_subtypes <= set(c.subtypes)
+                and not ("Creature" in c.types and (c.toughness or 0) <= 0)
             ),
             None,
         )

@@ -33252,12 +33252,12 @@
     },
     "Brass's Bounty": {
       "edhrec_rank": 1361,
-      "gate": "template",
+      "gate": null,
       "name": "Brass's Bounty",
-      "reason": "no template for: For each land you control, create a Treasure token",
+      "reason": "",
       "scryfall_id": "65fe7127-b0ec-400f-97f1-6e17ab8e319d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brass's Tunnel-Grinder // Tecutlan, the Searing Rift": {
@@ -50492,12 +50492,12 @@
     },
     "Combine Chrysalis": {
       "edhrec_rank": 5548,
-      "gate": "template",
+      "gate": null,
       "name": "Combine Chrysalis",
-      "reason": "no template for: Creature tokens you control have flying",
+      "reason": "",
       "scryfall_id": "3a695520-157e-41fb-a38a-82cce9ba0ad4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Combine Guildmage": {
@@ -54912,12 +54912,12 @@
     },
     "Crack Open": {
       "edhrec_rank": 8848,
-      "gate": "template",
+      "gate": null,
       "name": "Crack Open",
-      "reason": "no template for: Destroy target artifact or enchantment. Create a Treasure token",
+      "reason": "",
       "scryfall_id": "829af103-68b4-4a4b-94b4-d272b38e45cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crack in Time": {
@@ -59382,12 +59382,12 @@
     },
     "Cutthroat Negotiator": {
       "edhrec_rank": 10181,
-      "gate": "template",
+      "gate": null,
       "name": "Cutthroat Negotiator",
-      "reason": "no template for: Parley — Whenever this creature attacks, each player reveals the top card of their library",
+      "reason": "",
       "scryfall_id": "3f006075-96b8-4e70-be46-8f01eb13fed4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cutthroat il-Dal": {
@@ -79032,12 +79032,12 @@
     },
     "Echo Storm": {
       "edhrec_rank": 11357,
-      "gate": "template",
+      "gate": null,
       "name": "Echo Storm",
-      "reason": "no template for: When you cast this spell, copy it for each time you've cast your commander from the comman",
+      "reason": "",
       "scryfall_id": "75046d32-fb0b-4c25-9ffd-53db64ff6c9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echo Tracer": {
@@ -87352,12 +87352,12 @@
     },
     "Everquill Phoenix": {
       "edhrec_rank": 11236,
-      "gate": "template",
+      "gate": null,
       "name": "Everquill Phoenix",
-      "reason": "no template for: Mutate {3}{R}",
+      "reason": "",
       "scryfall_id": "333db3bc-98e9-4635-b1b0-a7e57ee59165",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evershrike": {
@@ -92972,12 +92972,12 @@
     },
     "Feldon of the Third Path": {
       "edhrec_rank": 1483,
-      "gate": "template",
+      "gate": null,
       "name": "Feldon of the Third Path",
-      "reason": "no template for: {2}{R}, {T}: Create a token that's a copy of target creature card in your graveyard, excep",
+      "reason": "",
       "scryfall_id": "0360f1ff-15c9-48e3-89eb-fbc4bf140c55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feldon's Cane": {
@@ -107552,12 +107552,12 @@
     },
     "Ghirapur Aether Grid": {
       "edhrec_rank": 6479,
-      "gate": "template",
+      "gate": null,
       "name": "Ghirapur Aether Grid",
-      "reason": "no template for: Tap two untapped artifacts you control: This enchantment deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "4ec852e9-bff8-4a07-8bc9-165484494c62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghirapur Gearcrafter": {
@@ -109572,12 +109572,12 @@
     },
     "Gimbal, Gremlin Prodigy": {
       "edhrec_rank": 15192,
-      "gate": "template",
+      "gate": null,
       "name": "Gimbal, Gremlin Prodigy",
-      "reason": "no template for: Artifact creatures you control have trample",
+      "reason": "",
       "scryfall_id": "30cd6ab7-7235-427e-bc92-c9fe6032ffa1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gimli of the Glittering Caves": {
@@ -125202,12 +125202,12 @@
     },
     "Hedron Detonator": {
       "edhrec_rank": 4891,
-      "gate": "template",
+      "gate": null,
       "name": "Hedron Detonator",
-      "reason": "no template for: Whenever an artifact you control enters, this creature deals 1 damage to target opponent",
+      "reason": "",
       "scryfall_id": "5194978a-ebc3-442f-97f3-012b3edd92da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hedron Matrix": {
@@ -125802,12 +125802,12 @@
     },
     "Hellkite Igniter": {
       "edhrec_rank": 7612,
-      "gate": "template",
+      "gate": null,
       "name": "Hellkite Igniter",
-      "reason": "no template for: {1}{R}: This creature gets +X/+0 until end of turn, where X is the number of artifacts you",
+      "reason": "",
       "scryfall_id": "dc03ad3e-8113-432c-bff6-3ced73af8728",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hellkite Overlord": {
@@ -169352,12 +169352,12 @@
     },
     "Masterful Replication": {
       "edhrec_rank": 8703,
-      "gate": "template",
+      "gate": null,
       "name": "Masterful Replication",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "860e81bd-769a-4e8a-97a4-b0ae653a593b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mastermind Plum": {
@@ -196812,12 +196812,12 @@
     },
     "Pain Distributor": {
       "edhrec_rank": 5043,
-      "gate": "template",
+      "gate": null,
       "name": "Pain Distributor",
-      "reason": "no template for: Whenever a player casts their first spell each turn, they create a Treasure token",
+      "reason": "",
       "scryfall_id": "3a3a0170-444e-4147-96b6-b14bb5649108",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pain Kami": {
@@ -215612,12 +215612,12 @@
     },
     "Rashmi and Ragavan": {
       "edhrec_rank": 9833,
-      "gate": "template",
+      "gate": null,
       "name": "Rashmi and Ragavan",
-      "reason": "no template for: Whenever you cast your first spell during each of your turns, exile the top card of target",
+      "reason": "",
       "scryfall_id": "30b2f2fd-8087-4fa8-9eb7-bf9b89a5dfb9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rashmi, Eternities Crafter": {
@@ -220702,12 +220702,12 @@
     },
     "Replicating Ring": {
       "edhrec_rank": 1570,
-      "gate": "template",
+      "gate": null,
       "name": "Replicating Ring",
-      "reason": "no template for: At the beginning of your upkeep, put a night counter on this artifact. Then if it has eigh",
+      "reason": "",
       "scryfall_id": "041cb2b9-4435-426c-a639-f1e81fab5180",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Replication Specialist": {
@@ -224712,12 +224712,12 @@
     },
     "Rise and Shine": {
       "edhrec_rank": 3565,
-      "gate": "template",
+      "gate": null,
       "name": "Rise and Shine",
-      "reason": "no template for: Target noncreature artifact you control becomes a 0/0 artifact creature. Put four +1/+1 co",
+      "reason": "",
       "scryfall_id": "816716d6-4234-4570-9a64-cb3bef388095",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rise from the Grave": {
@@ -227212,12 +227212,12 @@
     },
     "Root Out": {
       "edhrec_rank": 13322,
-      "gate": "template",
+      "gate": null,
       "name": "Root Out",
-      "reason": "no template for: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "228a08f0-6664-407a-a74c-2c32badc0d37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Root Sliver": {
@@ -231222,12 +231222,12 @@
     },
     "Saheeli's Artistry": {
       "edhrec_rank": 7185,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli's Artistry",
-      "reason": "no template for: Choose one or both —",
+      "reason": "",
       "scryfall_id": "4cdfb468-e475-47e6-80f5-190c9b206e70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli's Directive": {
@@ -232672,12 +232672,12 @@
     },
     "Sandsteppe War Riders": {
       "edhrec_rank": 19955,
-      "gate": "template",
+      "gate": null,
       "name": "Sandsteppe War Riders",
-      "reason": "no template for: At the beginning of combat on your turn, bolster X, where X is the number of differently n",
+      "reason": "",
       "scryfall_id": "28cca229-77c9-4d57-b980-c98b76d94d26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sandstone Bridge": {
@@ -235452,12 +235452,12 @@
     },
     "Schema Thief": {
       "edhrec_rank": 10344,
-      "gate": "template",
+      "gate": null,
       "name": "Schema Thief",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, create a token that's a copy of ta",
+      "reason": "",
       "scryfall_id": "312591ec-436d-40e5-805e-e78e6a63096d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scheming Aspirant": {
@@ -242862,12 +242862,12 @@
     },
     "Sharding Sphinx": {
       "edhrec_rank": 3736,
-      "gate": "template",
+      "gate": null,
       "name": "Sharding Sphinx",
-      "reason": "no template for: Whenever an artifact creature you control deals combat damage to a player, you may create ",
+      "reason": "",
       "scryfall_id": "1d93d905-cc36-4a78-b07c-07f8bbf39a47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shardless Agent": {
@@ -250462,12 +250462,12 @@
     },
     "Skyclave Relic": {
       "edhrec_rank": 2436,
-      "gate": "template",
+      "gate": null,
       "name": "Skyclave Relic",
-      "reason": "no template for: Kicker {3}",
+      "reason": "",
       "scryfall_id": "a9740bce-4c89-4d98-8941-057515999bf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Sentinel": {
@@ -257962,12 +257962,12 @@
     },
     "Spell Swindle": {
       "edhrec_rank": 3104,
-      "gate": "template",
+      "gate": null,
       "name": "Spell Swindle",
-      "reason": "no template for: Counter target spell. Create X Treasure tokens, where X is that spell's mana value",
+      "reason": "",
       "scryfall_id": "01feef77-ff30-4f77-892f-6bdae3f0d35c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spell Syphon": {
@@ -267662,12 +267662,12 @@
     },
     "Struggle // Survive": {
       "edhrec_rank": 15210,
-      "gate": "template",
+      "gate": null,
       "name": "Struggle // Survive",
-      "reason": "no template for: Struggle deals damage to target creature equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "bf909dbb-6e49-4556-a37a-2738889915d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Struggle for Project Purity": {
@@ -283782,12 +283782,12 @@
     },
     "Thopter Assembly": {
       "edhrec_rank": 5232,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Assembly",
-      "reason": "no template for: At the beginning of your upkeep, if you control no Thopters other than this creature, retu",
+      "reason": "",
       "scryfall_id": "efc9db16-53d3-4d27-ba42-c3c445f2f92f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thopter Engineer": {
@@ -300942,12 +300942,12 @@
     },
     "Vampires' Vengeance": {
       "edhrec_rank": 9466,
-      "gate": "template",
+      "gate": null,
       "name": "Vampires' Vengeance",
-      "reason": "no template for: deals 2 damage to each non-Vampire creature. Create a Blood token",
+      "reason": "",
       "scryfall_id": "bdcfd9ee-9553-4080-a25c-d3552ddc7e82",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vampiric Dragon": {
@@ -301942,12 +301942,12 @@
     },
     "Vedalken Humiliator": {
       "edhrec_rank": 8611,
-      "gate": "template",
+      "gate": null,
       "name": "Vedalken Humiliator",
-      "reason": "no template for: Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creat",
+      "reason": "",
       "scryfall_id": "51b14afb-5603-49af-b545-1277341775ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vedalken Infiltrator": {
@@ -313242,12 +313242,12 @@
     },
     "Weirding Wood": {
       "edhrec_rank": 11932,
-      "gate": "template",
+      "gate": null,
       "name": "Weirding Wood",
-      "reason": "no template for: When this Aura enters, investigate",
+      "reason": "",
       "scryfall_id": "82e20104-117e-47de-ac0c-cca9250c1f3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Welcome the Dead": {
@@ -318842,12 +318842,12 @@
     },
     "Workshop Elders": {
       "edhrec_rank": 14654,
-      "gate": "template",
+      "gate": null,
       "name": "Workshop Elders",
-      "reason": "no template for: Artifact creatures you control have flying",
+      "reason": "",
       "scryfall_id": "0058a848-cb55-408a-a500-d97f573588f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Workshop Warchief": {
