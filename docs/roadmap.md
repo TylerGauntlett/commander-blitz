@@ -155,64 +155,65 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks).
+
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-3. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-4. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-5. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-6. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-7. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-8. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-9. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-10. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-11. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-12. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-13. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-14. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-15. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-16. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-17. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-18. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-19. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-20. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-21. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-22. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-23. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-24. [The Ring tempts you](#the-ring-tempts-you) — M, high
-25. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-26. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-27. [Difficulty](#difficulty) — S, medium
-28. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-29. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-30. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-31. [Why a press is refused](#why-a-press-is-refused) — S, medium
-32. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-33. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-34. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-35. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-36. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-37. [Secret choices](#secret-choices) — M, medium
-38. [Experience counters](#experience-counters) — M, medium
-39. [Outcomes as data](#outcomes-as-data) — M, medium
-40. [Rad counters](#rad-counters) — M, medium
-41. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-42. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-43. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-44. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-45. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-46. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-47. [Replays and sharing](#replays-and-sharing) — M, medium
-48. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-49. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-50. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-51. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-52. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-53. [Archidekt import](#archidekt-import) — S, low
-54. [Sound](#sound) — S, low
-55. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-56. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+2. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+3. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+4. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+5. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+6. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+7. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+8. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+9. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+10. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+11. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+12. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+13. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+14. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+15. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+16. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+17. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+18. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+19. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+20. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+21. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+22. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+23. [The Ring tempts you](#the-ring-tempts-you) — M, high
+24. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+25. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+26. [Difficulty](#difficulty) — S, medium
+27. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+28. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+29. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+30. [Why a press is refused](#why-a-press-is-refused) — S, medium
+31. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+32. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+33. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+34. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+35. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+36. [Secret choices](#secret-choices) — M, medium
+37. [Experience counters](#experience-counters) — M, medium
+38. [Outcomes as data](#outcomes-as-data) — M, medium
+39. [Rad counters](#rad-counters) — M, medium
+40. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+41. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+42. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+43. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+44. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+45. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+46. [Replays and sharing](#replays-and-sharing) — M, medium
+47. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+48. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+49. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+50. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+51. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+52. [Archidekt import](#archidekt-import) — S, low
+53. [Sound](#sound) — S, low
+54. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+55. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -3794,7 +3795,7 @@ whole-game test able to draw the deck.
 
 ### Draconic Destruction (Starter Commander Decks)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
 
 #### Today
 
