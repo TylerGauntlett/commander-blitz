@@ -6022,6 +6022,57 @@
       "keywords": [
         "flying"
       ]
+    },
+    {
+      "id": "phyrexian_insect_1_1_g_infect",
+      "name": "Phyrexian Insect Token",
+      "oracle_text": "1/1 green Phyrexian Insect creature token with infect.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Insect"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "infect"
+      ]
+    },
+    {
+      "id": "phyrexian_wurm_x_x_g_trample_toxic",
+      "name": "Phyrexian Wurm Token",
+      "oracle_text": "X/X green Phyrexian Wurm creature token with trample and toxic 1.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Wurm"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "trample",
+        "toxic"
+      ],
+      "toxic": 1
     }
   ]
 }

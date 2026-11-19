@@ -148,6 +148,7 @@ class TestTheToken:
                 "nalaar_aetherjet_x_x_c_flying_crew2",
                 "ooze_x_x_g",
                 "phyrexian_horror_x_x_c_artifact",
+                "phyrexian_wurm_x_x_g_trample_toxic",
                 "shapeshifter_x_x_c_changeling_deathtouch",
             ]
         )
