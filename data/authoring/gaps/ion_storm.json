@@ -1,0 +1,18 @@
+{
+  "card_id": "ion_storm",
+  "name": "Ion Storm",
+  "oracle_text": "{1}{R}, Remove a +1/+1 counter or a charge counter from a permanent you control: This enchantment deals 2 damage to any target.",
+  "blocked_sentences": [
+    "{1}{R}, Remove a +1/+1 counter or a charge counter from a permanent you control: This enchantment deals 2 damage to any target."
+  ],
+  "needs": [
+    {
+      "capability": "remove-counter-of-kinds-cost",
+      "kind": "cost",
+      "what": "a remove_counters_from_among cost whose `counter` names a set of kinds (\"a +1/+1 counter or a charge counter\"), so the pool is permanents you control carrying any listed kind and the payer picks the permanent and which listed kind to remove",
+      "why_existing_wont_do": "remove_counters_from_among takes either no `counter` (any kind, too broad: a loyalty or -1/-1 counter would pay) or one named kind (`_counter_removal_pool`/`_counters_on` read a single string); remove_counters only reads the source. Splitting into two activated abilities, one per kind, would claim the same printed line twice and is two abilities rather than one"
+    }
+  ],
+  "closest_existing": ["remove_counters_from_among"],
+  "confidence": "high"
+}

@@ -1092,12 +1092,12 @@
     },
     "Abzan Battle Priest": {
       "edhrec_rank": 3620,
-      "gate": "template",
+      "gate": null,
       "name": "Abzan Battle Priest",
-      "reason": "no template for: Outlast {W}",
+      "reason": "",
       "scryfall_id": "a424dafb-c77a-46a7-b1dc-cf04e88bb938",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abzan Beastmaster": {
@@ -1132,12 +1132,12 @@
     },
     "Abzan Falconer": {
       "edhrec_rank": 1398,
-      "gate": "template",
+      "gate": null,
       "name": "Abzan Falconer",
-      "reason": "no template for: Outlast {W}",
+      "reason": "",
       "scryfall_id": "f7e2b0e1-c9ea-4f91-b19e-73b1bd6a0884",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abzan Guide": {
@@ -6042,12 +6042,12 @@
     },
     "Alharu, Solemn Ritualist": {
       "edhrec_rank": 14598,
-      "gate": "template",
+      "gate": null,
       "name": "Alharu, Solemn Ritualist",
-      "reason": "no template for: When Alharu enters, put a +1/+1 counter on each of up to two other target creatures",
+      "reason": "",
       "scryfall_id": "f699f8d9-8708-44ca-8d14-1ca93aa68c9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ali Baba": {
@@ -13422,12 +13422,12 @@
     },
     "Armorcraft Judge": {
       "edhrec_rank": 3503,
-      "gate": "template",
+      "gate": null,
       "name": "Armorcraft Judge",
-      "reason": "no template for: When this creature enters, draw a card for each creature you control with a +1/+1 counter ",
+      "reason": "",
       "scryfall_id": "73ce0c46-689c-41e5-b95c-39e9bcd51100",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armored Armadillo": {
@@ -33992,12 +33992,12 @@
     },
     "Bretagard Stronghold": {
       "edhrec_rank": 10509,
-      "gate": "template",
+      "gate": null,
       "name": "Bretagard Stronghold",
-      "reason": "no template for: {G}{W}{W}, {T}, Sacrifice this land: Put a +1/+1 counter on each of up to two target creat",
+      "reason": "",
       "scryfall_id": "67733bb9-9151-4ddc-b104-e48328bd1b28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breya's Apprentice": {
@@ -34212,12 +34212,12 @@
     },
     "Bright-Palm, Soul Awakener": {
       "edhrec_rank": 9373,
-      "gate": "template",
+      "gate": null,
       "name": "Bright-Palm, Soul Awakener",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "03056df6-ae03-40ce-be4b-96d8061b12d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brightblade Stoat": {
@@ -43362,12 +43362,12 @@
     },
     "Champion of Lambholt": {
       "edhrec_rank": 557,
-      "gate": "template",
+      "gate": null,
       "name": "Champion of Lambholt",
-      "reason": "no template for: Creatures with power less than this creature's power can't block creatures you control",
+      "reason": "",
       "scryfall_id": "5d5f0288-480b-4c68-957f-2f2db04d25c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion of Rhonas": {
@@ -51392,12 +51392,12 @@
     },
     "Conclave Mentor": {
       "edhrec_rank": 2312,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Mentor",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, that many plus one +",
+      "reason": "",
       "scryfall_id": "93cc7133-1814-4a77-95cc-22b93e63db50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave Naturalists": {
@@ -51422,12 +51422,12 @@
     },
     "Conclave Sledge-Captain": {
       "edhrec_rank": 7305,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Sledge-Captain",
-      "reason": "no template for: Backup 1, backup 1, backup 1",
+      "reason": "",
       "scryfall_id": "3320f1b0-84b6-43c1-8423-1a044bdfb328",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave Tribunal": {
@@ -52112,12 +52112,12 @@
     },
     "Constable of the Realm": {
       "edhrec_rank": 13903,
-      "gate": "template",
+      "gate": null,
       "name": "Constable of the Realm",
-      "reason": "no template for: Renown 2",
+      "reason": "",
       "scryfall_id": "a1000f3c-475e-49b8-8c98-bbff0e7ed87b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Constant Mists": {
@@ -63652,12 +63652,12 @@
     },
     "Death-Greeter's Champion": {
       "edhrec_rank": 12650,
-      "gate": "template",
+      "gate": null,
       "name": "Death-Greeter's Champion",
-      "reason": "no template for: Dash {3}{R}",
+      "reason": "",
       "scryfall_id": "7cb2b582-1c45-4bb2-8aef-59a71a5a9e94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death-Hood Cobra": {
@@ -81162,12 +81162,12 @@
     },
     "Elite Scaleguard": {
       "edhrec_rank": 8656,
-      "gate": "template",
+      "gate": null,
       "name": "Elite Scaleguard",
-      "reason": "no template for: When this creature enters, bolster 2",
+      "reason": "",
       "scryfall_id": "4acacc21-3613-40eb-85e4-b93b2807d73b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elite Skirmisher": {
@@ -82832,12 +82832,12 @@
     },
     "Emergent Woodwurm": {
       "edhrec_rank": 6743,
-      "gate": "template",
+      "gate": null,
       "name": "Emergent Woodwurm",
-      "reason": "no template for: Backup 3",
+      "reason": "",
       "scryfall_id": "af1b9c3d-5700-4298-a6a5-9379cad8726e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emeria Captain": {
@@ -83952,12 +83952,12 @@
     },
     "Enduring Scalelord": {
       "edhrec_rank": 10986,
-      "gate": "template",
+      "gate": null,
       "name": "Enduring Scalelord",
-      "reason": "no template for: Whenever one or more +1/+1 counters are put on another creature you control, you may put a",
+      "reason": "",
       "scryfall_id": "c0ee001b-6ddb-478e-a407-58bcc2bf7c30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enduring Sliver": {
@@ -90462,12 +90462,12 @@
     },
     "Falkenrath Exterminator": {
       "edhrec_rank": 17718,
-      "gate": "template",
+      "gate": null,
       "name": "Falkenrath Exterminator",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, put a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "75cb8891-90bc-41d9-96ff-e24564d3970e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Falkenrath Forebear": {
@@ -93812,12 +93812,12 @@
     },
     "Fertilid": {
       "edhrec_rank": 2901,
-      "gate": "template",
+      "gate": null,
       "name": "Fertilid",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "2d73ea23-52ab-4b92-b263-dc8b9e5a1010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fertilid's Favor": {
@@ -97102,12 +97102,12 @@
     },
     "Flameshadow Conjuring": {
       "edhrec_rank": 2974,
-      "gate": "template",
+      "gate": null,
       "name": "Flameshadow Conjuring",
-      "reason": "no template for: Whenever a nontoken creature you control enters, you may pay {R}. If you do, create a toke",
+      "reason": "",
       "scryfall_id": "ae113258-288f-47d5-8f79-e2e51b6326de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flameshot": {
@@ -106012,12 +106012,12 @@
     },
     "Gavony Township": {
       "edhrec_rank": 992,
-      "gate": "template",
+      "gate": null,
       "name": "Gavony Township",
-      "reason": "no template for: {2}{G}{W}, {T}: Put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "ce46c4e2-a515-41d7-8d70-d20cf4925996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gavony Trapper": {
@@ -115152,12 +115152,12 @@
     },
     "Good-Fortune Unicorn": {
       "edhrec_rank": 3473,
-      "gate": "template",
+      "gate": null,
       "name": "Good-Fortune Unicorn",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature",
+      "reason": "",
       "scryfall_id": "eabbe163-2b15-42e3-89ce-7363e6250d3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gor Muldrak, Amphinologist": {
@@ -122032,12 +122032,12 @@
     },
     "Hamza, Guardian of Arashin": {
       "edhrec_rank": 3377,
-      "gate": "template",
+      "gate": null,
       "name": "Hamza, Guardian of Arashin",
-      "reason": "no template for: This spell costs {1} less to cast for each creature you control with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "adc7f8f3-140d-4dd0-aacc-b81b2b93eb67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hana Kami": {
@@ -127712,12 +127712,12 @@
     },
     "High Sentinels of Arashin": {
       "edhrec_rank": 15193,
-      "gate": "template",
+      "gate": null,
       "name": "High Sentinels of Arashin",
-      "reason": "no template for: This creature gets +1/+1 for each other creature you control with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "d46b34ed-88a4-4868-9ce3-b91901e600d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "High Stride": {
@@ -144492,12 +144492,12 @@
     },
     "Juniper Order Ranger": {
       "edhrec_rank": 7818,
-      "gate": "template",
+      "gate": null,
       "name": "Juniper Order Ranger",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature and a +",
+      "reason": "",
       "scryfall_id": "9f299f1e-2694-44e6-aad4-1f29c2ee5553",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Juniper Order Rootweaver": {
@@ -152512,12 +152512,12 @@
     },
     "Krenko, Tin Street Kingpin": {
       "edhrec_rank": 885,
-      "gate": "template",
+      "gate": null,
       "name": "Krenko, Tin Street Kingpin",
-      "reason": "no template for: Whenever Krenko attacks, put a +1/+1 counter on it, then create a number of 1/1 red Goblin",
+      "reason": "",
       "scryfall_id": "0c7d8714-a0ef-4ae8-909b-60f3319c646c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kresh the Bloodbraided": {
@@ -173182,12 +173182,12 @@
     },
     "Mikaeus, the Lunarch": {
       "edhrec_rank": 1921,
-      "gate": "template",
+      "gate": null,
       "name": "Mikaeus, the Lunarch",
-      "reason": "no template for: Mikaeus enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4d2e132e-9698-4bf4-927e-994015ec0410",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mikaeus, the Unhallowed": {
@@ -175402,12 +175402,12 @@
     },
     "Mirror-Style Master": {
       "edhrec_rank": 12235,
-      "gate": "template",
+      "gate": null,
       "name": "Mirror-Style Master",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "6b407f48-5b78-463e-ace9-3f109a9c55a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirrorform": {
@@ -206732,12 +206732,12 @@
     },
     "Pridemalkin": {
       "edhrec_rank": 4352,
-      "gate": "template",
+      "gate": null,
       "name": "Pridemalkin",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "91a3ef02-a5d6-4282-ae00-2f58d956c94f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of Ancient Lore": {
@@ -222242,12 +222242,12 @@
     },
     "Return to Nature": {
       "edhrec_rank": 736,
-      "gate": "template",
+      "gate": null,
       "name": "Return to Nature",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "e4d0b641-5126-4786-8924-8916bc1d2f40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to the Earth": {
@@ -239962,12 +239962,12 @@
     },
     "Semester's End": {
       "edhrec_rank": 2675,
-      "gate": "template",
+      "gate": null,
       "name": "Semester's End",
-      "reason": "no template for: Exile any number of target creatures and/or planeswalkers you control. At the beginning of",
+      "reason": "",
       "scryfall_id": "db2bb091-ac6d-4c99-bdf6-70ffb6291ef0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sen Triplets": {
@@ -242312,12 +242312,12 @@
     },
     "Shalai and Hallar": {
       "edhrec_rank": 3979,
-      "gate": "template",
+      "gate": null,
       "name": "Shalai and Hallar",
-      "reason": "no template for: Whenever one or more +1/+1 counters are put on a creature you control, deals that much dam",
+      "reason": "",
       "scryfall_id": "0dcb27cd-e5f1-46c6-b7cf-33fa90335459",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shalai's Acolyte": {
@@ -252592,12 +252592,12 @@
     },
     "Slurrk, All-Ingesting": {
       "edhrec_rank": 9973,
-      "gate": "template",
+      "gate": null,
       "name": "Slurrk, All-Ingesting",
-      "reason": "no template for: Slurrk enters with five +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "8107fd21-7d34-44ce-afb8-920eab3b924e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sly Instigator": {
@@ -267252,12 +267252,12 @@
     },
     "Strionic Resonator": {
       "edhrec_rank": 585,
-      "gate": "template",
+      "gate": null,
       "name": "Strionic Resonator",
-      "reason": "no template for: {2}, {T}: Copy target triggered ability you control. You may choose new targets for the co",
+      "reason": "",
       "scryfall_id": "01cb04a6-d185-4e1e-a33b-032793247365",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strip Bare": {
@@ -293012,12 +293012,12 @@
     },
     "Triskelion": {
       "edhrec_rank": 4681,
-      "gate": "template",
+      "gate": null,
       "name": "Triskelion",
-      "reason": "no template for: This creature enters with three +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4b811d9b-1815-4219-9fc8-706dff705d4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triton Cavalry": {
@@ -296732,12 +296732,12 @@
     },
     "Uncivil Unrest": {
       "edhrec_rank": 2903,
-      "gate": "template",
+      "gate": null,
       "name": "Uncivil Unrest",
-      "reason": "no template for: Nontoken creatures you control have riot",
+      "reason": "",
       "scryfall_id": "343c3e40-d551-4e2c-bb94-315b58151a33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unclaimed Territory": {

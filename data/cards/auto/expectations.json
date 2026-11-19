@@ -63,6 +63,14 @@
     },
     "zone": "battlefield"
   },
+  "abzan_battle_priest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "abzan_falconer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "academy_manufactor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -472,6 +480,10 @@
     ]
   },
   "alhammarret_s_archive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "alharu_solemn_ritualist": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1262,6 +1274,16 @@
     "tokens": {
       "count": 2,
       "id": "clue_token"
+    },
+    "zone": "battlefield"
+  },
+  "armorcraft_judge": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "battlefield"
   },
@@ -2929,6 +2951,10 @@
   "breezekeeper": {
     "zone": "battlefield"
   },
+  "bretagard_stronghold": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bria_riptide_rogue": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2938,6 +2964,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "bright_palm_soul_awakener": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "brightblade_stoat": {
     "zone": "battlefield"
@@ -3657,6 +3687,10 @@
   "champion_of_arashin": {
     "zone": "battlefield"
   },
+  "champion_of_lambholt": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champion_of_the_perished": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4301,6 +4335,17 @@
   "concealed_courtyard": {
     "zone": "battlefield"
   },
+  "conclave_mentor": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "conclave_sledge_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "conclave_tribunal": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -4365,6 +4410,11 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "constable_of_the_realm": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "consulate_skygate": {
     "zone": "battlefield"
@@ -5359,6 +5409,10 @@
     "zone": "battlefield"
   },
   "death_baron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "death_greeter_s_champion": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6751,6 +6805,10 @@
   "elite_cat_warrior": {
     "zone": "battlefield"
   },
+  "elite_scaleguard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elite_vanguard": {
     "zone": "battlefield"
   },
@@ -6854,6 +6912,10 @@
       "id": "lander_token"
     },
     "zone": "graveyard"
+  },
+  "emergent_woodwurm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "emeria_s_call_emeria_shattered_skyclave": {
     "battlefield_count": 34,
@@ -6967,6 +7029,10 @@
     "zone": "battlefield"
   },
   "endurance_bobblehead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "enduring_scalelord": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7625,6 +7691,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "falkenrath_exterminator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "falkenrath_pit_fighter": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7878,6 +7948,14 @@
   },
   "fertile_ground": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fertilid": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "fervent_charge": {
@@ -8166,6 +8244,10 @@
     "zone": "battlefield"
   },
   "flamerush_rider": {
+    "zone": "battlefield"
+  },
+  "flameshadow_conjuring": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "flaming_sword": {
@@ -8876,6 +8958,10 @@
     "zone": "battlefield"
   },
   "gavel_of_the_righteous": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gavony_township": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9633,6 +9719,10 @@
   "goobbue_gardener": {
     "zone": "battlefield"
   },
+  "good_fortune_unicorn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gore_swine": {
     "zone": "battlefield"
   },
@@ -10168,6 +10258,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hamza_guardian_of_arashin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "hancock_ghoulish_mayor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10669,6 +10766,10 @@
     "zone": "battlefield"
   },
   "high_score": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "high_sentinels_of_arashin": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11872,6 +11973,10 @@
   "jungle_weaver": {
     "zone": "battlefield"
   },
+  "juniper_order_ranger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "junji_the_midnight_sky": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12612,6 +12717,10 @@
     "zone": "battlefield"
   },
   "krenko_s_enforcer": {
+    "zone": "battlefield"
+  },
+  "krenko_tin_street_kingpin": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "krile_baldesion": {
@@ -14436,6 +14545,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mikaeus_the_lunarch": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "mikokoro_center_of_the_sea": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14550,6 +14667,10 @@
     "zone": "battlefield"
   },
   "mirror_of_galadriel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mirror_style_master": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17096,6 +17217,16 @@
   "prideful_feastling": {
     "zone": "battlefield"
   },
+  "pridemalkin": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "priest_of_fell_rites": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18423,6 +18554,10 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "return_to_nature": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "reunion_of_the_house": {
     "zone": "exile"
   },
@@ -19739,6 +19874,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "semester_s_end": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "senate_griffin": {
     "zone": "battlefield"
   },
@@ -19977,6 +20116,13 @@
     "zone": "battlefield"
   },
   "shadrix_silverquill": {
+    "zone": "battlefield"
+  },
+  "shalai_and_hallar": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "shalai_voice_of_plenty": {
@@ -20855,6 +21001,14 @@
     "zone": "battlefield"
   },
   "slumbering_waterways": {
+    "zone": "battlefield"
+  },
+  "slurrk_all_ingesting": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "smaug_the_magnificent": {
@@ -21878,6 +22032,10 @@
     "zone": "battlefield"
   },
   "striding_shotcaller_run_the_play": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "strionic_resonator": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -24381,6 +24539,14 @@
     },
     "zone": "battlefield"
   },
+  "triskelion": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "triton_shorestalker": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24720,6 +24886,16 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "uncivil_unrest": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "riot"
+      ]
+    },
+    "zone": "battlefield"
   },
   "unclaimed_territory": {
     "battlefield_count": 33,

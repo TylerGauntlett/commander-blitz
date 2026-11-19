@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [planechase]
 status: proposed
 rank: 71
 ---
@@ -19,6 +19,15 @@ coming-soon shell on the shelf: its row `moc_call_for_backup` is in
 `python scripts/sync_precons.py --missing moc_call_for_backup` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Six cards are left. Fractured Powerstone, Ichor Elixir and Path of the
+Pyromancer roll the planar die or planeswalk, so they wait on
+[planechase](planechase.md), a rules subsystem the engine does not have; Path
+of the Pyromancer also waits on `voting`. Dromoka's Command waits on
+`prevent-damage-by-source` (a shield keyed to a spell on the stack),
+Hindervines on `no-counters-of-kind-filter`, and Ion Storm on
+`remove-counter-of-kinds-cost`; those are `/extend-dsl` runs this item still
+owns.
 
 ## The change
 

@@ -1,0 +1,18 @@
+{
+  "card_id": "dromoka_s_command",
+  "name": "Dromoka's Command",
+  "oracle_text": "Choose two —\n• Prevent all damage target instant or sorcery spell would deal this turn.\n• Target player sacrifices an enchantment of their choice.\n• Put a +1/+1 counter on target creature.\n• Target creature you control fights target creature you don't control.",
+  "blocked_sentences": [
+    "• Prevent all damage target instant or sorcery spell would deal this turn."
+  ],
+  "needs": [
+    {
+      "capability": "prevent-damage-by-source",
+      "kind": "op",
+      "what": "a this-turn prevention op whose shield is keyed to a SPELL on the stack as the damage source (a `kind: spell` target with an instant/sorcery selector, `objects: {target: t1}`), preventing all damage that spell deals to any recipient (players, creatures, planeswalkers) for the rest of the turn, i.e. `prevent_damage_permanent` with `dealt: \"by\"` widened so its subject may be a stack object rather than only a battlefield permanent",
+      "why_existing_wont_do": "`prevent_damage_permanent` with `dealt: \"by\"` and `duration: \"this_turn\"` has the right direction and clock, but it resolves `objects` battlefield-filtered and installs a `PermanentShield` on permanents only, so a targeted instant or sorcery on the stack gets no shield. `prevent_combat_damage` only touches combat damage, and `prevent_damage` (op) shields seats rather than a source. The other three modes (sacrifice with chooser, add_counters, fight) are expressible, but the card is not written partially."
+    }
+  ],
+  "closest_existing": ["prevent_damage_permanent", "prevent_combat_damage"],
+  "confidence": "high"
+}

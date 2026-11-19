@@ -10,20 +10,20 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **457** capabilities.
+**542 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
 | [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
-| [prevent-damage-by-source](#prevent-damage-by-source) | 10 | 2713 | op, replacement, static_effect |
-| [planechase](#planechase) | 9 | 5666 | engine |
+| [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
+| [planechase](#planechase) | 10 | 5666 | engine |
 | [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
+| [voting](#voting) | 6 | 6980 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
-| [voting](#voting) | 5 | 8294 | decision, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
@@ -339,6 +339,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
 | [next-spell-gains-cascade](#next-spell-gains-cascade) | 1 | 5088 | op |
+| [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
@@ -387,6 +388,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
@@ -695,12 +697,14 @@ Blocks **15** cards.
 
 ## prevent-damage-by-source
 
-Blocks **10** cards.
+Blocks **11** cards.
 
 - **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
 - **(op)** a this-turn prevention op keyed to the damage's SOURCE by an effect-side selector (here {types: [Creature]}), matched against the dealer's current characteristics each time damage would be dealt, so creatures that enter or become creatures later in the turn are covered; it must stop combat AND noncombat damage to any recipient (players and permanents), and take the 615.5 `effects` rider with the prevented amount as {binding: amount} so 'You gain life equal to the damage prevented this way' is a gain_life of that binding for the spell's controller
   <br>Why the existing vocabulary won't do: `prevent_combat_damage` has the right `by` dealer filter and the right clock but only ever touches combat damage and takes no `effects` rider, so a creature's fight, ping or ETB damage would get through and no life would be gained. `prevent_damage_permanent` with `dealt: "by"` over all creatures carries the rider and stops both kinds, but it shields only the objects matched at resolution, so a creature that enters, or a permanent that becomes a creature, later this turn still deals damage. `prevent_damage` (op) shields seats, not by source, and misses damage to creatures. The `prevent_damage` static is continuous on a permanent, not a spell's one-turn effect.
+- **(op)** a this-turn prevention op whose shield is keyed to a SPELL on the stack as the damage source (a `kind: spell` target with an instant/sorcery selector, `objects: {target: t1}`), preventing all damage that spell deals to any recipient (players, creatures, planeswalkers) for the rest of the turn, i.e. `prevent_damage_permanent` with `dealt: "by"` widened so its subject may be a stack object rather than only a battlefield permanent
+  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` with `dealt: "by"` and `duration: "this_turn"` has the right direction and clock, but it resolves `objects` battlefield-filtered and installs a `PermanentShield` on permanents only, so a targeted instant or sorcery on the stack gets no shield. `prevent_combat_damage` only touches combat damage, and `prevent_damage` (op) shields seats rather than a source. The other three modes (sacrifice with chooser, add_counters, fight) are expressible, but the card is not written partially.
 - **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, e.g. a dealer filter of {"enchanted_by": true} (a creature with at least one Aura attached to it)
   <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. The `enchanted_by` filter key says 'enchanted creatures'; nothing lets the prevention shield read it of the dealer.
 - **(static_effect)** a dealer-side total shield on the `prevent_damage` static: `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` preventing all combat damage this creature would deal to any recipient (creatures, players and planeswalkers). The 'dealt to' half is already expressible as a second `prevent_damage` static with `prevent_all`, `combat_only` and `affects: {"self_only": true}`
@@ -722,6 +726,8 @@ Blocks **10** cards.
 
 - **Fog Bank** (rank 2713) — `fog_bank`
   - Prevent all combat damage that would be dealt to and dealt by this creature.
+- **Dromoka's Command** (rank 7146) — `dromoka_s_command`
+  - • Prevent all damage target instant or sorcery spell would deal this turn.
 - **Weeping Angel** (rank 9247) — `weeping_angel`
   - If this creature would deal combat damage to a creature, prevent that damage and that creature's owner shuffles it into their library.
 - **Chant of Vitu-Ghazi** (rank 12136) — `chant_of_vitu_ghazi`
@@ -746,7 +752,7 @@ Blocks **10** cards.
 
 ## planechase
 
-Blocks **9** cards.
+Blocks **10** cards.
 
 - **(engine)** the Planechase subsystem (rule 901): a planar deck and a face-up plane or phenomenon in the command zone, plus a `roll_planar_die` op (901.9) that rolls the six-sided planar die -- on the planeswalker symbol the roller planeswalks (701.31), on the chaos symbol the face-up plane's chaos ability triggers, otherwise nothing; activated here as a sorcery-speed {T} ability, with the free-roll-cost escalation of 901.9b not applying to an effect-driven roll
   <br>Why the existing vocabulary won't do: `roll_dice` rolls ordinary numbered dice and has no planeswalk or chaos outcome, and nothing in `ops` or the game setup knows planes, phenomena, a planar deck or chaos triggers. The rest of the card is expressible: '{T}: Add {C}.' is already the starting_point mana ability, and the activation limit is `sorcery_speed_only`
@@ -765,6 +771,8 @@ Blocks **9** cards.
 
 - **Fractured Powerstone** (rank 5666) — `fractured_powerstone`
   - {T}: Roll the planar die. Activate only as a sorcery.
+- **Path of the Pyromancer** (rank 6980) — `path_of_the_pyromancer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 - **TARDIS** (rank 7274) — `tardis`
   - Whenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.
 - **Path of the Animist** (rank 10704) — `path_of_the_animist`
@@ -906,6 +914,35 @@ Blocks **6** cards.
 
 </details>
 
+## voting
+
+Blocks **6** cards.
+
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Path of the Pyromancer** (rank 6980) — `path_of_the_pyromancer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+- **Path of the Animist** (rank 10704) — `path_of_the_animist`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -939,33 +976,6 @@ Blocks **5** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## voting
-
-Blocks **5** cards.
-
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
-  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Valeyard** (rank 8294) — `the_valeyard`
-  - If an opponent would face a villainous choice, they face that choice an additional time
-  - While voting, you may vote an additional time
-- **Path of the Animist** (rank 10704) — `path_of_the_animist`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 
 </details>
 
@@ -5833,6 +5843,20 @@ Blocks **1** card.
 
 </details>
 
+## no-counters-of-kind-filter
+
+Blocks **1** card.
+
+- **(selector)** a selector/filter key matching a permanent with zero counters of one named kind ("with no +1/+1 counters on them"), e.g. `not_has_counters: "+1/+1"` or `has_counters: {"kind": "+1/+1", "none": true}`, usable in prevent_combat_damage's `by` filter
+  <br>Why the existing vocabulary won't do: prevent_combat_damage with `by` and duration this_turn is exactly the op (Arachnogenesis), but `has_counters` only says 'some counter', 'no counters at all' (false) or 'at least one of kind X'. `has_counters: false` is wider than printed: it would spare a creature carrying only a stun, shield or keyword counter, which Hindervines still fogs. The selector language has no negation (`any_of`/`union` are unions only), and `counters_on` is a value, not a filter key usable in `by`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hindervines** (rank 15432) — `hindervines`
+  - Prevent all combat damage that would be dealt this turn by creatures with no +1/+1 counters on them.
+
+</details>
+
 ## no-mana-cost
 
 Blocks **1** card.
@@ -6516,6 +6540,20 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
+
+</details>
+
+## remove-counter-of-kinds-cost
+
+Blocks **1** card.
+
+- **(cost)** a remove_counters_from_among cost whose `counter` names a set of kinds ("a +1/+1 counter or a charge counter"), so the pool is permanents you control carrying any listed kind and the payer picks the permanent and which listed kind to remove
+  <br>Why the existing vocabulary won't do: remove_counters_from_among takes either no `counter` (any kind, too broad: a loyalty or -1/-1 counter would pay) or one named kind (`_counter_removal_pool`/`_counters_on` read a single string); remove_counters only reads the source. Splitting into two activated abilities, one per kind, would claim the same printed line twice and is two abilities rather than one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ion Storm** (rank 20169) — `ion_storm`
+  - {1}{R}, Remove a +1/+1 counter or a charge counter from a permanent you control: This enchantment deals 2 damage to any target.
 
 </details>
 
