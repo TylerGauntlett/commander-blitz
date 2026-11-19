@@ -26897,6 +26897,33 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bilious_skulldweller",
+      "keywords": [
+        "deathtouch",
+        "toxic"
+      ],
+      "mana_cost": "{B}",
+      "name": "Bilious Skulldweller",
+      "oracle_text": "Deathtouch\nToxic 1 (Players dealt combat damage by this creature also get a poison counter.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Insect"
+      ],
+      "toughness": 1,
+      "toxic": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -28886,6 +28913,50 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "regenerate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}: Regenerate this creature."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "blight_mamba",
+      "keywords": [
+        "infect"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Blight Mamba",
+      "oracle_text": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\n{1}{G}: Regenerate this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Snake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attacking": true,
             "controller": "you",
@@ -29163,6 +29234,47 @@
         "Giant"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, proliferate.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blightbelly_rat",
+      "keywords": [
+        "toxic"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Blightbelly Rat",
+      "oracle_text": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nWhen this creature dies, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Rat"
+      ],
+      "toughness": 2,
+      "toxic": 1,
       "types": [
         "Creature"
       ]
@@ -40127,6 +40239,107 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "destroy"
+                    }
+                  ],
+                  "label": "Destroy target artifact."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t2"
+                      },
+                      "op": "destroy"
+                    }
+                  ],
+                  "label": "Destroy target enchantment."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "proliferate"
+                    }
+                  ],
+                  "label": "Proliferate."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice this creature: Choose one —\n• Destroy target artifact.\n• Destroy target enchantment.\n• Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cankerbloom",
+      "mana_cost": "{1}{G}",
+      "name": "Cankerbloom",
+      "oracle_text": "{1}, Sacrifice this creature: Choose one —\n• Destroy target artifact.\n• Destroy target enchantment.\n• Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Fungus"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -41301,6 +41514,61 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "caress_of_phyrexia",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Caress of Phyrexia",
+      "oracle_text": "Target player draws three cards, loses 3 life, and gets three poison counters.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "add_poison",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -55367,6 +55635,101 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to one or more players, proliferate.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a land card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Corrupted — At the beginning of your end step, if an opponent has three or more poison counters, draw a card, then you may put a land card from your hand onto the battlefield.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "max_poison_of": "each_opponent"
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "contaminant_grafter",
+      "keywords": [
+        "trample",
+        "toxic"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Contaminant Grafter",
+      "oracle_text": "Trample, toxic 1\nWhenever one or more creatures you control deal combat damage to one or more players, proliferate.\nCorrupted — At the beginning of your end step, if an opponent has three or more poison counters, draw a card, then you may put a land card from your hand onto the battlefield.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Druid"
+      ],
+      "toughness": 5,
+      "toxic": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -90317,6 +90680,62 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "expand_the_sphere",
+      "mana_cost": "{3}{G}",
+      "name": "Expand the Sphere",
+      "oracle_text": "Look at the top six cards of your library. Put up to two land cards from among them onto the battlefield tapped and the rest on the bottom of your library in a random order. If you put fewer than two lands onto the battlefield this way, proliferate a number of times equal to the difference. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 6
+          },
+          "as": "sphere_lands",
+          "destination": "battlefield",
+          "objects": {
+            "count": 2,
+            "optional": true,
+            "types": [
+              "Land"
+            ]
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true,
+          "tapped": true
+        },
+        {
+          "amount": {
+            "minus": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "binding": "sphere_lands"
+                }
+              }
+            ]
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "op": "repeat"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -94273,6 +94692,69 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "feed_the_infection",
+      "mana_cost": "{3}{B}",
+      "name": "Feed the Infection",
+      "oracle_text": "You draw three cards and you lose 3 life.\nCorrupted — Each opponent who has three or more poison counters loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "max_poison_of": {
+                    "binding": "each_player"
+                  }
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ]
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -113255,6 +113737,156 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, proliferate.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "max_poison_of": "each_opponent"
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}{W}{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}{U}{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}{B}{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}{R}{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}{G}{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Corrupted — {T}: Add three mana of any one color. Activate only if an opponent has three or more poison counters."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "glistening_sphere",
+      "mana_cost": "{3}",
+      "name": "Glistening Sphere",
+      "oracle_text": "This artifact enters tapped.\nWhen this artifact enters, proliferate.\n{T}: Add one mana of any color.\nCorrupted — {T}: Add three mana of any one color. Activate only if an opponent has three or more poison counters.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -134141,6 +134773,50 @@
               "amount": {
                 "const": 1
               },
+              "op": "add_poison",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each player gets a poison counter",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ichor_rats",
+      "keywords": [
+        "infect"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Ichor Rats",
+      "oracle_text": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\nWhen this creature enters, each player gets a poison counter.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Rat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "draw",
               "player": "you"
             }
@@ -134179,6 +134855,54 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature becomes blocked, it gets +2/+2 until end of turn.",
+          "trigger": {
+            "event": "becomes_blocked",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ichorclaw_myr",
+      "keywords": [
+        "infect"
+      ],
+      "mana_cost": "{2}",
+      "name": "Ichorclaw Myr",
+      "oracle_text": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\nWhenever this creature becomes blocked, it gets +2/+2 until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Myr"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -136917,6 +137641,45 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "infectious_inquiry",
+      "mana_cost": "{2}{B}",
+      "name": "Infectious Inquiry",
+      "oracle_text": "You draw two cards and you lose 2 life. Each opponent gets a poison counter.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "add_poison",
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -174002,6 +174765,96 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "merciless_eviction",
+      "mana_cost": "{4}{W}{B}",
+      "name": "Merciless Eviction",
+      "oracle_text": "Choose one —\n• Exile all artifacts.\n• Exile all creatures.\n• Exile all enchantments.\n• Exile all planeswalkers.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile all artifacts."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile all creatures."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "types": [
+                      "Enchantment"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile all enchantments."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "types": [
+                      "Planeswalker"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile all planeswalkers."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -184048,6 +184901,93 @@
     {
       "abilities": [
         {
+          "cost": {
+            "pay_life": 2,
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 2 life: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "myr_convert",
+      "keywords": [
+        "toxic"
+      ],
+      "mana_cost": "{2}",
+      "name": "Myr Convert",
+      "oracle_text": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\n{T}, Pay 2 life: Add one mana of any color.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Myr"
+      ],
+      "toughness": 1,
+      "toxic": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "destination": "hand",
@@ -190516,6 +191456,39 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{W/P}"
+          },
+          "effect": "attack_tax",
+          "kind": "static",
+          "or_planeswalkers": true,
+          "text": "Creatures can't attack you or planeswalkers you control unless their controller pays {W/P} for each of those creatures."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "norn_s_annex",
+      "mana_cost": "{3}{W/P}{W/P}",
+      "name": "Norn's Annex",
+      "oracle_text": "({W/P} can be paid with either {W} or 2 life.)\nCreatures can't attack you or planeswalkers you control unless their controller pays {W/P} for each of those creatures.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "proliferate"
@@ -191026,6 +191999,41 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "noxious_revival",
+      "mana_cost": "{G/P}",
+      "name": "Noxious Revival",
+      "oracle_text": "({G/P} can be paid with either {G} or 2 life.)\nPut target card from a graveyard on top of its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -203830,6 +204838,33 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "pestilent_syphoner",
+      "keywords": [
+        "flying",
+        "toxic"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Pestilent Syphoner",
+      "oracle_text": "Flying\nToxic 1 (Players dealt combat damage by this creature also get a poison counter.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Insect"
+      ],
+      "toughness": 1,
+      "toxic": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -204558,6 +205593,184 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "phyresis_outbreak",
+      "mana_cost": "{2}{B}",
+      "name": "Phyresis Outbreak",
+      "oracle_text": "Each opponent gets a poison counter. Then each creature your opponents control gets -1/-1 until end of turn for each poison counter its controller has.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "add_poison",
+          "player": "each_opponent"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "times": [
+                  {
+                    "const": -1
+                  },
+                  {
+                    "max_poison_of": {
+                      "binding": "each_player"
+                    }
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "const": -1
+                  },
+                  {
+                    "max_poison_of": {
+                      "binding": "each_player"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "max_poison_of": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 3
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Corrupted — Whenever this artifact becomes tapped, each opponent who has three or more poison counters loses 1 life.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "phyrexian_atlas",
+      "mana_cost": "{3}",
+      "name": "Phyrexian Atlas",
+      "oracle_text": "{T}: Add one mana of any color.\nCorrupted — Whenever this artifact becomes tapped, each opponent who has three or more poison counters loses 1 life.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -2229,6 +2229,17 @@
     },
     "zone": "battlefield"
   },
+  "bilious_skulldweller": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "deathtouch",
+        "toxic"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "binding_mummy": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2394,6 +2405,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "blight_mamba": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blight_mound": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2417,6 +2432,10 @@
       "count": 1,
       "id": "incubator_token"
     },
+    "zone": "battlefield"
+  },
+  "blightbelly_rat": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blighted_woodland": {
@@ -3308,6 +3327,10 @@
       "graveyard"
     ]
   },
+  "cankerbloom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "canopy_gargantuan": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3395,6 +3418,18 @@
   "careful_cultivation": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "caress_of_phyrexia": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
   },
   "caretaker_s_talent": {
     "battlefield_count": 33,
@@ -4473,6 +4508,13 @@
   },
   "containment_construct": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "contaminant_grafter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "contaminated_aquifer": {
@@ -7491,6 +7533,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "expand_the_sphere": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "expansion_algorithm": {
     "hand_size": {
       "0": 1
@@ -7886,6 +7935,22 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "feed_the_infection": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "feed_the_swarm": {
     "graveyard_size": {
@@ -9507,6 +9572,10 @@
     "zone": "battlefield"
   },
   "glistener_elf": {
+    "zone": "battlefield"
+  },
+  "glistening_sphere": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glittering_massif": {
@@ -11214,6 +11283,14 @@
   "ice_tunnel": {
     "zone": "battlefield"
   },
+  "ichor_rats": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "ichor_wellspring": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11222,6 +11299,10 @@
     "library_size": {
       "0": 39
     },
+    "zone": "battlefield"
+  },
+  "ichorclaw_myr": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "icon_of_ancestry": {
@@ -11424,6 +11505,18 @@
   "infantry_shield": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "infectious_inquiry": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "infernal_grasp": {
     "life": {
@@ -14483,6 +14576,11 @@
     },
     "zone": "graveyard"
   },
+  "merciless_eviction": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "merciless_executioner": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -15354,6 +15452,16 @@
     },
     "zone": "battlefield"
   },
+  "myr_convert": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "toxic"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "myr_retriever": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15842,6 +15950,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "norn_s_annex": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "norn_s_choirmaster": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15887,6 +16002,15 @@
   },
   "noxious_newt": {
     "zone": "battlefield"
+  },
+  "noxious_revival": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 41
+    },
+    "zone": "graveyard"
   },
   "nuka_cola_vending_machine": {
     "battlefield_count": 33,
@@ -16879,6 +17003,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "pestilent_syphoner": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "peter_parker_s_camera": {
     "battlefield_count": 33,
     "counters": {
@@ -16921,6 +17052,20 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "phyresis_outbreak": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
+  "phyrexian_atlas": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "phyrexian_delver": {
     "battlefield_count": 34,
