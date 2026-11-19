@@ -1794,6 +1794,18 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [pid] if pid is not None and state.is_alive(pid) else []
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
+        if "players_with_poison" in spec:
+            # "…from **that player's** graveyard", for each opponent who has
+            # three or more poison counters -- Geth's Summons. The seats the
+            # `players_with_poison` value counts, each measured alone against
+            # the floor, living ones only (800.4a).
+            inner = spec["players_with_poison"]
+            floor = int(inner["at_least"])
+            return [
+                pid
+                for pid in select_players(ctx, inner["player"])
+                if state.is_alive(pid) and state.players[pid].poison >= floor
+            ]
         if "except" in spec:
             # "each **opponent** who did this" -- the recorded set minus a seat.
             # `not` is the complement over the whole table and cannot narrow an
@@ -1910,6 +1922,29 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
                 return [pid for pid in state.alive() if pid in seats]
             return []
     raise DslError(f"unparsable player spec {spec!r}")
+
+
+def validate_players_with_poison(spec: Any, where: str, players: Any) -> None:
+    """Shared by the effect-side and static-side value validators.
+
+    ``player`` is not defaulted, for `validate_per_player_count`'s reason, and
+    ``at_least`` is required: corrupted prints three, but the threshold is the
+    card's, and a default would read the same in a file that meant another.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    unknown = set(spec) - {"player", "at_least"}
+    if unknown:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    who = spec.get("player")
+    if not isinstance(who, str) or who not in players:
+        raise DslError(f"{where}.player: must name one of {sorted(players)}, got {who!r}")
+    floor = spec.get("at_least")
+    if not isinstance(floor, int) or isinstance(floor, bool) or floor < 1:
+        raise DslError(
+            f"{where}.at_least: needs a whole number of poison counters, at least 1, "
+            f"got {floor!r}"
+        )
 
 
 def validate_colorless_key(filt: Any, where: str) -> None:
@@ -2275,6 +2310,13 @@ def validate_selector(selector: Any, where: str) -> None:
         # commander you own" would quietly mean "a commander", and the number a
         # card reads off that pool would be an opponent's.
         raise DslError(f"{where}: unknown owner clause {owner!r}")
+    if isinstance(owner, Mapping) and "players_with_poison" in owner:
+        # "…from **that player's** graveyard", for each corrupted opponent --
+        # Geth's Summons. A target selector is not walked by the loader's
+        # player-spec check, so its owner spec is checked here.
+        validate_players_with_poison(
+            owner["players_with_poison"], f"{where}.owner.players_with_poison", PLAYER_SPEC_NAMES
+        )
     if "player" in selector:
         # Only zones that *belong* to a player have an owner to choose. On the
         # battlefield and the stack the list is shared, so `player` would be

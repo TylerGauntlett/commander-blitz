@@ -921,6 +921,16 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
             # The defending players, a walker's or battle's controller
             # included: melee's count (`TurnLedger.opponents_attacked_this_combat`).
             defenders=sorted(set(combat.attackers.values())),
+            # "…if one or more **players being attacked** are poisoned" (Norn's
+            # Decree): the seats attacked directly. A seat whose planeswalker or
+            # battle is attacked is a defending player and not attacked (506.2).
+            attacked_players=sorted(
+                {
+                    seat
+                    for oid, seat in combat.attackers.items()
+                    if oid not in combat.attacking_permanent
+                }
+            ),
         )
         # "Whenever one or more creatures attack one of your opponents or a
         # planeswalker they control" -- one per *defending player*, between the

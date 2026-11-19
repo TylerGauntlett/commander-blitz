@@ -270,6 +270,10 @@ def move_object(
     # with "you" the creature's own controller. Folded into the turn ledger by
     # `GameState._tally`.
     had_equipment = _equipment_had(state, obj) if was_on_battlefield else 0
+    # An Aura or Equipment leaving while attached becomes unattached from its
+    # host, and its own "whenever this Equipment becomes unattached" sees it
+    # (603.10a): Grafted Wargear destroyed still costs the creature.
+    left_host = obj.attached_to if was_on_battlefield else None
     was_modified = was_on_battlefield and (
         any(n > 0 for n in had_counters.values())
         or had_equipment > 0
@@ -564,6 +568,10 @@ def move_object(
                 # 1/0 for `was_attacking`'s reason.
                 was_modified=1 if was_modified else 0,
             )
+        if left_host is not None:
+            from .primitives import fire_unattached  # primitives imports this module
+
+            fire_unattached(state, oid, left_host, attachment_left=True)
         # The departure has been heard, so a subscription waiting for it has
         # had its one chance: the object that comes back is a new one (400.7)
         # and its next death is not the one the delayed ability was about.
@@ -728,6 +736,9 @@ def _detach_all(state: GameState, oid: int) -> None:
             # fire: a "whenever equipped creature dies" trigger asked about
             # `attached_to` here would find nothing, every time.
             other.last_attached_to = oid
+            from .primitives import fire_unattached  # primitives imports this module
+
+            fire_unattached(state, other_id, oid)
         if other.paired_with == oid:
             other.paired_with = None
 

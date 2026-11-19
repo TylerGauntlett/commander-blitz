@@ -24752,12 +24752,12 @@
     },
     "Bilious Skulldweller": {
       "edhrec_rank": 4533,
-      "gate": "template",
+      "gate": null,
       "name": "Bilious Skulldweller",
-      "reason": "no template for: Toxic 1",
+      "reason": "",
       "scryfall_id": "dfb81cb1-ac56-4803-a962-359854a447df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bill Ferny, Bree Swindler": {
@@ -26972,12 +26972,12 @@
     },
     "Blight Mamba": {
       "edhrec_rank": 7748,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Mamba",
-      "reason": "no template for: {1}{G}: Regenerate this creature",
+      "reason": "",
       "scryfall_id": "7d1f1ce2-c6a6-4cab-bd94-a027ccec8aeb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Mound": {
@@ -27052,12 +27052,12 @@
     },
     "Blightbelly Rat": {
       "edhrec_rank": 2734,
-      "gate": "template",
+      "gate": null,
       "name": "Blightbelly Rat",
-      "reason": "no template for: Toxic 1",
+      "reason": "",
       "scryfall_id": "20364e49-0948-411a-b58f-b0d12fedce43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blightcaster": {
@@ -38802,12 +38802,12 @@
     },
     "Cankerbloom": {
       "edhrec_rank": 766,
-      "gate": "template",
+      "gate": null,
       "name": "Cankerbloom",
-      "reason": "no template for: {1}, Sacrifice this creature: Choose one —",
+      "reason": "",
       "scryfall_id": "02272f89-dd8e-4a07-8bd4-b33ad4e12888",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cankerous Thirst": {
@@ -39612,12 +39612,12 @@
     },
     "Captain's Hook": {
       "edhrec_rank": 16378,
-      "gate": "template",
+      "gate": null,
       "name": "Captain's Hook",
-      "reason": "no template for: Equipped creature gets +2/+0, has menace, and is a Pirate in addition to its other creatur",
+      "reason": "",
       "scryfall_id": "7bd3f777-b33a-454a-8d5d-993260ddda03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain's Maneuver": {
@@ -39922,12 +39922,12 @@
     },
     "Caress of Phyrexia": {
       "edhrec_rank": 10915,
-      "gate": "template",
+      "gate": null,
       "name": "Caress of Phyrexia",
-      "reason": "no template for: Target player draws three cards, loses 3 life, and gets three poison counters",
+      "reason": "",
       "scryfall_id": "0eef764a-a84f-4d2d-a0ee-2af73643c76f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caretaker's Talent": {
@@ -40212,12 +40212,12 @@
     },
     "Carrion Call": {
       "edhrec_rank": 16360,
-      "gate": "template",
+      "gate": null,
       "name": "Carrion Call",
-      "reason": "no template for: Create two 1/1 green Phyrexian Insect creature tokens with infect",
+      "reason": "",
       "scryfall_id": "225ff048-fb4b-4801-8db6-b1136a1935a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carrion Crow": {
@@ -52542,12 +52542,12 @@
     },
     "Contaminant Grafter": {
       "edhrec_rank": 3927,
-      "gate": "template",
+      "gate": null,
       "name": "Contaminant Grafter",
-      "reason": "no template for: Trample, toxic 1",
+      "reason": "",
       "scryfall_id": "0ef2f776-ff35-464b-bfcf-075c9ae4baa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Contaminated Aquifer": {
@@ -88172,12 +88172,12 @@
     },
     "Expand the Sphere": {
       "edhrec_rank": 5035,
-      "gate": "template",
+      "gate": null,
       "name": "Expand the Sphere",
-      "reason": "no template for: Look at the top six cards of your library. Put up to two land cards from among them onto t",
+      "reason": "",
       "scryfall_id": "572e174e-99f7-4b5e-8506-1833adddbf07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expanded Anatomy": {
@@ -92852,12 +92852,12 @@
     },
     "Feed the Infection": {
       "edhrec_rank": 10276,
-      "gate": "template",
+      "gate": null,
       "name": "Feed the Infection",
-      "reason": "no template for: You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "9f013a1a-d4b9-4380-9802-c299ee6c4492",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feed the Pack": {
@@ -107272,12 +107272,12 @@
     },
     "Geth's Summons": {
       "edhrec_rank": 9101,
-      "gate": "template",
+      "gate": null,
       "name": "Geth's Summons",
-      "reason": "no template for: Return up to one target creature card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "9cdab166-c0d2-45c4-8326-f4670cd7efd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geth's Verdict": {
@@ -111062,12 +111062,12 @@
     },
     "Glissa's Retriever": {
       "edhrec_rank": 9342,
-      "gate": "template",
+      "gate": null,
       "name": "Glissa's Retriever",
-      "reason": "no template for: Haste, toxic 3",
+      "reason": "",
       "scryfall_id": "81836d7f-ba8d-4c52-8b1f-c86b422e23b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glissa's Scorn": {
@@ -111152,12 +111152,12 @@
     },
     "Glistening Sphere": {
       "edhrec_rank": 2819,
-      "gate": "template",
+      "gate": null,
       "name": "Glistening Sphere",
-      "reason": "no template for: When this artifact enters, proliferate",
+      "reason": "",
       "scryfall_id": "4c10d7e0-cdbb-4045-8345-d00a554ed072",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glister Bairn": {
@@ -115762,12 +115762,12 @@
     },
     "Grafted Exoskeleton": {
       "edhrec_rank": 2271,
-      "gate": "template",
+      "gate": null,
       "name": "Grafted Exoskeleton",
-      "reason": "no template for: Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent",
+      "reason": "",
       "scryfall_id": "d9218955-6604-49de-9153-6301d216e3bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grafted Growth": {
@@ -115802,12 +115802,12 @@
     },
     "Grafted Wargear": {
       "edhrec_rank": 9237,
-      "gate": "template",
+      "gate": null,
       "name": "Grafted Wargear",
-      "reason": "no template for: Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent",
+      "reason": "",
       "scryfall_id": "1d023d44-482e-4f60-b9b1-eede9bfb732f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Graham O'Brien": {
@@ -133122,12 +133122,12 @@
     },
     "Ichor Rats": {
       "edhrec_rank": 3288,
-      "gate": "template",
+      "gate": null,
       "name": "Ichor Rats",
-      "reason": "no template for: When this creature enters, each player gets a poison counter",
+      "reason": "",
       "scryfall_id": "387e4be7-7e3d-4623-afe6-229f8a9bacd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ichor Shade": {
@@ -133172,12 +133172,12 @@
     },
     "Ichorclaw Myr": {
       "edhrec_rank": 4721,
-      "gate": "template",
+      "gate": null,
       "name": "Ichorclaw Myr",
-      "reason": "no template for: Whenever this creature becomes blocked, it gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "06ad4974-d806-4417-883a-2e622e909a7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ichorid": {
@@ -136092,12 +136092,12 @@
     },
     "Infectious Inquiry": {
       "edhrec_rank": 2460,
-      "gate": "template",
+      "gate": null,
       "name": "Infectious Inquiry",
-      "reason": "no template for: You draw two cards and you lose 2 life. Each opponent gets a poison counter",
+      "reason": "",
       "scryfall_id": "0a10f284-b043-4307-bdc7-6dad47cc9221",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Infectious Rage": {
@@ -140952,12 +140952,12 @@
     },
     "Ixhel, Scion of Atraxa": {
       "edhrec_rank": 5768,
-      "gate": "template",
+      "gate": null,
       "name": "Ixhel, Scion of Atraxa",
-      "reason": "no template for: Flying, vigilance, toxic 2",
+      "reason": "",
       "scryfall_id": "66d32d60-4e08-49aa-857f-da92dc7c01d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ixidor's Will": {
@@ -171362,12 +171362,12 @@
     },
     "Merciless Eviction": {
       "edhrec_rank": 3019,
-      "gate": "template",
+      "gate": null,
       "name": "Merciless Eviction",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "886542b7-55dc-4718-b4d9-fbde26260aad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merciless Executioner": {
@@ -181632,12 +181632,12 @@
     },
     "Mycosynth Fiend": {
       "edhrec_rank": 18673,
-      "gate": "template",
+      "gate": null,
       "name": "Mycosynth Fiend",
-      "reason": "no template for: This creature gets +1/+1 for each poison counter your opponents have",
+      "reason": "",
       "scryfall_id": "9e60dd79-cc2f-4f53-afe3-cd8ab91005cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mycosynth Golem": {
@@ -181792,12 +181792,12 @@
     },
     "Myr Convert": {
       "edhrec_rank": 2434,
-      "gate": "template",
+      "gate": null,
       "name": "Myr Convert",
-      "reason": "no template for: Toxic 1",
+      "reason": "",
       "scryfall_id": "19c7d89a-2b02-4faa-83cf-7dcf7faf6c4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myr Custodian": {
@@ -188612,12 +188612,12 @@
     },
     "Norn's Annex": {
       "edhrec_rank": 1961,
-      "gate": "template",
+      "gate": null,
       "name": "Norn's Annex",
-      "reason": "no template for: Creatures can't attack you or planeswalkers you control unless their controller pays {W/P}",
+      "reason": "",
       "scryfall_id": "d25bbe18-709c-4ed3-a047-5578ecfaaba7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Norn's Choirmaster": {
@@ -188632,12 +188632,12 @@
     },
     "Norn's Decree": {
       "edhrec_rank": 4072,
-      "gate": "template",
+      "gate": null,
       "name": "Norn's Decree",
-      "reason": "no template for: Whenever one or more creatures an opponent controls deal combat damage to you, that oppone",
+      "reason": "",
       "scryfall_id": "76f28aa2-1c18-4d58-a3f9-6cd5b49280d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Norn's Inquisitor": {
@@ -189072,12 +189072,12 @@
     },
     "Noxious Assault": {
       "edhrec_rank": 7655,
-      "gate": "template",
+      "gate": null,
       "name": "Noxious Assault",
-      "reason": "no template for: Creatures you control get +2/+2 until end of turn. Whenever a creature blocks this turn, i",
+      "reason": "",
       "scryfall_id": "9649de6c-a9f7-4f0a-8bf7-cacaea60ed54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Noxious Dragon": {
@@ -189172,12 +189172,12 @@
     },
     "Noxious Revival": {
       "edhrec_rank": 613,
-      "gate": "template",
+      "gate": null,
       "name": "Noxious Revival",
-      "reason": "no template for: Put target card from a graveyard on top of its owner's library",
+      "reason": "",
       "scryfall_id": "7b8c04ad-9c81-48f6-85cc-ae30a80a7989",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Noxious Toad": {
@@ -200372,12 +200372,12 @@
     },
     "Pestilent Syphoner": {
       "edhrec_rank": 6393,
-      "gate": "template",
+      "gate": null,
       "name": "Pestilent Syphoner",
-      "reason": "no template for: Toxic 1",
+      "reason": "",
       "scryfall_id": "947a1e44-3485-4e24-a34d-6c318584743c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pestilent Wolf": {
@@ -201312,12 +201312,12 @@
     },
     "Phyresis Outbreak": {
       "edhrec_rank": 3679,
-      "gate": "template",
+      "gate": null,
       "name": "Phyresis Outbreak",
-      "reason": "no template for: Each opponent gets a poison counter. Then each creature your opponents control gets -1/-1 ",
+      "reason": "",
       "scryfall_id": "40923aaf-c935-4aaf-920c-ae2c6ab6c1f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexia's Core": {
@@ -201352,12 +201352,12 @@
     },
     "Phyrexian Atlas": {
       "edhrec_rank": 7695,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Atlas",
-      "reason": "no template for: Corrupted — Whenever this artifact becomes tapped, each opponent who has three or more poi",
+      "reason": "",
       "scryfall_id": "b5adb509-6ad3-4838-925d-1cafa926b83a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Awakening": {
@@ -201932,12 +201932,12 @@
     },
     "Phyrexian Swarmlord": {
       "edhrec_rank": 4876,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Swarmlord",
-      "reason": "no template for: At the beginning of your upkeep, create a 1/1 green Phyrexian Insect creature token with i",
+      "reason": "",
       "scryfall_id": "715565be-0c97-4f06-8e89-2ea44c6007c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Totem": {
@@ -264872,12 +264872,12 @@
     },
     "Stitcher's Graft": {
       "edhrec_rank": 21633,
-      "gate": "template",
+      "gate": null,
       "name": "Stitcher's Graft",
-      "reason": "no template for: Whenever equipped creature attacks, it doesn't untap during its controller's next untap st",
+      "reason": "",
       "scryfall_id": "a5dad4be-599b-4c4d-a957-3fe6b52b4141",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stitcher's Supplier": {
@@ -298362,12 +298362,12 @@
     },
     "Unnatural Restoration": {
       "edhrec_rank": 1460,
-      "gate": "template",
+      "gate": null,
       "name": "Unnatural Restoration",
-      "reason": "no template for: Return target permanent card from your graveyard to your hand. Proliferate",
+      "reason": "",
       "scryfall_id": "4d4e6a91-59cc-4f7f-af25-16acabdafb1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unnatural Selection": {
@@ -301532,12 +301532,12 @@
     },
     "Vat Emergence": {
       "edhrec_rank": 4947,
-      "gate": "template",
+      "gate": null,
       "name": "Vat Emergence",
-      "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. Prolife",
+      "reason": "",
       "scryfall_id": "3a2aeaeb-7853-4588-8a5e-cfd997ba8515",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vat of Rebirth": {
@@ -302772,12 +302772,12 @@
     },
     "Venomous Brutalizer": {
       "edhrec_rank": 7628,
-      "gate": "template",
+      "gate": null,
       "name": "Venomous Brutalizer",
-      "reason": "no template for: Toxic 3",
+      "reason": "",
       "scryfall_id": "dd9df44a-a0ab-435f-914c-aa11cd88f4ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venomous Changeling": {
@@ -305362,12 +305362,12 @@
     },
     "Viridian Corrupter": {
       "edhrec_rank": 6041,
-      "gate": "template",
+      "gate": null,
       "name": "Viridian Corrupter",
-      "reason": "no template for: When this creature enters, destroy target artifact",
+      "reason": "",
       "scryfall_id": "94a1eddc-e5e6-4a4a-a950-13c4bc301c54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Viridian Emissary": {
@@ -305762,12 +305762,12 @@
     },
     "Vishgraz, the Doomhive": {
       "edhrec_rank": 6734,
-      "gate": "template",
+      "gate": null,
       "name": "Vishgraz, the Doomhive",
-      "reason": "no template for: Menace, toxic 1",
+      "reason": "",
       "scryfall_id": "6d97fa12-b4c0-49fe-98fd-dc560f43a79c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vision Charm": {
@@ -308242,12 +308242,12 @@
     },
     "Vraska's Fall": {
       "edhrec_rank": 2322,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska's Fall",
-      "reason": "no template for: Each opponent sacrifices a creature or planeswalker of their choice and gets a poison coun",
+      "reason": "",
       "scryfall_id": "0173b7b4-2832-4943-ba45-8ba498d7a056",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vraska's Final Mercy": {
@@ -319982,12 +319982,12 @@
     },
     "Wurmquake": {
       "edhrec_rank": 13547,
-      "gate": "template",
+      "gate": null,
       "name": "Wurmquake",
-      "reason": "no template for: Corrupted — Create an X/X green Phyrexian Wurm creature token with trample and toxic 1, wh",
+      "reason": "",
       "scryfall_id": "94f0a15e-9437-4aa9-86c5-482008124617",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wurmskin Forger": {

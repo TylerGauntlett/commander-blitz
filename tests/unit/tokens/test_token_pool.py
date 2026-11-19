@@ -3350,3 +3350,41 @@ class TestVulshokFactorysGolemIsAnXXWithHaste:
     def test_the_fixed_golem_is_still_separate(self, pool):
         golem = pool.get("golem_3_3_c_artifact")
         assert (golem.power, golem.toughness) == (3, 3) and not golem.keywords
+
+
+class TestCarrionCallsInsectIsAPhyrexianWithInfect:
+    """Carrion Call and Phyrexian Swarmlord: *"create ... 1/1 green **Phyrexian**
+    Insect creature token[s] with **infect**."* `insect_1_1_g` is the near miss:
+    the same body, neither Phyrexian nor infectious."""
+
+    def test_it_is_a_green_one_one_phyrexian_insect_with_infect(self, pool):
+        token = pool.get("phyrexian_insect_1_1_g_infect")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Insect", "Phyrexian"]
+        assert list(token.keywords) == ["infect"]
+        assert not token.abilities
+
+    def test_the_plain_insect_is_still_separate(self, pool):
+        insect = pool.get("insect_1_1_g")
+        assert list(insect.subtypes) == ["Insect"] and not insect.keywords
+
+
+class TestWurmquakesWurmIsAnXXWithTrampleAndToxic:
+    """Wurmquake: *"create an **X/X** green Phyrexian Wurm creature token with
+    **trample and toxic 1**."* `wurm_5_5_g` is the near miss: a fixed body with
+    no keyword."""
+
+    def test_it_is_a_variable_green_phyrexian_wurm_with_trample_and_toxic_one(self, pool):
+        token = pool.get("phyrexian_wurm_x_x_g_trample_toxic")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 0) and token.variable_pt
+        assert list(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Phyrexian", "Wurm"]
+        assert sorted(token.keywords) == ["toxic", "trample"]
+        assert token.toxic == 1
+
+    def test_the_fixed_wurm_is_still_separate(self, pool):
+        wurm = pool.get("wurm_5_5_g")
+        assert (wurm.power, wurm.toughness) == (5, 5) and not wurm.keywords

@@ -1705,6 +1705,27 @@ a return a replacement sends elsewhere leaves an Aura attached to nothing.
 Animate Dead's shape without the op is the near miss: it attaches a non-Aura
 enchantment that stays on the battlefield when its creature leaves.
 
+### "Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"
+
+```jsonc
+// Grafted Wargear
+{ "kind": "triggered",
+  "text": "Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent.",
+  "trigger": { "event": "becomes_unattached", "source": "self" },
+  "effects": [ { "op": "sacrifice", "objects": { "binding": "host" } } ] }
+```
+
+`becomes_unattached` fires once each time an Aura or Equipment comes off a
+permanent: equipped onto another creature, unattached by an effect, left behind
+by a host that leaves the battlefield or fails a state-based action (704.5n),
+or leaving the battlefield itself. That last one is the reason the drawback
+bites when the Wargear is destroyed: the ability looks back at the Equipment as
+it left (603.10a). Every route goes through `primitives.fire_unattached`. The
+subject is the attachment, as on `becomes_attached`; `{"binding": "host"}` is
+the permanent it came off, and an effect on it does nothing if that permanent
+has left. `leaves_battlefield` is the near miss: it misses the equip that moves
+the Wargear, which is the commonest way the creature is lost.
+
 ### "Whenever an Aura you control becomes attached to a creature you control"
 
 ```jsonc

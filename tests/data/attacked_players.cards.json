@@ -1,0 +1,52 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_attacked_players.py. t_ap_decree is Norn's Decree's second line alone.",
+  "cards": [
+    {
+      "id": "t_ap_decree",
+      "name": "Test Attacked Decree",
+      "oracle_text": "Whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card.",
+          "trigger": {
+            "event": "you_attack",
+            "controller": "any",
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_poison_of": {
+                  "binding": "attacked_players"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "const": 1
+              },
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

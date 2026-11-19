@@ -22,6 +22,7 @@ from commanderblitz.engine.effects.values import (
     validate_entered_filter,
     validate_mana_symbols,
     validate_per_player_count,
+    validate_players_with_poison,
 )
 from commanderblitz.engine.errors import DslError
 
@@ -52,6 +53,7 @@ from .vocabulary import (
     STATIC_MANA_POOL_KEYS,
     STATIC_MONARCH_PLAYERS,
     STATIC_POISON_KEYS,
+    STATIC_POISONED_PLAYERS_KEYS,
     STATIC_SPELLS_CAST_KEYS,
     STATIC_VALUE_COUNT_FILTER_KEYS,
     STATIC_VALUE_KEYS,
@@ -854,6 +856,8 @@ def _validate_static_value(value: Any, where: str) -> None:
             raise DslError(
                 f"{where}.{key}: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
             )
+    for key in STATIC_POISONED_PLAYERS_KEYS & set(value):
+        validate_players_with_poison(value[key], f"{where}.{key}", STATIC_LIFE_PLAYERS)
     for key in PER_PLAYER_COUNT_KEYS & set(value):
         # "As long as an opponent controls more lands than you" -- Verge Rangers.
         # Here as well as in the effect language, because the same printed clause

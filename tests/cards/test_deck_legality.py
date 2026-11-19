@@ -57,6 +57,7 @@ PRECONS = {
     "msc_doom_prevails",
     "msc_the_fantastic_four",
     "msc_wakanda_forever",
+    "onc_corrupting_influence",
     "otc_desert_bloom",
     "otc_grand_larceny",
     "otc_quick_draw",

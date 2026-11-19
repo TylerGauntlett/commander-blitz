@@ -1730,7 +1730,12 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: The per-player poison leaf -- corrupted, "as long as an opponent has three or
 #: more poison counters". A poison count is an input for a life total's reason,
 #: and takes the same player specs.
-STATIC_POISON_KEYS = frozenset({"max_poison_of"})
+STATIC_POISON_KEYS = frozenset({"max_poison_of", "total_poison_of"})
+
+#: The poison headcount -- "+1/+1 for each opponent who has three or more poison
+#: counters". Each player is measured alone against ``at_least``, so it is a
+#: mapping, not a bare player spec, and takes the life leaves' players in it.
+STATIC_POISONED_PLAYERS_KEYS = frozenset({"players_with_poison"})
 
 #: The mana-pool leaf -- Omnath, Locus of the Void's "+1/+1 for each unspent
 #: mana you have". The pool is player state like a poison count: only mana
@@ -1830,6 +1835,7 @@ STATIC_VALUE_KEYS = (
     )
     | STATIC_LIFE_KEYS
     | STATIC_POISON_KEYS
+    | STATIC_POISONED_PLAYERS_KEYS
     | STATIC_MANA_POOL_KEYS
     | STATIC_SPELLS_CAST_KEYS
     | STATIC_DEATHS_KEYS

@@ -1800,6 +1800,23 @@ the question asked of the declaration, checked as it triggers only:
                                         "enchanted_by": { "controller": "you" } } } }
 ```
 
+`you_attack` also binds `attacked_players`, the seats the declaration attacks
+**directly**, as a list a player spec reads: "whenever a player attacks, if one
+or more players being attacked are poisoned, the attacking player draws a card"
+(Norn's Decree) is
+
+```jsonc
+"trigger": { "event": "you_attack", "controller": "any",
+             "condition": { "cmp": ">", "left": { "max_poison_of": { "binding": "attacked_players" } },
+                            "right": { "const": 0 } } },
+"effects": [ { "op": "draw", "amount": { "const": 1 }, "player": { "binding": "event_player" } } ]
+```
+
+A seat whose planeswalker or battle alone is attacked is a defending player and
+not a player being attacked (506.2), so it is not in the list. One card however
+many poisoned players are attacked, because the event is the declaration;
+`creatures_attack_player`'s `defender` is the near miss and fires once per seat.
+
 | Near miss | Why not |
 |---|---|
 | `modified` | also counts counters and Equipment, and only Auras you control |
@@ -6442,7 +6459,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
@@ -7527,6 +7544,8 @@ smaller than the effect-side `value_keys`:
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
+| `{"total_poison_of": …}` | [every poison counter a spec's players have](#poison-across-the-table--each-poison-counter-your-opponents-have) |
+| `{"players_with_poison": …}` | [how many players each have at least so many](#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
 | `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
@@ -7894,6 +7913,44 @@ writes one, and it bumps `char_version`, so a static re-reads the condition the
 moment a counter lands. `counters_on` is the near miss and cannot reach it: it
 counts counters on objects, and a player is not one. The leaf works in both
 languages; in a static it takes the life leaves' player specs.
+
+#### Poison across the table — "each poison counter your opponents have"
+
+Two more questions of `PlayerState.poison`, each a different number from
+`max_poison_of`'s at a pod:
+
+- `{"total_poison_of": spec}` is every poison counter the spec's players have,
+  **summed** — "+1/+1 for each poison counter your opponents have" (Mycosynth
+  Fiend). Two and three counters on two opponents is five; the most on one
+  would be three.
+- `{"players_with_poison": {"player": spec, "at_least": n}}` is **how many** of
+  the spec's players each have at least `n` — "where X is the number of
+  opponents who have three or more poison counters" (Glissa's Retriever). Each
+  is measured alone, so two opponents on two each is none, and only players
+  still in the game count (800.4a). `player` and `at_least` are both required:
+  whose counters and the threshold are the card's.
+
+```jsonc
+// Mycosynth Fiend
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "total_poison_of": "each_opponent" },
+  "toughness": { "total_poison_of": "each_opponent" } }
+// Glissa's Retriever -- "up to X target cards", X the corrupted opponents
+{ "count": { "players_with_poison": { "player": "each_opponent", "at_least": 3 } },
+  "up_to": true }
+```
+
+The same mapping is also a **player spec**, naming the seats it would count:
+"for each opponent who has three or more poison counters as you cast this
+spell, put up to one target creature card from **that player's** graveyard"
+(Geth's Summons) restricts a target's `owner` to
+`{"players_with_poison": {"player": "each_opponent", "at_least": 3}}`, so the
+targets are chosen, as the spell is cast, only from those graveyards.
+
+Both are pipeline inputs on `max_poison_of`'s terms and work in both
+languages; in a static they take the life leaves' player specs. `player_count`'s
+comparing form is the near miss: it counts objects per player, and a player's
+counters are not objects.
 
 #### "For each unspent mana you have"
 

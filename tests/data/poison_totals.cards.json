@@ -1,0 +1,75 @@
+{
+  "_comment": "Test cards for the poison totals: total_poison_of sums the poison counters a player spec has (Mycosynth Fiend), players_with_poison counts the players each at or over a floor (Glissa's Retriever). See tests/unit/values/test_poison_totals.py.",
+  "cards": [
+    {
+      "id": "t_poison_grower",
+      "name": "Test Poison Grower",
+      "oracle_text": "This creature gets +1/+1 for each poison counter your opponents have.",
+      "mana_cost": "{1}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +1/+1 for each poison counter your opponents have.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "total_poison_of": "each_opponent"
+          },
+          "toughness": {
+            "total_poison_of": "each_opponent"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_corrupted_counter",
+      "name": "Test Corrupted Counter",
+      "oracle_text": "This creature gets +1/+1 for each opponent who has three or more poison counters.",
+      "mana_cost": "{1}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +1/+1 for each opponent who has three or more poison counters.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "players_with_poison": {
+              "player": "each_opponent",
+              "at_least": 3
+            }
+          },
+          "toughness": {
+            "players_with_poison": {
+              "player": "each_opponent",
+              "at_least": 3
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

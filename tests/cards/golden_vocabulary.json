@@ -750,10 +750,12 @@
    "min_count_of",
    "min_life_of",
    "permanents_entered_this_turn",
+   "players_with_poison",
    "spells_cast_this_turn",
    "starting_life_of",
    "sum",
    "times",
+   "total_poison_of",
    "unspent_mana_count"
   ],
   "STATIC_ZONE_FILTER_KEYS": [
