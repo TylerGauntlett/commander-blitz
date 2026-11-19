@@ -24,6 +24,9 @@ forms::
          "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"max_poison_of": "each_opponent"}  the most poison counters on one of them
+    {"total_poison_of": "each_opponent"}  every poison counter they have, summed
+    {"players_with_poison": {"player":  how many of them have at least that
+        "each_opponent", "at_least": 3}}  many poison counters each
     {"unspent_mana_count": "you"}     the mana in those players' pools
     {"player_count": "each_opponent"}  how many players the spec names
     {"player_count": {"player": …,     how many of them have a count passing
@@ -118,6 +121,17 @@ VALUE_KEYS = frozenset(
         # opponent is left. Read off `PlayerState.poison`; a player's counters
         # are not objects, so `counters_on` cannot reach them.
         "max_poison_of",
+        # "+1/+1 for each poison counter **your opponents have**" (Mycosynth
+        # Fiend). The SUM over the spec's players, where `max_poison_of` is one
+        # player's: at a pod on two and three counters the printed card is
+        # +5/+5, and the most on one opponent would say +3/+3.
+        "total_poison_of",
+        # "…where X is **the number of opponents who have three or more poison
+        # counters**" (Glissa's Retriever, Wurmquake). A headcount of the spec's
+        # players, each measured alone against ``at_least``; neither the sum nor
+        # the extreme can say it, and `player_count`'s comparing form counts
+        # objects, which a player's counters are not.
+        "players_with_poison",
         # "Omnath gets +1/+1 for each **unspent mana you have**" (Omnath, Locus
         # of the Void). Every mana in the named players' pools, restricted pips
         # included, summed. Here as well as in the static language for
@@ -744,6 +758,16 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "max_poison_of" in expr:
         pids = _players(ctx, expr["max_poison_of"])
         return max((ctx.state.players[p].poison for p in pids), default=0)
+    if "total_poison_of" in expr:
+        pids = _players(ctx, expr["total_poison_of"])
+        return sum(ctx.state.players[p].poison for p in pids)
+    if "players_with_poison" in expr:
+        spec = expr["players_with_poison"]
+        floor = int(spec["at_least"])
+        pids = _players(ctx, spec["player"])
+        return len(
+            {p for p in pids if ctx.state.is_alive(p) and ctx.state.players[p].poison >= floor}
+        )
     if "unspent_mana_count" in expr:
         pids = _players(ctx, expr["unspent_mana_count"])
         return sum(ctx.state.players[p].mana_pool.total() for p in pids)
@@ -1673,6 +1697,29 @@ def validate_player_count_where(spec: Mapping[str, Any], where: str) -> None:
     validate_value(spec["than"], f"{where}.than")
 
 
+def validate_players_with_poison(spec: Any, where: str, players: Any) -> None:
+    """Shared by the effect-side and static-side value validators.
+
+    ``player`` is not defaulted, for `validate_per_player_count`'s reason, and
+    ``at_least`` is required: corrupted prints three, but the threshold is the
+    card's, and a default would read the same in a file that meant another.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    unknown = set(spec) - {"player", "at_least"}
+    if unknown:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    who = spec.get("player")
+    if not isinstance(who, str) or who not in players:
+        raise DslError(f"{where}.player: must name one of {sorted(players)}, got {who!r}")
+    floor = spec.get("at_least")
+    if not isinstance(floor, int) or isinstance(floor, bool) or floor < 1:
+        raise DslError(
+            f"{where}.at_least: needs a whole number of poison counters, at least 1, "
+            f"got {floor!r}"
+        )
+
+
 def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = None) -> None:
     """Shared by the effect-side and static-side value validators.
 
@@ -2094,15 +2141,21 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.opponents_attacked_this_combat: needs a player spec, e.g. 'you' "
                 f"(whose attacks this combat), got {who!r}"
             )
-    if "max_poison_of" in expr:
-        who = expr["max_poison_of"]
+    for key in ("max_poison_of", "total_poison_of"):
+        if key not in expr:
+            continue
+        who = expr[key]
         if not isinstance(who, Mapping) and (
             not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
         ):
             raise DslError(
-                f"{where}.max_poison_of: needs a player spec, e.g. 'each_opponent' "
+                f"{where}.{key}: needs a player spec, e.g. 'each_opponent' "
                 f"(whose poison counters), got {who!r}"
             )
+    if "players_with_poison" in expr:
+        validate_players_with_poison(
+            expr["players_with_poison"], f"{where}.players_with_poison", PLAYER_SPEC_NAMES
+        )
     if "commander_casts_this_game" in expr:
         who = expr["commander_casts_this_game"]
         if not isinstance(who, Mapping) and (

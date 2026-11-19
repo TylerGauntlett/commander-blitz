@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 182 |
 | [Selectors](#selectors) | 80 |
 | [Player specs](#player-specs) | 10 |
-| [Values](#values) | 76 |
+| [Values](#values) | 78 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 63 |
 | [Trigger filters](#trigger-filters) | 37 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 34 |
 | [Static conditions](#static-conditions) | 15 |
-| [Static values](#static-values) | 22 |
+| [Static values](#static-values) | 24 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -399,6 +399,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
+| `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |
@@ -410,6 +411,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `targets_of_spell` | How many of the triggering spell's targets are, as asked, of the listed kinds (`permanent` on the battlefield, `player` in the game); 0 once the spell has left the stack. | [What the cast spell targets — spell_target_count and targets_of_spell](card-dsl.md#what-the-cast-spell-targets--spell_target_count-and-targets_of_spell) |
 | `times` | a * b. | [Value expressions](card-dsl.md#value-expressions) |
 | `times_tapped_this_turn` | Times one object has become tapped this turn, counting every tap since the turn began. | [How many times a permanent has become tapped this turn](card-dsl.md#how-many-times-a-permanent-has-become-tapped-this-turn) |
+| `total_poison_of` | Every poison counter a spec's players have, summed. | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `toughness_of` | An object's toughness. | [Value expressions](card-dsl.md#value-expressions) |
 | `unspent_mana_count` | The unspent mana in a spec's players' mana pools. | ["For each unspent mana you have"](card-dsl.md#for-each-unspent-mana-you-have) |
@@ -1084,10 +1086,12 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
+| `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `spells_cast_this_turn` | Spells a player spec's players have cast this turn; or `{player, filter}` for spells of a type, matched on printed faces. | ["As long as an opponent has cast a spell this turn"](card-dsl.md#as-long-as-an-opponent-has-cast-a-spell-this-turn) |
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `times` | a * b. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `total_poison_of` | Every poison counter a spec's players have, summed. | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `unspent_mana_count` | The unspent mana in a spec's players' mana pools. | ["For each unspent mana you have"](card-dsl.md#for-each-unspent-mana-you-have) |
 
 ## Spell filter keys

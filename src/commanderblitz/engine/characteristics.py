@@ -2318,6 +2318,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # and that funnel bumps `char_version` so the condition is re-read.
         pids = _static_players(state, source, expr["max_poison_of"])
         return max((state.players[p].poison for p in pids), default=0)
+    if "total_poison_of" in expr:
+        # Mycosynth Fiend: "+1/+1 for each poison counter your opponents have."
+        # The sum, where corrupted's leaf is one player's; the same input.
+        pids = _static_players(state, source, expr["total_poison_of"])
+        return sum(state.players[p].poison for p in pids)
+    if "players_with_poison" in expr:
+        spec = expr["players_with_poison"]
+        floor = int(spec["at_least"])
+        pids = _static_players(state, source, spec["player"])
+        return len({p for p in pids if state.is_alive(p) and state.players[p].poison >= floor})
     if "unspent_mana_count" in expr:
         # Omnath, Locus of the Void: "+1/+1 for each unspent mana you have."
         # Every mana in the pool, restricted pips included -- unspent is not
