@@ -2232,12 +2232,12 @@
     },
     "Adriana, Captain of the Guard": {
       "edhrec_rank": 4708,
-      "gate": "template",
+      "gate": null,
       "name": "Adriana, Captain of the Guard",
-      "reason": "no template for: Melee",
+      "reason": "",
       "scryfall_id": "1aa1e7ff-d0b9-441f-bcbb-4f0f89cab038",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Adric, Mathematical Genius": {
@@ -15282,12 +15282,12 @@
     },
     "Assemble the Legion": {
       "edhrec_rank": 2160,
-      "gate": "template",
+      "gate": null,
       "name": "Assemble the Legion",
-      "reason": "no template for: At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1",
+      "reason": "",
       "scryfall_id": "2ea53937-7fe9-46bd-8956-5238788bbbe9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assemble the Players": {
@@ -21882,12 +21882,12 @@
     },
     "Battle Screech": {
       "edhrec_rank": 7468,
-      "gate": "compile",
+      "gate": null,
       "name": "Battle Screech",
-      "reason": "battle_screech: a graveyard cost needs mana",
+      "reason": "",
       "scryfall_id": "1c71de34-fb9c-47f6-8586-e45d897d0f85",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battle Sliver": {
@@ -37692,12 +37692,12 @@
     },
     "Caesar, Legion's Emperor": {
       "edhrec_rank": 2721,
-      "gate": "template",
+      "gate": null,
       "name": "Caesar, Legion's Emperor",
-      "reason": "no template for: Whenever you attack, you may sacrifice another creature. When you do, choose two —",
+      "reason": "",
       "scryfall_id": "246a7176-98bc-4f54-aa61-38747420f178",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cage of Hands": {
@@ -81452,12 +81452,12 @@
     },
     "Elspeth Tirel": {
       "edhrec_rank": 5197,
-      "gate": "template",
+      "gate": null,
       "name": "Elspeth Tirel",
-      "reason": "no template for: +2: You gain 1 life for each creature you control",
+      "reason": "",
       "scryfall_id": "95d3a061-03b4-4004-8a6c-4374513de17a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elspeth's Devotee": {
@@ -95172,12 +95172,12 @@
     },
     "Finale of Glory": {
       "edhrec_rank": 2827,
-      "gate": "template",
+      "gate": null,
       "name": "Finale of Glory",
-      "reason": "no template for: Create X 2/2 white Soldier creature tokens with vigilance. If X is 10 or more, also create",
+      "reason": "",
       "scryfall_id": "1e71b0fb-2d36-4b81-bd5b-c3fd083e3e97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Finale of Promise": {
@@ -110702,12 +110702,12 @@
     },
     "Glimmer Lens": {
       "edhrec_rank": 5414,
-      "gate": "template",
+      "gate": null,
       "name": "Glimmer Lens",
-      "reason": "no template for: For Mirrodin!",
+      "reason": "",
       "scryfall_id": "06b0b327-9da7-4652-ba4a-cb2db6b75e92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glimmer Seeker": {
@@ -114652,12 +114652,12 @@
     },
     "Goldwardens' Gambit": {
       "edhrec_rank": 10505,
-      "gate": "template",
+      "gate": null,
       "name": "Goldwardens' Gambit",
-      "reason": "no template for: Affinity for Equipment",
+      "reason": "",
       "scryfall_id": "0cb7f413-f9b9-4b1c-898a-c49c571613f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Golem Artisan": {
@@ -122772,12 +122772,12 @@
     },
     "Harmonious Archon": {
       "edhrec_rank": 13938,
-      "gate": "template",
+      "gate": null,
       "name": "Harmonious Archon",
-      "reason": "no template for: Non-Archon creatures have base power and toughness 3/3",
+      "reason": "",
       "scryfall_id": "21a2bac8-451f-4af8-a82d-aeae5e28a8be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harmonious Emergence": {
@@ -123322,12 +123322,12 @@
     },
     "Hate Mirage": {
       "edhrec_rank": 7355,
-      "gate": "template",
+      "gate": null,
       "name": "Hate Mirage",
-      "reason": "no template for: Choose up to two target creatures you don't control. For each of those creatures, create a",
+      "reason": "",
       "scryfall_id": "80e9aebe-5311-4bc6-bc0f-b8084f805db3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hate Weaver": {
@@ -127162,12 +127162,12 @@
     },
     "Hexplate Wallbreaker": {
       "edhrec_rank": 3507,
-      "gate": "template",
+      "gate": null,
       "name": "Hexplate Wallbreaker",
-      "reason": "no template for: For Mirrodin!",
+      "reason": "",
       "scryfall_id": "3a7351aa-4ace-405c-9ffb-dc89d00cdf5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hezrou // Demonic Stench": {
@@ -143742,12 +143742,12 @@
     },
     "Jor Kadeen, the Prevailer": {
       "edhrec_rank": 8853,
-      "gate": "template",
+      "gate": null,
       "name": "Jor Kadeen, the Prevailer",
-      "reason": "no template for: Metalcraft — Creatures you control get +3/+0 as long as you control three or more artifact",
+      "reason": "",
       "scryfall_id": "b849e6a2-bb0b-48c9-8118-51d304275d59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Joraga Auxiliary": {
@@ -147982,12 +147982,12 @@
     },
     "Kemba's Banner": {
       "edhrec_rank": 9968,
-      "gate": "template",
+      "gate": null,
       "name": "Kemba's Banner",
-      "reason": "no template for: For Mirrodin!",
+      "reason": "",
       "scryfall_id": "382807d4-00e6-45d4-b481-231bc299c2ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kemba's Legion": {
@@ -163842,12 +163842,12 @@
     },
     "Mace of the Valiant": {
       "edhrec_rank": 8834,
-      "gate": "template",
+      "gate": null,
       "name": "Mace of the Valiant",
-      "reason": "no template for: Equipped creature gets +1/+1 for each charge counter on this Equipment and has vigilance",
+      "reason": "",
       "scryfall_id": "01f9de40-af40-4b94-8517-da9f12fb61c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Macetail Hystrodon": {
@@ -172782,12 +172782,12 @@
     },
     "Midnight Haunting": {
       "edhrec_rank": 13274,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Haunting",
-      "reason": "no template for: Create two 1/1 white Spirit creature tokens with flying",
+      "reason": "",
       "scryfall_id": "eddc09d1-63de-4791-b654-31b354032c54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Mangler": {
@@ -200822,12 +200822,12 @@
     },
     "Phantom General": {
       "edhrec_rank": 12747,
-      "gate": "template",
+      "gate": null,
       "name": "Phantom General",
-      "reason": "no template for: Creature tokens you control get +1/+1",
+      "reason": "",
       "scryfall_id": "eff5d3da-81d0-4776-9200-928af1b0cf18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phantom Interference": {
@@ -308522,12 +308522,12 @@
     },
     "Vulshok Factory": {
       "edhrec_rank": 15375,
-      "gate": "template",
+      "gate": null,
       "name": "Vulshok Factory",
-      "reason": "no template for: {T}: Add {R}. Put a charge counter on this artifact",
+      "reason": "",
       "scryfall_id": "b1c40dd7-6839-49ae-9901-443fd5748877",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vulshok Gauntlets": {
@@ -314502,12 +314502,12 @@
     },
     "White Sun's Zenith": {
       "edhrec_rank": 3358,
-      "gate": "template",
+      "gate": null,
       "name": "White Sun's Zenith",
-      "reason": "no template for: Create X 2/2 white Cat creature tokens. Shuffle into its owner's library",
+      "reason": "",
       "scryfall_id": "577b98e3-ad78-4828-95ee-840309d4ec64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Tiger, Amulet Keeper": {

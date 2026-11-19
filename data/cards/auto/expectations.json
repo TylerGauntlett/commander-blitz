@@ -156,6 +156,16 @@
     },
     "zone": "battlefield"
   },
+  "adriana_captain_of_the_guard": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "melee"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "adric_mathematical_genius": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1448,6 +1458,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "assemble_the_legion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "astral_cornucopia": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1991,6 +2005,14 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "battle_screech": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "bird_1_1_w_flying"
+    },
+    "zone": "graveyard"
   },
   "battlefield_forge": {
     "zone": "battlefield"
@@ -3198,6 +3220,10 @@
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
+    "zone": "battlefield"
+  },
+  "caesar_legion_s_emperor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "cait_cage_brawler": {
@@ -6834,6 +6860,14 @@
     },
     "zone": "battlefield"
   },
+  "elspeth_tirel": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "elven_farsight": {
     "hand_size": {
       "0": 1
@@ -8057,6 +8091,14 @@
     },
     "graveyard_size": {
       "0": 2
+    },
+    "zone": "graveyard"
+  },
+  "finale_of_glory": {
+    "battlefield_count": 72,
+    "tokens": {
+      "count": 20,
+      "id": "soldier_2_2_w_vigilance"
     },
     "zone": "graveyard"
   },
@@ -9430,6 +9472,14 @@
   "glider_kids": {
     "zone": "battlefield"
   },
+  "glimmer_lens": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "rebel_2_2_r"
+    },
+    "zone": "battlefield"
+  },
   "glimmer_of_genius": {
     "hand_size": {
       "0": 3
@@ -9666,6 +9716,14 @@
   "goldvein_hydra": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "goldwardens_gambit": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 5,
+      "id": "rebel_2_2_r"
+    },
+    "zone": "graveyard"
   },
   "golem_foundry": {
     "battlefield_count": 33,
@@ -10338,6 +10396,14 @@
     },
     "zone": "battlefield"
   },
+  "harmonious_archon": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "human_1_1_w"
+    },
+    "zone": "battlefield"
+  },
   "harrier_naga": {
     "zone": "battlefield"
   },
@@ -10370,6 +10436,17 @@
       "power": 3,
       "toughness": 1
     },
+    "zone": "graveyard"
+  },
+  "hate_mirage": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "hateful_eidolon": {
@@ -10735,6 +10812,14 @@
     "zone": "graveyard"
   },
   "hexplate_golem": {
+    "zone": "battlefield"
+  },
+  "hexplate_wallbreaker": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "rebel_2_2_r"
+    },
     "zone": "battlefield"
   },
   "hidden_cataract": {
@@ -11914,6 +11999,16 @@
     },
     "zone": "graveyard"
   },
+  "jor_kadeen_the_prevailer": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "first_strike"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "joraga_visionary": {
     "hand_size": {
       "0": 2
@@ -12255,6 +12350,14 @@
   },
   "kellogg_dangerous_mind": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kemba_s_banner": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "rebel_2_2_r"
+    },
     "zone": "battlefield"
   },
   "kemba_s_skyguard": {
@@ -13658,6 +13761,10 @@
     },
     "zone": "battlefield"
   },
+  "mace_of_the_valiant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "macetail_hystrodon": {
     "zone": "battlefield"
   },
@@ -14513,6 +14620,14 @@
   "midnight_clock": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "midnight_haunting": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "spirit_1_1_w_flying"
+    },
+    "zone": "graveyard"
   },
   "midnight_reaper": {
     "battlefield_count": 33,
@@ -16770,6 +16885,10 @@
       "amount": 3,
       "kind": "film"
     },
+    "zone": "battlefield"
+  },
+  "phantom_general": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phantom_monster": {
@@ -25878,6 +25997,14 @@
   "vulshok_berserker": {
     "zone": "battlefield"
   },
+  "vulshok_factory": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 0,
+      "kind": "charge"
+    },
+    "zone": "battlefield"
+  },
   "vulshok_morningstar": {
     "zone": "battlefield"
   },
@@ -26386,6 +26513,19 @@
       "id": "phyrexian_mite_1_1_c_toxic"
     },
     "zone": "graveyard"
+  },
+  "white_sun_s_zenith": {
+    "battlefield_count": 52,
+    "graveyard_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 41
+    },
+    "tokens": {
+      "count": 20,
+      "id": "cat_2_2_w"
+    }
   },
   "whitesun_s_passage": {
     "life": {

@@ -188,10 +188,15 @@ class TestTheLoader:
     def test_the_shipped_shape_loads(self):
         compile_card(CardModel.model_validate(probe(flashback={"mana": "{1}{U}", "pay_life": 3})))
 
-    def test_a_flashback_cost_needs_mana(self):
-        """Without it the card is castable from the graveyard for free."""
-        with pytest.raises(DslError, match="needs mana"):
-            compile_card(CardModel.model_validate(probe(flashback={"pay_life": 3})))
+    def test_a_flashback_cost_needs_a_price(self):
+        """With nothing on it the card is castable from the graveyard for free."""
+        with pytest.raises(DslError, match="needs mana or a non-mana payment"):
+            compile_card(CardModel.model_validate(probe(flashback={})))
+
+    def test_a_non_mana_price_is_a_price(self):
+        """Battle Screech's tap-three flashback has no mana half at all;
+        `test_flashback_non_mana.py` holds how it is cast."""
+        compile_card(CardModel.model_validate(probe(flashback={"pay_life": 3})))
 
     def test_flashback_and_retrace_are_exclusive(self):
         """Both widen legality to the graveyard and each answers the price."""

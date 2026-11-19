@@ -8495,6 +8495,16 @@ its cost is hardcoded to a discarded land and charged *in addition* to the
 printed one, so it can name no alternative price, and it deliberately returns
 the card to the graveyard to be used again. A card may not have both.
 
+The mana half may be empty when the cost charges something else, and the
+loader refuses the node only when it charges nothing at all, the same line
+`alternative_cost` draws through `Cost.charges_nothing`:
+
+```jsonc
+// Battle Screech — "Flashback—Tap three untapped white creatures you control."
+"flashback": { "tap_permanents": { "controller": "you", "types": ["Creature"],
+                                   "colors": ["W"], "count": 3 } }
+```
+
 Two riders come with it, and the second does not fall out of the first:
 
 **"Then exile it."** A spell cast this way goes to exile rather than the

@@ -5,7 +5,7 @@ area: decks
 effort: M
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [experience-counters]
 status: proposed
 rank: 72
 ---
@@ -19,6 +19,15 @@ coming-soon shell on the shelf: its row `onc_rebellion_rising` is in
 `python scripts/sync_precons.py --missing onc_rebellion_rising` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Three cards are left. Otharri, Suns' Glory gives its controller experience
+counters, so it waits on [experience-counters](experience-counters.md), a rules
+subsystem the engine does not have. Neyali, Suns' Vanguard waits on
+`playable_condition_attacked_with_token` (a play permission open only on a turn
+you attacked with a token, beside `you_attacked_with_a_commander`), and Roar of
+Resistance on `attacking_player_or_planeswalker` (creatures attacking an
+opponent or a planeswalker they control); those are `/extend-dsl` runs this
+item still owns.
 
 ## The change
 

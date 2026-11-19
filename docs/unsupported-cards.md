@@ -36,6 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 3 | 1514 | engine, op |
 | [excess-damage](#excess-damage) | 3 | 3919 | value |
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
+| [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [random-player-choice](#random-player-choice) | 3 | 5120 | op |
@@ -55,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
-| [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
@@ -72,7 +72,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [scry-trigger](#scry-trigger) | 2 | 9218 | trigger_event |
-| [soldier-1-1-rw-haste](#soldier-1-1-rw-haste) | 2 | 2160 | token |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
@@ -111,6 +110,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [attacking-player-or-planeswalker](#attacking-player-or-planeswalker) | 1 | 5846 | selector |
 | [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
@@ -246,7 +246,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flashback](#flashback) | 1 | 14595 | op |
-| [flashback-nonmana-cost](#flashback-nonmana-cost) | 1 | 7468 | cost |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
 | [foretell](#foretell) | 1 | 9914 | op |
@@ -357,6 +356,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
+| [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
 | [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [playable-while-source-on-battlefield](#playable-while-source-on-battlefield) | 1 | 14646 | value |
@@ -1277,6 +1277,30 @@ Blocks **3** cards.
 
 </details>
 
+## experience-counters
+
+Blocks **3** cards.
+
+- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, usable as a pump amount (+X/+X where X is your experience counters)
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Azlask's experience, a different card. The rest of the card (dies trigger with self_only/colorless any_of filter, pump, grant_keyword indestructible and annihilator to Scion/Spawn subtypes) is expressible once the counter exists
+- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, for comparison against mana_value_of a target
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Meren's experience, a different card
+- **(engine)** experience as a player counter kind (122.1): a PlayerState field plus an entry in PLAYER_COUNTER_KINDS, an op that gives a player N experience counters ("you get an experience counter"), and a value that reads how many experience counters a player has, so create_token's amount can be "for each experience counter you have"
+  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS in engine/player.py carries only poison and energy; add_poison and add_energy are kind-specific ops and add_counters (amount, counter, objects) puts counters on objects, not players. value_keys has counters_on (objects only) and no player-counter reader, so the token count cannot be expressed; using energy or a turn flag would be a different card (proliferate, energy payments)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Meren of Clan Nel Toth** (rank 1480) — `meren_of_clan_nel_toth`
+  - Whenever another creature you control dies, you get an experience counter.
+  - At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.
+- **Otharri, Suns' Glory** (rank 2840) — `otharri_suns_glory`
+  - Whenever Otharri attacks, you get an experience counter. Then create a 2/2 red Rebel creature token that's tapped and attacking for each experience counter you have.
+- **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
+  - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
+  - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
+
+</details>
+
 ## goad
 
 Blocks **3** cards.
@@ -1652,26 +1676,6 @@ Blocks **2** cards.
 
 </details>
 
-## experience-counters
-
-Blocks **2** cards.
-
-- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, usable as a pump amount (+X/+X where X is your experience counters)
-  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Azlask's experience, a different card. The rest of the card (dies trigger with self_only/colorless any_of filter, pump, grant_keyword indestructible and annihilator to Scion/Spawn subtypes) is expressible once the counter exists
-- **(engine)** an experience counter kind on players (122.1): a PlayerState field listed in PLAYER_COUNTER_KINDS so proliferate and lose_all_player_counters see it, an op that gives a player N experience counters (like add_poison/add_energy), and a value that reads how many experience counters a player has, for comparison against mana_value_of a target
-  <br>Why the existing vocabulary won't do: PLAYER_COUNTER_KINDS carries only poison and energy; add_poison and add_energy are fixed to those kinds, add_counters puts counters on objects not players, and counters_on reads object counters, so neither giving nor reading an experience counter can be said. Substituting energy would let other energy cards spend Meren's experience, a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Meren of Clan Nel Toth** (rank 1480) — `meren_of_clan_nel_toth`
-  - Whenever another creature you control dies, you get an experience counter.
-  - At the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.
-- **Azlask, the Swelling Scourge** (rank 6315) — `azlask_the_swelling_scourge`
-  - Whenever Azlask or another colorless creature you control dies, you get an experience counter.
-  - {W}{U}{B}{R}{G}: Creatures you control get +X/+X until end of turn, where X is the number of experience counters you have. Scions and Spawns you control gain indestructible and annihilator 1 until end of turn.
-
-</details>
-
 ## grant-cycling-to-cards-in-hand
 
 Blocks **2** cards.
@@ -1963,24 +1967,6 @@ Blocks **2** cards.
 - **River Song** (rank 10400) — `river_song`
   - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
   - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
-
-</details>
-
-## soldier-1-1-rw-haste
-
-Blocks **2** cards.
-
-- **(token)** a 1/1 red and white Soldier creature token with haste
-  <br>Why the existing vocabulary won't do: token_ids has soldier_1_1_w (white, no haste), soldier_1_1_w_lifelink, human_soldier_1_1_w and elemental_1_1_r_haste, but no red-and-white Soldier with haste; the rest of the line is expressible as an upkeep trigger doing add_counters (muster, self) then create_token with amount {counters_on: {counter: muster, objects: {self_only: true}}}
-- **(token)** a 1/1 red and white Soldier creature token with haste
-  <br>Why the existing vocabulary won't do: token_ids has soldier_1_1_w (white, no haste), soldier_1_1_w_lifelink, human_soldier_1_1_w and elemental_1_1_r_haste, but no red-and-white Soldier with haste. The rest of the card is expressible: a you_attack trigger with may (pay: sacrifice another creature) whose effects are a reflexive_trigger holding a choose_mode count 2 over create_token (amount 2, tapped, attacking), draw + lose_life, and damage to target opponent equal to a count of creature tokens you control
-
-<details><summary>Cards waiting on this</summary>
-
-- **Assemble the Legion** (rank 2160) — `assemble_the_legion`
-  - At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1/1 red and white Soldier creature token with haste for each muster counter on this enchantment.
-- **Caesar, Legion's Emperor** (rank 2721) — `caesar_legion_s_emperor`
-  - • Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.
 
 </details>
 
@@ -2587,6 +2573,20 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## attacking-player-or-planeswalker
+
+Blocks **1** card.
+
+- **(selector)** a selector key matching a creature attacking an opponent of the ability's controller OR a planeswalker such an opponent controls (not a battle, not the controller or the controller's planeswalkers), any creature's controller -- e.g. `attacking_player: "opponent"` widened by an `or_planeswalkers: true` flag that also accepts attackers whose combat.attacking_permanent is a planeswalker controlled by an opponent. Same need as Soul Snare's gap (attacking_you_or_your_planeswalker), mirrored to the opponent side
+  <br>Why the existing vocabulary won't do: The trigger is fine (`you_attack` with `controller: "any"`, as Duelist's Heritage writes it, then `may` with `pay: {"mana": "{1}{R}"}` wrapping a `pump`), and the first sentence is a `grant_keyword` static with `is_token`. But the pump's objects cannot be said: `attacking_player: "opponent"` deliberately excludes creatures in combat.attacking_permanent, so it drops attackers aimed at opponents' planeswalkers; `attacking: true` is a bare boolean and would also pump an opponent's creatures attacking you; `creatures_attack_player` with `defending: "opponent"` binds exactly the right attackers but fires once per defending opponent, so in a pod you would be asked to pay {1}{R} once per attacked opponent instead of once per attack, and it would not fire at all on an attack aimed only at you
+
+<details><summary>Cards waiting on this</summary>
+
+- **Roar of Resistance** (rank 5846) — `roar_of_resistance`
+  - Whenever one or more creatures attack, you may pay {1}{R}. If you do, creatures attacking your opponents and/or planeswalkers they control get +2/+0 until end of turn.
 
 </details>
 
@@ -4519,20 +4519,6 @@ Blocks **1** card.
 
 </details>
 
-## flashback-nonmana-cost
-
-Blocks **1** card.
-
-- **(cost)** a flashback cost with no mana half, here only a tap_permanents cost (three untapped white creatures you control), so the spell's mana cost is replaced by nothing and the tapping is the whole price
-  <br>Why the existing vocabulary won't do: The card-level flashback node is a full Cost and Game._cast already pays its non-mana part (tap_permanents with colors works as a selector), but the loader refuses any graveyard cost whose mana is empty ('a graveyard cost needs mana', cards/loader) to stop free graveyard casts; writing {0} would only dodge that guard rather than express the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Battle Screech** (rank 7468) — `battle_screech`
-  - Flashback—Tap three untapped white creatures you control
-
-</details>
-
 ## flashback-x
 
 Blocks **1** card.
@@ -6097,6 +6083,20 @@ Blocks **1** card.
 
 - **Vault 112: Sadistic Simulation** (rank 11125) — `vault_112_sadistic_simulation`
   - III — Pay any amount of {E}. If you paid one or more {E} this way, shuffle your library, then exile that many cards from the top. You may play one of those cards without paying its mana cost.
+
+</details>
+
+## playable-condition-attacked-with-token
+
+Blocks **1** card.
+
+- **(value)** a playable_condition value "you_attacked_with_a_token" for exile/grant_playable permissions: the permission holder declared as an attacker, this turn, a creature that is a token (read off TurnLedger.creatures_attacked like the commander variant, counting a token that attacked and has since left)
+  <br>Why the existing vocabulary won't do: PLAYABLE_CONDITIONS in engine/objects.py holds only "you_attacked_with_a_commander" (Neriv); playable: "while_exiled" alone would let the card be played on turns with no token attack, and playable_this_turn would wrongly expire it after this turn. The other two sentences are expressible (grant_keyword static over {controller: you, is_token: true, attacking: true}; creatures_attack_player trigger filtered is_token with an exile of the top card)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Neyali, Suns' Vanguard** (rank 3339) — `neyali_suns_vanguard`
+  - During any turn you attacked with a token, you may play that card.
 
 </details>
 
