@@ -3362,7 +3362,7 @@ class TestCarrionCallsInsectIsAPhyrexianWithInfect:
         assert token is not None and token.is_token and token.is_creature
         assert (token.power, token.toughness) == (1, 1)
         assert list(token.colors) == ["G"]
-        assert list(token.subtypes) == ["Phyrexian", "Insect"]
+        assert sorted(token.subtypes) == ["Insect", "Phyrexian"]
         assert list(token.keywords) == ["infect"]
         assert not token.abilities
 
@@ -3381,7 +3381,7 @@ class TestWurmquakesWurmIsAnXXWithTrampleAndToxic:
         assert token is not None and token.is_token and token.is_creature
         assert (token.power, token.toughness) == (0, 0) and token.variable_pt
         assert list(token.colors) == ["G"]
-        assert list(token.subtypes) == ["Phyrexian", "Wurm"]
+        assert sorted(token.subtypes) == ["Phyrexian", "Wurm"]
         assert sorted(token.keywords) == ["toxic", "trample"]
         assert token.toxic == 1
 
