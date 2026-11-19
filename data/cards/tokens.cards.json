@@ -876,6 +876,27 @@
       ]
     },
     {
+      "id": "golem_x_x_c_artifact_haste",
+      "name": "Golem Token",
+      "oracle_text": "X/X colorless Golem artifact creature token with haste.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
       "id": "construct_4_4_c_artifact_flying_haste",
       "name": "Construct Token",
       "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
@@ -3766,6 +3787,54 @@
       "toughness": 1,
       "keywords": [
         "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "soldier_1_1_rw_haste",
+      "name": "Soldier Token",
+      "oracle_text": "1/1 red and white Soldier creature token with haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "haste"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "soldier_2_2_w_vigilance",
+      "name": "Soldier Token",
+      "oracle_text": "2/2 white Soldier creature token with vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
       ],
       "colors": [
         "W"

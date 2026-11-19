@@ -3294,3 +3294,59 @@ class TestPhyrexianRebirthsHorrorIsAPhyrexianHorror:
     def test_the_plain_phyrexian_is_still_a_separate_token(self, pool):
         plain = pool.get("phyrexian_0_0_c_artifact")
         assert list(plain.subtypes) == ["Phyrexian"] and not plain.variable_pt
+
+
+class TestAssembleTheLegionsSoldierIsRedAndWhiteWithHaste:
+    """Assemble the Legion: *"create a 1/1 **red and white** Soldier creature
+    token with **haste**."* `soldier_1_1_w` is the near miss: the same body in
+    white alone and without haste."""
+
+    def test_it_is_a_hasty_red_and_white_one_one_soldier(self, pool):
+        token = pool.get("soldier_1_1_rw_haste")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["R", "W"]
+        assert list(token.subtypes) == ["Soldier"]
+        assert list(token.keywords) == ["haste"]
+        assert not token.abilities
+
+    def test_the_white_soldier_is_still_separate(self, pool):
+        white = pool.get("soldier_1_1_w")
+        assert list(white.colors) == ["W"] and not white.keywords
+
+
+class TestFinaleOfGlorysSoldierIsATwoTwoWithVigilance:
+    """Finale of Glory: *"create X **2/2** white Soldier creature tokens with
+    **vigilance**."* Its near misses are `soldier_1_1_w`, a smaller body with no
+    keyword, and `knight_2_2_w_vigilance`, the same body as a Knight."""
+
+    def test_it_is_a_white_two_two_soldier_with_vigilance(self, pool):
+        token = pool.get("soldier_2_2_w_vigilance")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert list(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Soldier"]
+        assert list(token.keywords) == ["vigilance"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate(self, pool):
+        assert (pool.get("soldier_1_1_w").power, pool.get("soldier_1_1_w").toughness) == (1, 1)
+        assert list(pool.get("knight_2_2_w_vigilance").subtypes) == ["Knight"]
+
+
+class TestVulshokFactorysGolemIsAnXXWithHaste:
+    """Vulshok Factory: *"create an **X/X** colorless Golem artifact creature
+    token with **haste**."* `golem_3_3_c_artifact` is the near miss: a fixed
+    body with no keyword."""
+
+    def test_it_is_a_variable_colorless_artifact_golem_with_haste(self, pool):
+        token = pool.get("golem_x_x_c_artifact_haste")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 0) and token.variable_pt
+        assert not token.colors
+        assert "Artifact" in token.types and list(token.subtypes) == ["Golem"]
+        assert list(token.keywords) == ["haste"]
+
+    def test_the_fixed_golem_is_still_separate(self, pool):
+        golem = pool.get("golem_3_3_c_artifact")
+        assert (golem.power, golem.toughness) == (3, 3) and not golem.keywords
