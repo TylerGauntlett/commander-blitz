@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [planechase]
+status: proposed
 rank: 69
 ---
 
@@ -19,6 +19,13 @@ coming-soon shell on the shelf: its row `moc_tinker_time` is in
 `python scripts/sync_precons.py --missing moc_tinker_time` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Five cards are left. Fractured Powerstone, Ichor Elixir and Path of the
+Animist roll the planar die or planeswalk, so they wait on
+[planechase](planechase.md), a rules subsystem the engine does not have. Aid
+from the Cowl waits on `revolt`, and Curse of Opulence on a Gold token and a
+selector for the opponents attacking the enchanted player; both are
+`/extend-dsl` runs this item still owns.
 
 ## The change
 
