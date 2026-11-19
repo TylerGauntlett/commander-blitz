@@ -87,7 +87,7 @@ each heading; this table is generated from them.
 | [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
-| [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | nothing | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | nothing | 0 |
 | [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) | L | high | nothing | 0 |
@@ -147,7 +147,7 @@ each heading; this table is generated from them.
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
 | [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) | S | low | nothing | 0 |
-| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 5 |
+| [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 6 |
 
 ## What to do next
 
@@ -155,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander).
 
 **Ready now, best first:**
 
@@ -258,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
+- [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -3623,7 +3622,7 @@ whole-game test able to draw the deck.
 
 ### Growing Threat (March of the Machine Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
 
 #### Today
 
@@ -3634,6 +3633,15 @@ coming-soon shell on the shelf: its row `moc_growing_threat` is in
 `python scripts/sync_precons.py --missing moc_growing_threat` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Eight cards are left. Fractured Powerstone, Ichor Elixir and Path of the
+Schemer roll the planar die or planeswalk, so they wait on
+[planechase](planechase.md), a rules subsystem the engine does not have; Path
+of the Schemer also waits on `voting`. Bone Shredder waits on `echo`, Brimaz,
+Blight of Oreskos on `creatures_died_this_turn_filtered`, Excise the Imperfect
+on an `incubate` made for another player, Filigree Vector on
+`multiple_variable_size_targets`, and Yawgmoth's Vile Offering on
+`legendary_sorcery`; those are `/extend-dsl` runs this item still owns.
 
 #### The change
 
