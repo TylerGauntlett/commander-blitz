@@ -239517,6 +239517,111 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "semester_s_end",
+      "mana_cost": "{3}{W}",
+      "name": "Semester's End",
+      "oracle_text": "Exile any number of target creatures and/or planeswalkers you control. At the beginning of the next end step, return each of them to the battlefield under its owner's control. Each of them enters with an additional +1/+1 counter on it if it's a creature and an additional loyalty counter on it if it's a planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1,
+                "loyalty": 1
+              },
+              "objects": {
+                "binding": "exiled",
+                "types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "objects": {
+                "binding": "exiled",
+                "not_types": [
+                  "Planeswalker"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "counters": {
+                "loyalty": 1
+              },
+              "objects": {
+                "binding": "exiled",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Planeswalker"
+                ],
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "objects": {
+                "binding": "exiled",
+                "not_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "At the beginning of the next end step, return each of them to the battlefield under its owner's control. Each of them enters with an additional +1/+1 counter on it if it's a creature and an additional loyalty counter on it if it's a planeswalker."
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "you",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -296861,6 +296966,66 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Remove a +1/+1 counter from this creature: It deals 1 damage to any target."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "triskelion",
+      "mana_cost": "{6}",
+      "name": "Triskelion",
+      "oracle_text": "This creature enters with three +1/+1 counters on it.\nRemove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": 3,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

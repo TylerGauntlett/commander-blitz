@@ -19874,6 +19874,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "semester_s_end": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "senate_griffin": {
     "zone": "battlefield"
   },
@@ -24532,6 +24536,14 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "triskelion": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
     },
     "zone": "battlefield"
   },

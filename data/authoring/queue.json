@@ -239962,12 +239962,12 @@
     },
     "Semester's End": {
       "edhrec_rank": 2675,
-      "gate": "template",
+      "gate": null,
       "name": "Semester's End",
-      "reason": "no template for: Exile any number of target creatures and/or planeswalkers you control. At the beginning of",
+      "reason": "",
       "scryfall_id": "db2bb091-ac6d-4c99-bdf6-70ffb6291ef0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sen Triplets": {
@@ -293012,12 +293012,12 @@
     },
     "Triskelion": {
       "edhrec_rank": 4681,
-      "gate": "template",
+      "gate": null,
       "name": "Triskelion",
-      "reason": "no template for: This creature enters with three +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4b811d9b-1815-4219-9fc8-706dff705d4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triton Cavalry": {
