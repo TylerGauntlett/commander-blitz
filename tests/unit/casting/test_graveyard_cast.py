@@ -222,11 +222,10 @@ class TestTheLoaderGuardsTheNewField:
         with pytest.raises(DslError, match="needs a 'graveyard_cost'"):
             compile_card(CardModel.model_validate(self.base(graveyard_cast="graveyard")))
 
-    def test_a_graveyard_cost_still_needs_mana(self):
-        with pytest.raises(DslError, match="needs mana"):
-            compile_card(
-                CardModel.model_validate(self.base(graveyard_cost={"pay_life": 3}))
-            )
+    def test_a_graveyard_cost_still_needs_a_price(self):
+        """Mana or a non-mana payment; a node charging nothing is a free cast."""
+        with pytest.raises(DslError, match="needs mana or a non-mana payment"):
+            compile_card(CardModel.model_validate(self.base(graveyard_cost={})))
 
     def test_the_new_name_compiles(self):
         card = compile_card(
