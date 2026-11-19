@@ -15486,6 +15486,95 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_fight_regent",
+      "name": "Test Fight Regent",
+      "oracle_text": "Whenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+      "mana_cost": "{2}{R}{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "R",
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+          "trigger": {
+            "event": "fights",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_fight_watcher",
+      "name": "Test Fight Watcher",
+      "oracle_text": "Whenever this creature fights, you gain 1 life.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature fights, you gain 1 life.",
+          "trigger": {
+            "event": "fights",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

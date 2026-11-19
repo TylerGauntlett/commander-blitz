@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 78 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 64 |
+| [Trigger events](#trigger-events) | 65 |
 | [Trigger filters](#trigger-filters) | 37 |
 | [Static effects](#static-effects) | 104 |
 | [Player-wide statics](#player-wide-statics) | 48 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 24 |
-| [Engine events](#engine-events) | 86 |
+| [Engine events](#engine-events) | 87 |
 
 ## Effect ops
 
@@ -505,6 +505,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `explores` | `explored` | A permanent explores, once per explore after it completes, even of an empty library; the subject is the explorer. | ["Whenever a creature you control explores"](card-dsl-cookbook.md#whenever-a-creature-you-control-explores) |
 | `explores_land` | `explored` | A permanent explores and reveals a land card; the subject is the explorer. | ["Whenever a creature you control explores"](card-dsl-cookbook.md#whenever-a-creature-you-control-explores) |
 | `explores_nonland` | `explored` | A permanent explores and reveals a nonland card; the subject is the explorer. | ["Whenever a creature you control explores"](card-dsl-cookbook.md#whenever-a-creature-you-control-explores) |
+| `fights` | `fought` | A creature fights, once per creature in each fight that happens; the subject is the creature that fought. | ["Whenever a creature you control fights"](card-dsl-cookbook.md#whenever-a-creature-you-control-fights) |
 | `gives_gift` | `gift_given` | A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient. | ["Whenever you give a gift"](card-dsl-cookbook.md#whenever-you-give-a-gift) |
 | `investigates` | `investigated` | A player investigates, once per investigation; `nth` counts that player's investigations this turn. | [Investigate — the investigate op and the investigates trigger](card-dsl-cookbook.md#investigate--the-investigate-op-and-the-investigates-trigger) |
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
@@ -1254,6 +1255,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `energy_paid` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `explored` | `explores` `explores_land` `explores_nonland` |  | [Triggers](card-dsl.md#triggers) |
+| `fought` | `fights` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
 | `gift_given` | `gives_gift` |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |

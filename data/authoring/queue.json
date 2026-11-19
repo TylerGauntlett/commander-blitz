@@ -99232,12 +99232,12 @@
     },
     "Foe-Razer Regent": {
       "edhrec_rank": 9907,
-      "gate": "template",
+      "gate": null,
       "name": "Foe-Razer Regent",
-      "reason": "no template for: When this creature enters, you may have it fight target creature you don't control",
+      "reason": "",
       "scryfall_id": "fde4a5a2-adcc-4011-b866-3bb2161ce966",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Foe-liage": {

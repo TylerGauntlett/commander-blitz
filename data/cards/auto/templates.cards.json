@@ -101954,6 +101954,104 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have it fight target creature you don't control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may have it fight target creature you don't control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Put two +1/+1 counters on it."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "fights",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "foe_razer_regent",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Foe-Razer Regent",
+      "oracle_text": "Flying\nWhen this creature enters, you may have it fight target creature you don't control.\nWhenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

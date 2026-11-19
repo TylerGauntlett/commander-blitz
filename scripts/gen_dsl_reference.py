@@ -902,6 +902,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                       '"Whenever a creature you control explores"'),
     "explores_nonland": ("A permanent explores and reveals a nonland card; the subject is the explorer.",
                          '"Whenever a creature you control explores"'),
+    "fights": ("A creature fights, once per creature in each fight that happens; the subject is the creature that fought.",
+               '"Whenever a creature you control fights"'),
     "gives_gift": ("A player gives a gift (702.174): a spell with a promised gift resolves, or a permanent's gift trigger does; `gift_to` binds the recipient.",
                    '"Whenever you give a gift"'),
     "land_played": ("A land is played.", None),

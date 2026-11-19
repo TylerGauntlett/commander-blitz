@@ -8595,6 +8595,18 @@
   "flying_men": {
     "zone": "battlefield"
   },
+  "foe_razer_regent": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "fog": {
     "hand_size": {
       "0": 1

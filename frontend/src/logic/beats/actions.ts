@@ -56,6 +56,15 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A fight finishing, once per creature. Its blows have had their damage
+     * beats; this is short, so a "whenever a creature you control fights"
+     * trigger that follows has a line before it.
+     */
+    case "fought":
+      push({ hold: 120 });
+      return true;
+
+    /*
      * An explore finishing. Longer than a connive's, because its line is the
      * only place the revealed card is shown -- a nonland kept on top moves
      * nothing -- and a "whenever a creature you control explores" trigger

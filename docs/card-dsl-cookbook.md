@@ -17125,6 +17125,32 @@ the turn your hand was all lands.
 connives on its own — its own controller draws, from its own hand, onto its own
 counters.
 
+## "Whenever a creature you control fights"
+
+```jsonc
+// Foe-Razer Regent — "Whenever a creature you control fights, put two +1/+1
+// counters on it at the beginning of the next end step."
+{ "kind": "triggered",
+  "trigger": { "event": "fights", "controller": "you",
+               "filter": { "types": ["Creature"] } },
+  "effects": [
+    { "op": "delay", "step": "end_step", "effects": [
+      { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 2 },
+        "objects": { "binding": "subject", "zone": "battlefield" } } ] } ] }
+```
+
+The `fights` trigger event fires once for each creature in a `fight` that
+happens, after both blows. Its subject is the creature that fought: `filter`
+asks what it is, `controller: "you"` asks who controls it, and
+`{"binding": "subject"}` is "it". A creature you control fighting another you
+control fires twice. A fight 701.12c or 701.12d cancels (a creature gone, or
+one creature told to fight itself) is no fight and fires nothing; a 0-power
+creature that fights still fought. `source: "self"` is this creature fighting,
+never this permanent's ability making two others fight.
+
+`deals_damage` is the near miss: it fires for combat damage and every burn
+spell, and never for a creature with no power to deal.
+
 ## "Whenever a creature you control connives"
 
 ```jsonc

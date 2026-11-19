@@ -9,6 +9,7 @@ from ..carddef import TriggerSpec
 from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
+from ..events import EventType
 from ..player import PLAYER_COUNTER_KINDS
 from ..player_statics import player_cant_gain_life
 from ..primitives import (
@@ -41,6 +42,7 @@ from ..temp_effects import (
     shield_permanent,
     shield_player,
 )
+from ..triggers import fire
 from .context import EffectContext
 from .registry import register
 from .selectors import resolve_pool, select_players
@@ -548,6 +550,10 @@ def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
     Zero power is not a special case -- ``damage_permanent`` ignores a
     non-positive amount -- but a 0/1 fighting a 3/3 must still *take* its three,
     so the guard is per-blow and never abandons the exchange.
+
+    Each creature in an exchange that happens fires one `EventType.FOUGHT`
+    after both blows, the `fights` trigger event; the exchange 701.12c and
+    701.12d cancel fires none.
     """
 
     state = ctx.state
@@ -573,6 +579,20 @@ def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
     power_b = chars(state, b).power or 0
     damage_permanent(state, b, power_a, a)
     damage_permanent(state, a, power_b, b)
+    # "Whenever a creature you control fights" listens for this. One event per
+    # creature, after both blows, and only for an exchange that happened: the
+    # 701.12c and 701.12d returns above are no fight, so they fire nothing.
+    for oid, other in ((a, b), (b, a)):
+        obj = state.objects.get(oid)
+        fire(
+            state,
+            EventType.FOUGHT,
+            player=obj.controller if obj is not None else None,
+            source=ctx.source_oid,
+            oid=oid,
+            card=obj.def_id if obj is not None else None,
+            other=other,
+        )
 
 
 def _damage_what_it_attacks(

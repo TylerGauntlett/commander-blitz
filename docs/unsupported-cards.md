@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**543 cards** blocked by **460** capabilities.
+**542 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -241,7 +241,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
-| [fights](#fights) | 1 | 9907 | trigger_event |
 | [filtered-proliferate](#filtered-proliferate) | 1 | 17657 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
@@ -4441,20 +4440,6 @@ Blocks **1** card.
 
 - **Time Reaper** (rank 21122) — `time_reaper`
   - Consume Anomaly — Whenever this creature deals combat damage to a player, put target face-up card they own in exile on the bottom of their library. If you do, you gain 3 life.
-
-</details>
-
-## fights
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired once for each creature that fights (701.14), from any source's fight op, with that creature bound as the trigger subject so a filter can say controller: you and a following delayed end-step effect can put counters on 'it'
-  <br>Why the existing vocabulary won't do: trigger_events has no fight event; deals_damage / dealt_damage fire for combat and non-fight damage too and miss a fight where the creature deals 0 damage, and folding the counters into this card's own ETB fight would ignore fights caused by every other card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Foe-Razer Regent** (rank 9907) — `foe_razer_regent`
-  - Whenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.
 
 </details>
 
