@@ -109161,6 +109161,60 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "geth_s_summons",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Geth's Summons",
+      "oracle_text": "Return up to one target creature card from your graveyard to the battlefield.\nCorrupted — For each opponent who has three or more poison counters as you cast this spell, put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "one_per_player": true,
+          "selector": {
+            "any_of": [
+              {
+                "owner": "you"
+              },
+              {
+                "owner": {
+                  "players_with_poison": {
+                    "at_least": 3,
+                    "player": "each_opponent"
+                  }
+                }
+              }
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**545 cards** blocked by **462** capabilities.
+**542 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -107,7 +107,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
-| [attacked-players-binding](#attacked-players-binding) | 1 | 4072 | selector |
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
@@ -120,7 +119,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
-| [becomes-unattached](#becomes-unattached) | 1 | 2271 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -169,7 +167,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
-| [corrupted-target-per-opponent](#corrupted-target-per-opponent) | 1 | 9101 | selector |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
@@ -2537,20 +2534,6 @@ Blocks **1** card.
 
 </details>
 
-## attacked-players-binding
-
-Blocks **1** card.
-
-- **(selector)** a player-spec binding on the `you_attack` (ATTACKERS_DECLARED) trigger naming the players being attacked directly (not via a planeswalker or battle), so an intervening-if can read `{"cmp": ">", "left": {"max_poison_of": {"binding": "attacked_players"}}, "right": {"const": 0}}` and the trigger fires once per declaration with `controller: "any"` and draws for `event_player`
-  <br>Why the existing vocabulary won't do: `combat.declare_attackers` puts `defenders` on ATTACKERS_DECLARED but `triggers.EVENT_BINDING_KEYS` does not carry it into bindings, so no condition can name the attacked seats; `max_poison_of` over `each_opponent`/`each_player` asks about the trigger controller's opponents or the whole table, not the defenders; `creatures_attack_player` with `defending` binds one `defender` but fires once per defending seat, drawing two cards when two poisoned players are attacked, and it also counts seats attacked only through a planeswalker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Norn's Decree** (rank 4072) — `norn_s_decree`
-  - Whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card.
-
-</details>
-
 ## attacked-this-turn-static-condition
 
 Blocks **1** card.
@@ -2717,20 +2700,6 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
-
-</details>
-
-## becomes-unattached
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when this Equipment (or Aura) stops being attached to a permanent for any reason (re-equipped elsewhere, the Equipment leaving the battlefield, the unattach op, the creature ceasing to be a creature), binding the permanent it was attached to as the subject so the effect can sacrifice that permanent (its controller sacrifices it, if it is still on the battlefield)
-  <br>Why the existing vocabulary won't do: trigger_events has becomes_attached and leaves_battlefield but no unattach event; leaves_battlefield on self misses re-equipping and the unattach op, and nothing binds the formerly-attached permanent after the link is broken. The rest is expressible: a static pump +2/+2 and grant of infect affecting attached, and the equip keyword cost
-
-<details><summary>Cards waiting on this</summary>
-
-- **Grafted Exoskeleton** (rank 2271) — `grafted_exoskeleton`
-  - Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent
 
 </details>
 
@@ -3418,20 +3387,6 @@ Blocks **1** card.
 
 - **Zygon Infiltrator** (rank 15174) — `zygon_infiltrator`
   - Body-print — {2}{U}: Tap another target creature and put a stun counter on it. This creature becomes a copy of that creature for as long as that creature remains tapped. Activate only as a sorcery
-
-</details>
-
-## corrupted-target-per-opponent
-
-Blocks **1** card.
-
-- **(selector)** a card-in-graveyard target slot, one per opponent (one_per_player, up to one each), whose candidates are limited to graveyards of opponents who individually had three or more poison counters as the spell was cast (601.2c), i.e. a target selector clause on the owning player's poison count
-  <br>Why the existing vocabulary won't do: The only poison reader is the value max_poison_of, which with cmp gives a table-wide 'an opponent has 3+ poison' condition, not a per-opponent one; selector owner/controller accept only you/opponent/any, so with several opponents the spell could take a creature from an opponent with fewer than three poison counters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Geth's Summons** (rank 9101) — `geth_s_summons`
-  - Corrupted — For each opponent who has three or more poison counters as you cast this spell, put up to one target creature card from that player's graveyard onto the battlefield under your control
 
 </details>
 

@@ -107272,12 +107272,12 @@
     },
     "Geth's Summons": {
       "edhrec_rank": 9101,
-      "gate": "template",
+      "gate": null,
       "name": "Geth's Summons",
-      "reason": "no template for: Return up to one target creature card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "9cdab166-c0d2-45c4-8326-f4670cd7efd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geth's Verdict": {

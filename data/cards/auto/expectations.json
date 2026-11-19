@@ -9213,6 +9213,16 @@
     },
     "zone": "graveyard"
   },
+  "geth_s_summons": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "ghalta_primal_hunger": {
     "zone": "battlefield"
   },

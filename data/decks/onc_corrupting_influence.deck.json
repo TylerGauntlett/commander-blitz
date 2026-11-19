@@ -1,0 +1,803 @@
+{
+  "id": "onc_corrupting_influence",
+  "name": "Corrupting Influence",
+  "commanders": [
+    "ixhel_scion_of_atraxa"
+  ],
+  "color_identity": [
+    "B",
+    "G",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "ONC",
+    "set_name": "Phyrexia: All Will Be One Commander",
+    "date": "2023-02-10"
+  },
+  "notes": "Phyrexia: All Will Be One Commander precon, card for card (https://mtgjson.com/api/v5/decks/CorruptingInfluence_ONC.json).",
+  "tags": [
+    "Poison",
+    "Proliferate",
+    "Toxic",
+    "Corrupted"
+  ],
+  "strategy": "Ixhel, Scion of Atraxa wins by poison rather than damage: toxic and infect creatures such as Bilious Skulldweller, Venomous Brutalizer, Ichor Rats and Blightbelly Rat put the first counters on, and Contagion Clasp, Evolution Sage, Expand the Sphere, Vat Emergence and every other proliferate card grow them. Once an opponent has three, corrupted switches on: Ixhel exiles their top card each end step for you to play, Glistening Sphere taps for three mana, Feed the Infection and Phyrexian Atlas drain them, and Glissa's Retriever and Geth's Summons pull back creatures. Vishgraz, the Doomhive, Mycosynth Fiend and Phyrexian Swarmlord grow with the table's poison, Norn's Decree turns every poisoned seat into card draw, and Ghostly Prison, Norn's Annex, Swords to Plowshares, Putrefy, Fumigate and Merciless Eviction hold the board while the counters climb toward ten.",
+  "archetype": "aggro",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 2,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "ixhel_scion_of_atraxa",
+      "why": "Flying, vigilance, toxic 2, and every corrupted opponent's top card is yours to play at each end step."
+    },
+    {
+      "card_id": "vishgraz_the_doomhive",
+      "why": "Three toxic Mites on arrival, and it grows by every poison counter the opponents have."
+    },
+    {
+      "card_id": "contagion_clasp",
+      "why": "A -1/-1 counter as it enters, then proliferate for {4} every turn, so three poison climbs toward ten."
+    },
+    {
+      "card_id": "norn_s_decree",
+      "why": "Every hit on you poisons the attacker, and every attack on a poisoned player draws a card."
+    }
+  ],
+  "printings": {
+    "arcane_signet": {
+      "scryfall_id": "ecedbcca-4d71-46ac-a8e5-a1cf8109f4b7",
+      "artist": "Dan Murayama Scott",
+      "set_code": "onc",
+      "collector_number": "125"
+    },
+    "beast_within": {
+      "scryfall_id": "c6a30538-8a7b-425e-a9ae-562e527151ec",
+      "artist": "Dave Allsop",
+      "set_code": "onc",
+      "collector_number": "104"
+    },
+    "bilious_skulldweller": {
+      "scryfall_id": "dfb81cb1-ac56-4803-a962-359854a447df",
+      "artist": "Svetlin Velinov",
+      "set_code": "one",
+      "collector_number": "83"
+    },
+    "blight_mamba": {
+      "scryfall_id": "11803603-eb22-4ec9-b308-5d73d17a6770",
+      "artist": "Drew Baker",
+      "set_code": "onc",
+      "collector_number": "105"
+    },
+    "blightbelly_rat": {
+      "scryfall_id": "9255cd01-a611-4fec-b9ec-b271687740ba",
+      "artist": "Yeong-Hao Han",
+      "set_code": "one",
+      "collector_number": "85"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "e91d3f87-be99-4f79-a493-52a7cac2d57b",
+      "artist": "Howard Lyon",
+      "set_code": "onc",
+      "collector_number": "145"
+    },
+    "cankerbloom": {
+      "scryfall_id": "89b39293-6f57-4294-85fc-c718bdbb4d40",
+      "artist": "Nicholas Gregory",
+      "set_code": "one",
+      "collector_number": "161"
+    },
+    "canopy_vista": {
+      "scryfall_id": "ca0a8be8-5d1b-43f6-aeb8-4c7715fa0ad3",
+      "artist": "Adam Paquette",
+      "set_code": "onc",
+      "collector_number": "148"
+    },
+    "caress_of_phyrexia": {
+      "scryfall_id": "0eef764a-a84f-4d2d-a0ee-2af73643c76f",
+      "artist": "Karl Kopinski",
+      "set_code": "onc",
+      "collector_number": "92"
+    },
+    "carrion_call": {
+      "scryfall_id": "225ff048-fb4b-4801-8db6-b1136a1935a7",
+      "artist": "Adrian Smith",
+      "set_code": "onc",
+      "collector_number": "106"
+    },
+    "chromatic_lantern": {
+      "scryfall_id": "5df8ba21-7522-4163-a801-0e967c0ccf99",
+      "artist": "Jung Park",
+      "set_code": "onc",
+      "collector_number": "127"
+    },
+    "command_tower": {
+      "scryfall_id": "58109bb0-c8cc-4043-993e-d166581fb316",
+      "artist": "Evan Shipard",
+      "set_code": "onc",
+      "collector_number": "151"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "ec5fd106-30c2-4845-9678-e0bed7e35ced",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "onc",
+      "collector_number": "128"
+    },
+    "contagion_clasp": {
+      "scryfall_id": "1f963550-22b8-412f-9f53-195815328961",
+      "artist": "Anthony Palumbo",
+      "set_code": "onc",
+      "collector_number": "129"
+    },
+    "contaminant_grafter": {
+      "scryfall_id": "0ef2f776-ff35-464b-bfcf-075c9ae4baa7",
+      "artist": "Lars Grant-West",
+      "set_code": "onc",
+      "collector_number": "17"
+    },
+    "culling_ritual": {
+      "scryfall_id": "171424dc-1aad-4bab-9507-f7dd19cb80ae",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "onc",
+      "collector_number": "117"
+    },
+    "cultivate": {
+      "scryfall_id": "f6eecb56-d5a3-4c2b-a479-dbec61da9fb4",
+      "artist": "Anthony Palumbo",
+      "set_code": "onc",
+      "collector_number": "107"
+    },
+    "evolution_sage": {
+      "scryfall_id": "faee8f20-87e8-49f5-8559-8e6032e63965",
+      "artist": "Simon Dominic",
+      "set_code": "onc",
+      "collector_number": "108"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "5ac74c39-c623-4801-b552-e5f6a64dbf2f",
+      "artist": "Steven Belledin",
+      "set_code": "onc",
+      "collector_number": "152"
+    },
+    "expand_the_sphere": {
+      "scryfall_id": "572e174e-99f7-4b5e-8506-1833adddbf07",
+      "artist": "Sergey Glushakov",
+      "set_code": "one",
+      "collector_number": "168"
+    },
+    "feed_the_infection": {
+      "scryfall_id": "9f013a1a-d4b9-4380-9802-c299ee6c4492",
+      "artist": "Jason A. Engle",
+      "set_code": "one",
+      "collector_number": "93"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "b1914459-b29f-45c3-8def-39d1790a31c3",
+      "artist": "John Avon",
+      "set_code": "onc",
+      "collector_number": "130"
+    },
+    "forest": {
+      "scryfall_id": "9f9e911e-7e12-4d99-806c-5cfba19ea8f3",
+      "artist": "Nadia Hurianova",
+      "set_code": "one",
+      "collector_number": "276"
+    },
+    "fortified_village": {
+      "scryfall_id": "ac54bda0-0ad4-4e21-b766-45c1a70bbe52",
+      "artist": "Cliff Childs",
+      "set_code": "onc",
+      "collector_number": "154"
+    },
+    "fumigate": {
+      "scryfall_id": "46356861-5519-4970-87bf-006100ab9a7f",
+      "artist": "Svetlin Velinov",
+      "set_code": "onc",
+      "collector_number": "69"
+    },
+    "geth_s_summons": {
+      "scryfall_id": "9cdab166-c0d2-45c4-8326-f4670cd7efd4",
+      "artist": "Johann Bodin",
+      "set_code": "onc",
+      "collector_number": "11"
+    },
+    "ghostly_prison": {
+      "scryfall_id": "00e7e279-c11b-4978-b75e-9912d08590d2",
+      "artist": "Daarken",
+      "set_code": "onc",
+      "collector_number": "71"
+    },
+    "glissa_s_retriever": {
+      "scryfall_id": "81836d7f-ba8d-4c52-8b1f-c86b422e23b5",
+      "artist": "Josu Hernaiz",
+      "set_code": "onc",
+      "collector_number": "18"
+    },
+    "glistening_sphere": {
+      "scryfall_id": "b825db05-7e95-400b-944b-526cfa6addc0",
+      "artist": "Tuan Duong Chu",
+      "set_code": "onc",
+      "collector_number": "20"
+    },
+    "golgari_signet": {
+      "scryfall_id": "a31a1626-73b5-472e-a3ca-45b40b4378cd",
+      "artist": "Raoul Vitale",
+      "set_code": "onc",
+      "collector_number": "131"
+    },
+    "grafted_exoskeleton": {
+      "scryfall_id": "d9218955-6604-49de-9153-6301d216e3bb",
+      "artist": "Allen Williams",
+      "set_code": "onc",
+      "collector_number": "132"
+    },
+    "grateful_apparition": {
+      "scryfall_id": "fc207ec0-549b-4587-8a88-d6f4431bf44d",
+      "artist": "Izzy",
+      "set_code": "onc",
+      "collector_number": "73"
+    },
+    "ichor_rats": {
+      "scryfall_id": "387e4be7-7e3d-4623-afe6-229f8a9bacd4",
+      "artist": "Matt Stewart",
+      "set_code": "onc",
+      "collector_number": "93"
+    },
+    "ichorclaw_myr": {
+      "scryfall_id": "06ad4974-d806-4417-883a-2e622e909a7b",
+      "artist": "Eric Deschamps",
+      "set_code": "onc",
+      "collector_number": "133"
+    },
+    "infectious_inquiry": {
+      "scryfall_id": "0a10f284-b043-4307-bdc7-6dad47cc9221",
+      "artist": "Eli Minaya",
+      "set_code": "one",
+      "collector_number": "97"
+    },
+    "ixhel_scion_of_atraxa": {
+      "scryfall_id": "ab866ec4-dcb4-47ef-8de1-a369986609c0",
+      "artist": "Campbell White",
+      "set_code": "onc",
+      "collector_number": "1"
+    },
+    "karn_s_bastion": {
+      "scryfall_id": "760db1b6-bd2c-4aec-a033-95313c25c962",
+      "artist": "Adam Paquette",
+      "set_code": "onc",
+      "collector_number": "156"
+    },
+    "krosan_verge": {
+      "scryfall_id": "083fd5cb-0a26-4549-b054-3148d92e0ce9",
+      "artist": "Ruxing Gao",
+      "set_code": "onc",
+      "collector_number": "158"
+    },
+    "merciless_eviction": {
+      "scryfall_id": "886542b7-55dc-4718-b4d9-fbde26260aad",
+      "artist": "Richard Wright",
+      "set_code": "onc",
+      "collector_number": "120"
+    },
+    "moldervine_reclamation": {
+      "scryfall_id": "14e0b306-0973-49bc-907d-2f0f2c53b57f",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "onc",
+      "collector_number": "121"
+    },
+    "mortify": {
+      "scryfall_id": "be590aa9-4ea0-41c3-85b0-59c7b594235e",
+      "artist": "Anthony Palumbo",
+      "set_code": "onc",
+      "collector_number": "122"
+    },
+    "mycosynth_fiend": {
+      "scryfall_id": "9e60dd79-cc2f-4f53-afe3-cd8ab91005cd",
+      "artist": "Kev Walker",
+      "set_code": "onc",
+      "collector_number": "109"
+    },
+    "myr_convert": {
+      "scryfall_id": "9df0adcf-7ad0-4d70-8dcd-28f69471495b",
+      "artist": "José Parodi",
+      "set_code": "one",
+      "collector_number": "234"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "23d33c50-2f61-4183-b64c-25d76121d795",
+      "artist": "Jonas De Ro",
+      "set_code": "onc",
+      "collector_number": "159"
+    },
+    "necroblossom_snarl": {
+      "scryfall_id": "accbaeaf-f6c4-4588-8099-ef91e69a5555",
+      "artist": "Sam Burley",
+      "set_code": "onc",
+      "collector_number": "160"
+    },
+    "nights_whisper": {
+      "scryfall_id": "37f8b953-731f-4fb8-ad54-f1292779f187",
+      "artist": "John Severin Brassell",
+      "set_code": "onc",
+      "collector_number": "94"
+    },
+    "norn_s_annex": {
+      "scryfall_id": "98ed8e2e-5519-4872-ba5a-7e2f91d8d619",
+      "artist": "James Paick",
+      "set_code": "onc",
+      "collector_number": "83"
+    },
+    "norn_s_choirmaster": {
+      "scryfall_id": "1da10c9f-4c9f-4eee-8480-665c453215d4",
+      "artist": "Jason A. Engle",
+      "set_code": "onc",
+      "collector_number": "8"
+    },
+    "norn_s_decree": {
+      "scryfall_id": "76f28aa2-1c18-4d58-a3f9-6cd5b49280d8",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "onc",
+      "collector_number": "9"
+    },
+    "noxious_assault": {
+      "scryfall_id": "9649de6c-a9f7-4f0a-8bf7-cacaea60ed54",
+      "artist": "Billy Christian",
+      "set_code": "one",
+      "collector_number": "176"
+    },
+    "noxious_revival": {
+      "scryfall_id": "4db5b4cd-3809-4dfe-8b9a-2a25b02e814c",
+      "artist": "Matt Stewart",
+      "set_code": "onc",
+      "collector_number": "110"
+    },
+    "painful_truths": {
+      "scryfall_id": "db05f30f-e06c-4f9d-bf0e-930fbfeab2e7",
+      "artist": "Winona Nelson",
+      "set_code": "onc",
+      "collector_number": "95"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "ad715137-97d0-4fb3-8fa6-09c6d6a72a7d",
+      "artist": "Alayna Danner",
+      "set_code": "onc",
+      "collector_number": "161"
+    },
+    "pestilent_syphoner": {
+      "scryfall_id": "947a1e44-3485-4e24-a34d-6c318584743c",
+      "artist": "Brian Valeza",
+      "set_code": "one",
+      "collector_number": "103"
+    },
+    "phyresis_outbreak": {
+      "scryfall_id": "812498c8-974c-460c-b782-506f5f735346",
+      "artist": "Matthew G. Lewis",
+      "set_code": "onc",
+      "collector_number": "12"
+    },
+    "phyrexian_atlas": {
+      "scryfall_id": "b5adb509-6ad3-4838-925d-1cafa926b83a",
+      "artist": "Septian Fajrianto",
+      "set_code": "one",
+      "collector_number": "237"
+    },
+    "phyrexian_rebirth": {
+      "scryfall_id": "9813dc43-ec08-48b8-9a78-aea4c6a26dea",
+      "artist": "Scott Chou",
+      "set_code": "onc",
+      "collector_number": "86"
+    },
+    "phyrexian_swarmlord": {
+      "scryfall_id": "715565be-0c97-4f06-8e89-2ea44c6007c9",
+      "artist": "Svetlin Velinov",
+      "set_code": "onc",
+      "collector_number": "111"
+    },
+    "plague_myr": {
+      "scryfall_id": "e74be86a-f52e-4537-8f88-ba52618428ee",
+      "artist": "Efrem Palacios",
+      "set_code": "onc",
+      "collector_number": "139"
+    },
+    "plague_stinger": {
+      "scryfall_id": "325a8b1b-fa0c-4140-b9e3-a93705b06aa0",
+      "artist": "Ryan Pancoast",
+      "set_code": "onc",
+      "collector_number": "96"
+    },
+    "plains": {
+      "scryfall_id": "db14da86-6721-4e22-9b61-4a5680d4e5a3",
+      "artist": "Sergey Glushakov",
+      "set_code": "one",
+      "collector_number": "272"
+    },
+    "putrefy": {
+      "scryfall_id": "c69d4230-7ee6-4401-ba32-73c361a4bd87",
+      "artist": "Clint Cearley",
+      "set_code": "onc",
+      "collector_number": "123"
+    },
+    "sandsteppe_citadel": {
+      "scryfall_id": "ff18cccb-863f-41ad-94b9-2cf643cfe2af",
+      "artist": "Sam Burley",
+      "set_code": "onc",
+      "collector_number": "162"
+    },
+    "scavenging_ooze": {
+      "scryfall_id": "216b0731-c858-406e-803c-e46f5b66baa6",
+      "artist": "Austin Hsu",
+      "set_code": "onc",
+      "collector_number": "112"
+    },
+    "shineshadow_snarl": {
+      "scryfall_id": "d661c65d-eab3-47d7-8ca7-a9ddda2f6406",
+      "artist": "Sam Burley",
+      "set_code": "onc",
+      "collector_number": "164"
+    },
+    "sol_ring": {
+      "scryfall_id": "c6721419-70aa-4137-98d5-98ef17720c8e",
+      "artist": "Mike Bierek",
+      "set_code": "onc",
+      "collector_number": "140"
+    },
+    "sungrass_prairie": {
+      "scryfall_id": "5241517e-164a-4e34-98a9-c3a9851b5e5b",
+      "artist": "Ron Spencer",
+      "set_code": "onc",
+      "collector_number": "166"
+    },
+    "swamp": {
+      "scryfall_id": "d485c620-f1fb-4715-b7c5-d2d56588308d",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "one",
+      "collector_number": "274"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "9f083ec7-e589-4415-8c30-1c60cde2ce04",
+      "artist": "Jesper Ejsing",
+      "set_code": "onc",
+      "collector_number": "89"
+    },
+    "tainted_field": {
+      "scryfall_id": "f7217ee0-622b-49b2-8539-135a8389141e",
+      "artist": "Don Hazeltine",
+      "set_code": "onc",
+      "collector_number": "167"
+    },
+    "tainted_wood": {
+      "scryfall_id": "3723ae52-dfc2-4547-bc32-d9f88bcf4846",
+      "artist": "Rob Alexander",
+      "set_code": "onc",
+      "collector_number": "168"
+    },
+    "temple_of_malady": {
+      "scryfall_id": "6c8172a8-6d79-456c-9245-327e2370b2cd",
+      "artist": "Titus Lunter",
+      "set_code": "onc",
+      "collector_number": "169"
+    },
+    "temple_of_plenty": {
+      "scryfall_id": "791ebd6e-54e6-4b1d-b9a0-b1918b968b80",
+      "artist": "Chris Ostrowski",
+      "set_code": "onc",
+      "collector_number": "170"
+    },
+    "temple_of_silence": {
+      "scryfall_id": "fbf1b2c3-88ee-4b9b-b589-aa9cd9236117",
+      "artist": "Adam Paquette",
+      "set_code": "onc",
+      "collector_number": "171"
+    },
+    "trailblazer_s_boots": {
+      "scryfall_id": "70e3ce5d-cfb1-4fe9-99b7-9e4f58f892ec",
+      "artist": "Zoltan Boros & Gabor Szikszai",
+      "set_code": "onc",
+      "collector_number": "144"
+    },
+    "unnatural_restoration": {
+      "scryfall_id": "4d4e6a91-59cc-4f7f-af25-16acabdafb1a",
+      "artist": "Jeremy Wilson",
+      "set_code": "one",
+      "collector_number": "191"
+    },
+    "vat_emergence": {
+      "scryfall_id": "3a2aeaeb-7853-4588-8a5e-cfd997ba8515",
+      "artist": "Andreas Zafiratos",
+      "set_code": "one",
+      "collector_number": "112"
+    },
+    "venomous_brutalizer": {
+      "scryfall_id": "dd9df44a-a0ab-435f-914c-aa11cd88f4ec",
+      "artist": "Mike Jordana",
+      "set_code": "one",
+      "collector_number": "193"
+    },
+    "viridian_corrupter": {
+      "scryfall_id": "94a1eddc-e5e6-4a4a-a950-13c4bc301c54",
+      "artist": "Matt Cavotta",
+      "set_code": "onc",
+      "collector_number": "113"
+    },
+    "vishgraz_the_doomhive": {
+      "scryfall_id": "fb1d33b2-9082-4043-8e52-a5c2f3a174ba",
+      "artist": "Andrew Mar",
+      "set_code": "onc",
+      "collector_number": "4"
+    },
+    "vraska_s_fall": {
+      "scryfall_id": "0173b7b4-2832-4943-ba45-8ba498d7a056",
+      "artist": "Dibujante Nocturno",
+      "set_code": "one",
+      "collector_number": "116"
+    },
+    "windborn_muse": {
+      "scryfall_id": "b36755d0-0c5d-437e-ab74-9dd4acdfdee9",
+      "artist": "Adam Rex",
+      "set_code": "onc",
+      "collector_number": "91"
+    },
+    "wurmquake": {
+      "scryfall_id": "94f0a15e-9437-4aa9-86c5-482008124617",
+      "artist": "Xavier Ribeiro",
+      "set_code": "onc",
+      "collector_number": "19"
+    }
+  },
+  "cards": [
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "beast_within"
+    },
+    {
+      "id": "bilious_skulldweller"
+    },
+    {
+      "id": "blight_mamba"
+    },
+    {
+      "id": "blightbelly_rat"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "cankerbloom"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "caress_of_phyrexia"
+    },
+    {
+      "id": "carrion_call"
+    },
+    {
+      "id": "chromatic_lantern"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "contagion_clasp"
+    },
+    {
+      "id": "contaminant_grafter"
+    },
+    {
+      "id": "culling_ritual"
+    },
+    {
+      "id": "cultivate"
+    },
+    {
+      "id": "evolution_sage"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "expand_the_sphere"
+    },
+    {
+      "id": "feed_the_infection"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "forest",
+      "qty": 8
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "fumigate"
+    },
+    {
+      "id": "geth_s_summons"
+    },
+    {
+      "id": "ghostly_prison"
+    },
+    {
+      "id": "glissa_s_retriever"
+    },
+    {
+      "id": "glistening_sphere"
+    },
+    {
+      "id": "golgari_signet"
+    },
+    {
+      "id": "grafted_exoskeleton"
+    },
+    {
+      "id": "grateful_apparition"
+    },
+    {
+      "id": "ichor_rats"
+    },
+    {
+      "id": "ichorclaw_myr"
+    },
+    {
+      "id": "infectious_inquiry"
+    },
+    {
+      "id": "karn_s_bastion"
+    },
+    {
+      "id": "krosan_verge"
+    },
+    {
+      "id": "merciless_eviction"
+    },
+    {
+      "id": "moldervine_reclamation"
+    },
+    {
+      "id": "mortify"
+    },
+    {
+      "id": "mycosynth_fiend"
+    },
+    {
+      "id": "myr_convert"
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "necroblossom_snarl"
+    },
+    {
+      "id": "nights_whisper"
+    },
+    {
+      "id": "norn_s_annex"
+    },
+    {
+      "id": "norn_s_choirmaster"
+    },
+    {
+      "id": "norn_s_decree"
+    },
+    {
+      "id": "noxious_assault"
+    },
+    {
+      "id": "noxious_revival"
+    },
+    {
+      "id": "painful_truths"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "pestilent_syphoner"
+    },
+    {
+      "id": "phyresis_outbreak"
+    },
+    {
+      "id": "phyrexian_atlas"
+    },
+    {
+      "id": "phyrexian_rebirth"
+    },
+    {
+      "id": "phyrexian_swarmlord"
+    },
+    {
+      "id": "plague_myr"
+    },
+    {
+      "id": "plague_stinger"
+    },
+    {
+      "id": "plains",
+      "qty": 6
+    },
+    {
+      "id": "putrefy"
+    },
+    {
+      "id": "sandsteppe_citadel"
+    },
+    {
+      "id": "scavenging_ooze"
+    },
+    {
+      "id": "shineshadow_snarl"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sungrass_prairie"
+    },
+    {
+      "id": "swamp",
+      "qty": 6
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "tainted_field"
+    },
+    {
+      "id": "tainted_wood"
+    },
+    {
+      "id": "temple_of_malady"
+    },
+    {
+      "id": "temple_of_plenty"
+    },
+    {
+      "id": "temple_of_silence"
+    },
+    {
+      "id": "trailblazer_s_boots"
+    },
+    {
+      "id": "unnatural_restoration"
+    },
+    {
+      "id": "vat_emergence"
+    },
+    {
+      "id": "venomous_brutalizer"
+    },
+    {
+      "id": "viridian_corrupter"
+    },
+    {
+      "id": "vishgraz_the_doomhive"
+    },
+    {
+      "id": "vraska_s_fall"
+    },
+    {
+      "id": "windborn_muse"
+    },
+    {
+      "id": "wurmquake"
+    }
+  ]
+}
