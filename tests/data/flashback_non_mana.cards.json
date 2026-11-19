@@ -1,0 +1,20 @@
+{
+  "_comment": "A card that exists only for the non-mana flashback test (tests/unit/casting/test_flashback_non_mana.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_battle_screech` is Battle Screech's shape -- a flashback cost with no mana half.",
+  "cards": [
+    {
+      "id": "t_battle_screech",
+      "name": "Test Battle Screech",
+      "oracle_text": "Create two 1/1 white Bird creature tokens with flying.\nFlashback—Tap three untapped white creatures you control.",
+      "mana_cost": "{2}{W}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "flashback": {
+        "tap_permanents": {"controller": "you", "types": ["Creature"], "colors": ["W"], "count": 3}
+      },
+      "spell_effects": [
+        {"op": "create_token", "token": "bird_1_1_w_flying", "amount": {"const": 2}}
+      ]
+    }
+  ]
+}

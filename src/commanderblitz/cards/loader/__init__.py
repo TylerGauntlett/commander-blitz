@@ -2607,10 +2607,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     else:
         flashback = None
     if flashback is not None:
-        if not flashback.mana.text:
-            # The mana half *replaces* the printed cost, so without it the card
-            # would be castable from the graveyard for free.
-            raise DslError(f"{where}: a graveyard cost needs mana")
+        if not flashback.mana.text and flashback.charges_nothing():
+            # The cost *replaces* the printed one, so with nothing on it the
+            # card would be castable from the graveyard for free. A non-mana
+            # price is still a price: Battle Screech's flashback is "tap three
+            # untapped white creatures you control" and no mana at all, the
+            # same exemption `alternative_cost` gives Force of Will's pitch.
+            raise DslError(f"{where}: a graveyard cost needs mana or a non-mana payment")
         if flashback.mana.x_count:
             raise DslError(f"{where}: a graveyard cost with X is not implemented")
         if flashback.x_value is not None:
