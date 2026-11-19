@@ -1,0 +1,18 @@
+{
+  "card_id": "otharri_suns_glory",
+  "name": "Otharri, Suns' Glory",
+  "oracle_text": "Flying, lifelink, haste\nWhenever Otharri attacks, you get an experience counter. Then create a 2/2 red Rebel creature token that's tapped and attacking for each experience counter you have.\n{2}{R}{W}, Tap an untapped Rebel you control: Return this card from your graveyard to the battlefield tapped.",
+  "blocked_sentences": [
+    "Whenever Otharri attacks, you get an experience counter. Then create a 2/2 red Rebel creature token that's tapped and attacking for each experience counter you have."
+  ],
+  "needs": [
+    {
+      "capability": "experience_counters",
+      "kind": "engine",
+      "what": "experience as a player counter kind (122.1): a PlayerState field plus an entry in PLAYER_COUNTER_KINDS, an op that gives a player N experience counters (\"you get an experience counter\"), and a value that reads how many experience counters a player has, so create_token's amount can be \"for each experience counter you have\"",
+      "why_existing_wont_do": "PLAYER_COUNTER_KINDS in engine/player.py carries only poison and energy; add_poison and add_energy are kind-specific ops and add_counters (amount, counter, objects) puts counters on objects, not players. value_keys has counters_on (objects only) and no player-counter reader, so the token count cannot be expressed; using energy or a turn flag would be a different card (proliferate, energy payments)"
+    }
+  ],
+  "closest_existing": ["add_energy", "add_poison", "double_player_counters", "create_token"],
+  "confidence": "high"
+}

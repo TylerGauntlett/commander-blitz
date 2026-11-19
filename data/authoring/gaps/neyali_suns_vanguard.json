@@ -1,0 +1,18 @@
+{
+  "card_id": "neyali_suns_vanguard",
+  "name": "Neyali, Suns' Vanguard",
+  "oracle_text": "Attacking tokens you control have double strike.\nWhenever one or more tokens you control attack a player, exile the top card of your library. During any turn you attacked with a token, you may play that card.",
+  "blocked_sentences": [
+    "During any turn you attacked with a token, you may play that card."
+  ],
+  "needs": [
+    {
+      "capability": "playable_condition_attacked_with_token",
+      "kind": "value",
+      "what": "a playable_condition value \"you_attacked_with_a_token\" for exile/grant_playable permissions: the permission holder declared as an attacker, this turn, a creature that is a token (read off TurnLedger.creatures_attacked like the commander variant, counting a token that attacked and has since left)",
+      "why_existing_wont_do": "PLAYABLE_CONDITIONS in engine/objects.py holds only \"you_attacked_with_a_commander\" (Neriv); playable: \"while_exiled\" alone would let the card be played on turns with no token attack, and playable_this_turn would wrongly expire it after this turn. The other two sentences are expressible (grant_keyword static over {controller: you, is_token: true, attacking: true}; creatures_attack_player trigger filtered is_token with an exile of the top card)"
+    }
+  ],
+  "closest_existing": ["you_attacked_with_a_commander", "while_exiled"],
+  "confidence": "high"
+}
