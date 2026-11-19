@@ -61,6 +61,7 @@ PRECONS = {
     "otc_desert_bloom",
     "otc_grand_larceny",
     "otc_quick_draw",
+    "scd_draconic_destruction",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",
     "tdc_abzan_armor",
