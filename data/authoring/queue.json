@@ -87352,12 +87352,12 @@
     },
     "Everquill Phoenix": {
       "edhrec_rank": 11236,
-      "gate": "template",
+      "gate": null,
       "name": "Everquill Phoenix",
-      "reason": "no template for: Mutate {3}{R}",
+      "reason": "",
       "scryfall_id": "333db3bc-98e9-4635-b1b0-a7e57ee59165",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evershrike": {
@@ -109572,12 +109572,12 @@
     },
     "Gimbal, Gremlin Prodigy": {
       "edhrec_rank": 15192,
-      "gate": "template",
+      "gate": null,
       "name": "Gimbal, Gremlin Prodigy",
-      "reason": "no template for: Artifact creatures you control have trample",
+      "reason": "",
       "scryfall_id": "30cd6ab7-7235-427e-bc92-c9fe6032ffa1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gimli of the Glittering Caves": {
@@ -220702,12 +220702,12 @@
     },
     "Replicating Ring": {
       "edhrec_rank": 1570,
-      "gate": "template",
+      "gate": null,
       "name": "Replicating Ring",
-      "reason": "no template for: At the beginning of your upkeep, put a night counter on this artifact. Then if it has eigh",
+      "reason": "",
       "scryfall_id": "041cb2b9-4435-426c-a639-f1e81fab5180",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Replication Specialist": {
@@ -242862,12 +242862,12 @@
     },
     "Sharding Sphinx": {
       "edhrec_rank": 3736,
-      "gate": "template",
+      "gate": null,
       "name": "Sharding Sphinx",
-      "reason": "no template for: Whenever an artifact creature you control deals combat damage to a player, you may create ",
+      "reason": "",
       "scryfall_id": "1d93d905-cc36-4a78-b07c-07f8bbf39a47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shardless Agent": {

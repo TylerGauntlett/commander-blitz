@@ -7263,6 +7263,10 @@
     },
     "zone": "battlefield"
   },
+  "everquill_phoenix": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "evolution_sage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9148,6 +9152,10 @@
     "zone": "battlefield"
   },
   "gilt_leaf_palace": {
+    "zone": "battlefield"
+  },
+  "gimbal_gremlin_prodigy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gimli_of_the_glittering_caves": {
@@ -18093,6 +18101,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "replicating_ring": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "replication_technique": {
     "battlefield_count": 34,
     "opponent_battlefield_count": 6,
@@ -19866,6 +19878,10 @@
     "zone": "battlefield"
   },
   "shanodin_dryads": {
+    "zone": "battlefield"
+  },
+  "sharding_sphinx": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shared_animosity": {
