@@ -1,0 +1,18 @@
+{
+  "card_id": "phyrexian_rebirth",
+  "name": "Phyrexian Rebirth",
+  "oracle_text": "Destroy all creatures, then create an X/X colorless Phyrexian Horror artifact creature token, where X is the number of creatures destroyed this way.",
+  "blocked_sentences": [
+    "Destroy all creatures, then create an X/X colorless Phyrexian Horror artifact creature token, where X is the number of creatures destroyed this way."
+  ],
+  "needs": [
+    {
+      "capability": "phyrexian_horror_token",
+      "kind": "token",
+      "what": "an X/X (0/0 base, sized by create_token power/toughness) colorless Phyrexian Horror artifact creature token",
+      "why_existing_wont_do": "token_ids has no Phyrexian Horror; the nearest are phyrexian_0_0_c_artifact (a Phyrexian with no Horror subtype) and horror_2_2_b_enchantment (black 2/2 enchantment Horror), both different tokens. The rest of the sentence looks expressible: destroy with `as` binding all creatures, then create_token with power/toughness reading the count of that binding"
+    }
+  ],
+  "closest_existing": ["phyrexian_0_0_c_artifact", "horror_2_2_b_enchantment"],
+  "confidence": "high"
+}

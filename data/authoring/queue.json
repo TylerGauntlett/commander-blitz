@@ -27022,12 +27022,12 @@
     },
     "Blight Titan": {
       "edhrec_rank": 10865,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Titan",
-      "reason": "no template for: Whenever this creature enters or attacks, mill two cards, then incubate X, where X is the ",
+      "reason": "",
       "scryfall_id": "ae304cbe-aa42-4f02-a6d8-86fd5ded43ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight-Breath Catoblepas": {
@@ -28812,12 +28812,12 @@
     },
     "Bloodline Pretender": {
       "edhrec_rank": 1833,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodline Pretender",
-      "reason": "no template for: As this creature enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "6d4af123-eb59-487a-bc25-f2e7019e72d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodline Recollector // Ancestral Craving": {
@@ -41002,12 +41002,12 @@
     },
     "Cataclysmic Gearhulk": {
       "edhrec_rank": 5176,
-      "gate": "template",
+      "gate": null,
       "name": "Cataclysmic Gearhulk",
-      "reason": "no template for: When this creature enters, each player chooses an artifact, a creature, an enchantment, an",
+      "reason": "",
       "scryfall_id": "d5b8efa8-2d62-45b8-9e48-6be0a4ee944d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cataclysmic Prospecting": {
@@ -51122,12 +51122,12 @@
     },
     "Compleated Huntmaster": {
       "edhrec_rank": 11612,
-      "gate": "template",
+      "gate": null,
       "name": "Compleated Huntmaster",
-      "reason": "no template for: {1}, {T}, Sacrifice another creature or artifact: Incubate 3",
+      "reason": "",
       "scryfall_id": "4fc23af5-18dd-45f9-8d82-76b48aaf6d4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Complete Disregard": {
@@ -61602,12 +61602,12 @@
     },
     "Darksteel Splicer": {
       "edhrec_rank": 6621,
-      "gate": "template",
+      "gate": null,
       "name": "Darksteel Splicer",
-      "reason": "no template for: Whenever this creature or another nontoken Phyrexian you control enters, create X 3/3 colo",
+      "reason": "",
       "scryfall_id": "004966d8-2e2d-4b6a-938a-10f257179cf8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darkthicket Wolf": {
@@ -96382,12 +96382,12 @@
     },
     "First-Sphere Gargantua": {
       "edhrec_rank": 19986,
-      "gate": "template",
+      "gate": null,
       "name": "First-Sphere Gargantua",
-      "reason": "no template for: When this creature enters, you draw a card and you lose 1 life",
+      "reason": "",
       "scryfall_id": "323c8de1-f09b-45c5-8942-81cb3a09c803",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "First-Time Flyer": {
@@ -148122,12 +148122,12 @@
     },
     "Keskit, the Flesh Sculptor": {
       "edhrec_rank": 13397,
-      "gate": "template",
+      "gate": null,
       "name": "Keskit, the Flesh Sculptor",
-      "reason": "no template for: {T}, Sacrifice three other artifacts and/or creatures: Look at the top three cards of your",
+      "reason": "",
       "scryfall_id": "a9ecbf55-1f85-4877-a1ea-bf0d90dd9979",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kess, Dissident Mage": {
@@ -169052,12 +169052,12 @@
     },
     "Master Splicer": {
       "edhrec_rank": 7974,
-      "gate": "template",
+      "gate": null,
       "name": "Master Splicer",
-      "reason": "no template for: When this creature enters, create a 3/3 colorless Phyrexian Golem artifact creature token",
+      "reason": "",
       "scryfall_id": "68e441e0-5270-42a3-afbe-08761014c502",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Master Symmetrist": {
@@ -177302,12 +177302,12 @@
     },
     "Moira and Teshar": {
       "edhrec_rank": 15319,
-      "gate": "template",
+      "gate": null,
       "name": "Moira and Teshar",
-      "reason": "no template for: Whenever you cast a historic spell, return target nonland permanent card from your graveya",
+      "reason": "",
       "scryfall_id": "19d0acaa-bfbf-4155-a9b0-5b39c3c87361",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moira, Urborg Haunt": {
@@ -195072,12 +195072,12 @@
     },
     "Orzhov Locket": {
       "edhrec_rank": 9417,
-      "gate": "template",
+      "gate": null,
       "name": "Orzhov Locket",
-      "reason": "no template for: {W/B}{W/B}{W/B}{W/B}, {T}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "52f5b969-2f5a-4f9d-9301-2cbfbc7d76e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orzhov Pontiff": {
@@ -201462,12 +201462,12 @@
     },
     "Phyrexian Delver": {
       "edhrec_rank": 3892,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Delver",
-      "reason": "no template for: When this creature enters, return target creature card from your graveyard to the battlefi",
+      "reason": "",
       "scryfall_id": "86f6f3e9-b594-49da-b0af-75a672590da1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Denouncer": {
@@ -201572,22 +201572,22 @@
     },
     "Phyrexian Gargantua": {
       "edhrec_rank": 15317,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Gargantua",
-      "reason": "no template for: When this creature enters, you draw two cards and you lose 2 life",
+      "reason": "",
       "scryfall_id": "81472abd-8a5e-4184-8aa2-6d860fa40af4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Ghoul": {
       "edhrec_rank": 13156,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Ghoul",
-      "reason": "no template for: Sacrifice a creature: This creature gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "43752240-10b1-4920-bb89-e4a4a1e78219",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Gremlins": {
@@ -201812,12 +201812,12 @@
     },
     "Phyrexian Rager": {
       "edhrec_rank": 8214,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Rager",
-      "reason": "no template for: When this creature enters, you draw a card and you lose 1 life",
+      "reason": "",
       "scryfall_id": "a9861fb3-6722-43b8-bf0a-af6dd166e59d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Reaper": {

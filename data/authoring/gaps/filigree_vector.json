@@ -1,0 +1,18 @@
+{
+  "card_id": "filigree_vector",
+  "name": "Filigree Vector",
+  "oracle_text": "When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts.\n{1}, {T}, Sacrifice another artifact: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "blocked_sentences": [
+    "When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts."
+  ],
+  "needs": [
+    {
+      "capability": "multiple_variable_size_targets",
+      "kind": "engine",
+      "what": "one ability declaring two independent caster-sized target specs ('any number of target creatures' and 'any number of target artifacts'), where an artifact creature may be chosen as a target of both specs and each spec's refs stay distinguishable on resolution",
+      "why_existing_wont_do": "A target spec's count may be \"any\", but the loader (loader.targets, TargetSpec.count) admits at most one variable-size spec per ability and requires it to be last, because filter_legal slices stored refs spec by spec. Splitting the sentence into two triggered abilities would create two triggers instead of one; a single spec with any_types [Creature, Artifact] cannot say which counter an artifact creature gets, nor let it be targeted for both."
+    }
+  ],
+  "closest_existing": ["add_counters", "targets.count: any", "proliferate"],
+  "confidence": "high"
+}
