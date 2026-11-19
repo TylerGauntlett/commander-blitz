@@ -73582,12 +73582,12 @@
     },
     "Dragonkin Berserker": {
       "edhrec_rank": 13498,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonkin Berserker",
-      "reason": "no template for: Boast abilities you activate cost {1} less to activate for each Dragon you control",
+      "reason": "",
       "scryfall_id": "dcfd4840-c524-464a-9519-3fb78e6ee8c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonlair Spider": {

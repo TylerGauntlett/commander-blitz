@@ -2996,6 +2996,32 @@ the payment. Added to the ability's own `mana_reduction` rather than replacing
 it: two cards may both be talking about one activation, and the printed answer
 is that both apply. Generic only and clamped at zero, like every other reduction.
 
+### "Boast abilities you activate cost {1} less … for each Dragon you control"
+
+```jsonc
+// Dragonkin Berserker
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "boast": true },
+  "activated_by": "you",
+  "amount": { "count": { "controller": "you", "subtypes": ["Dragon"] } } }
+
+// its boast ability, declared as one
+{ "kind": "activated", "text": "Boast — {4}{R}: …",
+  "is_boast": true, "once_each_turn": true,
+  "condition": { "exists": { "attacked_this_turn": true, "self_only": true,
+                             "zone": "battlefield" } },
+  "cost": { "mana": "{4}{R}" }, "effects": [ … ] }
+```
+
+`{"boast": true}` is the class of activated abilities declaring `is_boast`
+(702.142a), read against `Ability.is_boast`. The marker is declared for
+`is_equip`'s reason: a boast ability compiles to an activated ability with
+`once_each_turn` and an attacked-this-turn `condition`, and other abilities
+print that restriction without the word. The loader holds the declaration to
+the shape and refuses `is_boast` on an ability that is not activated, does not
+print "Boast", or lacks either half of the restriction
+(`loader.vocabulary.BOAST_CONDITION` is the condition).
+
 ### "The first activated ability you activate during your turn that targets …"
 
 ```jsonc

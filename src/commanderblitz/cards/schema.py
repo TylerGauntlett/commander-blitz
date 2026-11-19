@@ -718,6 +718,16 @@ class AbilityModel(BaseModel):
     #: word. The loader checks the declaration against the shape instead, so
     #: the word cannot be written without the mechanic behind it.
     is_equip: bool = False
+    #: "**Boast** — {4}{R}: …" -- 702.142a. Marks this activated ability as a
+    #: boast ability, so a static can name boast abilities as a class:
+    #: Dragonkin Berserker's "boast abilities you activate cost {1} less to
+    #: activate for each Dragon you control".
+    #:
+    #: Declared, for `is_equip`'s reason: a boast ability compiles to an
+    #: activated ability with `once_each_turn` and an attacked-this-turn
+    #: `condition`, a shape other abilities print without the word. The
+    #: loader holds the declaration to that shape.
+    is_boast: bool = False
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
     #: A *list* is the "and/or" form -- "Spend this mana only to cast Vampire,
     #: Cleric, and/or Demon spells" -- and its entries may be subtypes as well as

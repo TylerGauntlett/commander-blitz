@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **459** capabilities.
+**541 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -122,7 +122,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
-| [boast](#boast) | 1 | 13498 | static_effect |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -2743,20 +2742,6 @@ Blocks **1** card.
 
 - **Twins of Discord** (rank 6438) — `twins_of_discord`
   - Each other colorless creature you control has bloodthirst 2
-
-</details>
-
-## boast
-
-Blocks **1** card.
-
-- **(static_effect)** a 'boast' ability class: an Ability.is_boast marker (set on activated abilities printed 'Boast — <cost>: <effect>', which carry the attacked-this-turn and once-each-turn restrictions) and a matching affects_abilities key {"boast": true} on ability_cost_reduction, so the static can discount every boast ability its controller activates by {1} per Dragon they control (amount {"count": {"controller": "you", "subtypes": ["Dragon"]}})
-  <br>Why the existing vocabulary won't do: ability_cost_reduction exists, but affects_abilities accepts only the classes in ABILITY_CLASS_KEYS (equip, any, non_mana); 'any' would discount every activated ability (and the loader demands a targeting clause with it), and the cost-node mana_reduction would only discount this card's own boast, not boast abilities on other permanents as printed. Nothing marks an ability as a boast ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragonkin Berserker** (rank 13498) — `dragonkin_berserker`
-  - Boast abilities you activate cost {1} less to activate for each Dragon you control.
 
 </details>
 

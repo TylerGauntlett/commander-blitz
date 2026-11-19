@@ -6309,6 +6309,10 @@
     },
     "zone": "battlefield"
   },
+  "dragonkin_berserker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dragonlord_dromoka": {
     "battlefield_count": 33,
     "zone": "battlefield"

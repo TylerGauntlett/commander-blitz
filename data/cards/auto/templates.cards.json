@@ -36850,6 +36850,7 @@
               "target": "t1"
             }
           ],
+          "is_boast": true,
           "kind": "activated",
           "once_each_turn": true,
           "targets": [
@@ -76886,6 +76887,75 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "you",
+          "affects_abilities": {
+            "boast": true
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          },
+          "effect": "ability_cost_reduction",
+          "kind": "static",
+          "text": "Boast abilities you activate cost {1} less to activate for each Dragon you control."
+        },
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{4}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_5_5_r_flying"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Boast — {4}{R}: Create a 5/5 red Dragon creature token with flying. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dragonkin_berserker",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Dragonkin Berserker",
+      "oracle_text": "First strike\nBoast abilities you activate cost {1} less to activate for each Dragon you control.\nBoast — {4}{R}: Create a 5/5 red Dragon creature token with flying. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Berserker"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

@@ -1,0 +1,151 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_boast_marker.py. t_boast_patron is Dragonkin Berserker's static alone; t_boaster carries a boast ability declaring is_boast; t_lookalike prints the same restriction and cost without the word, the near miss the class must not reach.",
+  "cards": [
+    {
+      "id": "t_boast_patron",
+      "name": "Test Boast Patron",
+      "oracle_text": "Boast abilities you activate cost {1} less to activate for each Dragon you control.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Boast abilities you activate cost {1} less to activate for each Dragon you control.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {
+            "boast": true
+          },
+          "activated_by": "you",
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_boaster",
+      "name": "Test Boaster",
+      "oracle_text": "Boast — {4}{R}: You gain 5 life. (Activate only if this creature attacked this turn and only once each turn.)",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Boast — {4}{R}: You gain 5 life. (Activate only if this creature attacked this turn and only once each turn.)",
+          "cost": {
+            "mana": "{4}{R}"
+          },
+          "once_each_turn": true,
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 5
+              }
+            }
+          ],
+          "is_boast": true
+        }
+      ]
+    },
+    {
+      "id": "t_lookalike",
+      "name": "Test Boast Lookalike",
+      "oracle_text": "{4}{R}: You gain 5 life. Activate only if this creature attacked this turn and only once each turn.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{4}{R}: You gain 5 life. Activate only if this creature attacked this turn and only once each turn.",
+          "cost": {
+            "mana": "{4}{R}"
+          },
+          "once_each_turn": true,
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_boast_dragon",
+      "name": "Test Boast Dragon",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    }
+  ]
+}
