@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **458** capabilities.
+**532 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -240,7 +240,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-spell-filter](#face-down-spell-filter) | 1 | 10947 | selector |
 | [face-down-static-filter](#face-down-static-filter) | 1 | 15770 | static_effect |
 | [face-up-exile-filter](#face-up-exile-filter) | 1 | 21122 | selector |
-| [feather-token](#feather-token) | 1 | 11236 | token |
 | [filtered-proliferate](#filtered-proliferate) | 1 | 17657 | op |
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
@@ -277,7 +276,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
-| [gremlin-artifact-token](#gremlin-artifact-token) | 1 | 15192 | token |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
@@ -394,7 +392,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
-| [replicated-ring-token](#replicated-ring-token) | 1 | 1570 | token |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
@@ -437,7 +434,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
-| [thopter-1-1-u-flying](#thopter-1-1-u-flying) | 1 | 3736 | token |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
@@ -4406,20 +4402,6 @@ Blocks **1** card.
 
 </details>
 
-## feather-token
-
-Blocks **1** card.
-
-- **(token)** a red noncreature artifact token named Feather with "{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped." (an activated ability: cost mana {1} + sacrifice self; target card_in_graveyard with subtypes [Phoenix] controlled by you; return_from_graveyard to battlefield tapped)
-  <br>Why the existing vocabulary won't do: token_ids has no Feather token and no red artifact token with a sacrifice-to-reanimate ability; create_token may only name an id in that closed list. The rest of the card is expressible: mutate is a card-level cost key, Flying is a keyword, and the 'mutates' trigger event exists (as used by Gemrazer and Nethroi).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everquill Phoenix** (rank 11236) — `everquill_phoenix`
-  - Whenever this creature mutates, create a red artifact token named Feather with "{1}, Sacrifice this token: Return target Phoenix card from your graveyard to the battlefield tapped."
-
-</details>
-
 ## filtered-proliferate
 
 Blocks **1** card.
@@ -4934,20 +4916,6 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
-
-</details>
-
-## gremlin-artifact-token
-
-Blocks **1** card.
-
-- **(token)** a 0/0 red Gremlin artifact creature token (types Artifact, Creature; subtype Gremlin; color R; no abilities), e.g. id gremlin_0_0_r_artifact
-  <br>Why the existing vocabulary won't do: The only Gremlin in token_ids is gremlin_1_1_r, a 1/1 red Gremlin creature that is not an artifact; create_token can override power/toughness but not add the Artifact type, and being an artifact matters both for the trample static and for the token counting itself in X. The rest of the line is expressible: end_step trigger, create_token with as-binding, then add_counters whose amount is {"distinct": {"of": "name", "objects": {"controller": "you", "types": ["Artifact"], "is_token": true}}}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gimbal, Gremlin Prodigy** (rank 15192) — `gimbal_gremlin_prodigy`
-  - At the beginning of your end step, create a 0/0 red Gremlin artifact creature token. Put X +1/+1 counters on it, where X is the number of differently named artifact tokens you control.
 
 </details>
 
@@ -6608,20 +6576,6 @@ Blocks **1** card.
 
 </details>
 
-## replicated-ring-token
-
-Blocks **1** card.
-
-- **(token)** a colorless snow artifact token named Replicated Ring with "{T}: Add one mana of any color." (supertype Snow, type Artifact, no subtype, not sacrificed)
-  <br>Why the existing vocabulary won't do: No such id in token_ids; treasure_token taps for any color but sacrifices itself, is a Treasure and is not snow, and vibranium_token adds only restricted {C}. The rest of the line is expressible: an upkeep trigger, add_counters night on self, then an if on counters_on >= 8 with remove_counters all of that kind and create_token amount 8
-
-<details><summary>Cards waiting on this</summary>
-
-- **Replicating Ring** (rank 1570) — `replicating_ring`
-  - At the beginning of your upkeep, put a night counter on this artifact. Then if it has eight or more night counters on it, remove all of them and create eight colorless snow artifact tokens named Replicated Ring with "{T}: Add one mana of any color."
-
-</details>
-
 ## retrace
 
 Blocks **1** card.
@@ -7223,20 +7177,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## thopter-1-1-u-flying
-
-Blocks **1** card.
-
-- **(token)** a 1/1 blue Thopter artifact creature token with flying
-  <br>Why the existing vocabulary won't do: The only Thopter in token_ids is thopter_1_1_c_flying, which is colorless; the printed token is blue. The trigger itself is expressible (deals_combat_damage_to_player with a filter of types Artifact+Creature, controller you, wrapped in may + create_token) once the token exists.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sharding Sphinx** (rank 3736) — `sharding_sphinx`
-  - Whenever an artifact creature you control deals combat damage to a player, you may create a 1/1 blue Thopter artifact creature token with flying.
 
 </details>
 

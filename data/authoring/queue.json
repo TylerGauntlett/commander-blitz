@@ -196812,12 +196812,12 @@
     },
     "Pain Distributor": {
       "edhrec_rank": 5043,
-      "gate": "template",
+      "gate": null,
       "name": "Pain Distributor",
-      "reason": "no template for: Whenever a player casts their first spell each turn, they create a Treasure token",
+      "reason": "",
       "scryfall_id": "3a3a0170-444e-4147-96b6-b14bb5649108",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pain Kami": {
@@ -231222,12 +231222,12 @@
     },
     "Saheeli's Artistry": {
       "edhrec_rank": 7185,
-      "gate": "template",
+      "gate": null,
       "name": "Saheeli's Artistry",
-      "reason": "no template for: Choose one or both —",
+      "reason": "",
       "scryfall_id": "4cdfb468-e475-47e6-80f5-190c9b206e70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Saheeli's Directive": {
@@ -232672,12 +232672,12 @@
     },
     "Sandsteppe War Riders": {
       "edhrec_rank": 19955,
-      "gate": "template",
+      "gate": null,
       "name": "Sandsteppe War Riders",
-      "reason": "no template for: At the beginning of combat on your turn, bolster X, where X is the number of differently n",
+      "reason": "",
       "scryfall_id": "28cca229-77c9-4d57-b980-c98b76d94d26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sandstone Bridge": {
@@ -267662,12 +267662,12 @@
     },
     "Struggle // Survive": {
       "edhrec_rank": 15210,
-      "gate": "template",
+      "gate": null,
       "name": "Struggle // Survive",
-      "reason": "no template for: Struggle deals damage to target creature equal to the number of lands you control",
+      "reason": "",
       "scryfall_id": "bf909dbb-6e49-4556-a37a-2738889915d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Struggle for Project Purity": {
@@ -301942,12 +301942,12 @@
     },
     "Vedalken Humiliator": {
       "edhrec_rank": 8611,
-      "gate": "template",
+      "gate": null,
       "name": "Vedalken Humiliator",
-      "reason": "no template for: Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creat",
+      "reason": "",
       "scryfall_id": "51b14afb-5603-49af-b545-1277341775ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vedalken Infiltrator": {
@@ -318842,12 +318842,12 @@
     },
     "Workshop Elders": {
       "edhrec_rank": 14654,
-      "gate": "template",
+      "gate": null,
       "name": "Workshop Elders",
-      "reason": "no template for: Artifact creatures you control have flying",
+      "reason": "",
       "scryfall_id": "0058a848-cb55-408a-a500-d97f573588f5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Workshop Warchief": {

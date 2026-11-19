@@ -16275,6 +16275,13 @@
     },
     "zone": "battlefield"
   },
+  "pain_distributor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "painful_truths": {
     "graveyard_size": {
       "0": 3
@@ -18984,6 +18991,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "saheeli_s_artistry": {
+    "battlefield_count": 34,
+    "zone": "graveyard"
+  },
   "saheeli_sublime_artificer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19035,6 +19046,10 @@
     "zone": "battlefield"
   },
   "sandsteppe_citadel": {
+    "zone": "battlefield"
+  },
+  "sandsteppe_war_riders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sandwurm_convergence": {
@@ -21734,6 +21749,9 @@
   "strong_back": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "struggle_survive": {
+    "zone": "graveyard"
   },
   "stubborn_denial": {
     "hand_size": {
@@ -25003,6 +25021,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "vedalken_humiliator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vein_ripper": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26452,6 +26474,10 @@
     "zone": "battlefield"
   },
   "worf_chief_tactical_officer": {
+    "zone": "battlefield"
+  },
+  "workshop_elders": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "world_breaker": {

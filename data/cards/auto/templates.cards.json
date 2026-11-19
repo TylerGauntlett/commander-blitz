@@ -195783,6 +195783,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player casts their first spell each turn, they create a Treasure token.",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "controller_of": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact an opponent controls is put into a graveyard from the battlefield, this creature deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pain_distributor",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Pain Distributor",
+      "oracle_text": "Menace\nWhenever a player casts their first spell each turn, they create a Treasure token.\nWhenever an artifact an opponent controls is put into a graveyard from the battlefield, this creature deals 1 damage to that player.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Devil",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -227809,6 +227884,86 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "saheeli_s_artistry",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Saheeli's Artistry",
+      "oracle_text": "Choose one or both —\n• Create a token that's a copy of target artifact.\n• Create a token that's a copy of target creature, except it's an artifact in addition to its other types.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "except_": {
+                    "add_types": [
+                      "Artifact"
+                    ]
+                  },
+                  "objects": {
+                    "target": "creature"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target creature, except it's an artifact in addition to its other types."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creature",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -228677,6 +228832,72 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "is_token": true,
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "name"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "extreme": {
+                  "of": "toughness",
+                  "pick": "least"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, bolster X, where X is the number of differently named artifact tokens you control",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sandsteppe_war_riders",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Sandsteppe War Riders",
+      "oracle_text": "Trample\nAt the beginning of combat on your turn, bolster X, where X is the number of differently named artifact tokens you control. (Choose a creature with the least toughness among creatures you control and put X +1/+1 counters on it.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -260080,6 +260301,77 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "struggle_survive",
+      "mana_cost": "{2}{R}",
+      "name": "Struggle // Survive",
+      "oracle_text": "Struggle deals damage to target creature equal to the number of lands you control.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their graveyard into their library.",
+      "second_face": "struggle_survive_survive",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "lands_you_control": true
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "struggle_survive_survive",
+      "mana_cost": "{1}{G}",
+      "name": "Survive",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles their graveyard into their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "player": "each_player",
+            "zone": "graveyard"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -301414,6 +301706,87 @@
         {
           "effects": [
             {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "lose_all_abilities"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creatures your opponents control lose all abilities and have base power and toughness 1/1 until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ]
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "vedalken_humiliator",
+      "mana_cost": "{3}{U}",
+      "name": "Vedalken Humiliator",
+      "oracle_text": "Metalcraft — Whenever this creature attacks, if you control three or more artifacts, creatures your opponents control lose all abilities and have base power and toughness 1/1 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "else": [
                 {
                   "op": "counter",
@@ -317835,6 +318208,105 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have flying."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 0
+                  },
+                  "toughness": {
+                    "const": 0
+                  },
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                },
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have the target artifact become a 0/0 artifact creature with four +1/+1 counters?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may have target noncreature artifact you control become a 0/0 artifact creature. If you do, put four +1/+1 counters on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "workshop_elders",
+      "mana_cost": "{6}{U}",
+      "name": "Workshop Elders",
+      "oracle_text": "Artifact creatures you control have flying.\nAt the beginning of combat on your turn, you may have target noncreature artifact you control become a 0/0 artifact creature. If you do, put four +1/+1 counters on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
