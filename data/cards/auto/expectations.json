@@ -4342,6 +4342,10 @@
     },
     "zone": "battlefield"
   },
+  "conclave_sledge_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "conclave_tribunal": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -4406,6 +4410,11 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "constable_of_the_realm": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "consulate_skygate": {
     "zone": "battlefield"
@@ -6796,6 +6805,10 @@
   "elite_cat_warrior": {
     "zone": "battlefield"
   },
+  "elite_scaleguard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elite_vanguard": {
     "zone": "battlefield"
   },
@@ -6899,6 +6912,10 @@
       "id": "lander_token"
     },
     "zone": "graveyard"
+  },
+  "emergent_woodwurm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "emeria_s_call_emeria_shattered_skyclave": {
     "battlefield_count": 34,
@@ -7012,6 +7029,10 @@
     "zone": "battlefield"
   },
   "endurance_bobblehead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "enduring_scalelord": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7670,6 +7691,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "falkenrath_exterminator": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "falkenrath_pit_fighter": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7923,6 +7948,14 @@
   },
   "fertile_ground": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fertilid": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "fervent_charge": {
@@ -8211,6 +8244,10 @@
     "zone": "battlefield"
   },
   "flamerush_rider": {
+    "zone": "battlefield"
+  },
+  "flameshadow_conjuring": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "flaming_sword": {
@@ -8921,6 +8958,10 @@
     "zone": "battlefield"
   },
   "gavel_of_the_righteous": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gavony_township": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9678,6 +9719,10 @@
   "goobbue_gardener": {
     "zone": "battlefield"
   },
+  "good_fortune_unicorn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gore_swine": {
     "zone": "battlefield"
   },
@@ -10211,6 +10256,13 @@
   },
   "hammerhead_tyrant": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hamza_guardian_of_arashin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "hancock_ghoulish_mayor": {

@@ -51422,12 +51422,12 @@
     },
     "Conclave Sledge-Captain": {
       "edhrec_rank": 7305,
-      "gate": "template",
+      "gate": null,
       "name": "Conclave Sledge-Captain",
-      "reason": "no template for: Backup 1, backup 1, backup 1",
+      "reason": "",
       "scryfall_id": "3320f1b0-84b6-43c1-8423-1a044bdfb328",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conclave Tribunal": {
@@ -52112,12 +52112,12 @@
     },
     "Constable of the Realm": {
       "edhrec_rank": 13903,
-      "gate": "template",
+      "gate": null,
       "name": "Constable of the Realm",
-      "reason": "no template for: Renown 2",
+      "reason": "",
       "scryfall_id": "a1000f3c-475e-49b8-8c98-bbff0e7ed87b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Constant Mists": {
@@ -81162,12 +81162,12 @@
     },
     "Elite Scaleguard": {
       "edhrec_rank": 8656,
-      "gate": "template",
+      "gate": null,
       "name": "Elite Scaleguard",
-      "reason": "no template for: When this creature enters, bolster 2",
+      "reason": "",
       "scryfall_id": "4acacc21-3613-40eb-85e4-b93b2807d73b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elite Skirmisher": {
@@ -82832,12 +82832,12 @@
     },
     "Emergent Woodwurm": {
       "edhrec_rank": 6743,
-      "gate": "template",
+      "gate": null,
       "name": "Emergent Woodwurm",
-      "reason": "no template for: Backup 3",
+      "reason": "",
       "scryfall_id": "af1b9c3d-5700-4298-a6a5-9379cad8726e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emeria Captain": {
@@ -83952,12 +83952,12 @@
     },
     "Enduring Scalelord": {
       "edhrec_rank": 10986,
-      "gate": "template",
+      "gate": null,
       "name": "Enduring Scalelord",
-      "reason": "no template for: Whenever one or more +1/+1 counters are put on another creature you control, you may put a",
+      "reason": "",
       "scryfall_id": "c0ee001b-6ddb-478e-a407-58bcc2bf7c30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enduring Sliver": {
@@ -90462,12 +90462,12 @@
     },
     "Falkenrath Exterminator": {
       "edhrec_rank": 17718,
-      "gate": "template",
+      "gate": null,
       "name": "Falkenrath Exterminator",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, put a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "75cb8891-90bc-41d9-96ff-e24564d3970e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Falkenrath Forebear": {
@@ -93812,12 +93812,12 @@
     },
     "Fertilid": {
       "edhrec_rank": 2901,
-      "gate": "template",
+      "gate": null,
       "name": "Fertilid",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "2d73ea23-52ab-4b92-b263-dc8b9e5a1010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fertilid's Favor": {
@@ -97102,12 +97102,12 @@
     },
     "Flameshadow Conjuring": {
       "edhrec_rank": 2974,
-      "gate": "template",
+      "gate": null,
       "name": "Flameshadow Conjuring",
-      "reason": "no template for: Whenever a nontoken creature you control enters, you may pay {R}. If you do, create a toke",
+      "reason": "",
       "scryfall_id": "ae113258-288f-47d5-8f79-e2e51b6326de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flameshot": {
@@ -106012,12 +106012,12 @@
     },
     "Gavony Township": {
       "edhrec_rank": 992,
-      "gate": "template",
+      "gate": null,
       "name": "Gavony Township",
-      "reason": "no template for: {2}{G}{W}, {T}: Put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "ce46c4e2-a515-41d7-8d70-d20cf4925996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gavony Trapper": {
@@ -115152,12 +115152,12 @@
     },
     "Good-Fortune Unicorn": {
       "edhrec_rank": 3473,
-      "gate": "template",
+      "gate": null,
       "name": "Good-Fortune Unicorn",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature",
+      "reason": "",
       "scryfall_id": "eabbe163-2b15-42e3-89ce-7363e6250d3a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gor Muldrak, Amphinologist": {
@@ -122032,12 +122032,12 @@
     },
     "Hamza, Guardian of Arashin": {
       "edhrec_rank": 3377,
-      "gate": "template",
+      "gate": null,
       "name": "Hamza, Guardian of Arashin",
-      "reason": "no template for: This spell costs {1} less to cast for each creature you control with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "adc7f8f3-140d-4dd0-aacc-b81b2b93eb67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hana Kami": {

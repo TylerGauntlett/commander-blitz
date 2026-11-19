@@ -53374,6 +53374,264 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "exclude_self": true,
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "ability": 0,
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_ability"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Backup 1, backup 1, backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn. Each backup ability triggers separately.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "exclude_self": true,
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "ability": 0,
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_ability"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Backup 1, backup 1, backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn. Each backup ability triggers separately.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "exclude_self": true,
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "ability": 0,
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_ability"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Backup 1, backup 1, backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn. Each backup ability triggers separately.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "conclave_sledge_captain",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{G}",
+      "name": "Conclave Sledge-Captain",
+      "oracle_text": "Backup 1, backup 1, backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn. Each backup ability triggers separately.)\nTrample\nWhenever this creature deals combat damage to a player, put that many +1/+1 counters on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Soldier"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -54437,6 +54695,96 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "flag": "renowned",
+              "objects": {
+                "self_only": true
+              },
+              "op": "set_flag"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)",
+          "trigger": {
+            "condition": {
+              "not": {
+                "has_flag": "renowned"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever one or more +1/+1 counters are put on this creature, exile up to one other target nonland permanent until this creature leaves the battlefield.",
+          "trigger": {
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "constable_of_the_realm",
+      "mana_cost": "{4}{W}",
+      "name": "Constable of the Realm",
+      "oracle_text": "Renown 2 (When this creature deals combat damage to a player, if it isn't renowned, put two +1/+1 counters on it and it becomes renowned.)\nWhenever one or more +1/+1 counters are put on this creature, exile up to one other target nonland permanent until this creature leaves the battlefield.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Giant",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -82413,6 +82761,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "extreme": {
+                  "of": "toughness",
+                  "pick": "least"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, bolster 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control with a +1/+1 counter on it attacks, tap target creature defending player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "has_counters": "+1/+1",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "elite_scaleguard",
+      "mana_cost": "{4}{W}",
+      "name": "Elite Scaleguard",
+      "oracle_text": "When this creature enters, bolster 2. (Choose a creature with the least toughness among creatures you control and put two +1/+1 counters on it.)\nWhenever a creature you control with a +1/+1 counter on it attacks, tap target creature defending player controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -83459,6 +83898,158 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "exclude_self": true,
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": 0,
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_ability"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Backup 3 (When this creature enters, put three +1/+1 counters on target creature. If that's another creature, it gains the following ability until end of turn.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, look at the top X cards of your library, where X is its power. You may put a permanent card with mana value X or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, look at the top X cards of your library, where X is its power. You may put a permanent card with mana value X or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "emergent_woodwurm",
+      "mana_cost": "{6}{G}",
+      "name": "Emergent Woodwurm",
+      "oracle_text": "Backup 3 (When this creature enters, put three +1/+1 counters on target creature. If that's another creature, it gains the following ability until end of turn.)\nWhenever this creature attacks, look at the top X cards of your library, where X is its power. You may put a permanent card with mana value X or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Wurm"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -84745,6 +85336,67 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a +1/+1 counter on Enduring Scalelord?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more +1/+1 counters are put on another creature you control, you may put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "enduring_scalelord",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{G}{W}",
+      "name": "Enduring Scalelord",
+      "oracle_text": "Flying\nWhenever one or more +1/+1 counters are put on another creature you control, you may put a +1/+1 counter on this creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -91516,6 +92168,87 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{R}: This creature deals damage to target creature equal to the number of +1/+1 counters on this creature."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "falkenrath_exterminator",
+      "mana_cost": "{1}{R}",
+      "name": "Falkenrath Exterminator",
+      "oracle_text": "Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.\n{2}{R}: This creature deals damage to target creature equal to the number of +1/+1 counters on this creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Archer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "cmp": ">=",
             "left": {
@@ -94426,6 +95159,74 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": {
+                "target": "t1"
+              },
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "shuffle": true,
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "{1}{G}, Remove a +1/+1 counter from this creature: Target player searches their library for a basic land card, puts it onto the battlefield tapped, then shuffles."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fertilid",
+      "mana_cost": "{2}{G}",
+      "name": "Fertilid",
+      "oracle_text": "This creature enters with two +1/+1 counters on it.\n{1}{G}, Remove a +1/+1 counter from this creature: Target player searches their library for a basic land card, puts it onto the battlefield tapped, then shuffles.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 2,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -97721,6 +98522,82 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "conjured_copy",
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "conjured_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "conjured_copy",
+                        "count": "all"
+                      },
+                      "op": "exile"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Exile it at the beginning of the next end step."
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{R}"
+              },
+              "prompt": "Pay {R} to create a token that's a copy of that creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control enters, you may pay {R}. If you do, create a token that's a copy of that creature. That token gains haste. Exile it at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": false,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flameshadow_conjuring",
+      "mana_cost": "{3}{R}",
+      "name": "Flameshadow Conjuring",
+      "oracle_text": "Whenever a nontoken creature you control enters, you may pay {R}. If you do, create a token that's a copy of that creature. That token gains haste. Exile it at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -105848,6 +106725,61 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}{W}, {T}: Put a +1/+1 counter on each creature you control."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "id": "gavony_township",
+      "name": "Gavony Township",
+      "oracle_text": "{T}: Add {C}.\n{2}{G}{W}, {T}: Put a +1/+1 counter on each creature you control.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -114919,6 +115851,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, put a +1/+1 counter on that creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "good_fortune_unicorn",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Good-Fortune Unicorn",
+      "oracle_text": "Whenever another creature you control enters, put a +1/+1 counter on that creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Unicorn"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -121326,6 +122309,64 @@
         "Dragon"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "has_counters": "+1/+1",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Creature spells you cast cost {1} less to cast for each creature you control with a +1/+1 counter on it."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "has_counters": "+1/+1",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "hamza_guardian_of_arashin",
+      "mana_cost": "{4}{G}{W}",
+      "name": "Hamza, Guardian of Arashin",
+      "oracle_text": "This spell costs {1} less to cast for each creature you control with a +1/+1 counter on it.\nCreature spells you cast cost {1} less to cast for each creature you control with a +1/+1 counter on it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
