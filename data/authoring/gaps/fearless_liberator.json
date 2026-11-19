@@ -1,0 +1,21 @@
+{
+  "card_id": "fearless_liberator",
+  "name": "Fearless Liberator",
+  "oracle_text": "Boast — {2}{R}: Create a 2/1 red Dwarf Berserker creature token. (Activate only if this creature attacked this turn and only once each turn.)",
+  "blocked_sentences": [
+    "Boast — {2}{R}: Create a 2/1 red Dwarf Berserker creature token."
+  ],
+  "needs": [
+    {
+      "capability": "dwarf_berserker_token",
+      "kind": "token",
+      "what": "a 2/1 red Dwarf Berserker creature token (e.g. id dwarf_berserker_2_1_r)",
+      "why_existing_wont_do": "The Boast ability itself is expressible (is_boast, once_each_turn, attacked_this_turn condition, create_token), but token_ids has no Dwarf Berserker; the only 2/1 tokens are inkling_2_1_wb_flying, insect_2_1_w_flying, phyrexian_myr_2_1_u_artifact and villain_2_1_b_menace, none red or of that creature type"
+    }
+  ],
+  "closest_existing": [
+    "villain_2_1_b_menace",
+    "create_token"
+  ],
+  "confidence": "high"
+}

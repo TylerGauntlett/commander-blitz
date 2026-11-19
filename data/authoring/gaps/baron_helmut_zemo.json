@@ -1,0 +1,24 @@
+{
+  "card_id": "baron_helmut_zemo",
+  "name": "Baron Helmut Zemo",
+  "oracle_text": "Whenever you cast a black spell from your hand, Baron Helmut Zemo connives.\nBoast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)",
+  "blocked_sentences": [
+    "Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "exile_from_graveyard_total_mana_symbols",
+      "kind": "cost",
+      "what": "an exile_from_graveyard cost of 'any number' of matching cards whose payment is legal only when the chosen set's combined count of {B} symbols in their mana costs is at least 15 (a threshold over the whole chosen set, like tap_permanents' total_power), with `as` binding the exiled cards",
+      "why_existing_wont_do": "exile_from_graveyard (costs._graveyard_pool / pay) takes a fixed `count` and asks for exactly that many cards; there is no variable-size pick and no aggregate constraint over the chosen cards. mana_symbols exists only as a value, not as a cost threshold"
+    },
+    {
+      "capability": "cast_copy_limit",
+      "kind": "op",
+      "what": "cast_copy with a cap on how many of the copies may be cast ('you may cast up to three of the copies'), the player choosing which of the copied cards to cast",
+      "why_existing_wont_do": "cast_copy takes only objects, optional and cost, and offers every matched card one at a time with no limit; grant_playable's `limit` applies to exiled originals, not to copies cast free during resolution"
+    }
+  ],
+  "closest_existing": ["exile_from_graveyard", "cast_copy", "tap_permanents.total_power"],
+  "confidence": "high"
+}

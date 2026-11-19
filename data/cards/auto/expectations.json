@@ -21045,6 +21045,10 @@
     },
     "zone": "graveyard"
   },
+  "sigurd_jarl_of_ravensthorpe": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "silent_artisan": {
     "zone": "battlefield"
   },
@@ -25794,6 +25798,10 @@
     "zone": "battlefield"
   },
   "varchild_s_crusader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "varragoth_bloodsky_sire": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -1,0 +1,22 @@
+{
+  "card_id": "eradicator_valkyrie",
+  "name": "Eradicator Valkyrie",
+  "oracle_text": "Flying, lifelink, hexproof from planeswalkers\nBoast — {1}{B}, Sacrifice a creature: Each opponent sacrifices a creature or planeswalker. (Activate only if this creature attacked this turn and only once each turn.)",
+  "blocked_sentences": [
+    "Flying, lifelink, hexproof from planeswalkers"
+  ],
+  "needs": [
+    {
+      "capability": "hexproof_from",
+      "kind": "keyword",
+      "what": "a parameterised hexproof keyword, 'hexproof from <quality>', where the quality here is a card type (planeswalkers): this permanent can't be the target of spells or abilities opponents control whose source is a planeswalker (702.11d), while remaining targetable by everything else",
+      "why_existing_wont_do": "The keywords list has only plain 'hexproof' (blocks every opponent source, too broad) and 'shroud'; the 'protection' static effect also prevents damage, blocking and attachment (DEBT), and 'ward' only taxes targeting; nothing restricts untargetability to sources of a given type"
+    }
+  ],
+  "closest_existing": [
+    "hexproof",
+    "protection",
+    "ward"
+  ],
+  "confidence": "high"
+}

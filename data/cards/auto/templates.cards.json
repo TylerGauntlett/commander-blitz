@@ -252585,6 +252585,152 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "lore",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a lore counter on it"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "lore",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "remove_counters"
+                    }
+                  ],
+                  "label": "Remove a lore counter from it"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Boast — {1}: Put a lore counter on target Saga you control or remove one from it. (Activate only if this creature attacked this turn and only once each turn.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you put a lore counter on a Saga you control, put a +1/+1 counter on up to one other target creature.",
+          "trigger": {
+            "controller": "any",
+            "counter": "lore",
+            "event": "counter_placed",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Saga"
+              ]
+            },
+            "put_by": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "sigurd_jarl_of_ravensthorpe",
+      "keywords": [
+        "vigilance",
+        "trample",
+        "lifelink"
+      ],
+      "mana_cost": "{R}{G}{W}",
+      "name": "Sigurd, Jarl of Ravensthorpe",
+      "oracle_text": "Vigilance, trample, lifelink\nBoast — {1}: Put a lore counter on target Saga you control or remove one from it. (Activate only if this creature attacked this turn and only once each turn.)\nWhenever you put a lore counter on a Saga you control, put a +1/+1 counter on up to one other target creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -310851,6 +310997,70 @@
         "Knight"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": {
+                "target": "t1"
+              },
+              "selector": {}
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Boast — {1}{B}: Target player searches their library for a card, then shuffles and puts that card on top. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "varragoth_bloodsky_sire",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Varragoth, Bloodsky Sire",
+      "oracle_text": "Deathtouch\nBoast — {1}{B}: Target player searches their library for a card, then shuffles and puts that card on top. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

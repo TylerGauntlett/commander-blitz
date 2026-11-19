@@ -17981,6 +17981,10 @@
     "artist": "Howard Lyon",
     "scryfall_id": "0111bf5d-7132-4cf2-b27d-efba3ad9477a"
   },
+  "sigurd_jarl_of_ravensthorpe": {
+    "artist": "Alexander Gering",
+    "scryfall_id": "25ceade9-f12a-4724-b198-312fb4b1210b"
+  },
   "silent_artisan": {
     "artist": "Anthony Palumbo",
     "scryfall_id": "dce5647d-1546-4eff-a2a2-9e9ef26db533"
@@ -22031,6 +22035,10 @@
   "varchild_s_crusader": {
     "artist": "Mark Poole",
     "scryfall_id": "b5ade7ad-ce32-4296-8cec-20bd79c7b16a"
+  },
+  "varragoth_bloodsky_sire": {
+    "artist": "Square Enix",
+    "scryfall_id": "e6628dee-54b1-4e04-90b2-3b327a2de090"
   },
   "vashta_nerada": {
     "artist": "Fang Xinyu",

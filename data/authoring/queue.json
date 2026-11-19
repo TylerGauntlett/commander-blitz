@@ -246972,12 +246972,12 @@
     },
     "Sigurd, Jarl of Ravensthorpe": {
       "edhrec_rank": 7045,
-      "gate": "template",
+      "gate": null,
       "name": "Sigurd, Jarl of Ravensthorpe",
-      "reason": "no template for: Boast — {1}: Put a lore counter on target Saga you control or remove one from it",
+      "reason": "",
       "scryfall_id": "25ceade9-f12a-4724-b198-312fb4b1210b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silas Renn, Seeker Adept": {
@@ -301422,12 +301422,12 @@
     },
     "Varragoth, Bloodsky Sire": {
       "edhrec_rank": 1920,
-      "gate": "template",
+      "gate": null,
       "name": "Varragoth, Bloodsky Sire",
-      "reason": "no template for: Boast — {1}{B}: Target player searches their library for a card, then shuffles and puts th",
+      "reason": "",
       "scryfall_id": "e6628dee-54b1-4e04-90b2-3b327a2de090",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vashta Nerada": {
