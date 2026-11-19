@@ -2199,6 +2199,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "melee"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control have melee."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "adriana_captain_of_the_guard",
+      "keywords": [
+        "melee"
+      ],
+      "mana_cost": "{3}{R}{W}",
+      "name": "Adriana, Captain of the Guard",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther creatures you control have melee. (If a creature has multiple instances of melee, each triggers separately.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}{U}",
             "tap": true
@@ -17077,6 +17124,58 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "muster",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "muster",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_rw_haste"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1/1 red and white Soldier creature token with haste for each muster counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "assemble_the_legion",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Assemble the Legion",
+      "oracle_text": "At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1/1 red and white Soldier creature token with haste for each muster counter on this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -24160,6 +24259,43 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flashback": {
+        "tap_permanents": {
+          "colors": [
+            "W"
+          ],
+          "controller": "you",
+          "count": 3,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "battle_screech",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Battle Screech",
+      "oracle_text": "Create two 1/1 white Bird creature tokens with flying.\nFlashback—Tap three untapped white creatures you control. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "bird_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -39008,6 +39144,174 @@
         "Legendary"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "caesar_choose_two",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice another creature to choose two of Caesar's modes?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, you may sacrifice another creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "count": 2,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "as": "caesar_soldier_defender_1",
+                      "op": "choose_player",
+                      "players": "each_opponent",
+                      "prompt": "Choose the player the first Soldier token attacks"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "attacking": {
+                        "binding": "caesar_soldier_defender_1"
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "or_planeswalker": true,
+                      "tapped": true,
+                      "token": "soldier_1_1_rw_haste"
+                    },
+                    {
+                      "as": "caesar_soldier_defender_2",
+                      "op": "choose_player",
+                      "players": "each_opponent",
+                      "prompt": "Choose the player the second Soldier token attacks"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "attacking": {
+                        "binding": "caesar_soldier_defender_2"
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "or_planeswalker": true,
+                      "tapped": true,
+                      "token": "soldier_1_1_rw_haste"
+                    }
+                  ],
+                  "label": "Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "You draw a card and you lose 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "count": {
+                          "controller": "you",
+                          "is_token": true,
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "Caesar deals damage equal to the number of creature tokens you control to target opponent."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "id": "caesar_choose_two",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "mode": 2,
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When you do, choose two —\n• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.\n• You draw a card and you lose 1 life.\n• Caesar deals damage equal to the number of creature tokens you control to target opponent."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "id": "caesar_legion_s_emperor",
+      "mana_cost": "{1}{R}{W}{B}",
+      "name": "Caesar, Legion's Emperor",
+      "oracle_text": "Whenever you attack, you may sacrifice another creature. When you do, choose two —\n• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.\n• You draw a card and you lose 1 life.\n• Caesar deals damage equal to the number of creature tokens you control to target opponent.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -83187,6 +83491,91 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+2: You gain 1 life for each creature you control."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Create three 1/1 white Soldier creature tokens."
+        },
+        {
+          "cost": {
+            "loyalty": -5
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "is_token": false,
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "−5: Destroy all other permanents except for lands and tokens."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "elspeth_tirel",
+      "loyalty": 4,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Elspeth Tirel",
+      "oracle_text": "+2: You gain 1 life for each creature you control.\n−2: Create three 1/1 white Soldier creature tokens.\n−5: Destroy all other permanents except for lands and tokens.",
+      "source": "auto",
+      "subtypes": [
+        "Elspeth"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -96488,6 +96877,54 @@
                 "zone": "battlefield"
               },
               "op": "grant_keyword"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "finale_of_glory",
+      "mana_cost": "{X}{W}{W}",
+      "name": "Finale of Glory",
+      "oracle_text": "Create X 2/2 white Soldier creature tokens with vigilance. If X is 10 or more, also create X 4/4 white Angel creature tokens with flying and vigilance.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "soldier_2_2_w_vigilance"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 10
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "x": true
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "angel_4_4_w_flying_vigilance"
             }
           ]
         }
@@ -112372,6 +112809,120 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "rebel",
+              "controller": "you",
+              "op": "create_token",
+              "token": "rebel_2_2_r"
+            },
+            {
+              "objects": {
+                "binding": "rebel"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature and at least one other creature attack, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking": true,
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            },
+            "recheck": false
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "glimmer_lens",
+      "mana_cost": "{1}{W}",
+      "name": "Glimmer Lens",
+      "oracle_text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nWhenever equipped creature and at least one other creature attack, draw a card.\nEquip {1}{W}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -115181,6 +115732,76 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "subtypes": [
+            "Equipment"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "goldwardens_gambit",
+      "mana_cost": "{6}{R}{R}",
+      "name": "Goldwardens' Gambit",
+      "oracle_text": "Affinity for Equipment (This spell costs {1} less to cast for each Equipment you control.)\nCreate five 2/2 red Rebel creature tokens. They gain haste until end of turn. For each of those tokens, you may attach an Equipment you control to it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "as": "rebels",
+          "op": "create_token",
+          "token": "rebel_2_2_r"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "binding": "rebels",
+            "count": "all"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "effects": [
+            {
+              "attachment": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "binding": "each"
+              },
+              "op": "attach"
+            }
+          ],
+          "objects": {
+            "binding": "rebels",
+            "count": "all"
+          },
+          "op": "for_each"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -123120,6 +123741,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "not_subtypes": [
+              "Archon"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Non-Archon creatures have base power and toughness 3/3.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "human_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create two 1/1 white Human creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "harmonious_archon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Harmonious Archon",
+      "oracle_text": "Flying\nNon-Archon creatures have base power and toughness 3/3.\nWhen this creature enters, create two 1/1 white Human creature tokens.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -123443,6 +124127,72 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hate_mirage",
+      "mana_cost": "{3}{R}",
+      "name": "Hate Mirage",
+      "oracle_text": "Choose up to two target creatures you don't control. For each of those creatures, create a token that's a copy of that creature. Those tokens gain haste. Exile them at the beginning of the next end step.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "mirage_tokens",
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        },
+        {
+          "duration": "permanent",
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "binding": "mirage_tokens",
+            "count": "all"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "mirage_tokens",
+                "count": "all"
+              },
+              "op": "exile"
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "Exile them at the beginning of the next end step."
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -128379,6 +129129,134 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "rebel",
+              "controller": "you",
+              "op": "create_token",
+              "token": "rebel_2_2_r"
+            },
+            {
+              "objects": {
+                "binding": "rebel"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking": true,
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, if it's the first combat phase of the turn, untap each attacking creature. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "combats_this_turn": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}{R}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hexplate_wallbreaker",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Hexplate Wallbreaker",
+      "oracle_text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nEquipped creature gets +2/+2.\nWhenever equipped creature attacks, if it's the first combat phase of the turn, untap each attacking creature. After this phase, there is an additional combat phase.\nEquip {3}{R}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -142946,6 +143824,70 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Metalcraft — Creatures you control get +3/+0 as long as you control three or more artifacts.",
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "jor_kadeen_the_prevailer",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{3}{R}{W}",
+      "name": "Jor Kadeen, the Prevailer",
+      "oracle_text": "First strike\nMetalcraft — Creatures you control get +3/+0 as long as you control three or more artifacts.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -147659,6 +148601,109 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "rebel",
+              "controller": "you",
+              "op": "create_token",
+              "token": "rebel_2_2_r"
+            },
+            {
+              "objects": {
+                "binding": "rebel"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Equipped creature gets +1/+1 for each creature you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kemba_s_banner",
+      "mana_cost": "{3}{W}",
+      "name": "Kemba's Banner",
+      "oracle_text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nEquipped creature gets +1/+1 for each creature you control.\nEquip {2}{W}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -165522,6 +166567,117 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Equipped creature gets +1/+1 for each charge counter on this Equipment and has vigilance",
+          "toughness": {
+            "counters_on": {
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1 for each charge counter on this Equipment and has vigilance"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, put a charge counter on this Equipment",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "mace_of_the_valiant",
+      "mana_cost": "{2}{W}",
+      "name": "Mace of the Valiant",
+      "oracle_text": "Equipped creature gets +1/+1 for each charge counter on this Equipment and has vigilance. (Attacking doesn't cause it to tap.)\nWhenever a creature you control enters, put a charge counter on this Equipment.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -174518,6 +175674,31 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "midnight_haunting",
+      "mana_cost": "{2}{W}",
+      "name": "Midnight Haunting",
+      "oracle_text": "Create two 1/1 white Spirit creature tokens with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "spirit_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -202737,6 +203918,48 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creature tokens you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "phantom_general",
+      "mana_cost": "{3}{W}",
+      "name": "Phantom General",
+      "oracle_text": "Creature tokens you control get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -312660,6 +313883,84 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}. Put a charge counter on this artifact."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "power": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              },
+              "token": "golem_x_x_c_artifact_haste",
+              "toughness": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}{R}, {T}, Sacrifice this artifact: Create an X/X colorless Golem artifact creature token with haste, where X is the number of charge counters on Vulshok Factory. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "vulshok_factory",
+      "mana_cost": "{2}{R}",
+      "name": "Vulshok Factory",
+      "oracle_text": "{T}: Add {R}. Put a charge counter on this artifact.\n{2}{R}, {T}, Sacrifice this artifact: Create an X/X colorless Golem artifact creature token with haste, where X is the number of charge counters on Vulshok Factory. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -318064,6 +319365,32 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "white_sun_s_zenith",
+      "mana_cost": "{X}{W}{W}{W}",
+      "name": "White Sun's Zenith",
+      "oracle_text": "Create X 2/2 white Cat creature tokens. Shuffle White Sun's Zenith into its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "cat_2_2_w"
+        }
+      ],
+      "tucks_itself": "shuffle",
+      "types": [
+        "Instant"
       ]
     },
     {
