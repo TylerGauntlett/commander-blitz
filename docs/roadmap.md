@@ -89,7 +89,7 @@ each heading; this table is generated from them.
 | [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
-| [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | nothing | 0 |
+| [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
 | [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) | L | high | nothing | 0 |
 | [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) | M | high | nothing | 0 |
 | [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) | M | high | nothing | 0 |
@@ -128,7 +128,7 @@ each heading; this table is generated from them.
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 4 |
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 4 |
-| [Experience counters](#experience-counters) | M | medium | nothing | 2 |
+| [Experience counters](#experience-counters) | M | medium | nothing | 3 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
@@ -155,8 +155,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander).
 
 **Ready now, best first:**
 
@@ -258,6 +256,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
+- [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -3739,7 +3738,7 @@ whole-game test able to draw the deck.
 
 ### Rebellion Rising (Phyrexia: All Will Be One Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Experience counters](#experience-counters).
 
 #### Today
 
@@ -3750,6 +3749,15 @@ coming-soon shell on the shelf: its row `onc_rebellion_rising` is in
 `python scripts/sync_precons.py --missing onc_rebellion_rising` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Three cards are left. Otharri, Suns' Glory gives its controller experience
+counters, so it waits on [experience-counters](experience-counters.md), a rules
+subsystem the engine does not have. Neyali, Suns' Vanguard waits on
+`playable_condition_attacked_with_token` (a play permission open only on a turn
+you attacked with a token, beside `you_attacked_with_a_commander`), and Roar of
+Resistance on `attacking_player_or_planeswalker` (creatures attacking an
+opponent or a planeswalker they control); those are `/extend-dsl` runs this
+item still owns.
 
 #### The change
 
