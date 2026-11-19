@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **454** capabilities.
+**538 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,18 +18,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 10 | 2713 | op, replacement, static_effect |
-| [planechase](#planechase) | 8 | 5666 | engine |
+| [planechase](#planechase) | 9 | 5666 | engine |
 | [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
+| [voting](#voting) | 5 | 8294 | decision, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [voting](#voting) | 4 | 8294 | decision, op |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -51,8 +51,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
+| [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
+| [echo](#echo) | 2 | 961 | keyword |
 | [experience-counters](#experience-counters) | 2 | 1480 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
@@ -174,7 +176,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
-| [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 1 | 13665 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -198,7 +199,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [draw-redirection](#draw-redirection) | 1 | 1178 | replacement |
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
-| [echo](#echo) | 1 | 961 | keyword |
 | [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -286,11 +286,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [human-knight-2-2-w-artifact-entered-buff](#human-knight-2-2-w-artifact-entered-buff) | 1 | 6715 | token |
 | [human-noble-1-1-w-vanishing-token](#human-noble-1-1-w-vanishing-token) | 1 | 13482 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [incubate](#incubate) | 1 | 7135 | op |
 | [insect-1-1-ur-flying-haste](#insect-1-1-ur-flying-haste) | 1 | 1699 | token |
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
+| [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -329,6 +331,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
+| [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
@@ -743,7 +746,7 @@ Blocks **10** cards.
 
 ## planechase
 
-Blocks **8** cards.
+Blocks **9** cards.
 
 - **(engine)** the Planechase subsystem (rule 901): a planar deck and a face-up plane or phenomenon in the command zone, plus a `roll_planar_die` op (901.9) that rolls the six-sided planar die -- on the planeswalker symbol the roller planeswalks (701.31), on the chaos symbol the face-up plane's chaos ability triggers, otherwise nothing; activated here as a sorcery-speed {T} ability, with the free-roll-cost escalation of 901.9b not applying to an effect-driven roll
   <br>Why the existing vocabulary won't do: `roll_dice` rolls ordinary numbered dice and has no planeswalk or chaos outcome, and nothing in `ops` or the game setup knows planes, phenomena, a planar deck or chaos triggers. The rest of the card is expressible: '{T}: Add {C}.' is already the starting_point mana ability, and the activation limit is `sorcery_speed_only`
@@ -771,6 +774,8 @@ Blocks **8** cards.
 - **Start the TARDIS** (rank 13326) — `start_the_tardis`
   - You may planeswalk.
 - **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
   - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 - **Susan Foreman** (rank 18784) — `susan_foreman`
   - If you would planeswalk, instead look at the top two cards of your planar deck, put one on the bottom of your planar deck and the other on top, then planeswalk.
@@ -937,6 +942,33 @@ Blocks **5** cards.
 
 </details>
 
+## voting
+
+Blocks **5** cards.
+
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+- **Path of the Animist** (rank 10704) — `path_of_the_animist`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+
+</details>
+
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -1099,29 +1131,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## voting
-
-Blocks **4** cards.
-
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
-  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Valeyard** (rank 8294) — `the_valeyard`
-  - If an opponent would face a villainous choice, they face that choice an additional time
-  - While voting, you may vote an additional time
-- **Path of the Animist** (rank 10704) — `path_of_the_animist`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 
 </details>
 
@@ -1560,6 +1569,24 @@ Blocks **2** cards.
 
 </details>
 
+## creatures-died-this-turn-filtered
+
+Blocks **2** cards.
+
+- **(value)** a turn-ledger value counting creatures that died this turn under a given player's control, filtered by the dead creature's last-known characteristics (here subtypes: ["Phyrexian"]), usable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are keyed only by player and take no creature filter, so they cannot ask whether the dead creature was a Phyrexian; a creature_dies trigger setting a turn flag would be an unprinted ability that misses Phyrexians that died before Brimaz entered or while it was off the battlefield
+- **(value)** a turn-ledger value counting creatures that died this turn under a given player's control, filtered by the dead creature's last-known characteristics (here subtypes: ["Human"]) and excluding the source itself ("another Human"), usable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are keyed only by player and take no creature filter, so they cannot ask whether the dead creature was a Human or someone other than this one; a creature_dies trigger setting a turn flag would be an unprinted ability that misses Humans that died before this creature entered
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brimaz, Blight of Oreskos** (rank 7488) — `brimaz_blight_of_oreskos`
+  - At the beginning of each end step, if a Phyrexian died under your control this turn, proliferate.
+- **White Glove Gourmand** (rank 13665) — `white_glove_gourmand`
+  - At the beginning of your end step, if another Human died under your control this turn, create a Food token.
+
+</details>
+
 ## dealt-damage-to-player-this-turn
 
 Blocks **2** cards.
@@ -1594,6 +1621,24 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
+
+</details>
+
+## echo
+
+Blocks **2** cards.
+
+- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
+  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys, card_level_rider_keys or keywords. An `upkeep` trigger with `may` pay {2}{B} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep'; a `delayed_trigger` on self_enters with duration `until_it_fires` covers only the enter case and misses a change of control (gain_control), so it would be a narrower card
+- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
+  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never
+
+<details><summary>Cards waiting on this</summary>
+
+- **Karmic Guide** (rank 961) — `karmic_guide`
+  - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+- **Bone Shredder** (rank 9157) — `bone_shredder`
+  - Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 
 </details>
 
@@ -3463,20 +3508,6 @@ Blocks **1** card.
 
 </details>
 
-## creatures-died-this-turn-filtered
-
-Blocks **1** card.
-
-- **(value)** a turn-ledger value counting creatures that died this turn under a given player's control, filtered by the dead creature's last-known characteristics (here subtypes: ["Human"]) and excluding the source itself ("another Human"), usable as an end_step trigger's intervening-if condition
-  <br>Why the existing vocabulary won't do: creatures_died_this_turn, nontoken_creatures_died_this_turn and modified_creatures_died_this_turn are keyed only by player and take no creature filter, so they cannot ask whether the dead creature was a Human or someone other than this one; a creature_dies trigger setting a turn flag would be an unprinted ability that misses Humans that died before this creature entered
-
-<details><summary>Cards waiting on this</summary>
-
-- **White Glove Gourmand** (rank 13665) — `white_glove_gourmand`
-  - At the beginning of your end step, if another Human died under your control this turn, create a Food token.
-
-</details>
-
 ## crew-with-toughness
 
 Blocks **1** card.
@@ -3801,20 +3832,6 @@ Blocks **1** card.
 
 - **Selective Obliteration** (rank 3587) — `selective_obliteration`
   - Each player chooses a color. Then exile each permanent unless it's colorless or it's only the color its controller chose.
-
-</details>
-
-## echo
-
-Blocks **1** card.
-
-- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
-  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never
-
-<details><summary>Cards waiting on this</summary>
-
-- **Karmic Guide** (rank 961) — `karmic_guide`
-  - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 
 </details>
 
@@ -5062,6 +5079,20 @@ Blocks **1** card.
 
 </details>
 
+## incubate
+
+Blocks **1** card.
+
+- **(op)** a `player` (or `controller`) option on the `incubate` op so a player other than the effect's controller incubates -- here the exiled permanent's last controller, e.g. a `snapshot` of the target's controller taken before the exile, with X read from the snapshotted mana value
+  <br>Why the existing vocabulary won't do: `incubate` takes only `amount` and `as` and op_incubate always creates the Incubator under ctx.controller; `create_token` has `controller` but writing `incubator_token` by hand would bypass incubate's enters-with counters, and `for_each_player` only binds a seat without changing who the op creates the token for
+
+<details><summary>Cards waiting on this</summary>
+
+- **Excise the Imperfect** (rank 7135) — `excise_the_imperfect`
+  - Its controller incubates X, where X is its mana value.
+
+</details>
+
 ## insect-1-1-ur-flying-haste
 
 Blocks **1** card.
@@ -5129,6 +5160,20 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
+
+</details>
+
+## legendary-sorcery
+
+Blocks **1** card.
+
+- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
+  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
+  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 
@@ -5672,6 +5717,20 @@ Blocks **1** card.
   - Kicker {G} and/or {1}{U}
   - When you cast this spell, if it was kicked with its {G} kicker, exile target artifact or enchantment an opponent controls.
   - When you cast this spell, if it was kicked with its {1}{U} kicker, return target creature an opponent controls to its owner's hand.
+
+</details>
+
+## multiple-variable-size-targets
+
+Blocks **1** card.
+
+- **(engine)** one ability declaring two independent caster-sized target specs ('any number of target creatures' and 'any number of target artifacts'), where an artifact creature may be chosen as a target of both specs and each spec's refs stay distinguishable on resolution
+  <br>Why the existing vocabulary won't do: A target spec's count may be "any", but the loader (loader.targets, TargetSpec.count) admits at most one variable-size spec per ability and requires it to be last, because filter_legal slices stored refs spec by spec. Splitting the sentence into two triggered abilities would create two triggers instead of one; a single spec with any_types [Creature, Artifact] cannot say which counter an artifact creature gets, nor let it be targeted for both.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Filigree Vector** (rank 4747) — `filigree_vector`
+  - When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts.
 
 </details>
 

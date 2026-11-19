@@ -1,0 +1,23 @@
+{
+  "card_id": "bone_shredder",
+  "name": "Bone Shredder",
+  "oracle_text": "Flying\nEcho {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, destroy target nonartifact, nonblack creature.",
+  "blocked_sentences": [
+    "Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "echo",
+      "kind": "keyword",
+      "what": "Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost",
+      "why_existing_wont_do": "No echo key in card_level_cost_keys, card_level_rider_keys or keywords. An `upkeep` trigger with `may` pay {2}{B} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep'; a `delayed_trigger` on self_enters with duration `until_it_fires` covers only the enter case and misses a change of control (gain_control), so it would be a narrower card"
+    }
+  ],
+  "closest_existing": [
+    "upkeep",
+    "may",
+    "sacrifice",
+    "delayed_trigger"
+  ],
+  "confidence": "high"
+}

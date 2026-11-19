@@ -1,0 +1,16 @@
+{
+  "card_id": "yawgmoth_s_vile_offering",
+  "name": "Yawgmoth's Vile Offering",
+  "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nPut up to one target creature or planeswalker card from a graveyard onto the battlefield under your control. Destroy up to one target creature or planeswalker. Exile Yawgmoth's Vile Offering.",
+  "blocked_sentences": [
+    "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)"
+  ],
+  "needs": [{
+    "capability": "legendary_sorcery",
+    "kind": "engine",
+    "what": "rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise",
+    "why_existing_wont_do": "The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: [\"Legendary\"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands."
+  }],
+  "closest_existing": ["cast_only_during", "supertypes"],
+  "confidence": "high"
+}

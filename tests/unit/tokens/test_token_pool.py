@@ -3278,3 +3278,19 @@ class TestEverquillsFeatherReturnsAPhoenix:
         (target,) = ability.targets
         assert target.kind == "card_in_graveyard"
         assert target.selector["subtypes"] == ["Phoenix"]
+
+
+class TestPhyrexianRebirthsHorrorIsAPhyrexianHorror:
+    """Phyrexian Rebirth: *"create an X/X colorless **Phyrexian Horror**
+    artifact creature token."* `phyrexian_0_0_c_artifact` is the near miss: a
+    colorless artifact Phyrexian of fixed size, without the Horror subtype."""
+
+    def test_it_is_an_x_x_colorless_artifact_phyrexian_horror(self, pool):
+        token = pool.get("phyrexian_horror_x_x_c_artifact")
+        assert (token.power, token.toughness) == (0, 0) and token.variable_pt
+        assert not token.colors and set(token.subtypes) == {"Phyrexian", "Horror"}
+        assert "Artifact" in token.types and "Creature" in token.types
+
+    def test_the_plain_phyrexian_is_still_a_separate_token(self, pool):
+        plain = pool.get("phyrexian_0_0_c_artifact")
+        assert list(plain.subtypes) == ["Phyrexian"] and not plain.variable_pt

@@ -2361,6 +2361,20 @@
   "blight_sickle": {
     "zone": "battlefield"
   },
+  "blight_titan": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 1,
+      "id": "incubator_token"
+    },
+    "zone": "battlefield"
+  },
   "blighted_woodland": {
     "zone": "battlefield"
   },
@@ -2460,6 +2474,13 @@
   "bloodline_keeper": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "bloodline_pretender": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "bloodline_recollector_ancestral_craving": {
@@ -3433,6 +3454,10 @@
   "cat_warriors": {
     "zone": "battlefield"
   },
+  "cataclysmic_gearhulk": {
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "cataclysmic_prospecting": {
     "battlefield_count": 30,
     "opponent_battlefield_count": 4,
@@ -4255,6 +4280,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "compleated_huntmaster": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "compulsive_research": {
@@ -5176,6 +5205,14 @@
     "zone": "battlefield"
   },
   "darksteel_sentinel": {
+    "zone": "battlefield"
+  },
+  "darksteel_splicer": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_golem_3_3_c_artifact"
+    },
     "zone": "battlefield"
   },
   "darkwater_catacombs": {
@@ -8054,6 +8091,19 @@
       "keywords": [
         "exalted"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "first_sphere_gargantua": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 39
     },
     "zone": "battlefield"
   },
@@ -12116,6 +12166,10 @@
     },
     "zone": "battlefield"
   },
+  "keskit_the_flesh_sculptor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kessig_recluse": {
     "zone": "battlefield"
   },
@@ -14040,6 +14094,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "master_splicer": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_golem_3_3_c_artifact"
+    },
+    "zone": "battlefield"
+  },
   "master_transmuter": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14618,6 +14680,13 @@
   },
   "mogis_god_of_slaughter": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "moira_and_teshar": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "moldering_karok": {
@@ -16108,6 +16177,10 @@
   "orzhov_guildgate": {
     "zone": "battlefield"
   },
+  "orzhov_locket": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orzhov_signet": {
     "zone": "battlefield"
   },
@@ -16609,7 +16682,30 @@
       "graveyard"
     ]
   },
+  "phyrexian_delver": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "phyrexian_digester": {
+    "zone": "battlefield"
+  },
+  "phyrexian_gargantua": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
+  "phyrexian_ghoul": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phyrexian_hulk": {
@@ -16619,6 +16715,29 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "phyrexian_rager": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
+  "phyrexian_rebirth": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 5
+    },
+    "tokens": {
+      "count": 1,
+      "id": "phyrexian_horror_x_x_c_artifact"
+    },
+    "zone": "graveyard"
+  },
   "phyrexian_reclamation": {
     "battlefield_count": 33,
     "life": {
@@ -16626,7 +16745,19 @@
     },
     "zone": "battlefield"
   },
+  "phyrexian_scriptures": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "phyrexian_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "phyrexian_triniform": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -19325,6 +19456,10 @@
   "scouting_hawk": {
     "zone": "battlefield"
   },
+  "scrap_trawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scrapshooter": {
     "battlefield_count": 33,
     "library_size": {
@@ -19370,6 +19505,10 @@
   "scryb_sprites": {
     "zone": "battlefield"
   },
+  "sculpting_steel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scurry_of_gremlins": {
     "battlefield_count": 35,
     "tokens": {
@@ -19398,6 +19537,14 @@
     },
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "scytheclaw": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "germ_0_0_b"
     },
     "zone": "battlefield"
   },
@@ -19912,6 +20059,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "shattered_angel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "shattered_landscape": {
     "zone": "battlefield"
@@ -20987,6 +21138,10 @@
     "zone": "battlefield"
   },
   "soul_guide_lantern": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "soul_of_new_phyrexia": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25535,6 +25690,10 @@
     "zone": "battlefield"
   },
   "vulpine_goliath": {
+    "zone": "battlefield"
+  },
+  "vulpine_harvester": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vulshok_battlegear": {

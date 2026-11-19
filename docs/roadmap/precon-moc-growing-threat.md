@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [planechase]
 status: proposed
 rank: 70
 ---
@@ -19,6 +19,15 @@ coming-soon shell on the shelf: its row `moc_growing_threat` is in
 `python scripts/sync_precons.py --missing moc_growing_threat` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Eight cards are left. Fractured Powerstone, Ichor Elixir and Path of the
+Schemer roll the planar die or planeswalk, so they wait on
+[planechase](planechase.md), a rules subsystem the engine does not have; Path
+of the Schemer also waits on `voting`. Bone Shredder waits on `echo`, Brimaz,
+Blight of Oreskos on `creatures_died_this_turn_filtered`, Excise the Imperfect
+on an `incubate` made for another player, Filigree Vector on
+`multiple_variable_size_targets`, and Yawgmoth's Vile Offering on
+`legendary_sorcery`; those are `/extend-dsl` runs this item still owns.
 
 ## The change
 
