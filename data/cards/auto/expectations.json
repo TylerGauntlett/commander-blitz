@@ -404,6 +404,10 @@
     },
     "zone": "battlefield"
   },
+  "akoum_hellkite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "akoum_refuge": {
     "life": {
       "0": 41
@@ -1480,6 +1484,10 @@
       "count": 1,
       "id": "hero_1_1_c"
     },
+    "zone": "battlefield"
+  },
+  "atarka_monument": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "atarka_world_render": {
@@ -2612,6 +2620,19 @@
   "blossoming_bogbeast": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "blossoming_defense": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "graveyard"
   },
   "blossoming_sands": {
     "life": {
@@ -4055,6 +4076,9 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "clan_defiance": {
+    "zone": "graveyard"
   },
   "clavileno_first_of_the_blessed": {
     "battlefield_count": 33,
@@ -5726,6 +5750,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "demanding_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "demolisher_spawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6213,6 +6241,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "draconic_disciple": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "draconic_lore": {
     "hand_size": {
       "0": 4
@@ -6227,6 +6262,13 @@
     "zone": "battlefield"
   },
   "dragon_bell_monk": {
+    "zone": "battlefield"
+  },
+  "dragon_mage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "dragon_man_reformed_robot": {
@@ -6355,6 +6397,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "dream_pillager": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dream_thief_s_bandana": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6431,6 +6477,13 @@
   },
   "drumbellower": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "drumhunter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "dryad_arbor": {
@@ -8263,6 +8316,16 @@
     },
     "zone": "battlefield"
   },
+  "fires_of_yavimaya": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "fireshrieker": {
     "zone": "battlefield"
   },
@@ -8354,6 +8417,10 @@
       "toughness": 0
     },
     "zone": "exile"
+  },
+  "flameblast_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "flameborn_viron": {
     "zone": "battlefield"
@@ -8868,6 +8935,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "furnace_whelp": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "furtive_homunculus": {
     "zone": "battlefield"
@@ -11032,6 +11106,11 @@
   "hitchclaw_recluse": {
     "zone": "battlefield"
   },
+  "hoard_smelter_dragon": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "hoarder_s_greed": {
     "hand_size": {
       "0": 3
@@ -11246,6 +11325,13 @@
   "hunter_s_insight": {
     "hand_size": {
       "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "hunter_s_prowess": {
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 3
     },
     "zone": "graveyard"
   },
@@ -13545,6 +13631,13 @@
   "loamdragger_giant": {
     "zone": "battlefield"
   },
+  "loaming_shaman": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "lobelia_defender_of_bag_end": {
     "battlefield_count": 33,
     "library_size": {
@@ -15223,6 +15316,10 @@
     "zone": "battlefield"
   },
   "morbid_opportunist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mordant_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17820,6 +17917,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "provoke_the_trolls": {
+    "zone": "graveyard"
+  },
   "prowler_clawed_thief": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19463,6 +19563,13 @@
   "runeclaw_bear": {
     "zone": "battlefield"
   },
+  "runehorn_hellkite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "runic_armasaur": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19699,6 +19806,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sarkhan_the_dragonspeaker": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "saruman_the_white_hand": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19750,6 +19868,10 @@
   },
   "savage_stomp": {
     "zone": "graveyard"
+  },
+  "savage_ventmaw": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "savai_crystal": {
     "zone": "battlefield"
@@ -22773,6 +22895,15 @@
   "sweatworks_brawler": {
     "zone": "battlefield"
   },
+  "sweltering_suns": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "swift_spinner": {
     "zone": "battlefield"
   },
@@ -24301,6 +24432,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thundermaw_hellkite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tiamat": {
     "battlefield_count": 33,
     "hand_size": {
@@ -25366,6 +25501,9 @@
   },
   "unknown_shores": {
     "zone": "battlefield"
+  },
+  "unleash_fury": {
+    "zone": "graveyard"
   },
   "unnatural_growth": {
     "battlefield_count": 33,

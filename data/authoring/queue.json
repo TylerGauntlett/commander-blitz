@@ -5212,12 +5212,12 @@
     },
     "Akoum Hellkite": {
       "edhrec_rank": 9015,
-      "gate": "template",
+      "gate": null,
       "name": "Akoum Hellkite",
-      "reason": "no template for: Landfall — Whenever a land you control enters, this creature deals 1 damage to any target.",
+      "reason": "",
       "scryfall_id": "cc2bff9a-b8a4-49a0-8208-9c6ebc56df14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Akoum Refuge": {
@@ -15602,12 +15602,12 @@
     },
     "Atarka Monument": {
       "edhrec_rank": 14987,
-      "gate": "template",
+      "gate": null,
       "name": "Atarka Monument",
-      "reason": "no template for: {4}{R}{G}: This artifact becomes a 4/4 red and green Dragon artifact creature with flying ",
+      "reason": "",
       "scryfall_id": "5e9fc80b-9602-4250-a282-e44aab6f8feb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atarka Pummeler": {
@@ -29412,12 +29412,12 @@
     },
     "Blossoming Defense": {
       "edhrec_rank": 2602,
-      "gate": "template",
+      "gate": null,
       "name": "Blossoming Defense",
-      "reason": "no template for: Target creature you control gets +2/+2 and gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "3cce80d0-b937-4325-a603-1278c110f244",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blossoming Sands": {
@@ -47422,12 +47422,12 @@
     },
     "Clan Defiance": {
       "edhrec_rank": 10144,
-      "gate": "template",
+      "gate": null,
       "name": "Clan Defiance",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "cc1afafd-d57b-4733-80c8-184947b7c5e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clan Guildmage": {
@@ -65902,12 +65902,12 @@
     },
     "Demanding Dragon": {
       "edhrec_rank": 7662,
-      "gate": "template",
+      "gate": null,
       "name": "Demanding Dragon",
-      "reason": "no template for: When this creature enters, it deals 5 damage to target opponent unless that player sacrifi",
+      "reason": "",
       "scryfall_id": "35f32486-8292-4372-a898-a38c92262a5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dematerialize": {
@@ -72862,12 +72862,12 @@
     },
     "Draconic Disciple": {
       "edhrec_rank": 12931,
-      "gate": "template",
+      "gate": null,
       "name": "Draconic Disciple",
-      "reason": "no template for: {7}, {T}, Sacrifice this creature: Create a 5/5 red Dragon creature token with flying",
+      "reason": "",
       "scryfall_id": "8cc56c65-b199-4203-b6f3-d890ab613800",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Draconic Intervention": {
@@ -73152,12 +73152,12 @@
     },
     "Dragon Mage": {
       "edhrec_rank": 2909,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon Mage",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, each player discards their hand, t",
+      "reason": "",
       "scryfall_id": "5525cfde-a92b-4fb5-8f15-a05efebecd3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragon Man, Reformed Robot": {
@@ -74822,12 +74822,12 @@
     },
     "Dream Pillager": {
       "edhrec_rank": 12387,
-      "gate": "template",
+      "gate": null,
       "name": "Dream Pillager",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, exile that many cards from the top",
+      "reason": "",
       "scryfall_id": "5284c6db-82f4-4285-ade3-9b136abcedd2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dream Prowler": {
@@ -76282,12 +76282,12 @@
     },
     "Drumhunter": {
       "edhrec_rank": 7970,
-      "gate": "template",
+      "gate": null,
       "name": "Drumhunter",
-      "reason": "no template for: At the beginning of your end step, if you control a creature with power 5 or greater, you ",
+      "reason": "",
       "scryfall_id": "cf56450a-9e9c-42f6-93b8-87314c1d1863",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drunau Corpse Trawler": {
@@ -96132,12 +96132,12 @@
     },
     "Fires of Yavimaya": {
       "edhrec_rank": 3187,
-      "gate": "template",
+      "gate": null,
       "name": "Fires of Yavimaya",
-      "reason": "no template for: Creatures you control have haste",
+      "reason": "",
       "scryfall_id": "f8003d09-9c1a-4bd3-8672-f4d7960c972e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Firescreamer": {
@@ -96892,12 +96892,12 @@
     },
     "Flameblast Dragon": {
       "edhrec_rank": 9145,
-      "gate": "template",
+      "gate": null,
       "name": "Flameblast Dragon",
-      "reason": "no template for: Whenever this creature attacks, you may pay {X}{R}. If you do, it deals X damage to any ta",
+      "reason": "",
       "scryfall_id": "90390efc-beca-440e-abee-65c1a29223cb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flameborn Hellion": {
@@ -103622,12 +103622,12 @@
     },
     "Furnace Whelp": {
       "edhrec_rank": 18614,
-      "gate": "template",
+      "gate": null,
       "name": "Furnace Whelp",
-      "reason": "no template for: {R}: This creature gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "ac7ba3f5-3ad5-47e7-86c9-31954f015b91",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Furnace of Rath": {
@@ -128542,12 +128542,12 @@
     },
     "Hoard-Smelter Dragon": {
       "edhrec_rank": 9454,
-      "gate": "template",
+      "gate": null,
       "name": "Hoard-Smelter Dragon",
-      "reason": "no template for: {3}{R}: Destroy target artifact. This creature gets +X/+0 until end of turn, where X is th",
+      "reason": "",
       "scryfall_id": "b4487bbe-2bc4-48d9-8a6f-9b0c7555fb47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hoarder's Greed": {
@@ -131842,12 +131842,12 @@
     },
     "Hunter's Prowess": {
       "edhrec_rank": 5479,
-      "gate": "template",
+      "gate": null,
       "name": "Hunter's Prowess",
-      "reason": "no template for: Until end of turn, target creature gets +3/+3 and gains trample and \"Whenever this creatur",
+      "reason": "",
       "scryfall_id": "40220c41-f70e-49e8-8885-3525d01e0ff1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hunter's Talent": {
@@ -160292,12 +160292,12 @@
     },
     "Loaming Shaman": {
       "edhrec_rank": 11555,
-      "gate": "template",
+      "gate": null,
       "name": "Loaming Shaman",
-      "reason": "no template for: When this creature enters, target player shuffles any number of target cards from their gr",
+      "reason": "",
       "scryfall_id": "ce191953-7656-4b3a-8b52-a9ae1c7ec897",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loan Shark": {
@@ -179202,12 +179202,12 @@
     },
     "Mordant Dragon": {
       "edhrec_rank": 12441,
-      "gate": "template",
+      "gate": null,
       "name": "Mordant Dragon",
-      "reason": "no template for: {1}{R}: This creature gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "a83a2fe7-36df-4a38-8dd3-605eeb5f58f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mordenkainen": {
@@ -208942,12 +208942,12 @@
     },
     "Provoke the Trolls": {
       "edhrec_rank": 22350,
-      "gate": "template",
+      "gate": null,
       "name": "Provoke the Trolls",
-      "reason": "no template for: deals 3 damage to any target. If a creature is dealt damage this way, it gets +5/+0 until ",
+      "reason": "",
       "scryfall_id": "964ae341-64eb-4ac1-9fb0-7243d5fe744d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prowcatcher Specialist": {
@@ -229502,12 +229502,12 @@
     },
     "Runehorn Hellkite": {
       "edhrec_rank": 12401,
-      "gate": "template",
+      "gate": null,
       "name": "Runehorn Hellkite",
-      "reason": "no template for: {5}{R}, Exile this card from your graveyard: Each player discards their hand, then draws s",
+      "reason": "",
       "scryfall_id": "932504ec-274e-49e6-ac51-a8ec362e83d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Runes of the Deus": {
@@ -233512,12 +233512,12 @@
     },
     "Sarkhan, the Dragonspeaker": {
       "edhrec_rank": 14537,
-      "gate": "template",
+      "gate": null,
       "name": "Sarkhan, the Dragonspeaker",
-      "reason": "no template for: +1: Until end of turn, Sarkhan becomes a legendary 4/4 red Dragon creature with flying, in",
+      "reason": "",
       "scryfall_id": "cadef4eb-d1fc-4b27-9d37-938f8893b9e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarkhan, the Dragonspeaker Emblem": {
@@ -234142,12 +234142,12 @@
     },
     "Savage Ventmaw": {
       "edhrec_rank": 1643,
-      "gate": "template",
+      "gate": null,
       "name": "Savage Ventmaw",
-      "reason": "no template for: Whenever this creature attacks, add {R}{R}{R}{G}{G}{G}. Until end of turn, you don't lose ",
+      "reason": "",
       "scryfall_id": "50027d69-8bb0-444c-8e9b-4c9afd91cbda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savageborn Hydra": {
@@ -271872,12 +271872,12 @@
     },
     "Sweltering Suns": {
       "edhrec_rank": 11161,
-      "gate": "template",
+      "gate": null,
       "name": "Sweltering Suns",
-      "reason": "no template for: deals 3 damage to each creature",
+      "reason": "",
       "scryfall_id": "7414b8da-abbe-4fba-afaf-2c9ff650a429",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Swerve": {
@@ -286352,12 +286352,12 @@
     },
     "Thundermaw Hellkite": {
       "edhrec_rank": 7170,
-      "gate": "template",
+      "gate": null,
       "name": "Thundermaw Hellkite",
-      "reason": "no template for: When this creature enters, it deals 1 damage to each creature with flying your opponents c",
+      "reason": "",
       "scryfall_id": "7a517c33-b516-4ad9-8cd8-d2ca27310252",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderous Debut": {
@@ -298132,12 +298132,12 @@
     },
     "Unleash Fury": {
       "edhrec_rank": 1602,
-      "gate": "template",
+      "gate": null,
       "name": "Unleash Fury",
-      "reason": "no template for: Double the power of target creature until end of turn",
+      "reason": "",
       "scryfall_id": "2578f3b5-c233-4f44-8b10-5a9dc311add5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unleash Shell": {
