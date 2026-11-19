@@ -127712,12 +127712,12 @@
     },
     "High Sentinels of Arashin": {
       "edhrec_rank": 15193,
-      "gate": "template",
+      "gate": null,
       "name": "High Sentinels of Arashin",
-      "reason": "no template for: This creature gets +1/+1 for each other creature you control with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "d46b34ed-88a4-4868-9ce3-b91901e600d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "High Stride": {
@@ -144492,12 +144492,12 @@
     },
     "Juniper Order Ranger": {
       "edhrec_rank": 7818,
-      "gate": "template",
+      "gate": null,
       "name": "Juniper Order Ranger",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature and a +",
+      "reason": "",
       "scryfall_id": "9f299f1e-2694-44e6-aad4-1f29c2ee5553",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Juniper Order Rootweaver": {
@@ -152512,12 +152512,12 @@
     },
     "Krenko, Tin Street Kingpin": {
       "edhrec_rank": 885,
-      "gate": "template",
+      "gate": null,
       "name": "Krenko, Tin Street Kingpin",
-      "reason": "no template for: Whenever Krenko attacks, put a +1/+1 counter on it, then create a number of 1/1 red Goblin",
+      "reason": "",
       "scryfall_id": "0c7d8714-a0ef-4ae8-909b-60f3319c646c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kresh the Bloodbraided": {
@@ -173182,12 +173182,12 @@
     },
     "Mikaeus, the Lunarch": {
       "edhrec_rank": 1921,
-      "gate": "template",
+      "gate": null,
       "name": "Mikaeus, the Lunarch",
-      "reason": "no template for: Mikaeus enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4d2e132e-9698-4bf4-927e-994015ec0410",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mikaeus, the Unhallowed": {
@@ -175402,12 +175402,12 @@
     },
     "Mirror-Style Master": {
       "edhrec_rank": 12235,
-      "gate": "template",
+      "gate": null,
       "name": "Mirror-Style Master",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "6b407f48-5b78-463e-ace9-3f109a9c55a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirrorform": {
@@ -206732,12 +206732,12 @@
     },
     "Pridemalkin": {
       "edhrec_rank": 4352,
-      "gate": "template",
+      "gate": null,
       "name": "Pridemalkin",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "91a3ef02-a5d6-4282-ae00-2f58d956c94f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of Ancient Lore": {
@@ -222242,12 +222242,12 @@
     },
     "Return to Nature": {
       "edhrec_rank": 736,
-      "gate": "template",
+      "gate": null,
       "name": "Return to Nature",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "e4d0b641-5126-4786-8924-8916bc1d2f40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Return to the Earth": {
@@ -242312,12 +242312,12 @@
     },
     "Shalai and Hallar": {
       "edhrec_rank": 3979,
-      "gate": "template",
+      "gate": null,
       "name": "Shalai and Hallar",
-      "reason": "no template for: Whenever one or more +1/+1 counters are put on a creature you control, deals that much dam",
+      "reason": "",
       "scryfall_id": "0dcb27cd-e5f1-46c6-b7cf-33fa90335459",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shalai's Acolyte": {
@@ -252592,12 +252592,12 @@
     },
     "Slurrk, All-Ingesting": {
       "edhrec_rank": 9973,
-      "gate": "template",
+      "gate": null,
       "name": "Slurrk, All-Ingesting",
-      "reason": "no template for: Slurrk enters with five +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "8107fd21-7d34-44ce-afb8-920eab3b924e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sly Instigator": {
@@ -267252,12 +267252,12 @@
     },
     "Strionic Resonator": {
       "edhrec_rank": 585,
-      "gate": "template",
+      "gate": null,
       "name": "Strionic Resonator",
-      "reason": "no template for: {2}, {T}: Copy target triggered ability you control. You may choose new targets for the co",
+      "reason": "",
       "scryfall_id": "01cb04a6-d185-4e1e-a33b-032793247365",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strip Bare": {
@@ -296732,12 +296732,12 @@
     },
     "Uncivil Unrest": {
       "edhrec_rank": 2903,
-      "gate": "template",
+      "gate": null,
       "name": "Uncivil Unrest",
-      "reason": "no template for: Nontoken creatures you control have riot",
+      "reason": "",
       "scryfall_id": "343c3e40-d551-4e2c-bb94-315b58151a33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unclaimed Territory": {

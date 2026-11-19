@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "triskelion",
+    "name": "Triskelion",
+    "oracle_text": "This creature enters with three +1/+1 counters on it.\nRemove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+    "mana_cost": "{6}",
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Construct"],
+    "power": 1,
+    "toughness": 1,
+    "colors": [],
+    "color_identity": [],
+    "replacements": [
+      {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 3}
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+        "cost": {"remove_counters": {"amount": 1, "counter": "+1/+1"}},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "any",
+            "count": 1,
+            "selector": {"any_types": ["Creature", "Planeswalker", "Battle"]}
+          }
+        ],
+        "effects": [
+          {"op": "damage", "amount": {"const": 1}, "target": "t1"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "+1/+1", "amount": 3},
+    "battlefield_count": 33
+  }
+}

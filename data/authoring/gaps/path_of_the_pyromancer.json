@@ -1,0 +1,24 @@
+{
+  "card_id": "path_of_the_pyromancer",
+  "name": "Path of the Pyromancer",
+  "oracle_text": "Discard all the cards in your hand. Add {R} for each card discarded this way, then draw that many cards plus one.\nWill of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.",
+  "blocked_sentences": [
+    "Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues."
+  ],
+  "needs": [
+    {
+      "capability": "planechase",
+      "kind": "engine",
+      "what": "the Planechase subsystem (rule 901): a planar deck per game, a face-up plane in the command zone, a `planeswalk` op (701.31) that moves the current plane to the bottom of the planar deck and turns over the next one, and a 'chaos ensues' op (701.32) that fires the face-up plane's chaos ability",
+      "why_existing_wont_do": "No op in the reference names planes, a planar deck, planeswalking or chaos; `must_attack_planeswalker` and `or_planeswalker` concern the Planeswalker card type. Writing `noop` would silently drop the clause"
+    },
+    {
+      "capability": "voting",
+      "kind": "decision",
+      "what": "a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)",
+      "why_existing_wont_do": "`choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts"
+    }
+  ],
+  "closest_existing": ["for_each_player", "choose_mode", "noop"],
+  "confidence": "high"
+}

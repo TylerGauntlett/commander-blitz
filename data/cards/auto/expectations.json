@@ -10769,6 +10769,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "high_sentinels_of_arashin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "high_society_hunter": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11969,6 +11973,10 @@
   "jungle_weaver": {
     "zone": "battlefield"
   },
+  "juniper_order_ranger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "junji_the_midnight_sky": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12709,6 +12717,10 @@
     "zone": "battlefield"
   },
   "krenko_s_enforcer": {
+    "zone": "battlefield"
+  },
+  "krenko_tin_street_kingpin": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "krile_baldesion": {
@@ -14533,6 +14545,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mikaeus_the_lunarch": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "mikokoro_center_of_the_sea": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14647,6 +14667,10 @@
     "zone": "battlefield"
   },
   "mirror_of_galadriel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mirror_style_master": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17193,6 +17217,16 @@
   "prideful_feastling": {
     "zone": "battlefield"
   },
+  "pridemalkin": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "priest_of_fell_rites": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18518,6 +18552,10 @@
   },
   "return_to_dust": {
     "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "return_to_nature": {
+    "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
   "reunion_of_the_house": {
@@ -20076,6 +20114,13 @@
   "shadrix_silverquill": {
     "zone": "battlefield"
   },
+  "shalai_and_hallar": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "shalai_voice_of_plenty": {
     "battlefield_count": 33,
     "granted": {
@@ -20952,6 +20997,14 @@
     "zone": "battlefield"
   },
   "slumbering_waterways": {
+    "zone": "battlefield"
+  },
+  "slurrk_all_ingesting": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "smaug_the_magnificent": {
@@ -21975,6 +22028,10 @@
     "zone": "battlefield"
   },
   "striding_shotcaller_run_the_play": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "strionic_resonator": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -24817,6 +24874,16 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "uncivil_unrest": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "riot"
+      ]
+    },
+    "zone": "battlefield"
   },
   "unclaimed_territory": {
     "battlefield_count": 33,

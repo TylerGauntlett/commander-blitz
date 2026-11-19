@@ -1,0 +1,18 @@
+{
+  "card_id": "hindervines",
+  "name": "Hindervines",
+  "oracle_text": "Prevent all combat damage that would be dealt this turn by creatures with no +1/+1 counters on them.",
+  "blocked_sentences": [
+    "Prevent all combat damage that would be dealt this turn by creatures with no +1/+1 counters on them."
+  ],
+  "needs": [
+    {
+      "capability": "lacks_counter_kind_filter",
+      "kind": "selector",
+      "what": "a selector/filter key matching a permanent with zero counters of one named kind (\"with no +1/+1 counters on them\"), e.g. `not_has_counters: \"+1/+1\"` or `has_counters: {\"kind\": \"+1/+1\", \"none\": true}`, usable in prevent_combat_damage's `by` filter",
+      "why_existing_wont_do": "prevent_combat_damage with `by` and duration this_turn is exactly the op (Arachnogenesis), but `has_counters` only says 'some counter', 'no counters at all' (false) or 'at least one of kind X'. `has_counters: false` is wider than printed: it would spare a creature carrying only a stun, shield or keyword counter, which Hindervines still fogs. The selector language has no negation (`any_of`/`union` are unions only), and `counters_on` is a value, not a filter key usable in `by`."
+    }
+  ],
+  "closest_existing": ["prevent_combat_damage", "has_counters"],
+  "confidence": "high"
+}
