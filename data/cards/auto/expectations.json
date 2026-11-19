@@ -3401,6 +3401,10 @@
     },
     "zone": "battlefield"
   },
+  "captain_s_hook": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captivating_crew": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9919,6 +9923,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "grafted_exoskeleton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "grafted_wargear": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "graham_o_brien": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15981,6 +15993,10 @@
     "zone": "battlefield"
   },
   "norn_s_choirmaster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "norn_s_decree": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -22150,6 +22166,13 @@
       "0": 2
     },
     "zone": "graveyard"
+  },
+  "stitcher_s_graft": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "stitcher_s_supplier": {
     "battlefield_count": 33,

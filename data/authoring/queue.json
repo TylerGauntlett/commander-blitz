@@ -39612,12 +39612,12 @@
     },
     "Captain's Hook": {
       "edhrec_rank": 16378,
-      "gate": "template",
+      "gate": null,
       "name": "Captain's Hook",
-      "reason": "no template for: Equipped creature gets +2/+0, has menace, and is a Pirate in addition to its other creatur",
+      "reason": "",
       "scryfall_id": "7bd3f777-b33a-454a-8d5d-993260ddda03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain's Maneuver": {
@@ -115762,12 +115762,12 @@
     },
     "Grafted Exoskeleton": {
       "edhrec_rank": 2271,
-      "gate": "template",
+      "gate": null,
       "name": "Grafted Exoskeleton",
-      "reason": "no template for: Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent",
+      "reason": "",
       "scryfall_id": "d9218955-6604-49de-9153-6301d216e3bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grafted Growth": {
@@ -115802,12 +115802,12 @@
     },
     "Grafted Wargear": {
       "edhrec_rank": 9237,
-      "gate": "template",
+      "gate": null,
       "name": "Grafted Wargear",
-      "reason": "no template for: Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent",
+      "reason": "",
       "scryfall_id": "1d023d44-482e-4f60-b9b1-eede9bfb732f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Graham O'Brien": {
@@ -188632,12 +188632,12 @@
     },
     "Norn's Decree": {
       "edhrec_rank": 4072,
-      "gate": "template",
+      "gate": null,
       "name": "Norn's Decree",
-      "reason": "no template for: Whenever one or more creatures an opponent controls deal combat damage to you, that oppone",
+      "reason": "",
       "scryfall_id": "76f28aa2-1c18-4d58-a3f9-6cd5b49280d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Norn's Inquisitor": {
@@ -264872,12 +264872,12 @@
     },
     "Stitcher's Graft": {
       "edhrec_rank": 21633,
-      "gate": "template",
+      "gate": null,
       "name": "Stitcher's Graft",
-      "reason": "no template for: Whenever equipped creature attacks, it doesn't untap during its controller's next untap st",
+      "reason": "",
       "scryfall_id": "a5dad4be-599b-4c4d-a957-3fe6b52b4141",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stitcher's Supplier": {
