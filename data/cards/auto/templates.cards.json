@@ -141749,6 +141749,91 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "max_poison_of": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 3
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "any_color": true,
+                      "destination": "exile",
+                      "face_down": true,
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "playable": "while_exiled",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Corrupted — At the beginning of your end step, each opponent who has three or more poison counters exiles the top card of their library face down. You may look at and play those cards for as long as they remain exiled, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "ixhel_scion_of_atraxa",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "toxic"
+      ],
+      "mana_cost": "{1}{W}{B}{G}",
+      "name": "Ixhel, Scion of Atraxa",
+      "oracle_text": "Flying, vigilance, toxic 2\nCorrupted — At the beginning of your end step, each opponent who has three or more poison counters exiles the top card of their library face down. You may look at and play those cards for as long as they remain exiled, and you may spend mana as though it were mana of any color to cast those spells.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "toxic": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "count": {
                   "controller": "you",
@@ -191789,6 +191874,61 @@
               "Creature"
             ],
             "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "noxious_assault",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Noxious Assault",
+      "oracle_text": "Creatures you control get +2/+2 until end of turn. Whenever a creature blocks this turn, its controller gets a poison counter.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "duration": "this_turn",
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_poison",
+              "player": {
+                "controller_of": "subject"
+              }
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever a creature blocks this turn, its controller gets a poison counter.",
+          "trigger": {
+            "controller": "any",
+            "event": "blocks"
           }
         }
       ],
@@ -305109,6 +305249,53 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "unnatural_restoration",
+      "mana_cost": "{1}{G}",
+      "name": "Unnatural Restoration",
+      "oracle_text": "Return target permanent card from your graveyard to your hand. Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "op": "proliferate"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -308269,6 +308456,48 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vat_emergence",
+      "mana_cost": "{4}{B}",
+      "name": "Vat Emergence",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        },
+        {
+          "op": "proliferate"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "chapter": 1,
@@ -309672,6 +309901,56 @@
         "Warrior"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "proliferate"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{G} to proliferate?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may pay {1}{G}. If you do, proliferate.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "venomous_brutalizer",
+      "keywords": [
+        "toxic"
+      ],
+      "mana_cost": "{2}{G}{G}",
+      "name": "Venomous Brutalizer",
+      "oracle_text": "Toxic 3 (Players dealt combat damage by this creature also get three poison counters.)\nWhen this creature enters, you may pay {1}{G}. If you do, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Knight"
+      ],
+      "toughness": 4,
+      "toxic": 3,
       "types": [
         "Creature"
       ]
@@ -312264,6 +312543,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target artifact.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "viridian_corrupter",
+      "keywords": [
+        "infect"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "name": "Viridian Corrupter",
+      "oracle_text": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\nWhen this creature enters, destroy target artifact.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -314795,6 +315131,56 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vraska_s_fall",
+      "mana_cost": "{2}{B}",
+      "name": "Vraska's Fall",
+      "oracle_text": "Each opponent sacrifices a creature or planeswalker of their choice and gets a poison counter.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_poison",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

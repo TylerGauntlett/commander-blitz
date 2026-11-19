@@ -140952,12 +140952,12 @@
     },
     "Ixhel, Scion of Atraxa": {
       "edhrec_rank": 5768,
-      "gate": "template",
+      "gate": null,
       "name": "Ixhel, Scion of Atraxa",
-      "reason": "no template for: Flying, vigilance, toxic 2",
+      "reason": "",
       "scryfall_id": "66d32d60-4e08-49aa-857f-da92dc7c01d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ixidor's Will": {
@@ -189072,12 +189072,12 @@
     },
     "Noxious Assault": {
       "edhrec_rank": 7655,
-      "gate": "template",
+      "gate": null,
       "name": "Noxious Assault",
-      "reason": "no template for: Creatures you control get +2/+2 until end of turn. Whenever a creature blocks this turn, i",
+      "reason": "",
       "scryfall_id": "9649de6c-a9f7-4f0a-8bf7-cacaea60ed54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Noxious Dragon": {
@@ -298362,12 +298362,12 @@
     },
     "Unnatural Restoration": {
       "edhrec_rank": 1460,
-      "gate": "template",
+      "gate": null,
       "name": "Unnatural Restoration",
-      "reason": "no template for: Return target permanent card from your graveyard to your hand. Proliferate",
+      "reason": "",
       "scryfall_id": "4d4e6a91-59cc-4f7f-af25-16acabdafb1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unnatural Selection": {
@@ -301532,12 +301532,12 @@
     },
     "Vat Emergence": {
       "edhrec_rank": 4947,
-      "gate": "template",
+      "gate": null,
       "name": "Vat Emergence",
-      "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. Prolife",
+      "reason": "",
       "scryfall_id": "3a2aeaeb-7853-4588-8a5e-cfd997ba8515",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vat of Rebirth": {
@@ -302772,12 +302772,12 @@
     },
     "Venomous Brutalizer": {
       "edhrec_rank": 7628,
-      "gate": "template",
+      "gate": null,
       "name": "Venomous Brutalizer",
-      "reason": "no template for: Toxic 3",
+      "reason": "",
       "scryfall_id": "dd9df44a-a0ab-435f-914c-aa11cd88f4ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venomous Changeling": {
@@ -305362,12 +305362,12 @@
     },
     "Viridian Corrupter": {
       "edhrec_rank": 6041,
-      "gate": "template",
+      "gate": null,
       "name": "Viridian Corrupter",
-      "reason": "no template for: When this creature enters, destroy target artifact",
+      "reason": "",
       "scryfall_id": "94a1eddc-e5e6-4a4a-a950-13c4bc301c54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Viridian Emissary": {
@@ -308242,12 +308242,12 @@
     },
     "Vraska's Fall": {
       "edhrec_rank": 2322,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska's Fall",
-      "reason": "no template for: Each opponent sacrifices a creature or planeswalker of their choice and gets a poison coun",
+      "reason": "",
       "scryfall_id": "0173b7b4-2832-4943-ba45-8ba498d7a056",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vraska's Final Mercy": {

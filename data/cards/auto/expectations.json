@@ -11854,6 +11854,10 @@
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
   },
+  "ixhel_scion_of_atraxa": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "izoni_thousand_eyed": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15989,6 +15993,13 @@
   },
   "nova_flame": {
     "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "noxious_assault": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "graveyard"
   },
   "noxious_gearhulk": {
@@ -25304,6 +25315,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "unnatural_restoration": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "unshakable_tail": {
     "battlefield_count": 33,
     "hand_size": {
@@ -25577,6 +25597,16 @@
   "vastwood_gorger": {
     "zone": "battlefield"
   },
+  "vat_emergence": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "vault_101_birthday_party": {
     "battlefield_count": 35,
     "counters": {
@@ -25694,6 +25724,10 @@
     "zone": "graveyard"
   },
   "vengeful_warchief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "venomous_brutalizer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25887,6 +25921,11 @@
     "zone": "battlefield"
   },
   "viridian_claw": {
+    "zone": "battlefield"
+  },
+  "viridian_corrupter": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "viridian_joiner": {
@@ -26120,6 +26159,10 @@
       "kind": "loyalty"
     },
     "zone": "battlefield"
+  },
+  "vraska_s_fall": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "vraska_the_unseen": {
     "battlefield_count": 33,
