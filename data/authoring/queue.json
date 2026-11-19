@@ -201862,12 +201862,12 @@
     },
     "Phyrexian Scriptures": {
       "edhrec_rank": 4480,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Scriptures",
-      "reason": "no template for: I — Put a +1/+1 counter on up to one target creature. That creature becomes an artifact in",
+      "reason": "",
       "scryfall_id": "09bb74d7-dd61-4cce-b88c-ee4d656a97f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Scuta": {
@@ -201972,12 +201972,12 @@
     },
     "Phyrexian Triniform": {
       "edhrec_rank": 3025,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Triniform",
-      "reason": "no template for: When this creature dies, create three 3/3 colorless Phyrexian Golem artifact creature toke",
+      "reason": "",
       "scryfall_id": "b55fcddd-e7c8-4f57-8f49-dd86e2d5fe49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Tyranny": {
@@ -237062,12 +237062,12 @@
     },
     "Sculpting Steel": {
       "edhrec_rank": 661,
-      "gate": "template",
+      "gate": null,
       "name": "Sculpting Steel",
-      "reason": "no template for: You may have this artifact enter as a copy of any artifact on the battlefield",
+      "reason": "",
       "scryfall_id": "9f824b34-f783-48b3-b5d5-579935101148",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sculptor of Winter": {
@@ -237312,12 +237312,12 @@
     },
     "Scytheclaw": {
       "edhrec_rank": 7283,
-      "gate": "template",
+      "gate": null,
       "name": "Scytheclaw",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "7d1b6402-c054-4dd5-a9d5-3d218270e8ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scytheclaw Raptor": {
@@ -243132,12 +243132,12 @@
     },
     "Shattered Angel": {
       "edhrec_rank": 6805,
-      "gate": "template",
+      "gate": null,
       "name": "Shattered Angel",
-      "reason": "no template for: Whenever a land an opponent controls enters, you may gain 3 life",
+      "reason": "",
       "scryfall_id": "e357d1de-1464-4bb2-b938-66c0c2105e59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shattered Crypt": {
@@ -256022,12 +256022,12 @@
     },
     "Soul of New Phyrexia": {
       "edhrec_rank": 3398,
-      "gate": "template",
+      "gate": null,
       "name": "Soul of New Phyrexia",
-      "reason": "no template for: {5}: Permanents you control gain indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "c3b6480a-9b25-42a2-b62c-1f375216b211",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul of Ravnica": {

@@ -16734,7 +16734,19 @@
     },
     "zone": "battlefield"
   },
+  "phyrexian_scriptures": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "phyrexian_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "phyrexian_triniform": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -19478,6 +19490,10 @@
   "scryb_sprites": {
     "zone": "battlefield"
   },
+  "sculpting_steel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scurry_of_gremlins": {
     "battlefield_count": 35,
     "tokens": {
@@ -19506,6 +19522,14 @@
     },
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "scytheclaw": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "germ_0_0_b"
     },
     "zone": "battlefield"
   },
@@ -20020,6 +20044,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "shattered_angel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "shattered_landscape": {
     "zone": "battlefield"
@@ -21095,6 +21123,10 @@
     "zone": "battlefield"
   },
   "soul_guide_lantern": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "soul_of_new_phyrexia": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
