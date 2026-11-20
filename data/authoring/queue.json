@@ -283022,12 +283022,12 @@
     },
     "Theater of Horrors": {
       "edhrec_rank": 4478,
-      "gate": "template",
+      "gate": null,
       "name": "Theater of Horrors",
-      "reason": "no template for: At the beginning of your upkeep, exile the top card of your library",
+      "reason": "",
       "scryfall_id": "f0b88e4f-070f-48d1-a5f9-c22dfc7ab31b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Theft of Dreams": {

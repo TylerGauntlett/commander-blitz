@@ -24532,6 +24532,10 @@
   "the_whizzer_classic_speedster": {
     "zone": "battlefield"
   },
+  "theater_of_horrors": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thelonite_hermit": {
     "battlefield_count": 33,
     "hand_size": {
