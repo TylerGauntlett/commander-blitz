@@ -1,0 +1,16 @@
+{
+  "card_id": "profane_command",
+  "name": "Profane Command",
+  "oracle_text": "Choose two —\n• Target player loses X life.\n• Return target creature card with mana value X or less from your graveyard to the battlefield.\n• Target creature gets -X/-X until end of turn.\n• Up to X target creatures gain fear until end of turn. (They can't be blocked except by artifact creatures and/or black creatures.)",
+  "blocked_sentences": [
+    "• Up to X target creatures gain fear until end of turn. (They can't be blocked except by artifact creatures and/or black creatures.)"
+  ],
+  "needs": [{
+    "capability": "x_sized_mode_target",
+    "kind": "engine",
+    "what": "a mode-owned target spec (`mode: 3`) whose ceiling is the X announced for the spell (`count: {\"x\": true}, up_to: true`), so a modal spell's bullet can say \"up to X target creatures\" and declare those targets only when that mode is chosen",
+    "why_existing_wont_do": "`count: {\"x\": true}` is legal on a spell's card-level targets (601.2b announces X before 601.2c), and `mode` is how a Command gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or \"any\" (\"a mode-owned target's size must be printed\"). Dropping `mode` would demand the fear targets whichever two bullets are chosen (and every bullet here owns a target), and `count: \"any\"` or a literal ceiling is not \"up to X\""
+  }],
+  "closest_existing": ["heliod_s_intervention", "choose_mode", "target.mode", "target.up_to", "grant_keyword"],
+  "confidence": "high"
+}

@@ -135902,12 +135902,12 @@
     },
     "Indulgent Tormentor": {
       "edhrec_rank": 3856,
-      "gate": "template",
+      "gate": null,
       "name": "Indulgent Tormentor",
-      "reason": "no template for: At the beginning of your upkeep, draw a card unless target opponent sacrifices a creature ",
+      "reason": "",
       "scryfall_id": "83f97e17-52b5-487d-88e4-22939fbfc275",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indulging Patrician": {
@@ -164832,12 +164832,12 @@
     },
     "Magmatic Force": {
       "edhrec_rank": 9942,
-      "gate": "template",
+      "gate": null,
       "name": "Magmatic Force",
-      "reason": "no template for: At the beginning of each upkeep, this creature deals 3 damage to any target",
+      "reason": "",
       "scryfall_id": "5a105c13-2d54-4b42-93dd-24e01de79bc6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magmatic Galleon": {
@@ -187012,12 +187012,12 @@
     },
     "Nihil Spellbomb": {
       "edhrec_rank": 5313,
-      "gate": "template",
+      "gate": null,
       "name": "Nihil Spellbomb",
-      "reason": "no template for: {T}, Sacrifice this artifact: Exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "03927043-9276-42d5-9db9-eb935cf8a7c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nihilistic Glee": {
@@ -214232,12 +214232,12 @@
     },
     "Rakshasa Debaser": {
       "edhrec_rank": 6972,
-      "gate": "template",
+      "gate": null,
       "name": "Rakshasa Debaser",
-      "reason": "no template for: Whenever this creature attacks, put target creature card from defending player's graveyard",
+      "reason": "",
       "scryfall_id": "11e16fad-925a-4b59-8612-362f650e09e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rakshasa Gravecaller": {

@@ -11798,6 +11798,13 @@
       "graveyard"
     ]
   },
+  "indulgent_tormentor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "indulging_patrician": {
     "battlefield_count": 33,
     "life": {
@@ -14331,6 +14338,13 @@
     },
     "zone": "graveyard"
   },
+  "magmatic_force": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "magmatic_insight": {
     "graveyard_size": {
       "0": 4
@@ -16271,6 +16285,10 @@
     "zone": "battlefield"
   },
   "nightveil_sprite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nihil_spellbomb": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18601,6 +18619,13 @@
     "zone": "battlefield"
   },
   "rakdos_signet": {
+    "zone": "battlefield"
+  },
+  "rakshasa_debaser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "rally_of_wings": {
