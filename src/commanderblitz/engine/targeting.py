@@ -374,7 +374,10 @@ def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:
     # stopped, so the check reads who controls the spell or ability.
     if ctx.controller in ctx.state.opponents(pid) and player_has_hexproof(ctx.state, pid):
         return False
-    clause = spec.selector.get("controller", "any")
+    # `player_clause` is `player_selector` when the card narrowed only the
+    # player half ("target **opponent** or planeswalker"), else the selector's
+    # `controller` -- which on an `any` spec then narrows both halves.
+    clause = spec.player_clause
     if clause == "any":
         return True
     return pid in select_players(ctx, clause)

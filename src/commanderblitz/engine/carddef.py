@@ -79,6 +79,11 @@ class TargetSpec:
     #: **creature**" (Fatehold Charm). ``None`` means both halves read
     #: `selector`. See :attr:`permanent_half`.
     permanent_selector: Mapping[str, Any] | None = None
+    #: An ``"any"`` spec's player spec for its **player** half, when the printed
+    #: word narrows only the players -- "target **opponent** or planeswalker".
+    #: ``None`` means the player half reads `selector`'s ``controller``. See
+    #: :attr:`player_clause`.
+    player_selector: str | Mapping[str, Any] | None = None
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
     #: last, because `filter_legal` slices the stored refs spec by spec and a
@@ -203,6 +208,20 @@ class TargetSpec:
         if self.permanent_selector is not None:
             return self.permanent_selector
         return self.selector
+
+    @property
+    def player_clause(self) -> str | Mapping[str, Any]:
+        """The player spec a seat is checked against for this spec.
+
+        `player_selector` when the card wrote one, else `selector`'s
+        ``controller`` (``"any"`` when absent). Read by
+        `targeting._player_allowed`, which both `candidates` and `still_legal`
+        ask, so the seats a target is offered from and re-checked against
+        cannot disagree.
+        """
+        if self.player_selector is not None:
+            return self.player_selector
+        return self.selector.get("controller", "any")
 
     @property
     def graveyard_half(self) -> Mapping[str, Any]:

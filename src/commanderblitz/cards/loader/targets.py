@@ -751,6 +751,36 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
         )
 
 
+def _check_player_selector(model: TargetModel, label: str) -> None:
+    """"Target **opponent** or planeswalker": the player half's own player spec.
+
+    Each refusal is a clause that would load and be read nowhere, or read
+    somewhere the rest of the targeting layer does not look.
+    """
+    who = model.player_selector
+    if model.kind != "any":
+        # A `player` spec has one pool, which `selector.controller` already
+        # names; every other kind has no player half for this to narrow.
+        raise DslError(
+            f"{label}: 'player_selector' narrows the player half of an 'any' "
+            f"target, and this one is {model.kind!r}"
+        )
+    if who == "any":
+        raise DslError(
+            f"{label}.player_selector: 'any' is what an absent 'player_selector' "
+            f"already means -- drop it"
+        )
+    if _reads_context(who):
+        # The linked-target walk (`targeting._names_a_sibling`) reads
+        # `selector` only; a sibling named here would be enumerated without
+        # the answer it depends on. No printing asks for one.
+        raise DslError(
+            f"{label}.player_selector: names a sibling target or {{X}}, "
+            f"which only 'selector' may do"
+        )
+    _validate_player_spec(who, f"{label}.player_selector", {})
+
+
 def _compile_target(
     model: TargetModel, where: str, siblings: Mapping[str, str] | None = None
 ) -> TargetSpec:
@@ -890,6 +920,8 @@ def _compile_target(
 
     if model.permanent_selector is not None:
         _check_permanent_selector(model, label)
+    if model.player_selector is not None:
+        _check_player_selector(model, label)
 
     zone = model.selector.get("zone")
     if model.kind == "permanent" and zone not in (None, "battlefield"):
@@ -992,6 +1024,11 @@ def _compile_target(
         ),
         permanent_selector=(
             dict(model.permanent_selector) if model.permanent_selector is not None else None
+        ),
+        player_selector=(
+            dict(model.player_selector)
+            if isinstance(model.player_selector, dict)
+            else model.player_selector
         ),
         count=dict(model.count) if isinstance(model.count, dict) else model.count,
         count_if_kicked=(

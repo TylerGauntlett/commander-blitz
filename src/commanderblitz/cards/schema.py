@@ -400,6 +400,16 @@ class TargetModel(BaseModel):
     #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
+    #: The player spec the **player half** of a ``"any"`` target reads instead
+    #: of `selector`'s ``controller`` -- "target **opponent** or planeswalker"
+    #: (Theater of Horrors, Collective Defiance), where "opponent" narrows only
+    #: the players: any planeswalker is legal, your own included (115.4), and of
+    #: the players only an opponent. `selector` then narrows the permanent half
+    #: alone, its ``controller`` included. Absent, both halves read `selector`,
+    #: which is Balefire Liege's "target player or planeswalker". Refused on
+    #: every other kind, as ``"any"`` (the absent field already means that),
+    #: and when it names a sibling target.
+    player_selector: str | dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.
     #: `count: N, optional: true` is not the same thing and cannot stand in: it

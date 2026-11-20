@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **451** capabilities.
+**531 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -73,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
-| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 2 | 4478 | selector |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -1972,24 +1971,6 @@ Blocks **2** cards.
   - Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
-
-</details>
-
-## target-opponent-or-planeswalker
-
-Blocks **2** cards.
-
-- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
-  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
-- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
-  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. The other two sentences are expressible: an upkeep-triggered look_at_top to exile with link: true, playable: "while_exiled" and playable_condition: "your_turn_opponent_lost_life_exiled_with_source".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Theater of Horrors** (rank 4478) — `theater_of_horrors`
-  - {3}{R}: This enchantment deals 1 damage to target opponent or planeswalker.
-- **Collective Defiance** (rank 7525) — `collective_defiance`
-  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
 
 </details>
 

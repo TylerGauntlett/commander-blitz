@@ -1357,6 +1357,33 @@ spell target's `objects` narrowed by any other clause, since that pool is
 `choose_objects`' object refs and the spell is never in it — narrow the target
 spec instead.
 
+### "Target opponent or planeswalker" — `player_selector`
+
+```jsonc
+{ "id": "t1", "kind": "any", "count": 1,
+  "selector": { "types": ["Planeswalker"] },
+  "player_selector": "opponent" }
+```
+
+Theater of Horrors, Collective Defiance. A `kind: "any"` target spans players
+and battlefield permanents. Its `selector` narrows the permanent half, and its
+`controller` also narrows the player half (through `targeting._player_allowed`),
+which is right for "target player or planeswalker" (Balefire Liege: no
+`controller`, any player or any planeswalker).
+
+"Opponent" narrows only the players: 115.4 keeps every planeswalker legal, your
+own included. `player_selector` is a player spec the player half reads instead
+of `selector`'s `controller`, and `selector` (its `controller` included) then
+narrows the permanent half alone. Both `candidates` and `still_legal` read it
+through `TargetSpec.player_clause`, so the 608.2b re-check asks what the
+declaration asked.
+
+The near misses: `"selector": {"types": ["Planeswalker"], "controller": "opponent"}`
+also drops your own planeswalkers, and leaving `controller` out lets you target
+yourself. `player_selector` is refused on every kind but `any`, as `"any"` (an
+absent field already means that), as an unknown player spec, and when it names
+a sibling target.
+
 ### "Target spell or nonland permanent"
 
 ```jsonc
