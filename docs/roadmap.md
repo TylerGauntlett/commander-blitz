@@ -117,6 +117,7 @@ each heading; this table is generated from them.
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
+| [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
@@ -184,34 +185,35 @@ same list, and `/extend-roadmap` starts at the top of it.
 24. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
 25. [Difficulty](#difficulty) — S, medium
 26. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-27. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-28. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-29. [Why a press is refused](#why-a-press-is-refused) — S, medium
-30. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-31. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-32. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-33. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-34. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-35. [Secret choices](#secret-choices) — M, medium
-36. [Experience counters](#experience-counters) — M, medium
-37. [Outcomes as data](#outcomes-as-data) — M, medium
-38. [Rad counters](#rad-counters) — M, medium
-39. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-40. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-41. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-42. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-43. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-44. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-45. [Replays and sharing](#replays-and-sharing) — M, medium
-46. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-47. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-48. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-49. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-50. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-51. [Archidekt import](#archidekt-import) — S, low
-52. [Sound](#sound) — S, low
-53. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-54. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+27. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+28. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+29. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+30. [Why a press is refused](#why-a-press-is-refused) — S, medium
+31. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+32. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+33. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+34. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+35. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+36. [Secret choices](#secret-choices) — M, medium
+37. [Experience counters](#experience-counters) — M, medium
+38. [Outcomes as data](#outcomes-as-data) — M, medium
+39. [Rad counters](#rad-counters) — M, medium
+40. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+41. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+42. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+43. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+44. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+45. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+46. [Replays and sharing](#replays-and-sharing) — M, medium
+47. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+48. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+49. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+50. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+51. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+52. [Archidekt import](#archidekt-import) — S, low
+53. [Sound](#sound) — S, low
+54. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+55. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -548,6 +550,75 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### Granted flashback permissions without a per-turn cap
+
+Effort **S** · Impact **medium**, Lier, Return the Past and The Great Work each let one instant or sorcery out of the graveyard a turn, where the printed card lets every one go · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A permission to cast from a graveyard is metered by `max_per_turn`, read in
+`casting._permission_reaches`: an explicit `None` is uncapped, a missing key is
+one cast a turn, unless the permission grants escape or retrace. The count is
+billed per granting object through `TurnLedger` under `GRAVEYARD_CAST_SLOT`.
+
+Flashback's exile is the brake for a permission that grants it (702.34a, the
+`StackItem.exiles_instead` stamp in `Game._cast`). The two loaders say so:
+the `cast_from_graveyard` refusal in `cards/loader/__init__.py` ("Lier prints
+no per-turn cap and needs none") and the `grant_graveyard_cast` guard in
+`cards/loader/effects.py::_validate_effect`. Neither compiles that way:
+
+- The static's compile in `cards/loader/__init__.py` writes `max_per_turn: 1`
+  for a `grants_flashback` static with no printed cap; only `escape`,
+  `grants_retrace` and a non-flashback `surveilled_this_turn` get `None`.
+  Lier, Disciple of the Drowned and Return the Past are capped at one cast a
+  turn.
+- `effects/ops_cards.py::op_grant_graveyard_cast` copies the spec into the
+  static as written, and a `grants_flashback` grant carries no
+  `max_per_turn`, so it reads as one a turn. The Great Work's third chapter is
+  capped at one cast a turn.
+
+A probe shows it: with The Great Work's grant live and two instants in the
+graveyard, casting the first leaves the second uncastable.
+`tests/unit/casting/test_graveyard_cast_grant.py` and
+`tests/unit/casting/test_spells_cant_be_countered.py` each cast one card under
+a flashback permission and never a second, so nothing holds the cap either way.
+
+#### The change
+
+1. The static's compile writes `max_per_turn: None` for a `grants_flashback`
+   static with no printed cap, beside the escape and retrace cases.
+2. `op_grant_graveyard_cast` writes `max_per_turn: None` for a
+   `grants_flashback` grant that prints no `max_per_turn`, the same explicit
+   `None` its `unmetered` flag writes.
+3. The comment on `casting._permission_reaches` names flashback among the
+   uncapped permissions, and the row in
+   [rules-coverage.md](rules-coverage.md) says a flashback permission is
+   uncapped because its exile is the brake.
+
+It changes no printed cap: a permission that prints `max_per_turn` keeps it.
+It also leaves alone which permission a cast is billed to when two cover the
+same card (`casting._graveyard_cast_permission`, first unspent wins).
+
+#### Gate
+
+A unit test under `tests/unit/casting/` for the uncapped flashback permission:
+with two instants in the graveyard, casting the first under The Great Work's
+grant exiles it and leaves the second castable, and the same holds under a
+Lier-shaped static (`t_lier` in `tests/data/uncounterable_static.cards.json`).
+A permission that prints `max_per_turn: 1` beside `grants_flashback` still
+allows one cast. `tests/cards` re-verifies Lier, Return the Past and The Great
+Work through the six gates, and `tests/cards/test_golden_pool.py` is re-pinned.
+
+#### Open questions
+
+- **Re-pin and ship as a card behaviour change.** The fix changes how shipped
+  cards play, so the golden pool pin moves. Recommended: ship it as a `fix(dsl)`
+  pull request on its own, so the title says a card's play changed and the
+  merge releases it.
+- **Fix the static and the grant together.** They are the same misreading on
+  two paths. Recommended: one pull request, since both rest on the same rule and
+  one test file covers both.
 
 ### Voting: will of the council and council's dilemma
 
