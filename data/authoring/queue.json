@@ -33832,12 +33832,12 @@
     },
     "Breath of Malfegor": {
       "edhrec_rank": 13526,
-      "gate": "template",
+      "gate": null,
       "name": "Breath of Malfegor",
-      "reason": "no template for: deals 5 damage to each opponent",
+      "reason": "",
       "scryfall_id": "0e855b4e-71c3-49b8-acd5-e509b1f6da5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breath of the Sleepless": {
@@ -63152,12 +63152,12 @@
     },
     "Deadly Tempest": {
       "edhrec_rank": 3596,
-      "gate": "template",
+      "gate": null,
       "name": "Deadly Tempest",
-      "reason": "no template for: Destroy all creatures. Each player loses life equal to the number of creatures they contro",
+      "reason": "",
       "scryfall_id": "dcf4fb19-db45-4dd6-9479-6fa065e86cb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadly Visit": {
@@ -68532,12 +68532,12 @@
     },
     "Dictate of the Twin Gods": {
       "edhrec_rank": 2334,
-      "gate": "template",
+      "gate": null,
       "name": "Dictate of the Twin Gods",
-      "reason": "no template for: If a source would deal damage to a permanent or player, it deals double that damage to tha",
+      "reason": "",
       "scryfall_id": "61d6f304-680c-43ad-9686-61d8b0a0ad14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Didact Echo": {
@@ -75172,12 +75172,12 @@
     },
     "Dredge the Mire": {
       "edhrec_rank": 10727,
-      "gate": "template",
+      "gate": null,
       "name": "Dredge the Mire",
-      "reason": "no template for: Each opponent chooses a creature card in their graveyard. Put those cards onto the battlef",
+      "reason": "",
       "scryfall_id": "4194675b-0807-431c-9d47-7e51e5a1dac0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dredger's Insight": {
@@ -106922,12 +106922,12 @@
     },
     "Geode Rager": {
       "edhrec_rank": 2890,
-      "gate": "template",
+      "gate": null,
       "name": "Geode Rager",
-      "reason": "no template for: Landfall — Whenever a land you control enters, goad each creature target player controls",
+      "reason": "",
       "scryfall_id": "f6ba7b25-02bd-4e01-9920-ec84e89250b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geological Appraiser": {

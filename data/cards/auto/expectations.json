@@ -3002,6 +3002,13 @@
   "breakneck_berserker": {
     "zone": "battlefield"
   },
+  "breath_of_malfegor": {
+    "life": {
+      "0": 40,
+      "1": 35
+    },
+    "zone": "graveyard"
+  },
   "breath_weapon": {
     "zone": "graveyard"
   },
@@ -5566,6 +5573,15 @@
   "deadly_recluse": {
     "zone": "battlefield"
   },
+  "deadly_tempest": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 38,
+      "1": 38
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "dearly_departed": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5995,6 +6011,14 @@
   },
   "diamond_weapon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dictate_of_the_twin_gods": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "dig_through_time": {
@@ -6489,6 +6513,16 @@
   "dreamstone_hedron": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "dredge_the_mire": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "dreg_reaver": {
     "zone": "battlefield"
@@ -9381,6 +9415,10 @@
     "zone": "graveyard"
   },
   "genji_glove": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "geode_rager": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

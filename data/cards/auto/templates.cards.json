@@ -35780,6 +35780,33 @@
     },
     {
       "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "breath_of_malfegor",
+      "mana_cost": "{3}{B}{R}",
+      "name": "Breath of Malfegor",
+      "oracle_text": "Breath of Malfegor deals 5 damage to each opponent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "op": "damage",
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -67730,6 +67757,56 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "deadly_tempest",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Deadly Tempest",
+      "oracle_text": "Destroy all creatures. Each player loses life equal to the number of creatures they controlled that were destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "destroyed",
+                  "controller": {
+                    "binding": "each_player"
+                  }
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "active_zones": [
@@ -72937,6 +73014,33 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "damage_multiplier": 2,
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dictate_of_the_twin_gods",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Dictate of the Twin Gods",
+      "oracle_text": "Flash\nIf a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -79124,6 +79228,56 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dredge_the_mire",
+      "mana_cost": "{3}{B}",
+      "name": "Dredge the Mire",
+      "oracle_text": "Each opponent chooses a creature card in their graveyard. Put those cards onto the battlefield under your control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "chosen",
+              "objects": {
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature card in your graveyard"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "binding": "chosen"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -111013,6 +111167,70 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "target": "t1"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, goad each creature target player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "geode_rager",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Geode Rager",
+      "oracle_text": "First strike\nLandfall — Whenever a land you control enters, goad each creature target player controls. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
