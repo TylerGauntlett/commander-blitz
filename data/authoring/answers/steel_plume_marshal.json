@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "steel_plume_marshal",
+    "name": "Steel-Plume Marshal",
+    "oracle_text": "Flying\nWhenever this creature attacks, other attacking creatures you control with flying get +2/+2 until end of turn.",
+    "mana_cost": "{3}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Bird", "Soldier"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 3,
+    "toughness": 3,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, other attacking creatures you control with flying get +2/+2 until end of turn.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "attacking": true,
+              "keywords": ["flying"],
+              "exclude_self": true,
+              "count": "all"
+            },
+            "power": {"const": 2},
+            "toughness": {"const": 2},
+            "duration": "until_end_of_turn"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

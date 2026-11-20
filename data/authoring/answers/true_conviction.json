@@ -1,0 +1,28 @@
+{
+  "card": {
+    "id": "true_conviction",
+    "name": "True Conviction",
+    "oracle_text": "Creatures you control have double strike and lifelink.",
+    "mana_cost": "{3}{W}{W}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control have double strike and lifelink.",
+        "effect": "grant_keyword",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"]
+        },
+        "keywords": ["double_strike", "lifelink"]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["double_strike", "lifelink"], "count": 2}
+  }
+}
