@@ -355,6 +355,20 @@ token (`quiet_aura_token`), so that card's board holds 33.
 `tests/cards/test_every_card_works.py` calls the same helpers, so the two
 sandboxes agree.
 
+The position can move as well as be stocked, for a card that has no play in
+precombat main. A card-level target (or a spree mode's) that must be an
+attacking creature, on the selector or in one of its `any_of` branches, has no
+legal target there (601.2c), so `_cast` asks `wants_attacking_target` and
+`enter_sandbox_combat` walks the game into combat through the engine's own
+declarations: player 0 declares one of its creatures as an attacker and casts in
+the declare attackers step, and the measurement stops before combat damage. A
+target that can only be a blocking creature is not moved for, since a block on
+the board means combat damage before anything stops the turn. The move happens
+only when `find_play` offers nothing in main, so a card castable there keeps the position it was measured in (a split
+card whose other half is castable in main is still measured through that half),
+and a cast that runs past cleanup is refused, as it is for a `cast_only_during`
+window.
+
 ## Where the output lives
 
 ```

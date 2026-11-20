@@ -2705,6 +2705,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "enchanted_by",
         "entered_this_turn",
         "attacking_player",
+        "or_planeswalkers",
         "mana_value",
         "mana_cost",
         "power",
@@ -3112,7 +3113,12 @@ def matches_card_filter(
     # planeswalker would count as one attacking you.
     who = filt.get("attacking_player")
     if who is not None and not attacking_player_matches(
-        state.combat, oid, str(who), ability_source.controller, state
+        state.combat,
+        oid,
+        str(who),
+        ability_source.controller,
+        state,
+        or_planeswalkers=bool(filt.get("or_planeswalkers")),
     ):
         return False
     mv = filt.get("mana_value")

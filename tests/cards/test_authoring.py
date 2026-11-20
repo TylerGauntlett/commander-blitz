@@ -170,20 +170,20 @@ class TestTheEarlierGates:
         assert V.verify(flier, {"zone": "battlefield"}, pool).ok
 
     def test_a_card_that_cannot_be_cast_fails_on_playable(self, pool):
-        # Its only target is an attacking creature, and the sandbox never
-        # attacks -- the same limitation that kept Condemn out of the Isperia
-        # deck. "Not castable here" is a real answer, not a crash.
+        # Its only target is a blocking creature, and the sandbox never blocks
+        # (see `wants_attacking_target`). "Not castable here" is a real answer,
+        # not a crash.
         uncastable = {
-            "id": "auto_test_condemn",
-            "name": "Auto Test Condemn",
-            "oracle_text": "Destroy target attacking creature.",
+            "id": "auto_test_blocker_kill",
+            "name": "Auto Test Blocker Kill",
+            "oracle_text": "Destroy target blocking creature.",
             "mana_cost": "{W}",
             "types": ["Instant"],
             "targets": [
                 {
                     "id": "t1",
                     "kind": "permanent",
-                    "selector": {"zone": "battlefield", "types": ["Creature"], "attacking": True},
+                    "selector": {"zone": "battlefield", "types": ["Creature"], "blocking": True},
                     "count": 1,
                 }
             ],
@@ -451,6 +451,125 @@ class TestTheSandboxMeetsACastWindow:
         game = V.build_sandbox(merged, card.id)
         assert (game.state.active_player, game.state.step) == (0, V.Step.PRECOMBAT_MAIN)
         assert game.state.turn == 1
+
+
+class TestTheSandboxEntersCombatForAnAttackingTarget:
+    """A card whose only target is an attacking creature is cast in combat.
+
+    Condemn ("put target attacking creature on the bottom of its owner's
+    library") had no legal target in precombat main and failed gate 4. The
+    sandbox now declares one of player 0's creatures as an attacker and casts
+    in the declare attackers step -- only for a card with no play in main --
+    and the card is still cast through `legal_actions`.
+    """
+
+    @staticmethod
+    def _attacking_target(**selector) -> list[dict]:
+        return [
+            {
+                "id": "t1",
+                "kind": "permanent",
+                "count": 1,
+                "selector": {
+                    "zone": "battlefield",
+                    "controller": "any",
+                    "types": ["Creature"],
+                    **selector,
+                },
+            }
+        ]
+
+    def _condemn(self) -> dict:
+        return {
+            "id": "auto_test_condemn",
+            "name": "Auto Test Condemn",
+            "oracle_text": (
+                "Put target attacking creature on the bottom of its owner's library. "
+                "Its controller gains life equal to its toughness."
+            ),
+            "mana_cost": "{W}",
+            "types": ["Instant"],
+            "targets": self._attacking_target(attacking=True),
+            "spell_effects": [
+                {"op": "snapshot", "target": "t1", "as": "condemned"},
+                {"op": "put_on_top", "objects": {"target": "t1"}, "bottom": True},
+                {
+                    "op": "gain_life",
+                    "player": {"controller_of": "condemned"},
+                    "amount": {"toughness_of": {"var": "condemned"}},
+                },
+            ],
+        }
+
+    def _pump(self) -> dict:
+        """An attacker that survives the spell: the stop must still precede damage."""
+        return {
+            "id": "auto_test_charge",
+            "name": "Auto Test Charge",
+            "oracle_text": "Target attacking or blocking creature gets +2/+2 until end of turn.",
+            "mana_cost": "{W}",
+            "types": ["Instant"],
+            "targets": self._attacking_target(any_of=[{"attacking": True}, {"blocking": True}]),
+            "spell_effects": [
+                {
+                    "op": "pump",
+                    "objects": {"target": "t1"},
+                    "power": {"const": 2},
+                    "toughness": {"const": 2},
+                }
+            ],
+        }
+
+    def _merged(self, pool: CardRegistry, payload: dict):
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def test_it_is_read_off_the_selector_and_its_any_of_branches(self, hand_written):
+        _, condemn = self._merged(hand_written, self._condemn())
+        _, charge = self._merged(hand_written, self._pump())
+        assert V.wants_attacking_target(condemn)
+        assert V.wants_attacking_target(charge)
+
+    def test_it_is_cast_in_declare_attackers_at_its_own_attacker(self, hand_written):
+        merged, card = self._merged(hand_written, self._condemn())
+        game, oid, target, _ = V._cast(merged, card)
+        assert game.state.objects[oid].zone is V.Zone.GRAVEYARD
+        assert game.state.objects[target].zone is V.Zone.LIBRARY
+        assert game.state.objects[target].owner == 0
+        # Measured inside the turn it was cast in, before cleanup.
+        assert (game.state.turn, game.state.active_player) == (1, 0)
+
+    def test_it_clears_every_gate(self, hand_written):
+        verdict = V.verify(
+            self._condemn(),
+            {"zone": "graveyard", "battlefield_count": 31, "library_size": {"0": 41}},
+            hand_written,
+        )
+        assert verdict.ok, str(verdict)
+
+    def test_a_surviving_attacker_is_measured_before_combat_damage(self, hand_written):
+        merged, card = self._merged(hand_written, self._pump())
+        game, _, target, before = V._cast(merged, card)
+        after = V.chars(game.state, target)
+        assert (after.power, after.toughness) == (before[0] + 2, before[1] + 2)
+        assert game.state.players[1].life == 40
+        assert game.state.step is V.Step.DECLARE_BLOCKERS
+
+    def test_a_card_castable_in_main_keeps_its_position(self, pool):
+        """Response // Resurgence: measured through the half main offers.
+
+        Its Response half targets an attacking or blocking creature, but the
+        card has a play in main -- its Resurgence half -- so the sandbox does
+        not move and its recorded expectation still describes what is measured.
+        """
+        card = pool.get("response_resurgence")
+        assert V.wants_attacking_target(card)
+        game = V.build_sandbox(pool, card.id)
+        game._advance()
+        action = V.find_play(game, card.id)
+        assert action is not None and action.second_face
+        assert game.state.step is V.Step.PRECOMBAT_MAIN
+        assert game.state.combat is None
 
 
 class TestTheSandboxIsUsable:

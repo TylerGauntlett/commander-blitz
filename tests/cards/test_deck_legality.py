@@ -62,6 +62,7 @@ PRECONS = {
     "otc_grand_larceny",
     "otc_quick_draw",
     "scd_draconic_destruction",
+    "scd_first_flight",
     "scd_grave_danger",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",

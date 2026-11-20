@@ -14124,7 +14124,7 @@ one at your planeswalker would draw a card.
 
 `attacking_player` is the selector key that says *whom*: `"you"`, `"opponent"` or
 `"any"` player, relative to the ability's controller, and never a creature whose
-attack is recorded in `combat.attacking_planeswalker`. It narrows the binding
+attack is recorded in `combat.attacking_permanent` (a planeswalker or a battle). It narrows the binding
 inside `count`, and works on any pool (`{"attacking_player": "opponent"}` over the
 battlefield) and in a trigger filter. Out of combat it matches nothing. It is a
 word, not a boolean — `true` is refused, because read as a word it would name
@@ -14132,8 +14132,30 @@ nobody. `attacking` stays the whom-less boolean. `"most_life"` is "attacking
 the player with the most life or tied for most life" (Scourge of the Throne's
 intervening-if): the defender passes `GameState.has_most_life`, read live, so
 in a `condition` it is asked again on resolution. Dethrone, which has no "if",
-is the trigger's `defending: "most_life"` instead. Battles are not attackable in
-this engine; when they are, a creature attacking one belongs outside this key too.
+is the trigger's `defending: "most_life"` instead. A creature attacking a battle
+is attacking no player, so it is outside this key in every form.
+
+**`or_planeswalkers: true`** is the printed "…or a planeswalker you control"
+said on a selector, for the cards whose pool is not one defender's `attackers`
+binding. Soul Snare targets one creature attacking you or your planeswalker;
+Roar of Resistance pumps the creatures attacking *every* opponent and their
+planeswalkers, once per attack, which `creatures_attack_player` (one firing per
+defending player) cannot say:
+
+```jsonc
+// Soul Snare: "Exile target creature that's attacking you or a planeswalker you control."
+"selector": { "types": ["Creature"], "attacking_player": "you", "or_planeswalkers": true }
+
+// Roar of Resistance: "creatures attacking your opponents and/or planeswalkers they control"
+"objects": { "types": ["Creature"], "attacking_player": "opponent", "or_planeswalkers": true }
+```
+
+It widens every form of `attacking_player`, a binding's seat included, and the
+trigger filter reads it too. The walker is asked about as it is now: one that
+left the battlefield, stopped being a planeswalker or changed hands is no longer
+"a planeswalker that player controls". Never a battle. The loader refuses it
+without an `attacking_player` beside it, because `attacking: true` with the flag
+would load and mean nothing more, and refuses anything but a boolean.
 
 `{"binding": name}` is the one non-word form: the creature is attacking the
 **seat** that binding holds. Namor, Atlantean King's "other creatures you

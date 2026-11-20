@@ -11,12 +11,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 184 |
-| [Selectors](#selectors) | 80 |
+| [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 65 |
-| [Trigger filters](#trigger-filters) | 37 |
+| [Trigger filters](#trigger-filters) | 38 |
 | [Static effects](#static-effects) | 104 |
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 48 |
@@ -289,6 +289,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `not_types` | Has none of these card types ("noncreature"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `object_kind` | Restrict to cards, tokens, spells or abilities. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `optional` | Exactly N, or none at all ("you may"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
@@ -567,6 +568,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
+| `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `paid_by` | A spell paid with mana from the named source. | ["When that mana is spent to cast…"](card-dsl-cookbook.md#when-that-mana-is-spent-to-cast) |
 | `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |

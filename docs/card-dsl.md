@@ -621,6 +621,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"|{"binding": name}
+  "or_planeswalkers": true,       // ...or a planeswalker that player controls (Soul Snare); needs attacking_player, never a battle
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- unblocked once blockers are declared (509.1h); neither before

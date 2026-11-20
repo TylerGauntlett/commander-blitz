@@ -10782,6 +10782,43 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Creatures your opponents control attack each combat if able."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "angler_turtle",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Angler Turtle",
+      "oracle_text": "Hexproof\nCreatures your opponents control attack each combat if able.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Turtle"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "damage_multiplier": 2,
           "damage_source": {
             "controller": "you"
@@ -14275,6 +14312,66 @@
         "Archon"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Gain life equal to that creature's power?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control with flying enters, you may gain life equal to that creature's power.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archon_of_redemption",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Archon of Redemption",
+      "oracle_text": "Flying\nWhenever this creature or another creature you control with flying enters, you may gain life equal to that creature's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -19604,6 +19701,66 @@
         "Warrior"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "keywords": [
+                        "flying"
+                      ],
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you gain 2 life for each creature you control with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aven_gagglemaster",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Aven Gagglemaster",
+      "oracle_text": "Flying\nWhen this creature enters, you gain 2 life for each creature you control with flying.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Warrior"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -42617,6 +42774,99 @@
         {
           "effects": [
             {
+              "as": "returned",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "returned",
+                  "zone": "hand"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "count": {
+                        "const": 1
+                      },
+                      "destination": "battlefield",
+                      "op": "search_library",
+                      "player": "you",
+                      "selector": {
+                        "subtypes": [
+                          "Plains"
+                        ]
+                      },
+                      "tapped": true
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Search your library for a Plains card?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "defender"
+                  },
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "recheck": false,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cartographer_s_hawk",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Cartographer's Hawk",
+      "oracle_text": "Flying\nWhen this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -54841,6 +55091,62 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "condemn",
+      "mana_cost": "{W}",
+      "name": "Condemn",
+      "oracle_text": "Put target attacking creature on the bottom of its owner's library. Its controller gains life equal to its toughness.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "condemned",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "bottom": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "amount": {
+            "toughness_of": {
+              "var": "condemned"
+            }
+          },
+          "op": "gain_life",
+          "player": {
+            "controller_of": "condemned"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "attacking": true,
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -72376,6 +72682,53 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "devouring_light",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Devouring Light",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nExile target attacking or blocking creature.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "attacking": true
+              },
+              {
+                "blocking": true
+              }
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -74078,6 +74431,43 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "disenchant",
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -90972,6 +91362,42 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ever_watching_threshold",
+      "mana_cost": "{2}{U}",
+      "name": "Ever-Watching Threshold",
+      "oracle_text": "Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "op": "hideaway"
@@ -95732,6 +96158,44 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control with flying get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "favorable_winds",
+      "mana_cost": "{1}{U}",
+      "name": "Favorable Winds",
+      "oracle_text": "Creatures you control with flying get +1/+1.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -121008,6 +121472,64 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Creatures with flying get +2/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": -2
+          },
+          "text": "Creatures without flying get -2/-0.",
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "gravitational_shift",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Gravitational Shift",
+      "oracle_text": "Creatures with flying get +2/+0.\nCreatures without flying get -2/-0.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -141637,6 +142159,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw cards equal to the number of opponents you have.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "inspired_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Inspired Sphinx",
+      "oracle_text": "Flying\nWhen this creature enters, draw cards equal to the number of opponents you have.\n{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -147458,6 +148039,66 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Creatures you control with flying have \"Spells your opponents cast that target this creature cost {2} more to cast.\""
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "affects_spells": {
+            "controller": "opponent"
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "spell_cost_increase",
+          "kind": "static",
+          "targeting": {
+            "self_only": true
+          },
+          "text": "Spells your opponents cast that target this creature cost {2} more to cast."
+        }
+      ],
+      "id": "jubilant_skybonder",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W/U}{W/U}",
+      "name": "Jubilant Skybonder",
+      "oracle_text": "Flying\nCreatures you control with flying have \"Spells your opponents cast that target this creature cost {2} more to cast.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -149777,6 +150418,231 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attacking": true,
+                "controller": "any",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, attacking creatures with flying get +1/+1 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{5}{W}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {5}{W} ({5}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kangee_s_lieutenant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Kangee's Lieutenant",
+      "oracle_text": "Flying\nWhenever this creature attacks, attacking creatures with flying get +1/+1 until end of turn.\nEncore {5}{W} ({5}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attacking": true,
+                "controller": "any",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kangee attacks, attacking creatures with flying get +2/+0 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "blocking": true,
+                "controller": "any",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kangee blocks, blocking creatures with flying get +0/+2 until end of turn.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "kangee_sky_warden",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}{U}",
+      "name": "Kangee, Sky Warden",
+      "oracle_text": "Flying, vigilance\nWhenever Kangee attacks, attacking creatures with flying get +2/+0 until end of turn.\nWhenever Kangee blocks, blocking creatures with flying get +0/+2 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -185063,6 +185929,59 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            },
+            "mana": "{W}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}{U}, {T}, Exile a creature card from your graveyard: Create a 1/1 white Spirit creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "moorland_haunt",
+      "name": "Moorland Haunt",
+      "oracle_text": "{T}: Add {C}.\n{W}{U}, {T}, Exile a creature card from your graveyard: Create a 1/1 white Spirit creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -210504,6 +211423,53 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "pilgrim_s_eye",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "Pilgrim's Eye",
+      "oracle_text": "Flying\nWhen this creature enters, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Thopter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -222235,6 +223201,55 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rally_of_wings",
+      "mana_cost": "{1}{W}",
+      "name": "Rally of Wings",
+      "oracle_text": "Untap all creatures you control. Creatures you control with flying get +2/+2 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "untap"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -233187,6 +234202,77 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creature tokens you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "attacking_player": "opponent",
+                    "count": "all",
+                    "or_planeswalkers": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{R}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{R} to give creatures attacking your opponents and/or planeswalkers they control +2/+0 until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures attack, you may pay {1}{R}. If you do, creatures attacking your opponents and/or planeswalkers they control get +2/+0 until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "roar_of_resistance",
+      "mana_cost": "{1}{R}",
+      "name": "Roar of Resistance",
+      "oracle_text": "Creature tokens you control have haste.\nWhenever one or more creatures attack, you may pay {1}{R}. If you do, creatures attacking your opponents and/or planeswalkers they control get +2/+0 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -257374,6 +258460,84 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "exclude_self": true,
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "This creature gets +1/+1 for each other creature you control with flying.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "exclude_self": true,
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "cat_bird_1_1_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}{U}: Create a 1/1 white Cat Bird creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "skycat_sovereign",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{W}{U}",
+      "name": "Skycat Sovereign",
+      "oracle_text": "Flying\nThis creature gets +1/+1 for each other creature you control with flying.\n{2}{W}{U}: Create a 1/1 white Cat Bird creature token with flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Cat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "link": true,
@@ -262910,6 +264074,58 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{W}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "op": "exile",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking_player": "you",
+                "or_planeswalkers": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "soul_snare",
+      "mana_cost": "{W}",
+      "name": "Soul Snare",
+      "oracle_text": "{W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -267473,6 +268689,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1 and has lifelink and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has lifelink and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has lifelink and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "staggering_insight",
+      "mana_cost": "{W}{U}",
+      "name": "Staggering Insight",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has lifelink and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "G"
@@ -268389,6 +269693,67 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attacking": true,
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, other attacking creatures you control with flying get +2/+2 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "steel_plume_marshal",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Steel-Plume Marshal",
+      "oracle_text": "Flying\nWhenever this creature attacks, other attacking creatures you control with flying get +2/+2 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -270031,6 +271396,31 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "storm_herd",
+      "mana_cost": "{8}{W}{W}",
+      "name": "Storm Herd",
+      "oracle_text": "Create X 1/1 white Pegasus creature tokens with flying, where X is your life total.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "life_of": "you"
+          },
+          "op": "create_token",
+          "token": "pegasus_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -297169,6 +298559,56 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other creatures you control with flying get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "thunderclap_wyvern",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{U}",
+      "name": "Thunderclap Wyvern",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nFlying\nOther creatures you control with flying get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Drake"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "condition": {
@@ -297760,6 +299200,63 @@
         "Fish"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures with flying, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers",
+                  "keywords": [
+                    "flying"
+                  ]
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tide_skimmer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Tide Skimmer",
+      "oracle_text": "Flying\nWhenever you attack with two or more creatures with flying, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Drake"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -304473,6 +305970,39 @@
       "mana_cost": "{2}{G}",
       "name": "Trudge Garden",
       "oracle_text": "Whenever you gain life, you may pay {2}. If you do, create a 4/4 green Fungus Beast creature token with trample.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have double strike and lifelink."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "true_conviction",
+      "mana_cost": "{3}{W}{W}{W}",
+      "name": "True Conviction",
+      "oracle_text": "Creatures you control have double strike and lifelink.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -328489,6 +330019,46 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 1,
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      },
+      "id": "winged_words",
+      "mana_cost": "{2}{U}",
+      "name": "Winged Words",
+      "oracle_text": "This spell costs {1} less to cast if you control a creature with flying.\nDraw two cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

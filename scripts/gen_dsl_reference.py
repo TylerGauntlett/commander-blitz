@@ -591,6 +591,8 @@ SELECTORS: dict[str, Entry] = {
     "not_types": ("Has none of these card types (\"noncreature\").", None),
     "object_kind": ("Restrict to cards, tokens, spells or abilities.", None),
     "optional": ("Exactly N, or none at all (\"you may\").", None),
+    "or_planeswalkers": ("With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle).",
+                         '"Attacks **you**" is not "attacks you and/or your planeswalkers"'),
     "owner": ("Owned by `you`/`opponent`/`any` or a player spec.", None),
     "paid_by": ("A spell paid with mana from the named source.",
                 '"When that mana is spent to cast…"'),

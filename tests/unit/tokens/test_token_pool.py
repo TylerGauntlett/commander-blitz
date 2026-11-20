@@ -3412,3 +3412,50 @@ class TestVerixsKaroxIsALegendaryDragon:
 
     def test_the_near_miss_is_still_separate(self, pool):
         assert not pool.get("dragon_4_4_r_flying").supertypes
+
+
+class TestStormHerdsPegasusIsAOneOne:
+    """Storm Herd: *"Create X **1/1 white Pegasus** creature tokens with
+    **flying**, where X is your life total."*
+
+    Its near miss is `pegasus_2_2_w_flying`, Archon of Sun's Grace's Pegasus:
+    the right creature type at twice the size, and Storm Herd makes forty of
+    them.
+    """
+
+    def test_it_is_a_one_one_white_pegasus_with_flying(self, pool):
+        token = pool.get("pegasus_1_1_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Pegasus"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_two_two_pegasus_is_still_separate(self, pool):
+        other = pool.get("pegasus_2_2_w_flying")
+        assert (other.power, other.toughness) == (2, 2)
+
+
+class TestSkycatSovereignsCatBirdIsBoth:
+    """Skycat Sovereign: *"Create a **1/1 white Cat Bird** creature token with
+    **flying**."*
+
+    Two near misses, each missing one creature type: `bird_1_1_w_flying` is
+    not a Cat and `cat_1_1_w` is not a Bird and does not fly. Both types
+    count, for a Cat lord and a Bird lord alike.
+    """
+
+    def test_it_is_a_one_one_white_cat_bird_with_flying(self, pool):
+        token = pool.get("cat_bird_1_1_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["W"]
+        assert sorted(token.subtypes) == ["Bird", "Cat"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert "Cat" not in pool.get("bird_1_1_w_flying").subtypes
+        assert "Bird" not in pool.get("cat_1_1_w").subtypes
+        assert not pool.get("cat_1_1_w").keywords

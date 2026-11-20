@@ -9162,12 +9162,12 @@
     },
     "Angler Turtle": {
       "edhrec_rank": 13595,
-      "gate": "template",
+      "gate": null,
       "name": "Angler Turtle",
-      "reason": "no template for: Creatures your opponents control attack each combat if able",
+      "reason": "",
       "scryfall_id": "01c029b2-dbe8-477e-9b61-6df666978444",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angrath's Ambusher": {
@@ -12292,12 +12292,12 @@
     },
     "Archon of Redemption": {
       "edhrec_rank": 14615,
-      "gate": "template",
+      "gate": null,
       "name": "Archon of Redemption",
-      "reason": "no template for: Whenever this creature or another creature you control with flying enters, you may gain li",
+      "reason": "",
       "scryfall_id": "2243270a-2e7c-4239-af2e-9b6b47124237",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Sun's Grace": {
@@ -17412,12 +17412,12 @@
     },
     "Aven Gagglemaster": {
       "edhrec_rank": 13783,
-      "gate": "template",
+      "gate": null,
       "name": "Aven Gagglemaster",
-      "reason": "no template for: When this creature enters, you gain 2 life for each creature you control with flying",
+      "reason": "",
       "scryfall_id": "a07568b2-5a1f-4aaf-bd71-57b41bae925d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aven Heartstabber": {
@@ -40412,12 +40412,12 @@
     },
     "Cartographer's Hawk": {
       "edhrec_rank": 4568,
-      "gate": "template",
+      "gate": null,
       "name": "Cartographer's Hawk",
-      "reason": "no template for: When this creature deals combat damage to a player who controls more lands than you, retur",
+      "reason": "",
       "scryfall_id": "12d0b07f-9823-45b7-89bb-0a2a71833d46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cartographer's Survey": {
@@ -51492,12 +51492,12 @@
     },
     "Condemn": {
       "edhrec_rank": 4637,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Condemn",
-      "reason": "no template for: Put target attacking creature on the bottom of its owner's library. Its controller gains l",
+      "reason": "player 0 life is 42, expected 999",
       "scryfall_id": "ee6a541f-a72e-4aa5-bced-430e5158ca85",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Condescend": {
@@ -68142,12 +68142,12 @@
     },
     "Devouring Light": {
       "edhrec_rank": 9654,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Devouring Light",
-      "reason": "no template for: Convoke",
+      "reason": "your battlefield is 31, expected 999",
       "scryfall_id": "9f33b612-c4fb-48b1-bd39-571e4e3c4619",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Devouring Rage": {
@@ -69912,12 +69912,12 @@
     },
     "Disenchant": {
       "edhrec_rank": 1094,
-      "gate": "template",
+      "gate": null,
       "name": "Disenchant",
-      "reason": "no template for: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "7ac43e16-8b14-46f2-877a-600ea918766b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disentomb": {
@@ -87212,12 +87212,12 @@
     },
     "Ever-Watching Threshold": {
       "edhrec_rank": 8797,
-      "gate": "template",
+      "gate": null,
       "name": "Ever-Watching Threshold",
-      "reason": "no template for: Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw",
+      "reason": "",
       "scryfall_id": "1fb0d8fa-48d0-4143-b8c4-d3b01a0bd7cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everbark Shaman": {
@@ -92222,12 +92222,12 @@
     },
     "Favorable Winds": {
       "edhrec_rank": 3178,
-      "gate": "template",
+      "gate": null,
       "name": "Favorable Winds",
-      "reason": "no template for: Creatures you control with flying get +1/+1",
+      "reason": "",
       "scryfall_id": "cc11f0f5-ecdc-42a7-9f6a-ecdd44dbc0a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Favored Hoplite": {
@@ -116812,12 +116812,12 @@
     },
     "Gravitational Shift": {
       "edhrec_rank": 6318,
-      "gate": "template",
+      "gate": null,
       "name": "Gravitational Shift",
-      "reason": "no template for: Creatures with flying get +2/+0",
+      "reason": "",
       "scryfall_id": "86463838-81d0-464d-84ba-37fa1c76bbea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravitic Punch": {
@@ -137662,12 +137662,12 @@
     },
     "Inspired Sphinx": {
       "edhrec_rank": 13106,
-      "gate": "template",
+      "gate": null,
       "name": "Inspired Sphinx",
-      "reason": "no template for: When this creature enters, draw cards equal to the number of opponents you have",
+      "reason": "",
       "scryfall_id": "21522dff-8a65-4816-8b6e-b71270fda3cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspired Sprite": {
@@ -144052,12 +144052,12 @@
     },
     "Jubilant Skybonder": {
       "edhrec_rank": 6002,
-      "gate": "template",
+      "gate": null,
       "name": "Jubilant Skybonder",
-      "reason": "no template for: Creatures you control with flying have \"Spells your opponents cast that target this creatu",
+      "reason": "",
       "scryfall_id": "d8a649ec-4f64-4b50-a96c-ac967502b3a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jubilation": {
@@ -145782,12 +145782,12 @@
     },
     "Kangee's Lieutenant": {
       "edhrec_rank": 8785,
-      "gate": "template",
+      "gate": null,
       "name": "Kangee's Lieutenant",
-      "reason": "no template for: Whenever this creature attacks, attacking creatures with flying get +1/+1 until end of tur",
+      "reason": "",
       "scryfall_id": "d0caf32b-ab0e-4207-9aaa-75c19f88cdd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kangee, Aerie Keeper": {
@@ -145802,12 +145802,12 @@
     },
     "Kangee, Sky Warden": {
       "edhrec_rank": 5390,
-      "gate": "template",
+      "gate": null,
       "name": "Kangee, Sky Warden",
-      "reason": "no template for: Whenever Kangee attacks, attacking creatures with flying get +2/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "2f146425-749c-47f1-ae79-1c6cb113f425",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kapow!": {
@@ -179052,12 +179052,12 @@
     },
     "Moorland Haunt": {
       "edhrec_rank": 8599,
-      "gate": "template",
+      "gate": null,
       "name": "Moorland Haunt",
-      "reason": "no template for: {W}{U}, {T}, Exile a creature card from your graveyard: Create a 1/1 white Spirit creature",
+      "reason": "",
       "scryfall_id": "df8bbd04-981e-45ec-a835-7237350630cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moorland Inquisitor": {
@@ -202482,12 +202482,12 @@
     },
     "Pilgrim's Eye": {
       "edhrec_rank": 4782,
-      "gate": "template",
+      "gate": null,
       "name": "Pilgrim's Eye",
-      "reason": "no template for: When this creature enters, you may search your library for a basic land card, reveal it, p",
+      "reason": "",
       "scryfall_id": "48bfc25b-f73c-431c-b173-adcd65c5d491",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pili-Pala": {
@@ -214472,12 +214472,12 @@
     },
     "Rally of Wings": {
       "edhrec_rank": 7142,
-      "gate": "template",
+      "gate": null,
       "name": "Rally of Wings",
-      "reason": "no template for: Untap all creatures you control. Creatures you control with flying get +2/+2 until end of ",
+      "reason": "",
       "scryfall_id": "a88827db-a52a-44ef-8e49-8c32bb37cbfe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rally the Ancestors": {
@@ -226012,12 +226012,12 @@
     },
     "Roar of Resistance": {
       "edhrec_rank": 5846,
-      "gate": "template",
+      "gate": null,
       "name": "Roar of Resistance",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "8599b714-21a2-4d57-9193-eb3bd8aad035",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roar of the Crowd": {
@@ -250392,12 +250392,12 @@
     },
     "Skycat Sovereign": {
       "edhrec_rank": 7358,
-      "gate": "template",
+      "gate": null,
       "name": "Skycat Sovereign",
-      "reason": "no template for: This creature gets +1/+1 for each other creature you control with flying",
+      "reason": "",
       "scryfall_id": "8276bec2-1a3c-425c-928f-866b8ef05e97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Aerialist // Skyclave Invader": {
@@ -255872,12 +255872,12 @@
     },
     "Soul Snare": {
       "edhrec_rank": 6445,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Snare",
-      "reason": "no template for: {W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswal",
+      "reason": "",
       "scryfall_id": "18f3a850-b2e1-4970-9971-5f662fb3df31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul Snuffers": {
@@ -262162,12 +262162,12 @@
     },
     "Staggering Insight": {
       "edhrec_rank": 5458,
-      "gate": "template",
+      "gate": null,
       "name": "Staggering Insight",
-      "reason": "no template for: Enchanted creature gets +1/+1 and has lifelink and \"Whenever this creature deals combat da",
+      "reason": "",
       "scryfall_id": "fe50be3b-7d22-49c1-a2f1-b2c5786090be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Staggering Size": {
@@ -263832,12 +263832,12 @@
     },
     "Steel-Plume Marshal": {
       "edhrec_rank": 7312,
-      "gate": "template",
+      "gate": null,
       "name": "Steel-Plume Marshal",
-      "reason": "no template for: Whenever this creature attacks, other attacking creatures you control with flying get +2/+",
+      "reason": "",
       "scryfall_id": "d35353c1-65a9-4ddc-b7c7-f15b93a7f21c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steelbane Hydra": {
@@ -265892,12 +265892,12 @@
     },
     "Storm Herd": {
       "edhrec_rank": 3011,
-      "gate": "template",
+      "gate": null,
       "name": "Storm Herd",
-      "reason": "no template for: Create X 1/1 white Pegasus creature tokens with flying, where X is your life total",
+      "reason": "",
       "scryfall_id": "62a3fc08-6d95-43da-8479-4289018c2d58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm King's Thunder": {
@@ -286092,12 +286092,12 @@
     },
     "Thunderclap Wyvern": {
       "edhrec_rank": 9503,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderclap Wyvern",
-      "reason": "no template for: Other creatures you control with flying get +1/+1",
+      "reason": "",
       "scryfall_id": "b162acd7-3a19-4a7a-a9bc-d65c92062ab8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thundercloud Elemental": {
@@ -286872,12 +286872,12 @@
     },
     "Tide Skimmer": {
       "edhrec_rank": 11607,
-      "gate": "template",
+      "gate": null,
       "name": "Tide Skimmer",
-      "reason": "no template for: Whenever you attack with two or more creatures with flying, draw a card",
+      "reason": "",
       "scryfall_id": "ac70fcc7-893f-4a08-88a3-2f0655de18fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tide of War": {
@@ -293522,12 +293522,12 @@
     },
     "True Conviction": {
       "edhrec_rank": 1814,
-      "gate": "template",
+      "gate": null,
       "name": "True Conviction",
-      "reason": "no template for: Creatures you control have double strike and lifelink",
+      "reason": "",
       "scryfall_id": "e3afc893-58bb-4620-94e9-ed544e93d830",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "True Identity": {
@@ -316542,12 +316542,12 @@
     },
     "Winged Words": {
       "edhrec_rank": 3515,
-      "gate": "template",
+      "gate": null,
       "name": "Winged Words",
-      "reason": "no template for: This spell costs {1} less to cast if you control a creature with flying",
+      "reason": "",
       "scryfall_id": "4b1ec48d-46d6-4921-9937-ae7ac7154adf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wingfold Pteron": {
