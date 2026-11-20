@@ -1,0 +1,18 @@
+{
+  "card_id": "liliana_untouched_by_death",
+  "name": "Liliana, Untouched by Death",
+  "oracle_text": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life.\n−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control.\n−3: You may cast Zombie spells from your graveyard this turn.",
+  "blocked_sentences": [
+    "−3: You may cast Zombie spells from your graveyard this turn."
+  ],
+  "needs": [
+    {
+      "capability": "unmetered_graveyard_cast_this_turn",
+      "kind": "op",
+      "what": "a turn-long permission to cast any number of spells matching a filter (subtypes Zombie) from your own graveyard at their printed cost, with no per-turn cap and no exile-instead rider -- e.g. letting grant_graveyard_cast accept an unmetered spec when the grant is itself bounded to this turn",
+      "why_existing_wont_do": "grant_graveyard_cast is exactly the shape (a this-turn GraveyardCastGrant that turn.py drops at end of turn, reading affects_spells), but the loader refuses it unless it carries 'max_per_turn' or 'grants_flashback'. Liliana prints neither: adding max_per_turn caps a sentence that has no cap, and grants_flashback exiles spells the card lets go back to the graveyard. grant_playable snapshots only the cards in the graveyard now, missing Zombies that land there later in the turn, and the cast_from_graveyard static is read off a permanent and would outlive 'this turn'."
+    }
+  ],
+  "closest_existing": ["grant_graveyard_cast", "grant_playable", "cast_from_graveyard"],
+  "confidence": "high"
+}
