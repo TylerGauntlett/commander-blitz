@@ -266,6 +266,20 @@ SELECTOR_KEYS = frozenset(
         #: player**", the `defender` of its own `attacks` event; refused in a
         #: trigger filter, where nothing is bound yet.
         "attacking_player",
+        #: "…target creature that's attacking you **or a planeswalker you
+        #: control**" -- Soul Snare; "creatures attacking your opponents
+        #: **and/or planeswalkers they control**" -- Roar of Resistance.
+        #: `true` widens `attacking_player` (and only it: refused without one)
+        #: to also take a creature attacking a planeswalker that player
+        #: controls, read off `combat.attacking_permanent` and the walker's
+        #: current controller and types. Never a battle, which 506.2 makes a
+        #: third kind of thing to attack and these cards do not name. The same
+        #: word the `attack_tax` static uses for the same widening.
+        #:
+        #: The `attackers` binding of `creatures_attack_player` is the near
+        #: miss: it is already this wide, but it binds one defending player's
+        #: attackers per firing, so it cannot say "any opponent" once.
+        "or_planeswalkers",
         #: "Untap all creatures that **attacked this turn**" -- Relentless
         #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
         #: live combat state and is false for everything by the time these
@@ -1332,13 +1346,20 @@ def matches(
             # a player and never a planeswalker or battle they control (506.2).
             seats = set(select_players(ctx, who))
             if not (
-                combat is not None
-                and combat.attacking(oid)
-                and oid not in combat.attacking_permanent
+                _attacks_player_itself(
+                    combat, oid, state, bool(selector.get("or_planeswalkers"))
+                )
                 and combat.attackers[oid] in seats
             ):
                 return False
-        elif not attacking_player_matches(combat, oid, str(who), ctx.controller, state):
+        elif not attacking_player_matches(
+            combat,
+            oid,
+            str(who),
+            ctx.controller,
+            state,
+            or_planeswalkers=bool(selector.get("or_planeswalkers")),
+        ):
             return False
     if "blocked" in selector:
         # "…an **unblocked** attacker you control" -- ninjutsu. 509.1h: an
@@ -1436,8 +1457,43 @@ def matches(
 ATTACKING_PLAYER_WORDS = ("you", "opponent", "any", "most_life")
 
 
+def _attacks_player_itself(
+    combat: Any, oid: int, state: Any, or_planeswalkers: bool
+) -> bool:
+    """Is ``oid`` attacking a player -- or, with ``or_planeswalkers``, a
+    planeswalker -- rather than nothing or a battle?
+
+    The defending player is then `combat.attackers[oid]`. For a planeswalker
+    attack that is the walker's controller as attackers were declared, so the
+    walker's *current* controller is asked too: a walker that changed hands
+    mid-combat is still the thing being attacked, but no longer "a planeswalker
+    that player controls". One that stopped being a planeswalker, or left, is
+    nothing at all (506.4).
+    """
+    if combat is None or not combat.attacking(oid):
+        return False
+    target = combat.attacking_permanent.get(oid)
+    if target is None:
+        return True
+    if not or_planeswalkers or state is None:
+        return False
+    walker = state.objects.get(target)
+    return (
+        walker is not None
+        and walker.on_battlefield
+        and walker.controller == combat.attackers[oid]
+        and CardType.PLANESWALKER in chars(state, target).types
+    )
+
+
 def attacking_player_matches(
-    combat: Any, oid: int, who: str, controller: int, state: Any = None
+    combat: Any,
+    oid: int,
+    who: str,
+    controller: int,
+    state: Any = None,
+    *,
+    or_planeswalkers: bool = False,
 ) -> bool:
     """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
     planeswalker or battle that player controls?
@@ -1457,10 +1513,14 @@ def attacking_player_matches(
     is asked again on resolution (603.4) and fails once that player has been
     drained below somebody else. It needs ``state``; without one it is false.
 
+    ``or_planeswalkers`` also takes a creature attacking a planeswalker the
+    named player controls -- "attacking you or a planeswalker you control"
+    (Soul Snare). Still never a battle. It needs ``state`` to read the walker.
+
     Shared by `matches` and `triggers.matches_card_filter`, so the effect and
     trigger halves of the filter language cannot disagree about it.
     """
-    if combat is None or not combat.attacking(oid) or oid in combat.attacking_permanent:
+    if not _attacks_player_itself(combat, oid, state, or_planeswalkers):
         return False
     defender = combat.attackers[oid]
     if who == "you":
@@ -2394,6 +2454,17 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{list(ATTACKING_PLAYER_WORDS)} or {{'binding': <name>}} for the seat a "
             f"binding holds; use 'attacking' for true/false"
         )
+    # The widening has nothing to widen without a player: "attacking a
+    # planeswalker" alone is a different, unprinted filter, and a bare flag
+    # beside `attacking: true` would load and change nothing.
+    if "or_planeswalkers" in selector:
+        if not isinstance(selector["or_planeswalkers"], bool):
+            raise DslError(f"{where}: 'or_planeswalkers' is true or false")
+        if who is None:
+            raise DslError(
+                f"{where}: 'or_planeswalkers' widens 'attacking_player' to that "
+                f"player's planeswalkers; it needs an 'attacking_player' beside it"
+            )
     if "mana_cost" in selector:
         validate_printed_cost_list(selector["mana_cost"], where)
     count = selector.get("count")

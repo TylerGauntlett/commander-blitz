@@ -1836,6 +1836,129 @@ def _pass_for_the_opponent(game: Game, limit: int = 8) -> None:
         game.apply(passes[0])
 
 
+def _selector_branches(selector: Any):
+    """A selector, and each of its ``any_of`` branches merged onto it.
+
+    The reading ``tests/cards/test_every_card_works.py``'s helper of the same
+    name gives, for the same reason: "target attacking **or blocking**
+    creature" keeps its `attacking` inside a branch, not on the outer selector.
+    """
+    if not isinstance(selector, dict):
+        return
+    yield selector
+    for branch in selector.get("any_of") or ():
+        if isinstance(branch, dict):
+            yield {**selector, **branch}
+
+
+def combat_target_wants(card: CardDef | None) -> str | None:
+    """Does a card-level target ask for a creature in combat, and which kind?
+
+    "Put target **attacking** creature on the bottom of its owner's library"
+    (Condemn) and "exile target attacking or blocking creature" (Devouring
+    Light) have no legal target in precombat main, where nothing is in combat,
+    so 601.2c leaves them uncastable and gate 4 rejected correct cards -- the
+    harness unable to represent the moment the card exists for, the same
+    absence `sandbox_turn` records for a cast window. The house answer is the
+    same: move the position, do not relax the gate.
+
+    ``"attacking"`` when some branch of a card-level target (or a spree mode's)
+    takes an attacking creature, ``"blocking"`` when only a blocking one will
+    do, and None otherwise. Read only far enough to decide how to *move the
+    game*: whether what combat produces is a legal target stays
+    `legal_actions`' answer, so no second copy of `matches` lives here.
+
+    `_cast` asks this **only when the card has no play in precombat main**, so
+    every card that was castable there keeps the exact position it was measured
+    in. Response // Resurgence is why that matters: its Response half is such a
+    target, and the card has always been measured -- and its expectation
+    written -- through the Resurgence half, the one main phase offers.
+    """
+    if card is None:
+        return None
+    branches = [
+        branch
+        for spec in (card.spree_targets or card.targets)
+        for branch in _selector_branches(spec.selector)
+    ]
+    if any(branch.get("attacking") is True for branch in branches):
+        return "attacking"
+    if any(branch.get("blocking") is True for branch in branches):
+        return "blocking"
+    return None
+
+
+def enter_sandbox_combat(game: Game, *, block: bool = False, limit: int = 40) -> bool:
+    """Walk player 0 from precombat main into combat, with a creature in it.
+
+    Player 0 passes main, declares the first of its own creatures as an attacker
+    against the opponent, and holds priority in the declare attackers step --
+    the caster and the measured seat stay player 0, so every authored seat
+    number keeps its meaning, and "target attacking creature" (controller any)
+    is met by player 0's own attacker. With ``block`` the walk goes one step
+    further: the opponent blocks that attacker with the first creature it
+    offers, and player 0 holds priority in the declare blockers step.
+
+    Answered with the engine's own declarations, never by writing combat state,
+    so an attacker is exactly what `legal_actions` calls one. False when the
+    walk cannot get there -- no creature able to attack, or no blocker -- and
+    the caller then reports "not playable in the sandbox", as before.
+
+    Measurement stays inside the turn: after the spell resolves, the opponent's
+    block declaration, or the spare Forest in postcombat main once an attacker
+    has left combat, is the stop `drive` returns at, and `_cast` refuses a cast
+    that ran past cleanup anyway.
+    """
+
+    def walk_to(kind: DecisionKind) -> bool:
+        for _ in range(limit):
+            decision = game.pending()
+            if decision is None or game.over:
+                return False
+            if decision.kind is kind:
+                return True
+            if decision.kind is not DecisionKind.PRIORITY:
+                return False
+            passing = next((a for a in game.legal_actions() if a.kind is ActionKind.PASS), None)
+            if passing is None:
+                return False
+            game.apply(passing)
+        return False
+
+    def declare(add: ActionKind) -> bool:
+        pick = next((a for a in game.legal_actions() if a.kind is add), None)
+        if pick is None:
+            return False
+        game.apply(pick)
+        finish = next(
+            (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION),
+            None,
+        )
+        if finish is None:
+            return False
+        game.apply(finish)
+        return True
+
+    turn = game.state.turn
+    if not walk_to(DecisionKind.DECLARE_ATTACKERS) or game.pending().player != 0:
+        return False
+    if not declare(ActionKind.ADD_ATTACKER):
+        return False
+    if block:
+        if not walk_to(DecisionKind.DECLARE_BLOCKERS) or game.pending().player != 1:
+            return False
+        if not declare(ActionKind.ADD_BLOCKER):
+            return False
+    _pass_for_the_opponent(game)
+    decision = game.pending()
+    return (
+        game.state.turn == turn
+        and decision is not None
+        and decision.kind is DecisionKind.PRIORITY
+        and decision.player == 0
+    )
+
+
 def _cast(
     registry: CardRegistry,
     card: CardDef,
@@ -1873,6 +1996,14 @@ def _cast(
     action = find_play(
         game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted
     )
+    in_combat = False
+    if action is None and (wants := combat_target_wants(card)) is not None:
+        # See `combat_target_wants`: only a card with no play in main is moved.
+        in_combat = enter_sandbox_combat(game, block=wants == "blocking")
+        if in_combat:
+            action = find_play(
+                game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted
+            )
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
         raise CommanderBlitzError(f"{card.id} is not playable in the sandbox; offered: {offered}")
@@ -1887,10 +2018,11 @@ def _cast(
     turn = game.state.turn
     game.apply(action)
     drive(game)
-    if card.cast_only_during is not None and game.state.turn != turn:
-        # A windowed card only: see `sandbox_turn` for why its turn can roll
-        # over. Measured now, it would be measured after cleanup and the next
-        # draw step, so it is refused here rather than judged at gate 5.
+    if (card.cast_only_during is not None or in_combat) and game.state.turn != turn:
+        # A windowed or combat-moved card only: see `sandbox_turn` for why its
+        # turn can roll over. Measured now, it would be measured after cleanup
+        # and the next draw step, so it is refused here rather than judged at
+        # gate 5.
         raise CommanderBlitzError(
             f"{card.id} was cast in its window but the sandbox ran past cleanup "
             "before it could be measured"
