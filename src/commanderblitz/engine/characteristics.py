@@ -3514,6 +3514,10 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
         return False
     return any(
         static.get("prevent_all")
+        # Unbreathing Horde's shield is answered by `damage_removes_counters`,
+        # later in `damage_permanent`: it prevents the same damage but also
+        # costs a counter, so it is the last total shield applied, not this one.
+        and not static.get("remove_counters")
         and (is_combat or not static.get("combat_only"))
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
@@ -3547,6 +3551,37 @@ def damage_into_counters(
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, static["counter"]
+    return None
+
+
+def damage_removes_counters(
+    state: GameState, oid: int, *, is_combat: bool = False
+) -> tuple[GameObject, str, int] | None:
+    """The total shield that costs this permanent counters, if any.
+
+    "If this creature would be dealt damage, prevent that damage and remove a
+    +1/+1 counter from it" -- Unbreathing Horde. A `prevent_damage` static
+    with ``prevent_all`` and ``remove_counters``: one prevention (615) whose
+    one event both prevents all of the damage and removes a **fixed** number
+    of counters, however much damage that was -- the Panther Habit shape
+    (`damage_into_counters`) with the counters going the other way.
+
+    Returns the first such static's source, its counter kind and the number
+    removed, or ``None``. First and not summed, for `damage_into_counters`'
+    reason: once one shield has prevented the damage there is none left for a
+    second to replace (616.1).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    for source_obj, static in _battlefield_statics(state):
+        spec = static.get("remove_counters")
+        if static.get("effect") != "prevent_damage" or not spec:
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return source_obj, str(spec["counter"]), int(spec.get("amount", 1))
     return None
 
 

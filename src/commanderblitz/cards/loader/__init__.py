@@ -5106,6 +5106,52 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: 'prevent_damage' puts only '+1/+1' counters for "
                     f"the damage it prevents, not {model.counter!r}"
                 )
+        if model.remove_counters is not None:
+            # "Prevent that damage and remove a +1/+1 counter from it"
+            # (Unbreathing Horde). The removing mirror of `counter`, and part
+            # of the same prevention (615) rather than a trigger: a fixed
+            # number however much damage is prevented. Only on the total
+            # shield, which is what "prevent that damage" is; never beside
+            # `counter`, two riders on one replacement no card prints. Only
+            # +1/+1, because the engine applies this shield *after* every
+            # other prevention (616.1, `primitives.damage_permanent`) -- the
+            # order the damaged creature's controller picks when losing the
+            # counter hurts them, and the wrong order for a kind whose loss
+            # helps.
+            spec = model.remove_counters
+            if not model.prevent_all:
+                raise DslError(
+                    f"{where}: 'prevent_damage' removes counters only with "
+                    f"'prevent_all' -- \"prevent that damage and remove a "
+                    f"counter\" prevents all of it"
+                )
+            if model.counter is not None:
+                raise DslError(
+                    f"{where}: 'prevent_damage' takes 'counter' (put that many) "
+                    f"or 'remove_counters', not both"
+                )
+            unknown = set(spec) - {"counter", "amount"}
+            if unknown:
+                raise DslError(
+                    f"{where}.remove_counters: unsupported keys {sorted(unknown)} "
+                    f"-- it takes 'counter' and 'amount'"
+                )
+            if spec.get("counter") != "+1/+1":
+                raise DslError(
+                    f"{where}.remove_counters: 'prevent_damage' removes only "
+                    f"'+1/+1' counters, not {spec.get('counter')!r}"
+                )
+            amount = spec.get("amount", 1)
+            if isinstance(amount, bool) or not isinstance(amount, int) or amount < 1:
+                raise DslError(
+                    f"{where}.remove_counters.amount: a whole number of at least "
+                    f"one, not {amount!r} -- the shield removes a fixed number, "
+                    f"not 'that many'"
+                )
+    if model.remove_counters is not None and model.effect != "prevent_damage":
+        raise DslError(
+            f"{where}: 'remove_counters' is read only by the 'prevent_damage' static"
+        )
     if model.prevent_all and model.effect != "prevent_damage":
         # A flag nothing reads is a printed line that does nothing.
         raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")
@@ -7570,6 +7616,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["counter_addend"] = model.counter_addend
     if model.counter is not None:
         static["counter"] = model.counter
+    if model.remove_counters is not None:
+        static["remove_counters"] = {
+            "counter": model.remove_counters["counter"],
+            "amount": int(model.remove_counters.get("amount", 1)),
+        }
     if model.effects_only:
         static["effects_only"] = True
     if model.put_by is not None:

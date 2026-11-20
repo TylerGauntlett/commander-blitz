@@ -376,7 +376,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [pregame-commander-color-choice](#pregame-commander-color-choice) | 1 | 12969 | engine |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
-| [prevent-damage-remove-counter](#prevent-damage-remove-counter) | 1 | 8240 | replacement |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
@@ -411,6 +410,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-combat-targets](#sandbox-combat-targets) | 1 | 9654 | engine |
+| [sandbox-counted-tribe-prop](#sandbox-counted-tribe-prop) | 1 | 8240 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -6370,20 +6370,6 @@ Blocks **1** card.
 
 </details>
 
-## prevent-damage-remove-counter
-
-Blocks **1** card.
-
-- **(replacement)** a continuous total-shield replacement on a permanent (static prevent_damage with prevent_all, affects self_only) whose one replacement event both prevents all of a damage event and removes exactly one +1/+1 counter from the shielded permanent, regardless of the damage amount (Protean Hydra's sibling with a fixed one instead of 'that many')
-  <br>Why the existing vocabulary won't do: The prevent_damage static's 'counter' rider (Panther Habit, characteristics.damage_into_counters) only PUTS 'that many' counters and the loader refuses any counter but +1/+1; there is no remove direction or fixed amount. prevent_damage_permanent's 'effects' rider is a one-shot op limited to duration this_turn, not a continuous static. A separate damage_prevented trigger with remove_counters would use the stack instead of being part of the replacement, so it is an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Unbreathing Horde** (rank 8240) — `unbreathing_horde`
-  - If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.
-
-</details>
-
 ## prevent-half-damage
 
 Blocks **1** card.
@@ -6870,6 +6856,20 @@ Blocks **1** card.
 
 - **Devouring Light** (rank 9654) — `devouring_light`
   - Exile target attacking or blocking creature.
+
+</details>
+
+## sandbox-counted-tribe-prop
+
+Blocks **1** card.
+
+- **(engine)** a verification-sandbox prop for a 0/0 whose enters-with counters count its own creature subtype: a Zombie among your board creatures or sandbox graveyard cards (a quiet one, chosen only for a card that needs it, the way verify.swap_in_tribal_body serves a tribal tap cost), so the card enters with at least one counter and survives gate 4. Both lines are expressible: the enters line as self_enters_with_counters with a sum of two counts, the damage line as prevent_damage prevent_all with remove_counters {counter: +1/+1, amount: 1}
+  <br>Why the existing vocabulary won't do: The sandbox's own creatures (the alphabetically first creature, an Ooze) and graveyard props (small_creature, flier) are no Zombies, so the exactly-written card enters as a 0/0 with no counters and dies to state-based actions; gate 4 rejects it as 'a permanent but ended in graveyard'. swap_in_tribal_body is keyed only to an additional cost that taps a subtype, not to a count an enters-with replacement reads
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbreathing Horde** (rank 8240) — `unbreathing_horde`
+  - This creature enters with a +1/+1 counter on it for each other Zombie you control and each Zombie card in your graveyard.
 
 </details>
 

@@ -9899,6 +9899,39 @@ The near miss is the total shield plus a `damage_prevented` trigger that puts
 the counters: a second ability on the stack, respondable, and resolving after
 state-based actions.
 
+## Damage prevented at the cost of a counter
+
+```jsonc
+// Unbreathing Horde: If this creature would be dealt damage, prevent that
+//                    damage and remove a +1/+1 counter from it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "remove_counters": { "counter": "+1/+1", "amount": 1 },
+  "affects": { "self_only": true } }
+```
+
+The same total shield with the counters going the other way: `remove_counters`
+takes a **fixed** number (`amount`, a whole number, default one) off the damaged
+permanent as part of the one prevention, however much damage that was. The
+damage is prevented even with no counter left to remove, which then removes
+none. It fires `DAMAGE_PREVENTED` with `reason: "prevent_remove_counters"` and
+removes the counters through `primitives.remove_counters`. Answered by
+`characteristics.damage_removes_counters`, and kept out of
+`prevents_all_damage` so the plain total shield does not answer it first.
+
+`primitives.damage_permanent` applies it **last of the total shields**, after
+protection, a total shield, a fog, absorb and a shield counter: 616.1 lets the
+damaged permanent's controller order them, and losing a +1/+1 counter only
+hurts, so it reaches only damage that would otherwise land. Combat damage is one
+event (510.2), so several blows in one combat damage step's `batch` cost the
+counters once. Under "damage can't be prevented" it still applies (615.12): the
+damage is dealt and the counters still come off.
+
+The loader accepts `remove_counters` only on `prevent_damage`, only beside
+`prevent_all`, never beside `counter`, and only as `"+1/+1"` — the ordering
+above is the wrong one for a kind whose loss helps. The near misses are
+`counter`, which puts "that many" on, and a `damage_prevented` trigger with
+`remove_counters`, a second ability on the stack.
+
 ## Preventing all damage to or by a **permanent**, for a while
 
 ```jsonc
