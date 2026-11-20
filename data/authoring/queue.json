@@ -34272,12 +34272,12 @@
     },
     "Brightflame": {
       "edhrec_rank": 18519,
-      "gate": "template",
+      "gate": null,
       "name": "Brightflame",
-      "reason": "no template for: Radiance — deals X damage to target creature and each other creature that shares a color w",
+      "reason": "",
       "scryfall_id": "5c7cc2c2-f4aa-4367-9f4a-96b9a74d4359",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brightglass Gearhulk": {
@@ -53762,12 +53762,12 @@
     },
     "Corrupt": {
       "edhrec_rank": 9798,
-      "gate": "template",
+      "gate": null,
       "name": "Corrupt",
-      "reason": "no template for: deals damage to any target equal to the number of Swamps you control. You gain life equal ",
+      "reason": "",
       "scryfall_id": "1ea410dd-59f8-4ce7-9fc9-6f904564bd9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Corrupt Court Official": {
@@ -55752,12 +55752,12 @@
     },
     "Creeping Bloodsucker": {
       "edhrec_rank": 1509,
-      "gate": "template",
+      "gate": null,
       "name": "Creeping Bloodsucker",
-      "reason": "no template for: At the beginning of your upkeep, this creature deals 1 damage to each opponent. You gain l",
+      "reason": "",
       "scryfall_id": "d9f12481-e4dd-4a44-910f-e0d263de14ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creeping Chill": {
@@ -84672,12 +84672,12 @@
     },
     "Enter the God-Eternals": {
       "edhrec_rank": 11504,
-      "gate": "template",
+      "gate": null,
       "name": "Enter the God-Eternals",
-      "reason": "no template for: deals 4 damage to target creature and you gain life equal to the damage dealt this way. Ta",
+      "reason": "",
       "scryfall_id": "d1da08b8-08c2-44e8-874b-eb93b535e90b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Enter the Infinite": {
@@ -273202,12 +273202,12 @@
     },
     "Syphon Soul": {
       "edhrec_rank": 14225,
-      "gate": "template",
+      "gate": null,
       "name": "Syphon Soul",
-      "reason": "no template for: deals 2 damage to each other player. You gain life equal to the damage dealt this way",
+      "reason": "",
       "scryfall_id": "dc308882-1c12-4da0-8eae-caf4cc3d43e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syr Alin, the Lion's Claw": {

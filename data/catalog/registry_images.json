@@ -2615,6 +2615,10 @@
     "artist": "Izzy",
     "scryfall_id": "0e843102-b8cc-4bc8-872e-79924197f4cc"
   },
+  "brightflame": {
+    "artist": "Dave Dorman",
+    "scryfall_id": "5c7cc2c2-f4aa-4367-9f4a-96b9a74d4359"
+  },
   "brilliant_plan": {
     "artist": "Yutaka Li",
     "scryfall_id": "6679be74-6eeb-4c50-b1be-ed85b6fa63b1"
@@ -4003,6 +4007,10 @@
     "artist": "Benjamin Ee",
     "scryfall_id": "85caf05a-035b-47c0-975c-dec76799ffcf"
   },
+  "corrupt": {
+    "artist": "Vincent Evans",
+    "scryfall_id": "1ea410dd-59f8-4ce7-9fc9-6f904564bd9a"
+  },
   "corrupted_conviction": {
     "artist": "Joseph Weston",
     "scryfall_id": "980e68f7-b6a5-4188-a2aa-d9182cb39689"
@@ -4146,6 +4154,10 @@
   "creative_technique": {
     "artist": "Gaboleps",
     "scryfall_id": "c0b5ba5f-ac25-4134-91c1-9677ba86576c"
+  },
+  "creeping_bloodsucker": {
+    "artist": "Antonio Jos\u00e9 Manzanedo",
+    "scryfall_id": "d9f12481-e4dd-4a44-910f-e0d263de14ae"
   },
   "creeping_renaissance": {
     "artist": "Tomasz Jedruszek",
@@ -6211,6 +6223,10 @@
   "ensnared_by_the_mara": {
     "artist": "Andrey Kuzinskiy",
     "scryfall_id": "11454c82-3f1d-4456-8857-0dcb01d34298"
+  },
+  "enter_the_god_eternals": {
+    "artist": "Daniel Ljunggren",
+    "scryfall_id": "d1da08b8-08c2-44e8-874b-eb93b535e90b"
   },
   "enterprising_scallywag": {
     "artist": "Denman Rooke",
@@ -19844,6 +19860,10 @@
   "syphon_mind": {
     "artist": "Jeff Easley",
     "scryfall_id": "f7bafc79-b626-4590-b867-e55d91756757"
+  },
+  "syphon_soul": {
+    "artist": "Ron Spears",
+    "scryfall_id": "dc308882-1c12-4da0-8eae-caf4cc3d43e1"
   },
   "syr_armont_the_redeemer": {
     "artist": "Magali Villeneuve",

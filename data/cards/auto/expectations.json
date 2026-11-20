@@ -3038,6 +3038,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "brightflame": {
+    "life": {
+      "0": 100
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "brilliant_plan": {
     "hand_size": {
       "0": 4
@@ -4656,6 +4663,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "corrupt": {
+    "battlefield_count": 31,
+    "life": {
+      "0": 46
+    },
+    "zone": "graveyard"
+  },
   "corrupted_conviction": {
     "hand_size": {
       "0": 3
@@ -4841,6 +4855,10 @@
       "0": 4
     },
     "zone": "graveyard"
+  },
+  "creeping_bloodsucker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "creeping_renaissance": {
     "hand_size": {
@@ -7227,6 +7245,19 @@
     "zone": "battlefield"
   },
   "ensnared_by_the_mara": {
+    "zone": "graveyard"
+  },
+  "enter_the_god_eternals": {
+    "library_size": {
+      "0": 36
+    },
+    "life": {
+      "0": 44
+    },
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
     "zone": "graveyard"
   },
   "enterprising_scallywag": {
@@ -23174,6 +23205,13 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "syphon_soul": {
+    "life": {
+      "0": 42,
+      "1": 38
     },
     "zone": "graveyard"
   },

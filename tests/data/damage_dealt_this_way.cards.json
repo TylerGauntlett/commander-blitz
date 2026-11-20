@@ -1,0 +1,50 @@
+{
+  "_comment": "The Enter the God-Eternals shape: a spell deals damage to target creature and gains its controller life equal to the damage dealt this way, read from the damage op's `as` binding.",
+  "cards": [
+    {
+      "id": "t_ddtw_drain",
+      "name": "Test Dealt This Way",
+      "oracle_text": "Test Dealt This Way deals 4 damage to target creature and you gain life equal to the damage dealt this way.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 4
+          },
+          "as": "dealt"
+        },
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "binding": "dealt"
+          }
+        }
+      ]
+    }
+  ]
+}

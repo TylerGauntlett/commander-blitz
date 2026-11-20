@@ -9171,6 +9171,27 @@ replaces the loss. Extort's "you gain that much life" is the same read.
 The binding is this op's loss alone: a second `lose_life` with the same `as`
 overwrites it rather than adding to it.
 
+## "You gain life equal to the damage dealt this way"
+
+```jsonc
+// Enter the God-Eternals
+"spell_effects": [
+  { "op": "damage", "target": "t1", "amount": { "const": 4 }, "as": "dealt" },
+  { "op": "gain_life", "player": "you", "amount": { "binding": "dealt" } } ]
+```
+
+`damage`'s `as` binds **the damage actually dealt** (120.3), summed over every
+recipient the one op hit — `objects`, `player`, `target`, `defender_of`,
+`divided`, and both halves of an `excess_to` spill — as a plain int read back
+with `{"binding": …}`. Prevented damage was never dealt (615.1), so a shield or
+protection binds 0; replaced damage is dealt in its replaced amount, so a
+doubler binds the doubled amount; a recipient gone from the battlefield is dealt
+nothing. A creature dealt more than its toughness was still dealt all of it: the
+binding is not the excess of 120.4a ("excess damage dealt this way"), which is a
+different, smaller number. `{"const": 4}` in the `gain_life` is the near miss —
+right exactly while nothing touches the damage. The binding is this op's damage
+alone; a second `damage` with the same `as` overwrites it.
+
 ### "As you cast this spell" — a value fixed at cast time
 
 A number the card fixes "as you cast this spell" (601.2) is written once, in the

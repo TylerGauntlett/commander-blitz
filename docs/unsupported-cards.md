@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**547 cards** blocked by **465** capabilities.
+**548 cards** blocked by **466** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -92,6 +92,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
+| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 1 | 8076 | cost |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
@@ -178,7 +179,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
-| [damage-dealt-this-way](#damage-dealt-this-way) | 1 | 11504 | value |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
@@ -355,6 +355,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [per-player-damage-amount](#per-player-damage-amount) | 1 | 13205 | value |
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
@@ -2325,6 +2326,20 @@ Blocks **1** card.
 
 </details>
 
+## additional-cost-sacrificed-binding
+
+Blocks **1** card.
+
+- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
+  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
+  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
+
+</details>
+
 ## additional-cost-target
 
 Blocks **1** card.
@@ -3544,20 +3559,6 @@ Blocks **1** card.
 
 - **Asinine Antics** (rank 7808) — `asinine_antics`
   - For each creature your opponents control, create a Cursed Role token attached to that creature.
-
-</details>
-
-## damage-dealt-this-way
-
-Blocks **1** card.
-
-- **(value)** an `as` binding on the `damage` op that records the amount of damage actually dealt (after prevention, e.g. protection or a prevention shield, and 0 if the target left or became illegal), readable by a later effect in the same resolution as `{"binding": <as>}` so `gain_life` can gain exactly that much
-  <br>Why the existing vocabulary won't do: `damage` takes amount/objects/target/excess_to/source_object but no `as`, and op_damage returns nothing; `gain_life` with `{"const": 4}` gains 4 even when the damage was prevented or the target is gone, and `damage_dealt_to_this_turn`/`damage_taken_this_turn` read a turn total, not this spell's damage. The other two sentences (`mill` with player target, `amass` with subtype Zombie and `zombie_army_0_0_b`) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Enter the God-Eternals** (rank 11504) — `enter_the_god_eternals`
-  - Enter the God-Eternals deals 4 damage to target creature and you gain life equal to the damage dealt this way.
 
 </details>
 
@@ -6069,6 +6070,20 @@ Blocks **1** card.
 
 - **Necrodominance** (rank 4322) — `necrodominance`
   - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
+
+</details>
+
+## per-player-damage-amount
+
+Blocks **1** card.
+
+- **(value)** a `damage` to a set of players whose amount is evaluated per recipient (each opponent's land count minus yours, so an opponent with no more lands is dealt 0) within one op, so all of it is one simultaneous damage event and `damage`'s `as` sums it for the following `create_token` of `treasure_token`
+  <br>Why the existing vocabulary won't do: `damage.amount` is evaluated once for every recipient; `for_each_player` with `loop_value` would deal each opponent's damage as a separate op (a separate `event_batch`, so batched damage triggers fire per opponent) and each `damage.as` would overwrite the last, binding one opponent's damage instead of the total. The binding itself (`damage.as`) exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiteful Repossession** (rank 13205) — `spiteful_repossession`
+  - Spiteful Repossession deals damage to each opponent who controls more lands than you equal to the difference. Then create a number of Treasure tokens equal to the damage dealt this way.
 
 </details>
 

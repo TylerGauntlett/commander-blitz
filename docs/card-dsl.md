@@ -986,7 +986,7 @@ number**" sayable at all. `count` defaults to `"all"`.
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
 `reveal`, `exile`, `destroy`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
-`may`, `draw` and `lose_life`. **No other op does**, and an `as` on one
+`may`, `draw`, `lose_life` and `damage`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
 

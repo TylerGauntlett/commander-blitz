@@ -168,7 +168,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
-| `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | Life & damage | yes | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast; `as` records how much was actually dealt. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `damage_life_floor` | Life & damage |  | Damage can't reduce a player's life below N this turn. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_player_counters` | Life & damage |  | Each named player gets as many more of each kind of counter they have. | [Doubling a player's counters](card-dsl-cookbook.md#doubling-a-players-counters) |
 | `exchange_life_total` | Life & damage |  | Exchange a player's life total with the source creature's toughness (701.12), in full or not at all. | [Exchanging a life total with a toughness](card-dsl-cookbook.md#exchanging-a-life-total-with-a-toughness) |
@@ -1145,7 +1145,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 |---|---|---|
 | `add_counters` | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
-| `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast; `as` records how much was actually dealt. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `delayed_trigger` | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `lose_life` | A player loses N life; `as` records how much. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |

@@ -71,6 +71,13 @@ RECORDING_OPS = frozenset(
         #: See `ops_stack.op_counter`.
         "counter",
         "create_token",
+        #: A plain **int**, like `lose_life`'s: the damage actually dealt,
+        #: after prevention and replacement, summed over every recipient the
+        #: op hit -- Enter the God-Eternals' "you gain life equal to the
+        #: damage dealt this way". 0 for a prevented hit or a recipient that
+        #: left. Not the excess (120.4a), which is a different number. See
+        #: `ops_life.op_damage`.
+        "damage",
         #: The permanents actually **destroyed** -- Avenge's "for each creature
         #: destroyed this way". Not the ones chosen: indestructible,
         #: regeneration, a shield counter and totem armor each leave a chosen

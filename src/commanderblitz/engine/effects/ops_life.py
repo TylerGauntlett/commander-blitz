@@ -477,13 +477,29 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     and travels as ``bindings["distribution"]``, so the amount is not read again
     here: each still-legal target is dealt its share, and one made illegal in
     response takes its share with it rather than passing it on (608.2b).
+
+    ``as`` binds **the damage actually dealt**, summed over every recipient
+    this one op hit, as a plain int read back with ``{"binding": …}`` -- "…deals
+    4 damage to target creature and you gain life equal to the damage dealt
+    this way" (Enter the God-Eternals). Actually dealt, not asked for: the
+    primitives return the damage after prevention and replacement (615, 614.1),
+    so protection or a shield binds 0, a doubler binds the doubled amount, and a
+    recipient gone from the battlefield binds nothing. The binding is written
+    whenever ``as`` is given, 0 included, and overwrites any earlier value of
+    the same name, as `op_lose_life`'s does.
     """
+    dealt = _deal_damage(ctx, spec)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = dealt
+
+
+def _deal_damage(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
+    """`op_damage`'s body: deal it, and return the total actually dealt."""
     if "divided" in spec:
-        _damage_divided(ctx, str(spec["divided"]))
-        return
+        return _damage_divided(ctx, str(spec["divided"]))
     amount = evaluate_value(ctx, spec.get("amount", 1))
     if amount <= 0:
-        return
+        return 0
 
     # "**Target creature you control** deals damage equal to its power to each
     # other creature and each opponent" -- Chandra's Ignition. The damage is
@@ -498,30 +514,32 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
             # The named creature has gone -- countered target, or removed in
             # response. Nothing deals the damage, rather than the spell dealing
             # it in the creature's place.
-            return
+            return 0
         dealer = named[0]
 
+    dealt = 0
     if "objects" in spec:
         for oid in resolve_pool(ctx, spec["objects"]):
-            damage_permanent(ctx.state, oid, amount, dealer)
+            dealt += damage_permanent(ctx.state, oid, amount, dealer)
 
     if "player" in spec:
         for pid in select_players(ctx, spec["player"]):
-            damage_player(ctx.state, pid, amount, dealer)
+            dealt += damage_player(ctx.state, pid, amount, dealer)
 
     if "defender_of" in spec:
-        _damage_what_it_attacks(ctx, spec["defender_of"], amount, dealer)
+        dealt += _damage_what_it_attacks(ctx, spec["defender_of"], amount, dealer)
 
     if "target" in spec:
         # A single target that may be either a creature or a player ("any target").
         for ref in ctx.target_refs(str(spec["target"])):
             if ref.kind == "object":
                 if spec.get("excess_to"):
-                    _damage_with_excess(ctx, ref.id, amount, str(spec["excess_to"]))
+                    dealt += _damage_with_excess(ctx, ref.id, amount, str(spec["excess_to"]))
                 else:
-                    damage_permanent(ctx.state, ref.id, amount, dealer)
+                    dealt += damage_permanent(ctx.state, ref.id, amount, dealer)
             elif ref.kind == "player":
-                damage_player(ctx.state, ref.id, amount, dealer)
+                dealt += damage_player(ctx.state, ref.id, amount, dealer)
+    return dealt
 
 
 @register("fight")
@@ -597,7 +615,7 @@ def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
 
 def _damage_what_it_attacks(
     ctx: EffectContext, selector: Mapping[str, Any], amount: int, dealer: int | None
-) -> None:
+) -> int:
     """ "…deals X damage to **the player or planeswalker it's attacking**." --
     Myr Battlesphere.
 
@@ -620,18 +638,20 @@ def _damage_what_it_attacks(
     state = ctx.state
     combat = state.combat
     if combat is None:
-        return
+        return 0
+    dealt = 0
     for oid in resolve_pool(ctx, selector)[:1]:
         if not combat.attacking(oid):
             continue
         permanent = combat.attacking_permanent.get(oid)
         if permanent is None:
-            damage_player(state, combat.attackers[oid], amount, dealer)
+            dealt += damage_player(state, combat.attackers[oid], amount, dealer)
         elif "Planeswalker" in chars(state, permanent).types:
-            damage_permanent(state, permanent, amount, dealer)
+            dealt += damage_permanent(state, permanent, amount, dealer)
+    return dealt
 
 
-def _damage_divided(ctx: EffectContext, target_id: str) -> None:
+def _damage_divided(ctx: EffectContext, target_id: str) -> int:
     """Each target its announced share, and nothing for one that left (608.2b).
 
     A copy of the spell carries the same bindings, so it keeps the division
@@ -645,13 +665,15 @@ def _damage_divided(ctx: EffectContext, target_id: str) -> None:
             raise DslError(
                 f"divided damage for {target_id!r} resolved without an announced division"
             )
-        return
+        return 0
+    dealt = 0
     for oid, share in division:
         if int(oid) in legal and int(share) > 0:
-            damage_permanent(ctx.state, int(oid), int(share), ctx.source_oid)
+            dealt += damage_permanent(ctx.state, int(oid), int(share), ctx.source_oid)
+    return dealt
 
 
-def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:
+def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> int:
     """ "Excess damage is dealt to that creature's controller instead."
 
     Gandalf's Sanction. **One damage event split in two**, not two events: the
@@ -670,7 +692,7 @@ def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: st
     state = ctx.state
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
-        return
+        return 0
     c = chars(state, oid)
     source = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     deathtouch = bool(
@@ -679,17 +701,19 @@ def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: st
     )
     lethal = 1 if deathtouch else max(0, (c.toughness or 0) - obj.damage)
     to_creature = min(amount, lethal)
+    dealt = 0
     if to_creature > 0:
-        damage_permanent(state, oid, to_creature, ctx.source_oid)
+        dealt += damage_permanent(state, oid, to_creature, ctx.source_oid)
     spill = amount - to_creature
     if spill <= 0:
-        return
+        return dealt
     # "that creature's controller" is the only spelling any printed card uses,
     # and it is read off the object rather than through `select_players` because
     # the creature is the subject: a control-changing effect has to move the
     # excess with it.
     if excess_to == "controller":
-        damage_player(state, obj.controller, spill, ctx.source_oid)
+        dealt += damage_player(state, obj.controller, spill, ctx.source_oid)
+    return dealt
 
 
 @register("cant_lose_the_game")
