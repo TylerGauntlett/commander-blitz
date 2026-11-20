@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import replace
+from itertools import combinations
 from typing import Any
 
 from ..characteristics import (
@@ -15,10 +16,10 @@ from ..characteristics import (
 from ..enums import Zone
 from ..errors import DslError
 from ..events import EventType
-from ..stack import StackItem, ability_of, announce_targets
+from ..stack import StackItem, ability_of, announce_targets, spell_target_specs
 from ..state import new_object
 from ..structs import CONVOKED_BINDING, UNCOUNTERABLE_GRANT_DURATIONS, TriggerInstance
-from ..targeting import describe_ref, enumerate_target_tuples
+from ..targeting import describe_ref, enumerate_target_tuples, filter_legal
 from ..temp_effects import grant_uncounterable, uncounterable_grant_covers
 from ..triggers import fire
 from ..zones import move_object
@@ -847,3 +848,129 @@ def _choose_new_targets_for(ctx: EffectContext, original, specs, chooser: int):
     if not picked:
         return None
     return options[picked[0]]
+
+
+@register("choose_new_targets")
+def op_choose_new_targets(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may choose new targets for target spell or ability" (115.7d) --
+    Wild Ricochet, Deflecting Swat, Boltbender.
+
+    The **original** object is retargeted where it sits on the stack, which is
+    what neither copy op can say: `copy_spell`'s ``new_targets`` moves a copy
+    and leaves the spell it copied aimed where it was.
+
+    ``target`` (default ``"t1"``) names the object, a target of kind
+    ``spell``, ``spell_or_ability`` or ``ability_on_stack``.
+    ``all_on_stack: true`` replaces it with every object on the stack, top
+    first -- "you may choose new targets for any number of other spells and/or
+    abilities" (Boltbender), where leaving one object's targets as they are is
+    not choosing it, and the resolving ability is already off the stack.
+
+    The resolving effect's controller chooses, but legality is the
+    retargeted object's: "target creature you control" on an opponent's spell
+    still means *their* creatures, so the offered tuples are enumerated for the
+    object's controller, against the specs it declared under
+    (`stack.spell_target_specs`, or the ability's for its modes). The number of
+    targets never changes.
+
+    115.7d, the default: any number of targets may be left as they are, **even
+    an illegal one**, and every new one must be legal. So the options are the
+    current tuple ("keep"), every legal tuple, and every legal tuple with some
+    of the currently illegal targets put back -- a new target never makes a
+    kept one illegal, because a kept legal target is only ever offered inside a
+    legal tuple.
+
+    ``must_change: true`` is 115.7a's "change the target(s)" (Misdirection):
+    every target moves to another legal one, or none does -- so only tuples
+    that differ in every position are offered, there is no "keep", and with no
+    such tuple nothing changes.
+
+    No new `DecisionKind`: one `ask_mode` pick among labelled tuples, the
+    question `_choose_new_targets` already asks for a copy. Nothing is asked
+    when there is only one answer. Each object a change newly targets fires
+    `BECAME_TARGET` (ward sees a redirected spell); a kept one does not.
+    """
+
+    state = ctx.state
+    if spec.get("all_on_stack"):
+        sids = [item.sid for item in reversed(state.stack)]
+    else:
+        sids = ctx.target_sids(str(spec.get("target", "t1")))
+    must_change = bool(spec.get("must_change", False))
+    for sid in sids:
+        item = state.stack_item(sid)
+        if item is not None and item.targets:
+            yield from _retarget(ctx, item, must_change=must_change)
+
+
+def _retarget(ctx: EffectContext, item, *, must_change: bool):
+    """`op_choose_new_targets` for one stack object."""
+
+    state = ctx.state
+    if item.is_spell:
+        obj = state.objects.get(item.oid) if item.oid is not None else None
+        if obj is None:
+            return
+        card = state.card_of(obj)
+        specs = spell_target_specs(state, item, card)
+        source, bindings, name = item.oid, {}, card.name
+    else:
+        ability = ability_of(state, item)
+        if ability is None:
+            return
+        specs = ability.specs_for_modes(item.modes)
+        source, bindings = item.source_oid, dict(item.bindings or {})
+        name = item.description or "that ability"
+    if not specs:
+        return
+    current = tuple(item.targets)
+    legal = [
+        tup
+        for tup in enumerate_target_tuples(
+            state,
+            item.controller,
+            specs,
+            source,
+            exclude_sid=item.sid,
+            bindings=bindings,
+            x=item.x,
+        )
+        # 115.7 changes targets; it never adds or removes one.
+        if len(tup) == len(current)
+    ]
+    if must_change:
+        options = [tup for tup in legal if all(a != b for a, b in zip(tup, current, strict=True))]
+    else:
+        kept, _ = filter_legal(
+            state, item.controller, specs, current, source, bindings=bindings, x=item.x
+        )
+        legal_now = {ref for refs in kept.values() for ref in refs}
+        illegal = [i for i, ref in enumerate(current) if ref not in legal_now]
+        options = [current]
+        for tup in legal:
+            for size in range(len(illegal) + 1):
+                for keep in combinations(illegal, size):
+                    options.append(
+                        tuple(current[i] if i in keep else ref for i, ref in enumerate(tup))
+                    )
+        options = list(dict.fromkeys(options))
+    if not options or (not must_change and len(options) <= 1):
+        return
+    chooser = ctx.controller
+    if len(options) == 1:
+        chosen = options[0]
+    else:
+        labels = [
+            ", ".join(describe_ref(state, ref) for ref in tup) or "no targets" for tup in options
+        ]
+        if not must_change:
+            labels[0] = f"Keep: {labels[0]}"
+        picked = yield from ask_mode(ctx, f"New targets for {name}?", labels, chooser)
+        if not picked:
+            return
+        chosen = options[picked[0]]
+    if chosen == current:
+        return
+    changed = [new for new, old in zip(chosen, current, strict=True) if new != old]
+    item.targets = chosen
+    announce_targets(state, item, changed)

@@ -1758,6 +1758,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    for key in ("must_change", "all_on_stack"):
+        # `choose_new_targets`' two switches. Anywhere else "change the target"
+        # would load and redirect nothing.
+        if key in effect:
+            if op != "choose_new_targets":
+                raise DslError(f"{where}: {key!r} only applies to choose_new_targets, not {op!r}")
+            if not isinstance(effect[key], bool):
+                raise DslError(f"{where}: {key!r} is a boolean, got {effect[key]!r}")
+    if op == "choose_new_targets":
+        # The op retargets objects on the stack by `target` (a declared spell
+        # or ability target) or, with `all_on_stack`, every one of them. A
+        # `target` naming a permanent or a player finds no stack object and
+        # the card resolves having redirected nothing.
+        if effect.get("all_on_stack"):
+            if "target" in effect:
+                raise DslError(
+                    f"{where}: choose_new_targets' 'all_on_stack' replaces 'target'"
+                )
+        else:
+            tid = str(effect.get("target", "t1"))
+            if tid not in target_kinds:
+                raise DslError(
+                    f"{where}: choose_new_targets references target {tid!r} "
+                    f"which the card does not declare"
+                )
+            if target_kinds[tid] not in ("spell", "spell_or_ability", "ability_on_stack"):
+                raise DslError(
+                    f"{where}: choose_new_targets needs a target of kind 'spell', "
+                    f"'spell_or_ability' or 'ability_on_stack', and {tid!r} is "
+                    f"{target_kinds[tid]!r}"
+                )
+        if "objects" in effect:
+            raise DslError(
+                f"{where}: choose_new_targets reads no 'objects' -- it takes the "
+                f"stack object its 'target' names, or 'all_on_stack'"
+            )
     if "this_spell" in effect:
         # "You may copy this spell" said by the resolving spell itself. Only a
         # spell's own effects have a resolving spell to name, and beside

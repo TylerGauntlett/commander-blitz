@@ -465,6 +465,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                           '"When you do" — reflexive triggered abilities'),
     "copy_ability": ("Stack", "Copy an activated or triggered ability; `new_targets` re-aims it.",
                      None),
+    "choose_new_targets": ("Stack", "Choose new targets for a spell or ability already on the stack (115.7).",
+                           '"You may choose new targets for target spell" — retargeting the original'),
     # ---- Turn structure --------------------------------------------------
     "extra_combat": ("Turn structure", "An additional combat phase (and main phase) this turn.",
                      "An additional combat phase"),

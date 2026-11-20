@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**544 cards** blocked by **458** capabilities.
+**541 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [voting](#voting) | 6 | 6980 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [choose-new-targets](#choose-new-targets) | 4 | 75 | op |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
@@ -1007,32 +1006,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## choose-new-targets
-
-Blocks **4** cards.
-
-- **(op)** an op that retargets objects already on the stack -- here over 'any number of other spells and/or abilities' (every stack object except this trigger), letting this ability's controller optionally choose new legal targets for each chosen one (115.7), leaving the originals on the stack rather than copying them
-  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell` / `copy_ability`, which retargets a freshly made copy, never the original object; `counter` touches another spell but removes it. No op mutates the target list of an existing stack object. Same capability Deflecting Swat is blocked on, here with a multi-object 'any number of' selection.
-- **(op)** an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it
-  <br>Why the existing vocabulary won't do: The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/commanderblitz/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it.
-- **(op)** an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well
-  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack.
-- **(op)** an op that retargets an object already on the stack -- given the targeted instant or sorcery spell, let the resolving spell's controller optionally choose new legal targets for that original spell (115.7), leaving it on the stack under its own controller, before the copy is made
-  <br>Why the existing vocabulary won't do: The only retargeting in reference is `new_targets` on `copy_spell` (and `copy_ability`), which retargets the freshly made copy, never the original; so the second and third sentences are expressible as `copy_spell` with `new_targets`, but the first sentence would be silently dropped. No op in `ops` changes the target list of an existing stack object; `counter` and `return_spell_to_hand` touch another spell only by removing it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deflecting Swat** (rank 75) — `deflecting_swat`
-  - You may choose new targets for target spell or ability.
-- **Misdirection** (rank 1562) — `misdirection`
-  - Change the target of target spell with a single target.
-- **Wild Ricochet** (rank 3999) — `wild_ricochet`
-  - You may choose new targets for target instant or sorcery spell.
-- **Boltbender** (rank 10169) — `boltbender`
-  - When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.
 
 </details>
 

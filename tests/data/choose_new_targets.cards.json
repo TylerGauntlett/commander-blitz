@@ -1,0 +1,79 @@
+{
+  "_comment": "Cards that exist only for the retargeting test (tests/unit/targets/test_choose_new_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_ricochet` is Wild Ricochet at {R}; `t_swat` is Deflecting Swat's second sentence; `t_misdirect` is 115.7a's mandatory change without Misdirection's single-target restriction; `t_scatter` is Boltbender's 'any number of spells and/or abilities' on an instant; `t_twin_zap` has two targets, so one can be kept while the other moves; `t_their_zap` targets a creature its caster's opponent controls, so legality has a side.",
+  "cards": [
+    {
+      "id": "t_ricochet",
+      "name": "Test Ricochet",
+      "oracle_text": "You may choose new targets for target instant or sorcery spell. Then copy that spell. You may choose new targets for the copy.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "spell", "count": 1, "selector": {"any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "choose_new_targets", "target": "t1"},
+        {"op": "copy_spell", "target": "t1", "new_targets": true}
+      ]
+    },
+    {
+      "id": "t_swat",
+      "name": "Test Swat",
+      "oracle_text": "You may choose new targets for target spell or ability.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [{"id": "t1", "kind": "spell_or_ability", "count": 1}],
+      "spell_effects": [{"op": "choose_new_targets", "target": "t1"}]
+    },
+    {
+      "id": "t_misdirect",
+      "name": "Test Misdirect",
+      "oracle_text": "Change the target of target spell.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [{"id": "t1", "kind": "spell", "count": 1, "selector": {}}],
+      "spell_effects": [{"op": "choose_new_targets", "target": "t1", "must_change": true}]
+    },
+    {
+      "id": "t_scatter",
+      "name": "Test Scatter",
+      "oracle_text": "You may choose new targets for any number of spells and/or abilities.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "choose_new_targets", "all_on_stack": true}]
+    },
+    {
+      "id": "t_twin_zap",
+      "name": "Test Twin Zap",
+      "oracle_text": "Test Twin Zap deals 1 damage to each of two target creatures.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 2, "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [{"op": "damage", "amount": {"const": 1}, "objects": {"target": "t1"}}]
+    },
+    {
+      "id": "t_their_zap",
+      "name": "Test Their Zap",
+      "oracle_text": "Test Their Zap deals 3 damage to target creature an opponent controls.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1, "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "opponent"}}
+      ],
+      "spell_effects": [{"op": "damage", "amount": {"const": 3}, "objects": {"target": "t1"}}]
+    }
+  ]
+}

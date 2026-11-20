@@ -7851,6 +7851,45 @@ Retargeting is not a detail of one card. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
 
+#### "You may choose new targets for target spell" — retargeting the original
+
+```jsonc
+// Wild Ricochet — "You may choose new targets for target instant or sorcery
+// spell. Then copy that spell. You may choose new targets for the copy."
+{ "targets": [ { "id": "t1", "kind": "spell", "count": 1,
+                 "selector": { "any_types": ["Instant", "Sorcery"] } } ],
+  "spell_effects": [ { "op": "choose_new_targets", "target": "t1" },
+                     { "op": "copy_spell", "target": "t1", "new_targets": true } ] }
+```
+
+`choose_new_targets` changes the target list of an object **already on the
+stack**, where it sits, under its own controller. The resolving effect's
+controller chooses; legality is the retargeted object's, enumerated for *its*
+controller against the specs it was declared under, so "target creature you
+control" on an opponent's spell still means their creatures. The number of
+targets never changes, and each object a change newly targets fires
+`becomes_target` (ward sees a redirected spell).
+
+- `target` (default `"t1"`) names a target of kind `spell`, `spell_or_ability`
+  (Deflecting Swat) or `ability_on_stack`; anything else, or an `objects` key,
+  is refused at load.
+- 115.7d is the default: any target may be left as it is, even one that has
+  become illegal, and every new one must be legal. The menu is "Keep", every
+  legal tuple, and every legal tuple with some currently illegal targets put
+  back. Nothing is asked when keeping is the only answer.
+- `must_change: true` is 115.7a's "change the target" (Misdirection): every
+  target moves to another legal one or none does, so "Keep" is not offered,
+  and with no such tuple nothing changes.
+- `all_on_stack: true` replaces `target` with every object on the stack, top
+  first — Boltbender's "any number of other spells and/or abilities", where
+  keeping an object's targets is not choosing it and the resolving trigger is
+  already off the stack.
+
+The near miss is `copy_spell`'s `new_targets`, which moves the **copy** and
+leaves the original aimed where it was: on Wild Ricochet that drops the first
+sentence and looks entirely normal. In the order printed, the copy is made from
+the retargeted original, so it starts at the new targets.
+
 #### "You may copy this spell" — a spell copying itself as it resolves
 
 ```jsonc
