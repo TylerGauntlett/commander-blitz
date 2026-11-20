@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "geode_rager",
+    "name": "Geode Rager",
+    "oracle_text": "First strike\nLandfall — Whenever a land you control enters, goad each creature target player controls. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+    "mana_cost": "{4}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Elemental"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["first_strike"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Landfall — Whenever a land you control enters, goad each creature target player controls.",
+        "trigger": {"event": "permanent_enters", "controller": "you", "filter": {"types": ["Land"]}},
+        "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}, "count": 1}],
+        "effects": [
+          {
+            "op": "goad",
+            "objects": {"zone": "battlefield", "types": ["Creature"], "controller": {"target": "t1"}, "count": "all"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

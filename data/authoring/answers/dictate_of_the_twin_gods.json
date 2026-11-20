@@ -1,0 +1,25 @@
+{
+  "card": {
+    "id": "dictate_of_the_twin_gods",
+    "name": "Dictate of the Twin Gods",
+    "oracle_text": "Flash\nIf a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+    "mana_cost": "{3}{R}{R}",
+    "types": ["Enchantment"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "keywords": ["flash"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "replace_damage",
+        "damage_multiplier": 2,
+        "text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40, "1": 40}
+  }
+}

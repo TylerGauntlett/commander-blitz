@@ -1,0 +1,15 @@
+{
+  "card": {
+    "id": "breath_of_malfegor",
+    "name": "Breath of Malfegor",
+    "oracle_text": "Breath of Malfegor deals 5 damage to each opponent.",
+    "mana_cost": "{3}{B}{R}",
+    "types": ["Instant"],
+    "colors": ["B", "R"],
+    "color_identity": ["B", "R"],
+    "spell_effects": [
+      {"op": "damage", "amount": {"const": 5}, "player": "each_opponent"}
+    ]
+  },
+  "expectation": {"zone": "graveyard", "life": {"0": 40, "1": 35}}
+}
