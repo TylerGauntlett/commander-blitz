@@ -296602,12 +296602,12 @@
     },
     "Unbreathing Horde": {
       "edhrec_rank": 8240,
-      "gate": "template",
+      "gate": null,
       "name": "Unbreathing Horde",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it for each other Zombie you control and each",
+      "reason": "",
       "scryfall_id": "9d656bd0-82e3-4261-b1bb-929beb87d172",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unbridled Growth": {

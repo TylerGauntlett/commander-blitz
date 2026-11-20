@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**546 cards** blocked by **464** capabilities.
+**545 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -409,7 +409,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-combat-targets](#sandbox-combat-targets) | 1 | 9654 | engine |
-| [sandbox-counted-tribe-prop](#sandbox-counted-tribe-prop) | 1 | 8240 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -6841,20 +6840,6 @@ Blocks **1** card.
 
 - **Devouring Light** (rank 9654) — `devouring_light`
   - Exile target attacking or blocking creature.
-
-</details>
-
-## sandbox-counted-tribe-prop
-
-Blocks **1** card.
-
-- **(engine)** a verification-sandbox prop for a 0/0 whose enters-with counters count its own creature subtype: a Zombie among your board creatures or sandbox graveyard cards (a quiet one, chosen only for a card that needs it, the way verify.swap_in_tribal_body serves a tribal tap cost), so the card enters with at least one counter and survives gate 4. Both lines are expressible: the enters line as self_enters_with_counters with a sum of two counts, the damage line as prevent_damage prevent_all with remove_counters {counter: +1/+1, amount: 1}
-  <br>Why the existing vocabulary won't do: The sandbox's own creatures (the alphabetically first creature, an Ooze) and graveyard props (small_creature, flier) are no Zombies, so the exactly-written card enters as a 0/0 with no counters and dies to state-based actions; gate 4 rejects it as 'a permanent but ended in graveyard'. swap_in_tribal_body is keyed only to an additional cost that taps a subtype, not to a count an enters-with replacement reads
-
-<details><summary>Cards waiting on this</summary>
-
-- **Unbreathing Horde** (rank 8240) — `unbreathing_horde`
-  - This creature enters with a +1/+1 counter on it for each other Zombie you control and each Zombie card in your graveyard.
 
 </details>
 

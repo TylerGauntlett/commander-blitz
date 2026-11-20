@@ -26,6 +26,7 @@ from commanderblitz.cards.authoring.verify import (
     spare_cards_in_hand,
     swap_in_artifact_body,
     swap_in_colorless_sources,
+    swap_in_counted_tribe_body,
     swap_in_legendary_body,
     swap_in_tribal_body,
 )
@@ -126,7 +127,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     # Ultimate Nullification sacrifices a legendary creature to be cast, and
     # this board's creatures are nonlegendary; `swap_in_legendary_body` is the
     # tribal swap's twin, shared for the same reason.
+    # Unbreathing Horde is a 0/0 entering with a counter per other Zombie you
+    # control; `swap_in_counted_tribe_body` gives it one, shared for the same
+    # reason and only for a card that needs it.
     board = swap_in_tribal_body(registry, list(OWN_BOARD), under_test)
+    board = swap_in_counted_tribe_body(registry, board, under_test)
     board = swap_in_legendary_body(registry, board, under_test)
     builder.battlefield(0, swap_in_artifact_body(registry, board, under_test))
     # "Enchant creature with another Aura attached to it" (Daybreak Coronet)

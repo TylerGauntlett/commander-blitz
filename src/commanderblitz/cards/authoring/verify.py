@@ -298,14 +298,17 @@ def _own_board(registry: CardRegistry, card: CardDef | None) -> list[str]:
 
     It takes the first slot rather than being appended, so the boards stay 32
     and 6; the second keeps the plain `creature` role, so a card wanting a
-    creature that is *not* of the tribe still finds one.
+    creature that is *not* of the tribe still finds one. A 0/0 whose
+    enters-with counters count its tribe gets the first slot swapped on the same
+    terms (:func:`swap_in_counted_tribe_body`).
 
     The second slot has a swap of its own, on the same terms: an artifact
     creature for a card whose toughness counts the artifacts you control
     (:func:`swap_in_artifact_body`).
     """
     props = _props(registry, OWN_BOARD_ROLES)
-    board = swap_in_legendary_body(registry, swap_in_tribal_body(registry, props, card), card)
+    board = swap_in_counted_tribe_body(registry, swap_in_tribal_body(registry, props, card), card)
+    board = swap_in_legendary_body(registry, board, card)
     return swap_in_artifact_body(registry, board, card)
 
 
@@ -350,6 +353,124 @@ def swap_in_tribal_body(
     if subtype is None or not board:
         return board
     pick = quiet_tribal_body(registry, subtype)
+    if pick is None:
+        return board
+    return [pick, *board[1:]]
+
+
+def _own_tribe_counted(value: Any, card: CardDef) -> str | None:
+    """The one creature subtype this value counts among your **permanents**, if any.
+
+    A ``count`` whose selector is "<subtype> you control" on the battlefield
+    (the default zone), naming exactly one subtype. A graveyard count is not
+    answered: the prop is a board body, and a graveyard count alone reads zero
+    against it. A count that does not exclude its source and names the card's
+    own subtype counts the card itself, so it never reads zero and needs no prop.
+    """
+    if isinstance(value, Mapping):
+        counted = value.get("count")
+        if isinstance(counted, Mapping):
+            wanted = counted.get("subtypes")
+            if (
+                counted.get("controller") == "you"
+                and str(counted.get("zone", "battlefield")) == "battlefield"
+                and isinstance(wanted, (list, tuple))
+                and len(wanted) == 1
+                and isinstance(wanted[0], str)
+                and (counted.get("exclude_self") or wanted[0] not in card.subtypes)
+            ):
+                return wanted[0]
+        for v in value.values():
+            if (found := _own_tribe_counted(v, card)) is not None:
+                return found
+    elif isinstance(value, (list, tuple)):
+        for v in value:
+            if (found := _own_tribe_counted(v, card)) is not None:
+                return found
+    return None
+
+
+def enters_counting_own_tribe(card: CardDef | None) -> str | None:
+    """The tribe a 0/0's enters-with +1/+1 counters count among your permanents.
+
+    "This creature enters with a +1/+1 counter on it for each other Zombie you
+    control and each Zombie card in your graveyard" (Unbreathing Horde): a
+    printed 0/0 whose `self_enters_with_counters` replacement (614.1c) reads a
+    count of its tribe. Read off the compiled replacement -- ``amount``, or the
+    ``modify.counters`` spelling of the same clause -- so the question asked is
+    the one the replacement will answer, as :func:`tribal_cost_subtype` reads
+    a cost.
+
+    Only a creature whose printed toughness is 0 or less: one that survives on
+    the sandbox board without the tribe keeps the board it was measured on, and
+    its counted number with it.
+    """
+    if card is None or not card.is_creature or (card.toughness or 0) > 0:
+        return None
+    for rep in card.replacements:
+        if rep.get("event") != "self_enters_with_counters":
+            continue
+        counters = (rep.get("modify") or {}).get("counters") or {}
+        amounts = [rep.get("amount")] if rep.get("counter") == "+1/+1" else []
+        if isinstance(counters, Mapping) and "+1/+1" in counters:
+            amounts.append(counters["+1/+1"])
+        for amount in amounts:
+            if (found := _own_tribe_counted(amount, card)) is not None:
+                return found
+    return None
+
+
+def quiet_counted_tribe_body(registry: CardRegistry, subtype: str) -> str | None:
+    """The quietest creature or creature token of ``subtype`` with toughness, or None.
+
+    :func:`quiet_tribal_body`'s standard -- **no abilities at all**, because a
+    lord's "other Zombies you control get +1/+1" would land inside the measured
+    P/T of the card under test, and nonlegendary -- plus a toughness above zero,
+    so the prop itself survives state-based actions (a 0/0 Zombie Army token is
+    no body). Then the fewest keywords, then a **token** before a card, then
+    the id. Tokens are eligible, unlike for the tribal cost, because the
+    hand-written pool `--collect` verifies against has no Zombie card without
+    abilities; and preferred, for :func:`quiet_aura_token`'s reason: tokens are
+    hand-written, so the pick is the same in that pool and in the full one
+    `tests/cards/test_every_card_works.py` builds from, and the two verdicts
+    cannot disagree.
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if c.is_creature
+            and "Legendary" not in c.supertypes
+            and subtype in c.subtypes
+            and not c.abilities
+            and (c.toughness or 0) > 0
+        ),
+        key=lambda c: (len(c.keywords), not c.is_token, c.id),
+    )
+    return match[0].id if match else None
+
+
+def swap_in_counted_tribe_body(
+    registry: CardRegistry, board: list[str], card: CardDef | None
+) -> list[str]:
+    """``board`` with its first creature swapped for the tribe ``card`` enters counting.
+
+    Your two creatures are of no tribe a 0/0 counts, so Unbreathing Horde --
+    written exactly, with its counters a sum of two counts -- entered with
+    none and state-based actions binned it: gate 4's "is a permanent but ended
+    in graveyard", the harness naming a shape the position could not represent
+    rather than a verdict about the card. The prop is added and the gate left
+    alone, on :func:`swap_in_tribal_body`'s terms: **only** for a card
+    :func:`enters_counting_own_tribe` names, so every other card sees the
+    position it was measured in; a swap, so the boards stay 32 and 6; the
+    **first** slot, the tribal swap's, so it composes with the artifact swap,
+    which takes the last. Returns the board untouched when the pool has no quiet
+    body of the tribe, and the card then fails gate 4 honestly.
+    """
+    subtype = enters_counting_own_tribe(card)
+    if subtype is None or not board:
+        return board
+    pick = quiet_counted_tribe_body(registry, subtype)
     if pick is None:
         return board
     return [pick, *board[1:]]
