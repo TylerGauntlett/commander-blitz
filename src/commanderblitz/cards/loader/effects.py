@@ -1841,6 +1841,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+        if "random" in effect:
+            # "Choose a player at random" -- nobody is asked, so a prompt would
+            # load and never be shown, and a non-boolean would read as a choice.
+            if not isinstance(effect["random"], bool):
+                raise DslError(f"{where}: 'random' is a boolean, got {effect['random']!r}")
+            if effect["random"] and effect.get("prompt"):
+                raise DslError(
+                    f"{where}: a 'random' choose_player asks nobody, so its "
+                    f"'prompt' would never be shown"
+                )
     if op == "manifest" and "controller" in effect and effect["controller"] != "you":
         # "You manifest the top card of that player's library." The only value
         # is "you": without the key the library's player manifests it, which is

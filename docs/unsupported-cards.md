@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**548 cards** blocked by **459** capabilities.
+**544 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
 | [planechase](#planechase) | 10 | 5666 | engine |
 | [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
-| [random-player-choice](#random-player-choice) | 7 | 5120 | decision, engine, op |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [voting](#voting) | 6 | 6980 | decision, op |
@@ -182,7 +181,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
-| [demon-x-x-b-flying](#demon-x-x-b-flying) | 1 | 14030 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
@@ -346,7 +344,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
-| [ogre-token](#ogre-token) | 1 | 1855 | token |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
@@ -387,6 +384,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [random-reflexive-target](#random-reflexive-target) | 1 | 13413 | engine |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -405,6 +403,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
+| [sacrificed-total-power](#sacrificed-total-power) | 1 | 14030 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
@@ -828,46 +827,6 @@ Blocks **7** cards.
   - When this creature enters, put a +1/+1 counter on each creature that convoked it.
 - **Joyful Stormsculptor** (rank 17299) — `joyful_stormsculptor`
   - Whenever you cast a spell that has convoke, this creature deals 1 damage to each opponent and each battle they protect.
-
-</details>
-
-## random-player-choice
-
-Blocks **7** cards.
-
-- **(engine)** a reflexive (spell-linked) triggered ability that fires once per card drawn by this spell's own draw effects (yours and each other player's optional draw) and whose single player target is an opponent chosen at random -- i.e. allow a target spec's selector `random: true` on a `reflexive_trigger` ability, drawn by `stack._random_trigger_targets` as it goes on the stack, over player targets restricted to the controller's opponents
-  <br>Why the existing vocabulary won't do: The only random-target path is `random: true` on a target selector, and the loader (`cards/loader/targets.py`) refuses it unless `on_trigger`, which `_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE; a `trigger_events` draw trigger cannot be scoped to 'drawn this way' by this spell, and `choose_player`/`damage` have no random option, so an ordinary chosen target opponent would let the caster pick and be a different card
-- **(op)** a `random: true` option on `choose_player` that picks one player uniformly at random from the pool (all players, the controller included) with no decision asked, binding the result under `as` so a following `reflexive_trigger`'s target selector can read `controller: {"binding": ...}` ("another target creature that player controls")
-  <br>Why the existing vocabulary won't do: `choose_player` takes only `as`, `players` and `prompt` and always asks the controller via `ask_player`; `random` exists only as a selector key over objects and on `choose_mode`/`discard`, not for picking a player, so the random seat cannot be produced and choosing it would let the controller pick the most favourable player
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
-- **(decision)** choose_player with a random pick: 'choose an opponent at random' selects one opponent uniformly at random (no player decision), bound under `as` for the following damage op
-  <br>Why the existing vocabulary won't do: choose_player takes only as/players/prompt, so the controller chooses deliberately; choose_mode has `random` but picks among modes, not players, and a mode per opponent cannot be written for a variable table size
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (each opponent still in the game) and binds the result under `as`, asking nobody, so must_attack_player can read it as {"binding": ...} as its defender
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller via ask_player; select_players has no random spelling, and `random` exists only on object selectors, choose_mode and discard. A controller-chosen opponent or each_opponent is a different card in a pod. The rest of the trigger (begin_combat, mill, must_attack_player, grant_keyword indestructible, pump by distinct card_type over your graveyard) is expressible
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod
-- **(op)** a `random: true` option on `choose_player` that binds one seat drawn uniformly at random from the `players` pool (here every living player, you included) under `as`, with no decision asked, so the later `exile` (chooser that player, from that player's graveyard) and `cast_copy` can read it with {"binding": ...}
-  <br>Why the existing vocabulary won't do: `choose_player` takes only `as`, `players` and `prompt` and always asks the controller via ask_player; `random` exists only as a selector key over objects (cards in a zone) and on `choose_mode`, and a random `choose_mode` over a 'you' mode and an 'opponent' mode is not uniform over players at a multiplayer table. The rest of the line (exile by the chosen player, then `cast_copy` optional of the exiled card, as Arcane Bombardment writes it) is expressible once the seat can be bound
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
-  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
-  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
-- **Wildfire Devils** (rank 6712) — `wildfire_devils`
-  - When this creature enters and at the beginning of your upkeep, choose a player at random.
-- **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
-  - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
-- **Truth or Consequences** (rank 10776) — `truth_or_consequences`
-  - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
-  - You draw cards equal to the number of truth votes.
-  - Then choose an opponent at random. Truth or Consequences deals 3 damage to that player for each consequences vote.
-- **Explosion of Riches** (rank 13413) — `explosion_of_riches`
-  - Draw a card, then each other player may draw a card. Whenever a card is drawn this way, Explosion of Riches deals 5 damage to target opponent chosen at random from among your opponents.
-- **Strax, Sontaran Nurse** (rank 19999) — `strax_sontaran_nurse`
-  - Grenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax fights another target creature that player controls.
 
 </details>
 
@@ -3627,20 +3586,6 @@ Blocks **1** card.
 
 </details>
 
-## demon-x-x-b-flying
-
-Blocks **1** card.
-
-- **(token)** an X/X black Demon creature token with flying (power and toughness set on creation by create_token's power/toughness)
-  <br>Why the existing vocabulary won't do: token_ids has no black Demon with flying of variable size: vampire_demon_4_3_wb_flying is a fixed 4/3 white-black Vampire Demon, and the X/X flying tokens (shark_x_x_u_flying, dragon_illusion_x_x_r_flying_haste) are the wrong colour and creature type. The sacrifice half is expressible (for_each_player + sacrifice with snapshot/as, X read via power_had summed), so only the token blocks the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Reign of the Pit** (rank 14030) — `reign_of_the_pit`
-  - Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way.
-
-</details>
-
 ## devil-token
 
 Blocks **1** card.
@@ -5968,20 +5913,6 @@ Blocks **1** card.
 
 </details>
 
-## ogre-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 red Ogre creature token (no abilities), e.g. id ogre_3_3_r
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Ogre token at all; the nearest 3/3 red token is ape_villain_3_3_r_haste, which has the wrong creature type and haste. The rest of the sentence looks expressible: an `attacks` trigger with controller opponent and `defending: "you"`, and a `may` whose `player` is the attacking creature's controller with `pay: {mana: "{3}"}` and `else` holding the create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kazuul, Tyrant of the Cliffs** (rank 1855) — `kazuul_tyrant_of_the_cliffs`
-  - Whenever a creature an opponent controls attacks, if you're the defending player, create a 3/3 red Ogre creature token unless that creature's controller pays {3}.
-
-</details>
-
 ## one-target-per-graveyard
 
 Blocks **1** card.
@@ -6551,6 +6482,20 @@ Blocks **1** card.
 
 </details>
 
+## random-reflexive-target
+
+Blocks **1** card.
+
+- **(engine)** allow a target spec's selector `random: true` on a reflexive (`kind: "reflexive"`) ability, so a `reflexive_trigger` fired after each card drawn by this spell (your draw, then each other player's `may` draw inside `for_each_player`) puts an ability on the stack whose one player target -- an opponent -- is drawn by `stack._random_trigger_targets`, which already serves reflexive triggers at runtime
+  <br>Why the existing vocabulary won't do: `choose_player` with `random: true` draws a seat but is a choice, not a target: it ignores hexproof and shroud and is never re-checked, so it is a different card from 'target opponent chosen at random'. The random-target path refuses `random` unless `on_trigger`, which `cards/loader/__init__.py::_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE
+
+<details><summary>Cards waiting on this</summary>
+
+- **Explosion of Riches** (rank 13413) — `explosion_of_riches`
+  - Draw a card, then each other player may draw a card. Whenever a card is drawn this way, Explosion of Riches deals 5 damage to target opponent chosen at random from among your opponents.
+
+</details>
+
 ## rate-limited-free-cast-by-counters
 
 Blocks **1** card.
@@ -6806,6 +6751,20 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
+## sacrificed-total-power
+
+Blocks **1** card.
+
+- **(value)** a value reading the summed last-known power of every creature an edict sacrificed across a `for_each_player` loop -- e.g. a `sacrifice` `snapshot`/`as` binding that accumulates across iterations (as `mill`'s `as` does) plus a `power_of` form that sums a list of snapshots -- so one `create_token` of `demon_x_x_b_flying` after the loop can set power and toughness to the total
+  <br>Why the existing vocabulary won't do: The edict is `for_each_player` over `sacrifice` (Syphon Flesh's shape), but `op_sacrifice` overwrites both its `as` and `snapshot` bindings on each iteration, and `snapshot` captures only the first chosen permanent; `power_of` over an `as` list of oids reads 0 (and would read graveyard printed power, not last-known power). Creating the token inside the loop makes one Demon per player instead of one, and creating it first and adding +1/+1 counters puts the token in your own sacrifice pool and gives it counters rather than a base X/X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reign of the Pit** (rank 14030) — `reign_of_the_pit`
+  - Each player sacrifices a creature of their choice. Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way.
 
 </details>
 

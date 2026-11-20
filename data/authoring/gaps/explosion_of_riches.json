@@ -7,12 +7,18 @@
   ],
   "needs": [
     {
-      "capability": "random_player_choice",
+      "capability": "random_reflexive_target",
       "kind": "engine",
-      "what": "a reflexive (spell-linked) triggered ability that fires once per card drawn by this spell's own draw effects (yours and each other player's optional draw) and whose single player target is an opponent chosen at random -- i.e. allow a target spec's selector `random: true` on a `reflexive_trigger` ability, drawn by `stack._random_trigger_targets` as it goes on the stack, over player targets restricted to the controller's opponents",
-      "why_existing_wont_do": "The only random-target path is `random: true` on a target selector, and the loader (`cards/loader/targets.py`) refuses it unless `on_trigger`, which `_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE; a `trigger_events` draw trigger cannot be scoped to 'drawn this way' by this spell, and `choose_player`/`damage` have no random option, so an ordinary chosen target opponent would let the caster pick and be a different card"
+      "what": "allow a target spec's selector `random: true` on a reflexive (`kind: \"reflexive\"`) ability, so a `reflexive_trigger` fired after each card drawn by this spell (your draw, then each other player's `may` draw inside `for_each_player`) puts an ability on the stack whose one player target -- an opponent -- is drawn by `stack._random_trigger_targets`, which already serves reflexive triggers at runtime",
+      "why_existing_wont_do": "`choose_player` with `random: true` draws a seat but is a choice, not a target: it ignores hexproof and shroud and is never re-checked, so it is a different card from 'target opponent chosen at random'. The random-target path refuses `random` unless `on_trigger`, which `cards/loader/__init__.py::_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE"
     }
   ],
-  "closest_existing": ["reflexive_trigger", "for_each_player", "may", "draw", "damage"],
+  "closest_existing": [
+    "reflexive_trigger",
+    "for_each_player",
+    "may",
+    "draw",
+    "damage"
+  ],
   "confidence": "high"
 }

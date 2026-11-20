@@ -603,10 +603,21 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     Nothing is bound when there is no one to choose, so ``{"binding": …}``
     resolves to no players and whatever depended on the choice does not happen.
     A card that means "and if you did not, …" says so with `if`.
+
+    ``random: true`` is "choose a player at random" (Wildfire Devils, Ursine
+    Monstrosity): nobody is asked, and the seat is drawn uniformly off the
+    seeded `state.rng` from the same living pool, so a replay draws the same
+    player. It is a choice, not a target (115.1) -- a player with hexproof can
+    still be chosen; "target opponent chosen at random" is a random *target*
+    spec on a triggered ability instead.
     """
     pool = select_players(ctx, spec.get("players", "each_opponent"))
     pool = [pid for pid in pool if ctx.state.is_alive(pid)]
     if not pool:
+        return
+    if spec.get("random"):
+        picked = pool[0] if len(pool) == 1 else ctx.state.rng.choice(pool)
+        ctx.bindings[str(spec["as"])] = int(picked)
         return
     prompt = str(spec.get("prompt") or "Choose a player")
     chosen = yield from ask_player(ctx, prompt, pool, ctx.controller)

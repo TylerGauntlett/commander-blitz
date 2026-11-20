@@ -13104,6 +13104,32 @@ condition, `cards_discarded_this_turn` counts the player's discards wherever
 the cards went; mayhem's per-object record is the near miss there, and forgets
 a discarded card that has since left the graveyard.
 
+## "Choose a player at random" — `choose_player` with `random`
+
+Ursine Monstrosity — *"At the beginning of combat on your turn, mill a card and
+choose an opponent at random. This creature attacks that player this combat if
+able. …"*
+
+```jsonc
+{ "op": "choose_player", "players": "each_opponent", "random": true, "as": "foe" },
+{ "op": "must_attack_player", "objects": { "self_only": true },
+  "defender": { "binding": "foe" }, "duration": "this_turn" }
+```
+
+`random: true` draws one seat uniformly off the game's seeded `state.rng` from
+the living players of `players` (the opponents by default; `"each_player"` for
+"choose a player at random", which can be you — Wildfire Devils, Strax) and
+binds it under `as`, asking nobody, so a replay draws the same seat. It is a
+choice on resolution, not a target: hexproof does not stop it, and nothing is
+re-checked. An empty pool binds nothing, exactly as the asked form does. A
+`prompt` is refused beside it, since nobody would see one.
+
+The near miss is a random target — *"target opponent chosen at random"* — which
+is a target spec with `random` in its selector on a triggered ability
+("Target … chosen at random"), drawn as the ability goes on the stack. Neither
+is `choose_mode` with `random` over a "you" mode and an "opponent" mode: that is
+not uniform over the seats at a pod.
+
 ## One choice across two zones — `union`
 
 Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand
