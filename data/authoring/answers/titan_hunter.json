@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "titan_hunter",
+    "name": "Titan Hunter",
+    "oracle_text": "At the beginning of each player's end step, if no creatures died this turn, this creature deals 4 damage to that player.\n{1}{B}, Sacrifice a creature: You gain 4 life.",
+    "mana_cost": "{4}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Warrior"],
+    "power": 4,
+    "toughness": 5,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's end step, if no creatures died this turn, this creature deals 4 damage to that player.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "any",
+          "condition": {"cmp": "=", "left": {"creatures_died_this_turn": "all"}, "right": {"const": 0}}
+        },
+        "effects": [
+          {"op": "damage", "amount": {"const": 4}, "player": {"binding": "event_player"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{B}, Sacrifice a creature: You gain 4 life.",
+        "cost": {"mana": "{1}{B}", "sacrifice": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": 1}},
+        "effects": [
+          {"op": "gain_life", "amount": {"const": 4}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
