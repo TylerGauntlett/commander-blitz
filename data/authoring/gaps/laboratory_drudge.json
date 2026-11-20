@@ -1,0 +1,18 @@
+{
+  "card_id": "laboratory_drudge",
+  "name": "Laboratory Drudge",
+  "oracle_text": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+  "blocked_sentences": [
+    "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn."
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_plays_this_turn",
+      "kind": "value",
+      "what": "a per-player turn-ledger value counting spells a player cast from a graveyard this turn (any graveyard, flashback/escape/retrace/graveyard_cast included) plus activated abilities of cards in a graveyard (unearth, embalm, scavenge, cycling-from-graveyard-style abilities) that player activated this turn -- e.g. {\"graveyard_plays_this_turn\": \"you\"} compared > 0, used as the end_step trigger's intervening-if condition",
+      "why_existing_wont_do": "spells_cast_this_turn counts casts and its filter matches only printed characteristics, not the zone the spell was cast from; cast_from_graveyard is a condition about the source spell itself, not about the turn's other casts; cards_from_graveyard_this_turn counts every card leaving a graveyard (reanimation, exile) and no activation; no ledger records activations from a graveyard at all. An ability_activated/spell_cast trigger setting a turn flag would miss everything done before the Drudge entered, which the 'this turn' ledger must count"
+    }
+  ],
+  "closest_existing": ["spells_cast_this_turn", "cards_from_graveyard_this_turn", "cast_from_graveyard"],
+  "confidence": "high"
+}
