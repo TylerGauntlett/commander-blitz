@@ -88572,12 +88572,12 @@
     },
     "Explosion of Riches": {
       "edhrec_rank": 13413,
-      "gate": "template",
+      "gate": null,
       "name": "Explosion of Riches",
-      "reason": "no template for: Draw a card, then each other player may draw a card. Whenever a card is drawn this way, de",
+      "reason": "",
       "scryfall_id": "e28ed670-eae0-4a39-bf3d-73b687327f0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Explosive Apparatus": {

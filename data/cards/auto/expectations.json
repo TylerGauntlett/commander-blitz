@@ -7800,6 +7800,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "explosion_of_riches": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40,
+      "1": 30
+    },
+    "zone": "graveyard"
+  },
   "explosive_derailment": {
     "battlefield_count": 31,
     "opponent_battlefield_count": 5,
