@@ -12700,6 +12700,10 @@
       "0": 41
     }
   },
+  "kazuul_tyrant_of_the_cliffs": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kederekt_creeper": {
     "zone": "battlefield"
   },

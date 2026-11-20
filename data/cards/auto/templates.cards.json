@@ -152202,6 +152202,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "ogre_3_3_r"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}"
+              },
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Pay {3} to stop Kazuul's Ogre token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls attacks, if you're the defending player, create a 3/3 red Ogre creature token unless that creature's controller pays {3}.",
+          "trigger": {
+            "controller": "opponent",
+            "defending": "you",
+            "event": "attacks"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "kazuul_tyrant_of_the_cliffs",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Kazuul, Tyrant of the Cliffs",
+      "oracle_text": "Whenever a creature an opponent controls attacks, if you're the defending player, create a 3/3 red Ogre creature token unless that creature's controller pays {3}.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "R",

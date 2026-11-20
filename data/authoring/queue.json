@@ -147192,12 +147192,12 @@
     },
     "Kazuul, Tyrant of the Cliffs": {
       "edhrec_rank": 1855,
-      "gate": "template",
+      "gate": null,
       "name": "Kazuul, Tyrant of the Cliffs",
-      "reason": "no template for: Whenever a creature an opponent controls attacks, if you're the defending player, create a",
+      "reason": "",
       "scryfall_id": "721df547-d777-4247-b130-a4e247445b04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kederekt Creeper": {
