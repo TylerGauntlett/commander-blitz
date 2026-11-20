@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "heliod_s_intervention",
+    "name": "Heliod's Intervention",
+    "oracle_text": "Choose one —\n• Destroy X target artifacts and/or enchantments.\n• Target player gains twice X life.",
+    "mana_cost": "{X}{W}{W}",
+    "types": ["Instant"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "targets": [
+      {"id": "broken", "kind": "permanent", "mode": 0, "count": {"x": true},
+       "selector": {"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]}},
+      {"id": "healed", "kind": "player", "mode": 1, "count": 1, "selector": {}}
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {"label": "Destroy X target artifacts and/or enchantments.",
+           "effects": [{"op": "destroy", "objects": {"target": "broken"}}]},
+          {"label": "Target player gains twice X life.",
+           "effects": [{"op": "gain_life", "player": {"target": "healed"},
+                        "amount": {"times": [{"const": 2}, {"x": true}]}}]}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 4,
+    "battlefield_count": 32
+  }
+}
