@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**550 cards** blocked by **469** capabilities.
+**549 cards** blocked by **467** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -266,7 +266,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
 | [grant-exiled-triggered-abilities](#grant-exiled-triggered-abilities) | 1 | 20131 | static_effect |
-| [grant-player-hexproof](#grant-player-hexproof) | 1 | 2072 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
@@ -369,7 +368,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
-| [player-hexproof](#player-hexproof) | 1 | 2813 | op |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [player-to-your-right](#player-to-your-right) | 1 | 5281 | selector |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
@@ -2804,7 +2802,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Everybody Lives!** (rank 2072) — `everybody_lives`
-  - Players gain hexproof until end of turn.
   - Players can't lose life this turn and players can't lose the game or win the game this turn.
 
 </details>
@@ -4809,21 +4806,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-player-hexproof
-
-Blocks **1** card.
-
-- **(op)** a one-shot op (or a `player` recipient on grant_keyword) that gives each selected player hexproof until end of turn, from an instant
-  <br>Why the existing vocabulary won't do: `player_hexproof` exists only as a static_effect, which an instant cannot install; grant_keyword resolves objects only and skips seats; grant_protection's `player` recipient grants protection qualities, not hexproof
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everybody Lives!** (rank 2072) — `everybody_lives`
-  - Players gain hexproof until end of turn.
-  - Players can't lose life this turn and players can't lose the game or win the game this turn.
-
-</details>
-
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -6271,20 +6253,6 @@ Blocks **1** card.
 
 - **Darien, King of Kjeldor** (rank 4451) — `darien_king_of_kjeldor`
   - Whenever you're dealt damage, you may create that many 1/1 white Soldier creature tokens.
-
-</details>
-
-## player-hexproof
-
-Blocks **1** card.
-
-- **(op)** a one-shot op giving a player hexproof for a duration ("you gain hexproof until end of turn"), usable from a spell's spell_effects, e.g. {"op": "grant_player_hexproof", "player": "you", "duration": "this_turn"}
-  <br>Why the existing vocabulary won't do: player_hexproof exists only as a static effect, which lives on a permanent and cannot be carried by an instant; grant_keyword reaches permanents but not players, so it covers only the 'permanents you control' half; grant_protection takes a player but protection is not hexproof; an emblem with a player_hexproof static would last forever, not until end of turn. The Amass Zombies 1 sentence alone is expressible (amass op, zombie_army_0_0_b token).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lazotep Plating** (rank 2813) — `lazotep_plating`
-  - You and permanents you control gain hexproof until end of turn. (You and they can't be the targets of spells or abilities your opponents control.)
 
 </details>
 

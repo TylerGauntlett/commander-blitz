@@ -1189,6 +1189,37 @@ class LifeFloor:
     source: int | None = None
 
 
+#: The durations a `PlayerHexproof` may carry. "Until end of turn" is the only
+#: one printed on a card that installs one.
+PLAYER_HEXPROOF_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class PlayerHexproof:
+    """"**You** and permanents you control gain hexproof until end of turn." --
+    Lazotep Plating.  Rule 702.11d.
+
+    Hexproof over a **player** for a while, which neither end of the engine
+    could say. The `player_hexproof` static lives on a permanent, so an Instant
+    that leaves nothing behind cannot carry it, and an emblem holding it would
+    last forever; `grant_keyword` writes a `TempEffect` onto an *object*, and a
+    seat is not one. `PlayerProtection` is the near miss and the wrong card:
+    protection also prevents damage and stops the player's *own* spells
+    targeting them, where hexproof only turns away opponents.
+
+    Its own table, read beside the static by
+    `player_statics.player_has_hexproof` -- the one question
+    `targeting._player_allowed` asks -- so declaring targets and the 608.2b
+    re-check both see it. Swept in the cleanup step with the tables beside it.
+    """
+
+    player: int
+    duration: str = "this_turn"
+    #: The spell that granted it, for the log. Not part of the lifetime: Lazotep
+    #: Plating is in the graveyard before its hexproof has done anything.
+    source: int | None = None
+
+
 #: The durations a `TokenMultiplier` may carry. "Until end of turn" is the only
 #: one printed on a card that installs one.
 TOKEN_MULTIPLIER_DURATIONS = ("this_turn",)

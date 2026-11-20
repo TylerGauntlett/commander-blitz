@@ -22,6 +22,7 @@ from .structs import (
     DAMAGE_SHIELD_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
+    PLAYER_HEXPROOF_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
     AttackMark,
@@ -38,6 +39,7 @@ from .structs import (
     NextSpellDiscount,
     OutcomeLock,
     PermanentShield,
+    PlayerHexproof,
     PlayerProtection,
     SacrificeRestriction,
     TempEffect,
@@ -353,6 +355,37 @@ def grant_player_protection(
     if added:
         state.bump_chars()
     return added
+
+
+def grant_player_hexproof(
+    state: GameState,
+    pid: int,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """Give ``pid`` hexproof for ``duration`` (702.11d).
+
+    Deduplicated on the whole entry, like every table beside it: two Lazotep
+    Platings in a turn are two identical records and the second changes
+    nothing that can be observed.
+    """
+
+    if duration not in PLAYER_HEXPROOF_DURATIONS:  # pragma: no cover - loader refuses
+        raise ValueError(f"unknown player hexproof duration {duration!r}")
+    record = PlayerHexproof(player=pid, duration=duration, source=source)
+    if record in state.player_hexproofs:
+        return False
+    state.player_hexproofs.append(record)
+    return True
+
+
+def clear_player_hexproofs(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the player hexproofs of one duration -- their wearing-off.
+
+    "Until end of turn" ends in `turn._cleanup_step` (514.2), the same breath
+    as every ``this_turn`` table beside it.
+    """
+    state.player_hexproofs = _expired(state.player_hexproofs, duration, player)
 
 
 def set_life_floor(

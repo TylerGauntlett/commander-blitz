@@ -361,7 +361,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Modify ----------------------------------------------------------
     "pump": ("Modify", "+N/+M until end of turn (or a duration, `as_long_as_you_control_source` included).",
              '"For as long as you control" this'),
-    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source.",
+    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. `player` gives players hexproof until end of turn.",
                       "How long a granted keyword lasts"),
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),

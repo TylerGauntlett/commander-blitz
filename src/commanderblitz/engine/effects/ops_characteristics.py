@@ -22,7 +22,7 @@ from ..primitives import (
     pump,
 )
 from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
-from ..temp_effects import grant_player_protection
+from ..temp_effects import grant_player_hexproof, grant_player_protection
 from ..text_change import printed_type_instances
 from ..triggers import fire
 from .context import EffectContext, ask_mode
@@ -400,8 +400,21 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     ``duration: "as_long_as_you_control_source"`` is Thancred Waters' "…gains
     indestructible for as long as you control Thancred Waters": no clock, and
     it ends the moment the source leaves or changes hands (`source_bound_seat`).
+
+    ``player`` is Lazotep Plating's "**You** and permanents you control gain
+    hexproof until end of turn": a seat cannot come out of `choose_objects`,
+    so the player half is its own clause reading the ordinary player spec and
+    writing a `PlayerHexproof` to the table, the way `grant_protection`'s
+    player half writes a `PlayerProtection`. Hexproof is the only keyword a
+    player can have (702.11d), and the loader refuses any other word or clock
+    beside ``player``.
     """
     keywords = spec.get("keywords") or ([spec["keyword"]] if "keyword" in spec else [])
+    if (who := spec.get("player")) is not None:
+        for pid in select_players(ctx, who):
+            grant_player_hexproof(ctx.state, pid, "this_turn", source=ctx.source_oid)
+        if spec.get("objects") is None:
+            return
     permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     # "…and gain lifelink **until your next turn**" -- Sorin, Solemn Visitor.
     until_player = until_player_of(ctx, spec)

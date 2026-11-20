@@ -13320,6 +13320,20 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lazotep_plating": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 33,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
+    "zone": "graveyard"
+  },
   "lazotep_quarry": {
     "zone": "battlefield"
   },

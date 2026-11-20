@@ -9660,6 +9660,34 @@ side and the half a hexproof-shaped implementation gets wrong.
 
 `from_everything` works on the `objects` half too, which is Progenitus.
 
+## Hexproof for a **player**, until end of turn
+
+```jsonc
+{"op": "grant_keyword", "keywords": ["hexproof"], "player": "you",
+ "objects": {"zone": "battlefield", "controller": "you"}}
+```
+
+Lazotep Plating's "You and permanents you control gain hexproof until end of
+turn"; Everybody Lives!'s "Players gain hexproof" is `"player": "each_player"`
+with no `objects`. 702.11d: an opponent's spell or ability cannot target the
+player, and their own still can.
+
+- **`player`** — an ordinary player spec, resolved by `select_players`, the
+  shape `grant_protection`'s player half has. `objects` may be written beside it
+  for the permanents half, or left out.
+- **Only `hexproof`, only until end of turn.** Beside `player` the loader refuses
+  any other keyword — hexproof is the only one a player has here — and any
+  `duration`, since the player's grant ends in the cleanup step and nowhere else.
+  Grant the permanents a second keyword with a separate `grant_keyword`.
+
+The grant is a `PlayerHexproof` in `GameState.player_hexproofs`, swept by the
+cleanup step, and read by `player_statics.player_has_hexproof` beside the
+`player_hexproof` static — the one question `targeting._player_allowed` asks.
+
+Near misses: the `player_hexproof` static lives on a permanent and never ends
+on its own; `grant_protection` with `player` also prevents damage and stops the
+player's own spells, which is a different card.
+
 ## Preventing all damage to a player for the turn
 
 ```jsonc

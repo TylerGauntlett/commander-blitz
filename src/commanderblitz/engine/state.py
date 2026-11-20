@@ -34,6 +34,7 @@ from .structs import (
     LifeLock,
     NextSpellDiscount,
     OutcomeLock,
+    PlayerHexproof,
     PlayerProtection,
     SacrificeRestriction,
     StackItem,
@@ -466,6 +467,10 @@ class GameState:
     #: `outcome_locks`, installed by the same Instant and swept in the same
     #: cleanup step, and read only by `primitives.damage_player`.
     life_floors: list[LifeFloor] = field(default_factory=list)
+    #: "You and permanents you control gain hexproof until end of turn" -- see
+    #: :class:`structs.PlayerHexproof`. Swept in the cleanup step with
+    #: `life_floors`, and read only by `player_statics.player_has_hexproof`.
+    player_hexproofs: list[PlayerHexproof] = field(default_factory=list)
     #: "Until end of turn, if one or more tokens would be created under your
     #: control, twice that many of those tokens are created instead" -- see
     #: :class:`structs.TokenMultiplier`. Swept in the cleanup step with

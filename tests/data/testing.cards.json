@@ -1595,6 +1595,34 @@
       ]
     },
     {
+      "id": "t_player_hexproof_grant",
+      "name": "Test Player Hexproof Grant",
+      "oracle_text": "You and permanents you control gain hexproof until end of turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "player": "you",
+          "objects": {
+            "zone": "battlefield",
+            "controller": "you"
+          }
+        }
+      ]
+    },
+    {
       "id": "t_bolt",
       "name": "Test Bolt",
       "oracle_text": "Test Bolt deals 3 damage to any target.",

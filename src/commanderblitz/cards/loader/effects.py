@@ -3644,6 +3644,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             list(effect.get("keywords") or ()) + ([effect["keyword"]] if "keyword" in effect else []),
             where,
         )
+    # "**You** and permanents you control gain hexproof until end of turn"
+    # (Lazotep Plating). A player has exactly one keyword the engine models
+    # (702.11d), and its one clock is the cleanup step's -- so any other word,
+    # or a duration that would outlast the turn, is refused here rather than
+    # granted to a seat that would silently ignore it.
+    if op == "grant_keyword" and effect.get("player") is not None:
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        words = list(effect.get("keywords") or ()) + (
+            [effect["keyword"]] if "keyword" in effect else []
+        )
+        if words != ["hexproof"]:
+            raise DslError(
+                f"{where}: the 'player' half of grant_keyword grants exactly "
+                f"['hexproof'] (702.11d), not {words!r}; give permanents other "
+                f"keywords in a separate grant_keyword"
+            )
+        if effect.get("duration", "until_end_of_turn") != "until_end_of_turn":
+            raise DslError(
+                f"{where}: a player's granted hexproof lasts until end of turn; "
+                f"'duration' {effect['duration']!r} is not implemented for 'player'"
+            )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (

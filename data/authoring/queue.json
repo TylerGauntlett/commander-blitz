@@ -155542,12 +155542,12 @@
     },
     "Lazotep Plating": {
       "edhrec_rank": 2813,
-      "gate": "template",
+      "gate": null,
       "name": "Lazotep Plating",
-      "reason": "no template for: Amass Zombies 1",
+      "reason": "",
       "scryfall_id": "548a76ed-8dd1-4e1c-8cfe-d37f1b4b0376",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Quarry": {
