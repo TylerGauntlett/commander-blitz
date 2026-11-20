@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "nihil_spellbomb",
+    "name": "Nihil Spellbomb",
+    "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.\nWhen this artifact is put into a graveyard from the battlefield, you may pay {B}. If you do, draw a card.",
+    "mana_cost": "{1}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
+        "cost": {
+          "tap": true,
+          "sacrifice": {"controller": "you", "count": 1, "self_only": true, "zone": "battlefield"}
+        },
+        "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {}}],
+        "effects": [
+          {"op": "exile", "objects": {"count": "all", "player": {"target": "t1"}, "zone": "graveyard"}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this artifact is put into a graveyard from the battlefield, you may pay {B}. If you do, draw a card.",
+        "trigger": {"event": "dies", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "pay": {"mana": "{B}"},
+            "prompt": "Pay {B} to draw a card?",
+            "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
