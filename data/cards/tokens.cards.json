@@ -6146,6 +6146,50 @@
       "keywords": [
         "flying"
       ]
+    },
+    {
+      "id": "ogre_3_3_r",
+      "name": "Ogre Token",
+      "oracle_text": "3/3 red Ogre creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ogre"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "demon_x_x_b_flying",
+      "name": "Demon Token",
+      "oracle_text": "X/X black Demon creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Demon"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     }
   ]
 }
