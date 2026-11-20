@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "stensia_bloodhall",
+    "name": "Stensia Bloodhall",
+    "oracle_text": "{T}: Add {C}.\n{3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["B", "R"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}],
+        "is_mana_ability": true,
+        "text": "{T}: Add {C}."
+      },
+      {
+        "kind": "activated",
+        "cost": {"mana": "{3}{B}{R}", "tap": true},
+        "targets": [
+          {"id": "t1", "kind": "any", "count": 1, "selector": {"types": ["Planeswalker"]}}
+        ],
+        "effects": [{"op": "damage", "amount": {"const": 2}, "target": "t1"}],
+        "text": "{3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
