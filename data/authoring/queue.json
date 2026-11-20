@@ -118442,12 +118442,12 @@
     },
     "Grimoire of the Dead": {
       "edhrec_rank": 5369,
-      "gate": "template",
+      "gate": null,
       "name": "Grimoire of the Dead",
-      "reason": "no template for: {1}, {T}, Discard a card: Put a study counter on",
+      "reason": "",
       "scryfall_id": "b1faa0cd-3556-4664-90d3-76ae5c736f5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grind // Dust": {
@@ -158952,12 +158952,12 @@
     },
     "Liliana, Death's Majesty": {
       "edhrec_rank": 2040,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Death's Majesty",
-      "reason": "no template for: +1: Create a 2/2 black Zombie creature token. Mill two cards",
+      "reason": "",
       "scryfall_id": "ae653ad0-c796-49d4-b893-25d627f1ff79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana, Defiant Necromancer Emblem": {
@@ -184472,12 +184472,12 @@
     },
     "Necromantic Selection": {
       "edhrec_rank": 3356,
-      "gate": "template",
+      "gate": null,
       "name": "Necromantic Selection",
-      "reason": "no template for: Destroy all creatures, then return a creature card put into a graveyard this way to the ba",
+      "reason": "",
       "scryfall_id": "0710c560-3a40-4f4b-8dd1-e97a15e95dd5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necromantic Summons": {

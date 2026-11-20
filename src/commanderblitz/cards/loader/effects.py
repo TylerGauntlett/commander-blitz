@@ -3256,6 +3256,33 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: add_subtype's 'counter' is the 'while_counter' duration's "
                 f"kind and means nothing on {effect.get('duration', 'permanent')!r}"
             )
+    if op == "add_color":
+        # "It's black in addition to its other colors." An op naming no colour
+        # is a sentence that does nothing and loads exactly like one that works.
+        colors = effect.get("colors")
+        if not isinstance(colors, list) or not colors:
+            raise DslError(f"{where}: add_color needs 'colors', a non-empty list of colour letters")
+        for c in colors:
+            if c not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown colour {c!r}")
+        if "objects" not in effect:
+            raise DslError(f"{where}: add_color needs 'objects' -- there is nothing to change")
+        # Every printed line of this shape names no duration, and the op
+        # writes none: a clock accepted and dropped would be a card that reads
+        # as "until end of turn" and stays black for good.
+        if effect.get("duration", "permanent") != "permanent":
+            raise DslError(
+                f"{where}: add_color has no duration -- the colour stays until the "
+                f"permanent leaves the battlefield; got {effect['duration']!r}"
+            )
+        # Colours only. "A black Zombie" is this op beside an `add_subtype`, and
+        # a replaced colour ("it's a green Mutant ... it loses its other colors")
+        # is `animate` with `exact`.
+        if unknown := {"types", "subtypes", "power", "toughness", "keywords"} & set(effect):
+            raise DslError(
+                f"{where}: add_color changes colours only, not {sorted(unknown)}; "
+                f"use add_subtype for subtypes and animate for types or a size"
+            )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
         # and does nothing at all.

@@ -11988,6 +11988,43 @@ Subtypes only. `types` is refused rather than dropped — "becomes an artifact i
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
 
+## "It's a black Zombie in addition to its other colors and types"
+
+```jsonc
+{ "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+  "objects": { "binding": "destroyed", "types": ["Creature"], "is_token": false, "count": 1 },
+  "as": "returned" },
+{ "op": "add_subtype", "subtypes": ["Zombie"], "objects": { "binding": "returned" } },
+{ "op": "add_color", "colors": ["B"], "objects": { "binding": "returned" } }
+```
+
+Necromantic Selection's second and third sentences. The sentence is two ops over
+one binding: `add_subtype` for the Zombie and `add_color` for the black. "They're
+black Zombies" (Grimoire of the Dead) is the same pair over a
+`put_onto_battlefield`'s `as`; "that creature" on a returned target (Liliana,
+Death's Majesty) is the same pair over the return's `as`.
+
+`add_color` takes `colors`, a non-empty list of colour letters, and `objects`.
+The colours are **added**: the printed ones stay, and no type, subtype or size
+changes. It has no `duration`, because no printed line of this shape has one;
+the colour lasts until the permanent leaves the battlefield. The loader refuses
+a `duration`, and `types`, `subtypes`, `power`, `toughness` and `keywords`,
+rather than dropping them. The colour goes on `GameObject.animations` as a
+`color` entry, so it is ordered by timestamp against the indefinite animations:
+an exact `animate` that began later ("becomes a green Elk") replaces it. A static
+filter sees it, as it sees an added subtype, so Bad Moon pumps the returned
+creature.
+
+`return_from_graveyard`'s `as` binds the cards that actually arrived where the
+return sent them. An Aura with nothing to enchant and a card a replacement sent
+elsewhere are not in it, and it is written even when nothing arrived.
+
+The near miss is `animate` with `colors`. A creature animation sets a base power
+and toughness, so a reanimated 5/5 would become whatever size the card named.
+`keep_pt` is refused on a binding, and `keep_colors` belongs to an exact
+animation, which replaces colours rather than adding to them. The `set_colors`
+static is the other near miss: it replaces the colours and ends with its source.
+
 **Literal names only**, which is the other half of the split above.
 `{"chosen_type_of": "self"}` is a load error *here* and legal on the static —
 see ["…is the chosen type in addition to its other

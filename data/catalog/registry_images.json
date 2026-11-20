@@ -8748,6 +8748,10 @@
     "artist": "Alex Horley-Orlandelli",
     "scryfall_id": "3c8f0bfc-767a-411c-b870-f2764f3706f4"
   },
+  "grimoire_of_the_dead": {
+    "artist": "Steven Belledin",
+    "scryfall_id": "b1faa0cd-3556-4664-90d3-76ae5c736f5b"
+  },
   "grishnakh_brash_instigator": {
     "artist": "Victor Harmatiuk",
     "scryfall_id": "6385e769-f805-499d-9f47-494533362152"
@@ -11593,6 +11597,10 @@
     "artist": "Andreas Zafiratos",
     "scryfall_id": "95efd401-579e-448b-9655-31311c0ae41e"
   },
+  "liliana_death_s_majesty": {
+    "artist": "Chris Rallis",
+    "scryfall_id": "ae653ad0-c796-49d4-b893-25d627f1ff79"
+  },
   "liliana_death_wielder": {
     "artist": "Clint Cearley",
     "scryfall_id": "6f874b0e-32e3-421f-8109-522638b3f38d"
@@ -13466,6 +13474,10 @@
   "necromancy": {
     "artist": "Bastien L. Deharme",
     "scryfall_id": "3dd34a1a-e76b-46ee-be8d-5f7f4a092648"
+  },
+  "necromantic_selection": {
+    "artist": "Dave Kendall",
+    "scryfall_id": "0710c560-3a40-4f4b-8dd1-e97a15e95dd5"
   },
   "necropolis_regent": {
     "artist": "Winona Nelson",

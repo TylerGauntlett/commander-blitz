@@ -10,6 +10,7 @@ from ..characteristics import chars, resolve_chosen_color_list
 from ..events import EventType
 from ..objects import PLUS_ONE
 from ..primitives import (
+    add_colors,
     add_counters,
     add_subtypes,
     animate,
@@ -150,6 +151,30 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
             until_player=until_player,
             while_counter=while_counter,
         )
+
+
+@register("add_color")
+def op_add_color(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "It's black in addition to its other colors." Necromantic Selection.
+
+    The colour half of "it's a black Zombie in addition to its other colors
+    and types", written beside an `add_subtype` for the Zombie half and aimed,
+    like it, at the binding the arrival recorded -- `return_from_graveyard`'s
+    or `put_onto_battlefield`'s ``as`` ("the creature card returned this way",
+    Grimoire of the Dead's "they"). No duration: the printed line has none,
+    and the colour stays until the permanent leaves the battlefield
+    (`primitives.add_colors`, 400.7). The loader refuses one.
+
+    Not `animate`, whose creature animation sets a base power and toughness
+    and would turn a reanimated 5/5 into whatever size it named; and not the
+    `set_colors` static, which replaces the colours and ends with its source.
+    """
+    colors = [str(c) for c in spec.get("colors", ())]
+    if not colors:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
+    for oid in oids:
+        add_colors(ctx.state, oid, colors, source=ctx.source_oid)
 
 
 @register("lose_all_abilities")

@@ -772,6 +772,13 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 # timestamp order, touching nothing else.
                 toughness = temp.toughness
                 continue
+            if temp.kind == "color":
+                # "It's black in addition to its other colors" (Necromantic
+                # Selection): a layer-5 addition and nothing else, ordered
+                # against the animations by timestamp -- an exact animation
+                # that began later replaces it (`primitives.add_colors`).
+                colors.update(temp.colors)
+                continue
             if temp.exact:
                 types = set(temp.types)
                 subtypes = {
@@ -2754,6 +2761,16 @@ def recorded_subtypes(obj: GameObject) -> tuple[str, ...]:
     return obj.added_subtypes + timed if timed else obj.added_subtypes
 
 
+def recorded_colors(obj: GameObject) -> tuple[str, ...]:
+    """The colours written onto ``obj`` "in addition to its other colors".
+
+    Every ``color`` entry `primitives.add_colors` put on
+    `GameObject.animations`. A pipeline input, read by a static's filter
+    beside `recorded_subtypes`.
+    """
+    return tuple(c for temp in obj.animations if temp.kind == "color" for c in temp.colors)
+
+
 def _matches_printed(
     card: CardDef,
     selector: Mapping[str, Any],
@@ -3285,6 +3302,12 @@ def _matches_wherever(
             # "…it becomes an Aura" (Necromancy): `_compute`'s change under the
             # identical condition, so "each Aura you control" counts it here too.
             card = dataclasses.replace(card, subtypes=card.subtypes | {"Aura"})
+        if added_colors := recorded_colors(obj):
+            # "It's black in addition to its other colors": written onto the
+            # object by `primitives.add_colors`, so a pipeline input as
+            # `recorded_subtypes` is, and the colour half of the black Zombie a
+            # Zombie lord already sees -- Bad Moon pumps it too.
+            card = dataclasses.replace(card, colors=card.colors | set(added_colors))
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None

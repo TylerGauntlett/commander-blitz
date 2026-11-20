@@ -1005,6 +1005,7 @@
   ]
  },
  "ops": [
+  "add_color",
   "add_counters",
   "add_energy",
   "add_mana",

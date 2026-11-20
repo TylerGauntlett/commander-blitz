@@ -10316,6 +10316,10 @@
     },
     "zone": "battlefield"
   },
+  "grimoire_of_the_dead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grishnakh_brash_instigator": {
     "tokens": {
       "count": 1,
@@ -13573,6 +13577,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "liliana_death_s_majesty": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "liliana_death_wielder": {
     "battlefield_count": 33,
     "counters": {
@@ -15884,6 +15892,11 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "necromantic_selection": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 3,
+    "zone": "exile"
   },
   "necropotence": {
     "battlefield_count": 33,

@@ -372,6 +372,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "for good, for a duration, or `while_counter` (with `counter`) for as long "
                     "as a counter of that kind stays on it.",
                     '"It becomes a Vampire in addition to its other types"'),
+    "add_color": ("Modify", "Permanents gain a colour in addition to their others, for as long "
+                  "as they stay on the battlefield; no duration, no type or size.",
+                  '"It\'s a black Zombie in addition to its other colors and types"'),
     "change_text": ("Modify", "Replace one creature type or color word with another in its text.",
                     '`change_text` — "replacing all instances of one creature type"'),
     "transform": ("Modify", "Transform a double-faced permanent.", "Transforming double-faced cards"),

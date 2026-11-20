@@ -2363,6 +2363,38 @@ def set_base_toughness(
     _stats_changed(state, obj, toughness=toughness)
 
 
+def add_colors(
+    state: GameState, oid: int, colors: Sequence[str], *, source: int | None = None
+) -> tuple[str, ...]:
+    """ "It's black in addition to its other colors." Indefinitely, layer 5.
+
+    The colour half of "it's a black Zombie in addition to its other colors and
+    types" (Necromantic Selection, Grimoire of the Dead, Liliana, Death's
+    Majesty); `add_subtypes` is the other half. An *adding* effect: the printed
+    colours stay, and no type, subtype or size is touched -- what separates it
+    from `animate`, which sets a base power and toughness on any creature
+    animation.
+
+    A ``color`` `TempEffect` on `GameObject.animations`, beside
+    `set_base_toughness`'s, so `characteristics._compute` reads it in the same
+    timestamp-ordered pass as the indefinite animations (613.7): an Oko's
+    exact "becomes a green Elk" that began later replaces these colours, and
+    one that began earlier is added to. It lasts as long as the permanent does;
+    leaving the battlefield empties `animations` (400.7).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ()
+    added = tuple(dict.fromkeys(colors))
+    if not added:
+        return ()
+    obj.animations.append(
+        TempEffect(kind="color", colors=added, source=source, timestamp=state.alloc_timestamp())
+    )
+    state.bump_chars()
+    return added
+
+
 def animate(
     state: GameState,
     oid: int,

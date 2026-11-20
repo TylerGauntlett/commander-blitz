@@ -122619,6 +122619,95 @@
     {
       "abilities": [
         {
+          "cost": {
+            "discard": 1,
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "study",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 3,
+              "counter": "study"
+            },
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "returned",
+              "controller": "you",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Zombie"
+              ]
+            },
+            {
+              "colors": [
+                "B"
+              ],
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_color"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "grimoire_of_the_dead",
+      "mana_cost": "{4}",
+      "name": "Grimoire of the Dead",
+      "oracle_text": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead.\n{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -163022,6 +163111,126 @@
       "abilities": [
         {
           "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 2/2 black Zombie creature token. Mill two cards."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "as": "returned",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Zombie"
+              ]
+            },
+            {
+              "colors": [
+                "B"
+              ],
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_color"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "−3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_subtypes": [
+                  "Zombie"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: Destroy all non-Zombie creatures."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_death_s_majesty",
+      "loyalty": 5,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Liliana, Death's Majesty",
+      "oracle_text": "+1: Create a 2/2 black Zombie creature token. Mill two cards.\n−3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.\n−7: Destroy all non-Zombie creatures.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "loyalty": 2
           },
           "effects": [
@@ -189909,6 +190118,71 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "id": "necromantic_selection",
+      "mana_cost": "{4}{B}{B}{B}",
+      "name": "Necromantic Selection",
+      "oracle_text": "Destroy all creatures, then return a creature card put into a graveyard this way to the battlefield under your control. It's a black Zombie in addition to its other colors and types. Exile Necromantic Selection.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "as": "returned",
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "binding": "destroyed",
+            "controller": "any",
+            "count": 1,
+            "is_token": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "objects": {
+            "binding": "returned"
+          },
+          "op": "add_subtype",
+          "subtypes": [
+            "Zombie"
+          ]
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "objects": {
+            "binding": "returned"
+          },
+          "op": "add_color"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

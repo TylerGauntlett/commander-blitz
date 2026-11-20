@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**553 cards** blocked by **470** capabilities.
+**550 cards** blocked by **469** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [add-color](#add-color) | 3 | 2040 | op |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -1152,28 +1151,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## add-color
-
-Blocks **3** cards.
-
-- **(op)** a one-shot, indefinite (no printed duration) effect that adds a color to the objects in a binding -- here the permanents a put_onto_battlefield recorded with `as` -- in addition to their existing colors, without touching their card types, base power/toughness or other characteristics ("they're black in addition to their other colors"; also Rise from the Grave, Necromantic Selection, Dread Slaver)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but carries no colors. animate is the only op with additive `colors`, but on a creature animation the loader demands `power` and `toughness` (which would overwrite each reanimated creature's printed size) unless `keep_pt`, and `keep_pt` is refused unless `objects` is self_only or a target narrowed to Vehicles -- a binding over the reanimated cards is neither. `types: []` falls back to Creature, and `keep_colors` only applies to an exact animation.
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("that creature is black in addition to its other colors") without touching its card types or base power/toughness, applied to the creature card the same loyalty ability just returned from the graveyard (named by the ability's target t1)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half (types added, duration permanent) but writes subtypes only. animate is the only one-shot that writes colors: a non-exact animate adds its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield. return_from_graveyard and put_onto_battlefield carry no color option. Same gap as necromantic_selection.
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Liliana, Death's Majesty** (rank 2040) — `liliana_death_s_majesty`
-  - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
-- **Necromantic Selection** (rank 3356) — `necromantic_selection`
-  - It's a black Zombie in addition to its other colors and types.
-- **Grimoire of the Dead** (rank 5369) — `grimoire_of_the_dead`
-  - {T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types.
 
 </details>
 

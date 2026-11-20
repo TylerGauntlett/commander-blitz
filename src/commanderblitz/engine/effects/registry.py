@@ -181,6 +181,12 @@ RECORDING_OPS = frozenset(
         #: because `_run_delayed` rebuilds its context with no targets. A binding
         #: is carried forward where a target is not.
         "return_to_hand",
+        #: The cards actually returned, where the return sent them -- "return a
+        #: creature card put into a graveyard this way to the battlefield
+        #: under your control. **It's** a black Zombie…" (Necromantic
+        #: Selection). What arrived, not what was chosen, as for
+        #: `put_onto_battlefield`. See `ops_cards.op_return_from_graveyard`.
+        "return_from_graveyard",
         "reveal",
         #: The matches a reveal-until walk moved, every seat's -- "put those
         #: creature cards onto the battlefield … they're goaded". See
