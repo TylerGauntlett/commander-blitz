@@ -158992,12 +158992,12 @@
     },
     "Liliana, Untouched by Death": {
       "edhrec_rank": 7118,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Untouched by Death",
-      "reason": "no template for: +1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses ",
+      "reason": "",
       "scryfall_id": "462f8951-7305-4607-92af-92f2b866558d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana, Waker of the Dead": {

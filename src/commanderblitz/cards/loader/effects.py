@@ -1320,15 +1320,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: 'escape' beside 'grants_flashback' is two keywords "
                     f"for one cast -- escape returns the card to the graveyard"
                 )
-        elif not effect.get("max_per_turn") and not effect.get("grants_flashback"):
-            # A permission that neither meters nor exiles recasts one card every
-            # turn for ever. `grants_flashback` IS the rate limit for the cards
-            # that print no cap -- the spent card is the brake -- which is the
-            # argument the static's loader makes in the same words.
+        if "unmetered" in effect and effect["unmetered"] is not True:
             raise DslError(
-                f"{where}: grant_graveyard_cast needs 'max_per_turn' or "
-                f"'grants_flashback' -- an unmetered permission is an engine, "
-                f"not a printed line"
+                f"{where}: 'unmetered' is a flag -- write true, or leave it out"
+            )
+        if effect.get("unmetered"):
+            # "You may cast Zombie spells from your graveyard this turn"
+            # (Liliana, Untouched by Death): any number, at the printed price,
+            # each spell going where it normally would. The static's refusal
+            # is about a permission with no end -- "one card every turn for
+            # ever" -- and a grant has one: `turn.py` drops it with the turn.
+            # Opted into by name rather than by leaving the cap out, so a grant
+            # whose author forgot "once" is still a load error.
+            for key in ("max_per_turn", "grants_flashback", "escape", "grants_retrace"):
+                if effect.get(key) not in (None, False):
+                    raise DslError(
+                        f"{where}: 'unmetered' beside '{key}' -- "
+                        + (
+                            "a cap and no cap at once"
+                            if key == "max_per_turn"
+                            else f"'{key}' is already its own brake"
+                        )
+                    )
+        elif (
+            effect.get("escape") is None
+            and not effect.get("max_per_turn")
+            and not effect.get("grants_flashback")
+        ):
+            # A permission that neither meters nor exiles and was not declared
+            # `unmetered` is one whose author left the printed "once" out.
+            # `grants_flashback` IS the rate limit for the cards that print no
+            # cap -- the spent card is the brake -- which is the argument the
+            # static's loader makes in the same words.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'max_per_turn', "
+                f"'grants_flashback' or 'unmetered' -- a permission that "
+                f"neither meters nor exiles says so by name"
             )
     if op == "spell_enters_with_counters":
         # The map is the whole effect: without it the spell is promised

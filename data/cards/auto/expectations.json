@@ -13648,6 +13648,14 @@
     },
     "zone": "battlefield"
   },
+  "liliana_untouched_by_death": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "lily_bowen_raging_grandma": {
     "battlefield_count": 33,
     "counters": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**548 cards** blocked by **466** capabilities.
+**547 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -468,7 +468,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
 | [unleash](#unleash) | 1 | 12169 | keyword |
-| [unmetered-graveyard-cast-this-turn](#unmetered-graveyard-cast-this-turn) | 1 | 7118 | op |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
@@ -7683,20 +7682,6 @@ Blocks **1** card.
 - **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
   - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
   - Other Dogs you control have unleash.
-
-</details>
-
-## unmetered-graveyard-cast-this-turn
-
-Blocks **1** card.
-
-- **(op)** a turn-long permission to cast any number of spells matching a filter (subtypes Zombie) from your own graveyard at their printed cost, with no per-turn cap and no exile-instead rider -- e.g. letting grant_graveyard_cast accept an unmetered spec when the grant is itself bounded to this turn
-  <br>Why the existing vocabulary won't do: grant_graveyard_cast is exactly the shape (a this-turn GraveyardCastGrant that turn.py drops at end of turn, reading affects_spells), but the loader refuses it unless it carries 'max_per_turn' or 'grants_flashback'. Liliana prints neither: adding max_per_turn caps a sentence that has no cap, and grants_flashback exiles spells the card lets go back to the graveyard. grant_playable snapshots only the cards in the graveyard now, missing Zombies that land there later in the turn, and the cast_from_graveyard static is read off a permanent and would outlive 'this turn'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Liliana, Untouched by Death** (rank 7118) — `liliana_untouched_by_death`
-  - −3: You may cast Zombie spells from your graveyard this turn.
 
 </details>
 

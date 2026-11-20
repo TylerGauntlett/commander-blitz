@@ -163961,6 +163961,152 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "milled",
+                  "subtypes": [
+                    "Zombie"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "times": [
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "subtypes": [
+                  "Zombie"
+                ]
+              },
+              "op": "grant_graveyard_cast",
+              "unmetered": true
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: You may cast Zombie spells from your graveyard this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_untouched_by_death",
+      "loyalty": 4,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Liliana, Untouched by Death",
+      "oracle_text": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life.\n−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control.\n−3: You may cast Zombie spells from your graveyard this turn.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "condition": {

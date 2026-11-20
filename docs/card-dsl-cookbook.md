@@ -975,9 +975,26 @@ and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
 flashback's exile, are all shared with the static — so the second printed
 sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
-graveyard) and either a cap, `grants_flashback` or `escape` (a permission that
-neither meters nor exiles nor charges an exile is an engine, not a printed line;
-[Granted escape](#granted-escape) is the last).
+graveyard) and a brake, named — a cap, `grants_flashback`, `escape`
+([Granted escape](#granted-escape)) or `unmetered`.
+
+```jsonc
+{ "op": "grant_graveyard_cast",
+  "affects_spells": { "subtypes": ["Zombie"] },
+  "unmetered": true }
+```
+
+"You may cast Zombie spells from your graveyard this turn." (Liliana, Untouched
+by Death's −3.) `unmetered: true` is any number of casts at the printed price,
+each spell going where it normally would — a Zombie that resolves, dies and
+returns is castable again the same turn. The turn is the bound, which is why the
+flag exists on the grant and never on the `cast_from_graveyard` static. It must
+be `true`, and is refused beside `max_per_turn`, `grants_flashback`, `escape` and
+`grants_retrace`; a grant that names no brake at all is still refused, because
+the printed "once" is the easiest clause to drop. The near misses are each one
+clause wrong: `max_per_turn` caps an uncapped sentence, `grants_flashback`
+exiles the Zombie the card lets back into the graveyard, and `grant_playable`
+snapshots the graveyard so the Zombie that died afterwards is missed.
 
 The difference is where the permission *lives*. `cast_from_graveyard` is read off a
 permanent on the battlefield, and this chapter exiles the Saga in the same breath

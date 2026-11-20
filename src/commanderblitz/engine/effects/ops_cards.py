@@ -343,6 +343,9 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
     printed sentence needs nothing here: "if a spell cast this way would be put
     into a graveyard, exile it instead" is the spec's `grants_flashback`, which
     `Game._cast` stamps onto the spell's stack item as `exiles_instead`.
+
+    ``unmetered`` is the other uncapped spelling: any number of casts this turn
+    at the printed price, each spell going where it normally would.
     """
 
     if ctx.source_oid is None:
@@ -352,8 +355,16 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
         # has a source -- and granting anyway would be an uncapped permission
         # belonging to nobody.
         return
-    static = {k: v for k, v in spec.items() if k != "op"}
+    static = {k: v for k, v in spec.items() if k not in ("op", "unmetered")}
     static.setdefault("affects_player", "you")
+    if spec.get("unmetered"):
+        # "You may cast Zombie spells from your graveyard this turn" (Liliana,
+        # Untouched by Death) prints no count. Written as the explicit
+        # ``None`` `casting._permission_reaches` reads as no cap: a missing key
+        # there is one a turn. The turn bounds the grant, which is why the
+        # loader lets `unmetered` stand alone here and never on the
+        # battlefield static.
+        static["max_per_turn"] = None
     ctx.state.graveyard_cast_grants.append(
         GraveyardCastGrant(
             player=ctx.controller,
