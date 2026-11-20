@@ -56212,12 +56212,12 @@
     },
     "Crippling Fear": {
       "edhrec_rank": 1988,
-      "gate": "template",
+      "gate": null,
       "name": "Crippling Fear",
-      "reason": "no template for: Choose a creature type. Creatures that aren't of the chosen type get -3/-3 until end of tu",
+      "reason": "",
       "scryfall_id": "713a28c0-0d12-4c62-bc91-59c2ddfc9ef8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crisis of Conscience": {
@@ -56922,12 +56922,12 @@
     },
     "Cruel Revival": {
       "edhrec_rank": 15399,
-      "gate": "template",
+      "gate": null,
       "name": "Cruel Revival",
-      "reason": "no template for: Destroy target non-Zombie creature. It can't be regenerated. Return up to one target Zombi",
+      "reason": "",
       "scryfall_id": "1c710e19-4cfb-43a1-bd01-fc0007c7426e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cruel Sadist": {
@@ -58662,12 +58662,12 @@
     },
     "Curse of Disturbance": {
       "edhrec_rank": 4142,
-      "gate": "template",
+      "gate": null,
       "name": "Curse of Disturbance",
-      "reason": "no template for: Enchant player",
+      "reason": "",
       "scryfall_id": "f8ca82ce-64f8-4e52-b8d9-aec6acb562f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curse of Echoes": {
@@ -69342,12 +69342,12 @@
     },
     "Diregraf Captain": {
       "edhrec_rank": 2277,
-      "gate": "template",
+      "gate": null,
       "name": "Diregraf Captain",
-      "reason": "no template for: Other Zombie creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "c0fb0da9-75c2-4634-adc8-24e1faa24e5e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diregraf Colossus": {
@@ -107042,12 +107042,12 @@
     },
     "Geralf's Mindcrusher": {
       "edhrec_rank": 13618,
-      "gate": "template",
+      "gate": null,
       "name": "Geralf's Mindcrusher",
-      "reason": "no template for: When this creature enters, target player mills five cards",
+      "reason": "",
       "scryfall_id": "53dcdb62-28d8-4981-8704-1de4309f76bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geralf, Visionary Stitcher": {
@@ -109722,12 +109722,12 @@
     },
     "Gisa and Geralf": {
       "edhrec_rank": 3889,
-      "gate": "template",
+      "gate": null,
       "name": "Gisa and Geralf",
-      "reason": "no template for: When enters, mill four cards",
+      "reason": "",
       "scryfall_id": "bce9bf8d-4d22-4967-bd9e-27fe444ef3f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gisa's Bidding": {
@@ -116722,12 +116722,12 @@
     },
     "Gravespawn Sovereign": {
       "edhrec_rank": 7743,
-      "gate": "template",
+      "gate": null,
       "name": "Gravespawn Sovereign",
-      "reason": "no template for: Tap five untapped Zombies you control: Put target creature card from a graveyard onto the ",
+      "reason": "",
       "scryfall_id": "e1241a23-f2da-4920-9383-b5994d7160af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravestone Strider": {
@@ -155562,12 +155562,12 @@
     },
     "Lazotep Reaver": {
       "edhrec_rank": 11102,
-      "gate": "template",
+      "gate": null,
       "name": "Lazotep Reaver",
-      "reason": "no template for: When this creature enters, amass Zombies 1",
+      "reason": "",
       "scryfall_id": "8eebe9a9-b25e-4cf6-a438-cbf794d9c791",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lazotep Sliver": {
@@ -158772,12 +158772,12 @@
     },
     "Liliana's Devotee": {
       "edhrec_rank": 9464,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana's Devotee",
-      "reason": "no template for: Zombies you control get +1/+0",
+      "reason": "",
       "scryfall_id": "bf8b1b78-62cb-42aa-9f36-0423720c2a63",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana's Elite": {
@@ -161852,12 +161852,12 @@
     },
     "Lotleth Giant": {
       "edhrec_rank": 12179,
-      "gate": "template",
+      "gate": null,
       "name": "Lotleth Giant",
-      "reason": "no template for: Undergrowth — When this creature enters, it deals 1 damage to target opponent for each cre",
+      "reason": "",
       "scryfall_id": "09237f1b-eff6-45bf-bd7d-a883deda122a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lotleth Troll": {
@@ -162402,12 +162402,12 @@
     },
     "Loyal Subordinate": {
       "edhrec_rank": 4868,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Subordinate",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, each ",
+      "reason": "",
       "scryfall_id": "1949469a-faa5-4bff-8b0f-0a1bc7ca87da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Tutor": {
@@ -181012,12 +181012,12 @@
     },
     "Murder": {
       "edhrec_rank": 825,
-      "gate": "template",
+      "gate": null,
       "name": "Murder",
-      "reason": "no template for: Destroy target creature",
+      "reason": "",
       "scryfall_id": "1f29d9e4-3100-43cb-9723-7d5c23f89b12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murder Investigation": {
@@ -202412,12 +202412,12 @@
     },
     "Pilfered Plans": {
       "edhrec_rank": 9505,
-      "gate": "template",
+      "gate": null,
       "name": "Pilfered Plans",
-      "reason": "no template for: Target player mills two cards. Draw two cards",
+      "reason": "",
       "scryfall_id": "24834043-1739-4cb1-9ad5-64b560471a86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pilfering Hawk": {
@@ -236152,12 +236152,12 @@
     },
     "Scourge of Nel Toth": {
       "edhrec_rank": 9143,
-      "gate": "template",
+      "gate": "residual",
       "name": "Scourge of Nel Toth",
-      "reason": "no template for: You may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatu",
+      "reason": "printed text not represented: You may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost",
       "scryfall_id": "acd8312a-1dd6-42eb-8908-51b85ceab6e2",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Scourge of Numai": {
@@ -248442,12 +248442,12 @@
     },
     "Sinister Sabotage": {
       "edhrec_rank": 6314,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Sabotage",
-      "reason": "no template for: Counter target spell",
+      "reason": "",
       "scryfall_id": "c3471c9c-6354-483f-960d-494f0e0a424f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Starfish": {
@@ -256912,12 +256912,12 @@
     },
     "Spark Reaper": {
       "edhrec_rank": 15030,
-      "gate": "template",
+      "gate": null,
       "name": "Spark Reaper",
-      "reason": "no template for: {3}, Sacrifice a creature or planeswalker: You gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "d4d87223-fc4a-49d8-aae9-67129c27a574",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spark Rupture": {
@@ -297332,12 +297332,12 @@
     },
     "Undermine": {
       "edhrec_rank": 6225,
-      "gate": "template",
+      "gate": null,
       "name": "Undermine",
-      "reason": "no template for: Counter target spell. Its controller loses 3 life",
+      "reason": "",
       "scryfall_id": "5957446f-ff3a-4bbb-a498-c95bc52eda84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Undermountain Adventurer": {
@@ -298712,12 +298712,12 @@
     },
     "Unstable Obelisk": {
       "edhrec_rank": 4881,
-      "gate": "template",
+      "gate": null,
       "name": "Unstable Obelisk",
-      "reason": "no template for: {7}, {T}, Sacrifice this artifact: Destroy target permanent",
+      "reason": "",
       "scryfall_id": "94eba26e-7c9e-46f3-ad13-aa684f3365cb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unstable Shapeshifter": {
@@ -302212,12 +302212,12 @@
     },
     "Vela the Night-Clad": {
       "edhrec_rank": 10312,
-      "gate": "template",
+      "gate": null,
       "name": "Vela the Night-Clad",
-      "reason": "no template for: Other creatures you control have intimidate",
+      "reason": "",
       "scryfall_id": "e84372fe-90a8-4910-a768-c13c7069c978",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Veldrane of Sengir": {
@@ -306472,12 +306472,12 @@
     },
     "Vizier of the Scorpion": {
       "edhrec_rank": 7028,
-      "gate": "template",
+      "gate": null,
       "name": "Vizier of the Scorpion",
-      "reason": "no template for: When this creature enters, amass Zombies 1",
+      "reason": "",
       "scryfall_id": "db9beaff-8253-49d9-b57f-20b8cf14c802",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vizier of the True": {
@@ -317612,12 +317612,12 @@
     },
     "Withered Wretch": {
       "edhrec_rank": 9749,
-      "gate": "template",
+      "gate": null,
       "name": "Withered Wretch",
-      "reason": "no template for: {1}: Exile target card from a graveyard",
+      "reason": "",
       "scryfall_id": "cf018484-8c7e-4e45-a4cd-cdc9d03b0aad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Withering Boon": {
@@ -323102,12 +323102,12 @@
     },
     "Zombie Apocalypse": {
       "edhrec_rank": 3040,
-      "gate": "template",
+      "gate": null,
       "name": "Zombie Apocalypse",
-      "reason": "no template for: Return all Zombie creature cards from your graveyard to the battlefield tapped, then destr",
+      "reason": "",
       "scryfall_id": "0d19ea1f-8b39-4a7d-8aaa-e87fc09b15f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zombie Assassin": {

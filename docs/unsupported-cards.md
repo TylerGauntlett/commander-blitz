@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**545 cards** blocked by **463** capabilities.
+**553 cards** blocked by **470** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,6 +30,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [add-color](#add-color) | 3 | 2040 | op |
 | [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -43,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
-| [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -179,6 +179,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
+| [damage-dealt-this-way](#damage-dealt-this-way) | 1 | 11504 | value |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
@@ -259,6 +260,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [gain-activated-abilities-of-card](#gain-activated-abilities-of-card) | 1 | 5905 | op |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
@@ -270,12 +272,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
+| [graveyard-alternative-cost](#graveyard-alternative-cost) | 1 | 9143 | engine |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
+| [graveyard-plays-this-turn](#graveyard-plays-this-turn) | 1 | 13740 | value |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
@@ -366,6 +370,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
+| [player-hexproof](#player-hexproof) | 1 | 2813 | op |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [player-to-your-right](#player-to-your-right) | 1 | 5281 | selector |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
@@ -375,6 +380,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [pregame-commander-color-choice](#pregame-commander-color-choice) | 1 | 12969 | engine |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
+| [prevent-damage-remove-counter](#prevent-damage-remove-counter) | 1 | 8240 | replacement |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
@@ -466,6 +472,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
 | [unleash](#unleash) | 1 | 12169 | keyword |
+| [unmetered-graveyard-cast-this-turn](#unmetered-graveyard-cast-this-turn) | 1 | 7118 | op |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
@@ -1148,6 +1155,28 @@ Blocks **4** cards.
 
 </details>
 
+## add-color
+
+Blocks **3** cards.
+
+- **(op)** a one-shot, indefinite (no printed duration) effect that adds a color to the objects in a binding -- here the permanents a put_onto_battlefield recorded with `as` -- in addition to their existing colors, without touching their card types, base power/toughness or other characteristics ("they're black in addition to their other colors"; also Rise from the Grave, Necromantic Selection, Dread Slaver)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but carries no colors. animate is the only op with additive `colors`, but on a creature animation the loader demands `power` and `toughness` (which would overwrite each reanimated creature's printed size) unless `keep_pt`, and `keep_pt` is refused unless `objects` is self_only or a target narrowed to Vehicles -- a binding over the reanimated cards is neither. `types: []` falls back to Creature, and `keep_colors` only applies to an exact animation.
+- **(op)** a one-shot effect that permanently adds a color to one permanent ("that creature is black in addition to its other colors") without touching its card types or base power/toughness, applied to the creature card the same loyalty ability just returned from the graveyard (named by the ability's target t1)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half (types added, duration permanent) but writes subtypes only. animate is the only one-shot that writes colors: a non-exact animate adds its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield. return_from_graveyard and put_onto_battlefield carry no color option. Same gap as necromantic_selection.
+- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
+  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Liliana, Death's Majesty** (rank 2040) — `liliana_death_s_majesty`
+  - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
+- **Necromantic Selection** (rank 3356) — `necromantic_selection`
+  - It's a black Zombie in addition to its other colors and types.
+- **Grimoire of the Dead** (rank 5369) — `grimoire_of_the_dead`
+  - {T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types.
+
+</details>
+
 ## choose-new-targets
 
 Blocks **3** cards.
@@ -1440,24 +1469,6 @@ Blocks **3** cards.
   - III — Create a 1/1 white Halfling creature token for each Food you control.
 - **Field-Tested Frying Pan** (rank 6851) — `field_tested_frying_pan`
   - When this Equipment enters, create a Food token, then create a 1/1 white Halfling creature token and attach this Equipment to it.
-
-</details>
-
-## add-color
-
-Blocks **2** cards.
-
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("that creature is black in addition to its other colors") without touching its card types or base power/toughness, applied to the creature card the same loyalty ability just returned from the graveyard (named by the ability's target t1)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half (types added, duration permanent) but writes subtypes only. animate is the only one-shot that writes colors: a non-exact animate adds its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield. return_from_graveyard and put_onto_battlefield carry no color option. Same gap as necromantic_selection.
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Liliana, Death's Majesty** (rank 2040) — `liliana_death_s_majesty`
-  - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
-- **Necromantic Selection** (rank 3356) — `necromantic_selection`
-  - It's a black Zombie in addition to its other colors and types.
 
 </details>
 
@@ -3564,6 +3575,20 @@ Blocks **1** card.
 
 </details>
 
+## damage-dealt-this-way
+
+Blocks **1** card.
+
+- **(value)** an `as` binding on the `damage` op that records the amount of damage actually dealt (after prevention, e.g. protection or a prevention shield, and 0 if the target left or became illegal), readable by a later effect in the same resolution as `{"binding": <as>}` so `gain_life` can gain exactly that much
+  <br>Why the existing vocabulary won't do: `damage` takes amount/objects/target/excess_to/source_object but no `as`, and op_damage returns nothing; `gain_life` with `{"const": 4}` gains 4 even when the damage was prevented or the target is gone, and `damage_dealt_to_this_turn`/`damage_taken_this_turn` read a turn total, not this spell's damage. The other two sentences (`mill` with player target, `amass` with subtype Zombie and `zombie_army_0_0_b`) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Enter the God-Eternals** (rank 11504) — `enter_the_god_eternals`
+  - Enter the God-Eternals deals 4 damage to target creature and you gain life equal to the damage dealt this way.
+
+</details>
+
 ## damage-player-or-planeswalker
 
 Blocks **1** card.
@@ -4709,6 +4734,20 @@ Blocks **1** card.
 
 </details>
 
+## gain-activated-abilities-of-card
+
+Blocks **1** card.
+
+- **(op)** an op that, until end of turn, gives a permanent (here the source, objects self_only) every activated ability printed on a bound card or spell (here the creature spell cast via the Lich's permission, bound by a delayed spell_cast trigger), read from that card's printed abilities and kept after the spell resolves or leaves the stack
+  <br>Why the existing vocabulary won't do: grant_ability hands over only a fixed entry of this card's own grantable_abilities by index, not abilities read off another card; become_copy copies all characteristics and name rather than adding just activated abilities; the static grant_exiled_abilities walks only cards the source exiled and is a static, not a one-shot until-end-of-turn effect on a cast spell. The first sentence (grant_playable with playable_this_turn and playable_cast_only on a targeted creature card in any graveyard) and the delayed spell_cast trigger look expressible, but the card cannot be written partially.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Havengul Lich** (rank 5905) — `havengul_lich`
+  - When you cast it this turn, this creature gains all activated abilities of that card until end of turn.
+
+</details>
+
 ## goad-while-source-on-battlefield
 
 Blocks **1** card.
@@ -4864,6 +4903,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-alternative-cost
+
+Blocks **1** card.
+
+- **(engine)** a residual-gate claimant for an unkeyworded graveyard alternative cost that carries a non-mana payment: "You may cast ~ from your graveyard by paying <mana> and sacrificing <N> <noun> rather than paying its mana cost", matched against a card-level graveyard_cost of {mana, sacrifice: {types, controller: you, count: N}} with graveyard_cast "graveyard" (the card goes where it normally would)
+  <br>Why the existing vocabulary won't do: The DSL already expresses the price -- graveyard_cost {"mana": "{B}{B}", "sacrifice": {"types": ["Creature"], "controller": "you", "zone": "battlefield", "count": 2}} with graveyard_cast "graveyard" validates against CardModel, and Game._cast pays the non-mana half of a graveyard cost through the general payer -- but no gate claims the printed line, so --collect rejects it at the residual gate. _GRAVEYARD_ALTERNATIVE_LINE / _declares_printed_graveyard_alternative in cards/authoring/verify.py accept a mana-only payment and fail closed on anything else (their comment names exactly this card's "{B}{B} and sacrificing two creatures"); _declares_printed_alternative_cost reads sacrifice payments but only for the hand alternative_cost and the "rather than pay this spell's mana cost" wording; _ESCAPE_LINE reads only exile-from-graveyard. Fix: extend the graveyard-alternative claimant to read the sacrifice clause (count word and creature noun) against cost.sacrifice, in the style of _declares_printed_tap, and pin it with a Scourge of Nel Toth test. No engine op is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scourge of Nel Toth** (rank 9143) — `scourge_of_nel_toth`
+  - You may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost.
+
+</details>
+
 ## graveyard-cast-dynamic-mana-value-cap
 
 Blocks **1** card.
@@ -4946,6 +4999,20 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
+## graveyard-plays-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-player turn-ledger value counting spells a player cast from a graveyard this turn (any graveyard, flashback/escape/retrace/graveyard_cast included) plus activated abilities of cards in a graveyard (unearth, embalm, scavenge, cycling-from-graveyard-style abilities) that player activated this turn -- e.g. {"graveyard_plays_this_turn": "you"} compared > 0, used as the end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: spells_cast_this_turn counts casts and its filter matches only printed characteristics, not the zone the spell was cast from; cast_from_graveyard is a condition about the source spell itself, not about the turn's other casts; cards_from_graveyard_this_turn counts every card leaving a graveyard (reanimation, exile) and no activation; no ledger records activations from a graveyard at all. An ability_activated/spell_cast trigger setting a turn flag would miss everything done before the Drudge entered, which the 'this turn' ledger must count
+
+<details><summary>Cards waiting on this</summary>
+
+- **Laboratory Drudge** (rank 13740) — `laboratory_drudge`
+  - At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.
 
 </details>
 
@@ -6230,6 +6297,20 @@ Blocks **1** card.
 
 </details>
 
+## player-hexproof
+
+Blocks **1** card.
+
+- **(op)** a one-shot op giving a player hexproof for a duration ("you gain hexproof until end of turn"), usable from a spell's spell_effects, e.g. {"op": "grant_player_hexproof", "player": "you", "duration": "this_turn"}
+  <br>Why the existing vocabulary won't do: player_hexproof exists only as a static effect, which lives on a permanent and cannot be carried by an instant; grant_keyword reaches permanents but not players, so it covers only the 'permanents you control' half; grant_protection takes a player but protection is not hexproof; an emblem with a player_hexproof static would last forever, not until end of turn. The Amass Zombies 1 sentence alone is expressible (amass op, zombie_army_0_0_b token).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lazotep Plating** (rank 2813) — `lazotep_plating`
+  - You and permanents you control gain hexproof until end of turn. (You and they can't be the targets of spells or abilities your opponents control.)
+
+</details>
+
 ## player-mana-ability-until-end-of-turn
 
 Blocks **1** card.
@@ -6357,6 +6438,20 @@ Blocks **1** card.
 
 - **Desert Nomads** (rank 29255) — `desert_nomads`
   - Prevent all damage that would be dealt to this creature by Deserts.
+
+</details>
+
+## prevent-damage-remove-counter
+
+Blocks **1** card.
+
+- **(replacement)** a continuous total-shield replacement on a permanent (static prevent_damage with prevent_all, affects self_only) whose one replacement event both prevents all of a damage event and removes exactly one +1/+1 counter from the shielded permanent, regardless of the damage amount (Protean Hydra's sibling with a fixed one instead of 'that many')
+  <br>Why the existing vocabulary won't do: The prevent_damage static's 'counter' rider (Panther Habit, characteristics.damage_into_counters) only PUTS 'that many' counters and the loader refuses any counter but +1/+1; there is no remove direction or fixed amount. prevent_damage_permanent's 'effects' rider is a one-shot op limited to duration this_turn, not a continuous static. A separate damage_prevented trigger with remove_counters would use the stack instead of being part of the replacement, so it is an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbreathing Horde** (rank 8240) — `unbreathing_horde`
+  - If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.
 
 </details>
 
@@ -7658,6 +7753,20 @@ Blocks **1** card.
 - **Tesak, Judith's Hellhound** (rank 12169) — `tesak_judith_s_hellhound`
   - Unleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)
   - Other Dogs you control have unleash.
+
+</details>
+
+## unmetered-graveyard-cast-this-turn
+
+Blocks **1** card.
+
+- **(op)** a turn-long permission to cast any number of spells matching a filter (subtypes Zombie) from your own graveyard at their printed cost, with no per-turn cap and no exile-instead rider -- e.g. letting grant_graveyard_cast accept an unmetered spec when the grant is itself bounded to this turn
+  <br>Why the existing vocabulary won't do: grant_graveyard_cast is exactly the shape (a this-turn GraveyardCastGrant that turn.py drops at end of turn, reading affects_spells), but the loader refuses it unless it carries 'max_per_turn' or 'grants_flashback'. Liliana prints neither: adding max_per_turn caps a sentence that has no cap, and grants_flashback exiles spells the card lets go back to the graveyard. grant_playable snapshots only the cards in the graveyard now, missing Zombies that land there later in the turn, and the cast_from_graveyard static is read off a permanent and would outlive 'this turn'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Liliana, Untouched by Death** (rank 7118) — `liliana_untouched_by_death`
+  - −3: You may cast Zombie spells from your graveyard this turn.
 
 </details>
 

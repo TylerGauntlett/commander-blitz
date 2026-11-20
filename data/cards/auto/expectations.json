@@ -4871,6 +4871,9 @@
   "crimson_kobolds": {
     "zone": "battlefield"
   },
+  "crippling_fear": {
+    "zone": "graveyard"
+  },
   "crisis_of_conscience": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -4919,6 +4922,13 @@
   "crucible_of_fire": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "cruel_revival": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "crumbling_necropolis": {
     "zone": "battlefield"
@@ -5048,6 +5058,10 @@
     "zone": "battlefield"
   },
   "currency_converter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "curse_of_disturbance": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6005,6 +6019,10 @@
     "zone": "battlefield"
   },
   "director_nick_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "diregraf_captain": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9289,6 +9307,10 @@
   "geothermal_bog": {
     "zone": "battlefield"
   },
+  "geralf_s_mindcrusher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gerrard_s_irregulars": {
     "zone": "battlefield"
   },
@@ -9519,6 +9541,16 @@
   },
   "ginger_queen_of_sweets": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gisa_and_geralf": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 36
+    },
     "zone": "battlefield"
   },
   "gisela_the_broken_blade": {
@@ -10116,6 +10148,13 @@
       "0": 1
     },
     "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
+  "gravespawn_sovereign": {
+    "battlefield_count": 33,
+    "graveyard_size": {
       "0": 2
     },
     "zone": "battlefield"
@@ -13280,6 +13319,14 @@
   "lazotep_quarry": {
     "zone": "battlefield"
   },
+  "lazotep_reaver": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
+    "zone": "battlefield"
+  },
   "leaden_myr": {
     "zone": "battlefield"
   },
@@ -13539,6 +13586,13 @@
     "counters": {
       "amount": 6,
       "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "liliana_s_devotee": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -13834,6 +13888,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lotleth_giant": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 38
+    },
+    "zone": "battlefield"
+  },
   "lotus_cobra": {
     "zone": "battlefield"
   },
@@ -13904,6 +13966,14 @@
   },
   "loyal_retainers": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "loyal_subordinate": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "loyal_warhound": {
@@ -15529,6 +15599,13 @@
   },
   "murasa_brute": {
     "zone": "battlefield"
+  },
+  "murder": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "murderous_rider_swift_end": {
     "battlefield_count": 33,
@@ -17354,6 +17431,12 @@
   },
   "pile_on": {
     "battlefield_count": 31,
+    "zone": "graveyard"
+  },
+  "pilfered_plans": {
+    "hand_size": {
+      "0": 3
+    },
     "zone": "graveyard"
   },
   "pilgrim_of_the_fires": {
@@ -21193,6 +21276,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sinister_sabotage": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "sinister_starfish": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21822,6 +21914,10 @@
       "amount": 1,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "spark_reaper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "spawnbed_protector": {
@@ -25426,6 +25522,13 @@
   "underground_sea": {
     "zone": "battlefield"
   },
+  "undermine": {
+    "life": {
+      "0": 40,
+      "1": 37
+    },
+    "zone": "graveyard"
+  },
   "undersea_invader": {
     "zone": "battlefield"
   },
@@ -25550,6 +25653,10 @@
     "zone": "battlefield"
   },
   "unstable_molecule_suit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "unstable_obelisk": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25898,6 +26005,16 @@
     },
     "zone": "battlefield"
   },
+  "vela_the_night_clad": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "intimidate"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "velomachus_lorehold": {
     "battlefield_count": 33,
     "granted": {
@@ -26242,6 +26359,14 @@
   },
   "vizier_of_many_faces": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vizier_of_the_scorpion": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "zombie_army_0_0_b"
+    },
     "zone": "battlefield"
   },
   "vizkopa_vampire": {
@@ -27299,6 +27424,13 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "withered_wretch": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "withering_torment": {
     "life": {
       "0": 38
@@ -27774,6 +27906,9 @@
   },
   "zodiac_tiger": {
     "zone": "battlefield"
+  },
+  "zombie_apocalypse": {
+    "zone": "graveyard"
   },
   "zombie_goliath": {
     "zone": "battlefield"
