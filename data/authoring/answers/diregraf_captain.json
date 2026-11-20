@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "diregraf_captain",
+    "name": "Diregraf Captain",
+    "oracle_text": "Deathtouch\nOther Zombie creatures you control get +1/+1.\nWhenever another Zombie you control dies, target opponent loses 1 life.",
+    "mana_cost": "{1}{U}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie", "Soldier"],
+    "colors": ["B", "U"],
+    "color_identity": ["B", "U"],
+    "power": 2,
+    "toughness": 2,
+    "keywords": ["deathtouch"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other Zombie creatures you control get +1/+1.",
+        "effect": "buff",
+        "affects": {"controller": "you", "exclude_self": true, "types": ["Creature"], "subtypes": ["Zombie"]},
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever another Zombie you control dies, target opponent loses 1 life.",
+        "trigger": {
+          "event": "creature_dies",
+          "controller": "you",
+          "filter": {"controller": "you", "exclude_self": true, "subtypes": ["Zombie"]}
+        },
+        "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "opponent"}, "count": 1}],
+        "effects": [{"op": "lose_life", "player": {"target": "t1"}, "amount": {"const": 1}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

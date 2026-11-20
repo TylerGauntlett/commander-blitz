@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "cruel_revival",
+    "name": "Cruel Revival",
+    "oracle_text": "Destroy target non-Zombie creature. It can't be regenerated. Return up to one target Zombie card from your graveyard to your hand.",
+    "mana_cost": "{4}{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {"id": "victim", "kind": "permanent", "count": 1,
+       "selector": {"zone": "battlefield", "types": ["Creature"], "not_subtypes": ["Zombie"]}},
+      {"id": "zombie", "kind": "card_in_graveyard", "count": 1, "optional": true,
+       "selector": {"zone": "graveyard", "controller": "you", "subtypes": ["Zombie"]}}
+    ],
+    "spell_effects": [
+      {"op": "destroy", "objects": {"target": "victim"}, "no_regeneration": true},
+      {"op": "return_to_hand", "objects": {"target": "zombie"}}
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "havengul_lich",
+  "name": "Havengul Lich",
+  "oracle_text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+  "blocked_sentences": [
+    "When you cast it this turn, this creature gains all activated abilities of that card until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "gain_activated_abilities_of_card",
+      "kind": "op",
+      "what": "an op that, until end of turn, gives a permanent (here the source, objects self_only) every activated ability printed on a bound card or spell (here the creature spell cast via the Lich's permission, bound by a delayed spell_cast trigger), read from that card's printed abilities and kept after the spell resolves or leaves the stack",
+      "why_existing_wont_do": "grant_ability hands over only a fixed entry of this card's own grantable_abilities by index, not abilities read off another card; become_copy copies all characteristics and name rather than adding just activated abilities; the static grant_exiled_abilities walks only cards the source exiled and is a static, not a one-shot until-end-of-turn effect on a cast spell. The first sentence (grant_playable with playable_this_turn and playable_cast_only on a targeted creature card in any graveyard) and the delayed spell_cast trigger look expressible, but the card cannot be written partially."
+    }
+  ],
+  "closest_existing": ["grant_ability", "grant_exiled_abilities", "become_copy"],
+  "confidence": "high"
+}

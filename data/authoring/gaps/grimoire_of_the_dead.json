@@ -1,0 +1,18 @@
+{
+  "card_id": "grimoire_of_the_dead",
+  "name": "Grimoire of the Dead",
+  "oracle_text": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead.\n{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types.",
+  "blocked_sentences": [
+    "{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types."
+  ],
+  "needs": [
+    {
+      "capability": "add_color",
+      "kind": "op",
+      "what": "a one-shot, indefinite (no printed duration) effect that adds a color to the objects in a binding -- here the permanents a put_onto_battlefield recorded with `as` -- in addition to their existing colors, without touching their card types, base power/toughness or other characteristics (\"they're black in addition to their other colors\"; also Rise from the Grave, Necromantic Selection, Dread Slaver)",
+      "why_existing_wont_do": "add_subtype covers the Zombie half but carries no colors. animate is the only op with additive `colors`, but on a creature animation the loader demands `power` and `toughness` (which would overwrite each reanimated creature's printed size) unless `keep_pt`, and `keep_pt` is refused unless `objects` is self_only or a target narrowed to Vehicles -- a binding over the reanimated cards is neither. `types: []` falls back to Creature, and `keep_colors` only applies to an exact animation."
+    }
+  ],
+  "closest_existing": ["animate", "add_subtype", "put_onto_battlefield"],
+  "confidence": "high"
+}

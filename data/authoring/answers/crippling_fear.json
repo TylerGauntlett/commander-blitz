@@ -1,0 +1,28 @@
+{
+  "card": {
+    "id": "crippling_fear",
+    "name": "Crippling Fear",
+    "oracle_text": "Choose a creature type. Creatures that aren't of the chosen type get -3/-3 until end of turn.",
+    "mana_cost": "{2}{B}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "spell_effects": [
+      {"op": "choose_type", "prompt": "Choose a creature type"},
+      {
+        "op": "pump",
+        "duration": "until_end_of_turn",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "any",
+          "count": "all",
+          "types": ["Creature"],
+          "not_subtypes": [{"chosen_type_of": "self"}]
+        },
+        "power": {"const": -3},
+        "toughness": {"const": -3}
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}

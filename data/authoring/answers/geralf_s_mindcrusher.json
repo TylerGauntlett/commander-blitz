@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "geralf_s_mindcrusher",
+    "name": "Geralf's Mindcrusher",
+    "oracle_text": "When this creature enters, target player mills five cards.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+    "mana_cost": "{4}{U}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie", "Horror"],
+    "power": 5,
+    "toughness": 5,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, target player mills five cards.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "any"}}],
+        "effects": [{"op": "mill", "player": {"target": "t1"}, "amount": {"const": 5}}]
+      },
+      {
+        "kind": "triggered",
+        "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+        "trigger": {
+          "event": "dies",
+          "source": "self",
+          "condition": {"cmp": "==", "left": {"counters_had": "+1/+1"}, "right": {"const": 0}}
+        },
+        "effects": [{
+          "op": "return_from_graveyard",
+          "objects": {"self_only": true, "zone": "graveyard"},
+          "destination": "battlefield",
+          "counters": {"+1/+1": 1}
+        }]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
