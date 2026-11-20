@@ -61,6 +61,7 @@ from .triggers import fire
 from .zones import graveyard_hosts, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .carddef import Ability
     from .state import GameState
 
 # ----------------------------------------------------------------------
@@ -2734,6 +2735,32 @@ def grant_ability(
         obj.granted_abilities_permanent.append(effect)
     else:
         obj.until_eot.append(effect)
+    state.bump_chars()
+
+
+def gain_activated_abilities(
+    state: GameState, oid: int, card_oid: int, abilities: Sequence[Ability]
+) -> None:
+    """Lend ``oid`` every one of ``abilities`` -- ``card_oid``'s -- until end of turn.
+
+    Havengul Lich: "…this creature gains all activated abilities of that card
+    until end of turn." A layer-6 ability-adding effect (613.1f) on
+    `until_eot`, so cleanup ends it and leaving the battlefield takes it
+    (400.7). The abilities are the caller's snapshot of the card, not a pointer
+    to it: once gained they are the permanent's own (113.6, 602.1) and stay so
+    whatever becomes of the card. Nothing to lend lends nothing.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or not abilities:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="borrowed_abilities",
+            source=card_oid,
+            abilities=tuple(abilities),
+            timestamp=state.alloc_timestamp(),
+        )
+    )
     state.bump_chars()
 
 

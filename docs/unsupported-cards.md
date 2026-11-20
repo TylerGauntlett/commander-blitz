@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**547 cards** blocked by **465** capabilities.
+**546 cards** blocked by **464** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -259,7 +259,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
-| [gain-activated-abilities-of-card](#gain-activated-abilities-of-card) | 1 | 5905 | op |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
@@ -4703,20 +4702,6 @@ Blocks **1** card.
 - **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
   - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
   - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
-
-</details>
-
-## gain-activated-abilities-of-card
-
-Blocks **1** card.
-
-- **(op)** an op that, until end of turn, gives a permanent (here the source, objects self_only) every activated ability printed on a bound card or spell (here the creature spell cast via the Lich's permission, bound by a delayed spell_cast trigger), read from that card's printed abilities and kept after the spell resolves or leaves the stack
-  <br>Why the existing vocabulary won't do: grant_ability hands over only a fixed entry of this card's own grantable_abilities by index, not abilities read off another card; become_copy copies all characteristics and name rather than adding just activated abilities; the static grant_exiled_abilities walks only cards the source exiled and is a static, not a one-shot until-end-of-turn effect on a cast spell. The first sentence (grant_playable with playable_this_turn and playable_cast_only on a targeted creature card in any graveyard) and the delayed spell_cast trigger look expressible, but the card cannot be written partially.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Havengul Lich** (rank 5905) — `havengul_lich`
-  - When you cast it this turn, this creature gains all activated abilities of that card until end of turn.
 
 </details>
 

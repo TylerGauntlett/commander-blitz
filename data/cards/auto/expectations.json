@@ -10751,6 +10751,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "havengul_lich": {
+    "zone": "battlefield"
+  },
   "havenwood_wurm": {
     "zone": "battlefield"
   },

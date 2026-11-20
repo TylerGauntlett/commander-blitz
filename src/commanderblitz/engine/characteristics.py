@@ -1160,16 +1160,28 @@ def exiled_activated_abilities(
         face = state.card_of(card)
         if not wanted & set(face.types):
             continue
-        for ability in face.abilities:
-            if (
-                ability.is_activated
-                and Zone.BATTLEFIELD in ability.active_zones
-                and ability.level is None
-                and not ability.solved
-                and ability.threshold is None
-            ):
-                out.append((oid, ability))
+        out.extend((oid, ability) for ability in face.abilities if lendable_activated(ability))
     return out
+
+
+def lendable_activated(ability: Ability) -> bool:
+    """Is this printed ability one "all activated abilities of" hands over?
+
+    Every activated ability, mana abilities included (602.1, 605.1a), that
+    works on the battlefield: one that works only from another zone (cycling,
+    unearth) is left behind, since the permanent receiving it could never
+    activate it there, and so is a Class level's, a Case's "Solved —" and a
+    station threshold's, which are gated on the object that printed them.
+    Shared by `exiled_activated_abilities` and the `gain_activated_abilities`
+    op, which must not disagree about what "all" means.
+    """
+    return (
+        ability.is_activated
+        and Zone.BATTLEFIELD in ability.active_zones
+        and ability.level is None
+        and not ability.solved
+        and ability.threshold is None
+    )
 
 
 def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -1514,7 +1526,8 @@ def _derived_abilities(
     all.
 
     A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
-    exiled card's printed face, which no pool index can name.
+    exiled card's printed face, or a `gain_activated_abilities` op lent off
+    another card, which no pool index can name.
 
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
@@ -1552,6 +1565,7 @@ def _derived_abilities(
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
     out.extend(_op_granted_abilities(state, obj))
+    out.extend(_op_borrowed_abilities(obj))
     # 305.6, last so no grant's index moves with a land type. A loss of all
     # abilities takes these with the printed ones: the type change that gave
     # them is layer 4 and the loss layer 6 (613.1d, 613.1f). Read against the
@@ -1570,7 +1584,8 @@ def _has_op_grants(obj: GameObject) -> bool:
     answered with the printed list.
     """
     return any(
-        temp.kind == "ability" for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
+        temp.kind in ("ability", "borrowed_abilities")
+        for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
     )
 
 
@@ -1658,6 +1673,30 @@ def _op_granted_abilities(
     return out
 
 
+def _op_borrowed_abilities(obj: GameObject) -> list[tuple[Ability, Borrowed]]:
+    """The activated abilities a `gain_activated_abilities` op lent this permanent.
+
+    Havengul Lich: "…this creature gains all activated abilities of that card
+    until end of turn." Read off the ``borrowed_abilities`` records on
+    ``until_eot`` (`primitives.gain_activated_abilities`), each holding its own
+    snapshot of the card's abilities, so the gain stands whatever became of the
+    card -- countered, resolved, dead or exiled. A `Borrowed` provenance like
+    `grant_exiled_abilities`'s, because the definition is in no
+    ``grantable_abilities`` pool: an activation rides the ability itself onto
+    the stack (`StackItem.granted_ability`). A timed loss of all abilities that
+    began later hides the record (613.7), as it does every other grant.
+    """
+    out: list[tuple[Ability, Borrowed]] = []
+    cut = timed_loss_cutoff(obj)
+    for temp in obj.until_eot:
+        if temp.kind != "borrowed_abilities" or temp.source is None:
+            continue
+        if _hidden_by_loss(temp, cut):
+            continue
+        out.extend((ability, Borrowed(temp.source, ability.index)) for ability in temp.abilities)
+    return out
+
+
 def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int, int] | None:
     """Who granted the ability now sitting at ``index``, and where it lives.
 
@@ -1692,8 +1731,9 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
 def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
     """Is the ability at ``index`` on this permanent borrowed off an exiled card?
 
-    ``grant_exiled_abilities``: the definition lives on a card in exile, not
-    in any ``grantable_abilities`` pool, so an activation snapshots the ability
+    ``grant_exiled_abilities``, or the `gain_activated_abilities` op's
+    snapshot: the definition lives on another card, not in any
+    ``grantable_abilities`` pool, so an activation snapshots the ability
     itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
     pair -- 608.2 has it resolve even once the card has left exile.
     """
@@ -1701,7 +1741,9 @@ def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
     if obj is None or not obj.on_battlefield or obj.face_down:
         return False
     statics = _ability_statics(state)
-    if not any(static.get("effect") == "grant_exiled_abilities" for _, static in statics):
+    if not any(
+        static.get("effect") == "grant_exiled_abilities" for _, static in statics
+    ) and not any(temp.kind == "borrowed_abilities" for temp in obj.until_eot):
         return False
     derived = _derived_abilities(state, obj, statics)
     return 0 <= index < len(derived) and isinstance(derived[index][1], Borrowed)

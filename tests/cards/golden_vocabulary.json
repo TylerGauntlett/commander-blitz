@@ -1086,6 +1086,7 @@
   "for_each",
   "for_each_player",
   "freeze",
+  "gain_activated_abilities",
   "gain_control",
   "gain_life",
   "goad",

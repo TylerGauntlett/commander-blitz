@@ -3283,6 +3283,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: add_subtype's 'counter' is the 'while_counter' duration's "
                 f"kind and means nothing on {effect.get('duration', 'permanent')!r}"
             )
+    if op == "gain_activated_abilities":
+        # "…gains all activated abilities of that card until end of turn."
+        # Naming no card, or no permanent to gain, is a sentence that does
+        # nothing and loads exactly like one that works.
+        if not isinstance(effect.get("from"), Mapping):
+            raise DslError(
+                f"{where}: gain_activated_abilities needs 'from' naming the card whose "
+                f'activated abilities are gained, e.g. {{"binding": "subject"}}'
+            )
+        validate_selector(effect["from"], f"{where}.from")
+        if "objects" not in effect:
+            raise DslError(
+                f"{where}: gain_activated_abilities needs 'objects' naming what gains them"
+            )
+        # The one printed duration. A clock accepted and dropped would be a
+        # card that reads "for as long as" and loses the abilities at cleanup.
+        if effect.get("duration", "until_end_of_turn") != "until_end_of_turn":
+            raise DslError(
+                f"{where}: gain_activated_abilities lasts until end of turn; "
+                f"got duration {effect['duration']!r}"
+            )
+        # "All activated abilities" is the whole of it: a grantable index or a
+        # keyword list would load and be ignored.
+        if unknown := {"ability", "ability_index", "keywords"} & set(effect):
+            raise DslError(
+                f"{where}: gain_activated_abilities gains every activated ability of "
+                f"'from' and takes no {sorted(unknown)}; use grant_ability for one "
+                f"of this card's grantable abilities"
+            )
     if op == "add_color":
         # "It's black in addition to its other colors." An op naming no colour
         # is a sentence that does nothing and loads exactly like one that works.

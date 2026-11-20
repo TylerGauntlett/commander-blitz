@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 183 |
+| [Effect ops](#effect-ops) | 184 |
 | [Selectors](#selectors) | 80 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
@@ -109,6 +109,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `exile` | Board | yes | Exile objects, or a spell a `{"target": …}` selector names off the stack without countering it; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns; `playable_cast_only` narrows it to casting; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard; `playable_by: "owner"` hands a `while_exiled` permission to each card's owner. | [Effect ops](card-dsl.md#effect-ops) |
 | `exile_and_return` | Board |  | Exile permanents, then return them (transformed, under an owner). | ["Exile it, then return it transformed under its owner's control"](card-dsl-cookbook.md#exile-it-then-return-it-transformed-under-its-owners-control) |
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
+| `gain_activated_abilities` | Board |  | Permanents gain every activated ability of the card `from` names, read as the op resolves, until end of turn. | [gain_activated_abilities — every activated ability of another card](card-dsl-cookbook.md#gain_activated_abilities--every-activated-ability-of-another-card) |
 | `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` and `while_source_on_battlefield` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
 | `goad` | Board |  | Goad creatures until your next turn, or for the rest of the game. | [Goad](card-dsl-cookbook.md#goad) |
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |

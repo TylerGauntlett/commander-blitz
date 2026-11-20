@@ -123672,12 +123672,12 @@
     },
     "Havengul Lich": {
       "edhrec_rank": 5905,
-      "gate": "template",
+      "gate": null,
       "name": "Havengul Lich",
-      "reason": "no template for: {1}: You may cast target creature card in a graveyard this turn. When you cast it this tur",
+      "reason": "",
       "scryfall_id": "f61a6f03-cd3a-48ab-b9ad-e9b1f986ea4b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Havengul Runebinder": {

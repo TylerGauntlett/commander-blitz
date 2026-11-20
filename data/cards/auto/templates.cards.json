@@ -127634,6 +127634,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            },
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "from": {
+                    "binding": "subject"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "gain_activated_abilities"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+              "trigger": {
+                "controller": "you",
+                "event": "spell_cast",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "havengul_lich",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Havengul Lich",
+      "oracle_text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

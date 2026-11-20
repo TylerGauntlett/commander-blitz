@@ -56,8 +56,9 @@ class TempEffect:
     ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``,
     ``"lock_abilities"`` ("its activated abilities can't be activated this
     turn"), ``"ability"`` (a whole triggered or activated ability granted by
-    another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
-    turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
+    another permanent), ``"borrowed_abilities"`` (every activated ability of
+    another card, Havengul Lich's), ``"animate"`` ("becomes a 4/4 creature
+    until end of turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
     addition to its other types": ``subtypes`` added, base P/T untouched), or
     ``"control"`` ("gain control of target permanent until end of turn"), or
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
@@ -97,6 +98,14 @@ class TempEffect:
     #: For ``kind == "ability"``: which of the source card's
     #: ``grantable_abilities`` was handed over.
     ability_index: int | None = None
+    #: For ``kind == "borrowed_abilities"``: the activated abilities of another
+    #: card, snapshotted as `primitives.gain_activated_abilities` resolved, and
+    #: ``source`` is that card. Havengul Lich: "…gains all activated abilities
+    #: of that card until end of turn." The abilities themselves rather than a
+    #: pointer, because they are read off the card where it was then (a spell on
+    #: the stack) and the gain outlives the card going anywhere else -- the
+    #: snapshot `StackItem.granted_ability` already makes for one activation.
+    abilities: tuple[Ability, ...] = ()
     #: For ``kind == "animate"``: what the permanent becomes.  Types and subtypes
     #: are *added* -- "it's still a land" is the default rather than a special
     #: case, because every printed animation says it.
@@ -216,6 +225,7 @@ class TempEffect:
             "toughness": self.toughness,
             "keyword": self.keyword,
             "source": self.source,
+            "abilities": [ability.text for ability in self.abilities],
             "types": list(self.types),
             "subtypes": list(self.subtypes),
             "colors": list(self.colors),

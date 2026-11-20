@@ -271,6 +271,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                        "Token copies"),
     "grant_ability": ("Board", "Give permanents one of the card's `grantable_abilities`.",
                       "Granting an ability"),
+    "gain_activated_abilities": ("Board", "Permanents gain every activated ability of the card `from` "
+                                 "names, read as the op resolves, until end of turn.",
+                                 "`gain_activated_abilities` — every activated ability of another card"),
     "skip_untap": ("Board", "It doesn't untap during its controller's next untap step.",
                    H_UNTAP_NONE),
     "must_attack": ("Board", "Creatures attack this turn if able.", "Attack requirements"),

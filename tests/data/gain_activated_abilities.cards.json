@@ -1,0 +1,84 @@
+{
+  "_comment": "Shapes for tests/unit/effects/test_gain_activated_abilities.py. t_ga_lich is Havengul Lich's activated ability on a vanilla body. The lent cards are t_gx_tinkerer and t_gx_brewmaster (tests/data/grant_exiled_abilities.cards.json) and llanowar_elves.",
+  "cards": [
+    {
+      "id": "t_ga_lich",
+      "name": "Test Borrowing Lich",
+      "oracle_text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+      "mana_cost": "{3}{U}{B}",
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+          "cost": {
+            "mana": "{1}"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "grant_playable",
+              "objects": {
+                "target": "t1"
+              },
+              "playable": "this_turn",
+              "playable_cast_only": true
+            },
+            {
+              "op": "delayed_trigger",
+              "duration": "once_this_turn",
+              "text": "When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+              "trigger": {
+                "event": "spell_cast",
+                "controller": "you",
+                "subject": {
+                  "target": "t1"
+                }
+              },
+              "effects": [
+                {
+                  "op": "gain_activated_abilities",
+                  "from": {
+                    "binding": "subject"
+                  },
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

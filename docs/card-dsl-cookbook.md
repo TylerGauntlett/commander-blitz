@@ -11594,6 +11594,51 @@ written in the card's own `grantable_abilities` and cannot borrow whatever
 happens to be in exile; `imprint_characteristics` reads a card in exile but
 takes only its size and creature types.
 
+### `gain_activated_abilities` — every activated ability of another card
+
+Havengul Lich: "{1}: You may cast target creature card in a graveyard this
+turn. When you cast it this turn, this creature gains all activated abilities
+of that card until end of turn."
+
+```jsonc
+// the Lich's activated ability; t1 is a card_in_graveyard target,
+// {"controller": "any", "types": ["Creature"], "zone": "graveyard"}
+{ "op": "grant_playable", "objects": { "target": "t1" },
+  "playable": "this_turn", "playable_cast_only": true },
+{ "op": "delayed_trigger", "duration": "once_this_turn",
+  "trigger": { "event": "spell_cast", "controller": "you",
+               "subject": { "target": "t1" } },
+  "effects": [ { "op": "gain_activated_abilities",
+                 "from": { "binding": "subject" },
+                 "objects": { "self_only": true } } ] }
+```
+
+`from` names the card — here the spell the `spell_cast` subscription heard —
+and `objects` the permanents that gain. The abilities are read **once, as the op
+resolves**, off the card where it is (`abilities_of`): a spell on the stack has
+its printed abilities, so what is gained is what the card had as it was cast.
+Every activated ability that works on the battlefield, mana abilities included
+(602.1, 605.1a; `characteristics.lendable_activated`, shared with
+`grant_exiled_abilities`); never a static or a triggered one.
+
+`primitives.gain_activated_abilities` writes a `borrowed_abilities`
+`TempEffect` onto the recipient's `until_eot` holding that snapshot, so the
+gain survives the spell resolving, being countered or the creature leaving, and
+ends at cleanup or as the recipient leaves the battlefield (400.7). The
+abilities are appended after the recipient's own and are its own (113.6,
+602.1): a `{T}` taps the recipient and "this creature" is the recipient. An
+activation rides the ability onto the stack item (`StackItem.granted_ability`),
+as a `grant_exiled_abilities` one does. A timed loss of all abilities that
+began later hides them (613.7).
+
+The loader refuses it without `from` or `objects`, with any `duration` but
+`until_end_of_turn`, and with `ability`, `ability_index` or `keywords`.
+
+**The near misses**: `grant_ability` hands over one fixed entry of this card's
+own `grantable_abilities`; `become_copy` takes the name and every
+characteristic; the `grant_exiled_abilities` static lends off cards linked in
+exile for as long as they stay there.
+
 ### `set_creature_types` — "it loses all other creature types"
 
 "Celebration — As long as two or more nonland permanents entered the

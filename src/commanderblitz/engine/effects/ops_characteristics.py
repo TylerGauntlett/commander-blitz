@@ -6,7 +6,12 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import chars, resolve_chosen_color_list
+from ..characteristics import (
+    abilities_of,
+    chars,
+    lendable_activated,
+    resolve_chosen_color_list,
+)
 from ..events import EventType
 from ..objects import PLUS_ONE
 from ..primitives import (
@@ -15,6 +20,7 @@ from ..primitives import (
     add_subtypes,
     animate,
     forbid_keyword,
+    gain_activated_abilities,
     grant_ability,
     grant_keyword,
     lock_abilities,
@@ -29,6 +35,7 @@ from .context import EffectContext, ask_mode
 from .registry import register
 from .selectors import (
     choose_objects,
+    resolve_pool,
     select_players,
 )
 from .values import evaluate_value
@@ -755,6 +762,48 @@ def op_grant_ability(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     for oid in oids:
         grant_ability(ctx.state, oid, index, ctx.source_oid, permanent=permanent)
+
+
+@register("gain_activated_abilities")
+def op_gain_activated_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…this creature gains all activated abilities of that card until end of
+    turn." Havengul Lich.
+
+    ``from`` names the card -- here the creature spell the Lich's delayed
+    ``spell_cast`` trigger heard, ``{"binding": "subject"}`` -- and ``objects``
+    the permanents that gain. The abilities are read **once, now**, off the
+    card where it is: on the stack that is the spell's own characteristics
+    (`abilities_of` off the battlefield, the printed list and its gates), so
+    what is gained is what the card had as it was cast, and the gain survives
+    the spell being countered, resolving, or the creature leaving (608.2h's
+    snapshot; the card's rulings). Every activated ability, mana abilities
+    included (`characteristics.lendable_activated`); never a static or
+    triggered one.
+
+    Until end of turn, the one duration the printed line has. The near misses:
+    `grant_ability` hands over one fixed ability from this card's own
+    ``grantable_abilities``; `become_copy` takes every characteristic and the
+    name; the `grant_exiled_abilities` static lends off cards linked in exile
+    for as long as they stay there.
+    """
+    lent = []
+    for card_oid in resolve_pool(ctx, spec.get("from")):
+        lent.extend(
+            (card_oid, ability)
+            for ability in abilities_of(ctx.state, card_oid)
+            if lendable_activated(ability)
+        )
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Gains abilities")
+    if not lent:
+        return
+    for oid in oids:
+        for card_oid in dict.fromkeys(card for card, _ in lent):
+            gain_activated_abilities(
+                ctx.state,
+                oid,
+                card_oid,
+                [ability for card, ability in lent if card == card_oid],
+            )
 
 
 @register("skip_untap")
