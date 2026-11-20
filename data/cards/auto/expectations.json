@@ -19062,6 +19062,18 @@
     },
     "zone": "battlefield"
   },
+  "reign_of_the_pit": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "demon_x_x_b_flying"
+    },
+    "zone": "graveyard"
+  },
   "rejoin_the_fight": {
     "hand_size": {
       "0": 1

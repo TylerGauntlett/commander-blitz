@@ -228550,6 +228550,51 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "reign_of_the_pit",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Reign of the Pit",
+      "oracle_text": "Each player sacrifices a creature of their choice. Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "sacrificed",
+          "objects": {
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice",
+          "players": "each_player",
+          "snapshot": "sacrificed_lki"
+        },
+        {
+          "op": "create_token",
+          "power": {
+            "power_of": {
+              "binding": "sacrificed_lki"
+            }
+          },
+          "token": "demon_x_x_b_flying",
+          "toughness": {
+            "power_of": {
+              "binding": "sacrificed_lki"
+            }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [

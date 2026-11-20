@@ -219322,12 +219322,12 @@
     },
     "Reign of the Pit": {
       "edhrec_rank": 14030,
-      "gate": "template",
+      "gate": null,
       "name": "Reign of the Pit",
-      "reason": "no template for: Each player sacrifices a creature of their choice. Create an X/X black Demon creature toke",
+      "reason": "",
       "scryfall_id": "098c7cd1-5f20-437d-9b81-f480f3f02833",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reigning Victor": {
