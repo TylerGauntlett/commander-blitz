@@ -153652,12 +153652,12 @@
     },
     "Laboratory Drudge": {
       "edhrec_rank": 13740,
-      "gate": "template",
+      "gate": null,
       "name": "Laboratory Drudge",
-      "reason": "no template for: At the beginning of each end step, draw a card if you've cast a spell from a graveyard or ",
+      "reason": "",
       "scryfall_id": "2a1a8e0c-b3ca-4da3-8a08-25e3048ca1a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Laboratory Maniac": {

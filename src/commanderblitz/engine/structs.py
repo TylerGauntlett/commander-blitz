@@ -2458,6 +2458,22 @@ class TurnLedger:
     #: the per-ability tally), so an activation that was countered or whose
     #: source died paying its minus still counts -- it was activated.
     loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has **cast a spell from a graveyard or
+    #: activated an ability of a card in a graveyard** this turn -- Laboratory
+    #: Drudge's "if you've cast a spell from a graveyard or activated an ability
+    #: of a card in a graveyard this turn". Keyed by the caster or activator;
+    #: any graveyard, not only their own.
+    #:
+    #: Neither half is derivable after the fact. A spell's
+    #: `GameObject.cast_from_zone` records only that object's latest cast, so it
+    #: cannot say whether a card cast twice was cast from a graveyard this turn,
+    #: and an unearth or scavenge exiles its card as the cost is paid and leaves
+    #: no record of the activation at all. The cast is counted in
+    #: the SPELL_CAST fold (every cast path stamps `cast_from_zone` in
+    #: `stack.push_spell` before it fires), the activation in `Game._activate`
+    #: and `Game._activate_mana` before the cost is paid, while the card is
+    #: still in the graveyard.
+    graveyard_plays: dict[int, int] = field(default_factory=dict)
     #: Extra loyalty activations a permanent may make this turn, beyond 606.3's
     #: one: oid -> how many. The Chain Veil: "For each planeswalker you
     #: control, you may activate one of its loyalty abilities once this turn
@@ -2737,6 +2753,7 @@ class TurnLedger:
         self.ability_activations.clear()
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
+        self.graveyard_plays.clear()
         self.targeted_activations.clear()
         self.ability_sources.clear()
         self.cards_to_graveyard = 0

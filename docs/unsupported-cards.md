@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**548 cards** blocked by **466** capabilities.
+**547 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -276,7 +276,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cast-permission-additional-cost](#graveyard-cast-permission-additional-cost) | 1 | 7356 | static_effect |
 | [graveyard-play-from-library-this-turn](#graveyard-play-from-library-this-turn) | 1 | 7077 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
-| [graveyard-plays-this-turn](#graveyard-plays-this-turn) | 1 | 13740 | value |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
@@ -4943,20 +4942,6 @@ Blocks **1** card.
 
 - **Serra Paragon** (rank 3531) — `serra_paragon`
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
-
-</details>
-
-## graveyard-plays-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn-ledger value counting spells a player cast from a graveyard this turn (any graveyard, flashback/escape/retrace/graveyard_cast included) plus activated abilities of cards in a graveyard (unearth, embalm, scavenge, cycling-from-graveyard-style abilities) that player activated this turn -- e.g. {"graveyard_plays_this_turn": "you"} compared > 0, used as the end_step trigger's intervening-if condition
-  <br>Why the existing vocabulary won't do: spells_cast_this_turn counts casts and its filter matches only printed characteristics, not the zone the spell was cast from; cast_from_graveyard is a condition about the source spell itself, not about the turn's other casts; cards_from_graveyard_this_turn counts every card leaving a graveyard (reanimation, exile) and no activation; no ledger records activations from a graveyard at all. An ability_activated/spell_cast trigger setting a turn flag would miss everything done before the Drudge entered, which the 'this turn' ledger must count
-
-<details><summary>Cards waiting on this</summary>
-
-- **Laboratory Drudge** (rank 13740) — `laboratory_drudge`
-  - At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.
 
 </details>
 

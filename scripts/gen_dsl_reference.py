@@ -708,6 +708,7 @@ VALUES: dict[str, Entry] = {
     "life_lost_this_turn": ("Life the player lost this turn (spectacle).", H_LEDGER),
     "life_of": ("A player's life total (summed over a plural spec).", None),
     "loop_value": ("The current item of an enclosing `for_each`.", None),
+    "graveyard_plays_this_turn": ("Spells the player cast from a graveyard plus abilities of cards in a graveyard they activated, this turn.", H_LEDGER),
     "loyalty_activations_this_turn": ("Loyalty abilities the player activated this turn.", H_LEDGER),
     "mana_spent_of": ("Mana of a color actually spent to cast this.",
                       "`mana_spent_of` — what was paid, not what is printed"),

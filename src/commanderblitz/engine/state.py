@@ -1177,6 +1177,12 @@ class GameState:
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
+                # "…if you've cast a spell **from a graveyard** this turn"
+                # (Laboratory Drudge). `push_spell` stamped the zone on every
+                # cast path before this fired; see `TurnLedger.graveyard_plays`.
+                cast_obj = self.objects.get(data.get("oid"))
+                if cast_obj is not None and cast_obj.cast_from_zone == Zone.GRAVEYARD.value:
+                    ledger.graveyard_plays[pid] = ledger.graveyard_plays.get(pid, 0) + 1
                 # And what it was, for the conditions that ask about types
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:

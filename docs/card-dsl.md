@@ -2076,6 +2076,8 @@ Anywhere a number is expected -- the leaf list is
 { "counters_put_this_turn": { "player": "all",  // "if a counter was put on Wakka this turn";
     "on": { "self": true } } }                  //   one recipient, by anybody
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
+{ "graveyard_plays_this_turn": "you" }          // Laboratory Drudge; spells cast from ANY graveyard
+                                                //   plus abilities of graveyard cards activated
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
 { "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield

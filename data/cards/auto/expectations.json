@@ -13207,6 +13207,13 @@
   "kyoshi_warrior_guard": {
     "zone": "battlefield"
   },
+  "laboratory_drudge": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "labyrinth_of_skophos": {
     "battlefield_count": 33,
     "zone": "battlefield"

@@ -262,6 +262,11 @@ VALUE_KEYS = frozenset(
         # is a `cmp` `==` 0. Counted at activation, so a planeswalker that has
         # since died or left still counts.
         "loyalty_activations_this_turn",
+        # "…if you've cast a spell from a graveyard or activated an ability of
+        # a card in a graveyard this turn" -- Laboratory Drudge. Both halves
+        # in one tally per player, off `TurnLedger.graveyard_plays`, so plays
+        # made before the watcher entered count; "did it happen" is `> 0`.
+        "graveyard_plays_this_turn",
         "spells_cast_this_turn",
         #: Approach of the Second Sun's "this game". The same shape as the key
         #: above over a ledger with no turn boundary on it -- `spells_cast_ids`
@@ -949,6 +954,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "loyalty_activations_this_turn" in expr:
         pids = _players(ctx, expr["loyalty_activations_this_turn"])
         return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
+    if "graveyard_plays_this_turn" in expr:
+        pids = _players(ctx, expr["graveyard_plays_this_turn"])
+        return sum(ledger.graveyard_plays.get(p, 0) for p in pids)
     if "times_tapped_this_turn" in expr:
         # One object's taps, so a reference that names nobody -- a binding the
         # event did not carry, a target that went away -- reads 0, and a
