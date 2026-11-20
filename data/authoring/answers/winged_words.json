@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "winged_words",
+    "name": "Winged Words",
+    "oracle_text": "This spell costs {1} less to cast if you control a creature with flying.\nDraw two cards.",
+    "mana_cost": "{2}{U}",
+    "types": ["Sorcery"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "cost_reduction": {
+      "amount": 1,
+      "condition": {
+        "exists": {
+          "controller": "you",
+          "types": ["Creature"],
+          "keywords": ["flying"],
+          "zone": "battlefield"
+        }
+      }
+    },
+    "spell_effects": [
+      {"op": "draw", "player": "you", "amount": {"const": 2}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {"0": 38},
+    "hand_size": {"0": 3}
+  }
+}

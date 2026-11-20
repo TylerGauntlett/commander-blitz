@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "tide_skimmer",
+    "name": "Tide Skimmer",
+    "oracle_text": "Flying\nWhenever you attack with two or more creatures with flying, draw a card.",
+    "mana_cost": "{3}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Drake"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you attack with two or more creatures with flying, draw a card.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"binding": "attackers", "keywords": ["flying"]}},
+            "right": {"const": 2}
+          }
+        },
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
