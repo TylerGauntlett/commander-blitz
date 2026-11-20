@@ -9162,12 +9162,12 @@
     },
     "Angler Turtle": {
       "edhrec_rank": 13595,
-      "gate": "template",
+      "gate": null,
       "name": "Angler Turtle",
-      "reason": "no template for: Creatures your opponents control attack each combat if able",
+      "reason": "",
       "scryfall_id": "01c029b2-dbe8-477e-9b61-6df666978444",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angrath's Ambusher": {
@@ -12292,12 +12292,12 @@
     },
     "Archon of Redemption": {
       "edhrec_rank": 14615,
-      "gate": "template",
+      "gate": null,
       "name": "Archon of Redemption",
-      "reason": "no template for: Whenever this creature or another creature you control with flying enters, you may gain li",
+      "reason": "",
       "scryfall_id": "2243270a-2e7c-4239-af2e-9b6b47124237",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Sun's Grace": {
@@ -17412,12 +17412,12 @@
     },
     "Aven Gagglemaster": {
       "edhrec_rank": 13783,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Aven Gagglemaster",
-      "reason": "no template for: When this creature enters, you gain 2 life for each creature you control with flying",
+      "reason": "player 0 life is 42, expected 46",
       "scryfall_id": "a07568b2-5a1f-4aaf-bd71-57b41bae925d",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Aven Heartstabber": {
@@ -40412,12 +40412,12 @@
     },
     "Cartographer's Hawk": {
       "edhrec_rank": 4568,
-      "gate": "template",
+      "gate": null,
       "name": "Cartographer's Hawk",
-      "reason": "no template for: When this creature deals combat damage to a player who controls more lands than you, retur",
+      "reason": "",
       "scryfall_id": "12d0b07f-9823-45b7-89bb-0a2a71833d46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cartographer's Survey": {
@@ -69912,12 +69912,12 @@
     },
     "Disenchant": {
       "edhrec_rank": 1094,
-      "gate": "template",
+      "gate": null,
       "name": "Disenchant",
-      "reason": "no template for: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "7ac43e16-8b14-46f2-877a-600ea918766b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Disentomb": {
@@ -87212,12 +87212,12 @@
     },
     "Ever-Watching Threshold": {
       "edhrec_rank": 8797,
-      "gate": "template",
+      "gate": null,
       "name": "Ever-Watching Threshold",
-      "reason": "no template for: Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw",
+      "reason": "",
       "scryfall_id": "1fb0d8fa-48d0-4143-b8c4-d3b01a0bd7cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everbark Shaman": {
@@ -92222,12 +92222,12 @@
     },
     "Favorable Winds": {
       "edhrec_rank": 3178,
-      "gate": "template",
+      "gate": null,
       "name": "Favorable Winds",
-      "reason": "no template for: Creatures you control with flying get +1/+1",
+      "reason": "",
       "scryfall_id": "cc11f0f5-ecdc-42a7-9f6a-ecdd44dbc0a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Favored Hoplite": {
@@ -116812,12 +116812,12 @@
     },
     "Gravitational Shift": {
       "edhrec_rank": 6318,
-      "gate": "template",
+      "gate": null,
       "name": "Gravitational Shift",
-      "reason": "no template for: Creatures with flying get +2/+0",
+      "reason": "",
       "scryfall_id": "86463838-81d0-464d-84ba-37fa1c76bbea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gravitic Punch": {

@@ -901,6 +901,10 @@
     },
     "zone": "battlefield"
   },
+  "angler_turtle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "angrath_s_marauders": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1218,6 +1222,13 @@
       "1": 37
     },
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "archon_of_redemption": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 43
+    },
     "zone": "battlefield"
   },
   "archon_of_sun_s_grace": {
@@ -3518,6 +3529,10 @@
     "zone": "battlefield"
   },
   "carrion_screecher": {
+    "zone": "battlefield"
+  },
+  "cartographer_s_hawk": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "carven_caryatid": {
@@ -6091,6 +6106,10 @@
     },
     "zone": "battlefield"
   },
+  "disenchant": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "disinformation_campaign": {
     "hand_size": {
       "0": 2
@@ -7526,6 +7545,13 @@
     },
     "zone": "graveyard"
   },
+  "ever_watching_threshold": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "evercoat_ursine": {
     "battlefield_count": 33,
     "library_size": {
@@ -8023,6 +8049,10 @@
     "zone": "battlefield"
   },
   "fathom_mage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "favorable_winds": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10188,6 +10218,10 @@
     "graveyard_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "gravitational_shift": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gray_merchant_of_asphodel": {

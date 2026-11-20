@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "jubilant_skybonder",
+    "name": "Jubilant Skybonder",
+    "oracle_text": "Flying\nCreatures you control with flying have \"Spells your opponents cast that target this creature cost {2} more to cast.\"",
+    "mana_cost": "{1}{W/U}{W/U}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Wizard"],
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "power": 2,
+    "toughness": 2,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"controller": "you", "types": ["Creature"], "keywords": ["flying"]},
+        "text": "Creatures you control with flying have \"Spells your opponents cast that target this creature cost {2} more to cast.\""
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "static",
+        "effect": "spell_cost_increase",
+        "affects_spells": {"controller": "opponent"},
+        "cost": {"mana": "{2}"},
+        "targeting": {"self_only": true},
+        "text": "Spells your opponents cast that target this creature cost {2} more to cast."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

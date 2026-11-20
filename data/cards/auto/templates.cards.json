@@ -10782,6 +10782,43 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Creatures your opponents control attack each combat if able."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "angler_turtle",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Angler Turtle",
+      "oracle_text": "Hexproof\nCreatures your opponents control attack each combat if able.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Turtle"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "damage_multiplier": 2,
           "damage_source": {
             "controller": "you"
@@ -14275,6 +14312,66 @@
         "Archon"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Gain life equal to that creature's power?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control with flying enters, you may gain life equal to that creature's power.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archon_of_redemption",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Archon of Redemption",
+      "oracle_text": "Flying\nWhenever this creature or another creature you control with flying enters, you may gain life equal to that creature's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -42605,6 +42702,99 @@
       "source": "auto",
       "subtypes": [
         "Zombie",
+        "Bird"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "returned",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "returned",
+                  "zone": "hand"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "count": {
+                        "const": 1
+                      },
+                      "destination": "battlefield",
+                      "op": "search_library",
+                      "player": "you",
+                      "selector": {
+                        "subtypes": [
+                          "Plains"
+                        ]
+                      },
+                      "tapped": true
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Search your library for a Plains card?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "defender"
+                  },
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "recheck": false,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cartographer_s_hawk",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Cartographer's Hawk",
+      "oracle_text": "Flying\nWhen this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
         "Bird"
       ],
       "toughness": 1,
@@ -74081,6 +74271,43 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "disenchant",
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -90972,6 +91199,42 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ever_watching_threshold",
+      "mana_cost": "{2}{U}",
+      "name": "Ever-Watching Threshold",
+      "oracle_text": "Whenever an opponent attacks, if they attacked you and/or a planeswalker you control, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "op": "hideaway"
@@ -95732,6 +95995,44 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control with flying get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "favorable_winds",
+      "mana_cost": "{1}{U}",
+      "name": "Favorable Winds",
+      "oracle_text": "Creatures you control with flying get +1/+1.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -121003,6 +121304,64 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Creatures with flying get +2/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": -2
+          },
+          "text": "Creatures without flying get -2/-0.",
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "gravitational_shift",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Gravitational Shift",
+      "oracle_text": "Creatures with flying get +2/+0.\nCreatures without flying get -2/-0.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

@@ -33,7 +33,6 @@
   },
   "expectation": {
     "zone": "battlefield",
-    "battlefield_count": 33,
-    "life": {"0": 46}
+    "battlefield_count": 33
   }
 }

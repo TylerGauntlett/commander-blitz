@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "moorland_haunt",
+    "name": "Moorland Haunt",
+    "oracle_text": "{T}: Add {C}.\n{W}{U}, {T}, Exile a creature card from your graveyard: Create a 1/1 white Spirit creature token with flying.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["U", "W"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}],
+        "is_mana_ability": true
+      },
+      {
+        "kind": "activated",
+        "text": "{W}{U}, {T}, Exile a creature card from your graveyard: Create a 1/1 white Spirit creature token with flying.",
+        "cost": {
+          "mana": "{W}{U}",
+          "tap": true,
+          "exile_from_graveyard": {"count": 1, "types": ["Creature"]}
+        },
+        "effects": [{"op": "create_token", "token": "spirit_1_1_w_flying", "amount": {"const": 1}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

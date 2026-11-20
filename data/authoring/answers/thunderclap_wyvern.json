@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "thunderclap_wyvern",
+    "name": "Thunderclap Wyvern",
+    "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nFlying\nOther creatures you control with flying get +1/+1.",
+    "mana_cost": "{2}{W}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Drake"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "keywords": ["flash", "flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other creatures you control with flying get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "keywords": ["flying"],
+          "exclude_self": true
+        },
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

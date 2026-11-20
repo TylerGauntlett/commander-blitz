@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "inspired_sphinx",
+    "name": "Inspired Sphinx",
+    "oracle_text": "Flying\nWhen this creature enters, draw cards equal to the number of opponents you have.\n{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+    "mana_cost": "{5}{U}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Sphinx"],
+    "power": 5,
+    "toughness": 5,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, draw cards equal to the number of opponents you have.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"player_count": "each_opponent"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+        "cost": {"mana": "{3}{U}"},
+        "effects": [
+          {"op": "create_token", "token": "thopter_1_1_c_flying", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 2},
+    "library_size": {"0": 39}
+  }
+}
