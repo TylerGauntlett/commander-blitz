@@ -21,6 +21,7 @@ from commanderblitz.cards.authoring.verify import (
     check_expectation,
     dress_own_creature,
     encoded_itself,
+    enter_sandbox_combat,
     graveyard_spell_props,
     sandbox_turn,
     spare_cards_in_hand,
@@ -29,6 +30,7 @@ from commanderblitz.cards.authoring.verify import (
     swap_in_counted_tribe_body,
     swap_in_legendary_body,
     swap_in_tribal_body,
+    wants_attacking_target,
 )
 from commanderblitz.cards.registry import CardRegistry
 from commanderblitz.engine.actions import PendingDecision
@@ -388,6 +390,12 @@ class TestEveryCardIsPlayable:
                 if game.state.objects[o].def_id == card_id
             )
             _provide_the_target(game, registry, hand_oid, card)
+            action = find_play(game, card_id)
+        # Condemn -- "target attacking creature" has no legal target in main.
+        # `verify.enter_sandbox_combat` declares one of your creatures as an
+        # attacker, shared so the two sandboxes agree, and only for a card that
+        # is otherwise unplayable.
+        if action is None and wants_attacking_target(card) and enter_sandbox_combat(game):
             action = find_play(game, card_id)
         assert action is not None, (
             f"{card_id} ({card.name}) is not playable in the sandbox; "
@@ -1770,7 +1778,7 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
             branch
             for spec in ability.targets
             for branch in _selector_branches(spec.selector)
-            if branch.get("attacking")
+            if branch.get("attacking") or branch.get("attacking_player")
         ),
         None,
     )
@@ -1798,15 +1806,54 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
     )
     if match is None:
         return
-    attacker = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    # Soul Snare: "target creature that's attacking **you**" is a creature of
+    # the opponent's, on the opponent's turn -- an attack the sandbox's own
+    # player can never make.
+    attacked = wants.get("attacking_player") == "you"
+    attacker = new_object(
+        game.state, match.id, owner=1 if attacked else 0, zone=Zone.BATTLEFIELD
+    )
     attacker.entered_turn = 0
     game.state.battlefield.append(attacker.oid)
     game.state.bump_chars()
 
-    if _walk_to_declare_attackers(game):
+    if attacked:
+        _be_attacked_by(game, attacker.oid)
+    elif _walk_to_declare_attackers(game):
         _declare_them(game, [attacker.oid])
         if "blocked" in wants:
             _walk_past_blocks(game)
+
+
+def _be_attacked_by(game: Game, oid: int) -> None:
+    """Play into the opponent's turn and have ``oid`` attack player 0, then
+    stop at player 0's first priority with the attack live.
+
+    Player 0's own declaration is made empty on the way. Bails quietly on
+    anything unexpected, like the rest of the family: the caller's assertion
+    is what reports the failure.
+    """
+    for _ in range(3):
+        if not _walk_to_declare_attackers(game):
+            return
+        if game.state.active_player != 0:
+            break
+        _declare_them(game, [])
+    else:
+        return
+    _declare_them(game, [oid])
+    for _ in range(10):
+        decision = game.pending()
+        if decision is None or game.state.combat is None:
+            return
+        if decision.kind is DecisionKind.PRIORITY and decision.player == 0:
+            return
+        passing = next(
+            (a for a in game.legal_actions() if a.kind is ActionKind.PASS), None
+        )
+        if passing is None:
+            return
+        game.apply(passing)
 
 
 def _walk_past_blocks(game: Game) -> None:
