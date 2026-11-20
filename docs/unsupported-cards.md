@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**531 cards** blocked by **450** capabilities.
+**532 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -174,6 +174,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
+| [deals-damage-to-creature-trigger](#deals-damage-to-creature-trigger) | 1 | 19999 | trigger_event |
 | [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -3453,6 +3454,20 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+
+</details>
+
+## deals-damage-to-creature-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger on the permanent half of DAMAGE_DEALT whose subject is the DEALER (source: "self" = this creature dealt it) and which fires only when the recipient is a creature -- e.g. `deals_damage_to_creature`, or a recipient filter (`recipient: {types: ["Creature"]}`) on `deals_damage` -- for "Whenever this creature deals damage to a creature" (combat, fight or any other damage)
+  <br>Why the existing vocabulary won't do: `deals_damage` takes the dealer as subject but covers both halves (players, planeswalkers, battles, creatures) and its `filter` reads only the dealer, so damage to a player alone would add a counter. `dealt_damage` has the creature victim as subject but no key naming the dealer; its `damaged_by: "self"` filter reads the per-turn damage ledger, so another source damaging a creature Strax hit earlier this turn would also fire it. `deals_combat_damage` misses the fight from Grenades!, and the `fights` trigger misses combat damage and fires on a 0-power fight. No condition_key or binding exposes the event's recipient type. The Grenades! line itself is expressible (cost mana+tap+sacrifice Artifact; choose_player random over each_player as a binding; reflexive_trigger whose target selector uses controller {binding}, exclude_self, then fight).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strax, Sontaran Nurse** (rank 19999) — `strax_sontaran_nurse`
+  - Glory of Battle — Whenever Strax deals damage to a creature, put a +1/+1 counter on Strax.
 
 </details>
 

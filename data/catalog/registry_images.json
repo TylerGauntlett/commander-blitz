@@ -2335,6 +2335,10 @@
     "artist": "Yoshitaka Amano",
     "scryfall_id": "24b2833e-6c08-4f33-8481-f65f2a063c60"
   },
+  "boltbender": {
+    "artist": "Lars Grant-West",
+    "scryfall_id": "04193a0a-8ebc-4c8d-9eb6-661a373485f6"
+  },
   "bonders_enclave": {
     "artist": "Cliff Childs",
     "scryfall_id": "7cfeb33d-65c7-4aa2-a1d8-964e6cd73b82"
@@ -3671,6 +3675,10 @@
     "artist": "Jim Pavelec",
     "scryfall_id": "419fea28-3813-4e65-8b90-6d335fdf0a0b"
   },
+  "collective_defiance": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "17d512c0-fc02-419f-90f2-a6acc7815bd4"
+  },
   "collective_effort": {
     "artist": "Jurijus Chitrovas",
     "scryfall_id": "7a0c3645-2006-452c-87c1-6e9f24fcfb87"
@@ -4886,6 +4894,10 @@
   "defiling_daemogoth": {
     "artist": "Quintin Gleim",
     "scryfall_id": "2cde79eb-91c3-4a42-a2d3-e733e3b56846"
+  },
+  "deflecting_swat": {
+    "artist": "Patrick Ga\u00f1as",
+    "scryfall_id": "c2cb5a93-d2f9-4df6-9488-c57b6f18ae2b"
   },
   "deft_duelist": {
     "artist": "David Palumbo",
@@ -9316,6 +9328,10 @@
     "artist": "Andrea Piparo",
     "scryfall_id": "40339715-22d0-4f99-822b-a00d9824f27a"
   },
+  "heliod_s_intervention": {
+    "artist": "Daarken",
+    "scryfall_id": "3c3793c3-c9f6-4fb0-9b95-cd4cd07ab40d"
+  },
   "helionaut": {
     "artist": "Franz Vohwinkel",
     "scryfall_id": "3a4d395e-d7d6-4e93-9761-b0bae63b7b1c"
@@ -9708,6 +9724,10 @@
   "hour_of_reckoning": {
     "artist": "Joseph Meehan",
     "scryfall_id": "5e234ce4-e179-45b8-851c-76a7371044aa"
+  },
+  "hourglass_of_the_lost": {
+    "artist": "Lindsey Look",
+    "scryfall_id": "147b0ab2-3ac8-425a-9e1d-7580de58235c"
   },
   "hover_barrier": {
     "artist": "Mathias Kollros",
@@ -13358,6 +13378,10 @@
   "mox_sapphire": {
     "artist": "Dan Frazier",
     "scryfall_id": "f7d82f1d-631e-4668-9d10-7bf0ee515267"
+  },
+  "moxite_refinery": {
+    "artist": "Nadia Hurianova",
+    "scryfall_id": "ad617991-21c0-47c6-bc84-6e7c33edf7ee"
   },
   "mr_foxglove": {
     "artist": "Anna Podedworna",
@@ -22155,6 +22179,10 @@
   "urianger_augurelt": {
     "artist": "Vilhelmas Banys",
     "scryfall_id": "44d44107-da15-41b9-8dfb-6335c1cbd83a"
+  },
+  "ursine_monstrosity": {
+    "artist": "Carlos Palma Cruchaga",
+    "scryfall_id": "4fdb69ae-2d15-4e91-b229-4d03ff9d6fbb"
   },
   "urza_s_cave": {
     "artist": "Mark Poole",

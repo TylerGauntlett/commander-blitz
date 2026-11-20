@@ -32352,6 +32352,45 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "all_on_stack": true,
+              "op": "choose_new_targets"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities",
+          "trigger": {
+            "event": "turned_face_up",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "disguise": "{1}{R}",
+      "id": "boltbender",
+      "mana_cost": "{3}{R}",
+      "name": "Boltbender",
+      "oracle_text": "Disguise {1}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -52902,6 +52941,114 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "escalate": "{1}",
+      "id": "collective_defiance",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Collective Defiance",
+      "oracle_text": "Escalate {1} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target player discards all the cards in their hand, then draws that many cards.\n• Collective Defiance deals 4 damage to target creature.\n• Collective Defiance deals 3 damage to target opponent or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": {
+                    "target": "who"
+                  },
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "who"
+                  }
+                }
+              ],
+              "label": "Target player discards all the cards in their hand, then draws that many cards."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "damage",
+                  "target": "victim"
+                }
+              ],
+              "label": "Collective Defiance deals 4 damage to target creature."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "damage",
+                  "target": "face"
+                }
+              ],
+              "label": "Collective Defiance deals 3 damage to target opponent or planeswalker."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "who",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "id": "victim",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "face",
+          "kind": "any",
+          "mode": 2,
+          "player_selector": "opponent",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -70186,6 +70333,45 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "is_commander": true,
+            "zone": "battlefield"
+          }
+        },
+        "mana": "{0}"
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "deflecting_swat",
+      "mana_cost": "{2}{R}",
+      "name": "Deflecting Swat",
+      "oracle_text": "If you control a commander, you may cast this spell without paying its mana cost.\nYou may choose new targets for target spell or ability.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "choose_new_targets",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell_or_ability"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -130385,6 +130571,86 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "heliod_s_intervention",
+      "mana_cost": "{X}{W}{W}",
+      "name": "Heliod's Intervention",
+      "oracle_text": "Choose one —\n• Destroy X target artifacts and/or enchantments.\n• Target player gains twice X life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "broken"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy X target artifacts and/or enchantments."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "x": true
+                      }
+                    ]
+                  },
+                  "op": "gain_life",
+                  "player": {
+                    "target": "healed"
+                  }
+                }
+              ],
+              "label": "Target player gains twice X life."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "broken",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "healed",
+          "kind": "player",
+          "mode": 1,
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -135909,6 +136175,87 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}. Put a time counter on this artifact."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "remove_counters_x": {
+              "counter": "time"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Planeswalker",
+                  "Battle"
+                ],
+                "controller": "you",
+                "count": "all",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hourglass_of_the_lost",
+      "mana_cost": "{2}{W}",
+      "name": "Hourglass of the Lost",
+      "oracle_text": "{T}: Add {W}. Put a time counter on this artifact.\n{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -188171,6 +188518,101 @@
       "mana_cost": "{0}",
       "name": "Mox Sapphire",
       "oracle_text": "{T}: Add {U}.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "remove_counters_x": {
+              "from": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ]
+              }
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "counter": "charge",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put X charge counters on target artifact."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "x": true
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "t2"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put X +1/+1 counters on target creature."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.\n• Put X charge counters on target artifact.\n• Put X +1/+1 counters on target creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "moxite_refinery",
+      "mana_cost": "{2}",
+      "name": "Moxite Refinery",
+      "oracle_text": "{2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.\n• Put X charge counters on target artifact.\n• Put X +1/+1 counters on target creature.",
       "source": "auto",
       "types": [
         "Artifact"
@@ -313996,6 +314438,99 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "as": "foe",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "random": true
+            },
+            {
+              "defender": {
+                "binding": "foe"
+              },
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "must_attack_player"
+            },
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              },
+              "toughness": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "graveyard"
+                  },
+                  "of": "card_type"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ursine_monstrosity",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Ursine Monstrosity",
+      "oracle_text": "Trample\nAt the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bear",
+        "Mutant"
       ],
       "toughness": 3,
       "types": [

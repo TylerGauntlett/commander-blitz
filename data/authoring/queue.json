@@ -30552,12 +30552,12 @@
     },
     "Boltbender": {
       "edhrec_rank": 10169,
-      "gate": "template",
+      "gate": null,
       "name": "Boltbender",
-      "reason": "no template for: Disguise {1}{R}",
+      "reason": "",
       "scryfall_id": "04193a0a-8ebc-4c8d-9eb6-661a373485f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boltfire": {
@@ -49982,12 +49982,12 @@
     },
     "Collective Defiance": {
       "edhrec_rank": 7525,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Defiance",
-      "reason": "no template for: Escalate {1}",
+      "reason": "",
       "scryfall_id": "17d512c0-fc02-419f-90f2-a6acc7815bd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Drone": {
@@ -65492,12 +65492,12 @@
     },
     "Deflecting Swat": {
       "edhrec_rank": 75,
-      "gate": "template",
+      "gate": null,
       "name": "Deflecting Swat",
-      "reason": "no template for: If you control a commander, you may cast this spell without paying its mana cost",
+      "reason": "",
       "scryfall_id": "c2cb5a93-d2f9-4df6-9488-c57b6f18ae2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deflection": {
@@ -125482,12 +125482,12 @@
     },
     "Heliod's Intervention": {
       "edhrec_rank": 1456,
-      "gate": "template",
+      "gate": null,
       "name": "Heliod's Intervention",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3c3793c3-c9f6-4fb0-9b95-cd4cd07ab40d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heliod's Pilgrim": {
@@ -130582,12 +130582,12 @@
     },
     "Hourglass of the Lost": {
       "edhrec_rank": 5928,
-      "gate": "template",
+      "gate": null,
       "name": "Hourglass of the Lost",
-      "reason": "no template for: {T}: Add {W}. Put a time counter on this artifact",
+      "reason": "",
       "scryfall_id": "147b0ab2-3ac8-425a-9e1d-7580de58235c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "House Cartographer": {
@@ -180362,12 +180362,12 @@
     },
     "Moxite Refinery": {
       "edhrec_rank": 5399,
-      "gate": "template",
+      "gate": null,
       "name": "Moxite Refinery",
-      "reason": "no template for: {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate",
+      "reason": "",
       "scryfall_id": "ad617991-21c0-47c6-bc84-6e7c33edf7ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mr. Foxglove": {
@@ -299562,12 +299562,12 @@
     },
     "Ursine Monstrosity": {
       "edhrec_rank": 9663,
-      "gate": "template",
+      "gate": null,
       "name": "Ursine Monstrosity",
-      "reason": "no template for: At the beginning of combat on your turn, mill a card and choose an opponent at random. Thi",
+      "reason": "",
       "scryfall_id": "4fdb69ae-2d15-4e91-b229-4d03ff9d6fbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urtet, Remnant of Memnarch": {
