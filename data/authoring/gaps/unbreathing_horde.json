@@ -1,0 +1,18 @@
+{
+  "card_id": "unbreathing_horde",
+  "name": "Unbreathing Horde",
+  "oracle_text": "This creature enters with a +1/+1 counter on it for each other Zombie you control and each Zombie card in your graveyard.\nIf this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+  "blocked_sentences": [
+    "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it."
+  ],
+  "needs": [
+    {
+      "capability": "prevent_damage_remove_counter",
+      "kind": "replacement",
+      "what": "a continuous total-shield replacement on a permanent (static prevent_damage with prevent_all, affects self_only) whose one replacement event both prevents all of a damage event and removes exactly one +1/+1 counter from the shielded permanent, regardless of the damage amount (Protean Hydra's sibling with a fixed one instead of 'that many')",
+      "why_existing_wont_do": "The prevent_damage static's 'counter' rider (Panther Habit, characteristics.damage_into_counters) only PUTS 'that many' counters and the loader refuses any counter but +1/+1; there is no remove direction or fixed amount. prevent_damage_permanent's 'effects' rider is a one-shot op limited to duration this_turn, not a continuous static. A separate damage_prevented trigger with remove_counters would use the stack instead of being part of the replacement, so it is an approximation"
+    }
+  ],
+  "closest_existing": ["prevent_damage", "prevent_damage_permanent", "remove_counters"],
+  "confidence": "high"
+}
