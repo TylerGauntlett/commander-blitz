@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
-| [add-color](#add-color) | 2 | 2040 | op |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -93,6 +92,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
+| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 1 | 8076 | cost |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
@@ -265,7 +265,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
 | [grant-exiled-triggered-abilities](#grant-exiled-triggered-abilities) | 1 | 20131 | static_effect |
-| [grant-player-hexproof](#grant-player-hexproof) | 1 | 2072 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
@@ -354,6 +353,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [per-player-damage-amount](#per-player-damage-amount) | 1 | 13205 | value |
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
@@ -1443,24 +1443,6 @@ Blocks **3** cards.
 
 </details>
 
-## add-color
-
-Blocks **2** cards.
-
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("that creature is black in addition to its other colors") without touching its card types or base power/toughness, applied to the creature card the same loyalty ability just returned from the graveyard (named by the ability's target t1)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half (types added, duration permanent) but writes subtypes only. animate is the only one-shot that writes colors: a non-exact animate adds its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield. return_from_graveyard and put_onto_battlefield carry no color option. Same gap as necromantic_selection.
-- **(op)** a one-shot effect that permanently adds a color to one permanent ("it's black in addition to its other colors") without touching its types or power/toughness, applied to the creature card just returned by return_from_graveyard (which would also need an `as` binding so the following effect can name that one returned card)
-  <br>Why the existing vocabulary won't do: add_subtype covers the Zombie half but changes subtypes only. animate is the only one-shot that writes colors: a non-exact animate does add its colors, but the loader refuses it without power and toughness whenever the animation includes Creature (and an empty types list defaults to Creature), so it would overwrite the returned creature's base P/T; keep_colors is legal only on an exact animation, which replaces colors and types rather than adding. The set_colors static replaces colors and lasts only while its source is on the battlefield, and this sorcery exiles itself. return_from_graveyard has no `as`, so even the add_subtype half has no way to name the one returned card apart from `link`/`returned_with`, which ties it to an exiled source.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Liliana, Death's Majesty** (rank 2040) — `liliana_death_s_majesty`
-  - −3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.
-- **Necromantic Selection** (rank 3356) — `necromantic_selection`
-  - It's a black Zombie in addition to its other colors and types.
-
-</details>
-
 ## adventure
 
 Blocks **2** cards.
@@ -2341,6 +2323,20 @@ Blocks **1** card.
 
 </details>
 
+## additional-cost-sacrificed-binding
+
+Blocks **1** card.
+
+- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
+  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
+  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
+
+</details>
+
 ## additional-cost-target
 
 Blocks **1** card.
@@ -2816,7 +2812,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Everybody Lives!** (rank 2072) — `everybody_lives`
-  - Players gain hexproof until end of turn.
   - Players can't lose life this turn and players can't lose the game or win the game this turn.
 
 </details>
@@ -4793,21 +4788,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-player-hexproof
-
-Blocks **1** card.
-
-- **(op)** a one-shot op (or a `player` recipient on grant_keyword) that gives each selected player hexproof until end of turn, from an instant
-  <br>Why the existing vocabulary won't do: `player_hexproof` exists only as a static_effect, which an instant cannot install; grant_keyword resolves objects only and skips seats; grant_protection's `player` recipient grants protection qualities, not hexproof
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everybody Lives!** (rank 2072) — `everybody_lives`
-  - Players gain hexproof until end of turn.
-  - Players can't lose life this turn and players can't lose the game or win the game this turn.
-
-</details>
-
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -6059,6 +6039,20 @@ Blocks **1** card.
 
 - **Necrodominance** (rank 4322) — `necrodominance`
   - At the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.
+
+</details>
+
+## per-player-damage-amount
+
+Blocks **1** card.
+
+- **(value)** a `damage` to a set of players whose amount is evaluated per recipient (each opponent's land count minus yours, so an opponent with no more lands is dealt 0) within one op, so all of it is one simultaneous damage event and `damage`'s `as` sums it for the following `create_token` of `treasure_token`
+  <br>Why the existing vocabulary won't do: `damage.amount` is evaluated once for every recipient; `for_each_player` with `loop_value` would deal each opponent's damage as a separate op (a separate `event_batch`, so batched damage triggers fire per opponent) and each `damage.as` would overwrite the last, binding one opponent's damage instead of the total. The binding itself (`damage.as`) exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiteful Repossession** (rank 13205) — `spiteful_repossession`
+  - Spiteful Repossession deals damage to each opponent who controls more lands than you equal to the difference. Then create a number of Treasure tokens equal to the damage dealt this way.
 
 </details>
 

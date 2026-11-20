@@ -71,6 +71,13 @@ RECORDING_OPS = frozenset(
         #: See `ops_stack.op_counter`.
         "counter",
         "create_token",
+        #: A plain **int**, like `lose_life`'s: the damage actually dealt,
+        #: after prevention and replacement, summed over every recipient the
+        #: op hit -- Enter the God-Eternals' "you gain life equal to the
+        #: damage dealt this way". 0 for a prevented hit or a recipient that
+        #: left. Not the excess (120.4a), which is a different number. See
+        #: `ops_life.op_damage`.
+        "damage",
         #: The permanents actually **destroyed** -- Avenge's "for each creature
         #: destroyed this way". Not the ones chosen: indestructible,
         #: regeneration, a shield counter and totem armor each leave a chosen
@@ -181,6 +188,12 @@ RECORDING_OPS = frozenset(
         #: because `_run_delayed` rebuilds its context with no targets. A binding
         #: is carried forward where a target is not.
         "return_to_hand",
+        #: The cards actually returned, where the return sent them -- "return a
+        #: creature card put into a graveyard this way to the battlefield
+        #: under your control. **It's** a black Zombie…" (Necromantic
+        #: Selection). What arrived, not what was chosen, as for
+        #: `put_onto_battlefield`. See `ops_cards.op_return_from_graveyard`.
+        "return_from_graveyard",
         "reveal",
         #: The matches a reveal-until walk moved, every seat's -- "put those
         #: creature cards onto the battlefield … they're goaded". See

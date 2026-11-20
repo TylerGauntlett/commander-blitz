@@ -56,8 +56,9 @@ class TempEffect:
     ``kind`` is ``"pump"`` (power/toughness modification), ``"keyword"``,
     ``"lock_abilities"`` ("its activated abilities can't be activated this
     turn"), ``"ability"`` (a whole triggered or activated ability granted by
-    another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
-    turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
+    another permanent), ``"borrowed_abilities"`` (every activated ability of
+    another card, Havengul Lich's), ``"animate"`` ("becomes a 4/4 creature
+    until end of turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
     addition to its other types": ``subtypes`` added, base P/T untouched), or
     ``"control"`` ("gain control of target permanent until end of turn"), or
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
@@ -97,6 +98,14 @@ class TempEffect:
     #: For ``kind == "ability"``: which of the source card's
     #: ``grantable_abilities`` was handed over.
     ability_index: int | None = None
+    #: For ``kind == "borrowed_abilities"``: the activated abilities of another
+    #: card, snapshotted as `primitives.gain_activated_abilities` resolved, and
+    #: ``source`` is that card. Havengul Lich: "…gains all activated abilities
+    #: of that card until end of turn." The abilities themselves rather than a
+    #: pointer, because they are read off the card where it was then (a spell on
+    #: the stack) and the gain outlives the card going anywhere else -- the
+    #: snapshot `StackItem.granted_ability` already makes for one activation.
+    abilities: tuple[Ability, ...] = ()
     #: For ``kind == "animate"``: what the permanent becomes.  Types and subtypes
     #: are *added* -- "it's still a land" is the default rather than a special
     #: case, because every printed animation says it.
@@ -216,6 +225,7 @@ class TempEffect:
             "toughness": self.toughness,
             "keyword": self.keyword,
             "source": self.source,
+            "abilities": [ability.text for ability in self.abilities],
             "types": list(self.types),
             "subtypes": list(self.subtypes),
             "colors": list(self.colors),
@@ -1186,6 +1196,37 @@ class LifeFloor:
     #: requires that number.
     floor: int = 1
     duration: str = "this_turn"
+    source: int | None = None
+
+
+#: The durations a `PlayerHexproof` may carry. "Until end of turn" is the only
+#: one printed on a card that installs one.
+PLAYER_HEXPROOF_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class PlayerHexproof:
+    """"**You** and permanents you control gain hexproof until end of turn." --
+    Lazotep Plating.  Rule 702.11d.
+
+    Hexproof over a **player** for a while, which neither end of the engine
+    could say. The `player_hexproof` static lives on a permanent, so an Instant
+    that leaves nothing behind cannot carry it, and an emblem holding it would
+    last forever; `grant_keyword` writes a `TempEffect` onto an *object*, and a
+    seat is not one. `PlayerProtection` is the near miss and the wrong card:
+    protection also prevents damage and stops the player's *own* spells
+    targeting them, where hexproof only turns away opponents.
+
+    Its own table, read beside the static by
+    `player_statics.player_has_hexproof` -- the one question
+    `targeting._player_allowed` asks -- so declaring targets and the 608.2b
+    re-check both see it. Swept in the cleanup step with the tables beside it.
+    """
+
+    player: int
+    duration: str = "this_turn"
+    #: The spell that granted it, for the log. Not part of the lifetime: Lazotep
+    #: Plating is in the graveyard before its hexproof has done anything.
     source: int | None = None
 
 
@@ -2427,6 +2468,22 @@ class TurnLedger:
     #: the per-ability tally), so an activation that was countered or whose
     #: source died paying its minus still counts -- it was activated.
     loyalty_activations: dict[int, int] = field(default_factory=dict)
+    #: How many times each player has **cast a spell from a graveyard or
+    #: activated an ability of a card in a graveyard** this turn -- Laboratory
+    #: Drudge's "if you've cast a spell from a graveyard or activated an ability
+    #: of a card in a graveyard this turn". Keyed by the caster or activator;
+    #: any graveyard, not only their own.
+    #:
+    #: Neither half is derivable after the fact. A spell's
+    #: `GameObject.cast_from_zone` records only that object's latest cast, so it
+    #: cannot say whether a card cast twice was cast from a graveyard this turn,
+    #: and an unearth or scavenge exiles its card as the cost is paid and leaves
+    #: no record of the activation at all. The cast is counted in
+    #: the SPELL_CAST fold (every cast path stamps `cast_from_zone` in
+    #: `stack.push_spell` before it fires), the activation in `Game._activate`
+    #: and `Game._activate_mana` before the cost is paid, while the card is
+    #: still in the graveyard.
+    graveyard_plays: dict[int, int] = field(default_factory=dict)
     #: Extra loyalty activations a permanent may make this turn, beyond 606.3's
     #: one: oid -> how many. The Chain Veil: "For each planeswalker you
     #: control, you may activate one of its loyalty abilities once this turn
@@ -2706,6 +2763,7 @@ class TurnLedger:
         self.ability_activations.clear()
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
+        self.graveyard_plays.clear()
         self.targeted_activations.clear()
         self.ability_sources.clear()
         self.cards_to_graveyard = 0

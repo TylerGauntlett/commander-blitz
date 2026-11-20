@@ -1,0 +1,79 @@
+{
+  "_comment": "Cards for tests/unit/ledger/test_graveyard_plays_this_turn.py. Never part of a deck list. `t_drudge_watcher` is Laboratory Drudge's end-step line alone on an artifact (the \"if\" follows the effect, so it is checked on resolution only, not an intervening if); `t_flashback_cantrip` is an instant cast from hand or flashed back; `t_grave_lifegain` has one ability activated from the graveyard by exiling itself (an unearth's shape), and `t_board_lifegain` the same ability activated on the battlefield, as the counterfactual.",
+  "cards": [
+    {
+      "id": "t_drudge_watcher",
+      "name": "Test Drudge Watcher",
+      "oracle_text": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "any"
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">",
+                "left": {"graveyard_plays_this_turn": "you"},
+                "right": {"const": 0}
+              },
+              "then": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_flashback_cantrip",
+      "name": "Test Flashback Cantrip",
+      "oracle_text": "You gain 1 life.\nFlashback {1}",
+      "mana_cost": "{1}",
+      "types": ["Instant"],
+      "flashback": {"mana": "{1}"},
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+      ]
+    },
+    {
+      "id": "t_grave_lifegain",
+      "name": "Test Grave Lifegain",
+      "oracle_text": "{1}, Exile this card from your graveyard: You gain 2 life.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Exile this card from your graveyard: You gain 2 life.",
+          "active_zones": ["graveyard"],
+          "cost": {"mana": "{1}", "exile_from_graveyard": {"self_only": true, "count": 1}},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_board_lifegain",
+      "name": "Test Board Lifegain",
+      "oracle_text": "{1}: You gain 2 life.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: You gain 2 life.",
+          "cost": {"mana": "{1}"},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+          ]
+        }
+      ]
+    }
+  ]
+}

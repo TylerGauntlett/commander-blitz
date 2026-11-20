@@ -899,6 +899,15 @@ def reference() -> dict:
             " compared `==` against `{\"const\": 0}`, as the trigger's"
             " `condition`. A per-player tally counted at activation, so it"
             " remembers a planeswalker that has since left.",
+            "\"If you've cast a spell from a graveyard or activated an ability"
+            " of a card in a graveyard this turn\" is the value"
+            " `{\"graveyard_plays_this_turn\": \"you\"}` compared `>` against"
+            " `{\"const\": 0}` -- an `if` effect's `condition` for \"draw a card"
+            " if...\" (checked on resolution), a trigger's `condition` for"
+            " \"At..., if...\" (an intervening if). One per-player"
+            " tally of both halves, any graveyard, counted as they happen, so"
+            " plays before the permanent entered count. Not"
+            " `cards_from_graveyard_this_turn` (every card leaving a graveyard).",
             "\"Your opponents can't gain life\" is the player-wide static"
             " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
             " and \"any\" for the other sentences). Every gain is stopped,"

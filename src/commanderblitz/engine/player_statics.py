@@ -812,7 +812,13 @@ def player_has_hexproof(state: GameState, pid: int) -> bool:
     from shroud and from protection. Read by `targeting._player_allowed`, the
     one place a seat is offered as a target, so declaring and the 608.2b
     re-check both see it.
+
+    Two sources answer it: the static, and the timed `PlayerHexproof` a
+    one-shot installs (Lazotep Plating's "you … gain hexproof until end of
+    turn"), which the cleanup step sweeps.
     """
+    if any(entry.player == pid for entry in state.player_hexproofs):
+        return True
     return _player_static(state, pid, "player_hexproof")
 
 

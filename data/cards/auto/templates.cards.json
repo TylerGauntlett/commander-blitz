@@ -36634,6 +36634,69 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "brightflame",
+      "mana_cost": "{X}{R}{R}{W}{W}",
+      "name": "Brightflame",
+      "oracle_text": "Radiance — Brightflame deals X damage to target creature and each other creature that shares a color with it. You gain life equal to the damage dealt this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "it",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "dealt",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "it",
+            "shares_a_color_with": "it",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -57549,6 +57612,59 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "corrupt",
+      "mana_cost": "{5}{B}",
+      "name": "Corrupt",
+      "oracle_text": "Corrupt deals damage to any target equal to the number of Swamps you control. You gain life equal to the damage dealt this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Swamp"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "as": "dealt",
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -59562,6 +59678,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "dealt",
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "binding": "dealt"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, this creature deals 1 damage to each opponent. You gain life equal to the damage dealt this way.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "creeping_bloodsucker",
+      "mana_cost": "{1}{B}",
+      "name": "Creeping Bloodsucker",
+      "oracle_text": "At the beginning of your upkeep, this creature deals 1 damage to each opponent. You gain life equal to the damage dealt this way.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -59937,6 +60101,51 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "crippling_fear",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Crippling Fear",
+      "oracle_text": "Choose a creature type. Creatures that aren't of the chosen type get -3/-3 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "choose_type",
+          "prompt": "Choose a creature type"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -60389,6 +60598,66 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "cruel_revival",
+      "mana_cost": "{4}{B}",
+      "name": "Cruel Revival",
+      "oracle_text": "Destroy target non-Zombie creature. It can't be regenerated. Return up to one target Zombie card from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "no_regeneration": true,
+          "objects": {
+            "target": "victim"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "zombie"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "victim",
+          "kind": "permanent",
+          "selector": {
+            "not_subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "zombie",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "subtypes": [
+              "Zombie"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -62449,6 +62718,68 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "binding": "event_player",
+                "except": "you"
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted player is attacked, create a 2/2 black Zombie creature token. Each opponent attacking that player does the same.",
+          "trigger": {
+            "controller": "any",
+            "defending": "enchanted_player",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "curse_of_disturbance",
+      "mana_cost": "{2}{B}",
+      "name": "Curse of Disturbance",
+      "oracle_text": "Enchant player\nWhenever enchanted player is attacked, create a 2/2 black Zombie creature token. Each opponent attacking that player does the same.",
+      "source": "auto",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -73172,6 +73503,92 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Zombie creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever another Zombie you control dies, target opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "diregraf_captain",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Diregraf Captain",
+      "oracle_text": "Deathtouch\nOther Zombie creatures you control get +1/+1.\nWhenever another Zombie you control dies, target opponent loses 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Soldier"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -87285,6 +87702,78 @@
           ],
           "op": "for_each_player",
           "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "enter_the_god_eternals",
+      "mana_cost": "{2}{U}{U}{B}",
+      "name": "Enter the God-Eternals",
+      "oracle_text": "Enter the God-Eternals deals 4 damage to target creature and you gain life equal to the damage dealt this way. Target player mills four cards. Amass Zombies 4. (Put four +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "as": "dealt",
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "mill",
+          "player": {
+            "target": "t2"
+          }
+        },
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "amass",
+          "subtype": "Zombie"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
         }
       ],
       "types": [
@@ -110119,6 +110608,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When this creature enters, target player mills five cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "geralf_s_mindcrusher",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Geralf's Mindcrusher",
+      "oracle_text": "When this creature enters, target player mills five cards.\nUndying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -112943,6 +113515,70 @@
       "toughness": 4,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Gisa and Geralf enters, mill four cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "static_max_per_turn": 1,
+          "text": "Once during each of your turns, you may cast a Zombie creature spell from your graveyard."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "gisa_and_geralf",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Gisa and Geralf",
+      "oracle_text": "When Gisa and Geralf enters, mill four cards.\nOnce during each of your turns, you may cast a Zombie creature spell from your graveyard.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -120313,6 +120949,65 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Tap five untapped Zombies you control: Put target creature card from a graveyard onto the battlefield under your control."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gravespawn_sovereign",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Gravespawn Sovereign",
+      "oracle_text": "Tap five untapped Zombies you control: Put target creature card from a graveyard onto the battlefield under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -122155,6 +122850,95 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard": 1,
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "study",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 3,
+              "counter": "study"
+            },
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "returned",
+              "controller": "you",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Zombie"
+              ]
+            },
+            {
+              "colors": [
+                "B"
+              ],
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_color"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "grimoire_of_the_dead",
+      "mana_cost": "{4}",
+      "name": "Grimoire of the Dead",
+      "oracle_text": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead.\n{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -126847,6 +127631,86 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cast_only": true
+            },
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "from": {
+                    "binding": "subject"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "gain_activated_abilities"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+              "trigger": {
+                "controller": "you",
+                "event": "spell_cast",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "havengul_lich",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Havengul Lich",
+      "oracle_text": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -157582,6 +158446,61 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "graveyard_plays_this_turn": "you"
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "laboratory_drudge",
+      "mana_cost": "{3}{U}",
+      "name": "Laboratory Drudge",
+      "oracle_text": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Horror"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -159426,6 +160345,43 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lazotep_plating",
+      "mana_cost": "{1}{U}",
+      "name": "Lazotep Plating",
+      "oracle_text": "Amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nYou and permanents you control gain hexproof until end of turn. (You and they can't be the targets of spells or abilities your opponents control.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "amass",
+          "subtype": "Zombie"
+        },
+        {
+          "keywords": [
+            "hexproof"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -159584,6 +160540,47 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Zombies 1",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "lazotep_reaver",
+      "mana_cost": "{1}{B}",
+      "name": "Lazotep Reaver",
+      "oracle_text": "When this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Beast"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -162522,6 +163519,126 @@
       "abilities": [
         {
           "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "zombie_2_2_b"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Create a 2/2 black Zombie creature token. Mill two cards."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "as": "returned",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_subtype",
+              "subtypes": [
+                "Zombie"
+              ]
+            },
+            {
+              "colors": [
+                "B"
+              ],
+              "objects": {
+                "binding": "returned"
+              },
+              "op": "add_color"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "−3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_subtypes": [
+                  "Zombie"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: Destroy all non-Zombie creatures."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_death_s_majesty",
+      "loyalty": 5,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Liliana, Death's Majesty",
+      "oracle_text": "+1: Create a 2/2 black Zombie creature token. Mill two cards.\n−3: Return target creature card from your graveyard to the battlefield. That creature is a black Zombie in addition to its other colors and types.\n−7: Destroy all non-Zombie creatures.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "loyalty": 2
           },
           "effects": [
@@ -162853,6 +163970,84 @@
             "controller": "you",
             "subtypes": [
               "Zombie"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Zombies you control get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "zombie_2_2_b"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}{B}"
+              },
+              "player": "you",
+              "prompt": "Pay {1}{B} to create a 2/2 black Zombie token (Liliana's Devotee)?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if a creature died this turn, you may pay {1}{B}. If you do, create a 2/2 black Zombie creature token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_s_devotee",
+      "mana_cost": "{2}{B}",
+      "name": "Liliana's Devotee",
+      "oracle_text": "Zombies you control get +1/+0.\nAt the beginning of your end step, if a creature died this turn, you may pay {1}{B}. If you do, create a 2/2 black Zombie creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Zombie"
             ],
             "types": [
               "Creature"
@@ -163123,6 +164318,152 @@
       "mana_cost": "{1}{B}{B}",
       "name": "Liliana, the Last Hope",
       "oracle_text": "+1: Up to one target creature gets -2/-1 until your next turn.\n−2: Mill two cards, then you may return a creature card from your graveyard to your hand.\n−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\"",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "milled",
+                  "subtypes": [
+                    "Zombie"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "times": [
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Zombie"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "subtypes": [
+                  "Zombie"
+                ]
+              },
+              "op": "grant_graveyard_cast",
+              "unmetered": true
+            }
+          ],
+          "kind": "activated",
+          "text": "−3: You may cast Zombie spells from your graveyard this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_untouched_by_death",
+      "loyalty": 4,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Liliana, Untouched by Death",
+      "oracle_text": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life.\n−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control.\n−3: You may cast Zombie spells from your graveyard this turn.",
       "source": "auto",
       "subtypes": [
         "Liliana"
@@ -166693,6 +168034,63 @@
         {
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Undergrowth — When this creature enters, it deals 1 damage to target opponent for each creature card in your graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "lotleth_giant",
+      "mana_cost": "{6}{B}",
+      "name": "Lotleth Giant",
+      "oracle_text": "Undergrowth — When this creature enters, it deals 1 damage to target opponent for each creature card in your graveyard.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Giant"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -167595,6 +168993,57 @@
       "subtypes": [
         "Human",
         "Advisor"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, each opponent loses 3 life.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "loyal_subordinate",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Loyal Subordinate",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nLieutenant — At the beginning of combat on your turn, if you control your commander, each opponent loses 3 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
       ],
       "toughness": 1,
       "types": [
@@ -185872,6 +187321,42 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "murder",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murder",
+      "oracle_text": "Destroy target creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -189187,6 +190672,71 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "id": "necromantic_selection",
+      "mana_cost": "{4}{B}{B}{B}",
+      "name": "Necromantic Selection",
+      "oracle_text": "Destroy all creatures, then return a creature card put into a graveyard this way to the battlefield under your control. It's a black Zombie in addition to its other colors and types. Exile Necromantic Selection.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "as": "returned",
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "binding": "destroyed",
+            "controller": "any",
+            "count": 1,
+            "is_token": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "objects": {
+            "binding": "returned"
+          },
+          "op": "add_subtype",
+          "subtypes": [
+            "Zombie"
+          ]
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "objects": {
+            "binding": "returned"
+          },
+          "op": "add_color"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -208881,6 +210431,52 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "pilfered_plans",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Pilfered Plans",
+      "oracle_text": "Target player mills two cards. Draw two cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "mill",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -240746,6 +242342,43 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "mana": "{B}{B}",
+        "sacrifice": {
+          "controller": "you",
+          "count": 2,
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "scourge_of_nel_toth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Scourge of Nel Toth",
+      "oracle_text": "Flying\nYou may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -254341,6 +255974,41 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sinister_sabotage",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Sinister Sabotage",
+      "oracle_text": "Counter target spell.\nSurveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "surveil",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -261777,6 +263445,61 @@
         "Illusion"
       ],
       "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}",
+            "sacrifice": {
+              "any_types": [
+                "Creature",
+                "Planeswalker"
+              ],
+              "controller": "you",
+              "count": 1,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, Sacrifice a creature or planeswalker: You gain 1 life and draw a card."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "spark_reaper",
+      "mana_cost": "{2}{B}",
+      "name": "Spark Reaper",
+      "oracle_text": "{3}, Sacrifice a creature or planeswalker: You gain 1 life and draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -276882,6 +278605,39 @@
             }
           },
           "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "syphon_soul",
+      "mana_cost": "{2}{B}",
+      "name": "Syphon Soul",
+      "oracle_text": "Syphon Soul deals 2 damage to each other player. You gain life equal to the damage dealt this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "as": "dealt",
+          "op": "damage",
+          "player": "each_opponent"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
           "player": "you"
         }
       ],
@@ -306274,6 +308030,71 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "remove_counters": {
+            "amount": 1,
+            "counter": "+1/+1"
+          },
+          "text": "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "unbreathing_horde",
+      "mana_cost": "{2}{B}",
+      "name": "Unbreathing Horde",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each other Zombie you control and each Zombie card in your graveyard.\nIf this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Zombie"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Zombie"
+                  ],
+                  "zone": "graveyard"
+                }
+              }
+            ]
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "is_token": false,
             "types": [
@@ -306946,6 +308767,52 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "undermine",
+      "mana_cost": "{U}{U}{B}",
+      "name": "Undermine",
+      "oracle_text": "Counter target spell. Its controller loses 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": {
+            "controller_of": "victim"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -308233,6 +310100,66 @@
       "subtypes": [
         "Equipment"
       ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{7}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{7}, {T}, Sacrifice this artifact: Destroy target permanent."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "unstable_obelisk",
+      "mana_cost": "{3}",
+      "name": "Unstable Obelisk",
+      "oracle_text": "{T}: Add {C}.\n{7}, {T}, Sacrifice this artifact: Destroy target permanent.",
+      "source": "auto",
       "types": [
         "Artifact"
       ]
@@ -312155,6 +314082,75 @@
         "Warlock"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "intimidate"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control have intimidate."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Vela or another creature you control leaves the battlefield, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "vela_the_night_clad",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{4}{U}{B}",
+      "name": "Vela the Night-Clad",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)\nOther creatures you control have intimidate.\nWhenever Vela or another creature you control leaves the battlefield, each opponent loses 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -316362,6 +318358,62 @@
         "Cleric"
       ],
       "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Zombies 1",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "subtypes": [
+              "Zombie"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Zombie tokens you control have deathtouch."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vizier_of_the_scorpion",
+      "mana_cost": "{2}{B}",
+      "name": "Vizier of the Scorpion",
+      "oracle_text": "When this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nZombie tokens you control have deathtouch.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -327679,6 +329731,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}: Exile target card from a graveyard."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "withered_wretch",
+      "mana_cost": "{B}{B}",
+      "name": "Withered Wretch",
+      "oracle_text": "{1}: Exile target card from a graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -333773,6 +335875,52 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "zombie_apocalypse",
+      "mana_cost": "{3}{B}{B}{B}",
+      "name": "Zombie Apocalypse",
+      "oracle_text": "Return all Zombie creature cards from your graveyard to the battlefield tapped, then destroy all Humans.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Zombie"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "subtypes": [
+              "Human"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

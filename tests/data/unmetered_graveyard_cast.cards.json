@@ -1,0 +1,45 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_unmetered_graveyard_cast.py. t_zombie_will is Liliana, Untouched by Death's -3 as a sorcery: an uncapped this-turn grant over Zombie spells, no exile rider. t_gy_zombie is a cheap Zombie creature card for it to free and t_gy_imp the same body without the subtype.",
+  "cards": [
+    {
+      "id": "t_zombie_will",
+      "name": "Test Zombie Will",
+      "oracle_text": "You may cast Zombie spells from your graveyard this turn.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {
+          "op": "grant_graveyard_cast",
+          "affects_spells": {"subtypes": ["Zombie"]},
+          "unmetered": true
+        }
+      ]
+    },
+    {
+      "id": "t_gy_zombie",
+      "name": "Test Graveyard Zombie",
+      "oracle_text": "",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    },
+    {
+      "id": "t_gy_imp",
+      "name": "Test Graveyard Imp",
+      "oracle_text": "",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Imp"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}

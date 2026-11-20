@@ -333,8 +333,9 @@ verdict.
 
 A prop a card needs only for its own shape is added for that card alone, so no
 other card's position moves. The conditional props are the helpers beside
-`build_sandbox`: `swap_in_tribal_body`, `swap_in_legendary_body`,
-`swap_in_artifact_body` and `swap_in_colorless_sources` swap a slot;
+`build_sandbox`: `swap_in_tribal_body`, `swap_in_counted_tribe_body`,
+`swap_in_legendary_body`, `swap_in_artifact_body` and
+`swap_in_colorless_sources` swap a slot;
 `spare_cards_in_hand` and `spare_graveyard_roles` add fodder for an additional
 cost; `graveyard_spell_props` puts a targetless instant or sorcery card in your
 graveyard or the opponent's (which is otherwise empty) for a spell whose
@@ -342,7 +343,11 @@ required `card_in_graveyard` target selects Instant or Sorcery there.
 `swap_in_artifact_body` serves two shapes: a non-artifact card whose toughness
 counts your artifacts, and a card whose required target is a plain artifact (or
 artifact creature) you control, "Enchant artifact you control"
-(`must_target_own_artifact`). `dress_own_creature` is the one addition rather
+(`must_target_own_artifact`). `swap_in_counted_tribe_body` is the tribal swap
+for a 0/0 whose enters-with +1/+1 counters count "other <tribe> you control"
+(`enters_counting_own_tribe`): your first creature becomes the quietest body of
+that tribe (`quiet_counted_tribe_body`), a token preferred so both pools pick
+the same one. `dress_own_creature` is the one addition rather
 than a swap: for a card whose required target is a creature already enchanted,
 "Enchant creature with another Aura attached to it"
 (`must_target_enchanted_creature`), your first creature wears the quietest Aura

@@ -34,6 +34,7 @@ from .structs import (
     LifeLock,
     NextSpellDiscount,
     OutcomeLock,
+    PlayerHexproof,
     PlayerProtection,
     SacrificeRestriction,
     StackItem,
@@ -466,6 +467,10 @@ class GameState:
     #: `outcome_locks`, installed by the same Instant and swept in the same
     #: cleanup step, and read only by `primitives.damage_player`.
     life_floors: list[LifeFloor] = field(default_factory=list)
+    #: "You and permanents you control gain hexproof until end of turn" -- see
+    #: :class:`structs.PlayerHexproof`. Swept in the cleanup step with
+    #: `life_floors`, and read only by `player_statics.player_has_hexproof`.
+    player_hexproofs: list[PlayerHexproof] = field(default_factory=list)
     #: "Until end of turn, if one or more tokens would be created under your
     #: control, twice that many of those tokens are created instead" -- see
     #: :class:`structs.TokenMultiplier`. Swept in the cleanup step with
@@ -1172,6 +1177,12 @@ class GameState:
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
+                # "…if you've cast a spell **from a graveyard** this turn"
+                # (Laboratory Drudge). `push_spell` stamped the zone on every
+                # cast path before this fired; see `TurnLedger.graveyard_plays`.
+                cast_obj = self.objects.get(data.get("oid"))
+                if cast_obj is not None and cast_obj.cast_from_zone == Zone.GRAVEYARD.value:
+                    ledger.graveyard_plays[pid] = ledger.graveyard_plays.get(pid, 0) + 1
                 # And what it was, for the conditions that ask about types
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:

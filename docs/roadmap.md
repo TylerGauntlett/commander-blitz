@@ -90,7 +90,6 @@ each heading; this table is generated from them.
 | [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
-| [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) | M | high | nothing | 0 |
 | [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) | M | high | nothing | 0 |
 | [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) | M | high | nothing | 0 |
 | [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) | L | high | nothing | 0 |
@@ -117,6 +116,7 @@ each heading; this table is generated from them.
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
+| [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
@@ -157,32 +157,32 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-3. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-4. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-5. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-6. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-7. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-8. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-9. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-10. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-11. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-12. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-13. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-14. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-15. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-16. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-17. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-18. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-19. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-20. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-21. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-22. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-23. [The Ring tempts you](#the-ring-tempts-you) — M, high
-24. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-25. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-26. [Difficulty](#difficulty) — S, medium
-27. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+2. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+3. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+4. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+5. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+6. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+7. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+8. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+9. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+10. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+11. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+12. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+13. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+14. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+15. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+16. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+17. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+18. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+19. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+20. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+21. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+22. [The Ring tempts you](#the-ring-tempts-you) — M, high
+23. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+24. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+25. [Difficulty](#difficulty) — S, medium
+26. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+27. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
 28. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
 29. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
 30. [Why a press is refused](#why-a-press-is-refused) — S, medium
@@ -547,6 +547,75 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### Granted flashback permissions without a per-turn cap
+
+Effort **S** · Impact **medium**, Lier, Return the Past and The Great Work each let one instant or sorcery out of the graveyard a turn, where the printed card lets every one go · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A permission to cast from a graveyard is metered by `max_per_turn`, read in
+`casting._permission_reaches`: an explicit `None` is uncapped, a missing key is
+one cast a turn, unless the permission grants escape or retrace. The count is
+billed per granting object through `TurnLedger` under `GRAVEYARD_CAST_SLOT`.
+
+Flashback's exile is the brake for a permission that grants it (702.34a, the
+`StackItem.exiles_instead` stamp in `Game._cast`). The two loaders say so:
+the `cast_from_graveyard` refusal in `cards/loader/__init__.py` ("Lier prints
+no per-turn cap and needs none") and the `grant_graveyard_cast` guard in
+`cards/loader/effects.py::_validate_effect`. Neither compiles that way:
+
+- The static's compile in `cards/loader/__init__.py` writes `max_per_turn: 1`
+  for a `grants_flashback` static with no printed cap; only `escape`,
+  `grants_retrace` and a non-flashback `surveilled_this_turn` get `None`.
+  Lier, Disciple of the Drowned and Return the Past are capped at one cast a
+  turn.
+- `effects/ops_cards.py::op_grant_graveyard_cast` copies the spec into the
+  static as written, and a `grants_flashback` grant carries no
+  `max_per_turn`, so it reads as one a turn. The Great Work's third chapter is
+  capped at one cast a turn.
+
+A probe shows it: with The Great Work's grant live and two instants in the
+graveyard, casting the first leaves the second uncastable.
+`tests/unit/casting/test_graveyard_cast_grant.py` and
+`tests/unit/casting/test_spells_cant_be_countered.py` each cast one card under
+a flashback permission and never a second, so nothing holds the cap either way.
+
+#### The change
+
+1. The static's compile writes `max_per_turn: None` for a `grants_flashback`
+   static with no printed cap, beside the escape and retrace cases.
+2. `op_grant_graveyard_cast` writes `max_per_turn: None` for a
+   `grants_flashback` grant that prints no `max_per_turn`, the same explicit
+   `None` its `unmetered` flag writes.
+3. The comment on `casting._permission_reaches` names flashback among the
+   uncapped permissions, and the row in
+   [rules-coverage.md](rules-coverage.md) says a flashback permission is
+   uncapped because its exile is the brake.
+
+It changes no printed cap: a permission that prints `max_per_turn` keeps it.
+It also leaves alone which permission a cast is billed to when two cover the
+same card (`casting._graveyard_cast_permission`, first unspent wins).
+
+#### Gate
+
+A unit test under `tests/unit/casting/` for the uncapped flashback permission:
+with two instants in the graveyard, casting the first under The Great Work's
+grant exiles it and leaves the second castable, and the same holds under a
+Lier-shaped static (`t_lier` in `tests/data/uncounterable_static.cards.json`).
+A permission that prints `max_per_turn: 1` beside `grants_flashback` still
+allows one cast. `tests/cards` re-verifies Lier, Return the Past and The Great
+Work through the six gates, and `tests/cards/test_golden_pool.py` is re-pinned.
+
+#### Open questions
+
+- **Re-pin and ship as a card behaviour change.** The fix changes how shipped
+  cards play, so the golden pool pin moves. Recommended: ship it as a `fix(dsl)`
+  pull request on its own, so the title says a card's play changed and the
+  merge releases it.
+- **Fix the static and the grant together.** They are the same misreading on
+  two paths. Recommended: one pull request, since both rest on the same rule and
+  one test file covers both.
 
 ### Voting: will of the council and council's dilemma
 
@@ -3764,55 +3833,6 @@ Rebellion Rising ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck onc_rebellion_rising`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Grave Danger (Starter Commander Decks)
-
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Grave Danger, the Starter Commander Decks precon released 2022-12-02, is a
-coming-soon shell on the shelf: its row `scd_grave_danger` is in
-`data/decks/sources.json` and there is no `data/decks/scd_grave_danger.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing scd_grave_danger` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Grave Danger ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck scd_grave_danger`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.

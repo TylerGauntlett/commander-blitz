@@ -1320,15 +1320,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: 'escape' beside 'grants_flashback' is two keywords "
                     f"for one cast -- escape returns the card to the graveyard"
                 )
-        elif not effect.get("max_per_turn") and not effect.get("grants_flashback"):
-            # A permission that neither meters nor exiles recasts one card every
-            # turn for ever. `grants_flashback` IS the rate limit for the cards
-            # that print no cap -- the spent card is the brake -- which is the
-            # argument the static's loader makes in the same words.
+        if "unmetered" in effect and effect["unmetered"] is not True:
             raise DslError(
-                f"{where}: grant_graveyard_cast needs 'max_per_turn' or "
-                f"'grants_flashback' -- an unmetered permission is an engine, "
-                f"not a printed line"
+                f"{where}: 'unmetered' is a flag -- write true, or leave it out"
+            )
+        if effect.get("unmetered"):
+            # "You may cast Zombie spells from your graveyard this turn"
+            # (Liliana, Untouched by Death): any number, at the printed price,
+            # each spell going where it normally would. The static's refusal
+            # is about a permission with no end -- "one card every turn for
+            # ever" -- and a grant has one: `turn.py` drops it with the turn.
+            # Opted into by name rather than by leaving the cap out, so a grant
+            # whose author forgot "once" is still a load error.
+            for key in ("max_per_turn", "grants_flashback", "escape", "grants_retrace"):
+                if effect.get(key) not in (None, False):
+                    raise DslError(
+                        f"{where}: 'unmetered' beside '{key}' -- "
+                        + (
+                            "a cap and no cap at once"
+                            if key == "max_per_turn"
+                            else f"'{key}' is already its own brake"
+                        )
+                    )
+        elif (
+            effect.get("escape") is None
+            and not effect.get("max_per_turn")
+            and not effect.get("grants_flashback")
+        ):
+            # A permission that neither meters nor exiles and was not declared
+            # `unmetered` is one whose author left the printed "once" out.
+            # `grants_flashback` IS the rate limit for the cards that print no
+            # cap -- the spent card is the brake -- which is the argument the
+            # static's loader makes in the same words.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'max_per_turn', "
+                f"'grants_flashback' or 'unmetered' -- a permission that "
+                f"neither meters nor exiles says so by name"
             )
     if op == "spell_enters_with_counters":
         # The map is the whole effect: without it the spell is promised
@@ -3256,6 +3283,62 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: add_subtype's 'counter' is the 'while_counter' duration's "
                 f"kind and means nothing on {effect.get('duration', 'permanent')!r}"
             )
+    if op == "gain_activated_abilities":
+        # "…gains all activated abilities of that card until end of turn."
+        # Naming no card, or no permanent to gain, is a sentence that does
+        # nothing and loads exactly like one that works.
+        if not isinstance(effect.get("from"), Mapping):
+            raise DslError(
+                f"{where}: gain_activated_abilities needs 'from' naming the card whose "
+                f'activated abilities are gained, e.g. {{"binding": "subject"}}'
+            )
+        validate_selector(effect["from"], f"{where}.from")
+        if "objects" not in effect:
+            raise DslError(
+                f"{where}: gain_activated_abilities needs 'objects' naming what gains them"
+            )
+        # The one printed duration. A clock accepted and dropped would be a
+        # card that reads "for as long as" and loses the abilities at cleanup.
+        if effect.get("duration", "until_end_of_turn") != "until_end_of_turn":
+            raise DslError(
+                f"{where}: gain_activated_abilities lasts until end of turn; "
+                f"got duration {effect['duration']!r}"
+            )
+        # "All activated abilities" is the whole of it: a grantable index or a
+        # keyword list would load and be ignored.
+        if unknown := {"ability", "ability_index", "keywords"} & set(effect):
+            raise DslError(
+                f"{where}: gain_activated_abilities gains every activated ability of "
+                f"'from' and takes no {sorted(unknown)}; use grant_ability for one "
+                f"of this card's grantable abilities"
+            )
+    if op == "add_color":
+        # "It's black in addition to its other colors." An op naming no colour
+        # is a sentence that does nothing and loads exactly like one that works.
+        colors = effect.get("colors")
+        if not isinstance(colors, list) or not colors:
+            raise DslError(f"{where}: add_color needs 'colors', a non-empty list of colour letters")
+        for c in colors:
+            if c not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown colour {c!r}")
+        if "objects" not in effect:
+            raise DslError(f"{where}: add_color needs 'objects' -- there is nothing to change")
+        # Every printed line of this shape names no duration, and the op
+        # writes none: a clock accepted and dropped would be a card that reads
+        # as "until end of turn" and stays black for good.
+        if effect.get("duration", "permanent") != "permanent":
+            raise DslError(
+                f"{where}: add_color has no duration -- the colour stays until the "
+                f"permanent leaves the battlefield; got {effect['duration']!r}"
+            )
+        # Colours only. "A black Zombie" is this op beside an `add_subtype`, and
+        # a replaced colour ("it's a green Mutant ... it loses its other colors")
+        # is `animate` with `exact`.
+        if unknown := {"types", "subtypes", "power", "toughness", "keywords"} & set(effect):
+            raise DslError(
+                f"{where}: add_color changes colours only, not {sorted(unknown)}; "
+                f"use add_subtype for subtypes and animate for types or a size"
+            )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
         # and does nothing at all.
@@ -3617,6 +3700,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             list(effect.get("keywords") or ()) + ([effect["keyword"]] if "keyword" in effect else []),
             where,
         )
+    # "**You** and permanents you control gain hexproof until end of turn"
+    # (Lazotep Plating). A player has exactly one keyword the engine models
+    # (702.11d), and its one clock is the cleanup step's -- so any other word,
+    # or a duration that would outlast the turn, is refused here rather than
+    # granted to a seat that would silently ignore it.
+    if op == "grant_keyword" and effect.get("player") is not None:
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        words = list(effect.get("keywords") or ()) + (
+            [effect["keyword"]] if "keyword" in effect else []
+        )
+        if words != ["hexproof"]:
+            raise DslError(
+                f"{where}: the 'player' half of grant_keyword grants exactly "
+                f"['hexproof'] (702.11d), not {words!r}; give permanents other "
+                f"keywords in a separate grant_keyword"
+            )
+        if effect.get("duration", "until_end_of_turn") != "until_end_of_turn":
+            raise DslError(
+                f"{where}: a player's granted hexproof lasts until end of turn; "
+                f"'duration' {effect['duration']!r} is not implemented for 'player'"
+            )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (

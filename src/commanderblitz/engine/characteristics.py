@@ -772,6 +772,13 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 # timestamp order, touching nothing else.
                 toughness = temp.toughness
                 continue
+            if temp.kind == "color":
+                # "It's black in addition to its other colors" (Necromantic
+                # Selection): a layer-5 addition and nothing else, ordered
+                # against the animations by timestamp -- an exact animation
+                # that began later replaces it (`primitives.add_colors`).
+                colors.update(temp.colors)
+                continue
             if temp.exact:
                 types = set(temp.types)
                 subtypes = {
@@ -1153,16 +1160,28 @@ def exiled_activated_abilities(
         face = state.card_of(card)
         if not wanted & set(face.types):
             continue
-        for ability in face.abilities:
-            if (
-                ability.is_activated
-                and Zone.BATTLEFIELD in ability.active_zones
-                and ability.level is None
-                and not ability.solved
-                and ability.threshold is None
-            ):
-                out.append((oid, ability))
+        out.extend((oid, ability) for ability in face.abilities if lendable_activated(ability))
     return out
+
+
+def lendable_activated(ability: Ability) -> bool:
+    """Is this printed ability one "all activated abilities of" hands over?
+
+    Every activated ability, mana abilities included (602.1, 605.1a), that
+    works on the battlefield: one that works only from another zone (cycling,
+    unearth) is left behind, since the permanent receiving it could never
+    activate it there, and so is a Class level's, a Case's "Solved —" and a
+    station threshold's, which are gated on the object that printed them.
+    Shared by `exiled_activated_abilities` and the `gain_activated_abilities`
+    op, which must not disagree about what "all" means.
+    """
+    return (
+        ability.is_activated
+        and Zone.BATTLEFIELD in ability.active_zones
+        and ability.level is None
+        and not ability.solved
+        and ability.threshold is None
+    )
 
 
 def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -1507,7 +1526,8 @@ def _derived_abilities(
     all.
 
     A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
-    exiled card's printed face, which no pool index can name.
+    exiled card's printed face, or a `gain_activated_abilities` op lent off
+    another card, which no pool index can name.
 
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
@@ -1545,6 +1565,7 @@ def _derived_abilities(
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
     out.extend(_op_granted_abilities(state, obj))
+    out.extend(_op_borrowed_abilities(obj))
     # 305.6, last so no grant's index moves with a land type. A loss of all
     # abilities takes these with the printed ones: the type change that gave
     # them is layer 4 and the loss layer 6 (613.1d, 613.1f). Read against the
@@ -1563,7 +1584,8 @@ def _has_op_grants(obj: GameObject) -> bool:
     answered with the printed list.
     """
     return any(
-        temp.kind == "ability" for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
+        temp.kind in ("ability", "borrowed_abilities")
+        for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
     )
 
 
@@ -1651,6 +1673,30 @@ def _op_granted_abilities(
     return out
 
 
+def _op_borrowed_abilities(obj: GameObject) -> list[tuple[Ability, Borrowed]]:
+    """The activated abilities a `gain_activated_abilities` op lent this permanent.
+
+    Havengul Lich: "…this creature gains all activated abilities of that card
+    until end of turn." Read off the ``borrowed_abilities`` records on
+    ``until_eot`` (`primitives.gain_activated_abilities`), each holding its own
+    snapshot of the card's abilities, so the gain stands whatever became of the
+    card -- countered, resolved, dead or exiled. A `Borrowed` provenance like
+    `grant_exiled_abilities`'s, because the definition is in no
+    ``grantable_abilities`` pool: an activation rides the ability itself onto
+    the stack (`StackItem.granted_ability`). A timed loss of all abilities that
+    began later hides the record (613.7), as it does every other grant.
+    """
+    out: list[tuple[Ability, Borrowed]] = []
+    cut = timed_loss_cutoff(obj)
+    for temp in obj.until_eot:
+        if temp.kind != "borrowed_abilities" or temp.source is None:
+            continue
+        if _hidden_by_loss(temp, cut):
+            continue
+        out.extend((ability, Borrowed(temp.source, ability.index)) for ability in temp.abilities)
+    return out
+
+
 def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int, int] | None:
     """Who granted the ability now sitting at ``index``, and where it lives.
 
@@ -1685,8 +1731,9 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
 def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
     """Is the ability at ``index`` on this permanent borrowed off an exiled card?
 
-    ``grant_exiled_abilities``: the definition lives on a card in exile, not
-    in any ``grantable_abilities`` pool, so an activation snapshots the ability
+    ``grant_exiled_abilities``, or the `gain_activated_abilities` op's
+    snapshot: the definition lives on another card, not in any
+    ``grantable_abilities`` pool, so an activation snapshots the ability
     itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
     pair -- 608.2 has it resolve even once the card has left exile.
     """
@@ -1694,7 +1741,9 @@ def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
     if obj is None or not obj.on_battlefield or obj.face_down:
         return False
     statics = _ability_statics(state)
-    if not any(static.get("effect") == "grant_exiled_abilities" for _, static in statics):
+    if not any(
+        static.get("effect") == "grant_exiled_abilities" for _, static in statics
+    ) and not any(temp.kind == "borrowed_abilities" for temp in obj.until_eot):
         return False
     derived = _derived_abilities(state, obj, statics)
     return 0 <= index < len(derived) and isinstance(derived[index][1], Borrowed)
@@ -2754,6 +2803,16 @@ def recorded_subtypes(obj: GameObject) -> tuple[str, ...]:
     return obj.added_subtypes + timed if timed else obj.added_subtypes
 
 
+def recorded_colors(obj: GameObject) -> tuple[str, ...]:
+    """The colours written onto ``obj`` "in addition to its other colors".
+
+    Every ``color`` entry `primitives.add_colors` put on
+    `GameObject.animations`. A pipeline input, read by a static's filter
+    beside `recorded_subtypes`.
+    """
+    return tuple(c for temp in obj.animations if temp.kind == "color" for c in temp.colors)
+
+
 def _matches_printed(
     card: CardDef,
     selector: Mapping[str, Any],
@@ -3285,6 +3344,12 @@ def _matches_wherever(
             # "…it becomes an Aura" (Necromancy): `_compute`'s change under the
             # identical condition, so "each Aura you control" counts it here too.
             card = dataclasses.replace(card, subtypes=card.subtypes | {"Aura"})
+        if added_colors := recorded_colors(obj):
+            # "It's black in addition to its other colors": written onto the
+            # object by `primitives.add_colors`, so a pipeline input as
+            # `recorded_subtypes` is, and the colour half of the black Zombie a
+            # Zombie lord already sees -- Bad Moon pumps it too.
+            card = dataclasses.replace(card, colors=card.colors | set(added_colors))
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
@@ -3491,6 +3556,10 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
         return False
     return any(
         static.get("prevent_all")
+        # Unbreathing Horde's shield is answered by `damage_removes_counters`,
+        # later in `damage_permanent`: it prevents the same damage but also
+        # costs a counter, so it is the last total shield applied, not this one.
+        and not static.get("remove_counters")
         and (is_combat or not static.get("combat_only"))
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
@@ -3524,6 +3593,37 @@ def damage_into_counters(
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, static["counter"]
+    return None
+
+
+def damage_removes_counters(
+    state: GameState, oid: int, *, is_combat: bool = False
+) -> tuple[GameObject, str, int] | None:
+    """The total shield that costs this permanent counters, if any.
+
+    "If this creature would be dealt damage, prevent that damage and remove a
+    +1/+1 counter from it" -- Unbreathing Horde. A `prevent_damage` static
+    with ``prevent_all`` and ``remove_counters``: one prevention (615) whose
+    one event both prevents all of the damage and removes a **fixed** number
+    of counters, however much damage that was -- the Panther Habit shape
+    (`damage_into_counters`) with the counters going the other way.
+
+    Returns the first such static's source, its counter kind and the number
+    removed, or ``None``. First and not summed, for `damage_into_counters`'
+    reason: once one shield has prevented the damage there is none left for a
+    second to replace (616.1).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    for source_obj, static in _battlefield_statics(state):
+        spec = static.get("remove_counters")
+        if static.get("effect") != "prevent_damage" or not spec:
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return source_obj, str(spec["counter"]), int(spec.get("amount", 1))
     return None
 
 

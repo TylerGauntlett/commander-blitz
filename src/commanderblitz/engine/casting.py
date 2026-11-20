@@ -1294,8 +1294,9 @@ def _permission_reaches(
     # beside `surveilled_this_turn` (Eye of Duskmantle) and `escape`
     # (Underworld Breach): each cast takes a card out, and whatever returns
     # is a new object (400.7) -- or, for escape, the exiled cards are the
-    # brake. A missing key is one a turn, which a resolving grant
-    # (`grant_graveyard_cast`) relies on, unless it grants escape.
+    # brake. `grant_graveyard_cast` writes it too for a grant that is
+    # `unmetered` (Liliana, Untouched by Death), which the turn bounds. A
+    # missing key is one a turn, unless it grants escape or retrace.
     cap = static.get(
         "max_per_turn",
         None if static.get("escape") or static.get("grants_retrace") else 1,

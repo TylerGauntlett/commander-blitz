@@ -1231,6 +1231,7 @@ class Game:
         # that strands mid-payment still spends the turn's allowance -- the same
         # reading `resolutions_this_turn` takes of its own event.
         state.turn_ledger.activated(oid, action.ability_index)
+        _count_graveyard_activation(state, pid, oid)
         # Exhaust (702.177) is spent at the same moment and for the same
         # reason: the activation happened, whether or not it resolves.
         if ability.exhaust:
@@ -2083,6 +2084,7 @@ class Game:
         # for his own power, so the card was an arbitrary amount of mana per
         # turn rather than one activation's worth.
         state.turn_ledger.activated(oid, action.ability_index)
+        _count_graveyard_activation(state, pid, oid)
 
         # Fired rather than emitted, and tagged, so `TriggerSpec.mana_ability`
         # is a live restriction rather than a guard that never runs: a card
@@ -2360,6 +2362,18 @@ class Game:
 #: Declare-blockers is the combat-trick window -- blocks are in and damage is
 #: next, which is the one non-main step players reliably want.
 ALWAYS_STOP_STEPS = frozenset({Step.DECLARE_BLOCKERS})
+
+
+def _count_graveyard_activation(state: GameState, pid: int, oid: int) -> None:
+    """Count an activation of an ability of a card in a graveyard (Laboratory Drudge).
+
+    Read before the cost is paid, because an unearth or scavenge exiles the card
+    as part of it -- see `TurnLedger.graveyard_plays`.
+    """
+    obj = state.objects.get(oid)
+    if obj is not None and obj.zone is Zone.GRAVEYARD:
+        plays = state.turn_ledger.graveyard_plays
+        plays[pid] = plays.get(pid, 0) + 1
 
 
 def _only_pass_or_mana(state: GameState, options: list[Action], player) -> bool:

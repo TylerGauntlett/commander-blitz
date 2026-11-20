@@ -1312,6 +1312,13 @@ class AbilityModel(BaseModel):
     #: `prevent_damage` total shield the kind it puts "that many" of for the
     #: damage it prevents (Panther Habit; ``+1/+1`` only).
     counter: str | None = None
+    #: On a `prevent_damage` total shield: the counters it **removes** from the
+    #: damaged permanent as part of the same prevention, a fixed number however
+    #: much damage it prevents -- Unbreathing Horde's "prevent that damage and
+    #: remove a +1/+1 counter from it" is ``{"counter": "+1/+1", "amount": 1}``
+    #: (``amount`` defaults to one, ``+1/+1`` only). The removing mirror of
+    #: ``counter``, which puts "that many"; the two are exclusive.
+    remove_counters: dict[str, Any] | None = None
     #: `replace_counters`: only counters an **effect** puts on. Doubling
     #: Season's "if **an effect** would put one or more counters…" -- and a
     #: cost is not an effect (118.1, 602.2b), so a planeswalker's +1 loyalty

@@ -1,0 +1,22 @@
+{
+  "card_id": "rite_of_consumption",
+  "name": "Rite of Consumption",
+  "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nRite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.",
+  "blocked_sentences": [
+    "Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way."
+  ],
+  "needs": [
+    {
+      "capability": "additional_cost_sacrificed_binding",
+      "kind": "cost",
+      "what": "an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{\"power_of\": {\"binding\": <as>}}` on resolution",
+      "why_existing_wont_do": "`cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`"
+    }
+  ],
+  "closest_existing": [
+    "cost.sacrifice.as",
+    "additional_cost",
+    "damage.as"
+  ],
+  "confidence": "high"
+}

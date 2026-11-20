@@ -16,6 +16,7 @@ from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
     damage_into_counters,
+    damage_removes_counters,
     player_protected_from,
     prevented_damage,
     prevents_all_damage,
@@ -60,6 +61,7 @@ from .triggers import fire
 from .zones import graveyard_hosts, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .carddef import Ability
     from .state import GameState
 
 # ----------------------------------------------------------------------
@@ -943,6 +945,54 @@ def damage_permanent(
             reason="shield_counter",
         )
         return 0
+    # "If this creature would be dealt damage, prevent that damage and remove
+    # a +1/+1 counter from it" (Unbreathing Horde). One prevention (615), as
+    # Panther Habit's is, with the counters going the other way and a fixed
+    # number of them however big the hit. The damage is still prevented with
+    # no counter left to remove; `remove_counters` simply takes none.
+    #
+    # **Last of the total shields**, the mirror of the Habit being first, for
+    # 616.1: the damaged permanent's controller orders the replacements, and
+    # the loader allows only +1/+1 counters here, so they always apply every
+    # shield that costs nothing first -- protection, a total shield, a fog,
+    # absorb, and a shield counter (whose loss shrinks nothing) -- and reach
+    # this one only for damage that would otherwise land.
+    #
+    # **Once per event.** Combat damage is one simultaneous event (510.2), so
+    # two blockers hitting the Horde cost it one counter, not two: a second
+    # assignment in the same combat `batch` is prevented without paying again.
+    #
+    # Under "damage can't be prevented" 615.12 still applies it: it prevents
+    # nothing, but its additional effect happens, so the counter comes off and
+    # the damage carries on below.
+    if (horde := damage_removes_counters(state, oid, is_combat=is_combat)) is not None:
+        shield_source, kind, removed = horde
+        paid = is_combat and batch is not None and _horde_paid(state, oid, batch)
+        mark = {"batch": batch} if is_combat and batch is not None else {}
+        if preventable:
+            fire(
+                state,
+                EventType.DAMAGE_PREVENTED,
+                player=obj.controller,
+                source=source_oid,
+                oid=oid,
+                amount=amount,
+                to="permanent",
+                reason=PREVENT_REMOVE_COUNTERS,
+                **mark,
+            )
+        else:
+            # A log line, not a prevention: nothing was prevented, and a
+            # `damage_prevented` trigger must not hear it. It is what a second
+            # blow in the same combat event reads to know the counter is paid.
+            state.emit(
+                PREVENT_REMOVE_COUNTERS, player=obj.controller, source=source_oid,
+                oid=oid, reason=PREVENT_REMOVE_COUNTERS, **mark,
+            )
+        if not paid:
+            remove_counters(state, oid, kind, removed, by=shield_source.controller)
+        if preventable:
+            return 0
     # "If equipped creature would deal combat damage, it deals **double** that
     # damage instead" -- Inquisitor's Flail, Furnace of Rath, Fiery
     # Emancipation -- or "that much damage **plus 1**" (Thor, Asgard's
@@ -1463,6 +1513,34 @@ def remove_counters(
             removed_by=obj.controller if by is None else by,
         )
     return taken
+
+
+PREVENT_REMOVE_COUNTERS = "prevent_remove_counters"
+
+
+def _horde_paid(state: GameState, oid: int, batch: int) -> bool:
+    """Has this combat damage event already cost ``oid`` its counters?
+
+    Unbreathing Horde's shield removes its counter once per damage **event**,
+    and combat damage is one (510.2) however many creatures deal it, while
+    `damage_permanent` hears it one assignment at a time. So the second
+    assignment looks back for the first one's mark -- the `DAMAGE_PREVENTED`
+    (or, under "damage can't be prevented", the log line) carrying this
+    permanent and this `batch` -- and stops at the first event of an earlier
+    batch, since batches only count up.
+    """
+    for event in reversed(state.events):
+        data = event.data
+        seen = data.get("batch")
+        if seen is not None and seen < batch:
+            return False
+        if (
+            seen == batch
+            and data.get("oid") == oid
+            and data.get("reason") == PREVENT_REMOVE_COUNTERS
+        ):
+            return True
+    return False
 
 
 def spend_shield_counter(state: GameState, oid: int, *, source: int | None = None) -> bool:
@@ -2363,6 +2441,38 @@ def set_base_toughness(
     _stats_changed(state, obj, toughness=toughness)
 
 
+def add_colors(
+    state: GameState, oid: int, colors: Sequence[str], *, source: int | None = None
+) -> tuple[str, ...]:
+    """ "It's black in addition to its other colors." Indefinitely, layer 5.
+
+    The colour half of "it's a black Zombie in addition to its other colors and
+    types" (Necromantic Selection, Grimoire of the Dead, Liliana, Death's
+    Majesty); `add_subtypes` is the other half. An *adding* effect: the printed
+    colours stay, and no type, subtype or size is touched -- what separates it
+    from `animate`, which sets a base power and toughness on any creature
+    animation.
+
+    A ``color`` `TempEffect` on `GameObject.animations`, beside
+    `set_base_toughness`'s, so `characteristics._compute` reads it in the same
+    timestamp-ordered pass as the indefinite animations (613.7): an Oko's
+    exact "becomes a green Elk" that began later replaces these colours, and
+    one that began earlier is added to. It lasts as long as the permanent does;
+    leaving the battlefield empties `animations` (400.7).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return ()
+    added = tuple(dict.fromkeys(colors))
+    if not added:
+        return ()
+    obj.animations.append(
+        TempEffect(kind="color", colors=added, source=source, timestamp=state.alloc_timestamp())
+    )
+    state.bump_chars()
+    return added
+
+
 def animate(
     state: GameState,
     oid: int,
@@ -2625,6 +2735,32 @@ def grant_ability(
         obj.granted_abilities_permanent.append(effect)
     else:
         obj.until_eot.append(effect)
+    state.bump_chars()
+
+
+def gain_activated_abilities(
+    state: GameState, oid: int, card_oid: int, abilities: Sequence[Ability]
+) -> None:
+    """Lend ``oid`` every one of ``abilities`` -- ``card_oid``'s -- until end of turn.
+
+    Havengul Lich: "…this creature gains all activated abilities of that card
+    until end of turn." A layer-6 ability-adding effect (613.1f) on
+    `until_eot`, so cleanup ends it and leaving the battlefield takes it
+    (400.7). The abilities are the caller's snapshot of the card, not a pointer
+    to it: once gained they are the permanent's own (113.6, 602.1) and stay so
+    whatever becomes of the card. Nothing to lend lends nothing.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or not abilities:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="borrowed_abilities",
+            source=card_oid,
+            abilities=tuple(abilities),
+            timestamp=state.alloc_timestamp(),
+        )
+    )
     state.bump_chars()
 
 

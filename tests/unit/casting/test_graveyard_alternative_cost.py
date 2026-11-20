@@ -181,7 +181,8 @@ class TestThePrintedLineIsClaimed:
         assert "graveyard" in self._residual(graveyard_cost=dearer)
 
     def test_a_printed_extra_payment_is_not_this_line(self):
-        # Scourge of Nel Toth's shape: the mana is only part of the price.
+        # A printed sacrifice the card does not charge: the mana is only part
+        # of the price (test_graveyard_alternative_sacrifice.py reads it).
         line = (
             "You may cast this card from your graveyard by paying {2}{W} and "
             "sacrificing two creatures rather than paying its mana cost."

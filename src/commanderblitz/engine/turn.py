@@ -54,6 +54,7 @@ from .temp_effects import (
     clear_next_spell_discounts,
     clear_outcome_locks,
     clear_permanent_shields,
+    clear_player_hexproofs,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_token_multipliers,
@@ -905,6 +906,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # Bolas). Owned by no permanent: the walker may be long gone.
     clear_uncounterable_grants(state, "this_turn")
     clear_life_floors(state, "this_turn")
+    # Lazotep Plating's "you … gain hexproof until end of turn". Owned by no
+    # permanent: the instant that granted it is already in the graveyard.
+    clear_player_hexproofs(state, "this_turn")
     # Kaya, Geist Hunter's "until end of turn" doubling. Owned by no permanent,
     # so nothing else would end it: the walker that made it may be long gone.
     clear_token_multipliers(state, "this_turn")

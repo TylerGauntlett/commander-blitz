@@ -220,7 +220,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '"You may play the exiled card this turn" — impulse draw'),
     "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
                        H_PLAYABLE),
-    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `escape` grants them escape instead, at that cost only.",
+    "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `max_per_turn` caps the casts, `grants_flashback` exiles each, `unmetered` declares neither; `escape` grants them escape instead, at that cost only.",
                              "Casting out of every graveyard, until end of turn"),
     "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
                        None),
@@ -271,6 +271,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                        "Token copies"),
     "grant_ability": ("Board", "Give permanents one of the card's `grantable_abilities`.",
                       "Granting an ability"),
+    "gain_activated_abilities": ("Board", "Permanents gain every activated ability of the card `from` "
+                                 "names, read as the op resolves, until end of turn.",
+                                 "`gain_activated_abilities` — every activated ability of another card"),
     "skip_untap": ("Board", "It doesn't untap during its controller's next untap step.",
                    H_UNTAP_NONE),
     "must_attack": ("Board", "Creatures attack this turn if able.", "Attack requirements"),
@@ -361,7 +364,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Modify ----------------------------------------------------------
     "pump": ("Modify", "+N/+M until end of turn (or a duration, `as_long_as_you_control_source` included).",
              '"For as long as you control" this'),
-    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source.",
+    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. `player` gives players hexproof until end of turn.",
                       "How long a granted keyword lasts"),
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
@@ -372,6 +375,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     "for good, for a duration, or `while_counter` (with `counter`) for as long "
                     "as a counter of that kind stays on it.",
                     '"It becomes a Vampire in addition to its other types"'),
+    "add_color": ("Modify", "Permanents gain a colour in addition to their others, for as long "
+                  "as they stay on the battlefield; no duration, no type or size.",
+                  '"It\'s a black Zombie in addition to its other colors and types"'),
     "change_text": ("Modify", "Replace one creature type or color word with another in its text.",
                     '`change_text` — "replacing all instances of one creature type"'),
     "transform": ("Modify", "Transform a double-faced permanent.", "Transforming double-faced cards"),
@@ -392,7 +398,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "lose_life": ("Life & damage", "A player loses N life; `as` records how much.", None),
     "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills over; "
                "`defender_of` hits what a creature is attacking; `divided` splits it among a target spec "
-               "as the spell is cast.",
+               "as the spell is cast; `as` records how much was actually dealt.",
                "`damage`'s `excess_to`"),
     "fight": ("Life & damage", "Two creatures fight.", H_FIGHT),
     "add_poison": ("Life & damage", "A player gets N poison counters.", None),
@@ -705,6 +711,7 @@ VALUES: dict[str, Entry] = {
     "life_lost_this_turn": ("Life the player lost this turn (spectacle).", H_LEDGER),
     "life_of": ("A player's life total (summed over a plural spec).", None),
     "loop_value": ("The current item of an enclosing `for_each`.", None),
+    "graveyard_plays_this_turn": ("Spells the player cast from a graveyard plus abilities of cards in a graveyard they activated, this turn.", H_LEDGER),
     "loyalty_activations_this_turn": ("Loyalty abilities the player activated this turn.", H_LEDGER),
     "mana_spent_of": ("Mana of a color actually spent to cast this.",
                       "`mana_spent_of` — what was paid, not what is printed"),
@@ -1084,7 +1091,7 @@ STATICS: dict[str, Entry] = {
     "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
-    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer.",
+    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, or all of it at the cost of N +1/+1 counters) or N of each damage to a seat from a matching dealer.",
                        "Absorb, which is not protection with a number"),
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",

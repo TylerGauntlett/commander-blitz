@@ -343,6 +343,9 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
     printed sentence needs nothing here: "if a spell cast this way would be put
     into a graveyard, exile it instead" is the spec's `grants_flashback`, which
     `Game._cast` stamps onto the spell's stack item as `exiles_instead`.
+
+    ``unmetered`` is the other uncapped spelling: any number of casts this turn
+    at the printed price, each spell going where it normally would.
     """
 
     if ctx.source_oid is None:
@@ -352,8 +355,16 @@ def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
         # has a source -- and granting anyway would be an uncapped permission
         # belonging to nobody.
         return
-    static = {k: v for k, v in spec.items() if k != "op"}
+    static = {k: v for k, v in spec.items() if k not in ("op", "unmetered")}
     static.setdefault("affects_player", "you")
+    if spec.get("unmetered"):
+        # "You may cast Zombie spells from your graveyard this turn" (Liliana,
+        # Untouched by Death) prints no count. Written as the explicit
+        # ``None`` `casting._permission_reaches` reads as no cap: a missing key
+        # there is one a turn. The turn bounds the grant, which is why the
+        # loader lets `unmetered` stand alone here and never on the
+        # battlefield static.
+        static["max_per_turn"] = None
     ctx.state.graveyard_cast_grants.append(
         GraveyardCastGrant(
             player=ctx.controller,
@@ -1339,6 +1350,12 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     `exile_and_return`'s ``face``, which picks a double-faced card's front or
     back. Only with ``destination: "battlefield"``, and never with
     ``host_named``: a face-down permanent is a creature, not an Aura.
+
+    ``as`` binds the cards that actually arrived at the destination, so a
+    following op can name "it" -- Necromantic Selection's `add_subtype` and
+    `add_color` over the one creature returned. `link` is the near miss: it
+    ties the creature to the source, which a sorcery that exiles itself
+    cannot be asked about afterwards.
     """
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "graveyard")
@@ -1346,6 +1363,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, selector, "Return from graveyard")
     hosts = named_hosts(ctx, spec)
     face_down = spec.get("face_down", False)
+    returned: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -1440,6 +1458,16 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
         # battlefield with anything.
         if spec.get("link") and obj.zone is Zone.BATTLEFIELD and ctx.source_oid is not None:
             obj.returned_by = ctx.source_oid
+        if obj.zone is destination:
+            returned.append(oid)
+    # "…return a creature card put into a graveyard this way to the
+    # battlefield under your control. **It's** a black Zombie…" (Necromantic
+    # Selection). ``as`` records the cards that actually arrived where the
+    # return sent them, `put_onto_battlefield`'s contract: an Aura with nothing
+    # to enchant stayed in the graveyard, and a commander sent to the command
+    # zone was not returned. Written even when nothing arrived.
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = returned
 
 
 @register("put_exiled_into_graveyard")

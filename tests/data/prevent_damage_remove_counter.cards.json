@@ -1,0 +1,49 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_prevent_damage_remove_counter.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_pr_horde is Unbreathing Horde's damage line -- a prevent_damage total shield on itself that removes one +1/+1 counter from it -- on a 0/0 Zombie; t_pr_sturdy is the same line on a 1/1, standing in for a Horde whose toughness another effect keeps above 0 so it can be hit with no counters on it. The Habit, ogre, blanket shield and Everlasting Torment come from prevent_damage_into_counters, prevent_all_damage and everlasting_torment.cards.json.",
+  "cards": [
+    {
+      "id": "t_pr_horde",
+      "name": "Test Unbreathing Horde",
+      "oracle_text": "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 0,
+      "toughness": 0,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "remove_counters": {"counter": "+1/+1", "amount": 1},
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_pr_sturdy",
+      "name": "Test Sturdy Horde",
+      "oracle_text": "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "remove_counters": {"counter": "+1/+1"},
+          "affects": {"self_only": true}
+        }
+      ]
+    }
+  ]
+}

@@ -975,9 +975,26 @@ and `grants_flashback`, which `Game._cast` stamps onto the spell's stack item as
 flashback's exile, are all shared with the static — so the second printed
 sentence needs nothing at all, and the loader asks for the same two guarantees the
 static's own loader does: a filter (an absent one would free the whole
-graveyard) and either a cap, `grants_flashback` or `escape` (a permission that
-neither meters nor exiles nor charges an exile is an engine, not a printed line;
-[Granted escape](#granted-escape) is the last).
+graveyard) and a brake, named — a cap, `grants_flashback`, `escape`
+([Granted escape](#granted-escape)) or `unmetered`.
+
+```jsonc
+{ "op": "grant_graveyard_cast",
+  "affects_spells": { "subtypes": ["Zombie"] },
+  "unmetered": true }
+```
+
+"You may cast Zombie spells from your graveyard this turn." (Liliana, Untouched
+by Death's −3.) `unmetered: true` is any number of casts at the printed price,
+each spell going where it normally would — a Zombie that resolves, dies and
+returns is castable again the same turn. The turn is the bound, which is why the
+flag exists on the grant and never on the `cast_from_graveyard` static. It must
+be `true`, and is refused beside `max_per_turn`, `grants_flashback`, `escape` and
+`grants_retrace`; a grant that names no brake at all is still refused, because
+the printed "once" is the easiest clause to drop. The near misses are each one
+clause wrong: `max_per_turn` caps an uncapped sentence, `grants_flashback`
+exiles the Zombie the card lets back into the graveyard, and `grant_playable`
+snapshots the graveyard so the Zombie that died afterwards is missed.
 
 The difference is where the permission *lives*. `cast_from_graveyard` is read off a
 permanent on the battlefield, and this chapter exiles the Saga in the same breath
@@ -7432,13 +7449,23 @@ and the destination:
 \ {2}{W} rather than paying its mana cost." Escape with nothing but mana.
 "graveyard_cost": { "mana": "{2}{W}" },
 "graveyard_cast": "graveyard"
+
+\ Scourge of Nel Toth -- "… by paying {B}{B} and sacrificing two creatures
+\ rather than paying its mana cost." The sacrifice is part of the same price.
+"graveyard_cost": { "mana": "{B}{B}",
+                    "sacrifice": { "types": ["Creature"], "controller": "you",
+                                   "zone": "battlefield", "count": 2 } },
+"graveyard_cast": "graveyard"
 ```
 
 The unkeyworded sentence has no exile rider, so it is `"graveyard_cast":
 "graveyard"`, never flashback's default. Gate 3 claims it from the field: the
-printed mana must be the declared mana and nothing else may be charged, so a
-line with a second payment (Scourge of Nel Toth's sacrifice), a condition in
-front or a rider behind it is not this sentence and stays residual.
+printed mana must be the declared mana, a printed "sacrificing <count> <noun>"
+must be the declared `sacrifice` (the count word its `count`, the plural noun
+its one type, your own battlefield) and no sacrifice may be declared when none
+is printed, and nothing else may be charged. A narrowed noun ("two other
+creatures", "two creature tokens"), any other payment, a condition in front or
+a rider behind it is not this sentence and stays residual.
 
 The mana half **replaces** the printed cost and everything else is charged on
 top, so a jump-start card repeats its own mana cost rather than leaving it out.
@@ -9144,6 +9171,27 @@ replaces the loss. Extort's "you gain that much life" is the same read.
 The binding is this op's loss alone: a second `lose_life` with the same `as`
 overwrites it rather than adding to it.
 
+## "You gain life equal to the damage dealt this way"
+
+```jsonc
+// Enter the God-Eternals
+"spell_effects": [
+  { "op": "damage", "target": "t1", "amount": { "const": 4 }, "as": "dealt" },
+  { "op": "gain_life", "player": "you", "amount": { "binding": "dealt" } } ]
+```
+
+`damage`'s `as` binds **the damage actually dealt** (120.3), summed over every
+recipient the one op hit — `objects`, `player`, `target`, `defender_of`,
+`divided`, and both halves of an `excess_to` spill — as a plain int read back
+with `{"binding": …}`. Prevented damage was never dealt (615.1), so a shield or
+protection binds 0; replaced damage is dealt in its replaced amount, so a
+doubler binds the doubled amount; a recipient gone from the battlefield is dealt
+nothing. A creature dealt more than its toughness was still dealt all of it: the
+binding is not the excess of 120.4a ("excess damage dealt this way"), which is a
+different, smaller number. `{"const": 4}` in the `gain_life` is the near miss —
+right exactly while nothing touches the damage. The binding is this op's damage
+alone; a second `damage` with the same `as` overwrites it.
+
 ### "As you cast this spell" — a value fixed at cast time
 
 A number the card fixes "as you cast this spell" (601.2) is written once, in the
@@ -9660,6 +9708,34 @@ side and the half a hexproof-shaped implementation gets wrong.
 
 `from_everything` works on the `objects` half too, which is Progenitus.
 
+## Hexproof for a **player**, until end of turn
+
+```jsonc
+{"op": "grant_keyword", "keywords": ["hexproof"], "player": "you",
+ "objects": {"zone": "battlefield", "controller": "you"}}
+```
+
+Lazotep Plating's "You and permanents you control gain hexproof until end of
+turn"; Everybody Lives!'s "Players gain hexproof" is `"player": "each_player"`
+with no `objects`. 702.11d: an opponent's spell or ability cannot target the
+player, and their own still can.
+
+- **`player`** — an ordinary player spec, resolved by `select_players`, the
+  shape `grant_protection`'s player half has. `objects` may be written beside it
+  for the permanents half, or left out.
+- **Only `hexproof`, only until end of turn.** Beside `player` the loader refuses
+  any other keyword — hexproof is the only one a player has here — and any
+  `duration`, since the player's grant ends in the cleanup step and nowhere else.
+  Grant the permanents a second keyword with a separate `grant_keyword`.
+
+The grant is a `PlayerHexproof` in `GameState.player_hexproofs`, swept by the
+cleanup step, and read by `player_statics.player_has_hexproof` beside the
+`player_hexproof` static — the one question `targeting._player_allowed` asks.
+
+Near misses: the `player_hexproof` static lives on a permanent and never ends
+on its own; `grant_protection` with `player` also prevents damage and stops the
+player's own spells, which is a different card.
+
 ## Preventing all damage to a player for the turn
 
 ```jsonc
@@ -9822,6 +9898,39 @@ as `"+1/+1"`, since the ordering above is the wrong one for a kind that hurts.
 The near miss is the total shield plus a `damage_prevented` trigger that puts
 the counters: a second ability on the stack, respondable, and resolving after
 state-based actions.
+
+## Damage prevented at the cost of a counter
+
+```jsonc
+// Unbreathing Horde: If this creature would be dealt damage, prevent that
+//                    damage and remove a +1/+1 counter from it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "remove_counters": { "counter": "+1/+1", "amount": 1 },
+  "affects": { "self_only": true } }
+```
+
+The same total shield with the counters going the other way: `remove_counters`
+takes a **fixed** number (`amount`, a whole number, default one) off the damaged
+permanent as part of the one prevention, however much damage that was. The
+damage is prevented even with no counter left to remove, which then removes
+none. It fires `DAMAGE_PREVENTED` with `reason: "prevent_remove_counters"` and
+removes the counters through `primitives.remove_counters`. Answered by
+`characteristics.damage_removes_counters`, and kept out of
+`prevents_all_damage` so the plain total shield does not answer it first.
+
+`primitives.damage_permanent` applies it **last of the total shields**, after
+protection, a total shield, a fog, absorb and a shield counter: 616.1 lets the
+damaged permanent's controller order them, and losing a +1/+1 counter only
+hurts, so it reaches only damage that would otherwise land. Combat damage is one
+event (510.2), so several blows in one combat damage step's `batch` cost the
+counters once. Under "damage can't be prevented" it still applies (615.12): the
+damage is dealt and the counters still come off.
+
+The loader accepts `remove_counters` only on `prevent_damage`, only beside
+`prevent_all`, never beside `counter`, and only as `"+1/+1"` — the ordering
+above is the wrong one for a kind whose loss helps. The near misses are
+`counter`, which puts "that many" on, and a `damage_prevented` trigger with
+`remove_counters`, a second ability on the stack.
 
 ## Preventing all damage to or by a **permanent**, for a while
 
@@ -11485,6 +11594,51 @@ written in the card's own `grantable_abilities` and cannot borrow whatever
 happens to be in exile; `imprint_characteristics` reads a card in exile but
 takes only its size and creature types.
 
+### `gain_activated_abilities` — every activated ability of another card
+
+Havengul Lich: "{1}: You may cast target creature card in a graveyard this
+turn. When you cast it this turn, this creature gains all activated abilities
+of that card until end of turn."
+
+```jsonc
+// the Lich's activated ability; t1 is a card_in_graveyard target,
+// {"controller": "any", "types": ["Creature"], "zone": "graveyard"}
+{ "op": "grant_playable", "objects": { "target": "t1" },
+  "playable": "this_turn", "playable_cast_only": true },
+{ "op": "delayed_trigger", "duration": "once_this_turn",
+  "trigger": { "event": "spell_cast", "controller": "you",
+               "subject": { "target": "t1" } },
+  "effects": [ { "op": "gain_activated_abilities",
+                 "from": { "binding": "subject" },
+                 "objects": { "self_only": true } } ] }
+```
+
+`from` names the card — here the spell the `spell_cast` subscription heard —
+and `objects` the permanents that gain. The abilities are read **once, as the op
+resolves**, off the card where it is (`abilities_of`): a spell on the stack has
+its printed abilities, so what is gained is what the card had as it was cast.
+Every activated ability that works on the battlefield, mana abilities included
+(602.1, 605.1a; `characteristics.lendable_activated`, shared with
+`grant_exiled_abilities`); never a static or a triggered one.
+
+`primitives.gain_activated_abilities` writes a `borrowed_abilities`
+`TempEffect` onto the recipient's `until_eot` holding that snapshot, so the
+gain survives the spell resolving, being countered or the creature leaving, and
+ends at cleanup or as the recipient leaves the battlefield (400.7). The
+abilities are appended after the recipient's own and are its own (113.6,
+602.1): a `{T}` taps the recipient and "this creature" is the recipient. An
+activation rides the ability onto the stack item (`StackItem.granted_ability`),
+as a `grant_exiled_abilities` one does. A timed loss of all abilities that
+began later hides them (613.7).
+
+The loader refuses it without `from` or `objects`, with any `duration` but
+`until_end_of_turn`, and with `ability`, `ability_index` or `keywords`.
+
+**The near misses**: `grant_ability` hands over one fixed entry of this card's
+own `grantable_abilities`; `become_copy` takes the name and every
+characteristic; the `grant_exiled_abilities` static lends off cards linked in
+exile for as long as they stay there.
+
 ### `set_creature_types` — "it loses all other creature types"
 
 "Celebration — As long as two or more nonland permanents entered the
@@ -11987,6 +12141,43 @@ it lasts — see [A basic land type is a mana ability](#a-basic-land-type-is-a-m
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
+
+## "It's a black Zombie in addition to its other colors and types"
+
+```jsonc
+{ "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+  "objects": { "binding": "destroyed", "types": ["Creature"], "is_token": false, "count": 1 },
+  "as": "returned" },
+{ "op": "add_subtype", "subtypes": ["Zombie"], "objects": { "binding": "returned" } },
+{ "op": "add_color", "colors": ["B"], "objects": { "binding": "returned" } }
+```
+
+Necromantic Selection's second and third sentences. The sentence is two ops over
+one binding: `add_subtype` for the Zombie and `add_color` for the black. "They're
+black Zombies" (Grimoire of the Dead) is the same pair over a
+`put_onto_battlefield`'s `as`; "that creature" on a returned target (Liliana,
+Death's Majesty) is the same pair over the return's `as`.
+
+`add_color` takes `colors`, a non-empty list of colour letters, and `objects`.
+The colours are **added**: the printed ones stay, and no type, subtype or size
+changes. It has no `duration`, because no printed line of this shape has one;
+the colour lasts until the permanent leaves the battlefield. The loader refuses
+a `duration`, and `types`, `subtypes`, `power`, `toughness` and `keywords`,
+rather than dropping them. The colour goes on `GameObject.animations` as a
+`color` entry, so it is ordered by timestamp against the indefinite animations:
+an exact `animate` that began later ("becomes a green Elk") replaces it. A static
+filter sees it, as it sees an added subtype, so Bad Moon pumps the returned
+creature.
+
+`return_from_graveyard`'s `as` binds the cards that actually arrived where the
+return sent them. An Aura with nothing to enchant and a card a replacement sent
+elsewhere are not in it, and it is written even when nothing arrived.
+
+The near miss is `animate` with `colors`. A creature animation sets a base power
+and toughness, so a reanimated 5/5 would become whatever size the card named.
+`keep_pt` is refused on a binding, and `keep_colors` belongs to an exact
+animation, which replaces colours rather than adding to them. The `set_colors`
+static is the other near miss: it replaces the colours and ends with its source.
 
 **Literal names only**, which is the other half of the split above.
 `{"chosen_type_of": "self"}` is a load error *here* and legal on the static —

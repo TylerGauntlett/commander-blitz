@@ -929,6 +929,160 @@ class TestTheArtifactProp:
         assert not pick.is_token
 
 
+class TestTheCountedTribeProp:
+    """A 0/0 entering with a counter per other creature of its tribe needs one.
+
+    Your two creatures are of no tribe such a card counts, so Unbreathing Horde
+    -- "enters with a +1/+1 counter on it for each other Zombie you control and
+    each Zombie card in your graveyard" -- entered with none and died to
+    state-based actions: gate 4's "ended in graveyard". The first creature is
+    swapped for a quiet body of the tribe, and only for a card that needs it.
+    """
+
+    HORDE = {
+        "id": "auto_test_counted_horde",
+        "name": "Auto Test Counted Horde",
+        "oracle_text": (
+            "This creature enters with a +1/+1 counter on it for each other Zombie "
+            "you control and each Zombie card in your graveyard."
+        ),
+        # Mana value 4, not the printed 3: an ``auto_test_`` id sorts first, so a
+        # three-drop would be its own `small_creature` graveyard prop -- a Zombie
+        # card the graveyard count would read.
+        "mana_cost": "{3}{B}",
+        "types": ["Creature"],
+        "subtypes": ["Zombie"],
+        "colors": ["B"],
+        "power": 0,
+        "toughness": 0,
+        "replacements": [
+            {
+                "event": "self_enters_with_counters",
+                "counter": "+1/+1",
+                "amount": {
+                    "sum": [
+                        {
+                            "count": {
+                                "zone": "battlefield",
+                                "controller": "you",
+                                "subtypes": ["Zombie"],
+                                "exclude_self": True,
+                            }
+                        },
+                        {
+                            "count": {
+                                "zone": "graveyard",
+                                "controller": "you",
+                                "subtypes": ["Zombie"],
+                            }
+                        },
+                    ]
+                },
+            }
+        ],
+    }
+
+    def _merged(self, pool: CardRegistry, payload: dict) -> tuple[CardRegistry, object]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def _variant(self, **changes) -> dict:
+        return {**self.HORDE, "id": "auto_test_horde_variant", "name": "Auto Test Horde Variant", **changes}
+
+    def _own_zombies(self, game) -> list:
+        return [
+            o
+            for o in game.state.battlefield_objects(0)
+            if "Zombie" in game.state.registry.get(o.def_id).subtypes
+        ]
+
+    def test_it_reads_the_tribe_off_the_replacement(self, hand_written):
+        _, card = self._merged(hand_written, self.HORDE)
+        assert V.enters_counting_own_tribe(card) == "Zombie"
+
+    def test_the_modify_spelling_is_read_too(self, hand_written):
+        amount = self.HORDE["replacements"][0]["amount"]
+        payload = self._variant(
+            replacements=[
+                {"event": "self_enters_with_counters", "modify": {"counters": {"+1/+1": amount}}}
+            ]
+        )
+        _, card = self._merged(hand_written, payload)
+        assert V.enters_counting_own_tribe(card) == "Zombie"
+
+    def test_it_enters_with_one_counter_and_clears_every_gate(self, hand_written):
+        """One counter: the prop Zombie, and none from a graveyard without one."""
+        verdict = V.verify(
+            self.HORDE,
+            {"zone": "battlefield", "counters": {"kind": "+1/+1", "amount": 1}},
+            hand_written,
+        )
+        assert verdict.ok, str(verdict)
+
+    def test_the_prop_is_one_quiet_body_and_the_boards_hold(self, hand_written):
+        merged, card = self._merged(hand_written, self.HORDE)
+        game = V.build_sandbox(merged, card.id)
+        zombies = self._own_zombies(game)
+        assert len(zombies) == 1
+        prop = merged.get(zombies[0].def_id)
+        assert prop.is_creature and not prop.abilities and (prop.toughness or 0) > 0
+        assert "Legendary" not in prop.supertypes
+        assert len(game.state.battlefield_objects(0)) == 32
+        assert len(game.state.battlefield_objects(1)) == 6
+
+    def test_both_pools_pick_the_same_body(self, hand_written, pool):
+        """A token first, so `--collect` and the every-card sandbox agree."""
+        assert V.quiet_counted_tribe_body(hand_written, "Zombie") == V.quiet_counted_tribe_body(
+            pool, "Zombie"
+        )
+
+    def test_a_printed_zero_toughness_still_dies(self, hand_written):
+        """The gate is not weaker: a 0/0 counting nothing gets no prop and is binned."""
+        bare = self._variant(oracle_text="", replacements=[])
+        verdict = V.verify(bare, {"zone": "battlefield"}, hand_written)
+        assert verdict.failed_gate == "playable"
+        assert "ended in graveyard" in verdict.reason
+
+    @pytest.mark.parametrize(
+        "changes",
+        [
+            # survives on the old board, so keeps the number it was measured with
+            {"toughness": 1},
+            # a graveyard count alone: the board body would not be counted
+            {
+                "replacements": [
+                    {
+                        "event": "self_enters_with_counters",
+                        "counter": "+1/+1",
+                        "amount": {
+                            "count": {"zone": "graveyard", "controller": "you", "subtypes": ["Zombie"]}
+                        },
+                    }
+                ]
+            },
+            # counts itself, so never reads zero
+            {
+                "replacements": [
+                    {
+                        "event": "self_enters_with_counters",
+                        "counter": "+1/+1",
+                        "amount": {"count": {"controller": "you", "subtypes": ["Zombie"]}},
+                    }
+                ]
+            },
+        ],
+        ids=["toughness", "graveyard_only", "counts_itself"],
+    )
+    def test_a_card_that_does_not_need_it_sees_the_old_board(self, hand_written, changes):
+        merged, card = self._merged(hand_written, self._variant(**changes))
+        assert V.enters_counting_own_tribe(card) is None
+        assert not self._own_zombies(V.build_sandbox(merged, card.id))
+
+    def test_no_shipped_card_but_the_horde_needs_it(self, pool):
+        """Every other card's sandbox is the one it was measured in."""
+        assert [c.id for c in pool if V.enters_counting_own_tribe(c)] == ["unbreathing_horde"]
+
+
 class TestTheOwnArtifactTargetProp:
     """An Aura that must enchant an artifact you control needs one to enchant.
 

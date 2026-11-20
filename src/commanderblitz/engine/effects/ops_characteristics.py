@@ -6,14 +6,21 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import chars, resolve_chosen_color_list
+from ..characteristics import (
+    abilities_of,
+    chars,
+    lendable_activated,
+    resolve_chosen_color_list,
+)
 from ..events import EventType
 from ..objects import PLUS_ONE
 from ..primitives import (
+    add_colors,
     add_counters,
     add_subtypes,
     animate,
     forbid_keyword,
+    gain_activated_abilities,
     grant_ability,
     grant_keyword,
     lock_abilities,
@@ -21,13 +28,14 @@ from ..primitives import (
     pump,
 )
 from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
-from ..temp_effects import grant_player_protection
+from ..temp_effects import grant_player_hexproof, grant_player_protection
 from ..text_change import printed_type_instances
 from ..triggers import fire
 from .context import EffectContext, ask_mode
 from .registry import register
 from .selectors import (
     choose_objects,
+    resolve_pool,
     select_players,
 )
 from .values import evaluate_value
@@ -150,6 +158,30 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
             until_player=until_player,
             while_counter=while_counter,
         )
+
+
+@register("add_color")
+def op_add_color(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "It's black in addition to its other colors." Necromantic Selection.
+
+    The colour half of "it's a black Zombie in addition to its other colors
+    and types", written beside an `add_subtype` for the Zombie half and aimed,
+    like it, at the binding the arrival recorded -- `return_from_graveyard`'s
+    or `put_onto_battlefield`'s ``as`` ("the creature card returned this way",
+    Grimoire of the Dead's "they"). No duration: the printed line has none,
+    and the colour stays until the permanent leaves the battlefield
+    (`primitives.add_colors`, 400.7). The loader refuses one.
+
+    Not `animate`, whose creature animation sets a base power and toughness
+    and would turn a reanimated 5/5 into whatever size it named; and not the
+    `set_colors` static, which replaces the colours and ends with its source.
+    """
+    colors = [str(c) for c in spec.get("colors", ())]
+    if not colors:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
+    for oid in oids:
+        add_colors(ctx.state, oid, colors, source=ctx.source_oid)
 
 
 @register("lose_all_abilities")
@@ -375,8 +407,21 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
     ``duration: "as_long_as_you_control_source"`` is Thancred Waters' "…gains
     indestructible for as long as you control Thancred Waters": no clock, and
     it ends the moment the source leaves or changes hands (`source_bound_seat`).
+
+    ``player`` is Lazotep Plating's "**You** and permanents you control gain
+    hexproof until end of turn": a seat cannot come out of `choose_objects`,
+    so the player half is its own clause reading the ordinary player spec and
+    writing a `PlayerHexproof` to the table, the way `grant_protection`'s
+    player half writes a `PlayerProtection`. Hexproof is the only keyword a
+    player can have (702.11d), and the loader refuses any other word or clock
+    beside ``player``.
     """
     keywords = spec.get("keywords") or ([spec["keyword"]] if "keyword" in spec else [])
+    if (who := spec.get("player")) is not None:
+        for pid in select_players(ctx, who):
+            grant_player_hexproof(ctx.state, pid, "this_turn", source=ctx.source_oid)
+        if spec.get("objects") is None:
+            return
     permanent = str(spec.get("duration", "until_end_of_turn")) == "permanent"
     # "…and gain lifelink **until your next turn**" -- Sorin, Solemn Visitor.
     until_player = until_player_of(ctx, spec)
@@ -717,6 +762,48 @@ def op_grant_ability(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     for oid in oids:
         grant_ability(ctx.state, oid, index, ctx.source_oid, permanent=permanent)
+
+
+@register("gain_activated_abilities")
+def op_gain_activated_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…this creature gains all activated abilities of that card until end of
+    turn." Havengul Lich.
+
+    ``from`` names the card -- here the creature spell the Lich's delayed
+    ``spell_cast`` trigger heard, ``{"binding": "subject"}`` -- and ``objects``
+    the permanents that gain. The abilities are read **once, now**, off the
+    card where it is: on the stack that is the spell's own characteristics
+    (`abilities_of` off the battlefield, the printed list and its gates), so
+    what is gained is what the card had as it was cast, and the gain survives
+    the spell being countered, resolving, or the creature leaving (608.2h's
+    snapshot; the card's rulings). Every activated ability, mana abilities
+    included (`characteristics.lendable_activated`); never a static or
+    triggered one.
+
+    Until end of turn, the one duration the printed line has. The near misses:
+    `grant_ability` hands over one fixed ability from this card's own
+    ``grantable_abilities``; `become_copy` takes every characteristic and the
+    name; the `grant_exiled_abilities` static lends off cards linked in exile
+    for as long as they stay there.
+    """
+    lent = []
+    for card_oid in resolve_pool(ctx, spec.get("from")):
+        lent.extend(
+            (card_oid, ability)
+            for ability in abilities_of(ctx.state, card_oid)
+            if lendable_activated(ability)
+        )
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Gains abilities")
+    if not lent:
+        return
+    for oid in oids:
+        for card_oid in dict.fromkeys(card for card, _ in lent):
+            gain_activated_abilities(
+                ctx.state,
+                oid,
+                card_oid,
+                [ability for card, ability in lent if card == card_oid],
+            )
 
 
 @register("skip_untap")
