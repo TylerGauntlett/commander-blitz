@@ -1597,6 +1597,36 @@ Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
 would size to zero for ever — a spell that says it targets and never does), and
 every computed count on a spell but these two.
 
+### "Up to X targets" owned by a mode
+
+```jsonc
+// Profane Command: "Choose two — … • Return target creature card with mana
+// value X or less from your graveyard to the battlefield. … • Up to X target
+// creatures gain fear until end of turn."
+{ "id": "raised", "kind": "card_in_graveyard", "mode": 1, "count": 1,
+  "selector": { "zone": "graveyard", "controller": "you", "types": ["Creature"],
+                "mana_value": { "op": "<=", "value": { "x": true } } } },
+{ "id": "feared", "kind": "permanent", "mode": 3, "count": { "x": true }, "up_to": true,
+  "selector": { "zone": "battlefield", "types": ["Creature"] } }
+```
+
+A [mode-owned](card-dsl-cookbook.md#modal-spells-with-a-target) spec on a
+**spell** may be sized by X: `count: {"x": true}` is exactly X (Heliod's
+Intervention, "destroy X target artifacts and/or enchantments"), and with
+`up_to` it is a ceiling from zero (Profane Command). `Game._cast` announces X
+(`_ask_x`) before it asks the modes and their targets, and hands that X to
+both: `targeting.selectable_modes` offers a bullet by the X announced, so a
+selector reading `{"x": true}` ("mana value X or less") has its pool, and
+`Game._ask_mode_targets` sizes the spec by it. An exact X with fewer legal
+targets than X takes what there is, as "each of X targets" does.
+
+An X-sized spec is caster-sized, so the one-sizeless-spec-per-card rule and its
+stored-last order apply to it. The loader refuses it with `optional` or
+`count_if_kicked` (a second size for the same spec) and on an activated or
+triggered ability's mode-owned spec, which is declared with no announced X. The
+near misses: a literal `count` with `up_to` is "up to N" whatever was paid, and
+dropping `mode` declares the targets whichever bullets are chosen.
+
 ### Targets sized by an additional cost
 
 ```jsonc

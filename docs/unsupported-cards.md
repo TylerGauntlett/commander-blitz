@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **456** capabilities.
+**538 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -83,7 +83,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wraith-token](#wraith-token) | 2 | 3658 | token |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
-| [x-sized-mode-target](#x-sized-mode-target) | 2 | 1456 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
@@ -2167,24 +2166,6 @@ Blocks **2** cards.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## x-sized-mode-target
-
-Blocks **2** cards.
-
-- **(engine)** a mode-owned target spec (`mode: 0`) whose size is the X announced for the spell (`count: {"x": true}`), so a modal spell's bullet can say "X target artifacts and/or enchantments" and only declare those targets when that mode is chosen
-  <br>Why the existing vocabulary won't do: `count: {"x": true}` is legal on a spell's card-level targets (Pest Infestation, Curse of the Swine), and `mode` is how Abrade gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or "any" ("a mode-owned target's size must be printed"). Dropping `mode` would demand the artifact targets and the player target together whichever bullet is chosen, and `count: "any"` is not exactly X
-- **(engine)** a mode-owned target spec (`mode: 3`) whose ceiling is the X announced for the spell (`count: {"x": true}, up_to: true`), so a modal spell's bullet can say "up to X target creatures" and declare those targets only when that mode is chosen
-  <br>Why the existing vocabulary won't do: `count: {"x": true}` is legal on a spell's card-level targets (601.2b announces X before 601.2c), and `mode` is how a Command gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or "any" ("a mode-owned target's size must be printed"). Dropping `mode` would demand the fear targets whichever two bullets are chosen (and every bullet here owns a target), and `count: "any"` or a literal ceiling is not "up to X"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heliod's Intervention** (rank 1456) — `heliod_s_intervention`
-  - • Destroy X target artifacts and/or enchantments.
-- **Profane Command** (rank 4904) — `profane_command`
-  - • Up to X target creatures gain fear until end of turn. (They can't be blocked except by artifact creatures and/or black creatures.)
 
 </details>
 

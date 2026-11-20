@@ -602,12 +602,25 @@ def _check_mode_targets(
             raise DslError(
                 f"{label}: mode {spec.mode} does not exist -- the card offers {mode_count}"
             )
-        if spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
+        if spec.x_sized and on_spell:
+            # "Up to X target creatures gain fear" (Profane Command), "destroy
+            # X target artifacts" (Heliod's Intervention): 601.2b announces X
+            # before the modes are chosen, and `Game._ask_mode_targets` runs
+            # after both, so X is a number when the bullet's targets are
+            # declared. `count_if_kicked` would be a second size for it.
+            if spec.count_if_kicked is not None or spec.optional:
+                raise DslError(
+                    f"{label}: an X-sized mode-owned target takes 'up_to' for "
+                    f"\"up to X\" and nothing else -- 'optional' and "
+                    f"'count_if_kicked' are a second size for the same spec"
+                )
+        elif spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
             raise DslError(
                 f"{label}: a mode-owned target's size must be printed -- a "
                 f"literal 'count' (with 'up_to' and 'min_count' if the caster "
-                f"picks how many) or 'any'; a computed count has no cast-time "
-                f"value to read"
+                f"picks how many) or 'any' -- or, on a spell, the announced X "
+                f"({{\"x\": true}}); any other computed count, and X on an "
+                f"ability, has no value to read when the targets are declared"
             )
         if spec.constrains_the_set:
             raise DslError(
