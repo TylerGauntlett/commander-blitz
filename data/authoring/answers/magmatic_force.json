@@ -1,0 +1,24 @@
+{
+  "card": {
+    "id": "magmatic_force",
+    "name": "Magmatic Force",
+    "oracle_text": "At the beginning of each upkeep, this creature deals 3 damage to any target.",
+    "mana_cost": "{5}{R}{R}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Elemental"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "power": 7,
+    "toughness": 7,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each upkeep, this creature deals 3 damage to any target.",
+        "trigger": {"event": "upkeep", "controller": "any"},
+        "targets": [{"id": "t1", "kind": "any", "count": 1, "selector": {"any_types": ["Creature", "Planeswalker", "Battle"]}}],
+        "effects": [{"op": "damage", "amount": {"const": 3}, "target": "t1"}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

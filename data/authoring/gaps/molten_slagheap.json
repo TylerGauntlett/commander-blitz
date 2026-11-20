@@ -1,0 +1,18 @@
+{
+  "card_id": "molten_slagheap",
+  "name": "Molten Slagheap",
+  "oracle_text": "{T}: Add {C}.\n{1}, {T}: Put a storage counter on this land.\n{1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}.",
+  "blocked_sentences": [
+    "{1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}."
+  ],
+  "needs": [
+    {
+      "capability": "storage_counters_x",
+      "kind": "cost",
+      "what": "a cost that removes an announced X counters of a named kind from the source (\"Remove X storage counters from this land\"), X chosen on activation from 0 up to the counters present and readable by the ability's effects as {\"x\": ...}, usable on a mana ability so add_mana's `amount` with `split: [\"B\", \"R\"]` can produce X mana",
+      "why_existing_wont_do": "The `remove_counters` cost takes a fixed integer `amount` (Cost.remove_counters is priced and paid with int(amount)); `cost_x_ceiling` announces X only for discard_x, sacrifice_x and tap_x, and loyalty_x is loyalty-only. There is no remove_counters_x, so the X cannot be announced or bounded by storage counters. The other two lines (`{T}: Add {C}.` and `{1}, {T}: Put a storage counter` via add_counters) are expressible."
+    }
+  ],
+  "closest_existing": ["remove_counters", "loyalty_x", "discard_x", "sacrifice_x", "tap_x"],
+  "confidence": "high"
+}
