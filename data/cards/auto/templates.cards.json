@@ -151271,6 +151271,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "goaded": false,
+              "objects": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an attacking creature dies, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "was_attacking"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "recheck": false,
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kardur_doomscourge",
+      "mana_cost": "{2}{B}{R}",
+      "name": "Kardur, Doomscourge",
+      "oracle_text": "When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.\nWhenever an attacking creature dies, each opponent loses 1 life and you gain 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Berserker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

@@ -145962,12 +145962,12 @@
     },
     "Kardur, Doomscourge": {
       "edhrec_rank": 973,
-      "gate": "template",
+      "gate": null,
       "name": "Kardur, Doomscourge",
-      "reason": "no template for: When Kardur enters, until your next turn, creatures your opponents control attack each com",
+      "reason": "",
       "scryfall_id": "7c0f7712-7bbf-471b-8107-3a49cf922ad9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kardur, Doomscourge // Kardur, Doomscourge": {

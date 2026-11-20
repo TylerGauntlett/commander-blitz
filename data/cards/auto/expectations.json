@@ -12653,6 +12653,15 @@
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },
+  "kardur_doomscourge": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kari_zev_skyship_raider": {
     "zone": "battlefield"
   },
