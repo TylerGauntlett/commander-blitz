@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "favorable_winds",
+    "name": "Favorable Winds",
+    "oracle_text": "Creatures you control with flying get +1/+1.",
+    "mana_cost": "{1}{U}",
+    "types": ["Enchantment"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control with flying get +1/+1.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "keywords": ["flying"]
+        },
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

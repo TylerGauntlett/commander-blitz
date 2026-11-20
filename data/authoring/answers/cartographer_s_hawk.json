@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "cartographer_s_hawk",
+    "name": "Cartographer's Hawk",
+    "oracle_text": "Flying\nWhen this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Bird"],
+    "power": 2,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self",
+          "recheck": false,
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "controller": {"binding": "defender"},
+                "types": ["Land"],
+                "zone": "battlefield"
+              }
+            },
+            "right": {"lands_you_control": true}
+          }
+        },
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "as": "returned",
+            "objects": {"self_only": true, "zone": "battlefield"}
+          },
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "returned", "zone": "hand"}},
+            "then": [
+              {
+                "op": "may",
+                "prompt": "Search your library for a Plains card?",
+                "effects": [
+                  {
+                    "op": "search_library",
+                    "player": "you",
+                    "count": {"const": 1},
+                    "destination": "battlefield",
+                    "tapped": true,
+                    "selector": {"subtypes": ["Plains"]}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

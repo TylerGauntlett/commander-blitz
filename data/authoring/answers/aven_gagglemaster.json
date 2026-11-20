@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "aven_gagglemaster",
+    "name": "Aven Gagglemaster",
+    "oracle_text": "Flying\nWhen this creature enters, you gain 2 life for each creature you control with flying.",
+    "mana_cost": "{3}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Bird", "Warrior"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, you gain 2 life for each creature you control with flying.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "times": [
+                {"const": 2},
+                {"count": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "keywords": ["flying"]}}
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 46}
+  }
+}
