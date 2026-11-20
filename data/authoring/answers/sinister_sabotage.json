@@ -1,0 +1,21 @@
+{
+  "card": {
+    "id": "sinister_sabotage",
+    "name": "Sinister Sabotage",
+    "oracle_text": "Counter target spell.\nSurveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+    "mana_cost": "{1}{U}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [{"id": "t1", "kind": "spell"}],
+    "spell_effects": [
+      {"op": "counter", "target": "t1"},
+      {"op": "surveil", "amount": {"const": 1}, "player": "you"}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1},
+    "library_size": {"0": 40}
+  }
+}
