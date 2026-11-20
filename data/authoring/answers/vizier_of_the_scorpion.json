@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "vizier_of_the_scorpion",
+    "name": "Vizier of the Scorpion",
+    "oracle_text": "When this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nZombie tokens you control have deathtouch.",
+    "mana_cost": "{2}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie", "Wizard"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, amass Zombies 1",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [{"op": "amass", "amount": {"const": 1}, "subtype": "Zombie"}]
+      },
+      {
+        "kind": "static",
+        "text": "Zombie tokens you control have deathtouch.",
+        "effect": "grant_keyword",
+        "keywords": ["deathtouch"],
+        "affects": {"controller": "you", "is_token": true, "subtypes": ["Zombie"]}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34,
+    "tokens": {"id": "zombie_army_0_0_b", "count": 1},
+    "granted": {"keywords": ["deathtouch"], "count": 1}
+  }
+}
