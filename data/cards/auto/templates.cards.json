@@ -217888,6 +217888,158 @@
       "colors": [
         "B"
       ],
+      "id": "profane_command",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Profane Command",
+      "oracle_text": "Choose two —\n• Target player loses X life.\n• Return target creature card with mana value X or less from your graveyard to the battlefield.\n• Target creature gets -X/-X until end of turn.\n• Up to X target creatures gain fear until end of turn. (They can't be blocked except by artifact creatures and/or black creatures.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "target": "drained"
+                  }
+                }
+              ],
+              "label": "Target player loses X life."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "raised"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target creature card with mana value X or less from your graveyard to the battlefield."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shrunk"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "minus": [
+                      {
+                        "const": 0
+                      },
+                      {
+                        "x": true
+                      }
+                    ]
+                  },
+                  "toughness": {
+                    "minus": [
+                      {
+                        "const": 0
+                      },
+                      {
+                        "x": true
+                      }
+                    ]
+                  }
+                }
+              ],
+              "label": "Target creature gets -X/-X until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "fear"
+                  ],
+                  "objects": {
+                    "target": "feared"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Up to X target creatures gain fear until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "drained",
+          "kind": "player",
+          "mode": 0,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "raised",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "shrunk",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": {
+            "x": true
+          },
+          "id": "feared",
+          "kind": "permanent",
+          "mode": 3,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "id": "profane_insight_foulmire_knight",
       "mana_cost": "{2}{B}",
       "name": "Profane Insight",

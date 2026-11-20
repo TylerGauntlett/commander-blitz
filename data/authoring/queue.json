@@ -207982,12 +207982,12 @@
     },
     "Profane Command": {
       "edhrec_rank": 4904,
-      "gate": "template",
+      "gate": null,
       "name": "Profane Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "d2ab6949-a0fc-4fe5-ae64-53b53914f34c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Profane Memento": {

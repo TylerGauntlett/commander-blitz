@@ -18135,6 +18135,17 @@
       "graveyard"
     ]
   },
+  "profane_command": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "life": {
+      "0": 20,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "professional_face_breaker": {
     "battlefield_count": 33,
     "zone": "battlefield"
