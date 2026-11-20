@@ -296,7 +296,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
-| `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
+| `random` | Pick at random rather than by choice; on a triggered or reflexive ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
 | `returned_with` | Put onto the battlefield by the named source's linked return. | [An Aura that enchants a card in a graveyard — Animate Dead](card-dsl-cookbook.md#an-aura-that-enchants-a-card-in-a-graveyard--animate-dead) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `shares_a_color_with` | Shares a color with the named object. | [Describing objects relative to another object](card-dsl.md#describing-objects-relative-to-another-object) |

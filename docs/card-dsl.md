@@ -1500,9 +1500,15 @@ Still a target: chosen as the triggered ability goes on the stack (603.3d),
 re-checked on resolution, and an ability with no legal candidate is not put on
 the stack. Only the chooser changes — the seeded `state.rng` picks uniformly
 among the legal candidates (`stack._random_trigger_targets`). The loader
-allows `random` only on a **triggered** ability's one target spec, with a
-fixed `count` and no `mode`, `optional` or `up_to`: a spell's and an activated
-ability's targets are chosen in legality, where nothing would read the clause.
+allows `random` only on a **triggered** or **reflexive** ability's one target
+spec, with a fixed `count` and no `mode`, `optional` or `up_to`: a spell's and
+an activated ability's targets are chosen in legality, where nothing would read
+the clause. A reflexive ability goes on the stack through the same moment, so
+Explosion of Riches' "whenever a card is drawn this way, … deals 5 damage to
+target opponent chosen at random" is a `kind: "reflexive"` ability with
+`{ "kind": "player", "count": 1, "selector": { "controller": "opponent",
+"random": true } }`, fired by one `reflexive_trigger` per seat in the `draw`
+ops' shared `as` binding.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 

@@ -13164,8 +13164,8 @@ re-checked. An empty pool binds nothing, exactly as the asked form does. A
 `prompt` is refused beside it, since nobody would see one.
 
 The near miss is a random target — *"target opponent chosen at random"* — which
-is a target spec with `random` in its selector on a triggered ability
-("Target … chosen at random"), drawn as the ability goes on the stack. Neither
+is a target spec with `random` in its selector on a triggered or reflexive
+ability ("Target … chosen at random"), drawn as the ability goes on the stack. Neither
 is `choose_mode` with `random` over a "you" mode and an "opponent" mode: that is
 not uniform over the seats at a pod.
 

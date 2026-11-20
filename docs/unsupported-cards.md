@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **457** capabilities.
+**540 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -383,7 +383,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [random-reflexive-target](#random-reflexive-target) | 1 | 13413 | engine |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -6452,20 +6451,6 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
-
-</details>
-
-## random-reflexive-target
-
-Blocks **1** card.
-
-- **(engine)** allow a target spec's selector `random: true` on a reflexive (`kind: "reflexive"`) ability, so a `reflexive_trigger` fired after each card drawn by this spell (your draw, then each other player's `may` draw inside `for_each_player`) puts an ability on the stack whose one player target -- an opponent -- is drawn by `stack._random_trigger_targets`, which already serves reflexive triggers at runtime
-  <br>Why the existing vocabulary won't do: `choose_player` with `random: true` draws a seat but is a choice, not a target: it ignores hexproof and shroud and is never re-checked, so it is a different card from 'target opponent chosen at random'. The random-target path refuses `random` unless `on_trigger`, which `cards/loader/__init__.py::_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE
-
-<details><summary>Cards waiting on this</summary>
-
-- **Explosion of Riches** (rank 13413) — `explosion_of_riches`
-  - Draw a card, then each other player may draw a card. Whenever a card is drawn this way, Explosion of Riches deals 5 damage to target opponent chosen at random from among your opponents.
 
 </details>
 

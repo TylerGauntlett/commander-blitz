@@ -606,7 +606,7 @@ SELECTORS: dict[str, Entry] = {
                       "An Aura that enchants a card in a graveyard — Animate Dead"),
     "power": ("A comparison on live power, or its `parity` (`{\"parity\": \"even\"}`, zero even).",
               "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
-    "random": ("Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random.",
+    "random": ("Pick at random rather than by choice; on a triggered or reflexive ability's one target spec, the target is drawn at random.",
                '"Target … chosen at random"'),
     "self_only": ("This permanent only.", None),
     "shares_a_color_with": ("Shares a color with the named object.",

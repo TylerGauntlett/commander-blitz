@@ -34,6 +34,7 @@ def _compile_targets(
     *,
     on_spell: bool = False,
     on_trigger: bool = False,
+    on_reflexive: bool = False,
     mode_count: int | None = None,
     mana_cost: str | None = None,
     has_kicker: bool = False,
@@ -63,6 +64,12 @@ def _compile_targets(
     ``on_trigger`` marks a **triggered** ability's targets, which is the other
     place a mode-owned spec has a moment to be declared in: 603.3d puts the
     modes and the targets alike at the instant the ability goes on the stack.
+
+    ``on_reflexive`` marks a **reflexive** ability's targets (603.12). It goes
+    on the stack through the same `stack.push_triggered_ability` a triggered
+    one does, so the one clause read there that it is allowed is ``random``:
+    `stack._random_trigger_targets` draws for it exactly as it does for a
+    trigger -- Explosion of Riches.
 
     ``mode_count`` is how many modes the single top-level ``choose_mode``
     offers, or ``None`` when there is no such question to hang a target on.  A
@@ -167,15 +174,15 @@ def _compile_targets(
     for spec in specs:
         if not spec.selector.get("random"):
             continue
-        # "Target … chosen at random" (Power Pack): `stack._random_trigger_targets`
-        # draws it as a triggered ability goes on the stack. Nothing else reads
-        # the clause -- a spell's or an activated ability's targets are chosen
-        # in legality, which offers every tuple -- so anywhere else it would
-        # load and be a free choice.
-        if not on_trigger:
+        # "Target … chosen at random" (Power Pack, Explosion of Riches):
+        # `stack._random_trigger_targets` draws it as a triggered or reflexive
+        # ability goes on the stack. Nothing else reads the clause -- a spell's
+        # or an activated ability's targets are chosen in legality, which offers
+        # every tuple -- so anywhere else it would load and be a free choice.
+        if not (on_trigger or on_reflexive):
             raise DslError(
-                f"{where}.target[{spec.id}]: 'random' is a triggered ability's "
-                f"target -- nothing else draws one at random"
+                f"{where}.target[{spec.id}]: 'random' is a triggered or reflexive "
+                f"ability's target -- nothing else draws one at random"
             )
         if len(specs) != 1 or spec.mode is not None:
             raise DslError(
