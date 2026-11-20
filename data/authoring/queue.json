@@ -236152,12 +236152,12 @@
     },
     "Scourge of Nel Toth": {
       "edhrec_rank": 9143,
-      "gate": "residual",
+      "gate": null,
       "name": "Scourge of Nel Toth",
-      "reason": "printed text not represented: You may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost",
+      "reason": "",
       "scryfall_id": "acd8312a-1dd6-42eb-8908-51b85ceab6e2",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scourge of Numai": {

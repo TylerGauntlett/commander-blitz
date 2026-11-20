@@ -7432,13 +7432,23 @@ and the destination:
 \ {2}{W} rather than paying its mana cost." Escape with nothing but mana.
 "graveyard_cost": { "mana": "{2}{W}" },
 "graveyard_cast": "graveyard"
+
+\ Scourge of Nel Toth -- "… by paying {B}{B} and sacrificing two creatures
+\ rather than paying its mana cost." The sacrifice is part of the same price.
+"graveyard_cost": { "mana": "{B}{B}",
+                    "sacrifice": { "types": ["Creature"], "controller": "you",
+                                   "zone": "battlefield", "count": 2 } },
+"graveyard_cast": "graveyard"
 ```
 
 The unkeyworded sentence has no exile rider, so it is `"graveyard_cast":
 "graveyard"`, never flashback's default. Gate 3 claims it from the field: the
-printed mana must be the declared mana and nothing else may be charged, so a
-line with a second payment (Scourge of Nel Toth's sacrifice), a condition in
-front or a rider behind it is not this sentence and stays residual.
+printed mana must be the declared mana, a printed "sacrificing <count> <noun>"
+must be the declared `sacrifice` (the count word its `count`, the plural noun
+its one type, your own battlefield) and no sacrifice may be declared when none
+is printed, and nothing else may be charged. A narrowed noun ("two other
+creatures", "two creature tokens"), any other payment, a condition in front or
+a rider behind it is not this sentence and stays residual.
 
 The mana half **replaces** the printed cost and everything else is charged on
 top, so a jump-start card repeats its own mana cost rather than leaving it out.

@@ -1935,27 +1935,34 @@ def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
 
 
 #: "You may cast this card from your graveyard by paying {2}{W} rather than
-#: paying its mana cost." (Raffine's Guidance), read off the self-reference-
-#: folded line. Anchored at both ends, so a line with a condition
-#: in front ("As long as you control a Giant, …") or a rider behind it ("If you
-#: do, it enters with …", "… exile it instead") is not this sentence, and the
-#: payment must be mana symbols alone, so "{B}{B} and sacrificing two
-#: creatures" is not read as {B}{B}.
+#: paying its mana cost." (Raffine's Guidance), and with a sacrifice beside the
+#: mana, "… by paying {B}{B} and sacrificing two creatures rather than …"
+#: (Scourge of Nel Toth), read off the self-reference-folded line. Anchored at
+#: both ends, so a line with a condition in front ("As long as you control a
+#: Giant, …") or a rider behind it ("If you do, it enters with …", "… exile it
+#: instead") is not this sentence, and the payment is mana symbols and at most
+#: one "sacrificing <count> <noun>" clause, the noun a run of plain words, so
+#: no other payment is read as part of the price.
 _GRAVEYARD_ALTERNATIVE_LINE = re.compile(
-    r"^you may cast ~ from your graveyard by paying (?P<mana>(?:\{[^}]+\})+) "
+    r"^you may cast ~ from your graveyard by paying (?P<mana>(?:\{[^}]+\})+)"
+    r"(?: and sacrificing (?P<count>\w+) (?P<noun>[a-z]+(?: [a-z]+)*?))? "
     r"rather than paying (?:its|~'s) mana cost$",
     re.IGNORECASE,
 )
+#: Selector keys a printed "sacrificing N <noun>" states: the noun is the
+#: types, and the payer's own battlefield is what "sacrificing" means (701.17a).
+#: A selector narrowed any other way prints words this does not read.
+_READ_SACRIFICE_KEYS = frozenset({"types", "controller", "zone", "count"})
 
 
 def _declares_printed_graveyard_alternative(card: CardDef, match: re.Match[str]) -> bool:
-    """Whether ``card``'s graveyard cost is the mana-only price ``match`` prints.
+    """Whether ``card``'s graveyard cost is the price ``match`` prints.
 
-    The unkeyworded sentence is escape's destination with no extra payment: the
-    card goes wherever it normally would (`graveyard_cast_exiles` False), it is
-    not mayhem's discarded-this-turn price nor disturb's back face, and the
-    cost is the printed mana and nothing else, so a cheaper price or any other
-    payment fails closed.
+    The unkeyworded sentence is escape's destination: the card goes wherever it
+    normally would (`graveyard_cast_exiles` False), it is not mayhem's
+    discarded-this-turn price nor disturb's back face, and the cost is the
+    printed mana plus, when printed, the sacrifice `_declares_printed_sacrifice`
+    reads -- nothing else, so a cheaper price or any other payment fails closed.
     """
     cost = card.flashback
     if (
@@ -1967,7 +1974,36 @@ def _declares_printed_graveyard_alternative(card: CardDef, match: re.Match[str])
         return False
     if not _declares_printed_cost(match.group("mana"), cost.mana):
         return False
-    return replace(cost, mana=ManaCost()) == Cost()
+    if not _declares_printed_sacrifice(match.group("count"), match.group("noun"), cost.sacrifice):
+        return False
+    return replace(cost, mana=ManaCost(), sacrifice=None) == Cost()
+
+
+def _declares_printed_sacrifice(count: str | None, noun: str | None, declared: Any) -> bool:
+    """Whether "sacrificing <count> <noun>" is exactly the declared ``sacrifice``.
+
+    Both directions, `_declares_printed_tap`'s reason: no clause printed means
+    no sacrifice declared, and a printed clause needs a selector of the payer's
+    own battlefield (701.17a) whose count is the printed number word and whose
+    types are the printed plural noun. "two other creatures", "two creature
+    tokens" or "two nonblack creatures" do not name a type list, so they fail
+    closed rather than be read as "two creatures".
+    """
+    if count is None or declared is None:
+        return count is None and declared is None
+    spec = dict(declared)
+    if set(spec) - _READ_SACRIFICE_KEYS:
+        return False
+    if spec.get("controller", "you") != "you" or spec.get("zone", "battlefield") != "battlefield":
+        return False
+    number = _NUMBER_WORDS.get(count.lower(), -1)
+    if number != int(spec.get("count", 1) or 1):
+        return False
+    types = spec.get("types") or ()
+    if len(types) != 1:
+        return False
+    word = str(types[0]).lower()
+    return noun.lower() == (word if number == 1 else f"{word}s")
 
 
 #: The `alternative_cost` fields the claimant below reads off the printed line.

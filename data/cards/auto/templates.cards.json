@@ -241825,6 +241825,43 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "mana": "{B}{B}",
+        "sacrifice": {
+          "controller": "you",
+          "count": 2,
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "scourge_of_nel_toth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Scourge of Nel Toth",
+      "oracle_text": "Flying\nYou may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

@@ -20141,6 +20141,10 @@
     "opponent_battlefield_count": 4,
     "zone": "battlefield"
   },
+  "scourge_of_nel_toth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scourge_of_the_throne": {
     "zone": "battlefield"
   },

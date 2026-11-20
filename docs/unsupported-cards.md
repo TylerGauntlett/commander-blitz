@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**549 cards** blocked by **467** capabilities.
+**548 cards** blocked by **466** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -270,7 +270,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
-| [graveyard-alternative-cost](#graveyard-alternative-cost) | 1 | 9143 | engine |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -4859,20 +4858,6 @@ Blocks **1** card.
 
 - **Nerd Rage** (rank 4512) — `nerd_rage`
   - Enchanted creature has "You have no maximum hand size" and "Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn."
-
-</details>
-
-## graveyard-alternative-cost
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant for an unkeyworded graveyard alternative cost that carries a non-mana payment: "You may cast ~ from your graveyard by paying <mana> and sacrificing <N> <noun> rather than paying its mana cost", matched against a card-level graveyard_cost of {mana, sacrifice: {types, controller: you, count: N}} with graveyard_cast "graveyard" (the card goes where it normally would)
-  <br>Why the existing vocabulary won't do: The DSL already expresses the price -- graveyard_cost {"mana": "{B}{B}", "sacrifice": {"types": ["Creature"], "controller": "you", "zone": "battlefield", "count": 2}} with graveyard_cast "graveyard" validates against CardModel, and Game._cast pays the non-mana half of a graveyard cost through the general payer -- but no gate claims the printed line, so --collect rejects it at the residual gate. _GRAVEYARD_ALTERNATIVE_LINE / _declares_printed_graveyard_alternative in cards/authoring/verify.py accept a mana-only payment and fail closed on anything else (their comment names exactly this card's "{B}{B} and sacrificing two creatures"); _declares_printed_alternative_cost reads sacrifice payments but only for the hand alternative_cost and the "rather than pay this spell's mana cost" wording; _ESCAPE_LINE reads only exile-from-graveyard. Fix: extend the graveyard-alternative claimant to read the sacrifice clause (count word and creature noun) against cost.sacrifice, in the style of _declares_printed_tap, and pin it with a Scourge of Nel Toth test. No engine op is missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scourge of Nel Toth** (rank 9143) — `scourge_of_nel_toth`
-  - You may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost.
 
 </details>
 
