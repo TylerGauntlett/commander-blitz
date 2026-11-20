@@ -1,0 +1,18 @@
+{
+  "card_id": "explosion_of_riches",
+  "name": "Explosion of Riches",
+  "oracle_text": "Draw a card, then each other player may draw a card. Whenever a card is drawn this way, Explosion of Riches deals 5 damage to target opponent chosen at random from among your opponents.",
+  "blocked_sentences": [
+    "Draw a card, then each other player may draw a card. Whenever a card is drawn this way, Explosion of Riches deals 5 damage to target opponent chosen at random from among your opponents."
+  ],
+  "needs": [
+    {
+      "capability": "random_target_reflexive_trigger",
+      "kind": "engine",
+      "what": "a reflexive (spell-linked) triggered ability that fires once per card drawn by this spell's own draw effects (yours and each other player's optional draw) and whose single player target is an opponent chosen at random -- i.e. allow a target spec's selector `random: true` on a `reflexive_trigger` ability, drawn by `stack._random_trigger_targets` as it goes on the stack, over player targets restricted to the controller's opponents",
+      "why_existing_wont_do": "The only random-target path is `random: true` on a target selector, and the loader (`cards/loader/targets.py`) refuses it unless `on_trigger`, which `_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE; a `trigger_events` draw trigger cannot be scoped to 'drawn this way' by this spell, and `choose_player`/`damage` have no random option, so an ordinary chosen target opponent would let the caster pick and be a different card"
+    }
+  ],
+  "closest_existing": ["reflexive_trigger", "for_each_player", "may", "draw", "damage"],
+  "confidence": "high"
+}
