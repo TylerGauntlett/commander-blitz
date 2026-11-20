@@ -513,6 +513,13 @@ export function describeEvent(
     case "connived":
       return `${card ?? "A creature"} connives`;
     /*
+     * A creature fought (701.12). The two blows already have their damage
+     * lines; this one is the moment "whenever a creature you control fights"
+     * triggers off, once for each of the two.
+     */
+    case "fought":
+      return `${card ?? "A creature"} fights`;
+    /*
      * A permanent explored (701.40). Nothing else in the log says what was
      * revealed -- a nonland kept on top moves no card -- so this line names
      * it, and it is the moment "whenever a creature you control explores"

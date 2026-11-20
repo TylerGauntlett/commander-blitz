@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **459** capabilities.
+**545 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -131,6 +131,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
+| [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -198,6 +199,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [draw-from-bottom](#draw-from-bottom) | 1 | 10400 | static_effect |
 | [draw-redirection](#draw-redirection) | 1 | 1178 | replacement |
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
+| [dwarf-berserker-token](#dwarf-berserker-token) | 1 | 14192 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -224,6 +226,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
+| [exile-from-graveyard-total-mana-symbols](#exile-from-graveyard-total-mana-symbols) | 1 | 13784 | cost |
 | [exile-x-from-graveyard-cost](#exile-x-from-graveyard-cost) | 1 | 17252 | cost |
 | [exiled-card-mana-value](#exiled-card-mana-value) | 1 | 20131 | value |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -277,6 +280,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
+| [hexproof-from](#hexproof-from) | 1 | 7920 | keyword |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
 | [horse-2-2-w-horsemanship-lord-token](#horse-2-2-w-horsemanship-lord-token) | 1 | 13482 | token |
 | [human-1-1-r](#human-1-1-r) | 1 | 13814 | token |
@@ -288,7 +292,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [incubate](#incubate) | 1 | 7135 | op |
 | [insect-1-1-ur-flying-haste](#insect-1-1-ur-flying-haste) | 1 | 1699 | token |
 | [jump-start](#jump-start) | 1 | 14777 | op |
-| [karox-bladewing](#karox-bladewing) | 1 | 8889 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
@@ -413,6 +416,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
+| [set-base-power](#set-base-power) | 1 | 16258 | op |
 | [set-name-static](#set-name-static) | 1 | 6322 | static_effect |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
 | [shares-card-type-with](#shares-card-type-with) | 1 | 12729 | selector |
@@ -2875,6 +2879,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-copy-limit
+
+Blocks **1** card.
+
+- **(op)** cast_copy with a cap on how many of the copies may be cast ('you may cast up to three of the copies'), the player choosing which of the copied cards to cast
+  <br>Why the existing vocabulary won't do: cast_copy takes only objects, optional and cost, and offers every matched card one at a time with no limit; grant_playable's `limit` applies to exiled originals, not to copies cast free during resolution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Baron Helmut Zemo** (rank 13784) — `baron_helmut_zemo`
+  - Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)
+
+</details>
+
 ## cast-exiled-for-life-equal-to-mana-value
 
 Blocks **1** card.
@@ -3831,6 +3849,20 @@ Blocks **1** card.
 
 </details>
 
+## dwarf-berserker-token
+
+Blocks **1** card.
+
+- **(token)** a 2/1 red Dwarf Berserker creature token (e.g. id dwarf_berserker_2_1_r)
+  <br>Why the existing vocabulary won't do: The Boast ability itself is expressible (is_boast, once_each_turn, attacked_this_turn condition, create_token), but token_ids has no Dwarf Berserker; the only 2/1 tokens are inkling_2_1_wb_flying, insect_2_1_w_flying, phyrexian_myr_2_1_u_artifact and villain_2_1_b_menace, none red or of that creature type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fearless Liberator** (rank 14192) — `fearless_liberator`
+  - Boast — {2}{R}: Create a 2/1 red Dwarf Berserker creature token.
+
+</details>
+
 ## each-player-chooses-color
 
 Blocks **1** card.
@@ -4196,6 +4228,20 @@ Blocks **1** card.
 
 - **Scroll Rack** (rank 1363) — `scroll_rack`
   - {1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.
+
+</details>
+
+## exile-from-graveyard-total-mana-symbols
+
+Blocks **1** card.
+
+- **(cost)** an exile_from_graveyard cost of 'any number' of matching cards whose payment is legal only when the chosen set's combined count of {B} symbols in their mana costs is at least 15 (a threshold over the whole chosen set, like tap_permanents' total_power), with `as` binding the exiled cards
+  <br>Why the existing vocabulary won't do: exile_from_graveyard (costs._graveyard_pool / pay) takes a fixed `count` and asks for exactly that many cards; there is no variable-size pick and no aggregate constraint over the chosen cards. mana_symbols exists only as a value, not as a cost threshold
+
+<details><summary>Cards waiting on this</summary>
+
+- **Baron Helmut Zemo** (rank 13784) — `baron_helmut_zemo`
+  - Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)
 
 </details>
 
@@ -4960,6 +5006,20 @@ Blocks **1** card.
 
 </details>
 
+## hexproof-from
+
+Blocks **1** card.
+
+- **(keyword)** a parameterised hexproof keyword, 'hexproof from <quality>', where the quality here is a card type (planeswalkers): this permanent can't be the target of spells or abilities opponents control whose source is a planeswalker (702.11d), while remaining targetable by everything else
+  <br>Why the existing vocabulary won't do: The keywords list has only plain 'hexproof' (blocks every opponent source, too broad) and 'shroud'; the 'protection' static effect also prevents damage, blocking and attachment (DEBT), and 'ward' only taxes targeting; nothing restricts untargetability to sources of a given type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eradicator Valkyrie** (rank 7920) — `eradicator_valkyrie`
+  - Flying, lifelink, hexproof from planeswalkers
+
+</details>
+
 ## hidden-card-guess
 
 Blocks **1** card.
@@ -5114,20 +5174,6 @@ Blocks **1** card.
 
 - **Filigree Racer** (rank 14777) — `filigree_racer`
   - Whenever this Vehicle attacks, you may pay {E}{E}. When you do, target instant or sorcery card in your graveyard gains jump-start until end of turn. (You may cast that card from your graveyard by discarding a card in addition to paying its other costs. Then exile it.)
-
-</details>
-
-## karox-bladewing
-
-Blocks **1** card.
-
-- **(token)** Karox Bladewing, a legendary 4/4 red Dragon creature token with flying (named token, supertype Legendary)
-  <br>Why the existing vocabulary won't do: dragon_4_4_r_flying exists in token_ids but is neither named Karox Bladewing nor legendary, so the legend rule would not apply to it; kicker and the kicked condition are otherwise expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verix Bladewing** (rank 8889) — `verix_bladewing`
-  - When Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.
 
 </details>
 
@@ -6903,6 +6949,20 @@ Blocks **1** card.
 
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
+## set-base-power
+
+Blocks **1** card.
+
+- **(op)** an op that sets only an object's base power (layer 7b) until end of turn, leaving its base toughness untouched, so counters, anthems and pumps on Arni still apply on top of the new base value; magnitude 1 + extreme_value {of: power, objects: other creatures you control}
+  <br>Why the existing vocabulary won't do: set_pt is a compensating pump over the current power and toughness (it cancels any +1/+1 counter or anthem already on Arni rather than setting the base) and always writes toughness too; animate does set base P/T but only both together (keep_pt only when neither is given) and no value reads base toughness to pass through unchanged
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arni Brokenbrow** (rank 16258) — `arni_brokenbrow`
+  - Boast — {1}: You may change Arni's base power to 1 plus the greatest power among other creatures you control until end of turn.
 
 </details>
 

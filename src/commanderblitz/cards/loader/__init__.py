@@ -136,6 +136,7 @@ from .vocabulary import (  # noqa: F401
     _FILTER_PLAYERS,
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
+    BOAST_CONDITION,
     CAST_LOCK_FILTER_KEYS,
     CAST_ORIGIN_ZONES,
     CONTROLLED_TARGET_KINDS,
@@ -3570,6 +3571,29 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"nothing else (702.6a); got {ops or 'no effects'}"
             )
 
+    if model.is_boast:
+        # "Boast — [cost]: [effect]. (Activate only if this creature attacked
+        # this turn and only once each turn.)" is 702.142a. Held to that shape,
+        # as `is_equip` is to 702.6a, so a static naming boast abilities as a
+        # class reaches exactly the abilities that print the word.
+        if kind is not AbilityKind.ACTIVATED:
+            raise DslError(
+                f"{where}: 'is_boast' marks an *activated* ability (702.142a), "
+                f"not a {kind.value} one"
+            )
+        if not model.text.startswith("Boast"):
+            raise DslError(f"{where}: 'is_boast' is on an ability that does not print 'Boast'")
+        if not model.once_each_turn:
+            raise DslError(
+                f"{where}: a boast ability activates only once each turn (702.142a) -- "
+                f"set 'once_each_turn'"
+            )
+        if model.condition != BOAST_CONDITION:
+            raise DslError(
+                f"{where}: a boast ability activates only if this creature attacked "
+                f"this turn (702.142a) -- its 'condition' is {BOAST_CONDITION}"
+            )
+
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
@@ -4488,6 +4512,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         is_equip=model.is_equip,
+        is_boast=model.is_boast,
         mana_options=mana_options,
         mana_amount=mana_amount,
         mana_rider=mana_rider,

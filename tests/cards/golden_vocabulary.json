@@ -2,6 +2,7 @@
  "loader": {
   "ABILITY_CLASS_KEYS": [
    "any",
+   "boast",
    "equip",
    "non_mana"
   ],
@@ -10,6 +11,13 @@
    "create_token",
    "put_onto_battlefield"
   ],
+  "BOAST_CONDITION": {
+   "exists": {
+    "attacked_this_turn": true,
+    "self_only": true,
+    "zone": "battlefield"
+   }
+  },
   "CAST_LOCK_FILTER_KEYS": [
    "any_types",
    "colors",

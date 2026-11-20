@@ -5477,6 +5477,90 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "subtypes": [
+                    "Mountain"
+                  ]
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, this creature deals 1 damage to any target. If that land is a Mountain, this creature deals 2 damage instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "akoum_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Akoum Hellkite",
+      "oracle_text": "Flying\nLandfall — Whenever a land you control enters, this creature deals 1 damage to any target. If that land is a Mountain, this creature deals 2 damage instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -17457,6 +17541,90 @@
       "subtypes": [
         "Equipment"
       ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        },
+        {
+          "cost": {
+            "mana": "{4}{R}{G}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "R",
+                "G"
+              ],
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "subtypes": [
+                "Dragon"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{R}{G}: This artifact becomes a 4/4 red and green Dragon artifact creature with flying until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "atarka_monument",
+      "mana_cost": "{3}",
+      "name": "Atarka Monument",
+      "oracle_text": "{T}: Add {R} or {G}.\n{4}{R}{G}: This artifact becomes a 4/4 red and green Dragon artifact creature with flying until end of turn.",
+      "source": "auto",
       "types": [
         "Artifact"
       ]
@@ -31300,6 +31468,59 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "blossoming_defense",
+      "mana_cost": "{G}",
+      "name": "Blossoming Defense",
+      "oracle_text": "Target creature you control gets +2/+2 and gains hexproof until end of turn. (It can't be the target of spells or abilities your opponents control.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": 2
+          },
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "keywords": [
+            "hexproof"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -36629,6 +36850,7 @@
               "target": "t1"
             }
           ],
+          "is_boast": true,
           "kind": "activated",
           "once_each_turn": true,
           "targets": [
@@ -50068,6 +50290,112 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "clan_defiance",
+      "mana_cost": "{X}{R}{G}",
+      "name": "Clan Defiance",
+      "oracle_text": "Choose one or more —\n• Clan Defiance deals X damage to target creature with flying.\n• Clan Defiance deals X damage to target creature without flying.\n• Clan Defiance deals X damage to target player or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "damage",
+                  "target": "flier"
+                }
+              ],
+              "label": "Clan Defiance deals X damage to target creature with flying."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "damage",
+                  "target": "grounded"
+                }
+              ],
+              "label": "Clan Defiance deals X damage to target creature without flying."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Clan Defiance deals X damage to target player or planeswalker."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "flier",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "grounded",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "not_keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -69600,6 +69928,79 @@
         {
           "effects": [
             {
+              "effects": [],
+              "else": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Sacrifice a creature? (Otherwise Demanding Dragon deals 5 damage to you.)"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, it deals 5 damage to target opponent unless that player sacrifices a creature of their choice.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "demanding_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Demanding Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, it deals 5 damage to target opponent unless that player sacrifices a creature of their choice.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "attacking": true,
                 "controller": "any",
@@ -75524,6 +75925,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{7}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "dragon_5_5_r_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{7}, {T}, Sacrifice this creature: Create a 5/5 red Dragon creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "draconic_disciple",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Draconic Disciple",
+      "oracle_text": "{T}: Add one mana of any color.\n{7}, {T}, Sacrifice this creature: Create a 5/5 red Dragon creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -75649,6 +76155,55 @@
         "Monk"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "discard",
+              "player": "each_player",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 7
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, each player discards their hand, then draws seven cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dragon_mage",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Dragon Mage",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, each player discards their hand, then draws seven cards.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Wizard"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -76332,6 +76887,75 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "you",
+          "affects_abilities": {
+            "boast": true
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          },
+          "effect": "ability_cost_reduction",
+          "kind": "static",
+          "text": "Boast abilities you activate cost {1} less to activate for each Dragon you control."
+        },
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{4}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "dragon_5_5_r_flying"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Boast — {4}{R}: Create a 5/5 red Dragon creature token with flying. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dragonkin_berserker",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Dragonkin Berserker",
+      "oracle_text": "First strike\nBoast abilities you activate cost {1} less to activate for each Dragon you control.\nBoast — {4}{R}: Create a 5/5 red Dragon creature token with flying. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Berserker"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -77456,6 +78080,55 @@
           "effects": [
             {
               "amount": {
+                "binding": "amount"
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_cast_only": true,
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, exile that many cards from the top of your library. Until end of turn, you may cast spells from among those exiled cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dream_pillager",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Dream Pillager",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, exile that many cards from the top of your library. Until end of turn, you may cast spells from among those exiled cards.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "any_type": true,
@@ -78525,6 +79198,82 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you control a creature with power 5 or greater, you may draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 5
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "drumhunter",
+      "mana_cost": "{3}{G}",
+      "name": "Drumhunter",
+      "oracle_text": "At the beginning of your end step, if you control a creature with power 5 or greater, you may draw a card.\n{T}: Add {C}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid",
+        "Warrior"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -98536,6 +99285,80 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have haste."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Sacrifice this enchantment: Target creature gets +2/+2 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "fires_of_yavimaya",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Fires of Yavimaya",
+      "oracle_text": "Creatures you control have haste.\nSacrifice this enchantment: Target creature gets +2/+2 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "grant_keyword",
@@ -99375,6 +100198,76 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "paid_x"
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}{R}"
+              },
+              "player": "you",
+              "prompt": "Pay {X}{R} to have Flameblast Dragon deal X damage to any target?",
+              "x": {
+                "as": "paid_x"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, you may pay {X}{R}. If you do, it deals X damage to any target.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flameblast_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Flameblast Dragon",
+      "oracle_text": "Flying\nWhenever this creature attacks, you may pay {X}{R}. If you do, it deals X damage to any target.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -101126,6 +102019,104 @@
         "Human"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Have it fight target creature you don't control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may have it fight target creature you don't control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Put two +1/+1 counters on it."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "fights",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "foe_razer_regent",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Foe-Razer Regent",
+      "oracle_text": "Flying\nWhen this creature enters, you may have it fight target creature you don't control.\nWhenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -105131,6 +106122,54 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}: This creature gets +1/+0 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "furnace_whelp",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Furnace Whelp",
+      "oracle_text": "Flying\n{R}: This creature gets +1/+0 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -131809,6 +132848,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "mana_value_of": {
+                  "var": "victim"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}{R}: Destroy target artifact. This creature gets +X/+0 until end of turn, where X is that artifact's mana value."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hoard_smelter_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Hoard-Smelter Dragon",
+      "oracle_text": "Flying\n{3}{R}: Destroy target artifact. This creature gets +X/+0 until end of turn, where X is that artifact's mana value.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -134474,6 +135589,87 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "hunter_s_prowess",
+      "mana_cost": "{4}{G}",
+      "name": "Hunter's Prowess",
+      "oracle_text": "Until end of turn, target creature gets +3/+3 and gains trample and \"Whenever this creature deals combat damage to a player, draw that many cards.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": 3
+          },
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "ability": 0,
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -162934,6 +164130,71 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "tucked"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "target": "shuffler"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "shuffler",
+              "kind": "player",
+              "selector": {}
+            },
+            {
+              "count": "any",
+              "id": "tucked",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": {
+                  "target": "shuffler"
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, target player shuffles any number of target cards from their graveyard into their library.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "loaming_shaman",
+      "mana_cost": "{2}{G}",
+      "name": "Loaming Shaman",
+      "oracle_text": "When this creature enters, target player shuffles any number of target cards from their graveyard into their library.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Centaur",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -182391,6 +183652,93 @@
         "Rogue"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}: This creature gets +1/+0 until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have Mordant Dragon deal that much damage to the targeted creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, you may have it deal that much damage to target creature that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "mordant_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{R}{R}",
+      "name": "Mordant Dragon",
+      "oracle_text": "Flying\n{1}{R}: This creature gets +1/+0 until end of turn.\nWhenever this creature deals combat damage to a player, you may have it deal that much damage to target creature that player controls.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -214936,6 +216284,61 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "provoke_the_trolls",
+      "mana_cost": "{3}{R}",
+      "name": "Provoke the Trolls",
+      "oracle_text": "Provoke the Trolls deals 3 damage to any target. If a creature is dealt damage this way, it gets +5/+0 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "damaged_by": "self",
+            "target": "t1",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 5
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -233307,6 +234710,60 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{5}{R}"
+          },
+          "effects": [
+            {
+              "op": "discard",
+              "player": "each_player",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 7
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{R}, Exile this card from your graveyard: Each player discards their hand, then draws seven cards."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "runehorn_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Runehorn Hellkite",
+      "oracle_text": "Flying\n{5}{R}, Exile this card from your graveyard: Each player discards their hand, then draws seven cards.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -236641,6 +238098,147 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "colors": [
+                "R"
+              ],
+              "exact": true,
+              "keywords": [
+                "flying",
+                "indestructible",
+                "haste"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "subtypes": [
+                "Dragon"
+              ],
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until end of turn, Sarkhan becomes a legendary 4/4 red Dragon creature with flying, indestructible, and haste. (He doesn't lose loyalty while he's not a planeswalker.)"
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Sarkhan deals 4 damage to target creature."
+        },
+        {
+          "cost": {
+            "loyalty": -6
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−6: You get an emblem with \"At the beginning of your draw step, draw two additional cards\" and \"At the beginning of your end step, discard your hand.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "kind": "triggered",
+              "text": "At the beginning of your draw step, draw two additional cards",
+              "trigger": {
+                "controller": "you",
+                "event": "draw_step"
+              }
+            },
+            {
+              "effects": [
+                {
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                }
+              ],
+              "kind": "triggered",
+              "text": "At the beginning of your end step, discard your hand.",
+              "trigger": {
+                "controller": "you",
+                "event": "end_step"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "sarkhan_the_dragonspeaker",
+      "loyalty": 4,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Sarkhan, the Dragonspeaker",
+      "oracle_text": "+1: Until end of turn, Sarkhan becomes a legendary 4/4 red Dragon creature with flying, indestructible, and haste. (He doesn't lose loyalty while he's not a planeswalker.)\n−3: Sarkhan deals 4 damage to target creature.\n−6: You get an emblem with \"At the beginning of your draw step, draw two additional cards\" and \"At the beginning of your end step, discard your hand.\"",
+      "source": "auto",
+      "subtypes": [
+        "Sarkhan"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -237270,6 +238868,50 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "mana": "{R}{R}{R}{G}{G}{G}",
+              "op": "add_mana",
+              "persists_until_end_of_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, add {R}{R}{R}{G}{G}{G}. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "savage_ventmaw",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{R}{G}",
+      "name": "Savage Ventmaw",
+      "oracle_text": "Flying\nWhenever this creature attacks, add {R}{R}{R}{G}{G}{G}. Until end of turn, you don't lose this mana as steps and phases end.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -250940,6 +252582,152 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "lore",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a lore counter on it"
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "lore",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "remove_counters"
+                    }
+                  ],
+                  "label": "Remove a lore counter from it"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Saga"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Boast — {1}: Put a lore counter on target Saga you control or remove one from it. (Activate only if this creature attacked this turn and only once each turn.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you put a lore counter on a Saga you control, put a +1/+1 counter on up to one other target creature.",
+          "trigger": {
+            "controller": "any",
+            "counter": "lore",
+            "event": "counter_placed",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Saga"
+              ]
+            },
+            "put_by": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "sigurd_jarl_of_ravensthorpe",
+      "keywords": [
+        "vigilance",
+        "trample",
+        "lifelink"
+      ],
+      "mana_cost": "{R}{G}{W}",
+      "name": "Sigurd, Jarl of Ravensthorpe",
+      "oracle_text": "Vigilance, trample, lifelink\nBoast — {1}: Put a lore counter on target Saga you control or remove one from it. (Activate only if this creature attacked this turn and only once each turn.)\nWhenever you put a lore counter on a Saga you control, put a +1/+1 counter on up to one other target creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -273535,6 +275323,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {3} ({3}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sweltering_suns",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Sweltering Suns",
+      "oracle_text": "Sweltering Suns deals 3 damage to each creature.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -293999,6 +295842,74 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            },
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, it deals 1 damage to each creature with flying your opponents control. Tap those creatures.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thundermaw_hellkite",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Thundermaw Hellkite",
+      "oracle_text": "Flying\nHaste (This creature can attack and {T} as soon as it comes under your control.)\nWhen this creature enters, it deals 1 damage to each creature with flying your opponents control. Tap those creatures.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 5,
               "destination": "hand",
               "distinct_names": true,
@@ -305887,6 +307798,50 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "unleash_fury",
+      "mana_cost": "{1}{R}",
+      "name": "Unleash Fury",
+      "oracle_text": "Double the power of target creature until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -309049,6 +311004,70 @@
     {
       "abilities": [
         {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "library_top",
+              "op": "search_library",
+              "player": {
+                "target": "t1"
+              },
+              "selector": {}
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Boast — {1}{B}: Target player searches their library for a card, then shuffles and puts that card on top. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "varragoth_bloodsky_sire",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Varragoth, Bloodsky Sire",
+      "oracle_text": "Deathtouch\nBoast — {1}{B}: Target player searches their library for a card, then shuffles and puts that card on top. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -311147,6 +313166,55 @@
         "Ranger"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "karox_bladewing_4_4_r_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "verix_bladewing",
+      "keywords": [
+        "flying"
+      ],
+      "kicker": "{3}",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Verix Bladewing",
+      "oracle_text": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nFlying\nWhen Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

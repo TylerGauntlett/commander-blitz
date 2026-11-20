@@ -114,6 +114,14 @@ class EventType:
     #: that discards nothing (an opponent's ability under a discard shield) is
     #: still a connive, and connive 2 is one connive, not two.
     CONNIVED = "connived"
+    #: Creatures fought (701.12) -- "Whenever a creature you control fights"
+    #: (Foe-Razer Regent). One event per creature in the exchange, fired by
+    #: `ops_life.op_fight` after both blows: ``oid`` is the creature that
+    #: fought, ``player`` its controller, ``other`` the creature it fought.
+    #: Its own type because `DAMAGE_DEALT` is the near miss: it fires for
+    #: combat and every other damage too, and not at all for a 0-power
+    #: creature that fought and dealt nothing.
+    FOUGHT = "fought"
     #: A permanent explored (701.40) -- "Whenever a creature you control
     #: explores" (Merfolk Cave-Diver), "…explores a land card" and "…explores a
     #: nonland card" (Nicanzil, Current Conductor). ``data["oid"]`` is the

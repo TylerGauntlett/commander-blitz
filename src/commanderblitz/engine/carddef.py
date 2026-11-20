@@ -1155,6 +1155,9 @@ class Ability:
     #: See `schema.AbilityModel.is_equip` for why it is declared and not
     #: inferred from the `attach` effect.
     is_equip: bool = False
+    #: "Boast — …" (702.142a), so a static can name boast abilities as a
+    #: class. See `schema.AbilityModel.is_boast`.
+    is_boast: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
     #: "Add {G} for each +1/+1 counter on this creature."  A value expression
     #: evaluated **when the ability is activated**, multiplying the single

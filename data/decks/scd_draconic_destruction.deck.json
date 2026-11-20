@@ -1,0 +1,702 @@
+{
+  "id": "scd_draconic_destruction",
+  "name": "Draconic Destruction",
+  "commanders": [
+    "atarka_world_render"
+  ],
+  "color_identity": [
+    "G",
+    "R"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "SCD",
+    "set_name": "Starter Commander Decks",
+    "date": "2022-12-02"
+  },
+  "notes": "Starter Commander Decks precon, card for card (https://mtgjson.com/api/v5/decks/DraconicDestruction_SCD.json).",
+  "tags": [
+    "Dragons",
+    "Tribal",
+    "Ramp",
+    "Big creatures"
+  ],
+  "strategy": "Atarka, World Render gives every Dragon you control double strike as it attacks, so the deck ramps with Sol Ring, Arcane Signet, Cultivate, Sakura-Tribe Elder, Draconic Disciple and Atarka Monument into fliers that hit twice. Dragonspeaker Shaman and Dragonlord's Servant make the Dragons cheaper, Thundermaw Hellkite and Savage Ventmaw arrive swinging, and Scourge of Valkas, Dragon Tempest and Akoum Hellkite turn every Dragon and land into burn. Foe-Razer Regent and Primal Might fight off blockers, Sweltering Suns, Magmaquake and Chain Reaction sweep the small creatures that would chump, and Crucible of Fire and Hunter's Prowess end games in a single swing of double strike.",
+  "archetype": "dragons",
+  "ratings": {
+    "speed": 2,
+    "complexity": 2,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 2
+  },
+  "signature": [
+    {
+      "card_id": "atarka_world_render",
+      "why": "Every Dragon you control gains double strike as it attacks, so a 5/5 flier deals ten."
+    },
+    {
+      "card_id": "thundermaw_hellkite",
+      "why": "A hasty 5/5 flier that taps and pings every flier your opponents control as it enters."
+    },
+    {
+      "card_id": "scourge_of_valkas",
+      "why": "Each Dragon that enters deals damage equal to the number of Dragons you control."
+    },
+    {
+      "card_id": "foe_razer_regent",
+      "why": "Fights as it enters, and every fight your creatures make grows them by two counters."
+    }
+  ],
+  "printings": {
+    "akoum_hellkite": {
+      "scryfall_id": "cc2bff9a-b8a4-49a0-8208-9c6ebc56df14",
+      "artist": "Jaime Jones",
+      "set_code": "scd",
+      "collector_number": "123"
+    },
+    "arcane_signet": {
+      "scryfall_id": "02cb9420-fbfb-4123-a830-a992ff470db6",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "257"
+    },
+    "atarka_monument": {
+      "scryfall_id": "5e9fc80b-9602-4250-a282-e44aab6f8feb",
+      "artist": "Daniel Ljunggren",
+      "set_code": "scd",
+      "collector_number": "258"
+    },
+    "atarka_world_render": {
+      "scryfall_id": "719f172b-f9ad-4960-af66-757eb54147f6",
+      "artist": "Camille Alquier",
+      "set_code": "scd",
+      "collector_number": "1"
+    },
+    "beast_within": {
+      "scryfall_id": "fb961f73-e352-4373-b2ae-1730b654640c",
+      "artist": "Jesper Ejsing",
+      "set_code": "scd",
+      "collector_number": "172"
+    },
+    "blossoming_defense": {
+      "scryfall_id": "bf65fcd0-5f4e-4e65-ac86-2f14d5c7d527",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "scd",
+      "collector_number": "173"
+    },
+    "chain_reaction": {
+      "scryfall_id": "0609ddd2-1e98-4fe3-855e-c0ba1c365369",
+      "artist": "Trevor Claxton",
+      "set_code": "scd",
+      "collector_number": "126"
+    },
+    "cinder_glade": {
+      "scryfall_id": "6db7c44f-7c15-48e9-8170-43b00c7c11c1",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "295"
+    },
+    "clan_defiance": {
+      "scryfall_id": "aebd371a-8564-4687-9874-7986fc64ecfe",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "220"
+    },
+    "command_tower": {
+      "scryfall_id": "cae0c9e0-3be9-4151-9d59-658a032c30e9",
+      "artist": "Evan Shipard",
+      "set_code": "scd",
+      "collector_number": "297"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "686b4c7f-5b42-4625-8ff9-782795eec264",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "scd",
+      "collector_number": "261"
+    },
+    "crucible_of_fire": {
+      "scryfall_id": "a4cfcb17-6401-4595-82e6-ac1ab2a9e43b",
+      "artist": "Dominick Domingo",
+      "set_code": "scd",
+      "collector_number": "129"
+    },
+    "cultivate": {
+      "scryfall_id": "ea325c2c-36cb-46c5-b410-a3ee0b15e638",
+      "artist": "Anthony Palumbo",
+      "set_code": "scd",
+      "collector_number": "177"
+    },
+    "demanding_dragon": {
+      "scryfall_id": "f97d0541-f04f-44a6-a20f-4d909ccc90ca",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "130"
+    },
+    "draconic_disciple": {
+      "scryfall_id": "8cc56c65-b199-4203-b6f3-d890ab613800",
+      "artist": "Yongjae Choi",
+      "set_code": "scd",
+      "collector_number": "225"
+    },
+    "dragon_mage": {
+      "scryfall_id": "2847214c-f435-42db-80db-f3ca8bfb8567",
+      "artist": "Matthew D. Wilson",
+      "set_code": "scd",
+      "collector_number": "132"
+    },
+    "dragon_s_hoard": {
+      "scryfall_id": "398748c4-0ca4-4a7e-a7c7-995d5c3fa646",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "264"
+    },
+    "dragon_tempest": {
+      "scryfall_id": "13ad7bb2-e58b-4cd1-9b32-38c7f8589214",
+      "artist": "Willian Murai",
+      "set_code": "scd",
+      "collector_number": "133"
+    },
+    "dragonkin_berserker": {
+      "scryfall_id": "dcfd4840-c524-464a-9519-3fb78e6ee8c5",
+      "artist": "Lie Setiawan",
+      "set_code": "scd",
+      "collector_number": "134"
+    },
+    "dragonlord_s_servant": {
+      "scryfall_id": "d746adc2-5844-424e-af19-c7e80498f106",
+      "artist": "Steve Prescott",
+      "set_code": "scd",
+      "collector_number": "135"
+    },
+    "dragonmaster_outcast": {
+      "scryfall_id": "e7198cf2-795d-4921-be28-86f208dfe1f3",
+      "artist": "Raymond Swanland",
+      "set_code": "scd",
+      "collector_number": "136"
+    },
+    "dragonspeaker_shaman": {
+      "scryfall_id": "938de396-9701-4737-b913-c3c010f1b142",
+      "artist": "Kev Walker",
+      "set_code": "scd",
+      "collector_number": "137"
+    },
+    "drakuseth_maw_of_flames": {
+      "scryfall_id": "c8b43b68-ee35-4704-9a0f-1df4a42d3791",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "scd",
+      "collector_number": "138"
+    },
+    "dream_pillager": {
+      "scryfall_id": "5284c6db-82f4-4285-ade3-9b136abcedd2",
+      "artist": "Min Yum",
+      "set_code": "scd",
+      "collector_number": "139"
+    },
+    "drumhunter": {
+      "scryfall_id": "658c6338-2bd4-450a-a2f3-9c57aaaa7739",
+      "artist": "Jim Murray",
+      "set_code": "scd",
+      "collector_number": "179"
+    },
+    "elemental_bond": {
+      "scryfall_id": "b2c1a36e-a17b-4168-9048-4cc02dd464c5",
+      "artist": "David Gaillet",
+      "set_code": "scd",
+      "collector_number": "180"
+    },
+    "fires_of_yavimaya": {
+      "scryfall_id": "f8003d09-9c1a-4bd3-8672-f4d7960c972e",
+      "artist": "Izzy",
+      "set_code": "scd",
+      "collector_number": "228"
+    },
+    "flameblast_dragon": {
+      "scryfall_id": "90390efc-beca-440e-abee-65c1a29223cb",
+      "artist": "Jaime Jones",
+      "set_code": "scd",
+      "collector_number": "142"
+    },
+    "foe_razer_regent": {
+      "scryfall_id": "fde4a5a2-adcc-4011-b866-3bb2161ce966",
+      "artist": "Lucas Graciano",
+      "set_code": "scd",
+      "collector_number": "183"
+    },
+    "forest": {
+      "scryfall_id": "2950dace-a653-47e4-a80a-a3de5db8d491",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "349"
+    },
+    "frontier_siege": {
+      "scryfall_id": "25b37249-bf5c-48ad-a5ea-c7538cc46929",
+      "artist": "James Ryman",
+      "set_code": "scd",
+      "collector_number": "184"
+    },
+    "furnace_whelp": {
+      "scryfall_id": "396db1ad-e463-49b7-a4da-24302f771441",
+      "artist": "Shreya Shetty",
+      "set_code": "scd",
+      "collector_number": "143"
+    },
+    "game_trail": {
+      "scryfall_id": "2e53f295-60f6-4c6b-a0a4-304556b4eea0",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "302"
+    },
+    "garruk_s_uprising": {
+      "scryfall_id": "2b4746f0-233a-4e6f-9054-7a269e36a206",
+      "artist": "Wisnu Tan",
+      "set_code": "scd",
+      "collector_number": "185"
+    },
+    "harbinger_of_the_hunt": {
+      "scryfall_id": "52b7ea31-e853-4e8f-82f8-440388a5b110",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "230"
+    },
+    "harmonize": {
+      "scryfall_id": "ada28221-e5be-4d87-9dc7-649e01ca1e24",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "187"
+    },
+    "haven_of_the_spirit_dragon": {
+      "scryfall_id": "f4454c38-a490-4ea7-8525-c695e37b9fc9",
+      "artist": "Raymond Swanland",
+      "set_code": "scd",
+      "collector_number": "304"
+    },
+    "hoard_smelter_dragon": {
+      "scryfall_id": "b4487bbe-2bc4-48d9-8a6f-9b0c7555fb47",
+      "artist": "Eric Deschamps",
+      "set_code": "scd",
+      "collector_number": "147"
+    },
+    "hunter_s_insight": {
+      "scryfall_id": "b2fb825e-0c93-4555-9f6e-9b9d21566c2a",
+      "artist": "Jim Murray",
+      "set_code": "scd",
+      "collector_number": "191"
+    },
+    "hunter_s_prowess": {
+      "scryfall_id": "40220c41-f70e-49e8-8885-3525d01e0ff1",
+      "artist": "Greg Staples",
+      "set_code": "scd",
+      "collector_number": "192"
+    },
+    "kazandu_refuge": {
+      "scryfall_id": "304b4d37-53e1-44a3-a892-627439edaf6f",
+      "artist": "Franz Vohwinkel",
+      "set_code": "scd",
+      "collector_number": "307"
+    },
+    "loaming_shaman": {
+      "scryfall_id": "595ed9e9-65b3-4dc1-be6b-6bcd4f7ab8a0",
+      "artist": "Carl Critchlow",
+      "set_code": "scd",
+      "collector_number": "197"
+    },
+    "magmaquake": {
+      "scryfall_id": "dd99b254-3830-4543-a8c7-42899dc6fc65",
+      "artist": "Gabor Szikszai",
+      "set_code": "scd",
+      "collector_number": "149"
+    },
+    "mordant_dragon": {
+      "scryfall_id": "a83a2fe7-36df-4a38-8dd3-605eeb5f58f1",
+      "artist": "Scott Chou",
+      "set_code": "scd",
+      "collector_number": "152"
+    },
+    "mountain": {
+      "scryfall_id": "77c65a79-b8ae-4743-b124-c34140a06731",
+      "artist": "Sam Burley",
+      "set_code": "scd",
+      "collector_number": "345"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "dbab5b0a-c80f-4604-bec8-04da67ae1691",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "312"
+    },
+    "primal_might": {
+      "scryfall_id": "2c9ed4cd-260e-4109-a962-44c58ab1b76d",
+      "artist": "Randy Vargas",
+      "set_code": "scd",
+      "collector_number": "204"
+    },
+    "provoke_the_trolls": {
+      "scryfall_id": "964ae341-64eb-4ac1-9fb0-7243d5fe744d",
+      "artist": "Deruchenko Alexander",
+      "set_code": "scd",
+      "collector_number": "153"
+    },
+    "rapacious_dragon": {
+      "scryfall_id": "af7d2077-c108-4cb6-af56-3815991439b7",
+      "artist": "Johan Grenier",
+      "set_code": "scd",
+      "collector_number": "154"
+    },
+    "return_to_nature": {
+      "scryfall_id": "6f68ce77-b581-465c-9532-69df6de7827b",
+      "artist": "Kim Sokol",
+      "set_code": "scd",
+      "collector_number": "206"
+    },
+    "rugged_highlands": {
+      "scryfall_id": "a0300df7-54a9-4719-81bb-08e4d7762eac",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "315"
+    },
+    "runehorn_hellkite": {
+      "scryfall_id": "932504ec-274e-49e6-ac51-a8ec362e83d5",
+      "artist": "Karl Kopinski",
+      "set_code": "scd",
+      "collector_number": "155"
+    },
+    "sakura_tribe_elder": {
+      "scryfall_id": "7611e8e3-9529-4d0b-bc23-88ba907c4939",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "scd",
+      "collector_number": "208"
+    },
+    "sarkhan_the_dragonspeaker": {
+      "scryfall_id": "e653b95e-43c8-4cd6-a094-b2cd22d0eda2",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "156"
+    },
+    "savage_ventmaw": {
+      "scryfall_id": "4e3bd256-09d8-4d13-90fb-dff4aed3f328",
+      "artist": "Slawomir Maniak",
+      "set_code": "scd",
+      "collector_number": "240"
+    },
+    "scourge_of_valkas": {
+      "scryfall_id": "02ba0244-b7fa-4090-a1ac-1ba762dd8cc3",
+      "artist": "Lucas Graciano",
+      "set_code": "scd",
+      "collector_number": "157"
+    },
+    "shamanic_revelation": {
+      "scryfall_id": "c2e1151b-9203-4415-802d-1f3c8e4b9d03",
+      "artist": "Cynthia Sheppard",
+      "set_code": "scd",
+      "collector_number": "211"
+    },
+    "shivan_oasis": {
+      "scryfall_id": "815fd52c-852a-4eac-8f7c-879f3af5548e",
+      "artist": "Rob Alexander",
+      "set_code": "scd",
+      "collector_number": "318"
+    },
+    "sol_ring": {
+      "scryfall_id": "1b023575-4cb5-434f-92ef-d3b81aaa3c3e",
+      "artist": "Mike Bierek",
+      "set_code": "scd",
+      "collector_number": "276"
+    },
+    "spit_flame": {
+      "scryfall_id": "49fed954-0341-4a06-ae34-71e7d8c779ab",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "158"
+    },
+    "steel_hellkite": {
+      "scryfall_id": "ef97714b-b0e0-43b4-b2f0-414cc7997ff3",
+      "artist": "Jaime Jones",
+      "set_code": "scd",
+      "collector_number": "278"
+    },
+    "sweltering_suns": {
+      "scryfall_id": "7414b8da-abbe-4fba-afaf-2c9ff650a429",
+      "artist": "Raymond Swanland",
+      "set_code": "scd",
+      "collector_number": "160"
+    },
+    "swiftfoot_boots": {
+      "scryfall_id": "adc02df9-fbe8-4ef9-9bed-a48ea43a9242",
+      "artist": "Svetlin Velinov",
+      "set_code": "scd",
+      "collector_number": "279"
+    },
+    "talisman_of_impulse": {
+      "scryfall_id": "b08ce0bf-ee14-451c-8a77-b0ffffbb3e0d",
+      "artist": "Mike Dringenberg",
+      "set_code": "scd",
+      "collector_number": "281"
+    },
+    "temple_of_abandon": {
+      "scryfall_id": "49dceacc-a71a-4115-b0a9-7c7bd3c9f451",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "323"
+    },
+    "thunderbreak_regent": {
+      "scryfall_id": "a985687c-7a3a-4de2-9af3-450cb665d523",
+      "artist": "Ryan Pancoast",
+      "set_code": "scd",
+      "collector_number": "163"
+    },
+    "thundermaw_hellkite": {
+      "scryfall_id": "7a517c33-b516-4ad9-8cd8-d2ca27310252",
+      "artist": "Svetlin Velinov",
+      "set_code": "scd",
+      "collector_number": "164"
+    },
+    "timber_gorge": {
+      "scryfall_id": "dd47ccf1-500c-4553-9f25-d8a192a65c4e",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "328"
+    },
+    "tyrant_s_familiar": {
+      "scryfall_id": "4f0c7f3b-337e-4b61-8ab9-5e67a0979a9a",
+      "artist": "Todd Lockwood",
+      "set_code": "scd",
+      "collector_number": "165"
+    },
+    "unleash_fury": {
+      "scryfall_id": "04b1739c-bc65-482c-81fd-fa08d6f29fcd",
+      "artist": "Izzy",
+      "set_code": "scd",
+      "collector_number": "166"
+    },
+    "vandalblast": {
+      "scryfall_id": "71eb87ef-7e79-4370-a367-f8960cfe188e",
+      "artist": "Seb McKinnon",
+      "set_code": "scd",
+      "collector_number": "167"
+    },
+    "verix_bladewing": {
+      "scryfall_id": "359be9e6-0770-43e3-853c-95e5317e9d30",
+      "artist": "XiaoDi Jin",
+      "set_code": "scd",
+      "collector_number": "168"
+    }
+  },
+  "cards": [
+    {
+      "id": "akoum_hellkite"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "atarka_monument"
+    },
+    {
+      "id": "beast_within"
+    },
+    {
+      "id": "blossoming_defense"
+    },
+    {
+      "id": "chain_reaction"
+    },
+    {
+      "id": "cinder_glade"
+    },
+    {
+      "id": "clan_defiance"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "crucible_of_fire"
+    },
+    {
+      "id": "cultivate"
+    },
+    {
+      "id": "demanding_dragon"
+    },
+    {
+      "id": "draconic_disciple"
+    },
+    {
+      "id": "dragon_mage"
+    },
+    {
+      "id": "dragon_s_hoard"
+    },
+    {
+      "id": "dragon_tempest"
+    },
+    {
+      "id": "dragonkin_berserker"
+    },
+    {
+      "id": "dragonlord_s_servant"
+    },
+    {
+      "id": "dragonmaster_outcast"
+    },
+    {
+      "id": "dragonspeaker_shaman"
+    },
+    {
+      "id": "drakuseth_maw_of_flames"
+    },
+    {
+      "id": "dream_pillager"
+    },
+    {
+      "id": "drumhunter"
+    },
+    {
+      "id": "elemental_bond"
+    },
+    {
+      "id": "fires_of_yavimaya"
+    },
+    {
+      "id": "flameblast_dragon"
+    },
+    {
+      "id": "foe_razer_regent"
+    },
+    {
+      "id": "forest",
+      "qty": 12
+    },
+    {
+      "id": "frontier_siege"
+    },
+    {
+      "id": "furnace_whelp"
+    },
+    {
+      "id": "game_trail"
+    },
+    {
+      "id": "garruk_s_uprising"
+    },
+    {
+      "id": "harbinger_of_the_hunt"
+    },
+    {
+      "id": "harmonize"
+    },
+    {
+      "id": "haven_of_the_spirit_dragon"
+    },
+    {
+      "id": "hoard_smelter_dragon"
+    },
+    {
+      "id": "hunter_s_insight"
+    },
+    {
+      "id": "hunter_s_prowess"
+    },
+    {
+      "id": "kazandu_refuge"
+    },
+    {
+      "id": "loaming_shaman"
+    },
+    {
+      "id": "magmaquake"
+    },
+    {
+      "id": "mordant_dragon"
+    },
+    {
+      "id": "mountain",
+      "qty": 18
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "primal_might"
+    },
+    {
+      "id": "provoke_the_trolls"
+    },
+    {
+      "id": "rapacious_dragon"
+    },
+    {
+      "id": "return_to_nature"
+    },
+    {
+      "id": "rugged_highlands"
+    },
+    {
+      "id": "runehorn_hellkite"
+    },
+    {
+      "id": "sakura_tribe_elder"
+    },
+    {
+      "id": "sarkhan_the_dragonspeaker"
+    },
+    {
+      "id": "savage_ventmaw"
+    },
+    {
+      "id": "scourge_of_valkas"
+    },
+    {
+      "id": "shamanic_revelation"
+    },
+    {
+      "id": "shivan_oasis"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "spit_flame"
+    },
+    {
+      "id": "steel_hellkite"
+    },
+    {
+      "id": "sweltering_suns"
+    },
+    {
+      "id": "swiftfoot_boots"
+    },
+    {
+      "id": "talisman_of_impulse"
+    },
+    {
+      "id": "temple_of_abandon"
+    },
+    {
+      "id": "thunderbreak_regent"
+    },
+    {
+      "id": "thundermaw_hellkite"
+    },
+    {
+      "id": "timber_gorge"
+    },
+    {
+      "id": "tyrant_s_familiar"
+    },
+    {
+      "id": "unleash_fury"
+    },
+    {
+      "id": "vandalblast"
+    },
+    {
+      "id": "verix_bladewing"
+    }
+  ]
+}

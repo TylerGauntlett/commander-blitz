@@ -1822,7 +1822,7 @@ def ability_mana_tax(
     picking the activation out, pointing the other way, and priced in a
     ``cost.mana`` node the loader holds to generic mana.
 
-    ``affects_abilities`` is the class (``equip``, ``any`` beside a
+    ``affects_abilities`` is the class (``equip``, ``boast``, ``any`` beside a
     `targeting` clause, or ``non_mana``), ``activated_by`` the activating player (default
     ``"you"``), and ``affects`` the permanent the ability is printed on.
     ``targeting`` is matched against the refs the activation chose, and read
@@ -1862,6 +1862,8 @@ def ability_mana_tax(
             # ability on the table, so a compile bug reads as none.
             continue
         if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        if classes.get("boast") and not getattr(ability, "is_boast", False):
             continue
         if classes.get("non_mana") and getattr(ability, "is_mana_ability", False):
             continue
@@ -1923,7 +1925,8 @@ def ability_cost_reduction(
 
     ``affects_abilities`` says which abilities. ``equip`` is the reason
     `Ability.is_equip` exists -- an equip ability is otherwise
-    indistinguishable from any other that attaches something -- and ``any`` is
+    indistinguishable from any other that attaches something -- ``boast``
+    reads `Ability.is_boast` (Dragonkin Berserker), and ``any`` is
     every activated ability (Professor Hojo), which the loader accepts only
     beside a `targeting` clause -- a mana ability has no targets (605.1a) --
     or `first_each_turn`, which counts mana abilities: a tap-only one is the
@@ -1969,6 +1972,8 @@ def ability_cost_reduction(
             # activated ability on the table, so a compile bug reads as none.
             continue
         if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        if classes.get("boast") and not getattr(ability, "is_boast", False):
             continue
         # "abilities **you** activate". The activating player, not the
         # permanent's controller: an opponent equipping your Equipment is their

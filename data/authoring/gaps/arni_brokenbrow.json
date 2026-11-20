@@ -1,0 +1,18 @@
+{
+  "card_id": "arni_brokenbrow",
+  "name": "Arni Brokenbrow",
+  "oracle_text": "Haste\nBoast — {1}: You may change Arni's base power to 1 plus the greatest power among other creatures you control until end of turn. (Activate only if this creature attacked this turn and only once each turn.)",
+  "blocked_sentences": [
+    "Boast — {1}: You may change Arni's base power to 1 plus the greatest power among other creatures you control until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "set_base_power",
+      "kind": "op",
+      "what": "an op that sets only an object's base power (layer 7b) until end of turn, leaving its base toughness untouched, so counters, anthems and pumps on Arni still apply on top of the new base value; magnitude 1 + extreme_value {of: power, objects: other creatures you control}",
+      "why_existing_wont_do": "set_pt is a compensating pump over the current power and toughness (it cancels any +1/+1 counter or anthem already on Arni rather than setting the base) and always writes toughness too; animate does set base P/T but only both together (keep_pt only when neither is given) and no value reads base toughness to pass through unchanged"
+    }
+  ],
+  "closest_existing": ["set_pt", "animate", "extreme_value"],
+  "confidence": "high"
+}

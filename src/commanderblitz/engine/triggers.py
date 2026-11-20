@@ -320,6 +320,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: discard would pay at all, and a connive whose discard an opponent's
     #: shield stopped would not pay -- and neither event names the creature.
     "connives": EventType.CONNIVED,
+    #: "Whenever a creature you control fights, …" (701.12) -- Foe-Razer
+    #: Regent. Once per creature in each fight that happens, fired by
+    #: `ops_life.op_fight` after both blows. The subject is the creature that
+    #: fought (see `OBJECT_SUBJECT_TRIGGERS`), so a `filter` asks what it is,
+    #: `controller: "you"` reads its controller, and `{"binding": "subject"}`
+    #: is "it". A creature you control fighting another you control is two
+    #: triggers.
+    #:
+    #: `deals_damage` is the near miss: it fires on combat damage and on
+    #: every burn spell, and never for a 0-power creature that fought.
+    "fights": EventType.FOUGHT,
     #: "Whenever a creature you control explores, …" (701.40) -- Merfolk
     #: Cave-Diver; "…explores a land card" and "…explores a nonland card" --
     #: Nicanzil, Current Conductor. Once per exploring permanent, after the
@@ -771,6 +782,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # event's `source`, which is whatever made it connive: see the
         # `source: "self"` check in `_matches`.
         "connives",
+        # The creature that fought, for `connives`' reason: the event's
+        # `source` is the spell or ability that made it fight.
+        "fights",
         # The permanent that explored, for `connives`' reason: the event's
         # `source` is whatever made it explore.
         "explores",
@@ -1737,6 +1751,10 @@ def _matches(
     # the ability that made something connive, so Doctor Doom making a Villain
     # connive would otherwise count as Doom conniving.
     if spec.event == "connives" and spec.source == "self" and subject_oid != obj.oid:
+        return False
+    # And for "whenever *this creature* fights": the spell that made it fight
+    # is the event's `source`, and the creature is its subject.
+    if spec.event == "fights" and spec.source == "self" and subject_oid != obj.oid:
         return False
     # And for "whenever *this creature* explores": a creature whose ability
     # makes another creature explore has not explored.

@@ -1857,13 +1857,21 @@ STATIC_VALUE_KEYS = (
 #: `ability_cost_increase` may name.
 #:
 #: Each is a question the engine can actually answer about a compiled
-#: `Ability` -- `equip` reads `Ability.is_equip`, `any` is every activated
+#: `Ability` -- `equip` reads `Ability.is_equip`, `boast` reads
+#: `Ability.is_boast` (Dragonkin Berserker), `any` is every activated
 #: ability ("the first activated ability you activate", Professor Hojo), and
 #: `non_mana` is every activated ability that is not a mana ability, read
 #: against `Ability.is_mana_ability` (Tithe Taker's "unless they're mana
 #: abilities", 605) -- and a class with no marker behind it would load and
 #: match nothing, which is the printed line silently not happening.
-ABILITY_CLASS_KEYS = frozenset({"equip", "any", "non_mana"})
+ABILITY_CLASS_KEYS = frozenset({"equip", "boast", "any", "non_mana"})
+
+#: The activation restriction every boast ability prints (702.142a), "activate
+#: only if this creature attacked this turn"; `once_each_turn` is the other
+#: half. An ability declaring `is_boast` carries exactly this `condition`.
+BOAST_CONDITION = {
+    "exists": {"attacked_this_turn": True, "self_only": True, "zone": "battlefield"}
+}
 
 #: The `targeting` keys an `ability_cost_reduction` with
 #: `first_during_your_turn` may read. "The **first** activated ability … that
