@@ -27480,6 +27480,15 @@
   "wild_ox": {
     "zone": "battlefield"
   },
+  "wild_ricochet": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "wild_wanderer": {
     "zone": "battlefield"
   },

@@ -315202,12 +315202,12 @@
     },
     "Wild Ricochet": {
       "edhrec_rank": 3999,
-      "gate": "template",
+      "gate": null,
       "name": "Wild Ricochet",
-      "reason": "no template for: You may choose new targets for target instant or sorcery spell. Then copy that spell. You ",
+      "reason": "",
       "scryfall_id": "ecbe8717-07a1-4145-9cd4-b98b145c2d4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wild Ride": {

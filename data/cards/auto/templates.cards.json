@@ -328995,6 +328995,46 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wild_ricochet",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Wild Ricochet",
+      "oracle_text": "You may choose new targets for target instant or sorcery spell. Then copy that spell. You may choose new targets for the copy.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "choose_new_targets",
+          "target": "t1"
+        },
+        {
+          "new_targets": true,
+          "op": "copy_spell",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
