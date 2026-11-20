@@ -20443,6 +20443,13 @@
   "scuzzback_scrapper": {
     "zone": "battlefield"
   },
+  "scythe_specter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "scythecat_cub": {
     "battlefield_count": 33,
     "granted": {
@@ -22629,6 +22636,10 @@
     },
     "zone": "battlefield"
   },
+  "stensia_bloodhall": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stensian_sanguinist_exsanguinate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24485,6 +24496,13 @@
   "theoretical_duplication": {
     "zone": "graveyard"
   },
+  "thermo_alchemist": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "thespian_s_stage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24968,6 +24986,13 @@
   },
   "titan_forge": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "titan_hunter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "titan_of_industry": {
@@ -25929,6 +25954,13 @@
     "zone": "battlefield"
   },
   "unleash_fury": {
+    "zone": "graveyard"
+  },
+  "unlicensed_disintegration": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "graveyard"
   },
   "unnatural_growth": {

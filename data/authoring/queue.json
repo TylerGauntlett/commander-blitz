@@ -237272,12 +237272,12 @@
     },
     "Scythe Specter": {
       "edhrec_rank": 13267,
-      "gate": "template",
+      "gate": null,
       "name": "Scythe Specter",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, each opponent discards a card. Eac",
+      "reason": "",
       "scryfall_id": "232afb53-8799-4d45-a3b5-f29ff5afc0c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scythe Tiger": {
@@ -264082,12 +264082,12 @@
     },
     "Stensia Bloodhall": {
       "edhrec_rank": 13536,
-      "gate": "template",
+      "gate": null,
       "name": "Stensia Bloodhall",
-      "reason": "no template for: {3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker",
+      "reason": "",
       "scryfall_id": "4c936ea7-8802-4ae7-9d85-4b873cbd56ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stensia Innkeeper": {
@@ -283262,12 +283262,12 @@
     },
     "Thermo-Alchemist": {
       "edhrec_rank": 1670,
-      "gate": "template",
+      "gate": null,
       "name": "Thermo-Alchemist",
-      "reason": "no template for: {T}: This creature deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "550d4e71-2f3c-49bf-acb7-de833c319514",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thermokarst": {
@@ -287992,12 +287992,12 @@
     },
     "Titan Hunter": {
       "edhrec_rank": 14919,
-      "gate": "template",
+      "gate": null,
       "name": "Titan Hunter",
-      "reason": "no template for: At the beginning of each player's end step, if no creatures died this turn, this creature ",
+      "reason": "",
       "scryfall_id": "7b7655b2-3367-478e-81b7-d8fca8911c9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan of Eternal Fire": {
@@ -298162,12 +298162,12 @@
     },
     "Unlicensed Disintegration": {
       "edhrec_rank": 9260,
-      "gate": "template",
+      "gate": null,
       "name": "Unlicensed Disintegration",
-      "reason": "no template for: Destroy target creature. If you control an artifact, deals 3 damage to that creature's con",
+      "reason": "",
       "scryfall_id": "dd56ade4-37aa-444f-ad54-15cf0468824e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unlicensed Hearse": {

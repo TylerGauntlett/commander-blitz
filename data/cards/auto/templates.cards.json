@@ -245211,6 +245211,112 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "each_opponent"
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "all": [
+                      {
+                        "exists": {
+                          "binding": "pitched",
+                          "owner": {
+                            "binding": "each_player"
+                          }
+                        }
+                      },
+                      {
+                        "cmp": ">=",
+                        "left": {
+                          "extreme_value": {
+                            "objects": {
+                              "binding": "pitched",
+                              "owner": {
+                                "binding": "each_player"
+                              }
+                            },
+                            "of": "mana_value",
+                            "pick": "greatest"
+                          }
+                        },
+                        "right": {
+                          "extreme_value": {
+                            "objects": {
+                              "binding": "pitched"
+                            },
+                            "of": "mana_value",
+                            "pick": "greatest"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "extreme_value": {
+                          "objects": {
+                            "binding": "pitched"
+                          },
+                          "of": "mana_value",
+                          "pick": "greatest"
+                        }
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, each opponent discards a card. Each player who discarded a card with the greatest mana value among cards discarded this way loses life equal to that mana value.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "scythe_specter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Scythe Specter",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, each opponent discards a card. Each player who discarded a card with the greatest mana value among cards discarded this way loses life equal to that mana value.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Specter"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "cmp": "==",
                 "left": {
@@ -270646,6 +270752,65 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{B}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "{3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "stensia_bloodhall",
+      "name": "Stensia Bloodhall",
+      "oracle_text": "{T}: Add {C}.\n{3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -296232,6 +296397,71 @@
           },
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: This creature deals 1 damage to each opponent."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, untap this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thermo_alchemist",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Thermo-Alchemist",
+      "oracle_text": "Defender\n{T}: This creature deals 1 damage to each opponent.\nWhenever you cast an instant or sorcery spell, untap this creature.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{C}",
               "op": "add_mana"
             }
@@ -301386,6 +301616,82 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's end step, if no creatures died this turn, this creature deals 4 damage to that player.",
+          "trigger": {
+            "condition": {
+              "cmp": "=",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}, Sacrifice a creature: You gain 4 life."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "titan_hunter",
+      "mana_cost": "{4}{B}",
+      "name": "Titan Hunter",
+      "oracle_text": "At the beginning of each player's end step, if no creatures died this turn, this creature deals 4 damage to that player.\n{1}{B}, Sacrifice a creature: You gain 4 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -311783,6 +312089,73 @@
       ],
       "targets": [
         {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "unlicensed_disintegration",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Unlicensed Disintegration",
+      "oracle_text": "Destroy target creature. If you control an artifact, Unlicensed Disintegration deals 3 damage to that creature's controller.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "player": {
+                "controller_of": "victim"
+              }
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
           "id": "t1",
           "kind": "permanent",
           "selector": {
