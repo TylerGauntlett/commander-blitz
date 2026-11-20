@@ -447,6 +447,30 @@
       ]
     },
     {
+      "id": "cat_bird_1_1_w_flying",
+      "name": "Cat Bird Token",
+      "oracle_text": "1/1 white Cat Bird creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat",
+        "Bird"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "cat_1_1_w",
       "name": "Cat Token",
       "oracle_text": "1/1 white Cat creature token.",
@@ -1887,6 +1911,29 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "pegasus_1_1_w_flying",
+      "name": "Pegasus Token",
+      "oracle_text": "1/1 white Pegasus creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pegasus"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
       ],
       "is_token": true
     },
