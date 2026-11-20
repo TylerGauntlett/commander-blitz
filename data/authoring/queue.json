@@ -315432,12 +315432,12 @@
     },
     "Wildfire Devils": {
       "edhrec_rank": 6712,
-      "gate": "template",
+      "gate": null,
       "name": "Wildfire Devils",
-      "reason": "no template for: When this creature enters and at the beginning of your upkeep, choose a player at random. ",
+      "reason": "",
       "scryfall_id": "3c876360-3608-422a-b709-84b32be8daa0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildfire Elemental": {

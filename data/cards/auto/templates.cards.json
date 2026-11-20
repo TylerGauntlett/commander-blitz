@@ -329110,6 +329110,111 @@
         {
           "effects": [
             {
+              "as": "chosen",
+              "op": "choose_player",
+              "players": "each_player",
+              "random": true
+            },
+            {
+              "as": "banked",
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "chooser": {
+                  "binding": "chosen"
+                },
+                "count": 1,
+                "player": {
+                  "binding": "chosen"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, choose a player at random. That player exiles an instant or sorcery card from their graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "chosen",
+              "op": "choose_player",
+              "players": "each_player",
+              "random": true
+            },
+            {
+              "as": "banked",
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "chooser": {
+                  "binding": "chosen"
+                },
+                "count": 1,
+                "player": {
+                  "binding": "chosen"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and at the beginning of your upkeep, choose a player at random. That player exiles an instant or sorcery card from their graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wildfire_devils",
+      "mana_cost": "{3}{R}",
+      "name": "Wildfire Devils",
+      "oracle_text": "When this creature enters and at the beginning of your upkeep, choose a player at random. That player exiles an instant or sorcery card from their graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Devil"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "max_mana_value": {
                 "mana_value_of": {
                   "binding": "subject"
