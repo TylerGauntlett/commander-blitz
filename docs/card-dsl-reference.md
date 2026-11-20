@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 36 |
+| [Ability costs](#ability-costs) | 37 |
 | [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 47 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -848,6 +848,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds, or of the one `counter` names, from among permanents the payer picks. | [remove_counters_from_among — counters off permanents the payer picks](card-dsl.md#remove_counters_from_among--counters-off-permanents-the-payer-picks) |
+| `remove_counters_x` | Remove X counters (of the named kind) from the source, or all from one permanent `from` picks; X announced and bounded by them. | [remove_counters_x — remove X counters, X announced](card-dsl.md#remove_counters_x--remove-x-counters-x-announced) |
 | `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
 | `reveal_from_hand` | Reveal matching cards from your own hand; nothing moves. | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `sacrifice` | Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |

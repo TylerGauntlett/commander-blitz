@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **455** capabilities.
+**535 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
-| [remove-x-counters-cost](#remove-x-counters-cost) | 3 | 5399 | cost |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
@@ -1321,28 +1320,6 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
-
-</details>
-
-## remove-x-counters-cost
-
-Blocks **3** cards.
-
-- **(cost)** an activated-ability cost that removes an announced number X of a named counter kind (here time counters) from the source itself, X chosen by the controller on activation (0 up to the counters on the source) and bound so the effects can read it with {"x": true}, so the resolution can return each nonland permanent card with mana value exactly X
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed integer amount (Cost reads int(amount)); loyalty_x is the variable form but only for loyalty counters and drags in planeswalker-ability rules (606.3 once per turn); x_value defines the X of an {X} in the mana cost from a value expression, and this cost has no {X} for the player to announce; remove_counters_from_among also takes a fixed count
-- **(cost)** a cost that removes an announced X counters of a named kind from the source ("Remove X storage counters from this land"), X chosen on activation from 0 up to the counters present and readable by the ability's effects as {"x": ...}, usable on a mana ability so add_mana's `amount` with `split: ["B", "R"]` can produce X mana
-  <br>Why the existing vocabulary won't do: The `remove_counters` cost takes a fixed integer `amount` (Cost.remove_counters is priced and paid with int(amount)); `cost_x_ceiling` announces X only for discard_x, sacrifice_x and tap_x, and loyalty_x is loyalty-only. There is no remove_counters_x, so the X cannot be announced or bounded by storage counters. The other two lines (`{T}: Add {C}.` and `{1}, {T}: Put a storage counter` via add_counters) are expressible.
-- **(cost)** an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({"x": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce
-
-<details><summary>Cards waiting on this</summary>
-
-- **Moxite Refinery** (rank 5399) — `moxite_refinery`
-  - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
-- **Hourglass of the Lost** (rank 5928) — `hourglass_of_the_lost`
-  - {T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.
-- **Molten Slagheap** (rank 8442) — `molten_slagheap`
-  - {1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}.
 
 </details>
 

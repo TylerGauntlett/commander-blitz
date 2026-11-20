@@ -129,6 +129,17 @@ class CostModel(BaseModel):
     #: Activated abilities only. No ``count``, ``total_power`` or ``as``; not
     #: beside ``tap_permanents`` and not beside another announced X.
     tap_x: dict[str, Any] | None = None
+    #: "{1}, **Remove X storage counters from this land**:" -- Molten
+    #: Slagheap. ``{"counter": kind}`` takes X counters of that kind off the
+    #: source; ``{"from": selector}`` takes all X off **one** permanent the
+    #: payer picks (``controller`` defaults to you), of the named ``counter``
+    #: kind or, without it, of any kinds -- Moxite Refinery's "Remove X
+    #: counters from an artifact or creature you control". X is announced as
+    #: the ability is activated, bounded by the most counters on one such
+    #: permanent, and the effects -- a mana ability's ``add_mana`` ``amount``
+    #: included -- read it back with ``{"x": true}``. Activated abilities
+    #: only; no other keys, and not beside another announced X.
+    remove_counters_x: dict[str, Any] | None = None
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix

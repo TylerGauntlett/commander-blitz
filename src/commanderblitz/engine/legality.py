@@ -1094,6 +1094,7 @@ def _targets_read_x(ability) -> bool:
         and not cost.discard_x
         and cost.sacrifice_x is None
         and cost.tap_x is None
+        and cost.remove_counters_x is None
         and (not cost.mana.x_count or cost.x_value is not None)
     ):
         return False

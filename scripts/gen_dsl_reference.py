@@ -1221,6 +1221,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "remove_counters": ("Remove N counters of a kind from the source.", None),
     "remove_counters_from_among": ("Remove N counters of any kinds, or of the one `counter` names, from among permanents the payer picks.",
                                    "`remove_counters_from_among` — counters off permanents the payer picks"),
+    "remove_counters_x": ("Remove X counters (of the named kind) from the source, or all from one permanent `from` picks; X announced and bounded by them.",
+                          "`remove_counters_x` — remove X counters, X announced"),
     "return_to_hand": ("Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects.",
                        "Ninjutsu — swapping into a combat already under way"),
     "sacrifice": ("Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents.",

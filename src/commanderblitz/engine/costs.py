@@ -1403,6 +1403,15 @@ def can_pay(
         # "Tap X untapped tokens" at the announced number; X = 0 is always
         # payable, the `discard_x` floor.
         return False
+    if cost.remove_counters_x is not None:
+        # "Remove X storage counters from this land" at the announced number.
+        # X = 0 is payable whenever there is a permanent to take none from --
+        # the source on the battlefield, or for a ``from`` pool at least one
+        # matching permanent, since the cost still chooses one (Moxite
+        # Refinery's "from an artifact or creature you control").
+        candidates = _remove_counters_x_pool(state, pid, cost, source_oid)
+        if not candidates or x > remove_counters_x_ceiling(state, pid, cost, source_oid):
+            return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
         return False
     if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
@@ -1749,6 +1758,45 @@ def tap_x_ceiling(state: GameState, pid: int, cost: Cost, source_oid: int | None
     return len(_tap_x_pool(state, pid, cost, source_oid))
 
 
+def _remove_counters_x_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """The permanents a ``remove_counters_x`` cost may take its X counters off.
+
+    The source alone, while it is on the battlefield, unless the cost names a
+    ``from`` selector (controller defaults to you): then every matching
+    permanent, counters or not -- X = 0 still chooses one. The payer takes all
+    X off **one** of them, so the pool is a list of candidates, not a sum.
+    """
+    spec = dict(cost.remove_counters_x or {})
+    selector = spec.get("from")
+    if selector is None:
+        if source_oid is None or source_oid not in state.battlefield:
+            return []
+        return [source_oid]
+    narrowed = dict(selector)
+    narrowed.setdefault("controller", "you")
+    narrowed.setdefault("zone", "battlefield")
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return list(resolve_pool(ctx, narrowed))
+
+
+def remove_counters_x_ceiling(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> int:
+    """The most X a ``remove_counters_x`` cost may announce.
+
+    The most counters -- of the named ``counter`` kind, or of every kind -- on
+    any **one** permanent of `_remove_counters_x_pool`, since the cost takes
+    all X off a single permanent (Moxite Refinery's ruling: counters on two
+    permanents cannot be added together). `tap_x_ceiling`'s twin, read by the
+    same places.
+    """
+    kind = (cost.remove_counters_x or {}).get("counter")
+    pool = _remove_counters_x_pool(state, pid, cost, source_oid)
+    return max((_counters_on(state, oid, kind) for oid in pool), default=0)
+
+
 def cost_x_ceiling(
     state: GameState, pid: int, cost: Cost | None, source_oid: int | None = None
 ) -> int | None:
@@ -1768,6 +1816,8 @@ def cost_x_ceiling(
         return sacrifice_x_ceiling(state, pid, cost, source_oid)
     if cost.tap_x is not None:
         return tap_x_ceiling(state, pid, cost, source_oid)
+    if cost.remove_counters_x is not None:
+        return remove_counters_x_ceiling(state, pid, cost, source_oid)
     return None
 
 
@@ -2187,6 +2237,39 @@ def pay(
         pool = _discard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(ctx, f"Discard {x}", pool, x, x, pid, "discard")
         yield from _discard(state, pid, picked)
+
+    if cost.remove_counters_x is not None and x > 0:
+        # Exactly the announced number, all off one permanent (601.2h): the
+        # source, or the one the payer picks from the ``from`` pool among
+        # those carrying X -- the bound `remove_counters_x_ceiling` set, so a
+        # pick can never fall short. Without a named kind the X may be any
+        # mix, asked a counter at a time when the permanent carries two kinds.
+        # Paid before the costs that move the source: Hourglass of the Lost
+        # removes its time counters "and exile[s] it", and a source already in
+        # exile is no longer a permanent to take them from.
+        kind = cost.remove_counters_x.get("counter")
+        able = [
+            oid
+            for oid in _remove_counters_x_pool(state, pid, cost, source_oid)
+            if _counters_on(state, oid, kind) >= x
+        ]
+        picked = yield from ask_objects(
+            ctx, f"Remove {x} counters from", able, 1, 1, pid, "remove_counter_cost"
+        )
+        if not picked:
+            return False
+        chosen = picked[0]
+        if kind is not None:
+            remove_counters(state, chosen, str(kind), x, by=pid)
+        else:
+            yield from remove_counters_one_at_a_time(
+                ctx,
+                lambda: [chosen],
+                most=x,
+                least=x,
+                chooser=pid,
+                purpose="remove_counter_cost",
+            )
 
     if cost.discard_self and source_oid is not None:
         # No `ask_objects`: which card goes is not a choice, it is *this* card.

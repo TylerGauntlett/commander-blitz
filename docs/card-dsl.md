@@ -4990,6 +4990,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "discard_x": true,                              // Gix: discard X cards, X announced
   "sacrifice_x": { "subtypes": ["Food"] },        // Frugivore: sacrifice X Foods, X announced
   "tap_x": { "is_token": true },                  // Hazel: tap X untapped tokens, X announced
+  "remove_counters_x": { "counter": "storage" },  // Molten Slagheap: X storage counters off the source
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -5157,8 +5158,8 @@ is fodder when it matches. X = 0 is a legal announcement, so the ability is on
 offer with nothing to tap. A target whose filter reads X is offered once per X,
 as for `discard_x`.
 
-**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x` or
-`discard_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
+**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x`,
+`discard_x` or `remove_counters_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
 the loader refuses `x` there otherwise. Such an ability is not tap-only, so the
 payment solver never activates it: it is offered at priority as one row, and
 its mana floats in the pool for what is cast next, as a Signet's does.
@@ -5172,6 +5173,43 @@ Not `tap_permanents` with a `count`, which is a number the card fixes. The
 loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
 beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
 `discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
+
+### `remove_counters_x` — remove X counters, X announced
+
+"{1}, Remove X storage counters from this land: Add X mana in any combination
+of {B} and/or {R}." — Molten Slagheap. "{2}, {T}, Remove X counters from an
+artifact or creature you control: …" — Moxite Refinery.
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "cost": { "mana": "{1}", "remove_counters_x": { "counter": "storage" } },
+  "effects": [{ "op": "add_mana", "split": ["B", "R"], "amount": { "x": true } }] }
+
+"cost": { "mana": "{2}", "tap": true,
+          "remove_counters_x": { "from": { "types": ["Artifact", "Creature"] } } }
+```
+
+Two keys. `counter` names the one kind that may come off; `from` is a selector
+over the battlefield (`controller` defaulting to you) naming the permanents the
+payer may take the counters from. Without `from` the counters come off the
+source, and `counter` is then required. With `from` and no `counter`, the X may
+be any mix of kinds. Either way **all X come off one permanent**: the
+controller announces X as the ability is activated (601.2b, 107.3), bounded by
+`costs.remove_counters_x_ceiling` — the most counters any one candidate
+carries, never a sum across two — then picks the permanent among those carrying
+X and, when no kind is named and it carries two, which kinds, a counter at a
+time. The effects read X with `{"x": true}` / `"x"`, a mana ability's `add_mana`
+`amount` included (see `tap_x`'s **On a mana ability**). X = 0 is a legal
+announcement while there is a candidate permanent — the source on the
+battlefield, or one matching `from`. A target whose filter reads X is offered
+once per X, as for `discard_x`.
+
+Not `remove_counters`, whose `amount` the card fixes, and not
+`remove_counters_from_among`, which takes a fixed count and lets the payer split
+it across several permanents. The loader refuses any other key, a `from` that
+is not a selector, the source form without `counter`, the key beside an `{X}` in
+`mana`, `pay_life_x`, `loyalty_x`, `discard_x`, `sacrifice_x` or `tap_x`, and
+anywhere but an activated ability's cost.
 
 ### `mill` — a cost, and never an effect
 
