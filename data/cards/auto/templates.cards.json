@@ -55094,6 +55094,62 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "condemn",
+      "mana_cost": "{W}",
+      "name": "Condemn",
+      "oracle_text": "Put target attacking creature on the bottom of its owner's library. Its controller gains life equal to its toughness.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "condemned",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "bottom": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "amount": {
+            "toughness_of": {
+              "var": "condemned"
+            }
+          },
+          "op": "gain_life",
+          "player": {
+            "controller_of": "condemned"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "attacking": true,
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_player": "you",
@@ -72623,6 +72679,53 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "devouring_light",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Devouring Light",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nExile target attacking or blocking creature.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "attacking": true
+              },
+              {
+                "blocking": true
+              }
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -142051,6 +142154,65 @@
         "Wizard"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw cards equal to the number of opponents you have.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "inspired_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Inspired Sphinx",
+      "oracle_text": "Flying\nWhen this creature enters, draw cards equal to the number of opponents you have.\n{3}{U}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -258227,6 +258389,84 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "exclude_self": true,
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "This creature gets +1/+1 for each other creature you control with flying.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "exclude_self": true,
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "cat_bird_1_1_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}{U}: Create a 1/1 white Cat Bird creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "skycat_sovereign",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{W}{U}",
+      "name": "Skycat Sovereign",
+      "oracle_text": "Flying\nThis creature gets +1/+1 for each other creature you control with flying.\n{2}{W}{U}: Create a 1/1 white Cat Bird creature token with flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Cat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "link": true,
@@ -271033,6 +271273,31 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "storm_herd",
+      "mana_cost": "{8}{W}{W}",
+      "name": "Storm Herd",
+      "oracle_text": "Create X 1/1 white Pegasus creature tokens with flying, where X is your life total.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "life_of": "you"
+          },
+          "op": "create_token",
+          "token": "pegasus_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -4477,6 +4477,16 @@
   "concordia_pegasus": {
     "zone": "battlefield"
   },
+  "condemn": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "conduit_of_worlds": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5955,6 +5965,11 @@
   },
   "devouring_deep": {
     "zone": "battlefield"
+  },
+  "devouring_light": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "devout_monk": {
     "life": {
@@ -11883,6 +11898,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "inspired_sphinx": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inspiring_call": {
@@ -21580,6 +21599,10 @@
   "skyblade_of_the_legion": {
     "zone": "battlefield"
   },
+  "skycat_sovereign": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skyclave_apparition": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -22657,6 +22680,14 @@
   "storm_fleet_negotiator": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "storm_herd": {
+    "battlefield_count": 72,
+    "tokens": {
+      "count": 40,
+      "id": "pegasus_1_1_w_flying"
+    },
+    "zone": "graveyard"
   },
   "storm_kiln_artist": {
     "battlefield_count": 33,

@@ -51492,12 +51492,12 @@
     },
     "Condemn": {
       "edhrec_rank": 4637,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Condemn",
-      "reason": "no template for: Put target attacking creature on the bottom of its owner's library. Its controller gains l",
+      "reason": "player 0 life is 42, expected 999",
       "scryfall_id": "ee6a541f-a72e-4aa5-bced-430e5158ca85",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Condescend": {
@@ -68142,12 +68142,12 @@
     },
     "Devouring Light": {
       "edhrec_rank": 9654,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Devouring Light",
-      "reason": "no template for: Convoke",
+      "reason": "your battlefield is 31, expected 999",
       "scryfall_id": "9f33b612-c4fb-48b1-bd39-571e4e3c4619",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Devouring Rage": {
@@ -137662,12 +137662,12 @@
     },
     "Inspired Sphinx": {
       "edhrec_rank": 13106,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Inspired Sphinx",
-      "reason": "player 0 hand_size is 1, expected 2; player 0 library_size is 40, expected 39",
+      "reason": "",
       "scryfall_id": "21522dff-8a65-4816-8b6e-b71270fda3cd",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspired Sprite": {
@@ -250392,12 +250392,12 @@
     },
     "Skycat Sovereign": {
       "edhrec_rank": 7358,
-      "gate": "template",
+      "gate": null,
       "name": "Skycat Sovereign",
-      "reason": "no template for: This creature gets +1/+1 for each other creature you control with flying",
+      "reason": "",
       "scryfall_id": "8276bec2-1a3c-425c-928f-866b8ef05e97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Aerialist // Skyclave Invader": {
@@ -265892,12 +265892,12 @@
     },
     "Storm Herd": {
       "edhrec_rank": 3011,
-      "gate": "template",
+      "gate": null,
       "name": "Storm Herd",
-      "reason": "no template for: Create X 1/1 white Pegasus creature tokens with flying, where X is your life total",
+      "reason": "",
       "scryfall_id": "62a3fc08-6d95-43da-8479-4289018c2d58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm King's Thunder": {
