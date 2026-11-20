@@ -1,0 +1,693 @@
+{
+  "id": "scd_grave_danger",
+  "name": "Grave Danger",
+  "commanders": [
+    "gisa_and_geralf"
+  ],
+  "color_identity": [
+    "B",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "SCD",
+    "set_name": "Starter Commander Decks",
+    "date": "2022-12-02"
+  },
+  "notes": "Starter Commander Decks precon, card for card (https://mtgjson.com/api/v5/decks/GraveDanger_SCD.json).",
+  "tags": [
+    "Zombies",
+    "Tribal",
+    "Graveyard",
+    "Reanimation"
+  ],
+  "strategy": "Gisa and Geralf mill four as they enter and let you cast a Zombie creature from your graveyard each of your turns, so the deck fills its graveyard with Geralf's Mindcrusher, Pilfered Plans, Deep Analysis and Grimoire of the Dead and plays its Zombies twice. Diregraf Captain, Lord of the Accursed, Cemetery Reaper and Liliana's Devotee pump the horde, Champion of the Perished and Unbreathing Horde grow with it, and Vizier of the Scorpion, Lazotep Reaver and Enter the God-Eternals amass a Zombie Army beside it. Gray Merchant of Asphodel, Vela the Night-Clad and Diregraf Captain drain each opponent as Zombies come and go, Gravespawn Sovereign, Necromantic Selection and Victimize steal or return creatures, Zombie Apocalypse returns every Zombie at once and Army of the Damned makes thirteen more, and Murder, Cruel Revival, Crippling Fear and Sinister Sabotage handle what the horde can't outgrow.",
+  "archetype": "tribal",
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 4,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "gisa_and_geralf",
+      "why": "Mills four as they enter, then lets you cast a Zombie creature from your graveyard each of your turns."
+    },
+    {
+      "card_id": "gravespawn_sovereign",
+      "why": "Tap five untapped Zombies to put any creature card from a graveyard onto the battlefield under your control."
+    },
+    {
+      "card_id": "zombie_apocalypse",
+      "why": "Every Zombie in your graveyard returns, and every Human dies."
+    },
+    {
+      "card_id": "gray_merchant_of_asphodel",
+      "why": "Each opponent loses life equal to your devotion to black, and you gain that much."
+    }
+  ],
+  "printings": {
+    "arcane_signet": {
+      "scryfall_id": "02cb9420-fbfb-4123-a830-a992ff470db6",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "257"
+    },
+    "army_of_the_damned": {
+      "scryfall_id": "cd59d5ff-bba3-46fa-a963-f3dff49a2714",
+      "artist": "Ryan Pancoast",
+      "set_code": "scd",
+      "collector_number": "68"
+    },
+    "cemetery_reaper": {
+      "scryfall_id": "82daa7af-2621-4b5b-8828-cab382a9f27c",
+      "artist": "Dave Allsop",
+      "set_code": "scd",
+      "collector_number": "70"
+    },
+    "champion_of_the_perished": {
+      "scryfall_id": "7bd59747-57f7-4ed1-baca-c36cb924d303",
+      "artist": "Kekai Kotaki",
+      "set_code": "scd",
+      "collector_number": "71"
+    },
+    "choked_estuary": {
+      "scryfall_id": "821e7025-e7bf-49eb-b35f-8bfee5663535",
+      "artist": "Vincent Proce",
+      "set_code": "scd",
+      "collector_number": "293"
+    },
+    "command_tower": {
+      "scryfall_id": "cae0c9e0-3be9-4151-9d59-658a032c30e9",
+      "artist": "Evan Shipard",
+      "set_code": "scd",
+      "collector_number": "297"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "686b4c7f-5b42-4625-8ff9-782795eec264",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "scd",
+      "collector_number": "261"
+    },
+    "crippling_fear": {
+      "scryfall_id": "d74c3f9b-5df9-4d74-8c27-a2a9966bfe8c",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "scd",
+      "collector_number": "72"
+    },
+    "cruel_revival": {
+      "scryfall_id": "1c710e19-4cfb-43a1-bd01-fc0007c7426e",
+      "artist": "Miles Johnston",
+      "set_code": "scd",
+      "collector_number": "73"
+    },
+    "curse_of_disturbance": {
+      "scryfall_id": "f8ca82ce-64f8-4e52-b8d9-aec6acb562f9",
+      "artist": "Kieran Yanner",
+      "set_code": "scd",
+      "collector_number": "74"
+    },
+    "deep_analysis": {
+      "scryfall_id": "274ceb53-07a4-4def-bbbd-ac48ff4c7eec",
+      "artist": "Jesper Ejsing",
+      "set_code": "scd",
+      "collector_number": "46"
+    },
+    "dimir_signet": {
+      "scryfall_id": "47c621c7-6673-4a86-8f09-339d45fd5958",
+      "artist": "Raoul Vitale",
+      "set_code": "scd",
+      "collector_number": "263"
+    },
+    "diregraf_captain": {
+      "scryfall_id": "1e2071f5-c4d1-433b-9688-0227e8a289e9",
+      "artist": "Slawomir Maniak",
+      "set_code": "scd",
+      "collector_number": "224"
+    },
+    "dismal_backwater": {
+      "scryfall_id": "db659c77-8452-4364-9195-7701cefe5415",
+      "artist": "Chris Ostrowski",
+      "set_code": "scd",
+      "collector_number": "298"
+    },
+    "distant_melody": {
+      "scryfall_id": "22f71933-5c7b-4e7c-b508-942f04657799",
+      "artist": "Omar Rayyan",
+      "set_code": "scd",
+      "collector_number": "48"
+    },
+    "enter_the_god_eternals": {
+      "scryfall_id": "d1da08b8-08c2-44e8-874b-eb93b535e90b",
+      "artist": "Daniel Ljunggren",
+      "set_code": "scd",
+      "collector_number": "227"
+    },
+    "eternal_skylord": {
+      "scryfall_id": "fbef216d-da79-4565-a6a3-adf0de8ee5eb",
+      "artist": "Johan Grenier",
+      "set_code": "scd",
+      "collector_number": "49"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "57a77cbc-cbe9-44b4-9651-6967a02c7e75",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "scd",
+      "collector_number": "77"
+    },
+    "fleshbag_marauder": {
+      "scryfall_id": "84c7bed8-5f79-4f59-b7dc-f17167c140de",
+      "artist": "Mark Zug",
+      "set_code": "scd",
+      "collector_number": "78"
+    },
+    "geralf_s_mindcrusher": {
+      "scryfall_id": "53dcdb62-28d8-4981-8704-1de4309f76bb",
+      "artist": "Steven Belledin",
+      "set_code": "scd",
+      "collector_number": "53"
+    },
+    "gisa_and_geralf": {
+      "scryfall_id": "4d8fd87c-caf7-402e-b543-e35ba3007bcb",
+      "artist": "Aaron J. Riley",
+      "set_code": "scd",
+      "collector_number": "3"
+    },
+    "gleaming_overseer": {
+      "scryfall_id": "fcfcc1b5-e59e-4741-a573-1e05fb40dfe1",
+      "artist": "Volkan Baǵa",
+      "set_code": "scd",
+      "collector_number": "229"
+    },
+    "gravespawn_sovereign": {
+      "scryfall_id": "e1241a23-f2da-4920-9383-b5994d7160af",
+      "artist": "Adam Rex",
+      "set_code": "scd",
+      "collector_number": "79"
+    },
+    "gray_merchant_of_asphodel": {
+      "scryfall_id": "013ff2e6-07a6-48ec-a0f4-e933f748ad72",
+      "artist": "Scott Murphy",
+      "set_code": "scd",
+      "collector_number": "80"
+    },
+    "grimoire_of_the_dead": {
+      "scryfall_id": "b1faa0cd-3556-4664-90d3-76ae5c736f5b",
+      "artist": "Steven Belledin",
+      "set_code": "scd",
+      "collector_number": "265"
+    },
+    "havengul_lich": {
+      "scryfall_id": "511f6b2f-b5a0-45e8-ae55-b869ca65dfd5",
+      "artist": "James Ryman",
+      "set_code": "scd",
+      "collector_number": "231"
+    },
+    "heraldic_banner": {
+      "scryfall_id": "2199a8ad-0955-45df-8d74-77be2c40385b",
+      "artist": "Ravenna Tran",
+      "set_code": "scd",
+      "collector_number": "267"
+    },
+    "island": {
+      "scryfall_id": "e3de0391-c658-4dab-bef1-2aaf4eae7720",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "337"
+    },
+    "josu_vess_lich_knight": {
+      "scryfall_id": "4b7f57cc-3ce3-48fe-85aa-22df749f57e7",
+      "artist": "Tyler Jacobson",
+      "set_code": "scd",
+      "collector_number": "82"
+    },
+    "jwar_isle_refuge": {
+      "scryfall_id": "58da70cf-4e85-425c-9439-a15e6719718c",
+      "artist": "Cyril Van Der Haegen",
+      "set_code": "scd",
+      "collector_number": "306"
+    },
+    "laboratory_drudge": {
+      "scryfall_id": "2a1a8e0c-b3ca-4da3-8a08-25e3048ca1a2",
+      "artist": "Milivoj Ćeran",
+      "set_code": "scd",
+      "collector_number": "56"
+    },
+    "lazotep_plating": {
+      "scryfall_id": "2751f413-22bb-4aed-b196-225a6ba7c794",
+      "artist": "Yeong-Hao Han",
+      "set_code": "scd",
+      "collector_number": "57"
+    },
+    "lazotep_reaver": {
+      "scryfall_id": "8eebe9a9-b25e-4cf6-a438-cbf794d9c791",
+      "artist": "Craig J Spearing",
+      "set_code": "scd",
+      "collector_number": "83"
+    },
+    "liliana_s_devotee": {
+      "scryfall_id": "e5be825b-16ea-49eb-8ffa-79af40ce4f98",
+      "artist": "Colin Boyer",
+      "set_code": "scd",
+      "collector_number": "85"
+    },
+    "liliana_s_mastery": {
+      "scryfall_id": "99833a13-cc77-4fa3-ae3e-def47a30e944",
+      "artist": "Kieran Yanner",
+      "set_code": "scd",
+      "collector_number": "86"
+    },
+    "liliana_s_standard_bearer": {
+      "scryfall_id": "74a77fff-909a-4c6a-88b9-a403f5625135",
+      "artist": "Josh Hass",
+      "set_code": "scd",
+      "collector_number": "87"
+    },
+    "liliana_untouched_by_death": {
+      "scryfall_id": "462f8951-7305-4607-92af-92f2b866558d",
+      "artist": "Bastien L. Deharme",
+      "set_code": "scd",
+      "collector_number": "84"
+    },
+    "lord_of_the_accursed": {
+      "scryfall_id": "bb4e5e8a-ce5d-48a8-99c8-e459c92552cb",
+      "artist": "Grzegorz Rutkowski",
+      "set_code": "scd",
+      "collector_number": "88"
+    },
+    "lotleth_giant": {
+      "scryfall_id": "c3a73aaf-3613-4ffb-ad04-3e22abe11937",
+      "artist": "Alex Konstad",
+      "set_code": "scd",
+      "collector_number": "89"
+    },
+    "loyal_subordinate": {
+      "scryfall_id": "5103b06e-df31-4f02-91f1-849c63ed210e",
+      "artist": "Kev Walker",
+      "set_code": "scd",
+      "collector_number": "90"
+    },
+    "midnight_reaper": {
+      "scryfall_id": "0dc376ef-6c79-4ff1-89ed-61001a6267cc",
+      "artist": "Sidharth Chaturvedi",
+      "set_code": "scd",
+      "collector_number": "91"
+    },
+    "mire_triton": {
+      "scryfall_id": "56d7e5fa-6521-4a00-afa5-de8867a1192e",
+      "artist": "Seb McKinnon",
+      "set_code": "scd",
+      "collector_number": "92"
+    },
+    "murder": {
+      "scryfall_id": "f7139613-488b-496b-a21d-a577b1426e6f",
+      "artist": "Yongjae Choi",
+      "set_code": "scd",
+      "collector_number": "93"
+    },
+    "necromantic_selection": {
+      "scryfall_id": "0710c560-3a40-4f4b-8dd1-e97a15e95dd5",
+      "artist": "Dave Kendall",
+      "set_code": "scd",
+      "collector_number": "94"
+    },
+    "necrotic_hex": {
+      "scryfall_id": "a447bd2a-110c-46fa-97db-8b92aade1d1f",
+      "artist": "Nils Hamm",
+      "set_code": "scd",
+      "collector_number": "95"
+    },
+    "open_the_graves": {
+      "scryfall_id": "11fedd76-ee35-4a17-8cdb-684414783df9",
+      "artist": "Vincent Proce",
+      "set_code": "scd",
+      "collector_number": "97"
+    },
+    "overseer_of_the_damned": {
+      "scryfall_id": "967f3962-482b-4080-bc65-3add0e34426b",
+      "artist": "rk post",
+      "set_code": "scd",
+      "collector_number": "98"
+    },
+    "pilfered_plans": {
+      "scryfall_id": "24834043-1739-4cb1-9ad5-64b560471a86",
+      "artist": "Michael C. Hayes",
+      "set_code": "scd",
+      "collector_number": "238"
+    },
+    "salt_marsh": {
+      "scryfall_id": "a25b7167-468e-4515-8dbf-52a9a4d11287",
+      "artist": "Jerry Tiritilli",
+      "set_code": "scd",
+      "collector_number": "316"
+    },
+    "scourge_of_nel_toth": {
+      "scryfall_id": "acd8312a-1dd6-42eb-8908-51b85ceab6e2",
+      "artist": "Mark Winters",
+      "set_code": "scd",
+      "collector_number": "104"
+    },
+    "sinister_sabotage": {
+      "scryfall_id": "cd8bfe3c-2c47-4a42-bee8-e34619cdbd41",
+      "artist": "Mathias Kollros",
+      "set_code": "scd",
+      "collector_number": "60"
+    },
+    "sol_ring": {
+      "scryfall_id": "1b023575-4cb5-434f-92ef-d3b81aaa3c3e",
+      "artist": "Mike Bierek",
+      "set_code": "scd",
+      "collector_number": "276"
+    },
+    "spark_reaper": {
+      "scryfall_id": "53e1cff4-efc8-4479-bfe7-a0e4f1614d44",
+      "artist": "Zoltan Boros",
+      "set_code": "scd",
+      "collector_number": "109"
+    },
+    "submerged_boneyard": {
+      "scryfall_id": "a13b5d2a-a75e-431e-94aa-896d4ba63890",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "321"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "5e708530-7108-4e47-844c-896389be6162",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "322"
+    },
+    "swamp": {
+      "scryfall_id": "feb9faf5-8f7b-4d0d-a3ca-963832e7f711",
+      "artist": "Jonas De Ro",
+      "set_code": "scd",
+      "collector_number": "341"
+    },
+    "syphon_flesh": {
+      "scryfall_id": "5ecbb2b5-2a9d-417e-a73d-9ab21c5308ea",
+      "artist": "Ironbrush",
+      "set_code": "scd",
+      "collector_number": "110"
+    },
+    "talisman_of_dominance": {
+      "scryfall_id": "0a004432-2d0d-47df-b321-ce38d9aa1709",
+      "artist": "Mike Dringenberg",
+      "set_code": "scd",
+      "collector_number": "280"
+    },
+    "temple_of_deceit": {
+      "scryfall_id": "5f94415c-369f-4ebd-8e6a-f027ede114e8",
+      "artist": "Jonas De Ro",
+      "set_code": "scd",
+      "collector_number": "324"
+    },
+    "unbreathing_horde": {
+      "scryfall_id": "9d656bd0-82e3-4261-b1bb-929beb87d172",
+      "artist": "Dave Kendall",
+      "set_code": "scd",
+      "collector_number": "113"
+    },
+    "undead_augur": {
+      "scryfall_id": "ee44589e-2c10-43d6-8151-84b34986e35b",
+      "artist": "Sara Winters",
+      "set_code": "scd",
+      "collector_number": "114"
+    },
+    "undermine": {
+      "scryfall_id": "5957446f-ff3a-4bbb-a498-c95bc52eda84",
+      "artist": "Massimiliano Frezzato",
+      "set_code": "scd",
+      "collector_number": "254"
+    },
+    "unstable_obelisk": {
+      "scryfall_id": "9a9df1f7-38e2-4802-b379-d1e6d0ad4ec4",
+      "artist": "William Wu",
+      "set_code": "scd",
+      "collector_number": "286"
+    },
+    "vampiric_rites": {
+      "scryfall_id": "da2e2548-a6ab-4968-8fb3-c9b212443a81",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "scd",
+      "collector_number": "116"
+    },
+    "vela_the_night_clad": {
+      "scryfall_id": "e84372fe-90a8-4910-a768-c13c7069c978",
+      "artist": "Allen Williams",
+      "set_code": "scd",
+      "collector_number": "256"
+    },
+    "vengeful_dead": {
+      "scryfall_id": "eb020ae5-4e51-4348-a013-f723996b8ad4",
+      "artist": "Alex Horley-Orlandelli",
+      "set_code": "scd",
+      "collector_number": "117"
+    },
+    "victimize": {
+      "scryfall_id": "6f5e8449-f643-41b4-977f-45a6f62546d4",
+      "artist": "Craig J Spearing",
+      "set_code": "scd",
+      "collector_number": "118"
+    },
+    "vizier_of_the_scorpion": {
+      "scryfall_id": "db9beaff-8253-49d9-b57f-20b8cf14c802",
+      "artist": "Zack Stella",
+      "set_code": "scd",
+      "collector_number": "119"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "ef1f727a-79d3-42a6-aa20-fa55499a4979",
+      "artist": "Darrell Riche",
+      "set_code": "scd",
+      "collector_number": "287"
+    },
+    "withered_wretch": {
+      "scryfall_id": "f5ec82d7-b29f-4e38-833d-f9943ecfaec1",
+      "artist": "Tim Hildebrandt",
+      "set_code": "scd",
+      "collector_number": "120"
+    },
+    "zombie_apocalypse": {
+      "scryfall_id": "31928e60-4758-4d84-ad0a-2a1634cabf39",
+      "artist": "Volkan Baǵa",
+      "set_code": "scd",
+      "collector_number": "121"
+    }
+  },
+  "cards": [
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "army_of_the_damned"
+    },
+    {
+      "id": "cemetery_reaper"
+    },
+    {
+      "id": "champion_of_the_perished"
+    },
+    {
+      "id": "choked_estuary"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "crippling_fear"
+    },
+    {
+      "id": "cruel_revival"
+    },
+    {
+      "id": "curse_of_disturbance"
+    },
+    {
+      "id": "deep_analysis"
+    },
+    {
+      "id": "dimir_signet"
+    },
+    {
+      "id": "diregraf_captain"
+    },
+    {
+      "id": "dismal_backwater"
+    },
+    {
+      "id": "distant_melody"
+    },
+    {
+      "id": "enter_the_god_eternals"
+    },
+    {
+      "id": "eternal_skylord"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "fleshbag_marauder"
+    },
+    {
+      "id": "geralf_s_mindcrusher"
+    },
+    {
+      "id": "gleaming_overseer"
+    },
+    {
+      "id": "gravespawn_sovereign"
+    },
+    {
+      "id": "gray_merchant_of_asphodel"
+    },
+    {
+      "id": "grimoire_of_the_dead"
+    },
+    {
+      "id": "havengul_lich"
+    },
+    {
+      "id": "heraldic_banner"
+    },
+    {
+      "id": "island",
+      "qty": 13
+    },
+    {
+      "id": "josu_vess_lich_knight"
+    },
+    {
+      "id": "jwar_isle_refuge"
+    },
+    {
+      "id": "laboratory_drudge"
+    },
+    {
+      "id": "lazotep_plating"
+    },
+    {
+      "id": "lazotep_reaver"
+    },
+    {
+      "id": "liliana_s_devotee"
+    },
+    {
+      "id": "liliana_s_mastery"
+    },
+    {
+      "id": "liliana_s_standard_bearer"
+    },
+    {
+      "id": "liliana_untouched_by_death"
+    },
+    {
+      "id": "lord_of_the_accursed"
+    },
+    {
+      "id": "lotleth_giant"
+    },
+    {
+      "id": "loyal_subordinate"
+    },
+    {
+      "id": "midnight_reaper"
+    },
+    {
+      "id": "mire_triton"
+    },
+    {
+      "id": "murder"
+    },
+    {
+      "id": "necromantic_selection"
+    },
+    {
+      "id": "necrotic_hex"
+    },
+    {
+      "id": "open_the_graves"
+    },
+    {
+      "id": "overseer_of_the_damned"
+    },
+    {
+      "id": "pilfered_plans"
+    },
+    {
+      "id": "salt_marsh"
+    },
+    {
+      "id": "scourge_of_nel_toth"
+    },
+    {
+      "id": "sinister_sabotage"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "spark_reaper"
+    },
+    {
+      "id": "submerged_boneyard"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 18
+    },
+    {
+      "id": "syphon_flesh"
+    },
+    {
+      "id": "talisman_of_dominance"
+    },
+    {
+      "id": "temple_of_deceit"
+    },
+    {
+      "id": "unbreathing_horde"
+    },
+    {
+      "id": "undead_augur"
+    },
+    {
+      "id": "undermine"
+    },
+    {
+      "id": "unstable_obelisk"
+    },
+    {
+      "id": "vampiric_rites"
+    },
+    {
+      "id": "vela_the_night_clad"
+    },
+    {
+      "id": "vengeful_dead"
+    },
+    {
+      "id": "victimize"
+    },
+    {
+      "id": "vizier_of_the_scorpion"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "withered_wretch"
+    },
+    {
+      "id": "zombie_apocalypse"
+    }
+  ]
+}
