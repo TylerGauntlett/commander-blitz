@@ -2527,6 +2527,77 @@
       ]
     },
     {
+      "id": "t_reign_of_the_pit",
+      "name": "Test Reign of the Pit",
+      "oracle_text": "Each player sacrifices a creature of their choice. Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way.",
+      "mana_cost": "{4}{B}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "sacrifice",
+          "players": "each_player",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": 1
+          },
+          "as": "sacrificed",
+          "snapshot": "sacrificed_lki"
+        },
+        {
+          "op": "create_token",
+          "token": "demon_x_x_b_flying",
+          "power": {
+            "power_of": {
+              "binding": "sacrificed_lki"
+            }
+          },
+          "toughness": {
+            "power_of": {
+              "binding": "sacrificed_lki"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_global_lord",
+      "name": "Test Global Lord",
+      "oracle_text": "All creatures get +1/+1.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All creatures get +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_entrapment",
       "name": "Test Entrapment Maneuver",
       "oracle_text": "Target player sacrifices an attacking creature of their choice. You create X 1/1 white Soldier creature tokens, where X is that creature's toughness.",

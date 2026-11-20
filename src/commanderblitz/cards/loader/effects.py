@@ -4404,6 +4404,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
             )
+    if op == "sacrifice" and "players" in effect:
+        # "Each player sacrifices a creature" as one action (701.21a, 101.4).
+        # Each named player chooses among what they control, so a written
+        # `controller` or `chooser` would be overridden and read as the card
+        # meaning something it does not -- refused rather than ignored.
+        _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+        objects = effect.get("objects")
+        clash = sorted({"controller", "chooser"} & set(objects or ())) if isinstance(objects, Mapping) else []
+        if clash:
+            raise DslError(
+                f"{where}: sacrifice with 'players' has each of those players choose "
+                f"among the permanents they control, so its 'objects' cannot also "
+                f"name {clash}"
+            )
     if op == "flip_coin":
         # "Flip a coin. If you lose the flip, ..." A non-list branch would be
         # read as no effects at all. Both branches may be absent: Setzer's

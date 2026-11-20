@@ -1134,6 +1134,40 @@ survivor. The binding accumulates across a loop, as `exile`'s does.
   "then": [ … ] }
 ```
 
+### "Each player sacrifices" — `sacrifice`'s `players`
+
+```jsonc
+// Reign of the Pit — "Each player sacrifices a creature of their choice. Create
+// an X/X black Demon creature token with flying, where X is the total power of
+// the creatures sacrificed this way."
+{ "op": "sacrifice", "players": "each_player",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "count": 1 },
+  "snapshot": "sacrificed" },
+{ "op": "create_token", "token": "demon_x_x_b_flying",
+  "power":     { "power_of": { "binding": "sacrificed" } },
+  "toughness": { "power_of": { "binding": "sacrificed" } } }
+```
+
+`players` is a player spec. Every player it names chooses among the permanents
+**they** control that match `objects`, in APNAP order from the active player
+(`GameState.turn_order`), each seeing the choices before theirs; then everything
+chosen is sacrificed at once (701.21a, 101.4). The player choosing is bound as
+`each_player` while they choose. `as` records every chosen permanent, and
+`snapshot` binds a **list**, one last-known snapshot per permanent, all taken
+before any of them moves. `power_of` (and `toughness_of`) over a list of
+snapshots is their total, so "the total power of the creatures sacrificed this
+way" counts each creature's counters, anthems and pumps as it left. Without
+`players`, `snapshot` is still one dict: "that creature" is one creature.
+
+The loader refuses a `controller` or `chooser` in `objects` beside `players`,
+because the op decides both, and an unknown player spec.
+
+| Near miss | Why not |
+|---|---|
+| `for_each_player` over `sacrifice` | sacrifices on every pass, so a later player's creature is measured after an earlier one's lord has gone; its `snapshot` is rewritten each pass and holds one creature |
+| `power_of` over the `as` binding | the oids name graveyard cards by then, at their printed power; only snapshot entries in a list are summed |
+| `create_token` inside the loop | one Demon per player rather than one |
+
 ### `discard`: `up_to`, `selector` and `as`
 
 `up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **453** capabilities.
+**533 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -398,7 +398,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
-| [sacrificed-total-power](#sacrificed-total-power) | 1 | 14030 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
@@ -6652,20 +6651,6 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
-
-</details>
-
-## sacrificed-total-power
-
-Blocks **1** card.
-
-- **(value)** a value reading the summed last-known power of every creature an edict sacrificed across a `for_each_player` loop -- e.g. a `sacrifice` `snapshot`/`as` binding that accumulates across iterations (as `mill`'s `as` does) plus a `power_of` form that sums a list of snapshots -- so one `create_token` of `demon_x_x_b_flying` after the loop can set power and toughness to the total
-  <br>Why the existing vocabulary won't do: The edict is `for_each_player` over `sacrifice` (Syphon Flesh's shape), but `op_sacrifice` overwrites both its `as` and `snapshot` bindings on each iteration, and `snapshot` captures only the first chosen permanent; `power_of` over an `as` list of oids reads 0 (and would read graveyard printed power, not last-known power). Creating the token inside the loop makes one Demon per player instead of one, and creating it first and adding +1/+1 counters puts the token in your own sacrifice pool and gives it counters rather than a base X/X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Reign of the Pit** (rank 14030) — `reign_of_the_pit`
-  - Each player sacrifices a creature of their choice. Create an X/X black Demon creature token with flying, where X is the total power of the creatures sacrificed this way.
 
 </details>
 

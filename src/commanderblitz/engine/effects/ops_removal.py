@@ -47,6 +47,7 @@ from .selectors import (
     named_hosts,
     pick_from_pool,
     resolve_pool,
+    select_players,
 )
 from .tokens import ask_token_copies, ask_token_enters_copies
 from .values import evaluate_value
@@ -620,6 +621,11 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     stops answering for them the moment it reaches a graveyard.  See the comment
     at the write below.
 
+    ``players`` is "**each player** sacrifices a creature" as one simultaneous
+    action (701.21a, 101.4): every player the spec names chooses from what they
+    control, and then all of it is sacrificed together. See
+    `_each_player_chooses`.
+
     The **effect** road for "you can't sacrifice those creatures this turn"
     (701.17b) is the pool filter below, and it narrows the *pool* rather than
     skipping in the loop deliberately: 701.17b makes a protected permanent an
@@ -637,19 +643,11 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     not a selector key any card writes.
     """
     selector = dict(spec.get("objects") or {})
-    selector.setdefault("controller", "you")
-    pool = [oid for oid in resolve_pool(ctx, selector) if not sacrifice_forbidden(ctx.state, oid)]
-    # Tamiyo, Collector of Tales: "Spells and abilities your opponents control
-    # can't cause you to ... sacrifice permanents." Narrowed out of the pool for
-    # the reason above -- the rest of an edict still reaches everybody else.
-    pool = [
-        oid
-        for oid in pool
-        if not forced_discard_or_sacrifice_barred(
-            ctx.state, ctx.state.objects[oid].controller, ctx.controller
-        )
-    ]
-    oids = yield from pick_from_pool(ctx, pool, selector, "Sacrifice", "sacrifice")
+    if "players" in spec:
+        oids = yield from _each_player_chooses(ctx, spec["players"], selector)
+    else:
+        selector.setdefault("controller", "you")
+        oids = yield from _edict_choice(ctx, selector)
     if name := spec.get("as"):
         # Written before the sacrifice, so the binding is a record of the choice
         # rather than of what survived it.
@@ -673,12 +671,67 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
         # taken.
         #
         # The first chosen permanent, exactly as `op_snapshot` takes `oids[0]`
-        # of its pool: a snapshot is one object's characteristics and there is
-        # no printed sacrifice that needs a set of them. `as` is still the
-        # record of the whole choice, and the two are written side by side.
-        ctx.bindings[str(name)] = capture_snapshot(ctx.state, oids[0]) if oids else {}
+        # of its pool: a snapshot is one object's characteristics, and "that
+        # creature" is one. `as` is still the record of the whole choice, and
+        # the two are written side by side.
+        #
+        # Under `players` the binding is a **list**, one snapshot per
+        # permanent, all taken before any of them moves: "the total power of
+        # the creatures sacrificed this way" (Reign of the Pit) is a set, and
+        # `power_of` over a list of snapshots sums it.
+        if "players" in spec:
+            ctx.bindings[str(name)] = [capture_snapshot(ctx.state, oid) for oid in oids]
+        else:
+            ctx.bindings[str(name)] = capture_snapshot(ctx.state, oids[0]) if oids else {}
     for oid in oids:
         sacrifice(ctx.state, oid, by=ctx.source_oid)
+
+
+def _edict_choice(ctx: EffectContext, selector: Mapping[str, Any], chooser: int | None = None):
+    """One choice of permanents to sacrifice, over the pool 701.17b leaves."""
+    pool = [oid for oid in resolve_pool(ctx, selector) if not sacrifice_forbidden(ctx.state, oid)]
+    # Tamiyo, Collector of Tales: "Spells and abilities your opponents control
+    # can't cause you to ... sacrifice permanents." Narrowed out of the pool for
+    # the reason above -- the rest of an edict still reaches everybody else.
+    pool = [
+        oid
+        for oid in pool
+        if not forced_discard_or_sacrifice_barred(
+            ctx.state, ctx.state.objects[oid].controller, ctx.controller
+        )
+    ]
+    return (yield from pick_from_pool(ctx, pool, selector, "Sacrifice", "sacrifice", chooser))
+
+
+def _each_player_chooses(ctx: EffectContext, players: Any, selector: Mapping[str, Any]):
+    """Each player sacrifices a creature: every choice first, then one sacrifice.
+
+    701.21a with 101.4: each named player chooses among the permanents **they**
+    control, in APNAP order (`GameState.turn_order` from the active player),
+    each seeing the choices before theirs, and then everything chosen is
+    sacrificed at once. A `for_each_player` loop over `sacrifice` sacrifices
+    each pass before the next player chooses, which a creature's last-known
+    power can tell apart: a lord the first player sacrificed no longer pumps
+    the creature the second one does. The player is bound as ``each_player``
+    while they choose, so a nested selector may still read it.
+    """
+    named = set(select_players(ctx, players))
+    order = [pid for pid in ctx.state.turn_order() if pid in named]
+    scoped = {**selector, "controller": {"binding": "each_player"}}
+    previous = ctx.bindings.get("each_player")
+    chosen: list[int] = []
+    try:
+        for pid in order:
+            if not ctx.state.is_alive(pid):
+                continue
+            ctx.bindings["each_player"] = pid
+            chosen.extend((yield from _edict_choice(ctx, scoped, chooser=pid)))
+    finally:
+        if previous is None:
+            ctx.bindings.pop("each_player", None)
+        else:
+            ctx.bindings["each_player"] = previous
+    return chosen
 
 
 @register("put_onto_battlefield")

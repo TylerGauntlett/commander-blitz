@@ -141,7 +141,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |
 | `replace_leaves_battlefield` | Board |  | If it would leave the battlefield this turn, do something else. | [Effect ops](card-dsl.md#effect-ops) |
 | `rotate_control` | Board |  | Pass permanents around the table to the left or right. | ["Choose left or right" — passing the board around the table](card-dsl-cookbook.md#choose-left-or-right--passing-the-board-around-the-table) |
-| `sacrifice` | Board | yes | A player sacrifices permanents; `snapshot` remembers what they had. | [Effect ops](card-dsl.md#effect-ops) |
+| `sacrifice` | Board | yes | A player sacrifices permanents; `snapshot` remembers what they had; `players` is "each player sacrifices", every choice made in APNAP order and then sacrificed at once, `snapshot` then a list. | ["Each player sacrifices" — sacrifice's players](card-dsl.md#each-player-sacrifices--sacrifices-players) |
 | `set_flag` | Board |  | Write a word on the source for the game (renowned, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `set_turn_flag` | Board |  | Write a word on the source for the turn (exerted, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `skip_untap` | Board |  | It doesn't untap during its controller's next untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
@@ -406,7 +406,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
 | `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
-| `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
+| `power_of` | An object's power; over a list of snapshots, their total. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |
 | `rolled` | Dice results under a binding: count, by face, parity or total. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `spells_cast_this_game` | Spells the player has cast this game, by filter. | [Counting the spells you cast, by type](card-dsl-cookbook.md#counting-the-spells-you-cast-by-type) |
