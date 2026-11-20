@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "disenchant",
+    "name": "Disenchant",
+    "oracle_text": "Destroy target artifact or enchantment.",
+    "mana_cost": "{1}{W}",
+    "types": ["Instant"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]}
+      }
+    ],
+    "spell_effects": [
+      {"op": "destroy", "objects": {"target": "t1"}}
+    ]
+  },
+  "expectation": {"zone": "graveyard", "opponent_battlefield_count": 5}
+}
