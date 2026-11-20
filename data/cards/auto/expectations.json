@@ -15492,6 +15492,13 @@
   "molten_exhale": {
     "zone": "graveyard"
   },
+  "molten_slagheap": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "molten_tributary": {
     "zone": "battlefield"
   },

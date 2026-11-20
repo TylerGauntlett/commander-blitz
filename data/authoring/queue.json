@@ -177792,12 +177792,12 @@
     },
     "Molten Slagheap": {
       "edhrec_rank": 8442,
-      "gate": "template",
+      "gate": null,
       "name": "Molten Slagheap",
-      "reason": "no template for: {1}, {T}: Put a storage counter on this land",
+      "reason": "",
       "scryfall_id": "881f92f8-ba27-49a3-a753-b082612f9acf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molten Tributary": {
