@@ -2335,6 +2335,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"next turn (701.38a), which is a player and not a number. "
                 f"Use must_attack for a one-combat requirement"
             )
+        # `goaded: false` is goad's requirements without the goad (Kardur,
+        # Doomscourge). A boolean, and only on the timed clock: no printed
+        # card asks for "the rest of the game" without the word goaded.
+        if "goaded" in effect:
+            if not isinstance(effect["goaded"], bool):
+                raise DslError(
+                    f"{where}: goad's 'goaded' is true or false -- false lays goad's "
+                    f"two requirements without making the creatures goaded"
+                )
+            if effect["goaded"] is False and "duration" in effect:
+                raise DslError(
+                    f"{where}: goad with 'goaded': false takes no 'duration' -- its "
+                    f"requirements last until the player's next turn (Kardur, "
+                    f"Doomscourge); no printed card holds them for the rest of the game"
+                )
         # The goader defaults to the effect's controller, which is every printed
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every

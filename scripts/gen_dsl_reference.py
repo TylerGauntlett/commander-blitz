@@ -288,7 +288,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                            '"That player can\'t attack you"'),
     "attack_tax": ("Board", "Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static).",
                    "Pricing an attack rather than forbidding it"),
-    "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
+    "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game; "
+             "`goaded: false` lays the two requirements without goading.", "Goad"),
     "ungoad": ("Board", "End every goad on creatures, any goader and any clock; a `goaded` static still applies.",
                '"…is no longer goaded" — `ungoad`'),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",

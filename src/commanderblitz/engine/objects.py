@@ -1141,6 +1141,16 @@ class GameObject:
     #: still end when the goader leaves the game (800.4a) or the creature
     #: leaves the battlefield (400.7).
     goaded_permanently_by: set[int] = field(default_factory=set)
+    #: Goad's two requirements **without** the goaded designation: "until your
+    #: next turn, creatures your opponents control attack each combat if able
+    #: and attack a player other than you if able" (Kardur, Doomscourge), whose
+    #: ruling is that the creatures are not goaded. The players here are read
+    #: beside :attr:`goaded_by` by `player_statics.attack_goaders` -- the
+    #: compulsion and the target restriction -- and by nothing that asks whether
+    #: a creature *is* goaded (`player_statics.goaders`, the ``goaded`` filter),
+    #: and `ungoad` leaves them alone. The clock is goad's: `clear_goad` at the
+    #: player's untap step, or when the player leaves the game (800.4a).
+    goad_requirements_by: set[int] = field(default_factory=set)
     #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
     #: and "until your next turn, prevent all damage target permanent would
     #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
@@ -1462,6 +1472,7 @@ class GameObject:
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
         self.goaded_permanently_by = set()
+        self.goad_requirements_by = set()
         # And no longer the permanent a prevention shield was aimed at.
         self.damage_shields = []
         # Nor the planeswalker anybody was told to attack.
@@ -1732,6 +1743,7 @@ class GameObject:
             # comparable between two runs of the same game.
             "goaded_by": sorted(self.goaded_by),
             "goaded_permanently_by": sorted(self.goaded_permanently_by),
+            "goad_requirements_by": sorted(self.goad_requirements_by),
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,

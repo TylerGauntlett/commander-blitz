@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **454** capabilities.
+**534 cards** blocked by **453** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -254,7 +254,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
-| [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
@@ -4602,20 +4601,6 @@ Blocks **1** card.
 
 - **The War Games** (rank 13656) — `the_war_games`
   - I — Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield.
-
-</details>
-
-## goad-without-goaded
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect giving the creatures matched at resolution goad's two requirements (attack each combat if able; attack a player other than the effect's controller if able) until the controller's next turn, WITHOUT marking them goaded -- e.g. a `goad` option like `mark_goaded: false`, so `goaded` filters (Vengeful Ancestor, Puppet Master's treasure trigger) do not see them
-  <br>Why the existing vocabulary won't do: `goad` gives exactly these requirements but also makes the creatures goaded, which Kardur's ruling says it does not (an observable difference for every `goaded` filter); `must_attack` compels one combat only and has no defender restriction; `must_attack_player` names one required defender rather than forbidding the controller; `cant_attack_player` is a prohibition, not an 'if able' preference; the `attacks_if_able` static lives on Kardur, ends when it leaves, and cannot end at your next turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kardur, Doomscourge** (rank 973) — `kardur_doomscourge`
-  - When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.
 
 </details>
 

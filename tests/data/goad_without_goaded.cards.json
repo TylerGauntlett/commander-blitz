@@ -1,0 +1,63 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_goad_without_goaded.py. t_kgw_taunt is Kardur, Doomscourge's first sentence as a sorcery, so the shared goad helpers can cast it with three Mountains. t_kgw_kardur is the whole printed card: the same op on an enters trigger, and 'Whenever an attacking creature dies' as a leaves_battlefield trigger to the graveyard gated on the was_attacking binding.",
+  "cards": [
+    {
+      "id": "t_kgw_taunt",
+      "name": "Test Doomscourge Taunt",
+      "oracle_text": "Until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "goad",
+          "goaded": false,
+          "objects": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] }
+        }
+      ]
+    },
+    {
+      "id": "t_kgw_kardur",
+      "name": "Test Kardur",
+      "oracle_text": "When Test Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.\nWhenever an attacking creature dies, each opponent loses 1 life and you gain 1 life.",
+      "mana_cost": "{2}{B}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Demon"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"],
+      "power": 4,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When Test Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [
+            {
+              "op": "goad",
+              "goaded": false,
+              "objects": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever an attacking creature dies, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "controller": "any",
+            "to_zones": ["graveyard"],
+            "filter": { "types": ["Creature"] },
+            "condition": { "cmp": ">=", "left": { "binding": "was_attacking" }, "right": { "const": 1 } },
+            "recheck": false
+          },
+          "effects": [
+            { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 } },
+            { "op": "gain_life", "player": "you", "amount": { "const": 1 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

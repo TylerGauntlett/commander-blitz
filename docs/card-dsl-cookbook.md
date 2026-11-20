@@ -6257,6 +6257,48 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### Goad's requirements without the goad — `goaded: false`
+
+    Kardur, Doomscourge — "When Kardur enters, until your next turn, creatures
+                          your opponents control attack each combat if able and
+                          attack a player other than you if able."
+
+```jsonc
+{ "op": "goad", "goaded": false,
+  "objects": { "zone": "battlefield", "controller": "opponent",
+               "types": ["Creature"] } }
+```
+
+The sentence is 701.38a's two requirements on goad's clock, and Kardur's
+ruling is that the creatures are **not goaded**. `goaded: false` lays exactly
+that: the player goes into `GameObject.goad_requirements_by` instead of
+`goaded_by`. Combat reads both through `player_statics.attack_goaders` — the
+compulsion in `combat.attack_required`, the restriction in
+`combat.attack_target_forbidden` and 508.1d's count — while everything that
+asks whether a creature *is* goaded reads `player_statics.goaders`, which does
+not see it: the `goaded` selector and trigger-filter key, and so Vengeful
+Ancestor and Puppet Master's Treasure payoff. `ungoad` ("no longer goaded")
+leaves it alone, because there was no goad to end.
+
+Everything else is goad's: the creatures are the ones matched at resolution
+(611.2c), the clock is `temp_effects.clear_goad` at the player's untap step,
+the player leaving the game or the creature leaving the battlefield ends it,
+and a creature its own controller would be required around is refused as
+vacuous. The loader refuses a non-boolean `goaded`, and `goaded: false` with
+any `duration`: no printed card holds the requirements for the rest of the
+game.
+
+| Near miss | Why not |
+|---|---|
+| plain `goad` | makes the creatures goaded, which every `goaded` filter at the table then counts |
+| `must_attack` + `cant_attack_player` | one combat, not each combat; and a prohibition where the sentence only steers "if able" |
+| an `attacks_if_able` static on Kardur | ends when Kardur leaves, which the effect outlives, and cannot end at your next turn |
+
+Kardur's other sentence, "Whenever an attacking creature dies", is a
+`leaves_battlefield` trigger with `controller: "any"`, `to_zones:
+["graveyard"]`, a `Creature` filter and the condition `{"cmp": ">=", "left":
+{"binding": "was_attacking"}, "right": {"const": 1}}` with `recheck: false`.
+
 ### Goaded for as long as a static applies
 
     Coercive Impetus — "Enchant creature / Enchanted creature gets +1/+1 and is
