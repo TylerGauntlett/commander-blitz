@@ -226012,12 +226012,12 @@
     },
     "Roar of Resistance": {
       "edhrec_rank": 5846,
-      "gate": "template",
+      "gate": null,
       "name": "Roar of Resistance",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "8599b714-21a2-4d57-9193-eb3bd8aad035",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roar of the Crowd": {
@@ -255872,12 +255872,12 @@
     },
     "Soul Snare": {
       "edhrec_rank": 6445,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Snare",
-      "reason": "no template for: {W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswal",
+      "reason": "",
       "scryfall_id": "18f3a850-b2e1-4970-9971-5f662fb3df31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul Snuffers": {

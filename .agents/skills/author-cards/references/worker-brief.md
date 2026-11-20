@@ -114,7 +114,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | Opponent's library | 20 cards |
 | Your graveyard | **2 creature cards** — one of **mana value 3 or less**, one of **mana value 5**, so a printed cost ceiling *and* a printed floor each have something to reach — plus, for a spell that **must** target an instant or sorcery card in your graveyard, one targetless instant or sorcery card for it (so its `graveyard_size` starts at **3**) |
 | Opponent's graveyard | **empty** — except for a spell that **must** target an instant or sorcery card in an opponent's graveyard, which finds one targetless instant or sorcery card there |
-| Phase | your precombat main phase, turn 1, with mana enough to cast anything |
+| Phase | your precombat main phase, turn 1, with mana enough to cast anything — except for a card that has no play there because its only target must be a creature **in combat** ("target attacking creature", "target attacking or blocking creature"): you then declare one of your own two creatures as an attacker and cast the card in the **declare attackers** step, so that attacker is the target, its controller is **you**, and if it leaves the battlefield your board reads **31**. Nothing else about the position moves. A target that must be a *blocking* creature and nothing else is not represented: report it rather than widen the target |
 
 The board props are chosen *by role* from the card pool, so do not assume specific
 card names, printed power/toughness, or that the two creatures differ.
@@ -137,7 +137,9 @@ one.
 2. **"Permanents you control" is 32, not 2.** Count the lands.
 3. **`battlefield_count` includes the card itself** — cast a creature and it is 33.
 4. **Measurement happens before cleanup**, so "until end of turn" effects are still
-   live and `target_pt_delta` and `granted` work. Combat is declined.
+   live and `target_pt_delta` and `granted` work. Combat is declined, except
+   for the attacking-target card in the Phase row, and even then no combat
+   damage is dealt before measurement.
 5. **A trigger that never fires cannot be asserted.** Nothing in this position makes
    a land enter, a creature die, or a spell get cast after yours. If your card's
    only effect is such a trigger, assert `{"zone": "battlefield"}` — legitimate, but

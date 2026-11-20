@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**545 cards** blocked by **463** capabilities.
+**542 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -110,8 +110,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
-| [attacking-player-or-planeswalker](#attacking-player-or-planeswalker) | 1 | 5846 | selector |
-| [attacking-you-or-your-planeswalker](#attacking-you-or-your-planeswalker) | 1 | 6445 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -408,7 +406,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
-| [sandbox-combat-targets](#sandbox-combat-targets) | 1 | 9654 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -2573,34 +2570,6 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
-
-</details>
-
-## attacking-player-or-planeswalker
-
-Blocks **1** card.
-
-- **(selector)** a selector key matching a creature attacking an opponent of the ability's controller OR a planeswalker such an opponent controls (not a battle, not the controller or the controller's planeswalkers), any creature's controller -- e.g. `attacking_player: "opponent"` widened by an `or_planeswalkers: true` flag that also accepts attackers whose combat.attacking_permanent is a planeswalker controlled by an opponent. Same need as Soul Snare's gap (attacking_you_or_your_planeswalker), mirrored to the opponent side
-  <br>Why the existing vocabulary won't do: The trigger is fine (`you_attack` with `controller: "any"`, as Duelist's Heritage writes it, then `may` with `pay: {"mana": "{1}{R}"}` wrapping a `pump`), and the first sentence is a `grant_keyword` static with `is_token`. But the pump's objects cannot be said: `attacking_player: "opponent"` deliberately excludes creatures in combat.attacking_permanent, so it drops attackers aimed at opponents' planeswalkers; `attacking: true` is a bare boolean and would also pump an opponent's creatures attacking you; `creatures_attack_player` with `defending: "opponent"` binds exactly the right attackers but fires once per defending opponent, so in a pod you would be asked to pay {1}{R} once per attacked opponent instead of once per attack, and it would not fire at all on an attack aimed only at you
-
-<details><summary>Cards waiting on this</summary>
-
-- **Roar of Resistance** (rank 5846) — `roar_of_resistance`
-  - Whenever one or more creatures attack, you may pay {1}{R}. If you do, creatures attacking your opponents and/or planeswalkers they control get +2/+0 until end of turn.
-
-</details>
-
-## attacking-you-or-your-planeswalker
-
-Blocks **1** card.
-
-- **(selector)** a selector key matching a creature attacking the ability's controller OR a planeswalker that controller controls (not a battle, not another player), e.g. attacking_player: "you" widened by an or_planeswalkers flag that also accepts attackers whose combat.attacking_permanent is a planeswalker controlled by the ability's controller
-  <br>Why the existing vocabulary won't do: `attacking_player: "you"` deliberately excludes creatures in combat.attacking_permanent, so it misses attackers aimed at your planeswalkers; `attacking: true` is a bare boolean with no notion of whom (wrong in multiplayer, where the creature may be attacking another opponent); `controller: "opponent"` beside it is the same over-approximation; the trigger key `defending` and the attack_tax `or_planeswalkers` flag express exactly this reading but exist only on triggers/statics, not in selector_keys, so no target selector can say it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Soul Snare** (rank 6445) — `soul_snare`
-  - {W}, Sacrifice this enchantment: Exile target creature that's attacking you or a planeswalker you control.
 
 </details>
 
@@ -6826,20 +6795,6 @@ Blocks **1** card.
   - + {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.
   - + {2} — Target opponent discards half the cards in their hand, rounded up.
   - + {2} — Target opponent loses half their life, rounded up.
-
-</details>
-
-## sandbox-combat-targets
-
-Blocks **1** card.
-
-- **(engine)** The authoring verification sandbox (cards/authoring/verify.py build_sandbox / _cast) must be able to cast an instant whose only target must be an attacking or blocking creature: move the sandbox into a combat (e.g. player 0 declares one of its creatures as an attacker and the spell is cast in declare attackers or declare blockers) when a card-level target selector, or one of its any_of branches, carries attacking/blocking -- the way tests/cards/test_every_card_works.py _selector_branches already drives a game to declare-attackers for such targets
-  <br>Why the existing vocabulary won't do: Every printed word is expressible: card-level `pay_generic_with: "tap_creatures"` (convoke), a `permanent` target t1 with selector {zone: battlefield, controller: any, types: [Creature], any_of: [{attacking: true}, {blocking: true}]} (the shape dawnray_archer ships), and spell_effects [{op: exile, objects: {target: t1}}]. But the sandbox is fixed at precombat main with combat declined, so no creature is attacking or blocking. Verified with a scratch run of verify(): the draft FAILED at the playable gate -- 'devouring_light is not playable in the sandbox; offered: [Pass, Play Forest]' (601.2c, no legal target). No expectation key can be satisfied by a card that cannot be cast, and adding an unprinted cast_only_during or widening the target to any creature would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Devouring Light** (rank 9654) — `devouring_light`
-  - Exile target attacking or blocking creature.
 
 </details>
 

@@ -1851,8 +1851,8 @@ def _selector_branches(selector: Any):
             yield {**selector, **branch}
 
 
-def combat_target_wants(card: CardDef | None) -> str | None:
-    """Does a card-level target ask for a creature in combat, and which kind?
+def wants_attacking_target(card: CardDef | None) -> bool:
+    """Does a card-level target ask for an attacking creature?
 
     "Put target **attacking** creature on the bottom of its owner's library"
     (Condemn) and "exile target attacking or blocking creature" (Devouring
@@ -1862,11 +1862,17 @@ def combat_target_wants(card: CardDef | None) -> str | None:
     absence `sandbox_turn` records for a cast window. The house answer is the
     same: move the position, do not relax the gate.
 
-    ``"attacking"`` when some branch of a card-level target (or a spree mode's)
-    takes an attacking creature, ``"blocking"`` when only a blocking one will
-    do, and None otherwise. Read only far enough to decide how to *move the
-    game*: whether what combat produces is a legal target stays
+    True when some branch of a card-level target (or a spree mode's) takes an
+    attacking creature. Read only far enough to decide whether to *move the
+    game*: whether the attacker combat produces is a legal target stays
     `legal_actions`' answer, so no second copy of `matches` lives here.
+
+    A target that must be a **blocking** creature and nothing else is not
+    moved for. Casting it means a block on the board when the spell resolves,
+    and nothing then stops the turn before combat damage, so creatures dying in
+    combat would be folded into the card's measurement -- the reason `_answer`
+    declines combat at all. Such a card is still reported "not playable in the
+    sandbox", an unrepresented shape rather than a verdict.
 
     `_cast` asks this **only when the card has no play in precombat main**, so
     every card that was castable there keeps the exact position it was measured
@@ -1875,39 +1881,32 @@ def combat_target_wants(card: CardDef | None) -> str | None:
     written -- through the Resurgence half, the one main phase offers.
     """
     if card is None:
-        return None
-    branches = [
-        branch
+        return False
+    return any(
+        branch.get("attacking") is True
         for spec in (card.spree_targets or card.targets)
         for branch in _selector_branches(spec.selector)
-    ]
-    if any(branch.get("attacking") is True for branch in branches):
-        return "attacking"
-    if any(branch.get("blocking") is True for branch in branches):
-        return "blocking"
-    return None
+    )
 
 
-def enter_sandbox_combat(game: Game, *, block: bool = False, limit: int = 40) -> bool:
-    """Walk player 0 from precombat main into combat, with a creature in it.
+def enter_sandbox_combat(game: Game, *, limit: int = 40) -> bool:
+    """Walk player 0 from precombat main into combat, with an attacker in it.
 
     Player 0 passes main, declares the first of its own creatures as an attacker
     against the opponent, and holds priority in the declare attackers step --
     the caster and the measured seat stay player 0, so every authored seat
     number keeps its meaning, and "target attacking creature" (controller any)
-    is met by player 0's own attacker. With ``block`` the walk goes one step
-    further: the opponent blocks that attacker with the first creature it
-    offers, and player 0 holds priority in the declare blockers step.
+    is met by player 0's own attacker.
 
     Answered with the engine's own declarations, never by writing combat state,
     so an attacker is exactly what `legal_actions` calls one. False when the
-    walk cannot get there -- no creature able to attack, or no blocker -- and
-    the caller then reports "not playable in the sandbox", as before.
+    walk cannot get there -- no creature able to attack -- and the caller then
+    reports "not playable in the sandbox", as before.
 
-    Measurement stays inside the turn: after the spell resolves, the opponent's
-    block declaration, or the spare Forest in postcombat main once an attacker
-    has left combat, is the stop `drive` returns at, and `_cast` refuses a cast
-    that ran past cleanup anyway.
+    Measurement stays inside the turn and before combat damage: after the spell
+    resolves, the opponent's block declaration (an attacker still in combat) or
+    the spare Forest in postcombat main (none left) is the stop `drive` returns
+    at, and `_cast` refuses a cast that ran past cleanup anyway.
     """
 
     def walk_to(kind: DecisionKind) -> bool:
@@ -1944,11 +1943,6 @@ def enter_sandbox_combat(game: Game, *, block: bool = False, limit: int = 40) ->
         return False
     if not declare(ActionKind.ADD_ATTACKER):
         return False
-    if block:
-        if not walk_to(DecisionKind.DECLARE_BLOCKERS) or game.pending().player != 1:
-            return False
-        if not declare(ActionKind.ADD_BLOCKER):
-            return False
     _pass_for_the_opponent(game)
     decision = game.pending()
     return (
@@ -1997,9 +1991,9 @@ def _cast(
         game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted
     )
     in_combat = False
-    if action is None and (wants := combat_target_wants(card)) is not None:
-        # See `combat_target_wants`: only a card with no play in main is moved.
-        in_combat = enter_sandbox_combat(game, block=wants == "blocking")
+    if action is None and wants_attacking_target(card):
+        # See `wants_attacking_target`: only a card with no play in main moves.
+        in_combat = enter_sandbox_combat(game)
         if in_combat:
             action = find_play(
                 game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted

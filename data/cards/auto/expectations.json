@@ -19560,6 +19560,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "roar_of_resistance": {
+    "zone": "battlefield"
+  },
   "robe_of_mirrors": {
     "zone": [
       "battlefield",
@@ -22045,6 +22048,9 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "soul_snare": {
+    "zone": "battlefield"
   },
   "soul_snuffers": {
     "counters": {
