@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "random_target_reflexive_trigger",
+      "capability": "random_player_choice",
       "kind": "engine",
       "what": "a reflexive (spell-linked) triggered ability that fires once per card drawn by this spell's own draw effects (yours and each other player's optional draw) and whose single player target is an opponent chosen at random -- i.e. allow a target spec's selector `random: true` on a `reflexive_trigger` ability, drawn by `stack._random_trigger_targets` as it goes on the stack, over player targets restricted to the controller's opponents",
       "why_existing_wont_do": "The only random-target path is `random: true` on a target selector, and the loader (`cards/loader/targets.py`) refuses it unless `on_trigger`, which `_compile_targets` sets only for TRIGGERED and CHAPTER abilities, not REFLEXIVE; a `trigger_events` draw trigger cannot be scoped to 'drawn this way' by this spell, and `choose_player`/`damage` have no random option, so an ordinary chosen target opponent would let the caster pick and be a different card"

@@ -6,7 +6,7 @@
     "Grenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax fights another target creature that player controls."
   ],
   "needs": [{
-    "capability": "choose_player_at_random",
+    "capability": "random_player_choice",
     "kind": "op",
     "what": "a `random: true` option on `choose_player` that picks one player uniformly at random from the pool (all players, the controller included) with no decision asked, binding the result under `as` so a following `reflexive_trigger`'s target selector can read `controller: {\"binding\": ...}` (\"another target creature that player controls\")",
     "why_existing_wont_do": "`choose_player` takes only `as`, `players` and `prompt` and always asks the controller via `ask_player`; `random` exists only as a selector key over objects and on `choose_mode`/`discard`, not for picking a player, so the random seat cannot be produced and choosing it would let the controller pick the most favourable player"
