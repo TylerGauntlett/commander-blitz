@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **452** capabilities.
+**533 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -73,6 +73,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
+| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 2 | 4478 | selector |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -352,7 +353,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
-| [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [playable-while-source-on-battlefield](#playable-while-source-on-battlefield) | 1 | 14646 | value |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -427,7 +427,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
-| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
@@ -1973,6 +1972,24 @@ Blocks **2** cards.
   - Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
+
+</details>
+
+## target-opponent-or-planeswalker
+
+Blocks **2** cards.
+
+- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
+  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
+- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
+  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. The other two sentences are expressible: an upkeep-triggered look_at_top to exile with link: true, playable: "while_exiled" and playable_condition: "your_turn_opponent_lost_life_exiled_with_source".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Theater of Horrors** (rank 4478) — `theater_of_horrors`
+  - {3}{R}: This enchantment deals 1 damage to target opponent or planeswalker.
+- **Collective Defiance** (rank 7525) — `collective_defiance`
+  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
 
 </details>
 
@@ -5997,20 +6014,6 @@ Blocks **1** card.
 
 </details>
 
-## playable-condition-opponent-lost-life
-
-Blocks **1** card.
-
-- **(engine)** a new `playable_condition` value (e.g. "your_turn_and_opponent_lost_life") for exile/look_at_top permissions with `playable: "while_exiled"`: the exiled cards may be played only while it is the effect controller's turn and some opponent's TurnLedger.life_lost is greater than 0 this turn, rechecked each time the play is offered
-  <br>Why the existing vocabulary won't do: PLAYABLE_CONDITIONS (playable_conditions in the packet) holds only "you_attacked_with_a_commander"; the value `life_lost_this_turn` and the condition `is_your_turn` exist but only for `if`/trigger conditions, not as a play permission gate, and a `while_exiled` permission without the gate would let the cards be played on any turn with no life loss, which is a strictly stronger card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Theater of Horrors** (rank 4478) — `theater_of_horrors`
-  - During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.
-
-</details>
-
 ## playable-spell-type-restriction
 
 Blocks **1** card.
@@ -7071,20 +7074,6 @@ Blocks **1** card.
 
 - **Rory Williams** (rank 14357) — `rory_williams`
   - The Last Centurion — When you cast this spell from anywhere other than exile, exile it with three time counters on it. It gains suspend. Then investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
-
-</details>
-
-## target-opponent-or-planeswalker
-
-Blocks **1** card.
-
-- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
-  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Collective Defiance** (rank 7525) — `collective_defiance`
-  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
 
 </details>
 

@@ -1817,7 +1817,21 @@ PLAYABLE_DURATIONS = (
 #:   commander -- read off `TurnLedger.creatures_attacked`, so a commander that
 #:   attacked and then died still counts for the rest of the turn. A creature
 #:   put onto the battlefield attacking was never declared and does not.
-PLAYABLE_CONDITIONS = ("you_attacked_with_a_commander",)
+#: - ``"your_turn_opponent_lost_life_exiled_with_source"`` -- Theater of
+#:   Horrors: "**During your turn, if an opponent lost life this turn**, you may
+#:   play lands and cast spells from among cards **exiled with this
+#:   enchantment**." It is the holder's turn, a seat still in the game other
+#:   than the holder has a nonzero `TurnLedger.life_lost`, and the card is still
+#:   linked (607.2a) to the object that exiled it, which is on the battlefield
+#:   under the holder's control. The last clause is there because the printed
+#:   permission is a static ability of the enchantment, so it works only while
+#:   the enchantment is on the battlefield (113.6) and stops when the
+#:   enchantment leaves. The loader asks for ``link: true`` beside it for the
+#:   same reason.
+PLAYABLE_CONDITIONS = (
+    "you_attacked_with_a_commander",
+    "your_turn_opponent_lost_life_exiled_with_source",
+)
 
 
 def playable_condition_met(state: Any, obj: GameObject) -> bool:
@@ -1839,6 +1853,24 @@ def playable_condition_met(state: Any, obj: GameObject) -> bool:
         return any(
             (attacker := state.objects.get(oid)) is not None and attacker.is_commander
             for oid in attacked
+        )
+    if condition == "your_turn_opponent_lost_life_exiled_with_source":
+        holder = obj.playable_by
+        if holder is None or state.active_player != holder:
+            return False
+        lost = state.turn_ledger.life_lost
+        if not any(lost.get(pid, 0) > 0 for pid in state.opponents(holder)):
+            return False
+        # "…from among cards exiled with this enchantment": a static of the
+        # enchantment's, so the enchantment has to be on the battlefield as the
+        # object that exiled the card. A source that left and came back is a
+        # new object with an empty `exiled_cards` (400.7).
+        source = state.objects.get(obj.exiled_by) if obj.exiled_by is not None else None
+        return (
+            source is not None
+            and source.zone is Zone.BATTLEFIELD
+            and source.controller == holder
+            and obj.oid in source.exiled_cards
         )
     # The loader refuses anything else; an unknown condition opens nothing.
     return False

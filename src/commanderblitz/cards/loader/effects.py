@@ -3116,6 +3116,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown 'playable_condition' {effect['playable_condition']!r} "
                 f"(implemented: {sorted(PLAYABLE_CONDITIONS)})"
             )
+        if effect[
+            "playable_condition"
+        ] == "your_turn_opponent_lost_life_exiled_with_source" and not (
+            op in ("exile", "look_at_top") and effect.get("link") is True
+        ):
+            # "…from among cards exiled with this enchantment" (Theater of
+            # Horrors) is read off the exile link, so the op making the cards
+            # has to write it; without one the condition never holds and the
+            # card loads as one whose permission silently never opens.
+            raise DslError(
+                f"{where}: 'playable_condition': "
+                f"\"your_turn_opponent_lost_life_exiled_with_source\" reads the "
+                f"cards exiled with the source, so it needs the exiling op to "
+                f"link them (exile or look_at_top with 'link': true)"
+            )
     if op == "become_copy" and "except_" in effect:
         # Read only when the copy resolves: a misspelt key or keyword would
         # arrive as a plain copy, which loses the exception and says nothing.

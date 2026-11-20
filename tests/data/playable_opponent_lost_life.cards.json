@@ -1,0 +1,49 @@
+{
+  "_comment": "Witnesses for tests/unit/casting/test_playable_opponent_lost_life.py.",
+  "cards": [
+    {
+      "id": "t_horror_theater",
+      "name": "Test Horror Theater",
+      "oracle_text": "At the beginning of your upkeep, exile the top card of your library.\nDuring your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.",
+      "mana_cost": "{1}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, exile the top card of your library.",
+          "trigger": {"event": "upkeep", "controller": "you"},
+          "effects": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {"const": 1},
+              "objects": {"count": "all"},
+              "destination": "exile",
+              "link": true,
+              "playable": "while_exiled",
+              "playable_condition": "your_turn_opponent_lost_life_exiled_with_source"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_horror_drain",
+      "name": "Test Horror Drain",
+      "oracle_text": "Each opponent loses 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "lose_life", "player": "each_opponent", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_horror_self_drain",
+      "name": "Test Horror Self Drain",
+      "oracle_text": "You lose 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "lose_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

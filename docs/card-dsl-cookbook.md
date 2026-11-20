@@ -1119,6 +1119,41 @@ The near misses are both durations alone. `while_exiled` lets the cards be
 played on any turn, a stronger card; `this_turn` opens them only on the turn
 they were exiled and loses them after it, a weaker one.
 
+### "During your turn, if an opponent lost life this turn, you may play … cards exiled with this enchantment"
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "upkeep", "controller": "you" },
+  "text": "At the beginning of your upkeep, exile the top card of your library.",
+  "effects": [
+    { "op": "look_at_top", "player": "you", "amount": { "const": 1 },
+      "objects": { "count": "all" }, "destination": "exile", "link": true,
+      "playable": "while_exiled",
+      "playable_condition": "your_turn_opponent_lost_life_exiled_with_source" } ] }
+                                                              // Theater of Horrors
+```
+
+The printed permission is a static ability of the enchantment, written on the
+op that exiles the cards. `your_turn_opponent_lost_life_exiled_with_source`
+holds while all three of these are true:
+
+- it is the permission holder's turn;
+- a seat still in the game other than the holder has a nonzero
+  `TurnLedger.life_lost`, which counts damage, drains and life paid alike;
+- the card is still exiled with the source (607.2a), and that source is on the
+  battlefield under the holder's control.
+
+The last clause is the static half. When the enchantment leaves, the cards stay
+in exile and can no longer be played (113.6). An enchantment that comes back is
+a new object with nothing exiled with it (400.7). The loader refuses the value
+unless the op is `exile` or `look_at_top` with `link: true`, since the link is
+what the condition reads. It is refused on `grant_playable` for the same
+reason. A stolen enchantment shuts the cards; it does not hand them to the thief.
+
+The near miss is `while_exiled` alone. It lets the cards be played on any turn,
+with no life lost, and after the enchantment has gone, which is a stronger card.
+A one-shot "you may play that card" carrying the same turn condition is a
+different sentence, because it outlives its source. It needs a value of its own.
+
 ### "You may cast that card for as long as it remains exiled"
 
 ```jsonc
