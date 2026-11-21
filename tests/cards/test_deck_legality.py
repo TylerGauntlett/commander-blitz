@@ -65,6 +65,7 @@ PRECONS = {
     "scd_draconic_destruction",
     "scd_first_flight",
     "scd_grave_danger",
+    "scd_token_triumph",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",
     "tdc_abzan_armor",

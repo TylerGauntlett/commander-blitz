@@ -316,6 +316,7 @@
    "C"
   ],
   "NOT_A_CAST_TIME_COST": [
+   "discard_hand",
    "discard_self",
    "discard_x",
    "exile_self",

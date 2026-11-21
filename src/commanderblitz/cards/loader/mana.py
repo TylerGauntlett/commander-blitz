@@ -199,6 +199,16 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
         # The same card cannot go to two destinations, and which one it reached
         # is the whole difference between cycling and a pitch.
         raise DslError(f"{where}.cost: give 'discard_self' or 'exile_self_from_hand', not both")
+    if model.discard_hand and (
+        model.discard or model.discard_x or model.discard_self or model.discard_selector
+    ):
+        # "Discard your hand" is every card, so a count, an X, a selector or
+        # "this card" beside it would be a second answer to "which cards go",
+        # and whichever ran second would find the hand already empty.
+        raise DslError(
+            f"{where}.cost: 'discard_hand' discards every card in hand; it takes no "
+            f"'discard', 'discard_x', 'discard_self' or 'discard_selector' beside it"
+        )
     if model.pay_energy < 0:
         # A negative payment is energy *given*, which is the `add_energy` op;
         # as a cost it would be a payment that makes the payer richer.

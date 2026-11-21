@@ -1,0 +1,23 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_discard_hand_cost.py. `t_dh_slate` is Slate of Ancestry's 'Discard your hand' cost reduced to '{1}, {T}' and 'you gain 1 life and draw a card', so the activation is cheap, its resolution is visible on a life total, and the drawn card shows the hand was emptied before the effect ran rather than after.",
+  "cards": [
+    {
+      "id": "t_dh_slate",
+      "name": "Test Discard Hand Slate",
+      "oracle_text": "{1}, {T}, Discard your hand: You gain 1 life and draw a card.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Discard your hand: You gain 1 life and draw a card.",
+          "cost": {"mana": "{1}", "tap": true, "discard_hand": true},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": 1},
+            {"op": "draw", "amount": 1}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -102,6 +102,10 @@ class CostModel(BaseModel):
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
+    #: "{4}, {T}, **Discard your hand**:" -- Slate of Ancestry. Every card in
+    #: the payer's hand, no choice; an empty hand still pays it. Not beside
+    #: ``discard`` or ``discard_x``, which count the cards that go.
+    discard_hand: bool = False
     #: "{4}{B}{B}{B}, **Discard X cards**:" -- Gix, Yawgmoth Praetor. The
     #: controller announces X as the ability is activated (601.2b, 107.3), no
     #: more than the cards in hand the cost may take (``discard_selector``

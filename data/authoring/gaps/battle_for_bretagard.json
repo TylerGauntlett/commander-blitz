@@ -1,0 +1,18 @@
+{
+  "card_id": "battle_for_bretagard",
+  "name": "Battle for Bretagard",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 1/1 white Human Warrior creature token.\nII — Create a 1/1 green Elf Warrior creature token.\nIII — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it.",
+  "blocked_sentences": [
+    "III — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it."
+  ],
+  "needs": [
+    {
+      "capability": "choose_permanents_with_different_names",
+      "kind": "selector",
+      "what": "a battlefield selector constraint for a chosen set of permanents that each have different names (choose any number of artifact or creature tokens you control, no two sharing a name), usable as the objects of copy_permanent so that one token copy is created for each chosen permanent",
+      "why_existing_wont_do": "distinct_names exists but the loader accepts it only on search_library and search_zones (it narrows a library/zone search after each pick); copy_permanent's options (amount, as, objects, ...) and the selector keys (any_types, is_token, controller, optional, count, shares_a_name_with, not_name) have no way to force the chosen battlefield objects to have pairwise different names, so writing copy_permanent over all artifact/creature tokens would copy two same-named tokens, which the card forbids"
+    }
+  ],
+  "closest_existing": ["copy_permanent", "distinct_names"],
+  "confidence": "high"
+}

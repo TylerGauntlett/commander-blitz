@@ -1188,6 +1188,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "discard": ("Discard N cards.", None),
     "discard_selector": ("…matching this selector.", None),
     "discard_self": ("Discard this card (cycling).", "Cycling"),
+    "discard_hand": ("Discard your hand: every card in it, no choice; an empty hand pays it.",
+                     "`discard_hand` — discard your hand as a cost"),
     "discard_x": ("Discard X cards, X announced and bounded by the hand.",
                   "`discard_x` — discard X cards, X announced"),
     "exert": ("Exert the source.", "`exert` — the keyword as a cost"),

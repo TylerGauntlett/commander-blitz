@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **451** capabilities.
+**533 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -145,6 +145,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
+| [choose-permanents-with-different-names](#choose-permanents-with-different-names) | 1 | 7059 | selector |
 | [choose-x-modes](#choose-x-modes) | 1 | 8838 | engine |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
@@ -186,7 +187,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dinosaur-2-2-rw-flying-haste-token](#dinosaur-2-2-rw-flying-haste-token) | 1 | 5193 | token |
 | [discard-cost-binding](#discard-cost-binding) | 1 | 5635 | cost |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
-| [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
@@ -3044,6 +3044,20 @@ Blocks **1** card.
 
 </details>
 
+## choose-permanents-with-different-names
+
+Blocks **1** card.
+
+- **(selector)** a battlefield selector constraint for a chosen set of permanents that each have different names (choose any number of artifact or creature tokens you control, no two sharing a name), usable as the objects of copy_permanent so that one token copy is created for each chosen permanent
+  <br>Why the existing vocabulary won't do: distinct_names exists but the loader accepts it only on search_library and search_zones (it narrows a library/zone search after each pick); copy_permanent's options (amount, as, objects, ...) and the selector keys (any_types, is_token, controller, optional, count, shares_a_name_with, not_name) have no way to force the chosen battlefield objects to have pairwise different names, so writing copy_permanent over all artifact/creature tokens would copy two same-named tokens, which the card forbids
+
+<details><summary>Cards waiting on this</summary>
+
+- **Battle for Bretagard** (rank 7059) — `battle_for_bretagard`
+  - III — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it.
+
+</details>
+
 ## choose-x-modes
 
 Blocks **1** card.
@@ -3625,20 +3639,6 @@ Blocks **1** card.
 
 - **Veronica, Dissident Scribe** (rank 8688) — `veronica_dissident_scribe`
   - Whenever you discard one or more nonland cards for the first time each turn, create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
-
-</details>
-
-## discard-your-hand
-
-Blocks **1** card.
-
-- **(cost)** a cost key that throws away the payer's entire hand, whatever its size -- 'discard_hand: true' (or a 'discard' that accepts a value expression rather than a literal) -- payable with any hand including an empty one, and pricing itself at activation time rather than at load time
-  <br>Why the existing vocabulary won't do: 'discard' is a fixed integer: Cost.discard is loaded as int(spec.get('discard', 0)) and can_pay refuses the cost when _discard_pool is smaller than that number, so no constant is right -- 'discard: 7' is unpayable holding six cards, and 'discard: 0' charges nothing at all and hands over three mana for free. The cost language has no value leaf, so 'cards_in_hand' (a value_key, usable only in an amount) cannot be spent there. 'discard_selector' only narrows *which* cards may go, never how many. 'discard_self' throws the source alone, and this source is an artifact on the battlefield, not a card in hand. Writing it as the 'discard' op with amount {"cards_in_hand": ...} in the ability's effects moves the payment to resolution, which the packet forbids for exactly the reason this card demonstrates: the hand would still be intact while the ability is on the stack, turning a card whose whole design is 'the hand is gone before the mana arrives' into a free three-mana ritual you may respond to by casting the cards first.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
-  - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
 
 </details>
 

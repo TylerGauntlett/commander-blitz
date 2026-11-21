@@ -4827,6 +4827,110 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Put a +1/+1 counter on up to one target creature."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "keywords": [
+                "flying",
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Target creature gains flying and double strike until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "amount": {
+                "life_of": "you"
+              },
+              "op": "create_token",
+              "token": "cat_2_2_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: Create X 2/2 white Cat creature tokens, where X is your life total."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ajani_caller_of_the_pride",
+      "loyalty": 4,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Ajani, Caller of the Pride",
+      "oracle_text": "+1: Put a +1/+1 counter on up to one target creature.\n−3: Target creature gains flying and double strike until end of turn.\n−8: Create X 2/2 white Cat creature tokens, where X is your life total.",
+      "source": "auto",
+      "subtypes": [
+        "Ajani"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -18812,6 +18916,61 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "aura_mutation",
+      "mana_cost": "{G}{W}",
+      "name": "Aura Mutation",
+      "oracle_text": "Destroy target enchantment. Create X 1/1 green Saproling creature tokens, where X is that enchantment's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "var": "victim"
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "saproling_1_1_g"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -26696,6 +26855,48 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_warrior_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a 1/1 white Human Warrior creature token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "beskir_shieldmate",
+      "mana_cost": "{1}{W}",
+      "name": "Beskir Shieldmate",
+      "oracle_text": "When this creature dies, create a 1/1 white Human Warrior creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -40668,6 +40869,58 @@
     },
     {
       "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "camaraderie",
+      "mana_cost": "{4}{G}{W}",
+      "name": "Camaraderie",
+      "oracle_text": "You gain X life and draw X cards, where X is the number of creatures you control. Creatures you control get +1/+1 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -50522,6 +50775,41 @@
       "colors": [
         "W"
       ],
+      "id": "citywide_bust",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Citywide Bust",
+      "oracle_text": "Destroy all creatures with toughness 4 or greater.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "toughness": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "claim_jumper",
       "keywords": [
         "vigilance"
@@ -52940,6 +53228,43 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Creatures you control get +3/+3.",
+          "toughness": {
+            "const": 3
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "collective_blessing",
+      "mana_cost": "{3}{G}{G}{W}",
+      "name": "Collective Blessing",
+      "oracle_text": "Creatures you control get +3/+3.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -53258,6 +53583,31 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "collective_unconscious",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Collective Unconscious",
+      "oracle_text": "Draw a card for each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -56023,6 +56373,72 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "face_down": true,
+              "link": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, exile the top card of your library face down.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        },
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{1}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "connecting_the_dots",
+      "mana_cost": "{1}{R}",
+      "name": "Connecting the Dots",
+      "oracle_text": "Whenever a creature you control attacks, exile the top card of your library face down. (You can't look at it.)\n{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -63205,6 +63621,74 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player",
+                  "except": "you"
+                },
+                "count": "all",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted player is attacked, untap all nonland permanents you control. Each opponent attacking that player untaps all nonland permanents they control.",
+          "trigger": {
+            "controller": "any",
+            "defending": "enchanted_player",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "curse_of_bounty",
+      "mana_cost": "{1}{G}",
+      "name": "Curse of Bounty",
+      "oracle_text": "Enchant player\nWhenever enchanted player is attacked, untap all nonland permanents you control. Each opponent attacking that player untaps all nonland permanents they control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -66594,6 +67078,60 @@
         "Soldier"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "dauntless_escort",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Dauntless Escort",
+      "oracle_text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Soldier"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -73200,6 +73738,44 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dictate_of_heliod",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Dictate of Heliod",
+      "oracle_text": "Flash\nCreatures you control get +2/+2.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -87256,6 +87832,53 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "emmara_soul_of_the_accord",
+      "mana_cost": "{G}{W}",
+      "name": "Emmara, Soul of the Accord",
+      "oracle_text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -127819,6 +128442,48 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "harvest_season",
+      "mana_cost": "{2}{G}",
+      "name": "Harvest Season",
+      "oracle_text": "Search your library for up to X basic land cards, where X is the number of tapped creatures you control, put those cards onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": {
+            "count": {
+              "controller": "you",
+              "tapped": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -135014,6 +135679,101 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}. ({C} represents colorless mana.)"
+        },
+        {
+          "cost": {
+            "tap": true,
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Tap an untapped creature you control: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "holdout_settlement",
+      "name": "Holdout Settlement",
+      "oracle_text": "{T}: Add {C}. ({C} represents colorless mana.)\n{T}, Tap an untapped creature you control: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -146742,6 +147502,46 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}: Create a 1/1 green Saproling creature token."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jade_mage",
+      "mana_cost": "{1}{G}",
+      "name": "Jade Mage",
+      "oracle_text": "{2}{G}: Create a 1/1 green Saproling creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -147152,6 +147952,102 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true,
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Tap an untapped creature you control: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jaspera_sentinel",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{G}",
+      "name": "Jaspera Sentinel",
+      "oracle_text": "Reach\n{T}, Tap an untapped creature you control: Add one mana of any color.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Rogue"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -151615,6 +152511,128 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"{T}: Add one mana of any color.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "id": "karametra_s_favor",
+      "mana_cost": "{1}{G}",
+      "name": "Karametra's Favor",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card.\nEnchanted creature has \"{T}: Add one mana of any color.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -173568,6 +174586,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_warrior_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, create a 1/1 white Human Warrior creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "maja_bretagard_protector",
+      "mana_cost": "{2}{G}{W}{W}",
+      "name": "Maja, Bretagard Protector",
+      "oracle_text": "Other creatures you control get +1/+1.\nLandfall — Whenever a land you control enters, create a 1/1 white Human Warrior creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -175722,6 +176806,34 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "march_of_the_multitudes",
+      "mana_cost": "{X}{G}{W}{W}",
+      "name": "March of the Multitudes",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nCreate X 1/1 white Soldier creature tokens with lifelink.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "soldier_1_1_w_lifelink"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -196116,6 +197228,40 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nissa_s_expedition",
+      "mana_cost": "{4}{G}",
+      "name": "Nissa's Expedition",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nSearch your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -197786,6 +198932,106 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "{2}, {T}, Discard your hand: Counter target noncreature spell."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "null_brooch",
+      "mana_cost": "{4}",
+      "name": "Null Brooch",
+      "oracle_text": "{2}, {T}, Discard your hand: Counter target noncreature spell.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Tap four untapped creatures you control: Destroy target artifact or enchantment."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nullmage_shepherd",
+      "mana_cost": "{3}{G}",
+      "name": "Nullmage Shepherd",
+      "oracle_text": "Tap four untapped creatures you control: Destroy target artifact or enchantment.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -206101,6 +207347,55 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "overrun",
+      "mana_cost": "{2}{G}{G}{G}",
+      "name": "Overrun",
+      "oracle_text": "Creatures you control get +3/+3 and gain trample until end of turn. (Each of those creatures can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 3
+          },
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -206375,6 +207670,52 @@
       "mana_cost": "{1}{B}",
       "name": "Oversold Cemetery",
       "oracle_text": "At the beginning of your upkeep, if you have four or more creature cards in your graveyard, you may return target creature card from your graveyard to your hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with three or more creatures, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "overwhelming_instinct",
+      "mana_cost": "{2}{G}",
+      "name": "Overwhelming Instinct",
+      "oracle_text": "Whenever you attack with three or more creatures, draw a card.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -216210,6 +217551,67 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"{T}: Create a 1/1 green Elf Warrior creature token.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "elf_warrior_1_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 1/1 green Elf Warrior creature token."
+        }
+      ],
+      "id": "presence_of_gond",
+      "mana_cost": "{2}{G}",
+      "name": "Presence of Gond",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{T}: Create a 1/1 green Elf Warrior creature token.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -236650,6 +238052,60 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rootborn_defenses",
+      "mana_cost": "{2}{W}",
+      "name": "Rootborn Defenses",
+      "oracle_text": "Populate. Creatures you control gain indestructible until end of turn. (To populate, create a token that's a copy of a creature token you control.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "populate_original",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "is_token": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Populate: choose a creature token you control to copy"
+        },
+        {
+          "as": "populated",
+          "controller": "you",
+          "objects": {
+            "binding": "populate_original"
+          },
+          "op": "copy_permanent"
+        },
+        {
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -244132,6 +245588,32 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "scatter_the_seeds",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Scatter the Seeds",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nCreate three 1/1 green Saproling creature tokens.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "create_token",
+          "token": "saproling_1_1_g"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -248195,6 +249677,56 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "tap_permanents": {
+              "controller": "you",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Tap an untapped creature you control: Create a 1/1 green Saproling creature token."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "selesnya_evangel",
+      "mana_cost": "{G}{W}",
+      "name": "Selesnya Evangel",
+      "oracle_text": "{1}, {T}, Tap an untapped creature you control: Create a 1/1 green Saproling creature token.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -248244,6 +249776,75 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}: Create a 1/1 green Saproling creature token."
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}: Creatures you control get +1/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "selesnya_guildmage",
+      "mana_cost": "{G/W}{G/W}",
+      "name": "Selesnya Guildmage",
+      "oracle_text": "{3}{G}: Create a 1/1 green Saproling creature token.\n{3}{W}: Creatures you control get +1/+1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -261270,6 +262871,38 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "creatures_you_control": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}, Discard your hand: Draw a card for each creature you control"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "slate_of_ancestry",
+      "mana_cost": "{4}",
+      "name": "Slate of Ancestry",
+      "oracle_text": "{4}, {T}, Discard your hand: Draw a card for each creature you control.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -275179,6 +276812,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "power": {
+                  "op": "<=",
+                  "value": 2
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}: Another target creature with power 2 or less can't be blocked this turn."
+        },
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{1}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card.",
+              "trigger": {
+                "condition": {
+                  "cmp": "<=",
+                  "left": {
+                    "power_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "right": {
+                    "const": 2
+                  }
+                },
+                "controller": "you",
+                "event": "deals_combat_damage_to_player"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, {T}, Discard your hand: Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "subira_tulzidi_caravanner",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Subira, Tulzidi Caravanner",
+      "oracle_text": "Haste\n{1}: Another target creature with power 2 or less can't be blocked this turn.\n{1}{R}, {T}, Discard your hand: Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -281280,6 +283018,82 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "shuffle": true
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Basic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sylvan_reclamation",
+      "mana_cost": "{3}{G}{W}",
+      "name": "Sylvan Reclamation",
+      "oracle_text": "Exile up to two target artifacts and/or enchantments.\nBasic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "controller": "any",
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -307649,6 +309463,102 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Trostani enters, create two 1/1 white Soldier creature tokens with lifelink.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "permanent",
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "owner": {
+                      "binding": "each_player"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "gain_control",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each player gains control of all creatures they own.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "trostani_discordant",
+      "mana_cost": "{3}{G}{W}",
+      "name": "Trostani Discordant",
+      "oracle_text": "Other creatures you control get +1/+1.\nWhen Trostani enters, create two 1/1 white Soldier creature tokens with lifelink.\nAt the beginning of your end step, each player gains control of all creatures they own.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dryad"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "opponent",
           "effect": "skip_extra_turn",
           "kind": "static",
@@ -314841,6 +316751,55 @@
     {
       "abilities": [
         {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "human_warrior_1_1_w"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Boast — {1}{W}: Create a 1/1 white Human Warrior creature token. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "usher_of_the_fallen",
+      "mana_cost": "{W}",
+      "name": "Usher of the Fallen",
+      "oracle_text": "Boast — {1}{W}: Create a 1/1 white Human Warrior creature token. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -315645,6 +317604,56 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, creatures you control get +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "valor_in_akros",
+      "mana_cost": "{3}{W}",
+      "name": "Valor in Akros",
+      "oracle_text": "Whenever a creature you control enters, creatures you control get +1/+1 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -318589,6 +320598,46 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, create a 1/1 green Saproling creature token.",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "verdant_force",
+      "mana_cost": "{5}{G}{G}{G}",
+      "name": "Verdant Force",
+      "oracle_text": "At the beginning of each upkeep, create a 1/1 green Saproling creature token.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -322111,6 +324160,63 @@
       "subtypes": [
         "Merfolk",
         "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "cmp": "<",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "each_opponent",
+                  "than": {
+                    "count": {
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, draw a card for each opponent who controls fewer creatures than you.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "voice_of_many",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Voice of Many",
+      "oracle_text": "When this creature enters, draw a card for each opponent who controls fewer creatures than you.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
       ],
       "toughness": 3,
       "types": [
