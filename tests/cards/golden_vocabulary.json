@@ -113,6 +113,7 @@
    "subject"
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
+   "add_abilities",
    "add_keywords",
    "add_subtypes",
    "add_types",

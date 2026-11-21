@@ -263,6 +263,13 @@ def _check_grant_targets(
         if ability.is_static and static.get("effect") == "grant_ability":
             check(static.get("ability", 0), "grant_ability static")
 
+    for replacement in model.replacements:
+        # "…and it has "{T}: Add {U}."" (Machine God's Effigy): `card_of`
+        # skips a position out of range, which is a copy without the ability.
+        if replacement.event == "self_enters_as_copy":
+            for index in (replacement.except_ or {}).get("add_abilities") or ():
+                check(index, "self_enters_as_copy except_.add_abilities")
+
     trees: list[Any] = [model.spell_effects]
     trees.extend(a.effects for a in abilities)
     trees.extend(a.effects for a in grantable)
@@ -460,10 +467,14 @@ def load_deck_file(path: Path) -> DeckModel:
 #: ``set_types`` is the replacement beside ``add_types``' addition: Machine
 #: God's Effigy's "…except it's an artifact" with no "in addition", so the copy
 #: of a creature is an Artifact and nothing else, and its creature types go
-#: with the Creature it no longer is (205.1b).
+#: with the Creature it no longer is (205.1b). ``add_abilities`` is "…and it
+#: has "{T}: Add {U}."" (Machine God's Effigy): positions in the card's
+#: ``grantable_abilities``, each quoted ability written there once and put on
+#: the copied face, range-checked by `_check_grant_targets`.
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
+        "add_abilities",
         "add_types",
         "set_types",
         "add_subtypes",
@@ -563,6 +574,22 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
         for s in removed:
             if s not in KNOWN_SUPERTYPES:
                 raise DslError(f"{where}.remove_supertypes: unknown supertype {s!r}")
+    if "add_abilities" in spec:
+        # "…and it has "{T}: Add {U}."" (Machine God's Effigy). Positions in
+        # this card's `grantable_abilities`; the range is checked against the
+        # card by `_check_grant_targets`, since this sees the exception alone.
+        positions = spec["add_abilities"]
+        if (
+            not isinstance(positions, list)
+            or not positions
+            or not all(isinstance(i, int) and not isinstance(i, bool) for i in positions)
+        ):
+            raise DslError(
+                f"{where}.add_abilities: needs a non-empty list of positions in "
+                f"the card's 'grantable_abilities'"
+            )
+        if len(set(positions)) != len(positions):
+            raise DslError(f"{where}.add_abilities: names one ability twice")
     if "name" in spec:
         # "…except his name is Chameleon, Master of Disguise."
         name = spec["name"]

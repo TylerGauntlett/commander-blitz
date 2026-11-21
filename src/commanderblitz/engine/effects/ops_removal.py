@@ -183,6 +183,7 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.copying_no_mana_cost = False
         obj.copying_add_supertypes = frozenset(supertypes_added) if supertypes_added else None
         obj.copying_own_abilities = kept
+        obj.copying_add_abilities = None
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
 

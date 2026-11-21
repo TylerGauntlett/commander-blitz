@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **452** capabilities.
+**533 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -209,7 +209,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
-| [enters-as-copy-grant-ability](#enters-as-copy-grant-ability) | 1 | 2862 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -3957,20 +3956,6 @@ Blocks **1** card.
 
 - **Displaced Dinosaurs** (rank 4716) — `displaced_dinosaurs`
   - As a historic permanent you control enters, it becomes a 7/7 Dinosaur creature in addition to its other types.
-
-</details>
-
-## enters-as-copy-grant-ability
-
-Blocks **1** card.
-
-- **(replacement)** an exception key on a self_enters_as_copy replacement's except_ that adds a quoted ability (by grantable_abilities index) to the copiable values, here the mana ability "{T}: Add {U}.", so it is part of the copy and survives being copied again
-  <br>Why the existing vocabulary won't do: except_ has add_keywords only, for keyword abilities; the grant_ability op and static grant to a permanent rather than writing into its copiable values, and nothing here grants an activated mana ability as part of the copy; the type half is expressible (except_.set_types ["Artifact"]), so this exception is the card's only gap
-
-<details><summary>Cards waiting on this</summary>
-
-- **Machine God's Effigy** (rank 2862) — `machine_god_s_effigy`
-  - You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has "{T}: Add {U}."
 
 </details>
 

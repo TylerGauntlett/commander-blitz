@@ -14561,6 +14561,10 @@
   "macetail_hystrodon": {
     "zone": "battlefield"
   },
+  "machine_god_s_effigy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "madame_hydra": {
     "battlefield_count": 33,
     "hand_size": {

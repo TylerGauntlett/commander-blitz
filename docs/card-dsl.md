@@ -3647,6 +3647,7 @@ The other keys, each a copiable value the copy carries until it ends:
 | key | meaning |
 |---|---|
 | `add_keywords` | keywords added to the copied face |
+| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
 | `set_types` | the card types the copy has *instead of* the copied ones, on `copying_set_types`; every subtype of a type it no longer has goes with it (205.1b), so Machine God's Effigy's "…except it's an artifact" (`["Artifact"]`) makes the copy of a Bear a bare Artifact. The near miss is `add_types`, which is right only when the card prints "in addition to its other types"; the two are refused together |
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
@@ -3673,7 +3674,9 @@ that face. The printed card's other replacements stay the ones read.
 The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
 key, an empty exception (a `condition` alone is one), an empty list, an unknown
 keyword, colour, card type, supertype or counter, a malformed condition, an empty
-name, a `no_mana_cost` that is not `true`, and `set_types` beside `add_types`.
+name, a `no_mana_cost` that is not `true`, `set_types` beside `add_types`, and
+an `add_abilities` that is not a list of distinct positions the card's
+`grantable_abilities` has.
 
 A copy applied as a permanent enters overwrites every copiable value the object
 had (613.2a, 707.2), so a token's own creating exception (`copy_overrides`) does

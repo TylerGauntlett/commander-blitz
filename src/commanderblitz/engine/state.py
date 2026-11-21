@@ -723,6 +723,23 @@ class GameState:
                         replace(ability, index=base + k) for k, ability in enumerate(kept)
                     ),
                 )
+            if obj.copying_add_abilities:
+                # "…except it's an artifact and it has "{T}: Add {U}."" (Machine
+                # God's Effigy): a quoted ability from this permanent's own
+                # `grantable_abilities`, on the copied face rather than granted
+                # on top of it (707.9b). Appended last and renumbered, for the
+                # reason the kept abilities above are.
+                pool = self.registry.get(obj.def_id).grantable_abilities
+                quoted = [pool[i] for i in obj.copying_add_abilities if 0 <= i < len(pool)]
+                base = len(copied.abilities)
+                copied = replace(
+                    copied,
+                    abilities=copied.abilities
+                    + tuple(
+                        replace(ability, index=base + k)
+                        for k, ability in enumerate(quoted)
+                    ),
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied

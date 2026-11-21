@@ -1,0 +1,65 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_add_abilities.py. t_eaxa_effigy is Machine God's Effigy whole: an artifact that may enter as a copy of any creature on the battlefield, except it's an artifact and it has the quoted '{T}: Add {U}.', written once under grantable_abilities and named by add_abilities; uncopied it has the same mana ability printed. t_eaxa_mirror is the same exception until end of turn, with no printed ability of its own, so its quoted ability is visible only while it copies.",
+  "cards": [
+    {
+      "id": "t_eaxa_effigy",
+      "name": "Test Mana Effigy",
+      "oracle_text": "You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has \"{T}: Add {U}.\" (It's not a creature.)\n{T}: Add {U}.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [{"op": "add_mana", "mana": "{U}"}]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [{"op": "add_mana", "mana": "{U}"}]
+        }
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "except_": {"set_types": ["Artifact"], "add_abilities": [0]}
+        }
+      ]
+    },
+    {
+      "id": "t_eaxa_mirror",
+      "name": "Test Mana Mirror",
+      "oracle_text": "You may have this artifact enter as a copy of any creature on the battlefield until end of turn, except it's an artifact and it has \"{T}: Add {U}.\"",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": ["U"],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [{"op": "add_mana", "mana": "{U}"}]
+        }
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "duration": "end_of_turn",
+          "except_": {"set_types": ["Artifact"], "add_abilities": [0]}
+        }
+      ]
+    }
+  ]
+}

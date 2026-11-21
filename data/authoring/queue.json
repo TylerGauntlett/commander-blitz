@@ -163872,12 +163872,12 @@
     },
     "Machine God's Effigy": {
       "edhrec_rank": 2862,
-      "gate": "template",
+      "gate": null,
       "name": "Machine God's Effigy",
-      "reason": "no template for: You may have this artifact enter as a copy of any creature on the battlefield, except it's",
+      "reason": "",
       "scryfall_id": "637f69c2-ba24-42d1-9345-8ebdb04b6904",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Machine Man, Model X-51": {

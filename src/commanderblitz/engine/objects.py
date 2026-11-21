@@ -258,6 +258,16 @@ class GameObject:
     #: them after the copied face's abilities so the copied indices never move,
     #: and cleared beside `copying_keywords`, for its reasons.
     copying_own_abilities: tuple[int, ...] | None = None
+    #: Positions in this permanent's ``grantable_abilities`` that the copy has
+    #: as part of its copiable values (707.9b) -- Machine God's Effigy's
+    #: "…except it's an artifact **and it has "{T}: Add {U}."**". The quoted
+    #: ability is not one the copied card prints and not a layer-6 grant: it
+    #: is on the copied face itself, so no ability-removing effect sees it as
+    #: granted. Written by `_enter_battlefield` from a `self_enters_as_copy`
+    #: replacement's ``except_.add_abilities``, read by `GameState.card_of`,
+    #: which appends the abilities after the copied face's (and any kept own
+    #: ones), and cleared beside `copying_own_abilities`, for its reasons.
+    copying_add_abilities: tuple[int, ...] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -1547,6 +1557,7 @@ class GameObject:
         self.copying_no_mana_cost = False
         self.copying_add_supertypes = None
         self.copying_own_abilities = None
+        self.copying_add_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False

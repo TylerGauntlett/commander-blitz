@@ -1493,7 +1493,10 @@ class ReplacementModel(BaseModel):
     #: additional +1/+1 counter on it if it's a creature"); ``add_subtypes``,
     #: ``colors`` and ``no_mana_cost``, `copy_permanent`'s spellings;
     #: ``set_types``, the card types the copy has *instead of* the copied
-    #: ones (Machine God's Effigy's "…except it's an artifact"); and
+    #: ones (Machine God's Effigy's "…except it's an artifact");
+    #: ``add_abilities``, positions in the card's ``grantable_abilities`` the
+    #: copy has as copiable values (the Effigy's "…and it has "{T}: Add
+    #: {U}.""); and
     #: ``condition``, which makes the whole exception conditional (Vizier of
     #: Many Faces' "except if this creature was embalmed"). The loader holds
     #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.

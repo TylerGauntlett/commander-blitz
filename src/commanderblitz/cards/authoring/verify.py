@@ -2959,7 +2959,15 @@ def _covered(card: CardDef, line: str) -> bool:
             == folded_line
             for ability in card.abilities
         )
-    for ability in card.abilities:
+    # "…enter as a copy of any creature on the battlefield, except it's an
+    # artifact and it has "{T}: Add {U}."" (Machine God's Effigy) is the
+    # replacement's sentence, claimed by the replacement below or not at all:
+    # the card's own printed "{T}: Add {U}." is a substring of the quote, and
+    # would otherwise claim the sentence for a copy that has no such ability.
+    copy_sentence = "enter as a copy" in lowered and any(
+        r.get("event") == "self_enters_as_copy" for r in card.replacements
+    )
+    for ability in () if copy_sentence else card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:
             continue
@@ -3052,6 +3060,13 @@ def _covered(card: CardDef, line: str) -> bool:
                 is not None
             ) or "loses all other card types" in lowered
             if replaces_types != bool(exception.get("set_types")):
+                continue
+            # "…and it has "{T}: Add {U}."" (Machine God's Effigy): each quoted
+            # ability the copy has is one ``add_abilities`` position, so a copy
+            # that drops the mana ability cannot claim the sentence, and one
+            # that adds an ability nobody quoted cannot either.
+            quoted = len(re.findall(r"\bhas [\"\u201c]", lowered))
+            if quoted != len(exception.get("add_abilities") or ()):
                 continue
             # "…with a number of additional +1/+1 counters on it" (The
             # Mimeoplasm) is the same half without the words "enters with".

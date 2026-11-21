@@ -2084,6 +2084,11 @@ def _enter_battlefield(
                 obj.copying_no_mana_cost = bool(exception.get("no_mana_cost"))
                 obj.copying_add_supertypes = None
                 obj.copying_own_abilities = None
+                # "…and it has "{T}: Add {U}."" (Machine God's Effigy): a
+                # quoted ability, written once under the card's
+                # `grantable_abilities`, on the copied face (707.9b).
+                quoted = tuple(int(i) for i in exception.get("add_abilities") or ())
+                obj.copying_add_abilities = quoted or None
                 obj.copying_name = exception.get("name")
                 state.bump_chars()
                 # 614.12: the copied face's own "enters with" -- above all a
