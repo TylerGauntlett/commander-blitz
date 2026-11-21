@@ -28377,6 +28377,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "wreck_hunter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wreckage_wickerfolk": {
     "zone": "battlefield"
   },

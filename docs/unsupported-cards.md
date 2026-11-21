@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **451** capabilities.
+**536 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,8 +53,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
+| [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
+| [legendary-sorcery](#legendary-sorcery) | 2 | 1611 | engine |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
@@ -129,6 +131,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
+| [cast-from-among-paying](#cast-from-among-paying) | 1 | 10387 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
@@ -200,7 +203,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [emerge](#emerge) | 1 | 17443 | value |
-| [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
 | [energy-count](#energy-count) | 1 | 7317 | value |
@@ -287,7 +289,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
-| [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -1606,6 +1607,24 @@ Blocks **2** cards.
 
 </details>
 
+## encore
+
+Blocks **2** cards.
+
+- **(static_effect)** a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step
+  <br>Why the existing vocabulary won't do: There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to
+- **(static_effect)** a static that grants the encore activated ability to cards in its controller's graveyard matching a filter (artifact creature cards), with the encore cost set to each card's own printed mana cost; activation exiles the card from the graveyard as a cost, is sorcery-speed only, and for each opponent creates a token copy of the exiled card that has haste, must attack that opponent this turn if able, and is sacrificed at the beginning of the next end step
+  <br>Why the existing vocabulary won't do: The grant_ability static hands over an ability only to permanents on the battlefield (the packet notes say a granted activated ability works on the battlefield only), and there is no grants_encore analogue to grants_flashback/grants_retrace; grant_warp and granted_alternative_cost grant cast permissions, not an activated graveyard ability; nor is there a cost or value meaning 'this card's own mana cost' for a granted ability. The resolution half (copy_permanent with attacking per for_each_player, haste, delayed sacrifice) might be composable, but nothing can put the ability on the graveyard card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Graywater's Fixer** (rank 9330) — `graywater_s_fixer`
+  - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
+- **Wire Surgeons** (rank 20329) — `wire_surgeons`
+  - Each artifact creature card in your graveyard has encore. Its encore cost is equal to its mana cost. (Exile it and pay its mana cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)
+
+</details>
+
 ## grant-cycling-to-cards-in-hand
 
 Blocks **2** cards.
@@ -1639,6 +1658,24 @@ Blocks **2** cards.
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
 - **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
   - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
+
+</details>
+
+## legendary-sorcery
+
+Blocks **2** cards.
+
+- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise. The verification sandbox will also need a legendary creature on player 0's side for such a card, since the position's only legend is the opponent's
+  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule, copy characteristics and deck construction; nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play, a one-sided wrath with no precondition. cast_only_during and the other card-level riders only gate timing, and alternative_cost's condition gates a price rather than the cast itself; there is no card-level cast condition key. The rest of the card is expressible once this lands: one exile op over {"zone": "battlefield", "controller": "any", "not_types": ["Land"], "not_supertypes": ["Legendary"], "count": "all"}
+- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
+  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urza's Ruinous Blast** (rank 1611) — `urza_s_ruinous_blast`
+  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
+- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
+  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 
@@ -2814,6 +2851,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-from-among-paying
+
+Blocks **1** card.
+
+- **(op)** look_at_top's exile-and-cast shape (Herald of Amity: exile top N, you may cast ONE matching spell from among them, rest to the bottom in a random order) but with the cast made during resolution at the card's own mana cost rather than free -- e.g. a `cast_paying: true` alternative to `cast_free` on look_at_top, or a `limit: 1` on cast_card plus a random-order bottom for the uncast exiled cards
+  <br>Why the existing vocabulary won't do: look_at_top's cast_free and exile_until's cast_free cast without paying, a strictly better card. cast_card pays the mana cost but offers every card in its pool as its own 'you may', so it would allow casting several Vehicles/artifact creatures where the card allows one, and its uncast leftovers would need put_on_top with bottom:true, which tucks in pool order (or owner's chosen order), not a random order. grant_playable/playable_this_turn leaves a later permission, not a cast during resolution, and the cards would not then go to the bottom.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sanwell, Avenger Ace** (rank 10387) — `sanwell_avenger_ace`
+  - Whenever Sanwell becomes tapped, exile the top six cards of your library. You may cast a Vehicle or artifact creature spell from among them. Then put the rest on the bottom of your library in a random order.
+
+</details>
+
 ## cast-from-hand-result
 
 Blocks **1** card.
@@ -3823,20 +3874,6 @@ Blocks **1** card.
 
 - **Adipose Offspring** (rank 17443) — `adipose_offspring`
   - When this creature enters, create a 2/2 white Alien creature token. If this creature's emerge cost was paid, instead create X of those tokens, where X is the sacrificed creature's toughness.
-
-</details>
-
-## encore
-
-Blocks **1** card.
-
-- **(static_effect)** a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step
-  <br>Why the existing vocabulary won't do: There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to
-
-<details><summary>Cards waiting on this</summary>
-
-- **Graywater's Fixer** (rank 9330) — `graywater_s_fixer`
-  - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
 
 </details>
 
@@ -5066,20 +5103,6 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
-
-</details>
-
-## legendary-sorcery
-
-Blocks **1** card.
-
-- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
-  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
-  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 

@@ -1330,6 +1330,42 @@ class TestVibraniumIsAnIndestructibleArtifactWithRestrictedMana:
         assert treasure.abilities[0].mana_restriction is None
 
 
+class TestPowerstoneIsAPlainArtifactWithRestrictedMana:
+    """Wreck Hunter and the Brothers' War cards: *"create a tapped Powerstone
+    token. (It's an artifact with "{T}: Add {C}. This mana can't be spent to
+    cast a nonartifact spell.")"*
+
+    `vibranium_token` is the near miss: the same mana ability, but it is
+    indestructible and its subtype is Vibranium. A board wipe tells the two
+    apart, and so does anything that counts Powerstones (111.4).
+    """
+
+    def test_it_is_a_colorless_powerstone_artifact_with_no_keywords(self, pool):
+        token = pool.get("powerstone_token")
+        assert token is not None and token.is_token
+        assert token.name == "Powerstone"
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Powerstone"]
+        assert not token.colors
+        assert (token.power, token.toughness) == (None, None)
+        assert not token.keywords
+
+    def test_it_taps_for_one_colorless_its_mana_barred_from_nonartifact_spells(self, pool):
+        [ability] = pool.get("powerstone_token").abilities
+        assert ability.is_mana_ability
+        assert ability.cost.tap and not ability.cost.sacrifice
+        assert ability.effects == ({"op": "add_mana", "mana": "{C}"},)
+        restriction = ability.mana_restriction
+        assert [g.required for g in restriction.cast] == [frozenset({"artifact"})]
+        assert [g.required for g in restriction.activate] == [frozenset()]
+        assert [g.required for g in restriction.other] == [frozenset()]
+
+    def test_the_vibranium_is_still_a_separate_token(self, pool):
+        vibranium = pool.get("vibranium_token")
+        assert list(vibranium.keywords) == ["indestructible"]
+        assert list(vibranium.subtypes) == ["Vibranium"]
+
+
 class TestTradingPostsGoatIsAZeroOneWhite:
     """Trading Post: *"{1}, {T}, Pay 1 life: Create a 0/1 white Goat creature
     token."*

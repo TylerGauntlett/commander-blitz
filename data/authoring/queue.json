@@ -319452,12 +319452,12 @@
     },
     "Wreck Hunter": {
       "edhrec_rank": 17861,
-      "gate": "template",
+      "gate": null,
       "name": "Wreck Hunter",
-      "reason": "no template for: When this creature enters, choose target player. You create a tapped Powerstone token for ",
+      "reason": "",
       "scryfall_id": "5beac080-89cb-4bbc-9abd-eb229d74cd95",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wreck Remover": {

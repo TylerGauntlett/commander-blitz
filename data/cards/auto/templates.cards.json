@@ -338991,6 +338991,70 @@
           "effects": [
             {
               "amount": {
+                "count": {
+                  "graveyard_arrival_this_turn": [
+                    "from_battlefield"
+                  ],
+                  "not_types": [
+                    "Land"
+                  ],
+                  "player": {
+                    "target": "t1"
+                  },
+                  "zone": "graveyard"
+                }
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "powerstone_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature enters, choose target player. You create a tapped Powerstone token for each nonland card in that player's graveyard that was put there from the battlefield this turn",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "wreck_hunter",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{B}{B}",
+      "name": "Wreck Hunter",
+      "oracle_text": "Flash\nWhen this creature enters, choose target player. You create a tapped Powerstone token for each nonland card in that player's graveyard that was put there from the battlefield this turn. (It's an artifact with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "op": "surveil",
