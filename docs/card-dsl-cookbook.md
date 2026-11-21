@@ -1119,6 +1119,41 @@ The near misses are both durations alone. `while_exiled` lets the cards be
 played on any turn, a stronger card; `this_turn` opens them only on the turn
 they were exiled and loses them after it, a weaker one.
 
+### "During your turn, if an opponent lost life this turn, you may play … cards exiled with this enchantment"
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "upkeep", "controller": "you" },
+  "text": "At the beginning of your upkeep, exile the top card of your library.",
+  "effects": [
+    { "op": "look_at_top", "player": "you", "amount": { "const": 1 },
+      "objects": { "count": "all" }, "destination": "exile", "link": true,
+      "playable": "while_exiled",
+      "playable_condition": "your_turn_opponent_lost_life_exiled_with_source" } ] }
+                                                              // Theater of Horrors
+```
+
+The printed permission is a static ability of the enchantment, written on the
+op that exiles the cards. `your_turn_opponent_lost_life_exiled_with_source`
+holds while all three of these are true:
+
+- it is the permission holder's turn;
+- a seat still in the game other than the holder has a nonzero
+  `TurnLedger.life_lost`, which counts damage, drains and life paid alike;
+- the card is still exiled with the source (607.2a), and that source is on the
+  battlefield under the holder's control.
+
+The last clause is the static half. When the enchantment leaves, the cards stay
+in exile and can no longer be played (113.6). An enchantment that comes back is
+a new object with nothing exiled with it (400.7). The loader refuses the value
+unless the op is `exile` or `look_at_top` with `link: true`, since the link is
+what the condition reads. It is refused on `grant_playable` for the same
+reason. A stolen enchantment shuts the cards; it does not hand them to the thief.
+
+The near miss is `while_exiled` alone. It lets the cards be played on any turn,
+with no life lost, and after the enchantment has gone, which is a stronger card.
+A one-shot "you may play that card" carrying the same turn condition is a
+different sentence, because it outlives its source. It needs a value of its own.
+
 ### "You may cast that card for as long as it remains exiled"
 
 ```jsonc
@@ -6257,6 +6292,48 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### Goad's requirements without the goad — `goaded: false`
+
+    Kardur, Doomscourge — "When Kardur enters, until your next turn, creatures
+                          your opponents control attack each combat if able and
+                          attack a player other than you if able."
+
+```jsonc
+{ "op": "goad", "goaded": false,
+  "objects": { "zone": "battlefield", "controller": "opponent",
+               "types": ["Creature"] } }
+```
+
+The sentence is 701.38a's two requirements on goad's clock, and Kardur's
+ruling is that the creatures are **not goaded**. `goaded: false` lays exactly
+that: the player goes into `GameObject.goad_requirements_by` instead of
+`goaded_by`. Combat reads both through `player_statics.attack_goaders` — the
+compulsion in `combat.attack_required`, the restriction in
+`combat.attack_target_forbidden` and 508.1d's count — while everything that
+asks whether a creature *is* goaded reads `player_statics.goaders`, which does
+not see it: the `goaded` selector and trigger-filter key, and so Vengeful
+Ancestor and Puppet Master's Treasure payoff. `ungoad` ("no longer goaded")
+leaves it alone, because there was no goad to end.
+
+Everything else is goad's: the creatures are the ones matched at resolution
+(611.2c), the clock is `temp_effects.clear_goad` at the player's untap step,
+the player leaving the game or the creature leaving the battlefield ends it,
+and a creature its own controller would be required around is refused as
+vacuous. The loader refuses a non-boolean `goaded`, and `goaded: false` with
+any `duration`: no printed card holds the requirements for the rest of the
+game.
+
+| Near miss | Why not |
+|---|---|
+| plain `goad` | makes the creatures goaded, which every `goaded` filter at the table then counts |
+| `must_attack` + `cant_attack_player` | one combat, not each combat; and a prohibition where the sentence only steers "if able" |
+| an `attacks_if_able` static on Kardur | ends when Kardur leaves, which the effect outlives, and cannot end at your next turn |
+
+Kardur's other sentence, "Whenever an attacking creature dies", is a
+`leaves_battlefield` trigger with `controller: "any"`, `to_zones:
+["graveyard"]`, a `Creature` filter and the condition `{"cmp": ">=", "left":
+{"binding": "was_attacking"}, "right": {"const": 1}}` with `recheck: false`.
+
 ### Goaded for as long as a static applies
 
     Coercive Impetus — "Enchant creature / Enchanted creature gets +1/+1 and is
@@ -7850,6 +7927,45 @@ on any other op.
 Retargeting is not a detail of one card. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
+
+#### "You may choose new targets for target spell" — retargeting the original
+
+```jsonc
+// Wild Ricochet — "You may choose new targets for target instant or sorcery
+// spell. Then copy that spell. You may choose new targets for the copy."
+{ "targets": [ { "id": "t1", "kind": "spell", "count": 1,
+                 "selector": { "any_types": ["Instant", "Sorcery"] } } ],
+  "spell_effects": [ { "op": "choose_new_targets", "target": "t1" },
+                     { "op": "copy_spell", "target": "t1", "new_targets": true } ] }
+```
+
+`choose_new_targets` changes the target list of an object **already on the
+stack**, where it sits, under its own controller. The resolving effect's
+controller chooses; legality is the retargeted object's, enumerated for *its*
+controller against the specs it was declared under, so "target creature you
+control" on an opponent's spell still means their creatures. The number of
+targets never changes, and each object a change newly targets fires
+`becomes_target` (ward sees a redirected spell).
+
+- `target` (default `"t1"`) names a target of kind `spell`, `spell_or_ability`
+  (Deflecting Swat) or `ability_on_stack`; anything else, or an `objects` key,
+  is refused at load.
+- 115.7d is the default: any target may be left as it is, even one that has
+  become illegal, and every new one must be legal. The menu is "Keep", every
+  legal tuple, and every legal tuple with some currently illegal targets put
+  back. Nothing is asked when keeping is the only answer.
+- `must_change: true` is 115.7a's "change the target" (Misdirection): every
+  target moves to another legal one or none does, so "Keep" is not offered,
+  and with no such tuple nothing changes.
+- `all_on_stack: true` replaces `target` with every object on the stack, top
+  first — Boltbender's "any number of other spells and/or abilities", where
+  keeping an object's targets is not choosing it and the resolving trigger is
+  already off the stack.
+
+The near miss is `copy_spell`'s `new_targets`, which moves the **copy** and
+leaves the original aimed where it was: on Wild Ricochet that drops the first
+sentence and looks entirely normal. In the order printed, the copy is made from
+the retargeted original, so it starts at the new targets.
 
 #### "You may copy this spell" — a spell copying itself as it resolves
 
@@ -13103,6 +13219,32 @@ rolls a die, and a roll is an event "whenever you roll" cards see. For the
 condition, `cards_discarded_this_turn` counts the player's discards wherever
 the cards went; mayhem's per-object record is the near miss there, and forgets
 a discarded card that has since left the graveyard.
+
+## "Choose a player at random" — `choose_player` with `random`
+
+Ursine Monstrosity — *"At the beginning of combat on your turn, mill a card and
+choose an opponent at random. This creature attacks that player this combat if
+able. …"*
+
+```jsonc
+{ "op": "choose_player", "players": "each_opponent", "random": true, "as": "foe" },
+{ "op": "must_attack_player", "objects": { "self_only": true },
+  "defender": { "binding": "foe" }, "duration": "this_turn" }
+```
+
+`random: true` draws one seat uniformly off the game's seeded `state.rng` from
+the living players of `players` (the opponents by default; `"each_player"` for
+"choose a player at random", which can be you — Wildfire Devils, Strax) and
+binds it under `as`, asking nobody, so a replay draws the same seat. It is a
+choice on resolution, not a target: hexproof does not stop it, and nothing is
+re-checked. An empty pool binds nothing, exactly as the asked form does. A
+`prompt` is refused beside it, since nobody would see one.
+
+The near miss is a random target — *"target opponent chosen at random"* — which
+is a target spec with `random` in its selector on a triggered or reflexive
+ability ("Target … chosen at random"), drawn as the ability goes on the stack. Neither
+is `choose_mode` with `random` over a "you" mode and an "opponent" mode: that is
+not uniform over the seats at a pod.
 
 ## One choice across two zones — `union`
 

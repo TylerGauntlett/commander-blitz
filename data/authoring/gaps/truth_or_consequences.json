@@ -13,14 +13,13 @@
       "kind": "op",
       "what": "a vote op (rule 701.38) in its Secret council form: every player simultaneously and hidden from the others chooses one of N named options (here 'truth' or 'consequences'), then all votes are revealed at once; the op binds the tally per option under an `as` (e.g. {binding: 'votes.truth'}, {binding: 'votes.consequences'}) so later effects can size a draw by the truth count and a damage amount of 3 times the consequences count",
       "why_existing_wont_do": "choose_mode is one chooser picking modes, not every player casting a vote; for_each_player wrapping choose_mode cannot accumulate a count per chosen option, nothing makes the choices secret and simultaneous, and value_keys has no vote tally to size the draw or the damage. join_forces is the closest per-player decision but collects mana payments, not a choice"
-    },
-    {
-      "capability": "random_opponent",
-      "kind": "decision",
-      "what": "choose_player with a random pick: 'choose an opponent at random' selects one opponent uniformly at random (no player decision), bound under `as` for the following damage op",
-      "why_existing_wont_do": "choose_player takes only as/players/prompt, so the controller chooses deliberately; choose_mode has `random` but picks among modes, not players, and a mode per opponent cannot be written for a variable table size"
     }
   ],
-  "closest_existing": ["choose_mode", "join_forces", "choose_player", "for_each_player"],
+  "closest_existing": [
+    "choose_mode",
+    "join_forces",
+    "choose_player",
+    "for_each_player"
+  ],
   "confidence": "high"
 }

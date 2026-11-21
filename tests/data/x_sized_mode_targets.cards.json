@@ -1,0 +1,71 @@
+{
+  "_comment": "Cards that exist only for tests/unit/modes/test_x_sized_mode_targets.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_profane_command` is Profane Command: four bullets, each owning a target, two of them reading the announced X -- 'up to X target creatures' (an X-sized mode-owned spec) and 'creature card with mana value X or less' (a mode-owned selector reading X). `t_heliod_intervention` is Heliod's Intervention: 'destroy X target artifacts and/or enchantments', exactly X, owned by the first bullet.",
+  "cards": [
+    {
+      "id": "t_profane_command",
+      "name": "Test Profane Command",
+      "oracle_text": "Choose two —\n• Target player loses X life.\n• Return target creature card with mana value X or less from your graveyard to the battlefield.\n• Target creature gets -X/-X until end of turn.\n• Up to X target creatures gain fear until end of turn.",
+      "mana_cost": "{X}{B}{R}",
+      "types": ["Sorcery"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"],
+      "targets": [
+        {"id": "drained", "kind": "player", "mode": 0, "count": 1, "selector": {}},
+        {"id": "raised", "kind": "card_in_graveyard", "mode": 1, "count": 1,
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"],
+                      "mana_value": {"op": "<=", "value": {"x": true}}}},
+        {"id": "shrunk", "kind": "permanent", "mode": 2, "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}},
+        {"id": "feared", "kind": "permanent", "mode": 3, "count": {"x": true}, "up_to": true,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 2,
+          "modes": [
+            {"label": "Target player loses X life.",
+             "effects": [{"op": "lose_life", "amount": {"x": true}, "player": {"target": "drained"}}]},
+            {"label": "Return target creature card with mana value X or less from your graveyard to the battlefield.",
+             "effects": [{"op": "return_from_graveyard", "destination": "battlefield",
+                          "controller": "you", "objects": {"target": "raised"}}]},
+            {"label": "Target creature gets -X/-X until end of turn.",
+             "effects": [{"op": "pump", "objects": {"target": "shrunk"},
+                          "power": {"minus": [{"const": 0}, {"x": true}]},
+                          "toughness": {"minus": [{"const": 0}, {"x": true}]}}]},
+            {"label": "Up to X target creatures gain fear until end of turn.",
+             "effects": [{"op": "grant_keyword", "objects": {"target": "feared"},
+                          "keywords": ["fear"], "duration": "until_end_of_turn"}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_heliod_intervention",
+      "name": "Test Heliod Intervention",
+      "oracle_text": "Choose one —\n• Destroy X target artifacts and/or enchantments.\n• Target player gains twice X life.",
+      "mana_cost": "{X}{W}{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {"id": "broken", "kind": "permanent", "mode": 0, "count": {"x": true},
+         "selector": {"zone": "battlefield", "any_types": ["Artifact", "Enchantment"]}},
+        {"id": "healed", "kind": "player", "mode": 1, "count": 1, "selector": {}}
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "modes": [
+            {"label": "Destroy X target artifacts and/or enchantments.",
+             "effects": [{"op": "destroy", "objects": {"target": "broken"}}]},
+            {"label": "Target player gains twice X life.",
+             "effects": [{"op": "gain_life", "player": {"target": "healed"},
+                          "amount": {"times": [{"const": 2}, {"x": true}]}}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

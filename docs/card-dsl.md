@@ -1134,6 +1134,40 @@ survivor. The binding accumulates across a loop, as `exile`'s does.
   "then": [ … ] }
 ```
 
+### "Each player sacrifices" — `sacrifice`'s `players`
+
+```jsonc
+// Reign of the Pit — "Each player sacrifices a creature of their choice. Create
+// an X/X black Demon creature token with flying, where X is the total power of
+// the creatures sacrificed this way."
+{ "op": "sacrifice", "players": "each_player",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "count": 1 },
+  "snapshot": "sacrificed" },
+{ "op": "create_token", "token": "demon_x_x_b_flying",
+  "power":     { "power_of": { "binding": "sacrificed" } },
+  "toughness": { "power_of": { "binding": "sacrificed" } } }
+```
+
+`players` is a player spec. Every player it names chooses among the permanents
+**they** control that match `objects`, in APNAP order from the active player
+(`GameState.turn_order`), each seeing the choices before theirs; then everything
+chosen is sacrificed at once (701.21a, 101.4). The player choosing is bound as
+`each_player` while they choose. `as` records every chosen permanent, and
+`snapshot` binds a **list**, one last-known snapshot per permanent, all taken
+before any of them moves. `power_of` (and `toughness_of`) over a list of
+snapshots is their total, so "the total power of the creatures sacrificed this
+way" counts each creature's counters, anthems and pumps as it left. Without
+`players`, `snapshot` is still one dict: "that creature" is one creature.
+
+The loader refuses a `controller` or `chooser` in `objects` beside `players`,
+because the op decides both, and an unknown player spec.
+
+| Near miss | Why not |
+|---|---|
+| `for_each_player` over `sacrifice` | sacrifices on every pass, so a later player's creature is measured after an earlier one's lord has gone; its `snapshot` is rewritten each pass and holds one creature |
+| `power_of` over the `as` binding | the oids name graveyard cards by then, at their printed power; only snapshot entries in a list are summed |
+| `create_token` inside the loop | one Demon per player rather than one |
+
 ### `discard`: `up_to`, `selector` and `as`
 
 `up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two
@@ -1323,6 +1357,33 @@ spell target's `objects` narrowed by any other clause, since that pool is
 `choose_objects`' object refs and the spell is never in it — narrow the target
 spec instead.
 
+### "Target opponent or planeswalker" — `player_selector`
+
+```jsonc
+{ "id": "t1", "kind": "any", "count": 1,
+  "selector": { "types": ["Planeswalker"] },
+  "player_selector": "opponent" }
+```
+
+Theater of Horrors, Collective Defiance. A `kind: "any"` target spans players
+and battlefield permanents. Its `selector` narrows the permanent half, and its
+`controller` also narrows the player half (through `targeting._player_allowed`),
+which is right for "target player or planeswalker" (Balefire Liege: no
+`controller`, any player or any planeswalker).
+
+"Opponent" narrows only the players: 115.4 keeps every planeswalker legal, your
+own included. `player_selector` is a player spec the player half reads instead
+of `selector`'s `controller`, and `selector` (its `controller` included) then
+narrows the permanent half alone. Both `candidates` and `still_legal` read it
+through `TargetSpec.player_clause`, so the 608.2b re-check asks what the
+declaration asked.
+
+The near misses: `"selector": {"types": ["Planeswalker"], "controller": "opponent"}`
+also drops your own planeswalkers, and leaving `controller` out lets you target
+yourself. `player_selector` is refused on every kind but `any`, as `"any"` (an
+absent field already means that), as an unknown player spec, and when it names
+a sibling target.
+
 ### "Target spell or nonland permanent"
 
 ```jsonc
@@ -1500,9 +1561,15 @@ Still a target: chosen as the triggered ability goes on the stack (603.3d),
 re-checked on resolution, and an ability with no legal candidate is not put on
 the stack. Only the chooser changes — the seeded `state.rng` picks uniformly
 among the legal candidates (`stack._random_trigger_targets`). The loader
-allows `random` only on a **triggered** ability's one target spec, with a
-fixed `count` and no `mode`, `optional` or `up_to`: a spell's and an activated
-ability's targets are chosen in legality, where nothing would read the clause.
+allows `random` only on a **triggered** or **reflexive** ability's one target
+spec, with a fixed `count` and no `mode`, `optional` or `up_to`: a spell's and
+an activated ability's targets are chosen in legality, where nothing would read
+the clause. A reflexive ability goes on the stack through the same moment, so
+Explosion of Riches' "whenever a card is drawn this way, … deals 5 damage to
+target opponent chosen at random" is a `kind: "reflexive"` ability with
+`{ "kind": "player", "count": 1, "selector": { "controller": "opponent",
+"random": true } }`, fired by one `reflexive_trigger` per seat in the `draw`
+ops' shared `as` binding.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 
@@ -1590,6 +1657,36 @@ targets are declared (601.2c)".
 Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
 would size to zero for ever — a spell that says it targets and never does), and
 every computed count on a spell but these two.
+
+### "Up to X targets" owned by a mode
+
+```jsonc
+// Profane Command: "Choose two — … • Return target creature card with mana
+// value X or less from your graveyard to the battlefield. … • Up to X target
+// creatures gain fear until end of turn."
+{ "id": "raised", "kind": "card_in_graveyard", "mode": 1, "count": 1,
+  "selector": { "zone": "graveyard", "controller": "you", "types": ["Creature"],
+                "mana_value": { "op": "<=", "value": { "x": true } } } },
+{ "id": "feared", "kind": "permanent", "mode": 3, "count": { "x": true }, "up_to": true,
+  "selector": { "zone": "battlefield", "types": ["Creature"] } }
+```
+
+A [mode-owned](card-dsl-cookbook.md#modal-spells-with-a-target) spec on a
+**spell** may be sized by X: `count: {"x": true}` is exactly X (Heliod's
+Intervention, "destroy X target artifacts and/or enchantments"), and with
+`up_to` it is a ceiling from zero (Profane Command). `Game._cast` announces X
+(`_ask_x`) before it asks the modes and their targets, and hands that X to
+both: `targeting.selectable_modes` offers a bullet by the X announced, so a
+selector reading `{"x": true}` ("mana value X or less") has its pool, and
+`Game._ask_mode_targets` sizes the spec by it. An exact X with fewer legal
+targets than X takes what there is, as "each of X targets" does.
+
+An X-sized spec is caster-sized, so the one-sizeless-spec-per-card rule and its
+stored-last order apply to it. The loader refuses it with `optional` or
+`count_if_kicked` (a second size for the same spec) and on an activated or
+triggered ability's mode-owned spec, which is declared with no announced X. The
+near misses: a literal `count` with `up_to` is "up to N" whatever was paid, and
+dropping `mode` declares the targets whichever bullets are chosen.
 
 ### Targets sized by an additional cost
 
@@ -4954,6 +5051,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "discard_x": true,                              // Gix: discard X cards, X announced
   "sacrifice_x": { "subtypes": ["Food"] },        // Frugivore: sacrifice X Foods, X announced
   "tap_x": { "is_token": true },                  // Hazel: tap X untapped tokens, X announced
+  "remove_counters_x": { "counter": "storage" },  // Molten Slagheap: X storage counters off the source
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -5121,8 +5219,8 @@ is fodder when it matches. X = 0 is a legal announcement, so the ability is on
 offer with nothing to tap. A target whose filter reads X is offered once per X,
 as for `discard_x`.
 
-**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x` or
-`discard_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
+**On a mana ability.** A cost that takes X — `tap_x`, `sacrifice_x`,
+`discard_x` or `remove_counters_x` (`Cost.takes_x`) — is the one X a mana ability's `amount` may read;
 the loader refuses `x` there otherwise. Such an ability is not tap-only, so the
 payment solver never activates it: it is offered at priority as one row, and
 its mana floats in the pool for what is cast next, as a Signet's does.
@@ -5136,6 +5234,43 @@ Not `tap_permanents` with a `count`, which is a number the card fixes. The
 loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
 beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
 `discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
+
+### `remove_counters_x` — remove X counters, X announced
+
+"{1}, Remove X storage counters from this land: Add X mana in any combination
+of {B} and/or {R}." — Molten Slagheap. "{2}, {T}, Remove X counters from an
+artifact or creature you control: …" — Moxite Refinery.
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "cost": { "mana": "{1}", "remove_counters_x": { "counter": "storage" } },
+  "effects": [{ "op": "add_mana", "split": ["B", "R"], "amount": { "x": true } }] }
+
+"cost": { "mana": "{2}", "tap": true,
+          "remove_counters_x": { "from": { "types": ["Artifact", "Creature"] } } }
+```
+
+Two keys. `counter` names the one kind that may come off; `from` is a selector
+over the battlefield (`controller` defaulting to you) naming the permanents the
+payer may take the counters from. Without `from` the counters come off the
+source, and `counter` is then required. With `from` and no `counter`, the X may
+be any mix of kinds. Either way **all X come off one permanent**: the
+controller announces X as the ability is activated (601.2b, 107.3), bounded by
+`costs.remove_counters_x_ceiling` — the most counters any one candidate
+carries, never a sum across two — then picks the permanent among those carrying
+X and, when no kind is named and it carries two, which kinds, a counter at a
+time. The effects read X with `{"x": true}` / `"x"`, a mana ability's `add_mana`
+`amount` included (see `tap_x`'s **On a mana ability**). X = 0 is a legal
+announcement while there is a candidate permanent — the source on the
+battlefield, or one matching `from`. A target whose filter reads X is offered
+once per X, as for `discard_x`.
+
+Not `remove_counters`, whose `amount` the card fixes, and not
+`remove_counters_from_among`, which takes a fixed count and lets the payer split
+it across several permanents. The loader refuses any other key, a `from` that
+is not a selector, the source form without `counter`, the key beside an `{X}` in
+`mana`, `pay_life_x`, `loyalty_x`, `discard_x`, `sacrifice_x` or `tap_x`, and
+anywhere but an activated ability's cost.
 
 ### `mill` — a cost, and never an effect
 

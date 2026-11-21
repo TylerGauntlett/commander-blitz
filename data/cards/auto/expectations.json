@@ -2704,6 +2704,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "boltbender": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bonders_enclave": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3001,6 +3005,13 @@
   },
   "breakneck_berserker": {
     "zone": "battlefield"
+  },
+  "breath_of_malfegor": {
+    "life": {
+      "0": 40,
+      "1": 35
+    },
+    "zone": "graveyard"
   },
   "breath_weapon": {
     "zone": "graveyard"
@@ -4292,6 +4303,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "collective_defiance": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "collective_effort": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -5566,6 +5589,15 @@
   "deadly_recluse": {
     "zone": "battlefield"
   },
+  "deadly_tempest": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 38,
+      "1": 38
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "dearly_departed": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5768,6 +5800,12 @@
       "1": 40
     },
     "zone": "battlefield"
+  },
+  "deflecting_swat": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "deft_duelist": {
     "zone": "battlefield"
@@ -5995,6 +6033,14 @@
   },
   "diamond_weapon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dictate_of_the_twin_gods": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "dig_through_time": {
@@ -6489,6 +6535,16 @@
   "dreamstone_hedron": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "dredge_the_mire": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "dreg_reaver": {
     "zone": "battlefield"
@@ -7765,6 +7821,19 @@
   "explorer_s_scope": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "explosion_of_riches": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40,
+      "1": 30
+    },
+    "zone": "graveyard"
   },
   "explosive_derailment": {
     "battlefield_count": 31,
@@ -9384,6 +9453,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "geode_rager": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "geothermal_bog": {
     "zone": "battlefield"
   },
@@ -10946,6 +11019,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "heliod_s_intervention": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "helionaut": {
     "zone": "battlefield"
   },
@@ -11380,6 +11458,13 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "hourglass_of_the_lost": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "hover_barrier": {
     "zone": "battlefield"
   },
@@ -11759,6 +11844,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "indulgent_tormentor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "indulging_patrician": {
     "battlefield_count": 33,
@@ -12595,6 +12687,15 @@
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },
+  "kardur_doomscourge": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kari_zev_skyship_raider": {
     "zone": "battlefield"
   },
@@ -12654,6 +12755,10 @@
     "life": {
       "0": 41
     }
+  },
+  "kazuul_tyrant_of_the_cliffs": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "kederekt_creeper": {
     "zone": "battlefield"
@@ -14293,6 +14398,13 @@
     },
     "zone": "graveyard"
   },
+  "magmatic_force": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "magmatic_insight": {
     "graveyard_size": {
       "0": 4
@@ -15423,6 +15535,13 @@
   "molten_exhale": {
     "zone": "graveyard"
   },
+  "molten_slagheap": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "molten_tributary": {
     "zone": "battlefield"
   },
@@ -15676,6 +15795,10 @@
     "zone": "battlefield"
   },
   "mox_sapphire": {
+    "zone": "battlefield"
+  },
+  "moxite_refinery": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mr_foxglove": {
@@ -16233,6 +16356,10 @@
     "zone": "battlefield"
   },
   "nightveil_sprite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nihil_spellbomb": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18062,6 +18189,17 @@
       "graveyard"
     ]
   },
+  "profane_command": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "life": {
+      "0": 20,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "professional_face_breaker": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18565,6 +18703,13 @@
   "rakdos_signet": {
     "zone": "battlefield"
   },
+  "rakshasa_debaser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "rally_of_wings": {
     "battlefield_count": 32,
     "hand_size": {
@@ -18954,6 +19099,18 @@
       "id": "dinosaur_3_3_g_trample"
     },
     "zone": "battlefield"
+  },
+  "reign_of_the_pit": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "demon_x_x_b_flying"
+    },
+    "zone": "graveyard"
   },
   "rejoin_the_fight": {
     "hand_size": {
@@ -20378,6 +20535,13 @@
     "zone": "battlefield"
   },
   "scuzzback_scrapper": {
+    "zone": "battlefield"
+  },
+  "scythe_specter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "scythecat_cub": {
@@ -22566,6 +22730,10 @@
     },
     "zone": "battlefield"
   },
+  "stensia_bloodhall": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stensian_sanguinist_exsanguinate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24402,6 +24570,10 @@
   "the_whizzer_classic_speedster": {
     "zone": "battlefield"
   },
+  "theater_of_horrors": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thelonite_hermit": {
     "battlefield_count": 33,
     "hand_size": {
@@ -24421,6 +24593,13 @@
   },
   "theoretical_duplication": {
     "zone": "graveyard"
+  },
+  "thermo_alchemist": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "thespian_s_stage": {
     "battlefield_count": 33,
@@ -24905,6 +25084,13 @@
   },
   "titan_forge": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "titan_hunter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "titan_of_industry": {
@@ -25868,6 +26054,13 @@
   "unleash_fury": {
     "zone": "graveyard"
   },
+  "unlicensed_disintegration": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "unnatural_growth": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25966,6 +26159,10 @@
     "zone": "battlefield"
   },
   "urianger_augurelt": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ursine_monstrosity": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -27381,6 +27578,15 @@
   "wild_ox": {
     "zone": "battlefield"
   },
+  "wild_ricochet": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "wild_wanderer": {
     "zone": "battlefield"
   },
@@ -27396,6 +27602,13 @@
   },
   "wilderness_reclamation": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "wildfire_devils": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "wildsear_scouring_maw": {

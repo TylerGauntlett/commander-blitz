@@ -61,6 +61,7 @@ PRECONS = {
     "otc_desert_bloom",
     "otc_grand_larceny",
     "otc_quick_draw",
+    "scd_chaos_incarnate",
     "scd_draconic_destruction",
     "scd_first_flight",
     "scd_grave_danger",

@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 184 |
+| [Effect ops](#effect-ops) | 185 |
 | [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 48 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
-| [Ability costs](#ability-costs) | 36 |
+| [Ability costs](#ability-costs) | 37 |
 | [Card-level costs](#card-level-costs) | 35 |
 | [Keywords](#keywords) | 47 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -111,7 +111,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `freeze` | Board |  | Tap and it doesn't untap during its controller's next untap step. | [Effect ops](card-dsl.md#effect-ops) |
 | `gain_activated_abilities` | Board |  | Permanents gain every activated ability of the card `from` names, read as the op resolves, until end of turn. | [gain_activated_abilities — every activated ability of another card](card-dsl-cookbook.md#gain_activated_abilities--every-activated-ability-of-another-card) |
 | `gain_control` | Board | yes | Gain control of permanents, for a duration (`as_long_as_you_control_source` and `while_source_on_battlefield` included) or for good. | [Gaining control of a permanent](card-dsl-cookbook.md#gaining-control-of-a-permanent) |
-| `goad` | Board |  | Goad creatures until your next turn, or for the rest of the game. | [Goad](card-dsl-cookbook.md#goad) |
+| `goad` | Board |  | Goad creatures until your next turn, or for the rest of the game; `goaded: false` lays the two requirements without goading. | [Goad](card-dsl-cookbook.md#goad) |
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `incubate` | Board | yes | Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature. | [incubate — "Incubate N"](card-dsl-cookbook.md#incubate--incubate-n) |
@@ -141,7 +141,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |
 | `replace_leaves_battlefield` | Board |  | If it would leave the battlefield this turn, do something else. | [Effect ops](card-dsl.md#effect-ops) |
 | `rotate_control` | Board |  | Pass permanents around the table to the left or right. | ["Choose left or right" — passing the board around the table](card-dsl-cookbook.md#choose-left-or-right--passing-the-board-around-the-table) |
-| `sacrifice` | Board | yes | A player sacrifices permanents; `snapshot` remembers what they had. | [Effect ops](card-dsl.md#effect-ops) |
+| `sacrifice` | Board | yes | A player sacrifices permanents; `snapshot` remembers what they had; `players` is "each player sacrifices", every choice made in APNAP order and then sacrificed at once, `snapshot` then a list. | ["Each player sacrifices" — sacrifice's players](card-dsl.md#each-player-sacrifices--sacrifices-players) |
 | `set_flag` | Board |  | Write a word on the source for the game (renowned, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `set_turn_flag` | Board |  | Write a word on the source for the turn (exerted, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `skip_untap` | Board |  | It doesn't untap during its controller's next untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
@@ -195,6 +195,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_mana` | Mana |  | Add mana to a player's pool. | [Mana abilities](card-dsl-cookbook.md#mana-abilities) |
 | `add_mana_per` | Mana |  | Add one mana of a color for each object a selector finds. | ["Add {G} for each …"](card-dsl-cookbook.md#add-g-for-each-) |
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
+| `choose_new_targets` | Stack |  | Choose new targets for a spell or ability already on the stack (115.7). | ["You may choose new targets for target spell" — retargeting the original](card-dsl-cookbook.md#you-may-choose-new-targets-for-target-spell--retargeting-the-original) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
@@ -216,7 +217,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_mode` | Control flow |  | Choose one or more modes and run them; `repeatable` lets one mode be chosen more than once, each instance with its own targets. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
-| `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
+| `choose_player` | Control flow | yes | Choose a player; `as` records the seat; `random: true` draws it at random, asking nobody. | ["Choose a player at random" — choose_player with random](card-dsl-cookbook.md#choose-a-player-at-random--choose_player-with-random) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
 | `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
@@ -295,7 +296,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `power` | A comparison on live power, or its `parity` (`{"parity": "even"}`, zero even). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
-| `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
+| `random` | Pick at random rather than by choice; on a triggered or reflexive ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
 | `returned_with` | Put onto the battlefield by the named source's linked return. | [An Aura that enchants a card in a graveyard — Animate Dead](card-dsl-cookbook.md#an-aura-that-enchants-a-card-in-a-graveyard--animate-dead) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `shares_a_color_with` | Shares a color with the named object. | [Describing objects relative to another object](card-dsl.md#describing-objects-relative-to-another-object) |
@@ -405,7 +406,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
 | `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
-| `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
+| `power_of` | An object's power; over a list of snapshots, their total. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |
 | `rolled` | Dice results under a binding: count, by face, parity or total. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `spells_cast_this_game` | Spells the player has cast this game, by filter. | [Counting the spells you cast, by type](card-dsl-cookbook.md#counting-the-spells-you-cast-by-type) |
@@ -847,6 +848,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds, or of the one `counter` names, from among permanents the payer picks. | [remove_counters_from_among — counters off permanents the payer picks](card-dsl.md#remove_counters_from_among--counters-off-permanents-the-payer-picks) |
+| `remove_counters_x` | Remove X counters (of the named kind) from the source, or all from one permanent `from` picks; X announced and bounded by them. | [remove_counters_x — remove X counters, X announced](card-dsl.md#remove_counters_x--remove-x-counters-x-announced) |
 | `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
 | `reveal_from_hand` | Reveal matching cards from your own hand; nothing moves. | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `sacrifice` | Sacrifice a matching permanent (or `count` of them); `as` names it for the effects; a list of selectors is several parts, each paid by different permanents. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |

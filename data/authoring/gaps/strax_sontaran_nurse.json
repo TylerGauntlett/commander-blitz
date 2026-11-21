@@ -3,14 +3,16 @@
   "name": "Strax, Sontaran Nurse",
   "oracle_text": "Vigilance, trample\nGrenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax fights another target creature that player controls.\nGlory of Battle — Whenever Strax deals damage to a creature, put a +1/+1 counter on Strax.",
   "blocked_sentences": [
-    "Grenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax fights another target creature that player controls."
+    "Glory of Battle — Whenever Strax deals damage to a creature, put a +1/+1 counter on Strax."
   ],
-  "needs": [{
-    "capability": "choose_player_at_random",
-    "kind": "op",
-    "what": "a `random: true` option on `choose_player` that picks one player uniformly at random from the pool (all players, the controller included) with no decision asked, binding the result under `as` so a following `reflexive_trigger`'s target selector can read `controller: {\"binding\": ...}` (\"another target creature that player controls\")",
-    "why_existing_wont_do": "`choose_player` takes only `as`, `players` and `prompt` and always asks the controller via `ask_player`; `random` exists only as a selector key over objects and on `choose_mode`/`discard`, not for picking a player, so the random seat cannot be produced and choosing it would let the controller pick the most favourable player"
-  }],
-  "closest_existing": ["choose_player", "reflexive_trigger", "fight"],
+  "needs": [
+    {
+      "capability": "deals_damage_to_creature_trigger",
+      "kind": "trigger_event",
+      "what": "a trigger on the permanent half of DAMAGE_DEALT whose subject is the DEALER (source: \"self\" = this creature dealt it) and which fires only when the recipient is a creature -- e.g. `deals_damage_to_creature`, or a recipient filter (`recipient: {types: [\"Creature\"]}`) on `deals_damage` -- for \"Whenever this creature deals damage to a creature\" (combat, fight or any other damage)",
+      "why_existing_wont_do": "`deals_damage` takes the dealer as subject but covers both halves (players, planeswalkers, battles, creatures) and its `filter` reads only the dealer, so damage to a player alone would add a counter. `dealt_damage` has the creature victim as subject but no key naming the dealer; its `damaged_by: \"self\"` filter reads the per-turn damage ledger, so another source damaging a creature Strax hit earlier this turn would also fire it. `deals_combat_damage` misses the fight from Grenades!, and the `fights` trigger misses combat damage and fires on a 0-power fight. No condition_key or binding exposes the event's recipient type. The Grenades! line itself is expressible (cost mana+tap+sacrifice Artifact; choose_player random over each_player as a binding; reflexive_trigger whose target selector uses controller {binding}, exclude_self, then fight)."
+    }
+  ],
+  "closest_existing": ["deals_damage", "dealt_damage", "damaged_by", "fights"],
   "confidence": "high"
 }

@@ -155,7 +155,9 @@ def arm_attack_restrictions(state: GameState, player: int) -> None:
     ]
 
 
-def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = False) -> bool:
+def goad_creature(
+    state: GameState, oid: int, player: int, *, permanent: bool = False, goaded: bool = True
+) -> bool:
     """ "Goad that creature" (701.38a) -- ``player`` is the one it must attack around.
 
     One rules-relevant thing, said in one word: the creature is written down as
@@ -197,12 +199,24 @@ def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = 
     the next line, and the mark has to be his when they arrive at an opponent.
     A timed goad on a creature already goaded becomes permanent; a timed goad
     on a permanently goaded one changes nothing.
+
+    ``goaded=False`` is goad's two requirements without the designation
+    (Kardur, Doomscourge): the player goes into ``goad_requirements_by``
+    instead, which the compulsion and the target restriction read and the
+    ``goaded`` filter does not. Same clock, same refusals; never permanent.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     if not state.is_alive(player):
         return False
+    if not goaded:
+        if permanent:  # pragma: no cover - loader guards
+            raise ValueError("a goad's requirements without the goad have no permanent clock")
+        if obj.controller == player or player in obj.goad_requirements_by:
+            return False
+        obj.goad_requirements_by.add(player)
+        return True
     if permanent:
         if player in obj.goaded_permanently_by:
             return False
@@ -233,6 +247,9 @@ def end_goad(state: GameState, oid: int) -> bool:
     and leaves the Impetus Aura's goad in force for as long as the Aura
     enchants the creature.
 
+    Nor is ``goad_requirements_by``: Kardur's creatures were never goaded, so
+    "no longer goaded" says nothing about what Kardur makes them do.
+
     Returns whether a mark was removed.
     """
     obj = state.objects.get(oid)
@@ -262,6 +279,8 @@ def clear_goad(state: GameState, player: int, *, leaving: bool = False) -> None:
     pointing its target restriction at a seat `alive()` never offers again.
     """
     for obj in state.objects.values():
+        # Goad's requirements without the goad keep goad's clock (Kardur).
+        obj.goad_requirements_by.discard(player)
         if not leaving and player in obj.goaded_permanently_by:
             continue
         obj.goaded_by.discard(player)

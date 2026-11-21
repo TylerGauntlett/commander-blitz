@@ -34,6 +34,7 @@ def _compile_targets(
     *,
     on_spell: bool = False,
     on_trigger: bool = False,
+    on_reflexive: bool = False,
     mode_count: int | None = None,
     mana_cost: str | None = None,
     has_kicker: bool = False,
@@ -63,6 +64,12 @@ def _compile_targets(
     ``on_trigger`` marks a **triggered** ability's targets, which is the other
     place a mode-owned spec has a moment to be declared in: 603.3d puts the
     modes and the targets alike at the instant the ability goes on the stack.
+
+    ``on_reflexive`` marks a **reflexive** ability's targets (603.12). It goes
+    on the stack through the same `stack.push_triggered_ability` a triggered
+    one does, so the one clause read there that it is allowed is ``random``:
+    `stack._random_trigger_targets` draws for it exactly as it does for a
+    trigger -- Explosion of Riches.
 
     ``mode_count`` is how many modes the single top-level ``choose_mode``
     offers, or ``None`` when there is no such question to hang a target on.  A
@@ -167,15 +174,15 @@ def _compile_targets(
     for spec in specs:
         if not spec.selector.get("random"):
             continue
-        # "Target … chosen at random" (Power Pack): `stack._random_trigger_targets`
-        # draws it as a triggered ability goes on the stack. Nothing else reads
-        # the clause -- a spell's or an activated ability's targets are chosen
-        # in legality, which offers every tuple -- so anywhere else it would
-        # load and be a free choice.
-        if not on_trigger:
+        # "Target … chosen at random" (Power Pack, Explosion of Riches):
+        # `stack._random_trigger_targets` draws it as a triggered or reflexive
+        # ability goes on the stack. Nothing else reads the clause -- a spell's
+        # or an activated ability's targets are chosen in legality, which offers
+        # every tuple -- so anywhere else it would load and be a free choice.
+        if not (on_trigger or on_reflexive):
             raise DslError(
-                f"{where}.target[{spec.id}]: 'random' is a triggered ability's "
-                f"target -- nothing else draws one at random"
+                f"{where}.target[{spec.id}]: 'random' is a triggered or reflexive "
+                f"ability's target -- nothing else draws one at random"
             )
         if len(specs) != 1 or spec.mode is not None:
             raise DslError(
@@ -595,12 +602,25 @@ def _check_mode_targets(
             raise DslError(
                 f"{label}: mode {spec.mode} does not exist -- the card offers {mode_count}"
             )
-        if spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
+        if spec.x_sized and on_spell:
+            # "Up to X target creatures gain fear" (Profane Command), "destroy
+            # X target artifacts" (Heliod's Intervention): 601.2b announces X
+            # before the modes are chosen, and `Game._ask_mode_targets` runs
+            # after both, so X is a number when the bullet's targets are
+            # declared. `count_if_kicked` would be a second size for it.
+            if spec.count_if_kicked is not None or spec.optional:
+                raise DslError(
+                    f"{label}: an X-sized mode-owned target takes 'up_to' for "
+                    f"\"up to X\" and nothing else -- 'optional' and "
+                    f"'count_if_kicked' are a second size for the same spec"
+                )
+        elif spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
             raise DslError(
                 f"{label}: a mode-owned target's size must be printed -- a "
                 f"literal 'count' (with 'up_to' and 'min_count' if the caster "
-                f"picks how many) or 'any'; a computed count has no cast-time "
-                f"value to read"
+                f"picks how many) or 'any' -- or, on a spell, the announced X "
+                f"({{\"x\": true}}); any other computed count, and X on an "
+                f"ability, has no value to read when the targets are declared"
             )
         if spec.constrains_the_set:
             raise DslError(
@@ -729,6 +749,36 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
             f"{label}.permanent_selector: names a sibling target or {{X}}, "
             f"which only 'selector' may do"
         )
+
+
+def _check_player_selector(model: TargetModel, label: str) -> None:
+    """"Target **opponent** or planeswalker": the player half's own player spec.
+
+    Each refusal is a clause that would load and be read nowhere, or read
+    somewhere the rest of the targeting layer does not look.
+    """
+    who = model.player_selector
+    if model.kind != "any":
+        # A `player` spec has one pool, which `selector.controller` already
+        # names; every other kind has no player half for this to narrow.
+        raise DslError(
+            f"{label}: 'player_selector' narrows the player half of an 'any' "
+            f"target, and this one is {model.kind!r}"
+        )
+    if who == "any":
+        raise DslError(
+            f"{label}.player_selector: 'any' is what an absent 'player_selector' "
+            f"already means -- drop it"
+        )
+    if _reads_context(who):
+        # The linked-target walk (`targeting._names_a_sibling`) reads
+        # `selector` only; a sibling named here would be enumerated without
+        # the answer it depends on. No printing asks for one.
+        raise DslError(
+            f"{label}.player_selector: names a sibling target or {{X}}, "
+            f"which only 'selector' may do"
+        )
+    _validate_player_spec(who, f"{label}.player_selector", {})
 
 
 def _compile_target(
@@ -870,6 +920,8 @@ def _compile_target(
 
     if model.permanent_selector is not None:
         _check_permanent_selector(model, label)
+    if model.player_selector is not None:
+        _check_player_selector(model, label)
 
     zone = model.selector.get("zone")
     if model.kind == "permanent" and zone not in (None, "battlefield"):
@@ -972,6 +1024,11 @@ def _compile_target(
         ),
         permanent_selector=(
             dict(model.permanent_selector) if model.permanent_selector is not None else None
+        ),
+        player_selector=(
+            dict(model.player_selector)
+            if isinstance(model.player_selector, dict)
+            else model.player_selector
         ),
         count=dict(model.count) if isinstance(model.count, dict) else model.count,
         count_if_kicked=(

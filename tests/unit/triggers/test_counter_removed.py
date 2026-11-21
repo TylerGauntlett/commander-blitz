@@ -151,6 +151,34 @@ class TestWhoAndHowMany:
         remove_counters(game.state, oid, "+1/+1", 1, by=0)
         assert queued(game, oid) == 0
 
+    def test_a_placement_is_not_split_per_counter(self, builder, monkeypatch):
+        """A `counter_placed` of N reaches the listener once, not as N copies.
+
+        Splitting every event a `counter_removed` trigger hears, before its type
+        was read, made a Mossborn Hydra doubling to 2**40 counters build 2**40
+        copies in a pod with an exiled Watcher -- the game ran out of memory.
+        """
+        from commanderblitz.engine import triggers
+        from commanderblitz.engine.primitives import add_counters
+
+        game, _ = suspended(builder)
+        bear = next(
+            o.oid for o in game.state.objects.values()
+            if o.zone is Zone.BATTLEFIELD and o.controller == 0
+        )
+        split = triggers._per_counter_events
+        heard: list[int] = []
+
+        def spy(spec, events):
+            out = split(spec, events)
+            if spec.event == "counter_removed":
+                heard.append(len(out))
+            return out
+
+        monkeypatch.setattr(triggers, "_per_counter_events", spy)
+        add_counters(game.state, bear, "+1/+1", 1_000_000, by=0)
+        assert heard == [1]
+
     def test_it_listens_only_from_exile(self, builder):
         game, oid = suspended(builder, counters=1)
         past_the_next_upkeep_of(game, 0)

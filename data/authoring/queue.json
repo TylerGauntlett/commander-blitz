@@ -30552,12 +30552,12 @@
     },
     "Boltbender": {
       "edhrec_rank": 10169,
-      "gate": "template",
+      "gate": null,
       "name": "Boltbender",
-      "reason": "no template for: Disguise {1}{R}",
+      "reason": "",
       "scryfall_id": "04193a0a-8ebc-4c8d-9eb6-661a373485f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boltfire": {
@@ -33832,12 +33832,12 @@
     },
     "Breath of Malfegor": {
       "edhrec_rank": 13526,
-      "gate": "template",
+      "gate": null,
       "name": "Breath of Malfegor",
-      "reason": "no template for: deals 5 damage to each opponent",
+      "reason": "",
       "scryfall_id": "0e855b4e-71c3-49b8-acd5-e509b1f6da5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breath of the Sleepless": {
@@ -49982,12 +49982,12 @@
     },
     "Collective Defiance": {
       "edhrec_rank": 7525,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Defiance",
-      "reason": "no template for: Escalate {1}",
+      "reason": "",
       "scryfall_id": "17d512c0-fc02-419f-90f2-a6acc7815bd4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Drone": {
@@ -63152,12 +63152,12 @@
     },
     "Deadly Tempest": {
       "edhrec_rank": 3596,
-      "gate": "template",
+      "gate": null,
       "name": "Deadly Tempest",
-      "reason": "no template for: Destroy all creatures. Each player loses life equal to the number of creatures they contro",
+      "reason": "",
       "scryfall_id": "dcf4fb19-db45-4dd6-9479-6fa065e86cb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadly Visit": {
@@ -65492,12 +65492,12 @@
     },
     "Deflecting Swat": {
       "edhrec_rank": 75,
-      "gate": "template",
+      "gate": null,
       "name": "Deflecting Swat",
-      "reason": "no template for: If you control a commander, you may cast this spell without paying its mana cost",
+      "reason": "",
       "scryfall_id": "c2cb5a93-d2f9-4df6-9488-c57b6f18ae2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deflection": {
@@ -68532,12 +68532,12 @@
     },
     "Dictate of the Twin Gods": {
       "edhrec_rank": 2334,
-      "gate": "template",
+      "gate": null,
       "name": "Dictate of the Twin Gods",
-      "reason": "no template for: If a source would deal damage to a permanent or player, it deals double that damage to tha",
+      "reason": "",
       "scryfall_id": "61d6f304-680c-43ad-9686-61d8b0a0ad14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Didact Echo": {
@@ -75172,12 +75172,12 @@
     },
     "Dredge the Mire": {
       "edhrec_rank": 10727,
-      "gate": "template",
+      "gate": null,
       "name": "Dredge the Mire",
-      "reason": "no template for: Each opponent chooses a creature card in their graveyard. Put those cards onto the battlef",
+      "reason": "",
       "scryfall_id": "4194675b-0807-431c-9d47-7e51e5a1dac0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dredger's Insight": {
@@ -88572,12 +88572,12 @@
     },
     "Explosion of Riches": {
       "edhrec_rank": 13413,
-      "gate": "template",
+      "gate": null,
       "name": "Explosion of Riches",
-      "reason": "no template for: Draw a card, then each other player may draw a card. Whenever a card is drawn this way, de",
+      "reason": "",
       "scryfall_id": "e28ed670-eae0-4a39-bf3d-73b687327f0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Explosive Apparatus": {
@@ -106922,12 +106922,12 @@
     },
     "Geode Rager": {
       "edhrec_rank": 2890,
-      "gate": "template",
+      "gate": null,
       "name": "Geode Rager",
-      "reason": "no template for: Landfall — Whenever a land you control enters, goad each creature target player controls",
+      "reason": "",
       "scryfall_id": "f6ba7b25-02bd-4e01-9920-ec84e89250b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geological Appraiser": {
@@ -125482,12 +125482,12 @@
     },
     "Heliod's Intervention": {
       "edhrec_rank": 1456,
-      "gate": "template",
+      "gate": null,
       "name": "Heliod's Intervention",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3c3793c3-c9f6-4fb0-9b95-cd4cd07ab40d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heliod's Pilgrim": {
@@ -130582,12 +130582,12 @@
     },
     "Hourglass of the Lost": {
       "edhrec_rank": 5928,
-      "gate": "template",
+      "gate": null,
       "name": "Hourglass of the Lost",
-      "reason": "no template for: {T}: Add {W}. Put a time counter on this artifact",
+      "reason": "",
       "scryfall_id": "147b0ab2-3ac8-425a-9e1d-7580de58235c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "House Cartographer": {
@@ -135902,12 +135902,12 @@
     },
     "Indulgent Tormentor": {
       "edhrec_rank": 3856,
-      "gate": "template",
+      "gate": null,
       "name": "Indulgent Tormentor",
-      "reason": "no template for: At the beginning of your upkeep, draw a card unless target opponent sacrifices a creature ",
+      "reason": "",
       "scryfall_id": "83f97e17-52b5-487d-88e4-22939fbfc275",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indulging Patrician": {
@@ -145962,12 +145962,12 @@
     },
     "Kardur, Doomscourge": {
       "edhrec_rank": 973,
-      "gate": "template",
+      "gate": null,
       "name": "Kardur, Doomscourge",
-      "reason": "no template for: When Kardur enters, until your next turn, creatures your opponents control attack each com",
+      "reason": "",
       "scryfall_id": "7c0f7712-7bbf-471b-8107-3a49cf922ad9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kardur, Doomscourge // Kardur, Doomscourge": {
@@ -147192,12 +147192,12 @@
     },
     "Kazuul, Tyrant of the Cliffs": {
       "edhrec_rank": 1855,
-      "gate": "template",
+      "gate": null,
       "name": "Kazuul, Tyrant of the Cliffs",
-      "reason": "no template for: Whenever a creature an opponent controls attacks, if you're the defending player, create a",
+      "reason": "",
       "scryfall_id": "721df547-d777-4247-b130-a4e247445b04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kederekt Creeper": {
@@ -164832,12 +164832,12 @@
     },
     "Magmatic Force": {
       "edhrec_rank": 9942,
-      "gate": "template",
+      "gate": null,
       "name": "Magmatic Force",
-      "reason": "no template for: At the beginning of each upkeep, this creature deals 3 damage to any target",
+      "reason": "",
       "scryfall_id": "5a105c13-2d54-4b42-93dd-24e01de79bc6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magmatic Galleon": {
@@ -177792,12 +177792,12 @@
     },
     "Molten Slagheap": {
       "edhrec_rank": 8442,
-      "gate": "template",
+      "gate": null,
       "name": "Molten Slagheap",
-      "reason": "no template for: {1}, {T}: Put a storage counter on this land",
+      "reason": "",
       "scryfall_id": "881f92f8-ba27-49a3-a753-b082612f9acf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molten Tributary": {
@@ -180362,12 +180362,12 @@
     },
     "Moxite Refinery": {
       "edhrec_rank": 5399,
-      "gate": "template",
+      "gate": null,
       "name": "Moxite Refinery",
-      "reason": "no template for: {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate",
+      "reason": "",
       "scryfall_id": "ad617991-21c0-47c6-bc84-6e7c33edf7ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mr. Foxglove": {
@@ -187012,12 +187012,12 @@
     },
     "Nihil Spellbomb": {
       "edhrec_rank": 5313,
-      "gate": "template",
+      "gate": null,
       "name": "Nihil Spellbomb",
-      "reason": "no template for: {T}, Sacrifice this artifact: Exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "03927043-9276-42d5-9db9-eb935cf8a7c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nihilistic Glee": {
@@ -207982,12 +207982,12 @@
     },
     "Profane Command": {
       "edhrec_rank": 4904,
-      "gate": "template",
+      "gate": null,
       "name": "Profane Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "d2ab6949-a0fc-4fe5-ae64-53b53914f34c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Profane Memento": {
@@ -214232,12 +214232,12 @@
     },
     "Rakshasa Debaser": {
       "edhrec_rank": 6972,
-      "gate": "template",
+      "gate": null,
       "name": "Rakshasa Debaser",
-      "reason": "no template for: Whenever this creature attacks, put target creature card from defending player's graveyard",
+      "reason": "",
       "scryfall_id": "11e16fad-925a-4b59-8612-362f650e09e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rakshasa Gravecaller": {
@@ -219322,12 +219322,12 @@
     },
     "Reign of the Pit": {
       "edhrec_rank": 14030,
-      "gate": "template",
+      "gate": null,
       "name": "Reign of the Pit",
-      "reason": "no template for: Each player sacrifices a creature of their choice. Create an X/X black Demon creature toke",
+      "reason": "",
       "scryfall_id": "098c7cd1-5f20-437d-9b81-f480f3f02833",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reigning Victor": {
@@ -237272,12 +237272,12 @@
     },
     "Scythe Specter": {
       "edhrec_rank": 13267,
-      "gate": "template",
+      "gate": null,
       "name": "Scythe Specter",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, each opponent discards a card. Eac",
+      "reason": "",
       "scryfall_id": "232afb53-8799-4d45-a3b5-f29ff5afc0c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scythe Tiger": {
@@ -264082,12 +264082,12 @@
     },
     "Stensia Bloodhall": {
       "edhrec_rank": 13536,
-      "gate": "template",
+      "gate": null,
       "name": "Stensia Bloodhall",
-      "reason": "no template for: {3}{B}{R}, {T}: This land deals 2 damage to target player or planeswalker",
+      "reason": "",
       "scryfall_id": "4c936ea7-8802-4ae7-9d85-4b873cbd56ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stensia Innkeeper": {
@@ -283022,12 +283022,12 @@
     },
     "Theater of Horrors": {
       "edhrec_rank": 4478,
-      "gate": "template",
+      "gate": null,
       "name": "Theater of Horrors",
-      "reason": "no template for: At the beginning of your upkeep, exile the top card of your library",
+      "reason": "",
       "scryfall_id": "f0b88e4f-070f-48d1-a5f9-c22dfc7ab31b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Theft of Dreams": {
@@ -283262,12 +283262,12 @@
     },
     "Thermo-Alchemist": {
       "edhrec_rank": 1670,
-      "gate": "template",
+      "gate": null,
       "name": "Thermo-Alchemist",
-      "reason": "no template for: {T}: This creature deals 1 damage to each opponent",
+      "reason": "",
       "scryfall_id": "550d4e71-2f3c-49bf-acb7-de833c319514",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thermokarst": {
@@ -287992,12 +287992,12 @@
     },
     "Titan Hunter": {
       "edhrec_rank": 14919,
-      "gate": "template",
+      "gate": null,
       "name": "Titan Hunter",
-      "reason": "no template for: At the beginning of each player's end step, if no creatures died this turn, this creature ",
+      "reason": "",
       "scryfall_id": "7b7655b2-3367-478e-81b7-d8fca8911c9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan of Eternal Fire": {
@@ -298162,12 +298162,12 @@
     },
     "Unlicensed Disintegration": {
       "edhrec_rank": 9260,
-      "gate": "template",
+      "gate": null,
       "name": "Unlicensed Disintegration",
-      "reason": "no template for: Destroy target creature. If you control an artifact, deals 3 damage to that creature's con",
+      "reason": "",
       "scryfall_id": "dd56ade4-37aa-444f-ad54-15cf0468824e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unlicensed Hearse": {
@@ -299562,12 +299562,12 @@
     },
     "Ursine Monstrosity": {
       "edhrec_rank": 9663,
-      "gate": "template",
+      "gate": null,
       "name": "Ursine Monstrosity",
-      "reason": "no template for: At the beginning of combat on your turn, mill a card and choose an opponent at random. Thi",
+      "reason": "",
       "scryfall_id": "4fdb69ae-2d15-4e91-b229-4d03ff9d6fbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urtet, Remnant of Memnarch": {
@@ -315202,12 +315202,12 @@
     },
     "Wild Ricochet": {
       "edhrec_rank": 3999,
-      "gate": "template",
+      "gate": null,
       "name": "Wild Ricochet",
-      "reason": "no template for: You may choose new targets for target instant or sorcery spell. Then copy that spell. You ",
+      "reason": "",
       "scryfall_id": "ecbe8717-07a1-4145-9cd4-b98b145c2d4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wild Ride": {
@@ -315432,12 +315432,12 @@
     },
     "Wildfire Devils": {
       "edhrec_rank": 6712,
-      "gate": "template",
+      "gate": null,
       "name": "Wildfire Devils",
-      "reason": "no template for: When this creature enters and at the beginning of your upkeep, choose a player at random. ",
+      "reason": "",
       "scryfall_id": "3c876360-3608-422a-b709-84b32be8daa0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wildfire Elemental": {

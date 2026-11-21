@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **460** capabilities.
+**532 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [choose-new-targets](#choose-new-targets) | 3 | 75 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [escape](#escape) | 3 | 1514 | engine, op |
@@ -39,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
-| [random-player-choice](#random-player-choice) | 3 | 5120 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
@@ -66,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [remove-x-counters-cost](#remove-x-counters-cost) | 2 | 5399 | cost |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
@@ -148,7 +145,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
-| [choose-player-at-random](#choose-player-at-random) | 1 | 19999 | op |
 | [choose-x-modes](#choose-x-modes) | 1 | 8838 | engine |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
@@ -178,6 +174,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
+| [deals-damage-to-creature-trigger](#deals-damage-to-creature-trigger) | 1 | 19999 | trigger_event |
 | [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
@@ -258,7 +255,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
-| [goad-without-goaded](#goad-without-goaded) | 1 | 973 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grant-exiled-abilities-by-counter](#grant-exiled-abilities-by-counter) | 1 | 9571 | static_effect |
@@ -345,7 +341,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
-| [ogre-token](#ogre-token) | 1 | 1855 | token |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
@@ -358,7 +353,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
-| [playable-condition-opponent-lost-life](#playable-condition-opponent-lost-life) | 1 | 4478 | engine |
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [playable-while-source-on-battlefield](#playable-while-source-on-battlefield) | 1 | 14646 | value |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -385,7 +379,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
-| [random-opponent](#random-opponent) | 1 | 10776 | decision |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
@@ -434,7 +427,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
-| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
@@ -471,7 +463,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
 | [x-sized-linked-targets](#x-sized-linked-targets) | 1 | 12855 | engine |
-| [x-sized-mode-target](#x-sized-mode-target) | 1 | 1456 | engine |
 | [x-starting-loyalty](#x-starting-loyalty) | 1 | 6660 | engine |
 | [zombie-warrior-4-4-b-vigilance](#zombie-warrior-4-4-b-vigilance) | 1 | 2449 | token |
 
@@ -1145,28 +1136,6 @@ Blocks **4** cards.
 
 </details>
 
-## choose-new-targets
-
-Blocks **3** cards.
-
-- **(op)** an op that retargets objects already on the stack -- here over 'any number of other spells and/or abilities' (every stack object except this trigger), letting this ability's controller optionally choose new legal targets for each chosen one (115.7), leaving the originals on the stack rather than copying them
-  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell` / `copy_ability`, which retargets a freshly made copy, never the original object; `counter` touches another spell but removes it. No op mutates the target list of an existing stack object. Same capability Deflecting Swat is blocked on, here with a multi-object 'any number of' selection.
-- **(op)** an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it
-  <br>Why the existing vocabulary won't do: The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/commanderblitz/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it.
-- **(op)** an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well
-  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deflecting Swat** (rank 75) — `deflecting_swat`
-  - You may choose new targets for target spell or ability.
-- **Misdirection** (rank 1562) — `misdirection`
-  - Change the target of target spell with a single target.
-- **Boltbender** (rank 10169) — `boltbender`
-  - When this creature is turned face up, you may choose new targets for any number of other spells and/or abilities.
-
-</details>
-
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -1348,28 +1317,6 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
-
-</details>
-
-## random-player-choice
-
-Blocks **3** cards.
-
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players and binds the result (as), with an else branch when no player is eligible
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt, so the controller chooses; random exists on choose_mode and discard but not on a player choice
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (each opponent still in the game) and binds the result under `as`, asking nobody, so must_attack_player can read it as {"binding": ...} as its defender
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller via ask_player; select_players has no random spelling, and `random` exists only on object selectors, choose_mode and discard. A controller-chosen opponent or each_opponent is a different card in a pod. The rest of the trigger (begin_combat, mill, must_attack_player, grant_keyword indestructible, pump by distinct card_type over your graveyard) is expressible
-- **(op)** choose_player with random: true -- the engine picks uniformly at random among the eligible players (here each opponent still in the game) and binds the result under `as`, asking nobody
-  <br>Why the existing vocabulary won't do: choose_player takes only as, players and prompt and always asks the controller (ask_player); `random` exists on selectors over objects, choose_mode and discard but not on a player choice, so 'each_opponent' or a chosen opponent would both be a different card in a pod
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
-  - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
-- **Territorial Hellkite** (rank 6681) — `territorial_hellkite`
-  - At the beginning of combat on your turn, choose an opponent at random that this creature didn't attack during your last combat. This creature attacks that player this combat if able. If you can't choose an opponent this way, tap this creature.
-- **Ursine Monstrosity** (rank 9663) — `ursine_monstrosity`
-  - At the beginning of combat on your turn, mill a card and choose an opponent at random. This creature attacks that player this combat if able. Until end of turn, this creature gains indestructible and gets +1/+1 for each card type among cards in your graveyard.
 
 </details>
 
@@ -1858,24 +1805,6 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
-
-</details>
-
-## remove-x-counters-cost
-
-Blocks **2** cards.
-
-- **(cost)** an activated-ability cost that removes an announced number X of a named counter kind (here time counters) from the source itself, X chosen by the controller on activation (0 up to the counters on the source) and bound so the effects can read it with {"x": true}, so the resolution can return each nonland permanent card with mana value exactly X
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed integer amount (Cost reads int(amount)); loyalty_x is the variable form but only for loyalty counters and drags in planeswalker-ability rules (606.3 once per turn); x_value defines the X of an {X} in the mana cost from a value expression, and this cost has no {X} for the player to announce; remove_counters_from_among also takes a fixed count
-- **(cost)** an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({"x": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost
-  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce
-
-<details><summary>Cards waiting on this</summary>
-
-- **Moxite Refinery** (rank 5399) — `moxite_refinery`
-  - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
-- **Hourglass of the Lost** (rank 5928) — `hourglass_of_the_lost`
-  - {T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.
 
 </details>
 
@@ -3115,20 +3044,6 @@ Blocks **1** card.
 
 </details>
 
-## choose-player-at-random
-
-Blocks **1** card.
-
-- **(op)** a `random: true` option on `choose_player` that picks one player uniformly at random from the pool (all players, the controller included) with no decision asked, binding the result under `as` so a following `reflexive_trigger`'s target selector can read `controller: {"binding": ...}` ("another target creature that player controls")
-  <br>Why the existing vocabulary won't do: `choose_player` takes only `as`, `players` and `prompt` and always asks the controller via `ask_player`; `random` exists only as a selector key over objects and on `choose_mode`/`discard`, not for picking a player, so the random seat cannot be produced and choosing it would let the controller pick the most favourable player
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strax, Sontaran Nurse** (rank 19999) — `strax_sontaran_nurse`
-  - Grenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax fights another target creature that player controls.
-
-</details>
-
 ## choose-x-modes
 
 Blocks **1** card.
@@ -3539,6 +3454,20 @@ Blocks **1** card.
 
 - **Vial Smasher the Fierce** (rank 5120) — `vial_smasher_the_fierce`
   - Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.
+
+</details>
+
+## deals-damage-to-creature-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger on the permanent half of DAMAGE_DEALT whose subject is the DEALER (source: "self" = this creature dealt it) and which fires only when the recipient is a creature -- e.g. `deals_damage_to_creature`, or a recipient filter (`recipient: {types: ["Creature"]}`) on `deals_damage` -- for "Whenever this creature deals damage to a creature" (combat, fight or any other damage)
+  <br>Why the existing vocabulary won't do: `deals_damage` takes the dealer as subject but covers both halves (players, planeswalkers, battles, creatures) and its `filter` reads only the dealer, so damage to a player alone would add a counter. `dealt_damage` has the creature victim as subject but no key naming the dealer; its `damaged_by: "self"` filter reads the per-turn damage ledger, so another source damaging a creature Strax hit earlier this turn would also fire it. `deals_combat_damage` misses the fight from Grenades!, and the `fights` trigger misses combat damage and fires on a 0-power fight. No condition_key or binding exposes the event's recipient type. The Grenades! line itself is expressible (cost mana+tap+sacrifice Artifact; choose_player random over each_player as a binding; reflexive_trigger whose target selector uses controller {binding}, exclude_self, then fight).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strax, Sontaran Nurse** (rank 19999) — `strax_sontaran_nurse`
+  - Glory of Battle — Whenever Strax deals damage to a creature, put a +1/+1 counter on Strax.
 
 </details>
 
@@ -4684,20 +4613,6 @@ Blocks **1** card.
 
 - **The War Games** (rank 13656) — `the_war_games`
   - I — Each player creates three tapped 1/1 white Warrior creature tokens. The tokens are goaded for as long as this Saga remains on the battlefield.
-
-</details>
-
-## goad-without-goaded
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect giving the creatures matched at resolution goad's two requirements (attack each combat if able; attack a player other than the effect's controller if able) until the controller's next turn, WITHOUT marking them goaded -- e.g. a `goad` option like `mark_goaded: false`, so `goaded` filters (Vengeful Ancestor, Puppet Master's treasure trigger) do not see them
-  <br>Why the existing vocabulary won't do: `goad` gives exactly these requirements but also makes the creatures goaded, which Kardur's ruling says it does not (an observable difference for every `goaded` filter); `must_attack` compels one combat only and has no defender restriction; `must_attack_player` names one required defender rather than forbidding the controller; `cant_attack_player` is a prohibition, not an 'if able' preference; the `attacks_if_able` static lives on Kardur, ends when it leaves, and cannot end at your next turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kardur, Doomscourge** (rank 973) — `kardur_doomscourge`
-  - When Kardur enters, until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able.
 
 </details>
 
@@ -5925,20 +5840,6 @@ Blocks **1** card.
 
 </details>
 
-## ogre-token
-
-Blocks **1** card.
-
-- **(token)** a 3/3 red Ogre creature token (no abilities), e.g. id ogre_3_3_r
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Ogre token at all; the nearest 3/3 red token is ape_villain_3_3_r_haste, which has the wrong creature type and haste. The rest of the sentence looks expressible: an `attacks` trigger with controller opponent and `defending: "you"`, and a `may` whose `player` is the attacking creature's controller with `pay: {mana: "{3}"}` and `else` holding the create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kazuul, Tyrant of the Cliffs** (rank 1855) — `kazuul_tyrant_of_the_cliffs`
-  - Whenever a creature an opponent controls attacks, if you're the defending player, create a 3/3 red Ogre creature token unless that creature's controller pays {3}.
-
-</details>
-
 ## one-target-per-graveyard
 
 Blocks **1** card.
@@ -6106,20 +6007,6 @@ Blocks **1** card.
 
 - **Neyali, Suns' Vanguard** (rank 3339) — `neyali_suns_vanguard`
   - During any turn you attacked with a token, you may play that card.
-
-</details>
-
-## playable-condition-opponent-lost-life
-
-Blocks **1** card.
-
-- **(engine)** a new `playable_condition` value (e.g. "your_turn_and_opponent_lost_life") for exile/look_at_top permissions with `playable: "while_exiled"`: the exiled cards may be played only while it is the effect controller's turn and some opponent's TurnLedger.life_lost is greater than 0 this turn, rechecked each time the play is offered
-  <br>Why the existing vocabulary won't do: PLAYABLE_CONDITIONS (playable_conditions in the packet) holds only "you_attacked_with_a_commander"; the value `life_lost_this_turn` and the condition `is_your_turn` exist but only for `if`/trigger conditions, not as a play permission gate, and a `while_exiled` permission without the gate would let the cards be played on any turn with no life loss, which is a strictly stronger card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Theater of Horrors** (rank 4478) — `theater_of_horrors`
-  - During your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment.
 
 </details>
 
@@ -6491,22 +6378,6 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
-
-</details>
-
-## random-opponent
-
-Blocks **1** card.
-
-- **(decision)** choose_player with a random pick: 'choose an opponent at random' selects one opponent uniformly at random (no player decision), bound under `as` for the following damage op
-  <br>Why the existing vocabulary won't do: choose_player takes only as/players/prompt, so the controller chooses deliberately; choose_mode has `random` but picks among modes, not players, and a mode per opponent cannot be written for a variable table size
-
-<details><summary>Cards waiting on this</summary>
-
-- **Truth or Consequences** (rank 10776) — `truth_or_consequences`
-  - Secret council — Each player secretly votes for truth or consequences, then those votes are revealed.
-  - You draw cards equal to the number of truth votes.
-  - Then choose an opponent at random. Truth or Consequences deals 3 damage to that player for each consequences vote.
 
 </details>
 
@@ -7202,20 +7073,6 @@ Blocks **1** card.
 
 </details>
 
-## target-opponent-or-planeswalker
-
-Blocks **1** card.
-
-- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
-  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Collective Defiance** (rank 7525) — `collective_defiance`
-  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
-
-</details>
-
 ## target-player-dealt-combat-damage-by
 
 Blocks **1** card.
@@ -7720,20 +7577,6 @@ Blocks **1** card.
 
 - **Suffer the Past** (rank 12855) — `suffer_the_past`
   - Exile X target cards from target player's graveyard.
-
-</details>
-
-## x-sized-mode-target
-
-Blocks **1** card.
-
-- **(engine)** a mode-owned target spec (`mode: 0`) whose size is the X announced for the spell (`count: {"x": true}`), so a modal spell's bullet can say "X target artifacts and/or enchantments" and only declare those targets when that mode is chosen
-  <br>Why the existing vocabulary won't do: `count: {"x": true}` is legal on a spell's card-level targets (Pest Infestation, Curse of the Swine), and `mode` is how Abrade gives each bullet its own target, but `loader.targets._check_mode_targets` refuses a mode-owned spec whose count is not a literal or "any" ("a mode-owned target's size must be printed"). Dropping `mode` would demand the artifact targets and the player target together whichever bullet is chosen, and `count: "any"` is not exactly X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heliod's Intervention** (rank 1456) — `heliod_s_intervention`
-  - • Destroy X target artifacts and/or enchantments.
 
 </details>
 

@@ -3459,3 +3459,51 @@ class TestSkycatSovereignsCatBirdIsBoth:
         assert "Cat" not in pool.get("bird_1_1_w_flying").subtypes
         assert "Bird" not in pool.get("cat_1_1_w").subtypes
         assert not pool.get("cat_1_1_w").keywords
+
+
+class TestKazuulsOgreIsAPlainThreeThreeRed:
+    """Kazuul, Tyrant of the Cliffs: *"create a **3/3 red Ogre** creature
+    token unless that creature's controller pays {3}."*
+
+    `ape_villain_3_3_r_haste` is the pool's other 3/3 red token: the wrong
+    creature types, and it has haste. An Ogre that could attack the turn it
+    arrives is a stronger card than the printed one.
+    """
+
+    def test_it_is_a_vanilla_three_three_red_ogre(self, pool):
+        token = pool.get("ogre_3_3_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Ogre"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_hasty_ape_villain_is_still_separate(self, pool):
+        other = pool.get("ape_villain_3_3_r_haste")
+        assert "Ogre" not in other.subtypes
+        assert list(other.keywords) == ["haste"]
+
+
+class TestReignOfThePitsDemonIsAnXXBlackFlier:
+    """Reign of the Pit: *"Create an **X/X black Demon** creature token with
+    **flying**, where X is the total power of the creatures sacrificed this
+    way."*
+
+    Two near misses: `vampire_demon_4_3_wb_flying` is a fixed 4/3 that is
+    also white and also a Vampire, and `aetherborn_x_x_b` is the pool's other
+    X/X black token, with neither the Demon type nor flying.
+    """
+
+    def test_it_is_a_variable_black_demon_with_flying(self, pool):
+        token = pool.get("demon_x_x_b_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Demon"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert sorted(pool.get("vampire_demon_4_3_wb_flying").colors) == ["B", "W"]
+        assert not pool.get("aetherborn_x_x_b").keywords

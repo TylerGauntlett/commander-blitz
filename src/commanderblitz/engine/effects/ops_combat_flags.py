@@ -613,14 +613,25 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
     creature, so a creature goaded this way and then handed to an opponent
     must attack a player other than the goader -- which is why Dack's goad
     comes before his control change and must be written in that order.
+
+    ``goaded: false`` is goad's two requirements on the same clock **without**
+    making the creatures goaded: "until your next turn, creatures your
+    opponents control attack each combat if able and attack a player other
+    than you if able" (Kardur, Doomscourge), whose ruling says they are not
+    goaded. The mark goes into `GameObject.goad_requirements_by`, which combat
+    reads through `player_statics.attack_goaders` and the ``goaded`` filter
+    never sees, so Vengeful Ancestor and Puppet Master's payoff ignore it and
+    `ungoad` leaves it alone. The creatures are the ones matched at resolution
+    (611.2c). It takes no ``duration`` -- the loader refuses ``permanent``.
     """
     goaders = _players(ctx, spec["player"]) if "player" in spec else [ctx.controller]
     permanent = spec.get("duration") == "permanent"
+    goaded = spec.get("goaded", True) is not False
     for oid in resolve_pool(ctx, spec.get("objects") or {}):
         for player in goaders:
             # Battlefield and liveness are checked in the primitive, which is
             # also what makes a creature that left in response get nothing.
-            goad_creature(ctx.state, oid, player, permanent=permanent)
+            goad_creature(ctx.state, oid, player, permanent=permanent, goaded=goaded)
     yield from ()
 
 

@@ -2232,6 +2232,24 @@ def goaders(state: GameState, oid: int) -> set[int]:
     return out
 
 
+def attack_goaders(state: GameState, oid: int) -> set[int]:
+    """Every player this creature must attack around because of goad's requirements.
+
+    `goaders`, plus the players in `GameObject.goad_requirements_by`: goad's
+    two requirements laid on a creature that is not goaded (Kardur,
+    Doomscourge -- "attack each combat if able and attack a player other than
+    you if able"). Combat asks this -- `combat.attack_required` (the
+    compulsion), `combat.attack_target_forbidden` and the 508.1d count (the
+    target restriction) -- and anything asking whether the creature **is**
+    goaded asks `goaders` instead.
+    """
+    out = goaders(state, oid)
+    obj = state.objects.get(oid)
+    if obj is not None and obj.on_battlefield:
+        out |= obj.goad_requirements_by
+    return out
+
+
 def static_control_claims(state: GameState) -> list[tuple[int, int, int | None, int]]:
     """Every ``(source, permanent, seat, timestamp)`` a `control` static claims now.
 

@@ -1,0 +1,94 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_remove_counters_x.py. `t_rcx_slagheap` is Molten Slagheap as printed: a {C} tap, a storage-counter tap, and '{1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}', the mana ability that reads X. `t_rcx_engine` puts the cost on an ability that uses the stack, so the X the effect reads is visible on a life total. `t_rcx_hourglass` is Hourglass of the Lost's second ability, whose effect reads X in a graveyard selector. `t_rcx_refinery` is Moxite Refinery's cost -- X counters of any kinds off one artifact or creature you control -- on a life-gain effect.",
+  "cards": [
+    {
+      "id": "t_rcx_slagheap",
+      "name": "Test Remove X Slagheap",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Put a storage counter on this land.\n{1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}.",
+      "types": ["Land"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {"tap": true},
+          "effects": [{"op": "add_mana", "mana": "{C}"}]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Put a storage counter on this land.",
+          "cost": {"mana": "{1}", "tap": true},
+          "effects": [
+            {"op": "add_counters", "objects": {"self_only": true}, "counter": "storage", "amount": {"const": 1}}
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, Remove X storage counters from this land: Add X mana in any combination of {B} and/or {R}.",
+          "is_mana_ability": true,
+          "cost": {"mana": "{1}", "remove_counters_x": {"counter": "storage"}},
+          "effects": [{"op": "add_mana", "split": ["B", "R"], "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_rcx_engine",
+      "name": "Test Remove X Engine",
+      "oracle_text": "Remove X charge counters from this artifact: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Remove X charge counters from this artifact: You gain X life.",
+          "cost": {"remove_counters_x": {"counter": "charge"}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_rcx_hourglass",
+      "name": "Test Remove X Hourglass",
+      "oracle_text": "{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.",
+      "mana_cost": "{2}{W}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Remove X time counters from this artifact and exile it: Return each nonland permanent card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.",
+          "sorcery_speed_only": true,
+          "cost": {"tap": true, "remove_counters_x": {"counter": "time"}, "exile_self": true},
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "destination": "battlefield",
+              "objects": {
+                "zone": "graveyard",
+                "controller": "you",
+                "count": "all",
+                "any_types": ["Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"],
+                "not_types": ["Land"],
+                "mana_value": {"op": "=", "value": {"x": true}}
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rcx_refinery",
+      "name": "Test Remove X Refinery",
+      "oracle_text": "{T}, Remove X counters from an artifact or creature you control: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Remove X counters from an artifact or creature you control: You gain X life.",
+          "cost": {"tap": true, "remove_counters_x": {"from": {"any_types": ["Artifact", "Creature"]}}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    }
+  ]
+}

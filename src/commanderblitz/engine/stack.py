@@ -220,8 +220,15 @@ def push_spell(
     return item
 
 
-def announce_targets(state: GameState, item: StackItem) -> None:
+def announce_targets(
+    state: GameState, item: StackItem, refs: Sequence[TargetRef] | None = None
+) -> None:
     """Fire `BECAME_TARGET` for everything this stack item targets.
+
+    ``refs`` narrows it to the targets an effect has just *changed*
+    (`choose_new_targets`, 115.7): an object becomes the target of a spell
+    when the spell is retargeted onto it, and one the spell kept was a target
+    already.
 
     Rule 603.2d: "becomes the target of" triggers fire as the spell or ability
     is *put on the stack*, not as it resolves. That timing is the whole of ward
@@ -234,7 +241,7 @@ def announce_targets(state: GameState, item: StackItem) -> None:
     """
 
     source = item.oid if item.is_spell else item.source_oid
-    for ref in item.targets:
+    for ref in item.targets if refs is None else refs:
         if ref.kind == "object":
             target = state.objects.get(ref.id)
             fire(
@@ -950,12 +957,13 @@ def escaped(item: StackItem, card: CardDef | None) -> bool:
     )
 
 
-def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
-    assert item.oid is not None
-    obj = state.objects.get(item.oid)
-    if obj is None:
-        return
-    card = state.card_of(obj)
+def spell_target_specs(state: GameState, item: StackItem, card: CardDef) -> tuple:
+    """The target specs a spell on the stack declared its refs under.
+
+    Resolution re-checks against them (608.2b) and `choose_new_targets`
+    retargets against them (115.7), and the two have to agree -- the refs are
+    split positionally, so a different list mis-buckets every one of them.
+    """
 
     # Bestow (702.103a) is the one cast variant that changes what the spell
     # targets: the card declares none and the *rule* supplies "enchant
@@ -990,13 +998,23 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # bestow's specs are asked here: **declaration and resolution have to agree
     # about what the specs are.**
     #
-    # `filter_legal` below splits the stored refs into per-spec buckets and reads
+    # `filter_legal` splits the stored refs into per-spec buckets and reads
     # `TargetSpec.variable_size`, which is false for the printed `count: 1`. With
     # the substitution only in legality, a kicked Eagles stored two refs and then
     # bucketed one, orphaning the rest -- the card looked right at the prompt and
     # silently returned a single creature.
     if item.kicked and (swapped := kicked_targets(specs)) is not None:
         specs = swapped
+    return tuple(specs)
+
+
+def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
+    assert item.oid is not None
+    obj = state.objects.get(item.oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    specs = spell_target_specs(state, item, card)
     targets, any_legal = filter_legal(
         # `item.x` so 608.2b re-checks the target against the X that was
         # actually paid: "target ... with mana value X" is a question with an X

@@ -374,7 +374,10 @@ def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:
     # stopped, so the check reads who controls the spell or ability.
     if ctx.controller in ctx.state.opponents(pid) and player_has_hexproof(ctx.state, pid):
         return False
-    clause = spec.selector.get("controller", "any")
+    # `player_clause` is `player_selector` when the card narrowed only the
+    # player half ("target **opponent** or planeswalker"), else the selector's
+    # `controller` -- which on an `any` spec then narrows both halves.
+    clause = spec.player_clause
     if clause == "any":
         return True
     return pid in select_players(ctx, clause)
@@ -504,6 +507,7 @@ def target_count(
     source_oid: int | None,
     *,
     bindings: Mapping[str, Any] | None = None,
+    x: int = 0,
 ) -> int | str:
     """How many targets this spec asks for **right now** -- 601.2c's number.
 
@@ -536,6 +540,11 @@ def target_count(
     (`triggers` binds ``obj.cast_x``), so "when this artifact enters, support
     X" (Blitzball Stadium) sizes its targets by the X paid -- the same X the
     trigger's effects read once it is on the stack.
+
+    ``x`` is the X a spell announced, for the one caller that has it before the
+    targets are declared: a mode-owned "up to **X** target creatures" (Profane
+    Command) is declared by `Game._ask_mode_targets` after `_ask_x`, so the
+    number is the announced one rather than the zero legality enumerates at.
     """
     if isinstance(spec.count, int) or spec.count == "any":
         return spec.count
@@ -545,7 +554,7 @@ def target_count(
         controller=controller,
         source_oid=source_oid,
         bindings=bound,
-        x=int(bound.get("x", 0) or 0),
+        x=x or int(bound.get("x", 0) or 0),
     )
     return max(0, evaluate_value(ctx, spec.count))
 
@@ -781,7 +790,7 @@ def _spec_options(
     # four target creatures" defaulted to tapping none would be a different
     # card.
     empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-    count = target_count(state, controller, spec, source_oid, bindings=bindings)
+    count = target_count(state, controller, spec, source_oid, bindings=bindings, x=x)
     if count == "any" or spec.up_to:
         # "Any number of target creatures", and "up to X target creature
         # cards". A size the caster picks, so every subset up to the ceiling is
@@ -1017,7 +1026,7 @@ def enumerate_target_tuples(
 
 
 def selectable_modes(
-    state: GameState, controller: int, card, source_oid: int | None
+    state: GameState, controller: int, card, source_oid: int | None, *, x: int = 0
 ) -> list[int] | None:
     """Which modes 601.2b lets this spell choose from, or ``None`` for "all".
 
@@ -1029,6 +1038,11 @@ def selectable_modes(
     ``None`` rather than ``range(...)`` for a card with no mode-owned targets,
     so the caller can tell "every mode, as always" from "these three" without
     the loader having to know how many modes a card prints.
+
+    ``x`` is the X the cast announced, which 601.2b fixes before the modes are
+    chosen: "return target creature card with mana value **X** or less"
+    (Profane Command) has a legal choice only once X is a number. Legality,
+    which has no X yet, asks with the default 0.
     """
     if not getattr(card, "mode_targets", None):
         return None
@@ -1038,7 +1052,7 @@ def selectable_modes(
         index
         for index in range(total)
         if enumerate_target_tuples(
-            state, controller, card.mode_targets.get(index, ()), source_oid, limit=1
+            state, controller, card.mode_targets.get(index, ()), source_oid, limit=1, x=x
         )
     ]
 

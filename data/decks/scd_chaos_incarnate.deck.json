@@ -1,0 +1,711 @@
+{
+  "id": "scd_chaos_incarnate",
+  "name": "Chaos Incarnate",
+  "commanders": [
+    "kardur_doomscourge"
+  ],
+  "color_identity": [
+    "B",
+    "R"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "SCD",
+    "set_name": "Starter Commander Decks",
+    "date": "2022-12-02"
+  },
+  "notes": "Starter Commander Decks precon, card for card (https://mtgjson.com/api/v5/decks/ChaosIncarnate_SCD.json).",
+  "tags": [
+    "Goad",
+    "Punisher",
+    "Drain",
+    "Burn"
+  ],
+  "strategy": "Kardur, Doomscourge forces every opponent's creature to attack someone other than you, and every attacking creature that dies drains each opponent for 1, so the deck turns the table on itself and profits from the bloodshed. Geode Rager, Brash Taunter and Hate Mirage keep the fights going, Kazuul, Tyrant of the Cliffs taxes every attack with an Ogre, and Spiteful Visions, Guttersnipe, Thermo-Alchemist, Titan Hunter, Magmatic Force and Stormfist Crusader chip at every life total each turn while Dictate of the Twin Gods doubles it all. Breath of Malfegor, Fiery Confluence, Explosion of Riches and Profane Command close games, Blasphemous Act, Deadly Tempest, Reign of the Pit and Feed the Swarm clear the board, and Sign in Blood, Read the Bones, Bloodgift Demon and Ob Nixilis Reignited keep the cards coming.",
+  "archetype": "punisher",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 4,
+    "resilience": 2,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "kardur_doomscourge",
+      "why": "Until your next turn every opponent's creature must attack a player other than you, and each attacking creature that dies drains every opponent for 1."
+    },
+    {
+      "card_id": "dictate_of_the_twin_gods",
+      "why": "Flash in to double all damage, yours and the creatures Kardur sends at your opponents alike."
+    },
+    {
+      "card_id": "spiteful_visions",
+      "why": "Every player draws an extra card each draw step, and every card drawn deals 1 damage to its drawer."
+    },
+    {
+      "card_id": "kazuul_tyrant_of_the_cliffs",
+      "why": "Each creature that attacks you makes a 3/3 Ogre unless its controller pays {3}."
+    }
+  ],
+  "printings": {
+    "abrade": {
+      "scryfall_id": "778fad36-28d5-488b-bc7a-e60c8646bdc2",
+      "artist": "Dominik Mayer",
+      "set_code": "scd",
+      "collector_number": "122"
+    },
+    "akoum_refuge": {
+      "scryfall_id": "fd9b7070-7702-4e10-ad66-b2782590810e",
+      "artist": "Fred Fields",
+      "set_code": "scd",
+      "collector_number": "289"
+    },
+    "ambition_s_cost": {
+      "scryfall_id": "c56c3800-b6d5-44e8-8797-2d80070fd4d0",
+      "artist": "Zezhou Chen",
+      "set_code": "scd",
+      "collector_number": "66"
+    },
+    "arcane_signet": {
+      "scryfall_id": "02cb9420-fbfb-4123-a830-a992ff470db6",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "257"
+    },
+    "archfiend_of_depravity": {
+      "scryfall_id": "06bd7be3-20cb-4982-94d4-1f879f91654c",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "67"
+    },
+    "blasphemous_act": {
+      "scryfall_id": "70d1135e-ac1e-40f0-b47d-abc5b427ce55",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "124"
+    },
+    "bloodfell_caves": {
+      "scryfall_id": "c640715d-d8ab-458e-b0d8-8948ce85655e",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "scd",
+      "collector_number": "290"
+    },
+    "bloodgift_demon": {
+      "scryfall_id": "76f21afc-bd35-4b9f-8a31-15ef0fe3f0a7",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "69"
+    },
+    "brash_taunter": {
+      "scryfall_id": "86766f31-56f3-446e-950c-5238861e1b66",
+      "artist": "Svetlin Velinov",
+      "set_code": "scd",
+      "collector_number": "125"
+    },
+    "breath_of_malfegor": {
+      "scryfall_id": "0e855b4e-71c3-49b8-acd5-e509b1f6da5c",
+      "artist": "Vance Kovacs",
+      "set_code": "scd",
+      "collector_number": "218"
+    },
+    "burnished_hart": {
+      "scryfall_id": "ae40a6cf-9dd9-49c4-847c-de90c20d13ad",
+      "artist": "Yeong-Hao Han",
+      "set_code": "scd",
+      "collector_number": "260"
+    },
+    "chaos_warp": {
+      "scryfall_id": "07d3dbce-ef28-4c03-9b7b-92f1caaf1f01",
+      "artist": "Trevor Claxton",
+      "set_code": "scd",
+      "collector_number": "127"
+    },
+    "cinder_barrens": {
+      "scryfall_id": "27fd5194-4131-4a47-a29a-d36b36525808",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "294"
+    },
+    "combustible_gearhulk": {
+      "scryfall_id": "8a0d3d7a-6f6f-472e-bd4e-12d9c36b3b16",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "128"
+    },
+    "command_tower": {
+      "scryfall_id": "cae0c9e0-3be9-4151-9d59-658a032c30e9",
+      "artist": "Evan Shipard",
+      "set_code": "scd",
+      "collector_number": "297"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "686b4c7f-5b42-4625-8ff9-782795eec264",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "scd",
+      "collector_number": "261"
+    },
+    "coveted_jewel": {
+      "scryfall_id": "c4c39e75-bd88-44df-885a-44bce54d7dd2",
+      "artist": "Jason A. Engle",
+      "set_code": "scd",
+      "collector_number": "262"
+    },
+    "deadly_tempest": {
+      "scryfall_id": "dcf4fb19-db45-4dd6-9479-6fa065e86cb7",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "75"
+    },
+    "dictate_of_the_twin_gods": {
+      "scryfall_id": "61d6f304-680c-43ad-9686-61d8b0a0ad14",
+      "artist": "Jaime Jones",
+      "set_code": "scd",
+      "collector_number": "131"
+    },
+    "dredge_the_mire": {
+      "scryfall_id": "4194675b-0807-431c-9d47-7e51e5a1dac0",
+      "artist": "Lie Setiawan",
+      "set_code": "scd",
+      "collector_number": "76"
+    },
+    "explosion_of_riches": {
+      "scryfall_id": "e28ed670-eae0-4a39-bf3d-73b687327f0f",
+      "artist": "Chris Seaman",
+      "set_code": "scd",
+      "collector_number": "140"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "57a77cbc-cbe9-44b4-9651-6967a02c7e75",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "scd",
+      "collector_number": "77"
+    },
+    "fiery_confluence": {
+      "scryfall_id": "f6ff58e0-c938-458b-adea-9aa0b566a19b",
+      "artist": "Kieran Yanner",
+      "set_code": "scd",
+      "collector_number": "141"
+    },
+    "foreboding_ruins": {
+      "scryfall_id": "dc9055a5-c9fe-477b-a430-68b53fcea0c2",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "300"
+    },
+    "geode_rager": {
+      "scryfall_id": "f6ba7b25-02bd-4e01-9920-ec84e89250b3",
+      "artist": "Caio Monteiro",
+      "set_code": "scd",
+      "collector_number": "144"
+    },
+    "guttersnipe": {
+      "scryfall_id": "1e8f9ef5-762f-438f-b06b-9c30c4e364f0",
+      "artist": "Mathias Kollros",
+      "set_code": "scd",
+      "collector_number": "145"
+    },
+    "hate_mirage": {
+      "scryfall_id": "ea074c36-7116-4513-8064-2a12a2257db6",
+      "artist": "Tyler Walpole",
+      "set_code": "scd",
+      "collector_number": "146"
+    },
+    "indulgent_tormentor": {
+      "scryfall_id": "ff621292-fd89-401b-8306-02cd22b3bb60",
+      "artist": "Wesley Burt",
+      "set_code": "scd",
+      "collector_number": "81"
+    },
+    "kaervek_the_merciless": {
+      "scryfall_id": "df111928-8f05-460c-989b-6cfc5cf5cd0f",
+      "artist": "Heonhwa",
+      "set_code": "scd",
+      "collector_number": "233"
+    },
+    "kardur_doomscourge": {
+      "scryfall_id": "19e4d494-e8b3-4ae2-93e3-70c65ab90f15",
+      "artist": "Helge C. Balzer",
+      "set_code": "scd",
+      "collector_number": "5"
+    },
+    "kazuul_tyrant_of_the_cliffs": {
+      "scryfall_id": "b986e9e1-7233-4817-855c-68b7249d00f7",
+      "artist": "Paul Bonner",
+      "set_code": "scd",
+      "collector_number": "148"
+    },
+    "lightning_greaves": {
+      "scryfall_id": "f4b6e6fb-f6b5-436d-95eb-47331e60cb52",
+      "artist": "Jeremy Jarvis",
+      "set_code": "scd",
+      "collector_number": "269"
+    },
+    "magmatic_force": {
+      "scryfall_id": "146e7071-d4b7-4280-842f-16af580b5b3d",
+      "artist": "Jung Park",
+      "set_code": "scd",
+      "collector_number": "150"
+    },
+    "mana_geyser": {
+      "scryfall_id": "c9b8b1cf-4dbf-4ddb-ab41-31e482cc573b",
+      "artist": "Martina Pilcerova",
+      "set_code": "scd",
+      "collector_number": "151"
+    },
+    "molten_slagheap": {
+      "scryfall_id": "881f92f8-ba27-49a3-a753-b082612f9acf",
+      "artist": "Daren Bader",
+      "set_code": "scd",
+      "collector_number": "309"
+    },
+    "mountain": {
+      "scryfall_id": "77c65a79-b8ae-4743-b124-c34140a06731",
+      "artist": "Sam Burley",
+      "set_code": "scd",
+      "collector_number": "345"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "4cc77517-3455-4394-862e-43606abb7469",
+      "artist": "Jonas De Ro",
+      "set_code": "scd",
+      "collector_number": "311"
+    },
+    "nihil_spellbomb": {
+      "scryfall_id": "b1705dce-d655-4934-847f-edb2ffeeca00",
+      "artist": "Franz Vohwinkel",
+      "set_code": "scd",
+      "collector_number": "270"
+    },
+    "ob_nixilis_reignited": {
+      "scryfall_id": "71c285f6-1e6b-43b1-9af2-edb68e9cc30e",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "96"
+    },
+    "profane_command": {
+      "scryfall_id": "d2ab6949-a0fc-4fe5-ae64-53b53914f34c",
+      "artist": "Wayne England",
+      "set_code": "scd",
+      "collector_number": "99"
+    },
+    "rakdos_charm": {
+      "scryfall_id": "e6d8932c-e88f-4adc-b1e6-2ed687ab7aaf",
+      "artist": "Zoltan Boros",
+      "set_code": "scd",
+      "collector_number": "239"
+    },
+    "rakdos_signet": {
+      "scryfall_id": "b75d1464-8c8b-4a1a-90c5-3ff21e8d1a5b",
+      "artist": "Martina Pilcerova",
+      "set_code": "scd",
+      "collector_number": "272"
+    },
+    "rakshasa_debaser": {
+      "scryfall_id": "11e16fad-925a-4b59-8612-362f650e09e1",
+      "artist": "Yigit Koroglu",
+      "set_code": "scd",
+      "collector_number": "100"
+    },
+    "read_the_bones": {
+      "scryfall_id": "b6462949-9a13-4f7d-9656-658e7f7f1116",
+      "artist": "Lars Grant-West",
+      "set_code": "scd",
+      "collector_number": "101"
+    },
+    "reign_of_the_pit": {
+      "scryfall_id": "098c7cd1-5f20-437d-9b81-f480f3f02833",
+      "artist": "Evan Shipard",
+      "set_code": "scd",
+      "collector_number": "102"
+    },
+    "sangromancer": {
+      "scryfall_id": "6c503202-b7e4-4c98-8276-729ace2af390",
+      "artist": "Igor Kieryluk",
+      "set_code": "scd",
+      "collector_number": "103"
+    },
+    "scythe_specter": {
+      "scryfall_id": "232afb53-8799-4d45-a3b5-f29ff5afc0c3",
+      "artist": "Vincent Proce",
+      "set_code": "scd",
+      "collector_number": "105"
+    },
+    "sepulchral_primordial": {
+      "scryfall_id": "5e4064a4-98e6-41e0-b099-ef97c5dd86f6",
+      "artist": "Stephan Martiniere",
+      "set_code": "scd",
+      "collector_number": "106"
+    },
+    "sign_in_blood": {
+      "scryfall_id": "96f4824c-61d4-4ffa-904e-c8ae97350704",
+      "artist": "Howard Lyon",
+      "set_code": "scd",
+      "collector_number": "107"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "734dc7f3-b370-48ca-b6f7-2d4423797bbf",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "319"
+    },
+    "sol_ring": {
+      "scryfall_id": "1b023575-4cb5-434f-92ef-d3b81aaa3c3e",
+      "artist": "Mike Bierek",
+      "set_code": "scd",
+      "collector_number": "276"
+    },
+    "solemn_simulacrum": {
+      "scryfall_id": "51f0884d-e452-402c-9cb3-804b5bb9e055",
+      "artist": "Donato Giancola",
+      "set_code": "scd",
+      "collector_number": "277"
+    },
+    "soul_shatter": {
+      "scryfall_id": "25bc7936-4c85-47d5-8ac4-094403bd5edb",
+      "artist": "Wylie Beckert",
+      "set_code": "scd",
+      "collector_number": "108"
+    },
+    "spiteful_visions": {
+      "scryfall_id": "0d0c6527-a82e-4435-b3fd-6f605985c952",
+      "artist": "Brandon Kitkouski",
+      "set_code": "scd",
+      "collector_number": "245"
+    },
+    "stensia_bloodhall": {
+      "scryfall_id": "4c936ea7-8802-4ae7-9d85-4b873cbd56ce",
+      "artist": "John Avon",
+      "set_code": "scd",
+      "collector_number": "320"
+    },
+    "stormfist_crusader": {
+      "scryfall_id": "4b91f3e2-8844-4a0c-bbcf-a156bff29bde",
+      "artist": "Chris Rallis",
+      "set_code": "scd",
+      "collector_number": "247"
+    },
+    "sunbird_s_invocation": {
+      "scryfall_id": "80ca8daf-0898-4740-977b-6a145721f667",
+      "artist": "Christine Choi",
+      "set_code": "scd",
+      "collector_number": "159"
+    },
+    "swamp": {
+      "scryfall_id": "feb9faf5-8f7b-4d0d-a3ca-963832e7f711",
+      "artist": "Jonas De Ro",
+      "set_code": "scd",
+      "collector_number": "341"
+    },
+    "syphon_mind": {
+      "scryfall_id": "5987343f-ce72-4a25-8667-571fc0dbb809",
+      "artist": "Jeff Easley",
+      "set_code": "scd",
+      "collector_number": "111"
+    },
+    "talisman_of_indulgence": {
+      "scryfall_id": "09d2ef86-06e5-4857-9a2e-570871573298",
+      "artist": "Mike Dringenberg",
+      "set_code": "scd",
+      "collector_number": "282"
+    },
+    "tectonic_giant": {
+      "scryfall_id": "449c7351-ff39-4597-9f81-b8665f76bce7",
+      "artist": "Slawomir Maniak",
+      "set_code": "scd",
+      "collector_number": "161"
+    },
+    "temple_of_malice": {
+      "scryfall_id": "dc85a92c-4c2c-4e0d-af2d-de84b3ab1b79",
+      "artist": "Jonas De Ro",
+      "set_code": "scd",
+      "collector_number": "326"
+    },
+    "terminate": {
+      "scryfall_id": "20c521dc-f537-4707-81aa-defa20df57df",
+      "artist": "Lucas Graciano",
+      "set_code": "scd",
+      "collector_number": "249"
+    },
+    "theater_of_horrors": {
+      "scryfall_id": "9ca8e39d-832a-4746-9bfc-c6ff9b2508ae",
+      "artist": "Daarken",
+      "set_code": "scd",
+      "collector_number": "250"
+    },
+    "thermo_alchemist": {
+      "scryfall_id": "98c79cd4-c084-4c01-beeb-70fb12dd6e69",
+      "artist": "Raymond Swanland",
+      "set_code": "scd",
+      "collector_number": "162"
+    },
+    "titan_hunter": {
+      "scryfall_id": "7b7655b2-3367-478e-81b7-d8fca8911c9b",
+      "artist": "Matt Stewart",
+      "set_code": "scd",
+      "collector_number": "112"
+    },
+    "unlicensed_disintegration": {
+      "scryfall_id": "dd56ade4-37aa-444f-ad54-15cf0468824e",
+      "artist": "Izzy",
+      "set_code": "scd",
+      "collector_number": "255"
+    },
+    "urborg_volcano": {
+      "scryfall_id": "1a933ff7-163f-429c-872e-eba90e9e96a5",
+      "artist": "Tony Szczudlo",
+      "set_code": "scd",
+      "collector_number": "331"
+    },
+    "vampire_nighthawk": {
+      "scryfall_id": "51901ebb-27ba-4dc3-9224-2bd31024c2b7",
+      "artist": "Jason Chan",
+      "set_code": "scd",
+      "collector_number": "115"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "ef1f727a-79d3-42a6-aa20-fa55499a4979",
+      "artist": "Darrell Riche",
+      "set_code": "scd",
+      "collector_number": "287"
+    },
+    "wild_ricochet": {
+      "scryfall_id": "ecbe8717-07a1-4145-9cd4-b98b145c2d4c",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "169"
+    },
+    "wildfire_devils": {
+      "scryfall_id": "3c876360-3608-422a-b709-84b32be8daa0",
+      "artist": "Izzy",
+      "set_code": "scd",
+      "collector_number": "170"
+    },
+    "worn_powerstone": {
+      "scryfall_id": "98f3692a-b599-43d8-96ec-4b78e06e8d7d",
+      "artist": "Henry G. Higginbotham",
+      "set_code": "scd",
+      "collector_number": "288"
+    }
+  },
+  "cards": [
+    {
+      "id": "abrade"
+    },
+    {
+      "id": "akoum_refuge"
+    },
+    {
+      "id": "ambition_s_cost"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "archfiend_of_depravity"
+    },
+    {
+      "id": "blasphemous_act"
+    },
+    {
+      "id": "bloodfell_caves"
+    },
+    {
+      "id": "bloodgift_demon"
+    },
+    {
+      "id": "brash_taunter"
+    },
+    {
+      "id": "breath_of_malfegor"
+    },
+    {
+      "id": "burnished_hart"
+    },
+    {
+      "id": "chaos_warp"
+    },
+    {
+      "id": "cinder_barrens"
+    },
+    {
+      "id": "combustible_gearhulk"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "coveted_jewel"
+    },
+    {
+      "id": "deadly_tempest"
+    },
+    {
+      "id": "dictate_of_the_twin_gods"
+    },
+    {
+      "id": "dredge_the_mire"
+    },
+    {
+      "id": "explosion_of_riches"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "fiery_confluence"
+    },
+    {
+      "id": "foreboding_ruins"
+    },
+    {
+      "id": "geode_rager"
+    },
+    {
+      "id": "guttersnipe"
+    },
+    {
+      "id": "hate_mirage"
+    },
+    {
+      "id": "indulgent_tormentor"
+    },
+    {
+      "id": "kaervek_the_merciless"
+    },
+    {
+      "id": "kazuul_tyrant_of_the_cliffs"
+    },
+    {
+      "id": "lightning_greaves"
+    },
+    {
+      "id": "magmatic_force"
+    },
+    {
+      "id": "mana_geyser"
+    },
+    {
+      "id": "molten_slagheap"
+    },
+    {
+      "id": "mountain",
+      "qty": 14
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "nihil_spellbomb"
+    },
+    {
+      "id": "ob_nixilis_reignited"
+    },
+    {
+      "id": "profane_command"
+    },
+    {
+      "id": "rakdos_charm"
+    },
+    {
+      "id": "rakdos_signet"
+    },
+    {
+      "id": "rakshasa_debaser"
+    },
+    {
+      "id": "read_the_bones"
+    },
+    {
+      "id": "reign_of_the_pit"
+    },
+    {
+      "id": "sangromancer"
+    },
+    {
+      "id": "scythe_specter"
+    },
+    {
+      "id": "sepulchral_primordial"
+    },
+    {
+      "id": "sign_in_blood"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "solemn_simulacrum"
+    },
+    {
+      "id": "soul_shatter"
+    },
+    {
+      "id": "spiteful_visions"
+    },
+    {
+      "id": "stensia_bloodhall"
+    },
+    {
+      "id": "stormfist_crusader"
+    },
+    {
+      "id": "sunbird_s_invocation"
+    },
+    {
+      "id": "swamp",
+      "qty": 15
+    },
+    {
+      "id": "syphon_mind"
+    },
+    {
+      "id": "talisman_of_indulgence"
+    },
+    {
+      "id": "tectonic_giant"
+    },
+    {
+      "id": "temple_of_malice"
+    },
+    {
+      "id": "terminate"
+    },
+    {
+      "id": "theater_of_horrors"
+    },
+    {
+      "id": "thermo_alchemist"
+    },
+    {
+      "id": "titan_hunter"
+    },
+    {
+      "id": "unlicensed_disintegration"
+    },
+    {
+      "id": "urborg_volcano"
+    },
+    {
+      "id": "vampire_nighthawk"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "wild_ricochet"
+    },
+    {
+      "id": "wildfire_devils"
+    },
+    {
+      "id": "worn_powerstone"
+    }
+  ]
+}

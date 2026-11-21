@@ -30,6 +30,7 @@ from .player_statics import (
     attack_compelled,
     attack_defender_forbidden,
     attack_forbidden,
+    attack_goaders,
     attack_tax,
     attacked_player_forbidden,
     block_alone_forbidden,
@@ -37,7 +38,6 @@ from .player_statics import (
     block_only_refused,
     block_tax,
     defender_waived,
-    goaders,
     static_attack_defenders,
 )
 from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
@@ -234,8 +234,9 @@ def attack_required(state: GameState, oid: int) -> bool:
     # `discharge_attack_requirements` touches `must_attack` and nothing else, so
     # a goaded creature is compelled again by the *next* combat and the one
     # after, until its goader untaps. That is the whole reason goad could not be
-    # `must_attack` with a third duration. `goaders` also reads the `goaded`
-    # static, a goad with no clock that lasts while the static applies.
+    # `must_attack` with a third duration. `attack_goaders` also reads the
+    # `goaded` static, a goad with no clock that lasts while the static applies,
+    # and goad's requirements without the goad (Kardur, Doomscourge).
     #
     # All three are "…if able", so all three go through `can_attack` below.
     # A fourth: Gideon Jura's mark on a planeswalker, read live for its turn
@@ -245,7 +246,7 @@ def attack_required(state: GameState, oid: int) -> bool:
     # those seats is open to this creature.
     if (
         not attack_compelled(state, oid)
-        and not goaders(state, oid)
+        and not attack_goaders(state, oid)
         and not required_attack_walkers(state, oid)
         and not required_attack_defenders(state, oid)
     ):
@@ -480,7 +481,7 @@ def attack_target_forbidden(
     # "…if able" is the guard, and it is the difference between a restriction and
     # a rule that can make a declaration impossible: with the goader the only
     # thing left to attack, the creature attacks the goader.
-    goaded_by = goaders(state, oid)
+    goaded_by = attack_goaders(state, oid)
     if goaded_by and defender in goaded_by:
         return _has_non_goader_defender(state, oid, goaded_by)
     return False
@@ -645,7 +646,7 @@ def _misses_attack_requirements(
     target is scored and anything below the best is refused; ties are all
     allowed, so the player still chooses between equally obedient attacks.
     """
-    goaded_by = goaders(state, oid)
+    goaded_by = attack_goaders(state, oid)
 
     def score(seat: int, pw: int | None) -> int:
         points = 1 if pw is not None and pw in required else 0

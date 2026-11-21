@@ -316,6 +316,8 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                     f"permanents are tapped, X announced as the ability is activated"
                 )
         validate_selector(tap_x, f"{where}.cost.tap_x")
+    if model.remove_counters_x is not None:
+        _validate_remove_counters_x(model, where, defines_x=defines_x)
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
     if model.blight < 0:
@@ -438,6 +440,60 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     cost = Cost.from_spec(model.model_dump())
     assert cost is not None  # model_dump() is never None
     return cost
+
+
+def _validate_remove_counters_x(model, where: str, *, defines_x: bool) -> None:
+    """Refuse a ``remove_counters_x`` that would load and mean something else.
+
+    "Remove X storage counters from this land". `tap_x`'s refusals -- only an
+    activated ability announces it, and one X per ability -- plus its own
+    keys: ``counter`` (a kind) and ``from`` (a selector), nothing else, since
+    X is the amount and the cost names no number of its own.
+    """
+    at = f"{where}.cost.remove_counters_x"
+    spec = dict(model.remove_counters_x)
+    if not defines_x:
+        raise DslError(
+            f"{where}.cost: 'remove_counters_x' is announced as an activated "
+            f"ability is activated, and this is not one -- nothing else would ask for X"
+        )
+    if (
+        "X" in str(model.mana or "").upper()
+        or model.pay_life_x
+        or model.loyalty_x
+        or model.discard_x
+        or model.sacrifice_x is not None
+        or model.tap_x is not None
+    ):
+        raise DslError(
+            f"{where}.cost: 'remove_counters_x' announces this ability's X, so the "
+            f"cost may not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', "
+            f"'discard_x', 'sacrifice_x' or 'tap_x'"
+        )
+    unknown = set(spec) - {"counter", "from"}
+    if unknown:
+        raise DslError(
+            f"{at}: takes only 'counter' (a kind) and 'from' (a selector); X is "
+            f"the amount, announced as the ability is activated (got {sorted(unknown)})"
+        )
+    if "counter" in spec:
+        kind = spec["counter"]
+        if not isinstance(kind, str) or not kind:
+            raise DslError(f"{at}.counter: a counter kind, got {kind!r}")
+        validate_counter_kind(kind, f"{at}.counter")
+    if "from" in spec:
+        selector = spec["from"]
+        if not isinstance(selector, Mapping):
+            raise DslError(f"{at}.from: a selector over the battlefield, got {selector!r}")
+        validate_selector(dict(selector), f"{at}.from")
+    elif "counter" not in spec:
+        # Off the source with no kind named: "Remove X counters from this" is
+        # printed nowhere, and a typo dropping `counter` would turn Molten
+        # Slagheap's storage counters into any counters at all.
+        raise DslError(
+            f"{at}: name the 'counter' kind taken off the source, or a 'from' "
+            f"selector for the one permanent the payer picks"
+        )
 
 
 def _validate_sacrifice_parts(parts: list[Any], where: str, *, defines_x: bool) -> None:

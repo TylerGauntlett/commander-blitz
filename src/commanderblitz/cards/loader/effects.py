@@ -1758,6 +1758,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not isinstance(effect["new_targets"], bool):
             raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    for key in ("must_change", "all_on_stack"):
+        # `choose_new_targets`' two switches. Anywhere else "change the target"
+        # would load and redirect nothing.
+        if key in effect:
+            if op != "choose_new_targets":
+                raise DslError(f"{where}: {key!r} only applies to choose_new_targets, not {op!r}")
+            if not isinstance(effect[key], bool):
+                raise DslError(f"{where}: {key!r} is a boolean, got {effect[key]!r}")
+    if op == "choose_new_targets":
+        # The op retargets objects on the stack by `target` (a declared spell
+        # or ability target) or, with `all_on_stack`, every one of them. A
+        # `target` naming a permanent or a player finds no stack object and
+        # the card resolves having redirected nothing.
+        if effect.get("all_on_stack"):
+            if "target" in effect:
+                raise DslError(
+                    f"{where}: choose_new_targets' 'all_on_stack' replaces 'target'"
+                )
+        else:
+            tid = str(effect.get("target", "t1"))
+            if tid not in target_kinds:
+                raise DslError(
+                    f"{where}: choose_new_targets references target {tid!r} "
+                    f"which the card does not declare"
+                )
+            if target_kinds[tid] not in ("spell", "spell_or_ability", "ability_on_stack"):
+                raise DslError(
+                    f"{where}: choose_new_targets needs a target of kind 'spell', "
+                    f"'spell_or_ability' or 'ability_on_stack', and {tid!r} is "
+                    f"{target_kinds[tid]!r}"
+                )
+        if "objects" in effect:
+            raise DslError(
+                f"{where}: choose_new_targets reads no 'objects' -- it takes the "
+                f"stack object its 'target' names, or 'all_on_stack'"
+            )
     if "this_spell" in effect:
         # "You may copy this spell" said by the resolving spell itself. Only a
         # spell's own effects have a resolving spell to name, and beside
@@ -1841,6 +1877,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+        if "random" in effect:
+            # "Choose a player at random" -- nobody is asked, so a prompt would
+            # load and never be shown, and a non-boolean would read as a choice.
+            if not isinstance(effect["random"], bool):
+                raise DslError(f"{where}: 'random' is a boolean, got {effect['random']!r}")
+            if effect["random"] and effect.get("prompt"):
+                raise DslError(
+                    f"{where}: a 'random' choose_player asks nobody, so its "
+                    f"'prompt' would never be shown"
+                )
     if op == "manifest" and "controller" in effect and effect["controller"] != "you":
         # "You manifest the top card of that player's library." The only value
         # is "you": without the key the library's player manifests it, which is
@@ -2289,6 +2335,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"next turn (701.38a), which is a player and not a number. "
                 f"Use must_attack for a one-combat requirement"
             )
+        # `goaded: false` is goad's requirements without the goad (Kardur,
+        # Doomscourge). A boolean, and only on the timed clock: no printed
+        # card asks for "the rest of the game" without the word goaded.
+        if "goaded" in effect:
+            if not isinstance(effect["goaded"], bool):
+                raise DslError(
+                    f"{where}: goad's 'goaded' is true or false -- false lays goad's "
+                    f"two requirements without making the creatures goaded"
+                )
+            if effect["goaded"] is False and "duration" in effect:
+                raise DslError(
+                    f"{where}: goad with 'goaded': false takes no 'duration' -- its "
+                    f"requirements last until the player's next turn (Kardur, "
+                    f"Doomscourge); no printed card holds them for the rest of the game"
+                )
         # The goader defaults to the effect's controller, which is every printed
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
@@ -3054,6 +3115,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown 'playable_condition' {effect['playable_condition']!r} "
                 f"(implemented: {sorted(PLAYABLE_CONDITIONS)})"
+            )
+        if effect[
+            "playable_condition"
+        ] == "your_turn_opponent_lost_life_exiled_with_source" and not (
+            op in ("exile", "look_at_top") and effect.get("link") is True
+        ):
+            # "…from among cards exiled with this enchantment" (Theater of
+            # Horrors) is read off the exile link, so the op making the cards
+            # has to write it; without one the condition never holds and the
+            # card loads as one whose permission silently never opens.
+            raise DslError(
+                f"{where}: 'playable_condition': "
+                f"\"your_turn_opponent_lost_life_exiled_with_source\" reads the "
+                f"cards exiled with the source, so it needs the exiling op to "
+                f"link them (exile or look_at_top with 'link': true)"
             )
     if op == "become_copy" and "except_" in effect:
         # Read only when the copy resolves: a misspelt key or keyword would
@@ -4342,6 +4418,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if not (isinstance(effect["snapshot"], str) and effect["snapshot"]):
             raise DslError(
                 f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
+            )
+    if op == "sacrifice" and "players" in effect:
+        # "Each player sacrifices a creature" as one action (701.21a, 101.4).
+        # Each named player chooses among what they control, so a written
+        # `controller` or `chooser` would be overridden and read as the card
+        # meaning something it does not -- refused rather than ignored.
+        _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+        objects = effect.get("objects")
+        clash = sorted({"controller", "chooser"} & set(objects or ())) if isinstance(objects, Mapping) else []
+        if clash:
+            raise DslError(
+                f"{where}: sacrifice with 'players' has each of those players choose "
+                f"among the permanents they control, so its 'objects' cannot also "
+                f"name {clash}"
             )
     if op == "flip_coin":
         # "Flip a coin. If you lose the flip, ..." A non-list branch would be

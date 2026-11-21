@@ -79,6 +79,11 @@ class TargetSpec:
     #: **creature**" (Fatehold Charm). ``None`` means both halves read
     #: `selector`. See :attr:`permanent_half`.
     permanent_selector: Mapping[str, Any] | None = None
+    #: An ``"any"`` spec's player spec for its **player** half, when the printed
+    #: word narrows only the players -- "target **opponent** or planeswalker".
+    #: ``None`` means the player half reads `selector`'s ``controller``. See
+    #: :attr:`player_clause`.
+    player_selector: str | Mapping[str, Any] | None = None
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
     #: last, because `filter_legal` slices the stored refs spec by spec and a
@@ -203,6 +208,20 @@ class TargetSpec:
         if self.permanent_selector is not None:
             return self.permanent_selector
         return self.selector
+
+    @property
+    def player_clause(self) -> str | Mapping[str, Any]:
+        """The player spec a seat is checked against for this spec.
+
+        `player_selector` when the card wrote one, else `selector`'s
+        ``controller`` (``"any"`` when absent). Read by
+        `targeting._player_allowed`, which both `candidates` and `still_legal`
+        ask, so the seats a target is offered from and re-checked against
+        cannot disagree.
+        """
+        if self.player_selector is not None:
+            return self.player_selector
+        return self.selector.get("controller", "any")
 
     @property
     def graveyard_half(self) -> Mapping[str, Any]:
@@ -508,6 +527,21 @@ class Cost:
     #: ``add_mana`` ``amount`` included -- read X back with ``{"x": true}``.
     #: Not ``tap_permanents`` with a ``count``, which is a number the card fixes.
     tap_x: Mapping[str, Any] | None = None
+    #: "{1}, **Remove X storage counters from this land**: Add X mana in any
+    #: combination of {B} and/or {R}." -- Molten Slagheap. ``{"counter": kind}``
+    #: takes X counters of that kind off the source; ``{"from": selector}``
+    #: instead takes them all off **one** permanent the payer picks from the
+    #: selector's pool (Moxite Refinery's "from an artifact or creature you
+    #: control"), and without ``counter`` the X may be of any kinds. The
+    #: controller announces X as the ability is activated (601.2b, 107.3),
+    #: bounded by the counters one permanent carries
+    #: (`costs.remove_counters_x_ceiling`), and exactly that many come off as
+    #: the cost; the effects -- a mana ability's ``add_mana`` ``amount``
+    #: included -- read X back with ``{"x": true}``. Not ``remove_counters``,
+    #: whose amount is a number the card fixes, and not
+    #: ``remove_counters_from_among``, which splits a fixed count across
+    #: several permanents.
+    remove_counters_x: Mapping[str, Any] | None = None
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -589,6 +623,11 @@ class Cost:
             discard_x=bool(spec.get("discard_x")),
             sacrifice_x=(dict(spec["sacrifice_x"]) if spec.get("sacrifice_x") else None),
             tap_x=(dict(spec["tap_x"]) if spec.get("tap_x") is not None else None),
+            remove_counters_x=(
+                dict(spec["remove_counters_x"])
+                if spec.get("remove_counters_x") is not None
+                else None
+            ),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -664,10 +703,16 @@ class Cost:
     def takes_x(self) -> bool:
         """Does this cost announce an X bounded by what it takes?
 
-        "Discard X cards", "Sacrifice X Foods", "Tap X untapped tokens" --
-        `costs.cost_x_ceiling` bounds each. The X a mana ability can read.
+        "Discard X cards", "Sacrifice X Foods", "Tap X untapped tokens",
+        "Remove X storage counters from this land" -- `costs.cost_x_ceiling`
+        bounds each. The X a mana ability can read.
         """
-        return self.discard_x or self.sacrifice_x is not None or self.tap_x is not None
+        return (
+            self.discard_x
+            or self.sacrifice_x is not None
+            or self.tap_x is not None
+            or self.remove_counters_x is not None
+        )
 
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
@@ -690,6 +735,7 @@ class Cost:
             and not self.discard_x
             and self.sacrifice_x is None
             and self.tap_x is None
+            and self.remove_counters_x is None
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -777,6 +823,11 @@ class Cost:
                 parts.append("Pay X {E}")
         if self.remove_counters:
             parts.append("Remove counters")
+        if self.remove_counters_x is not None:
+            kind = self.remove_counters_x.get("counter")
+            named = f" {kind}" if kind else ""
+            where = "a permanent" if self.remove_counters_x.get("from") is not None else "this"
+            parts.append(f"Remove X{named} counters from {where}")
         if self.put_counters:
             amount = self.put_counters.get("amount", 1)
             kind = self.put_counters.get("counter", "")

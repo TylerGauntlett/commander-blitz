@@ -1,0 +1,81 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_opponent_or_planeswalker.py. t_oop_pinger is Theater of Horrors' activated ability on its own: one 'any' target whose player_selector narrows only the player half to opponents, its selector the permanent half to planeswalkers of any controller. t_oop_narrow is the near miss with controller 'opponent' in the selector, which also drops your own planeswalkers; t_oop_wide the other, with no controller at all, which lets you target yourself.",
+  "cards": [
+    {
+      "id": "t_oop_pinger",
+      "name": "Test Opponent or Planeswalker Pinger",
+      "oracle_text": "{R}: This enchantment deals 1 damage to target opponent or planeswalker.",
+      "mana_cost": "{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{R}: This enchantment deals 1 damage to target opponent or planeswalker.",
+          "cost": {"mana": "{R}"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "count": 1,
+              "selector": {"types": ["Planeswalker"]},
+              "player_selector": "opponent"
+            }
+          ],
+          "effects": [{"op": "damage", "amount": {"const": 1}, "target": "t1"}]
+        }
+      ]
+    },
+    {
+      "id": "t_oop_narrow",
+      "name": "Test Opponent or Their Planeswalker Pinger",
+      "oracle_text": "{R}: This enchantment deals 1 damage to target opponent or planeswalker an opponent controls.",
+      "mana_cost": "{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{R}: This enchantment deals 1 damage to target opponent or planeswalker an opponent controls.",
+          "cost": {"mana": "{R}"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "count": 1,
+              "selector": {"types": ["Planeswalker"], "controller": "opponent"}
+            }
+          ],
+          "effects": [{"op": "damage", "amount": {"const": 1}, "target": "t1"}]
+        }
+      ]
+    },
+    {
+      "id": "t_oop_wide",
+      "name": "Test Player or Planeswalker Pinger",
+      "oracle_text": "{R}: This enchantment deals 1 damage to target player or planeswalker.",
+      "mana_cost": "{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{R}: This enchantment deals 1 damage to target player or planeswalker.",
+          "cost": {"mana": "{R}"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "count": 1,
+              "selector": {"types": ["Planeswalker"]}
+            }
+          ],
+          "effects": [{"op": "damage", "amount": {"const": 1}, "target": "t1"}]
+        }
+      ]
+    }
+  ]
+}

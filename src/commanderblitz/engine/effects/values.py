@@ -1285,6 +1285,14 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
             return int(value.get(which, 0))
         if isinstance(value, int):
             return _from_oid(ctx, value, which)
+        if isinstance(value, list):
+            # A list of snapshots -- `sacrifice`'s `snapshot` under `players`,
+            # one per permanent -- is "the total power of the creatures
+            # sacrificed this way" (Reign of the Pit), summed as the `target`
+            # form sums. Only snapshot entries count: an oid in a recorded `as`
+            # list now names a graveyard card, whose printed power is not
+            # what it had.
+            return sum(int(snap.get(which, 0)) for snap in value if isinstance(snap, Mapping))
         return 0
     if isinstance(ref, Mapping) and "self" in ref:
         return _from_oid(ctx, ctx.source_oid, which) if ctx.source_oid else 0

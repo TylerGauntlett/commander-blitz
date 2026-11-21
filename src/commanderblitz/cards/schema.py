@@ -129,6 +129,17 @@ class CostModel(BaseModel):
     #: Activated abilities only. No ``count``, ``total_power`` or ``as``; not
     #: beside ``tap_permanents`` and not beside another announced X.
     tap_x: dict[str, Any] | None = None
+    #: "{1}, **Remove X storage counters from this land**:" -- Molten
+    #: Slagheap. ``{"counter": kind}`` takes X counters of that kind off the
+    #: source; ``{"from": selector}`` takes all X off **one** permanent the
+    #: payer picks (``controller`` defaults to you), of the named ``counter``
+    #: kind or, without it, of any kinds -- Moxite Refinery's "Remove X
+    #: counters from an artifact or creature you control". X is announced as
+    #: the ability is activated, bounded by the most counters on one such
+    #: permanent, and the effects -- a mana ability's ``add_mana`` ``amount``
+    #: included -- read it back with ``{"x": true}``. Activated abilities
+    #: only; no other keys, and not beside another announced X.
+    remove_counters_x: dict[str, Any] | None = None
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix
@@ -389,6 +400,16 @@ class TargetModel(BaseModel):
     #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
+    #: The player spec the **player half** of a ``"any"`` target reads instead
+    #: of `selector`'s ``controller`` -- "target **opponent** or planeswalker"
+    #: (Theater of Horrors, Collective Defiance), where "opponent" narrows only
+    #: the players: any planeswalker is legal, your own included (115.4), and of
+    #: the players only an opponent. `selector` then narrows the permanent half
+    #: alone, its ``controller`` included. Absent, both halves read `selector`,
+    #: which is Balefire Liege's "target player or planeswalker". Refused on
+    #: every other kind, as ``"any"`` (the absent field already means that),
+    #: and when it names a sibling target.
+    player_selector: str | dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.
     #: `count: N, optional: true` is not the same thing and cannot stand in: it

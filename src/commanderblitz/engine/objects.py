@@ -1141,6 +1141,16 @@ class GameObject:
     #: still end when the goader leaves the game (800.4a) or the creature
     #: leaves the battlefield (400.7).
     goaded_permanently_by: set[int] = field(default_factory=set)
+    #: Goad's two requirements **without** the goaded designation: "until your
+    #: next turn, creatures your opponents control attack each combat if able
+    #: and attack a player other than you if able" (Kardur, Doomscourge), whose
+    #: ruling is that the creatures are not goaded. The players here are read
+    #: beside :attr:`goaded_by` by `player_statics.attack_goaders` -- the
+    #: compulsion and the target restriction -- and by nothing that asks whether
+    #: a creature *is* goaded (`player_statics.goaders`, the ``goaded`` filter),
+    #: and `ungoad` leaves them alone. The clock is goad's: `clear_goad` at the
+    #: player's untap step, or when the player leaves the game (800.4a).
+    goad_requirements_by: set[int] = field(default_factory=set)
     #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
     #: and "until your next turn, prevent all damage target permanent would
     #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
@@ -1462,6 +1472,7 @@ class GameObject:
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
         self.goaded_permanently_by = set()
+        self.goad_requirements_by = set()
         # And no longer the permanent a prevention shield was aimed at.
         self.damage_shields = []
         # Nor the planeswalker anybody was told to attack.
@@ -1732,6 +1743,7 @@ class GameObject:
             # comparable between two runs of the same game.
             "goaded_by": sorted(self.goaded_by),
             "goaded_permanently_by": sorted(self.goaded_permanently_by),
+            "goad_requirements_by": sorted(self.goad_requirements_by),
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
@@ -1805,7 +1817,21 @@ PLAYABLE_DURATIONS = (
 #:   commander -- read off `TurnLedger.creatures_attacked`, so a commander that
 #:   attacked and then died still counts for the rest of the turn. A creature
 #:   put onto the battlefield attacking was never declared and does not.
-PLAYABLE_CONDITIONS = ("you_attacked_with_a_commander",)
+#: - ``"your_turn_opponent_lost_life_exiled_with_source"`` -- Theater of
+#:   Horrors: "**During your turn, if an opponent lost life this turn**, you may
+#:   play lands and cast spells from among cards **exiled with this
+#:   enchantment**." It is the holder's turn, a seat still in the game other
+#:   than the holder has a nonzero `TurnLedger.life_lost`, and the card is still
+#:   linked (607.2a) to the object that exiled it, which is on the battlefield
+#:   under the holder's control. The last clause is there because the printed
+#:   permission is a static ability of the enchantment, so it works only while
+#:   the enchantment is on the battlefield (113.6) and stops when the
+#:   enchantment leaves. The loader asks for ``link: true`` beside it for the
+#:   same reason.
+PLAYABLE_CONDITIONS = (
+    "you_attacked_with_a_commander",
+    "your_turn_opponent_lost_life_exiled_with_source",
+)
 
 
 def playable_condition_met(state: Any, obj: GameObject) -> bool:
@@ -1827,6 +1853,24 @@ def playable_condition_met(state: Any, obj: GameObject) -> bool:
         return any(
             (attacker := state.objects.get(oid)) is not None and attacker.is_commander
             for oid in attacked
+        )
+    if condition == "your_turn_opponent_lost_life_exiled_with_source":
+        holder = obj.playable_by
+        if holder is None or state.active_player != holder:
+            return False
+        lost = state.turn_ledger.life_lost
+        if not any(lost.get(pid, 0) > 0 for pid in state.opponents(holder)):
+            return False
+        # "…from among cards exiled with this enchantment": a static of the
+        # enchantment's, so the enchantment has to be on the battlefield as the
+        # object that exiled the card. A source that left and came back is a
+        # new object with an empty `exiled_cards` (400.7).
+        source = state.objects.get(obj.exiled_by) if obj.exiled_by is not None else None
+        return (
+            source is not None
+            and source.zone is Zone.BATTLEFIELD
+            and source.controller == holder
+            and obj.oid in source.exiled_cards
         )
     # The loader refuses anything else; an unknown condition opens nothing.
     return False

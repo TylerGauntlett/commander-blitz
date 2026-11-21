@@ -3623,6 +3623,9 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         # needs. An activated ability has no such moment -- see
         # `_check_mode_targets`.
         on_trigger=kind in (AbilityKind.TRIGGERED, AbilityKind.CHAPTER),
+        # A reflexive ability reaches the stack through the same 603.3d
+        # moment, which is where a random target is drawn.
+        on_reflexive=kind is AbilityKind.REFLEXIVE,
         mode_count=len(ability_modes.get("modes") or ()) if ability_modes else None,
     )
     targets = tuple(spec for spec in all_targets if spec.mode is None)

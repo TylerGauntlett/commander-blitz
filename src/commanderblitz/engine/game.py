@@ -813,7 +813,10 @@ class Game:
             card.name,
             card.cast_time_modes,
             kicked=action.kicked,
-            selectable=selectable_modes(state, pid, card, oid),
+            # X is already announced (601.2b, `_ask_x` above), so a bullet
+            # whose target reads it -- "with mana value X or less" -- is
+            # offered by the X the player picked.
+            selectable=selectable_modes(state, pid, card, oid, x=x),
             # Escalate: the line paid for this many modes beyond the first, so
             # the cast chooses exactly that many (601.2b fixes the modes before
             # 601.2f totals the cost, and legality priced this line).
@@ -822,7 +825,7 @@ class Game:
         # 601.2c, and the printed order: a mode-owned target is declared only
         # once its mode has been taken. Appended to the action's own refs, which
         # `CardDef.specs_for_modes` re-derives the spec list for on resolution.
-        mode_refs = yield from self._ask_mode_targets(pid, card, oid, modes)
+        mode_refs = yield from self._ask_mode_targets(pid, card, oid, modes, x=x)
         # 601.2c again, for the one target size a spell can only know now:
         # "deals 5 damage to each of **X** targets". Declared after `_ask_x`
         # above because 601.2b announces X first, which is the whole reason this
@@ -1892,7 +1895,7 @@ class Game:
         return tuple(sorted(offered[i] for i in picked))
 
     def _ask_mode_targets(
-        self, pid: int, card, oid: int, modes: Sequence[int]
+        self, pid: int, card, oid: int, modes: Sequence[int], *, x: int = 0
     ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
         """Declare the chosen modes' own targets -- 601.2c, in the printed order.
 
@@ -1907,6 +1910,12 @@ class Game:
         Every mode that reaches here had a legal target when :meth:`_ask_modes`
         offered it, and nothing can have changed since -- no player has had
         priority in between.
+
+        ``x`` is the X announced one step earlier (601.2b). It sizes an
+        X-sized mode-owned spec -- "up to **X** target creatures gain fear",
+        "destroy **X** target artifacts" -- and fills a selector's
+        ``{"x": true}`` leaf, "with mana value **X** or less" (Profane
+        Command).
         """
         if not card.mode_targets:
             return ()
@@ -1937,23 +1946,32 @@ class Game:
                 # only inside one mode, so the sibling is always answered first.
                 options = [
                     (describe_ref(state, ref), ref)
-                    for ref in candidates(state, pid, spec, oid, chosen=declared)
+                    for ref in candidates(state, pid, spec, oid, chosen=declared, x=x)
                 ]
-                count = target_count(state, pid, spec, oid)
-                if spec.variable_size:
+                count = target_count(state, pid, spec, oid, x=x)
+                if spec.x_sized and not spec.up_to:
+                    # "Destroy **X** target artifacts and/or enchantments"
+                    # (Heliod's Intervention): exactly X, read now that X is a
+                    # number. Fewer legal targets than X takes what there is,
+                    # the reading `_ask_x_targets` and the enumeration in
+                    # `targeting._spec_options` already give "each of X
+                    # targets".
+                    ceiling = floor = min(int(count), len(options))
+                elif spec.variable_size:
                     # "Return one or two target permanent cards" (Yuna's
                     # Decision) -- a size the caster picks, from `min_count`
-                    # through the printed ceiling. `loader.targets._check_mode_targets`
-                    # admits only a printed size (a literal or "any"), and only
-                    # one such spec, stored last -- so however many refs it
-                    # stores, `filter_legal` hands them all to it.
+                    # through the ceiling: printed, or the announced X for "up
+                    # to X target creatures" (Profane Command).
+                    # `loader.targets._check_mode_targets` admits only those
+                    # sizes, and only one such spec, stored last -- so however
+                    # many refs it stores, `filter_legal` hands them all to it.
                     ceiling = (
                         len(options) if count == "any" else min(int(count), len(options))
                     )
                     floor = 0 if spec.optional else min(spec.min_count, ceiling)
                 else:
-                    # An int by construction: the loader refuses a computed
-                    # size on a mode-owned spec. "Up to one target" --
+                    # An int by construction: the loader refuses every other
+                    # computed size on a mode-owned spec. "Up to one target" --
                     # `optional` -- is declinable whether or not there is
                     # something to point at, and the same stored-last rule
                     # makes storing no ref for it shift nothing.
