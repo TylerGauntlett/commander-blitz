@@ -63513,6 +63513,74 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player",
+                  "except": "you"
+                },
+                "count": "all",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted player is attacked, untap all nonland permanents you control. Each opponent attacking that player untaps all nonland permanents they control.",
+          "trigger": {
+            "controller": "any",
+            "defending": "enchanted_player",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "curse_of_bounty",
+      "mana_cost": "{1}{G}",
+      "name": "Curse of Bounty",
+      "oracle_text": "Enchant player\nWhenever enchanted player is attacked, untap all nonland permanents you control. Each opponent attacking that player untaps all nonland permanents they control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -66902,6 +66970,60 @@
         "Soldier"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "dauntless_escort",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Dauntless Escort",
+      "oracle_text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Soldier"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -73508,6 +73630,44 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dictate_of_heliod",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Dictate of Heliod",
+      "oracle_text": "Flash\nCreatures you control get +2/+2.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -87564,6 +87724,53 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "emmara_soul_of_the_accord",
+      "mana_cost": "{G}{W}",
+      "name": "Emmara, Soul of the Accord",
+      "oracle_text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -128127,6 +128334,48 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "harvest_season",
+      "mana_cost": "{2}{G}",
+      "name": "Harvest Season",
+      "oracle_text": "Search your library for up to X basic land cards, where X is the number of tapped creatures you control, put those cards onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": {
+            "count": {
+              "controller": "you",
+              "tapped": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -135322,6 +135571,101 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}. ({C} represents colorless mana.)"
+        },
+        {
+          "cost": {
+            "tap": true,
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Tap an untapped creature you control: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "holdout_settlement",
+      "name": "Holdout Settlement",
+      "oracle_text": "{T}: Add {C}. ({C} represents colorless mana.)\n{T}, Tap an untapped creature you control: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

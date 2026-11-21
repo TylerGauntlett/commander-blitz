@@ -58602,12 +58602,12 @@
     },
     "Curse of Bounty": {
       "edhrec_rank": 9770,
-      "gate": "template",
+      "gate": null,
       "name": "Curse of Bounty",
-      "reason": "no template for: Enchant player",
+      "reason": "",
       "scryfall_id": "37d5b1a2-01c6-475f-86cc-c911802e6033",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curse of Chains": {
@@ -61882,12 +61882,12 @@
     },
     "Dauntless Escort": {
       "edhrec_rank": 7962,
-      "gate": "template",
+      "gate": null,
       "name": "Dauntless Escort",
-      "reason": "no template for: Sacrifice this creature: Creatures you control gain indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "9884a2a9-8ee4-4d27-b410-a4568f45f6f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dauntless Onslaught": {
@@ -68502,12 +68502,12 @@
     },
     "Dictate of Heliod": {
       "edhrec_rank": 6845,
-      "gate": "template",
+      "gate": null,
       "name": "Dictate of Heliod",
-      "reason": "no template for: Creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "fe2f3830-d822-4cb5-a88a-df5c5b9020a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dictate of Karametra": {
@@ -83072,12 +83072,12 @@
     },
     "Emmara, Soul of the Accord": {
       "edhrec_rank": 6628,
-      "gate": "template",
+      "gate": null,
       "name": "Emmara, Soul of the Accord",
-      "reason": "no template for: Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink",
+      "reason": "",
       "scryfall_id": "07c42262-6291-43df-ba34-83e462ab56b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emmessi Tome": {
@@ -123142,12 +123142,12 @@
     },
     "Harvest Season": {
       "edhrec_rank": 2386,
-      "gate": "template",
+      "gate": null,
       "name": "Harvest Season",
-      "reason": "no template for: Search your library for up to X basic land cards, where X is the number of tapped creature",
+      "reason": "",
       "scryfall_id": "8d4329d0-f4ae-41c8-9b21-0957ba9f53fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harvest Wurm": {
@@ -128812,12 +128812,12 @@
     },
     "Holdout Settlement": {
       "edhrec_rank": 2990,
-      "gate": "template",
+      "gate": null,
       "name": "Holdout Settlement",
-      "reason": "no template for: {T}: Add {C}",
+      "reason": "",
       "scryfall_id": "abaf9baa-f9f6-429f-adad-af57d010a80a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Holistic Wisdom": {

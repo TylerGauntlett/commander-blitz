@@ -5173,6 +5173,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "curse_of_bounty": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "curse_of_disturbance": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5499,6 +5503,10 @@
     "zone": "battlefield"
   },
   "daru_warchief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dauntless_escort": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6074,6 +6082,10 @@
     "zone": "battlefield"
   },
   "diamond_weapon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dictate_of_heliod": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7266,6 +7278,10 @@
     "zone": "battlefield"
   },
   "emet_selch_of_the_third_seat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "emmara_soul_of_the_accord": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10852,6 +10868,13 @@
   "harvest_gwyllion": {
     "zone": "battlefield"
   },
+  "harvest_season": {
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "hashaton_scarab_s_fist": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11393,6 +11416,10 @@
     "zone": "battlefield"
   },
   "hobgoblin_dragoon": {
+    "zone": "battlefield"
+  },
+  "holdout_settlement": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hollowhenge_beast": {
