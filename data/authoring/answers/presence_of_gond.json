@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "presence_of_gond",
+    "name": "Presence of Gond",
+    "oracle_text": "Enchant creature\nEnchanted creature has \"{T}: Create a 1/1 green Elf Warrior creature token.\"",
+    "mana_cost": "{2}{G}",
+    "types": ["Enchantment"],
+    "subtypes": ["Aura"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "targets": [{"id": "enchanted", "kind": "permanent", "selector": {"types": ["Creature"], "zone": "battlefield"}}],
+    "abilities": [{
+      "kind": "static",
+      "effect": "grant_ability",
+      "ability": 0,
+      "affects": {"attached": true},
+      "text": "Enchanted creature has \"{T}: Create a 1/1 green Elf Warrior creature token.\""
+    }],
+    "grantable_abilities": [{
+      "kind": "activated",
+      "text": "{T}: Create a 1/1 green Elf Warrior creature token.",
+      "cost": {"tap": true},
+      "effects": [{"op": "create_token", "token": "elf_warrior_1_1_g", "amount": {"const": 1}, "controller": "you"}]
+    }]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
