@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "liquimetal_torque",
+    "name": "Liquimetal Torque",
+    "oracle_text": "{T}: Add {C}.\n{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn.",
+    "mana_cost": "{2}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}],
+        "is_mana_ability": true,
+        "text": "{T}: Add {C}."
+      },
+      {
+        "kind": "activated",
+        "cost": {"tap": true},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "controller": "any", "not_types": ["Land"]}
+          }
+        ],
+        "effects": [
+          {
+            "op": "animate",
+            "objects": {"target": "t1"},
+            "types": ["Artifact"],
+            "duration": "until_end_of_turn"
+          }
+        ],
+        "text": "{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
