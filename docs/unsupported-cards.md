@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **450** capabilities.
+**541 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -75,6 +75,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
+| [total-mana-value-selection](#total-mana-value-selection) | 2 | 4244 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [undaunted](#undaunted) | 2 | 3405 | value |
@@ -108,6 +109,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [attacking-player-filter](#attacking-player-filter) | 1 | 4093 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -159,10 +161,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
+| [construct-1-1-c-artifact](#construct-1-1-c-artifact) | 1 | 6085 | token |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
+| [copy-exception-name](#copy-exception-name) | 1 | 9876 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
+| [copy-triggering-ability](#copy-triggering-ability) | 1 | 13248 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -208,7 +213,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enlist](#enlist) | 1 | 13396 | keyword, value |
 | [entered-without-being-cast](#entered-without-being-cast) | 1 | 7379 | selector |
 | [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
+| [enters-as-copy-grant-ability](#enters-as-copy-grant-ability) | 1 | 2862 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
+| [enters-as-copy-set-types](#enters-as-copy-set-types) | 1 | 2862 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
@@ -339,6 +346,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [offering](#offering) | 1 | 4093 | cost |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -395,11 +403,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
+| [reveal-until-revealed-count](#reveal-until-revealed-count) | 1 | 8548 | value |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
+| [sacrificed-to-activate](#sacrificed-to-activate) | 1 | 13248 | trigger_event |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
+| [scrap-token](#scrap-token) | 1 | 10737 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -438,7 +449,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
-| [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -2011,6 +2021,24 @@ Blocks **2** cards.
 
 </details>
 
+## total-mana-value-selection
+
+Blocks **2** cards.
+
+- **(op)** a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom
+  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops).
+- **(op)** a `total_mana_value` cap on look_at_top's pick that takes a value expression, not only a literal: choose up to N cards from the revealed window whose combined mana value is at most V, where V here is `{"mana_value_of": {"binding": "sacrificed"}}` read from the activation's sacrifice cost -- e.g. look_at_top amount 8, objects {types: [Artifact], not_types: [Creature], count: 2, optional: true}, total_mana_value <value>, destination battlefield, rest_to_bottom
+  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (an int, checked by targeting.py _within_total) and in cost_reduction; cards in a look_at_top window are not targets, and look_at_top's op_options carry no running budget over the picks. A per-card `mana_value` <= sacrificed MV selector is a strictly better card (two cards each up to that MV), so it would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
+  - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
+- **Smelting Vat** (rank 13767) — `smelting_vat`
+  - {1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order.
+
+</details>
+
 ## training
 
 Blocks **2** cards.
@@ -2516,6 +2544,21 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## attacking-player-filter
+
+Blocks **1** card.
+
+- **(selector)** a static affects-filter key meaning 'attacking one of the source controller's opponents' (the defending player of the creature's attack is an opponent of the static's controller, not a planeswalker or battle), for a grant_keyword static over creatures of any controller
+  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attacking`, but the engine reads it as a boolean (selectors.py / characteristics.py compare bool(combat.attacking(oid))), so it would also grant double strike to an opponent's creatures attacking you and to creatures attacking planeswalkers; `defending`/`attacking` binding forms exist only on token-creation ops, not static filters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blast-Furnace Hellkite** (rank 4093) — `blast_furnace_hellkite`
+  - Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)
+  - Creatures attacking your opponents have double strike.
 
 </details>
 
@@ -3248,6 +3291,20 @@ Blocks **1** card.
 
 </details>
 
+## construct-1-1-c-artifact
+
+Blocks **1** card.
+
+- **(token)** a 1/1 colorless Construct artifact creature token with no abilities
+  <br>Why the existing vocabulary won't do: token_ids has Construct tokens only at 0/0 with a +1/+1-per-artifact static, 4/4, 4/4 flying haste and 6/12 trample; none is a vanilla 1/1, and the other 1/1 colorless artifact creatures (servo, myr, gnome, soldier) have the wrong creature type. The trigger itself is expressible (leaves_battlefield with batched, max_per_turn 1 and an is_your_turn condition), as is the {T}, sacrifice-an-artifact damage/gain-life ability.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oni-Cult Anvil** (rank 6085) — `oni_cult_anvil`
+  - Whenever one or more artifacts you control leave the battlefield during your turn, create a 1/1 colorless Construct artifact creature token. This ability triggers only once each turn.
+
+</details>
+
 ## control-while-has-counter
 
 Blocks **1** card.
@@ -3276,6 +3333,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-exception-name
+
+Blocks **1** card.
+
+- **(op)** a `name` key in copy_permanent's `except_` (stored in the token's copy_overrides and applied by GameState.card_of), so "create a token that's a copy of X, except its name is Mishra's Warform" sets the name as a copiable value (707.9b) on the token before it enters
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ covers power/toughness, types/add_types, subtypes/add_subtypes, add_keywords, colors and supertypes but not the name; become_copy's except_name only renames a permanent copying in place, not a token copy. The `rename` op applied to the `as` binding afterwards gets close, but it is a non-copiable effect set after the token exists: a copy of Mishra's Warform would come back under the original artifact's name, and the token enters (and its ETB triggers see it) under the copied name. The rest of the line is expressible: except_ {power 4, toughness 4, add_types [Creature], add_subtypes [Construct]}, grant_keyword haste this_turn on the binding, and a delayed_trigger on end_step that sacrifices it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mishra, Eminent One** (rank 9876) — `mishra_eminent_one`
+  - At the beginning of combat on your turn, create a token that's a copy of target noncreature artifact you control, except its name is Mishra's Warform and it's a 4/4 Construct artifact creature in addition to its other types.
+
+</details>
+
 ## copy-spell-except-nonlegendary
 
 Blocks **1** card.
@@ -3301,6 +3372,20 @@ Blocks **1** card.
 
 - **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
   - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
+
+</details>
+
+## copy-triggering-ability
+
+Blocks **1** card.
+
+- **(op)** copy the activated ability that caused this trigger ("copy that ability") with new_targets, without targeting it -- the stack item bound from the triggering event
+  <br>Why the existing vocabulary won't do: `copy_ability` reads stack refs from a target spec (`target`, default t1); a triggered ability saying "that ability" does not target, and the ability_activated event does not bind the new stack item's sid for the effect to read
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashnod the Uncaring** (rank 13248) — `ashnod_the_uncaring`
+  - Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)
 
 </details>
 
@@ -3944,6 +4029,20 @@ Blocks **1** card.
 
 </details>
 
+## enters-as-copy-grant-ability
+
+Blocks **1** card.
+
+- **(replacement)** an exception key on a self_enters_as_copy replacement's except_ that adds a quoted ability (by grantable_abilities index) to the copiable values, here the mana ability "{T}: Add {U}.", so it is part of the copy and survives being copied again
+  <br>Why the existing vocabulary won't do: except_ has add_keywords only, for keyword abilities; the grant_ability op and static grant to a permanent rather than writing into its copiable values, and nothing here grants an activated mana ability as part of the copy
+
+<details><summary>Cards waiting on this</summary>
+
+- **Machine God's Effigy** (rank 2862) — `machine_god_s_effigy`
+  - You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has "{T}: Add {U}."
+
+</details>
+
 ## enters-as-copy-of-exiled-card
 
 Blocks **1** card.
@@ -3955,6 +4054,20 @@ Blocks **1** card.
 
 - **The Master, Formed Anew** (rank 19072) — `the_master_formed_anew`
   - You may have The Master enter as a copy of a creature card in exile with a takeover counter on it.
+
+</details>
+
+## enters-as-copy-set-types
+
+Blocks **1** card.
+
+- **(replacement)** a 'set_types' exception on a self_enters_as_copy replacement's except_ (707.9b): the copy's card types are REPLACED by the printed list (here exactly ["Artifact"]), so the copy is not a creature, its creature subtypes go away (205.1b), and its copied power/toughness stop mattering
+  <br>Why the existing vocabulary won't do: The packet's reference has no self_enters_as_copy replacement at all; in the engine, ENTERS_COPY_EXCEPT_KEYS (cards/loader) carries add_types (Phyrexian Metamorph's 'in addition to its other types'), add_subtypes, add_keywords, colors, no_mana_cost, remove_supertypes, name, enters_with and condition, but nothing that replaces the type line, so 'except it's an artifact' would arrive as an artifact creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Machine God's Effigy** (rank 2862) — `machine_god_s_effigy`
+  - You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has "{T}: Add {U}."
 
 </details>
 
@@ -5815,6 +5928,21 @@ Blocks **1** card.
 
 </details>
 
+## offering
+
+Blocks **1** card.
+
+- **(cost)** an optional card-level alternative way to cast (702.48, '<Type> offering') parameterised by a permanent filter (here types: [Artifact]): the caster sacrifices one matching permanent they control as the spell is cast, the spell may then be cast any time they could cast an instant, and its total cost is reduced by the sacrificed permanent's mana cost symbol by symbol, coloured symbols included ({7}{R}{R} minus a {1}{R} artifact leaves {6}{R}), with the sacrificed object's mana cost read as the cost is locked in
+  <br>Why the existing vocabulary won't do: emerge is the closest: it sacrifices a creature and reduces by mana VALUE as generic only, and grants no flash timing; as_though_flash / flash_cost give instant timing but take no sacrifice and no cost reduction keyed to the sacrificed object; additional_cost with sacrifice plus cost_reduction cannot read the sacrificed object's coloured mana cost, and cost_reduction_keys only reduce generic
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blast-Furnace Hellkite** (rank 4093) — `blast_furnace_hellkite`
+  - Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)
+  - Creatures attacking your opponents have double strike.
+
+</details>
+
 ## offspring
 
 Blocks **1** card.
@@ -6614,6 +6742,20 @@ Blocks **1** card.
 
 </details>
 
+## reveal-until-revealed-count
+
+Blocks **1** card.
+
+- **(value)** a binding on `reveal_until` recording EVERY card revealed by the walk (the match plus the cards walked past, e.g. `revealed_as: "revealed"`), so a following `damage` to `player: "you"` with `amount: {"count_of"/"count": {"binding": "revealed"}}` reads "deals damage to you equal to the number of cards revealed this way" -- zero cards found still counts every card revealed
+  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) keeps its `revealed` list local and its `as` binding records only the hits that moved (one card here), so a count of it is always 1 or 0, not the number revealed. No value in `value_keys` reads a reveal's size. The rest is expressible: an activated ability with cost `{tap: true, sacrifice: {types: [Artifact]}}`, `reveal_until` with `objects: {types: [Artifact]}`, `destination: "battlefield"` and its default random bottoming, then `damage` with `player: "you"`; only the amount of that damage is blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Audacious Reshapers** (rank 8548) — `audacious_reshapers`
+  - {T}, Sacrifice an artifact: Reveal cards from the top of your library until you reveal an artifact card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. This creature deals damage to you equal to the number of cards revealed this way.
+
+</details>
+
 ## sacrificed-source-counters
 
 Blocks **1** card.
@@ -6639,6 +6781,20 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
+## sacrificed-to-activate
+
+Blocks **1** card.
+
+- **(trigger_event)** an `ability_activated` trigger restriction (or event payload) that fires only when the activation's cost sacrificed one or more permanents -- the ability's own `sacrifice`/`sacrifice_x` cost, not permanents sacrificed by mana abilities used to pay it
+  <br>Why the existing vocabulary won't do: `game.py` fires ABILITY_ACTIVATED with only player/source/ability/card/mana_ability; `trigger_keys` (`mana_ability`, `filter`, `condition`) and `condition_keys` read the source's printed face or the board, nothing about what the cost paid
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashnod the Uncaring** (rank 13248) — `ashnod_the_uncaring`
+  - Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)
 
 </details>
 
@@ -6683,6 +6839,20 @@ Blocks **1** card.
 
 - **Young Deathclaws** (rank 11499) — `young_deathclaws`
   - Each creature card in your graveyard has scavenge. The scavenge cost is equal to its mana cost.
+
+</details>
+
+## scrap-token
+
+Blocks **1** card.
+
+- **(token)** a colorless artifact token named Scrap with no abilities and no subtypes (token id e.g. scrap_token)
+  <br>Why the existing vocabulary won't do: token_ids has no Scrap; the nearest colorless noncreature artifact tokens (treasure_token, clue_token, junk_token, replicated_ring_token) all carry abilities or a subtype, so substituting one would give Farid a different token. The trigger itself (put_into_graveyard from battlefield, filter types Artifact, is_token false, controller you) and the modal sacrifice ability (sacrifice cost, choose_mode with add_counters+grant_keyword menace, goad, discard then draw) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Farid, Enterprising Salvager** (rank 10737) — `farid_enterprising_salvager`
+  - Whenever a nontoken artifact you control is put into a graveyard from the battlefield, create a colorless artifact token named Scrap.
 
 </details>
 
@@ -7227,20 +7397,6 @@ Blocks **1** card.
 
 - **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
   - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
-
-</details>
-
-## total-mana-value-selection
-
-Blocks **1** card.
-
-- **(op)** a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom
-  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
-  - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
 
 </details>
 

@@ -246982,12 +246982,12 @@
     },
     "Silas Renn, Seeker Adept": {
       "edhrec_rank": 11891,
-      "gate": "template",
+      "gate": null,
       "name": "Silas Renn, Seeker Adept",
-      "reason": "no template for: Whenever Silas Renn deals combat damage to a player, choose target artifact card in your g",
+      "reason": "",
       "scryfall_id": "79b50fc8-9658-4837-ade8-2f34d12d3cc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silburlind Snapper": {
@@ -252402,12 +252402,12 @@
     },
     "Slobad, Goblin Tinkerer": {
       "edhrec_rank": 7510,
-      "gate": "template",
+      "gate": null,
       "name": "Slobad, Goblin Tinkerer",
-      "reason": "no template for: Sacrifice an artifact: Target artifact gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "675d81e9-ff17-485b-ac23-aef4bd64f4d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slobad, Iron Goblin": {
@@ -278182,12 +278182,12 @@
     },
     "Terisiare's Devastation": {
       "edhrec_rank": 8121,
-      "gate": "template",
+      "gate": null,
       "name": "Terisiare's Devastation",
-      "reason": "no template for: You lose X life and create X tapped Powerstone tokens. Then all creatures get -1/-1 until ",
+      "reason": "",
       "scryfall_id": "494a9b67-cfd8-44cd-adbb-8e8a9eeca0d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Termagant Swarm": {
@@ -291732,12 +291732,12 @@
     },
     "Traxos, Scourge of Kroog": {
       "edhrec_rank": 3926,
-      "gate": "template",
+      "gate": null,
       "name": "Traxos, Scourge of Kroog",
-      "reason": "no template for: Whenever you cast a historic spell, untap Traxos",
+      "reason": "",
       "scryfall_id": "3f0cbff1-4b4e-4d60-b114-20bd3e977b25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trazyn the Infinite": {
@@ -318282,12 +318282,12 @@
     },
     "Wondrous Crucible": {
       "edhrec_rank": 4701,
-      "gate": "template",
+      "gate": null,
       "name": "Wondrous Crucible",
-      "reason": "no template for: Permanents you control have ward {2}",
+      "reason": "",
       "scryfall_id": "68c12fc0-f4fe-45cc-a225-3d80bcbbeb93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wondrous Revival": {

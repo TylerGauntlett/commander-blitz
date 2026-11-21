@@ -261038,6 +261038,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_playable",
+              "playable_this_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "player": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Silas Renn deals combat damage to a player, choose target artifact card in your graveyard. You may cast that card this turn.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "silas_renn_seeker_adept",
+      "keywords": [
+        "deathtouch",
+        "partner"
+      ],
+      "mana_cost": "{1}{U}{B}",
+      "name": "Silas Renn, Seeker Adept",
+      "oracle_text": "Deathtouch\nWhenever Silas Renn deals combat damage to a player, choose target artifact card in your graveyard. You may cast that card this turn.\nPartner (You can have two commanders if both have partner.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -265760,6 +265824,71 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Sacrifice an artifact: Target artifact gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "slobad_goblin_tinkerer",
+      "mana_cost": "{1}{R}",
+      "name": "Slobad, Goblin Tinkerer",
+      "oracle_text": "Sacrifice an artifact: Target artifact gains indestructible until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -293978,6 +294107,83 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "terisiare_s_devastation",
+      "mana_cost": "{X}{2}{B}{B}",
+      "name": "Terisiare's Devastation",
+      "oracle_text": "You lose X life and create X tapped Powerstone tokens. Then all creatures get -1/-1 until end of turn for each artifact you control. (The tokens are artifacts with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "powerstone_token"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": -1
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": -1
+              }
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -310547,6 +310753,81 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Traxos enters tapped and doesn't untap during your untap step."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a historic spell, untap Traxos. (Artifacts, legendaries, and Sagas are historic.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "traxos_scourge_of_kroog",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}",
+      "name": "Traxos, Scourge of Kroog",
+      "oracle_text": "Trample\nTraxos enters tapped and doesn't untap during your untap step.\nWhenever you cast a historic spell, untap Traxos. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": 7,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -338911,6 +339192,68 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Permanents you control have ward {2}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "as": "crucible_exiled",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "not_types": [
+                  "Land"
+                ],
+                "random": true,
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "crucible_exiled"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, mill two cards, then exile a nonland card at random from your graveyard. Copy it. You may cast the copy without paying its mana cost.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "wondrous_crucible",
+      "mana_cost": "{7}",
+      "name": "Wondrous Crucible",
+      "oracle_text": "Permanents you control have ward {2}.\nAt the beginning of your end step, mill two cards, then exile a nonland card at random from your graveyard. Copy it. You may cast the copy without paying its mana cost. (A copy of a permanent spell becomes a token.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

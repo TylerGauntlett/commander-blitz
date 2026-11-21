@@ -21842,6 +21842,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "silas_renn_seeker_adept": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "silent_artisan": {
     "zone": "battlefield"
   },
@@ -22274,6 +22278,10 @@
     "zone": "battlefield"
   },
   "sliver_construct": {
+    "zone": "battlefield"
+  },
+  "slobad_goblin_tinkerer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "slumbering_trudge": {
@@ -24496,6 +24504,18 @@
   "teremko_griffin": {
     "zone": "battlefield"
   },
+  "terisiare_s_devastation": {
+    "battlefield_count": 50,
+    "life": {
+      "0": 20
+    },
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 20,
+      "id": "powerstone_token"
+    },
+    "zone": "graveyard"
+  },
   "terminus": {
     "battlefield_count": 30,
     "library_size": {
@@ -25835,6 +25855,13 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "traxos_scourge_of_kroog": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "treachery": {
     "zone": "battlefield"
@@ -28389,6 +28416,10 @@
     "zone": "battlefield"
   },
   "wonder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "wondrous_crucible": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
