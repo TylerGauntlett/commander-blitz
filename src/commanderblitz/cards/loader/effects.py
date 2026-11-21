@@ -98,10 +98,12 @@ from .walk import (
 #: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
 #: the only subtraction any printing asks for ("except the token isn't
 #: legendary"). ``add_keywords``, "…and has haste" (Saheeli, Radiant Creator).
-#: And ``no_mana_cost``.
+#: ``no_mana_cost``. And ``name``, "…except its name is Mishra's Warform"
+#: (Mishra, Eminent One).
 COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
+        "name",
         "colors",
         "types",
         "power",
@@ -3212,6 +3214,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "name" in overrides:
+            # "…except its name is Mishra's Warform." A copiable value
+            # (707.9b), so a blank one would be a token with no name, which
+            # no printing makes and which the legend rule would pair with
+            # every other nameless permanent.
+            renamed = overrides["name"]
+            if not isinstance(renamed, str) or not renamed.strip():
+                raise DslError(f"{where}.except_.name: must be a non-empty string")
         if "add_keywords" in overrides:
             # "…except it's a 5/5 artifact creature … and has haste." Checked
             # here because the token reads it only as it is created: a

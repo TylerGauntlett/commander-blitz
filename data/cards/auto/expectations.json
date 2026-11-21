@@ -15629,6 +15629,10 @@
     },
     "zone": "battlefield"
   },
+  "mishra_eminent_one": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mishra_s_workshop": {
     "zone": "battlefield"
   },

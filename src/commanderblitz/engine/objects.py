@@ -1256,9 +1256,10 @@ class GameObject:
     #:
     #: A copy is a token whose ``def_id`` is the original's, so the "except"
     #: clause has nowhere to live on the card -- it is a property of this one
-    #: object. The copiable values 707.9b lets an exception rewrite: replacement
-    #: colours, card types and base power/toughness; added card types,
-    #: subtypes and supertypes; and whether the mana cost is gone. Anything
+    #: object. The copiable values 707.9b lets an exception rewrite: the name
+    #: (read by `GameState.card_of`), replacement colours, card types and base
+    #: power/toughness; added card types, subtypes and supertypes; and whether
+    #: the mana cost is gone. Anything
     #: richer belongs in a real copiable-values layer, which this engine does
     #: not have.
     #:

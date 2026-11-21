@@ -15240,6 +15240,7 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 
 | key | meaning |
 |---|---|
+| `name` | replaces the name — "except its name is Mishra's Warform" (Mishra, Eminent One); a non-empty string, read by `GameState.card_of`, so the token enters under it and the legend rule, `selector.name` and a copy of the token all see it. The near miss is `rename` on the `as` binding afterwards: not a copiable value, and applied after the token has entered under the copied name |
 | `colors` | replaces the printed colours outright |
 | `add_subtypes` | *adds* to the printed subtypes — an embalm token is a Zombie **Angel** |
 | `subtypes` | *replaces* the subtypes — "except it's a 4/4 black Zombie" (The Scarab God, Benthic Anomaly) is a Zombie *instead of* its creature types (205.1b); never beside `add_subtypes` |

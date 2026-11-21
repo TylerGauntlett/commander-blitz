@@ -711,6 +711,17 @@ class GameState:
                 copied = replace(copied, name=obj.renamed_to)
             return copied
         card = self.registry.get(obj.def_id)
+        # "…create a token that's a copy of target noncreature artifact you
+        # control, **except its name is Mishra's Warform**" (Mishra, Eminent
+        # One). A token copy's exception is a copiable value (707.9b), so the
+        # name is on the face itself, from the moment the token exists: its
+        # enters triggers, `selector.name`, the legend rule and the serializer
+        # all read it here, and a copy of the token carries it through
+        # `copy_overrides`. Read through `live_copy_overrides`, so a later copy
+        # effect on the token overwrites it (613.2a) -- that branch returned
+        # above.
+        if (overrides := obj.live_copy_overrides) and (named := overrides.get("name")):
+            card = replace(card, name=named)
         # "…become a legendary Equipment artifact **named Everflame, Heroes'
         # Legacy**" (The Irencrag). Here, for the reason the copy above is here:
         # this method is the single funnel every reader of a permanent's face

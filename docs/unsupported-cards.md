@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**539 cards** blocked by **458** capabilities.
+**538 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -163,7 +163,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
-| [copy-exception-name](#copy-exception-name) | 1 | 9876 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-triggering-ability](#copy-triggering-ability) | 1 | 13248 | op |
@@ -3314,20 +3313,6 @@ Blocks **1** card.
 
 - **Ulalek, Fused Atrocity** (rank 4558) — `ulalek_fused_atrocity`
   - Whenever you cast an Eldrazi spell, you may pay {C}{C}. If you do, copy all spells you control, then copy all other activated and triggered abilities you control. You may choose new targets for the copies
-
-</details>
-
-## copy-exception-name
-
-Blocks **1** card.
-
-- **(op)** a `name` key in copy_permanent's `except_` (stored in the token's copy_overrides and applied by GameState.card_of), so "create a token that's a copy of X, except its name is Mishra's Warform" sets the name as a copiable value (707.9b) on the token before it enters
-  <br>Why the existing vocabulary won't do: copy_permanent's except_ covers power/toughness, types/add_types, subtypes/add_subtypes, add_keywords, colors and supertypes but not the name; become_copy's except_name only renames a permanent copying in place, not a token copy. The `rename` op applied to the `as` binding afterwards gets close, but it is a non-copiable effect set after the token exists: a copy of Mishra's Warform would come back under the original artifact's name, and the token enters (and its ETB triggers see it) under the copied name. The rest of the line is expressible: except_ {power 4, toughness 4, add_types [Creature], add_subtypes [Construct]}, grant_keyword haste this_turn on the binding, and a delayed_trigger on end_step that sacrifices it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mishra, Eminent One** (rank 9876) — `mishra_eminent_one`
-  - At the beginning of combat on your turn, create a token that's a copy of target noncreature artifact you control, except its name is Mishra's Warform and it's a 4/4 Construct artifact creature in addition to its other types.
 
 </details>
 
