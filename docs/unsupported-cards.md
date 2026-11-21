@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **451** capabilities.
+**533 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,6 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
+| [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
@@ -200,7 +201,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [emerge](#emerge) | 1 | 17443 | value |
-| [encore](#encore) | 1 | 9330 | static_effect |
 | [end-of-combat-trigger](#end-of-combat-trigger) | 1 | 4544 | trigger_event |
 | [energy-alternative-cost](#energy-alternative-cost) | 1 | 7462 | op |
 | [energy-count](#energy-count) | 1 | 7317 | value |
@@ -287,7 +287,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
-| [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -1603,6 +1602,24 @@ Blocks **2** cards.
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 - **Bone Shredder** (rank 9157) — `bone_shredder`
   - Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+
+</details>
+
+## encore
+
+Blocks **2** cards.
+
+- **(static_effect)** a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step
+  <br>Why the existing vocabulary won't do: There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to
+- **(static_effect)** a static that grants the encore activated ability to cards in its controller's graveyard matching a filter (artifact creature cards), with the encore cost set to each card's own printed mana cost; activation exiles the card from the graveyard as a cost, is sorcery-speed only, and for each opponent creates a token copy of the exiled card that has haste, must attack that opponent this turn if able, and is sacrificed at the beginning of the next end step
+  <br>Why the existing vocabulary won't do: The grant_ability static hands over an ability only to permanents on the battlefield (the packet notes say a granted activated ability works on the battlefield only), and there is no grants_encore analogue to grants_flashback/grants_retrace; grant_warp and granted_alternative_cost grant cast permissions, not an activated graveyard ability; nor is there a cost or value meaning 'this card's own mana cost' for a granted ability. The resolution half (copy_permanent with attacking per for_each_player, haste, delayed sacrifice) might be composable, but nothing can put the ability on the graveyard card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Graywater's Fixer** (rank 9330) — `graywater_s_fixer`
+  - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
+- **Wire Surgeons** (rank 20329) — `wire_surgeons`
+  - Each artifact creature card in your graveyard has encore. Its encore cost is equal to its mana cost. (Exile it and pay its mana cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)
 
 </details>
 
@@ -3826,20 +3843,6 @@ Blocks **1** card.
 
 </details>
 
-## encore
-
-Blocks **1** card.
-
-- **(static_effect)** a static that grants encore to cards in your graveyard matching a filter (creature cards with an outlaw subtype: Assassin, Mercenary, Pirate, Rogue, Warlock), with the encore cost set per card to generic mana equal to that card's own mana value; encore itself being a graveyard-activated, sorcery-speed ability whose cost exiles the card and whose effect creates, for each opponent, a token copy of it with haste that must attack that opponent this turn and is sacrificed at the beginning of the next end step
-  <br>Why the existing vocabulary won't do: There is no encore keyword or card-level cost key; the grant_ability static only reaches permanents (a granted activated ability works on the battlefield only), cast_from_graveyard/grant_graveyard_cast give cast permissions rather than an activated ability, and no cost or value can price an ability at the mana value of the card it is granted to
-
-<details><summary>Cards waiting on this</summary>
-
-- **Graywater's Fixer** (rank 9330) — `graywater_s_fixer`
-  - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
-
-</details>
-
 ## end-of-combat-trigger
 
 Blocks **1** card.
@@ -5066,20 +5069,6 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
-
-</details>
-
-## legendary-sorcery
-
-Blocks **1** card.
-
-- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
-  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
-  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 

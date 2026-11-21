@@ -490,6 +490,21 @@ def sacrifice_cost_wants_legendary(card: CardDef | None) -> bool:
     return bool(pool) and "Legendary" in (pool.get("supertypes") or ())
 
 
+def casting_wants_legendary(card: CardDef | None) -> bool:
+    """Does casting this card need a legendary creature on its caster's side?
+
+    Two shapes do: an additional cost that sacrifices one
+    (:func:`sacrifice_cost_wants_legendary`), and a legendary instant or
+    sorcery, which 205.4e lets a player cast only while they control a
+    legendary creature or planeswalker -- Urza's Ruinous Blast.
+    """
+    if card is None:
+        return False
+    if card.is_legendary and not card.is_permanent:
+        return True
+    return sacrifice_cost_wants_legendary(card)
+
+
 def quiet_legendary_body(registry: CardRegistry) -> str | None:
     """The quietest legendary creature in this pool, or None if it has none.
 
@@ -526,8 +541,10 @@ def swap_in_legendary_body(
     :func:`swap_in_tribal_body`'s terms: **only** for a card
     :func:`sacrifice_cost_wants_legendary` says needs it, a swap so the boards
     stay 32 and 6, and the board untouched when the pool has no quiet body.
+    A legendary instant or sorcery needs the same body to be castable at all
+    (:func:`casting_wants_legendary`).
     """
-    if not sacrifice_cost_wants_legendary(card) or not board:
+    if not casting_wants_legendary(card) or not board:
         return board
     pick = quiet_legendary_body(registry)
     if pick is None:

@@ -4601,6 +4601,45 @@
       ]
     },
     {
+      "id": "powerstone_token",
+      "name": "Powerstone",
+      "oracle_text": "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Powerstone"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "artifact"
+              ]
+            ],
+            "activate": "any",
+            "other": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "vibranium_token",
       "name": "Vibranium",
       "oracle_text": "Indestructible\n{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",

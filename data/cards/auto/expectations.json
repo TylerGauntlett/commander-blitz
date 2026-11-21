@@ -484,6 +484,13 @@
     },
     "zone": "battlefield"
   },
+  "alela_artful_provocateur": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "alela_cunning_conqueror": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1307,6 +1314,10 @@
       "count": 2,
       "id": "clue_token"
     },
+    "zone": "battlefield"
+  },
+  "armix_filigree_thrasher": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "armorcraft_judge": {
@@ -4047,6 +4058,19 @@
   "chrome_cat": {
     "zone": "battlefield"
   },
+  "chrome_courier": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "chrome_host_seedshark": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4132,6 +4156,11 @@
   },
   "city_of_traitors": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cityscape_leveler": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "citywide_bust": {
@@ -4919,6 +4948,10 @@
         "lifelink"
       ]
     },
+    "zone": "battlefield"
+  },
+  "cranial_plating": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "crash_of_rhinos": {
@@ -6116,6 +6149,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "digsite_engineer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "diluvian_primordial": {
     "battlefield_count": 33,
@@ -7597,6 +7634,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "etched_champion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "etched_oracle": {
     "battlefield_count": 33,
     "counters": {
@@ -8429,6 +8470,10 @@
     "zone": "battlefield"
   },
   "fighting_drake": {
+    "zone": "battlefield"
+  },
+  "filigree_attendant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "final_act": {
@@ -11291,6 +11336,14 @@
     },
     "zone": "graveyard"
   },
+  "hexavus": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "hexplate_golem": {
     "zone": "battlefield"
   },
@@ -11912,6 +11965,16 @@
   "indomitable_ancients": {
     "zone": "battlefield"
   },
+  "indomitable_archangel": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 0,
+      "keywords": [
+        "shroud"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "indomitable_might": {
     "target_pt_delta": {
       "power": 3,
@@ -12432,6 +12495,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jaya_s_immolating_inferno": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "jazal_goldmane": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12712,6 +12780,9 @@
   "kalonian_tusker": {
     "zone": "battlefield"
   },
+  "kamahl_s_druidic_vow": {
+    "zone": "graveyard"
+  },
   "kamber_the_plunderer": {
     "battlefield_count": 33,
     "hand_size": {
@@ -12799,6 +12870,13 @@
   "karn_s_bastion": {
     "zone": "battlefield"
   },
+  "karn_s_temporal_sundering": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "exile"
+  },
   "karplusan_forest": {
     "zone": "battlefield"
   },
@@ -12839,6 +12917,10 @@
       "amount": 5,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "kayla_s_music_box": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kaza_roil_chaser": {
@@ -13987,6 +14069,10 @@
   "linvala_the_preserver": {
     "zone": "battlefield"
   },
+  "liquimetal_torque": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lita_little_orphan_amphibian": {
     "zone": "battlefield"
   },
@@ -14750,6 +14836,10 @@
   "marble_diamond": {
     "zone": "battlefield"
   },
+  "march_of_progress": {
+    "battlefield_count": 32,
+    "zone": "graveyard"
+  },
   "march_of_the_canonized": {
     "battlefield_count": 53,
     "tokens": {
@@ -14801,6 +14891,14 @@
   },
   "mari_the_killing_quill": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "marionette_master": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "marisi_s_twinclaws": {
@@ -18258,6 +18356,16 @@
   "primeval_titan": {
     "zone": "battlefield"
   },
+  "primevals_glorious_rebirth": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "primoc_escapee": {
     "zone": "battlefield"
   },
@@ -19318,6 +19426,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "relic_of_progenitus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_of_sauron": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20367,6 +20479,10 @@
   "sanitation_automaton": {
     "zone": "battlefield"
   },
+  "sanwell_avenger_ace": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sapphire_medallion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21256,6 +21372,13 @@
     "zone": "battlefield"
   },
   "sharlayan_nation_of_scholars": {
+    "zone": "battlefield"
+  },
+  "sharuum_the_hegemon": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "shatter_the_sky": {
@@ -23978,6 +24101,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tawnos_solemn_survivor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tcri_building": {
     "life": {
       "0": 41
@@ -24104,6 +24234,13 @@
   },
   "temmet_naktamun_s_will": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tempered_steel": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "tempest_drake": {
@@ -24897,6 +25034,13 @@
   },
   "thopter_fabricator": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thopter_shop": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "thopter_spy_network": {
@@ -26373,6 +26517,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "urza_chief_artificer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "urza_s_cave": {
     "zone": "battlefield"
   },
@@ -26385,6 +26533,11 @@
   },
   "urza_s_power_plant": {
     "zone": "battlefield"
+  },
+  "urza_s_ruinous_blast": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 3,
+    "zone": "graveyard"
   },
   "urza_s_saga": {
     "battlefield_count": 33,
@@ -28263,6 +28416,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "wreck_hunter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wreckage_wickerfolk": {
     "zone": "battlefield"
   },
@@ -28371,6 +28528,13 @@
   },
   "yavimaya_wurm": {
     "zone": "battlefield"
+  },
+  "yawgmoth_s_vile_offering": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "exile"
   },
   "yes_man_personal_securitron": {
     "battlefield_count": 33,

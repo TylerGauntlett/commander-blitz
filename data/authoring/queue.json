@@ -5882,12 +5882,12 @@
     },
     "Alela, Artful Provocateur": {
       "edhrec_rank": 5226,
-      "gate": "template",
+      "gate": null,
       "name": "Alela, Artful Provocateur",
-      "reason": "no template for: Other creatures you control with flying get +1/+0",
+      "reason": "",
       "scryfall_id": "31c99a7d-a70b-4599-9bd2-be7a5cac28ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alela, Cunning Conqueror": {
@@ -13352,12 +13352,12 @@
     },
     "Armix, Filigree Thrasher": {
       "edhrec_rank": 5967,
-      "gate": "template",
+      "gate": null,
       "name": "Armix, Filigree Thrasher",
-      "reason": "no template for: Whenever Armix attacks, you may discard a card. When you do, target creature defending pla",
+      "reason": "",
       "scryfall_id": "fe688c90-2dcf-48b9-a8b5-bea3500bb0a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armor Sliver": {
@@ -46212,12 +46212,12 @@
     },
     "Chrome Courier": {
       "edhrec_rank": 16115,
-      "gate": "template",
+      "gate": null,
       "name": "Chrome Courier",
-      "reason": "no template for: When this creature enters, reveal the top two cards of your library. Put one of them into ",
+      "reason": "",
       "scryfall_id": "47a40b66-a700-4308-99f3-f3d40db30375",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chrome Dome": {
@@ -47182,12 +47182,12 @@
     },
     "Cityscape Leveler": {
       "edhrec_rank": 2111,
-      "gate": "template",
+      "gate": null,
       "name": "Cityscape Leveler",
-      "reason": "no template for: When you cast this spell and whenever this creature attacks, destroy up to one target nonl",
+      "reason": "",
       "scryfall_id": "15564a92-7980-438e-b4cb-8ffb50fb6393",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Citywatch Sphinx": {
@@ -55282,12 +55282,12 @@
     },
     "Cranial Plating": {
       "edhrec_rank": 2384,
-      "gate": "template",
+      "gate": null,
       "name": "Cranial Plating",
-      "reason": "no template for: Equipped creature gets +1/+0 for each artifact you control",
+      "reason": "",
       "scryfall_id": "4b2253d5-f58c-4618-be1e-16e1808806fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cranial Ram": {
@@ -68642,12 +68642,12 @@
     },
     "Digsite Engineer": {
       "edhrec_rank": 4829,
-      "gate": "template",
+      "gate": null,
       "name": "Digsite Engineer",
-      "reason": "no template for: Whenever you cast an artifact spell, you may pay {2}. If you do, create a 0/0 colorless Co",
+      "reason": "",
       "scryfall_id": "5270882b-2382-450e-bb0c-7804be4f19ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dihada's Ploy": {
@@ -86482,12 +86482,12 @@
     },
     "Etched Champion": {
       "edhrec_rank": 9780,
-      "gate": "template",
+      "gate": null,
       "name": "Etched Champion",
-      "reason": "no template for: Metalcraft — This creature has protection from each color as long as you control three or ",
+      "reason": "",
       "scryfall_id": "e87347d9-fa02-42b9-8ae2-60374a70ece5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Etched Cornfield": {
@@ -94862,12 +94862,12 @@
     },
     "Filigree Attendant": {
       "edhrec_rank": 8189,
-      "gate": "template",
+      "gate": null,
       "name": "Filigree Attendant",
-      "reason": "no template for: 's power is equal to the number of artifacts you control",
+      "reason": "",
       "scryfall_id": "599baa0b-57bd-4d26-8404-355b1ec187e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Filigree Crawler": {
@@ -127032,12 +127032,12 @@
     },
     "Hexavus": {
       "edhrec_rank": 7989,
-      "gate": "template",
+      "gate": null,
       "name": "Hexavus",
-      "reason": "no template for: This creature enters with six +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "b599064e-1c44-4df0-ac7d-d2eb0ba44b16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hexbane Tortoise": {
@@ -135792,12 +135792,12 @@
     },
     "Indomitable Archangel": {
       "edhrec_rank": 6870,
-      "gate": "template",
+      "gate": null,
       "name": "Indomitable Archangel",
-      "reason": "no template for: Metalcraft — Artifacts you control have shroud as long as you control three or more artifa",
+      "reason": "",
       "scryfall_id": "e2d7a901-238c-4ea3-a6cb-6c9b4cea2ad6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indomitable Creativity": {
@@ -142302,12 +142302,12 @@
     },
     "Jaya's Immolating Inferno": {
       "edhrec_rank": 2227,
-      "gate": "template",
+      "gate": null,
       "name": "Jaya's Immolating Inferno",
-      "reason": "no template for: deals X damage to each of up to three targets",
+      "reason": "",
       "scryfall_id": "d41277c6-95f8-4f0e-ad4a-43b8bb7cdb19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jaya's Phoenix": {
@@ -145402,12 +145402,12 @@
     },
     "Kamahl's Druidic Vow": {
       "edhrec_rank": 5972,
-      "gate": "template",
+      "gate": null,
       "name": "Kamahl's Druidic Vow",
-      "reason": "no template for: Look at the top X cards of your library. You may put any number of land and/or legendary p",
+      "reason": "",
       "scryfall_id": "bf95ef60-e67b-466d-a6cb-d487ffa88b72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kamahl's Sledge": {
@@ -146152,12 +146152,12 @@
     },
     "Karn's Temporal Sundering": {
       "edhrec_rank": 4030,
-      "gate": "template",
+      "gate": null,
       "name": "Karn's Temporal Sundering",
-      "reason": "no template for: Target player takes an extra turn after this one. Return up to one target nonland permanen",
+      "reason": "",
       "scryfall_id": "7a64c1a4-02ce-49d2-97f2-970b8c33672d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karn's Touch": {
@@ -147052,12 +147052,12 @@
     },
     "Kayla's Music Box": {
       "edhrec_rank": 18665,
-      "gate": "template",
+      "gate": null,
       "name": "Kayla's Music Box",
-      "reason": "no template for: {W}, {T}: Look at the top card of your library, then exile it face down",
+      "reason": "",
       "scryfall_id": "673aaf8d-6716-4f2d-ad2a-b18430c13367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kayla's Reconstruction": {
@@ -159422,12 +159422,12 @@
     },
     "Liquimetal Torque": {
       "edhrec_rank": 514,
-      "gate": "template",
+      "gate": null,
       "name": "Liquimetal Torque",
-      "reason": "no template for: {T}: Target nonland permanent becomes an artifact in addition to its other types until end",
+      "reason": "",
       "scryfall_id": "1e7fd748-fc8f-4553-91a9-a049e5db68e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lita, Little Orphan Amphibian": {
@@ -167302,12 +167302,12 @@
     },
     "March of Progress": {
       "edhrec_rank": 4926,
-      "gate": "template",
+      "gate": null,
       "name": "March of Progress",
-      "reason": "no template for: Choose target artifact creature you control. For each creature chosen this way, create a t",
+      "reason": "",
       "scryfall_id": "3e26cae1-64d9-43a2-9a86-55f9b69905ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "March of Reckless Joy": {
@@ -167732,12 +167732,12 @@
     },
     "Marionette Master": {
       "edhrec_rank": 1507,
-      "gate": "template",
+      "gate": null,
       "name": "Marionette Master",
-      "reason": "no template for: Fabricate 3",
+      "reason": "",
       "scryfall_id": "236c3425-17a2-404e-8630-8dbeb9c3981d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mariposa Military Base": {
@@ -207262,12 +207262,12 @@
     },
     "Primevals' Glorious Rebirth": {
       "edhrec_rank": 2618,
-      "gate": "template",
+      "gate": null,
       "name": "Primevals' Glorious Rebirth",
-      "reason": "no template for: Return all legendary permanent cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "e11471f9-6bf4-4b31-8eb6-f5f9e8abd797",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primitive Etchings": {
@@ -219892,12 +219892,12 @@
     },
     "Relic of Progenitus": {
       "edhrec_rank": 4785,
-      "gate": "template",
+      "gate": null,
       "name": "Relic of Progenitus",
-      "reason": "no template for: {T}: Target player exiles a card from their graveyard",
+      "reason": "",
       "scryfall_id": "26b46701-9fe0-4d6e-8aaf-e0a677f9851f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic of Sauron": {
@@ -233022,12 +233022,12 @@
     },
     "Sanwell, Avenger Ace": {
       "edhrec_rank": 10387,
-      "gate": "template",
+      "gate": null,
       "name": "Sanwell, Avenger Ace",
-      "reason": "no template for: As long as an artifact creature you control is attacking, prevent all damage that would be",
+      "reason": "",
       "scryfall_id": "6b7cd9f1-6501-46ae-9f98-bb69644405bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sapling Nursery": {
@@ -243062,12 +243062,12 @@
     },
     "Sharuum the Hegemon": {
       "edhrec_rank": 7278,
-      "gate": "template",
+      "gate": null,
       "name": "Sharuum the Hegemon",
-      "reason": "no template for: When Sharuum enters, you may return target artifact card from your graveyard to the battle",
+      "reason": "",
       "scryfall_id": "2d7373e7-385f-4887-b1c7-af6d422dd70a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shatter": {
@@ -275882,12 +275882,12 @@
     },
     "Tawnos, Solemn Survivor": {
       "edhrec_rank": 14907,
-      "gate": "template",
+      "gate": null,
       "name": "Tawnos, Solemn Survivor",
-      "reason": "no template for: {2}, {T}: Create a token that's a copy of up to one target artifact token you control. Mil",
+      "reason": "",
       "scryfall_id": "63a7a0ec-2e71-4a32-bed8-dfcf1c48b8ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tawnos, Urza's Apprentice": {
@@ -277012,12 +277012,12 @@
     },
     "Tempered Steel": {
       "edhrec_rank": 3663,
-      "gate": "template",
+      "gate": null,
       "name": "Tempered Steel",
-      "reason": "no template for: Artifact creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "143cf473-681c-41b3-8719-55b878382368",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempered Veteran": {
@@ -283832,12 +283832,12 @@
     },
     "Thopter Shop": {
       "edhrec_rank": 7762,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Shop",
-      "reason": "no template for: Whenever one or more artifact creatures you control die, draw a card. This ability trigger",
+      "reason": "",
       "scryfall_id": "d42ad683-3336-4435-a605-571e53063cb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thopter Spy Network": {
@@ -299772,12 +299772,12 @@
     },
     "Urza's Ruinous Blast": {
       "edhrec_rank": 1611,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Ruinous Blast",
-      "reason": "no template for: Exile all nonland permanents that aren't legendary",
+      "reason": "",
       "scryfall_id": "76b10977-64eb-4a50-a481-d67cc2950f56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urza's Saga": {
@@ -299832,12 +299832,12 @@
     },
     "Urza, Chief Artificer": {
       "edhrec_rank": 4744,
-      "gate": "template",
+      "gate": null,
       "name": "Urza, Chief Artificer",
-      "reason": "no template for: Affinity for artifact creatures",
+      "reason": "",
       "scryfall_id": "30f27d74-2a46-478e-950b-5d3883be555a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urza, Lord High Artificer": {
@@ -319452,12 +319452,12 @@
     },
     "Wreck Hunter": {
       "edhrec_rank": 17861,
-      "gate": "template",
+      "gate": null,
       "name": "Wreck Hunter",
-      "reason": "no template for: When this creature enters, choose target player. You create a tapped Powerstone token for ",
+      "reason": "",
       "scryfall_id": "5beac080-89cb-4bbc-9abd-eb229d74cd95",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wreck Remover": {
@@ -320842,12 +320842,12 @@
     },
     "Yawgmoth's Vile Offering": {
       "edhrec_rank": 6032,
-      "gate": "template",
+      "gate": null,
       "name": "Yawgmoth's Vile Offering",
-      "reason": "no template for: Put up to one target creature or planeswalker card from a graveyard onto the battlefield u",
+      "reason": "",
       "scryfall_id": "31825ceb-d795-4ad7-81d8-77ab34c272f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yawgmoth's Will": {

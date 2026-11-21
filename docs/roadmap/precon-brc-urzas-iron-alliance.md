@@ -5,7 +5,7 @@ area: decks
 effort: M
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [granted-encore]
 status: proposed
 rank: 79
 ---
@@ -19,6 +19,11 @@ coming-soon shell on the shelf: its row `brc_urzas_iron_alliance` is in
 `python scripts/sync_precons.py --missing brc_urzas_iron_alliance` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+One card is left. Wire Surgeons grants encore to the artifact creature cards in
+its controller's graveyard, so it waits on [granted-encore](granted-encore.md):
+a granted activated ability that works off the battlefield, which the engine
+does not have.
 
 ## The change
 

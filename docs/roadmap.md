@@ -90,7 +90,7 @@ each heading; this table is generated from them.
 | [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
-| [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | nothing | 0 |
+| [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
 | [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) | L | high | nothing | 0 |
 | [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) | L | high | nothing | 0 |
 | [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) | L | high | nothing | 0 |
@@ -131,6 +131,7 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
+| [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
@@ -154,46 +155,46 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-3. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-4. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-5. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-6. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-7. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-8. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-9. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-10. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-11. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-12. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-13. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-14. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-15. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-16. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-17. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-18. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-19. [The Ring tempts you](#the-ring-tempts-you) — M, high
-20. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-21. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-22. [Difficulty](#difficulty) — S, medium
-23. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-24. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-25. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-26. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-27. [Why a press is refused](#why-a-press-is-refused) — S, medium
-28. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-29. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-30. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-31. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-32. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-33. [Secret choices](#secret-choices) — M, medium
-34. [Experience counters](#experience-counters) — M, medium
-35. [Outcomes as data](#outcomes-as-data) — M, medium
-36. [Rad counters](#rad-counters) — M, medium
-37. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-38. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-39. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-40. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-41. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+2. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+3. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+4. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+5. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+6. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+7. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+8. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+9. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+10. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+11. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+12. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+13. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+14. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+15. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+16. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+17. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+18. [The Ring tempts you](#the-ring-tempts-you) — M, high
+19. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+20. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+21. [Difficulty](#difficulty) — S, medium
+22. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+23. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+24. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+25. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+26. [Why a press is refused](#why-a-press-is-refused) — S, medium
+27. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+28. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+29. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+30. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+31. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+32. [Secret choices](#secret-choices) — M, medium
+33. [Experience counters](#experience-counters) — M, medium
+34. [Outcomes as data](#outcomes-as-data) — M, medium
+35. [Rad counters](#rad-counters) — M, medium
+36. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+37. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+38. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+39. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+40. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+41. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
 42. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
 43. [Replays and sharing](#replays-and-sharing) — M, medium
 44. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
@@ -247,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
+- [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1454,6 +1456,93 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
+
+### Encore, granted to cards in a graveyard
+
+Effort **M** · Impact **medium**, every card that hands encore to the creature cards in your graveyard waits on it, Wire Surgeons in the Urza's Iron Alliance precon among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Encore (702.141) is not a keyword the engine knows: `engine/enums.py` lists no
+`encore`, and no card key or op spells "exile this card from your graveyard:
+for each opponent, create a token copy that attacks that opponent this turn
+if able; they gain haste; sacrifice them at the beginning of the next end
+step; activate only as a sorcery". Its pieces exist apart: a graveyard
+activated ability is a printed ability whose `active_zones` names the
+graveyard (embalm, read by `legality._activate_zones`), `copy_permanent`
+makes the token copies (its `embalm` key stamps the provenance), and delayed
+sacrifice is the `delay` op.
+
+The cards that wait on it grant encore rather than print it. A grant cannot
+reach the graveyard: `characteristics.abilities_of` derives granted abilities
+on a permanent only and off the battlefield returns the printed list, and the
+loader refuses a granted activated ability whose `active_zones` is anything
+but the battlefield ("a granted activated ability works on the battlefield
+only", `cards/loader/__init__.py`).
+[rules-coverage.md](rules-coverage.md#not-implemented) lists "a granted
+activated ability that works off the battlefield (granted cycling)" as not
+implemented, and [granted-cycling](granted-cycling.md) is the same gap from
+the hand.
+
+The grants price encore by the card it lands on, which nothing can say today:
+Wire Surgeons ("each artifact creature card in your graveyard has encore. Its
+encore cost is equal to its mana cost") and Graywater's Fixer ("each outlaw
+creature card in your graveyard has encore {X}, where X is its mana value").
+Their gap records are `data/authoring/gaps/wire_surgeons.json` and
+`data/authoring/gaps/graywater_s_fixer.json`, under the capability `encore`.
+
+#### The change
+
+1. Encore as a card's own keyword: a graveyard-zone activated ability at
+   sorcery speed whose cost is the encore mana plus exiling the card, and whose
+   effect makes one `copy_permanent` token per opponent with haste, required
+   to attack that opponent this turn (508.1d), and a delayed sacrifice at the
+   beginning of the next end step.
+2. A `grant_encore` player-wide static in `grant_miracle`'s shape: an
+   `affects` filter over the cards in its controller's graveyard and an
+   `encore_cost` of either a mana string, `"mana_cost"` (the card's own) or
+   `"mana_value"` (generic equal to it).
+3. `characteristics.abilities_of` appends, for a graveyard card a
+   `grant_encore` static matches, the encore ability built the way a printed
+   one is, after the printed abilities so printed indices never move; the
+   stack push records the grant, as `stack.push_activated_ability` records
+   `granted_by` for a battlefield grant (608.2).
+4. The rules-coverage row for graveyard grants moves out of "Not
+   implemented"; the generator's curated map and `docs/card-dsl.md` gain the
+   keyword and the static.
+5. Harvest: Wire Surgeons and Graywater's Fixer, then one `/author-cards` wave
+   over the pending cards that print encore.
+
+It does not grant cycling to the hand; that is [granted-cycling](granted-cycling.md),
+which this item's `abilities_of` seam would share if it lands first.
+
+#### Gate
+
+A unit test under `tests/unit/keywords/` for encore: in a three-player game the
+ability makes one hasty token per opponent, each must attack its own opponent,
+each is sacrificed at the next end step, the card is exiled as the cost, and it
+is offered only at sorcery speed. A unit test for the grant: a matching card in
+the graveyard offers encore at each pricing, a non-matching one does not, and
+the offer disappears when the granting permanent leaves. Wire Surgeons' and
+Graywater's Fixer's six gates pass, and `tests/cards/test_dsl_reference.py`
+lists the new keyword and static.
+
+#### Open questions
+
+- **One item or two.** Printed encore and the graveyard grant are separable:
+  printed encore needs no new zone grant. Recommended: one pull request, since
+  no precon card prints encore without a grant waiting on it, and the grant's
+  test needs the keyword.
+- **A player static or a widened `grant_ability`.** Recommended: a dedicated
+  `grant_encore` player static, for the reasons [granted-cycling](granted-cycling.md)
+  gives: every precedent for handing something to cards in a hidden or
+  off-battlefield zone is a player static, and the battlefield grant's loader
+  check stays intact.
+- **"Attacks that opponent this turn if able".** The engine's requirement to
+  attack is a creature's, not a creature-and-player pair's. Recommended: a
+  per-token attack requirement naming the defending player, checked where
+  `combat` validates declared attackers, rather than a goad, which would also
+  forbid attacking its controller's other opponents and lasts the wrong time.
 
 ### Every creature type means every creature type
 
@@ -3855,7 +3944,7 @@ whole-game test able to draw the deck.
 
 ### Urza's Iron Alliance (The Brothers' War Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard).
 
 #### Today
 
@@ -3866,6 +3955,11 @@ coming-soon shell on the shelf: its row `brc_urzas_iron_alliance` is in
 `python scripts/sync_precons.py --missing brc_urzas_iron_alliance` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+One card is left. Wire Surgeons grants encore to the artifact creature cards in
+its controller's graveyard, so it waits on [granted-encore](granted-encore.md):
+a granted activated ability that works off the battlefield, which the engine
+does not have.
 
 #### The change
 

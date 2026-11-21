@@ -272,6 +272,11 @@ required — defaulted it would look at one card and say nothing about it.
 
 `cast_free` sends what was picked to the **stack** instead of to a destination
 zone — see [Casting for free out of the window](card-dsl-cookbook.md#casting-for-free-out-of-the-window).
+`cast_paying` is the same cast at the card's own mana cost — Sanwell, Avenger
+Ace's "you may cast a Vehicle or artifact creature spell from among them" —
+offered only when a line is payable, so an unaffordable pick folds back into the
+rest. It is refused beside `cast_free` and off `look_at_top`; `cast_card` is the
+near miss, which offers every card of its pool rather than one pick.
 
 `destinations` splits one look into ordered steps, each drawing from what the
 earlier ones left — Expressive Iteration's "put one of them into your hand, put
@@ -4587,6 +4592,18 @@ step or phase, an unknown key, and the key on a land, which is played and never
 cast. `cast_during` and `step_is` are the near misses: they are conditions read
 inside effects, so an `if` on one lets the spell be cast anywhere and do
 nothing.
+
+```jsonc
+// Urza's Ruinous Blast — "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)"
+{ "supertypes": ["Legendary"], "types": ["Sorcery"] }
+```
+
+A legendary instant or sorcery needs no key: 205.4e's restriction is read off
+the supertype. `player_statics.player_cant_cast_spells` refuses the cast unless
+the caster controls a legendary creature or a legendary planeswalker
+(`controls_a_legend_that_casts`, over the derived characteristics, so a
+legendary artifact that is not a creature does not count). The reminder
+sentence is printed and needs nothing either.
 
 ### Choosing a permanent or card type, and reading it back
 
