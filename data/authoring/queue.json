@@ -193002,12 +193002,12 @@
     },
     "Oni-Cult Anvil": {
       "edhrec_rank": 6085,
-      "gate": "template",
+      "gate": null,
       "name": "Oni-Cult Anvil",
-      "reason": "no template for: Whenever one or more artifacts you control leave the battlefield during your turn, create ",
+      "reason": "",
       "scryfall_id": "c275470f-83d2-4341-9757-a570ec19a181",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Onslaught": {

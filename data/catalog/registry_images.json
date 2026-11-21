@@ -3951,6 +3951,10 @@
     "artist": "Gabriel Rubio",
     "scryfall_id": "0910f9ee-755f-4a94-a2ab-20df2d7f7f27"
   },
+  "construct_1_1_c_artifact": {
+    "artist": "Gabriel Rubio",
+    "scryfall_id": "0910f9ee-755f-4a94-a2ab-20df2d7f7f27"
+  },
   "construct_4_4_c_artifact": {
     "artist": "Gabriel Rubio",
     "scryfall_id": "0910f9ee-755f-4a94-a2ab-20df2d7f7f27"
@@ -14542,6 +14546,10 @@
   "ongoing_investigation": {
     "artist": "Bud Cook",
     "scryfall_id": "ff084438-2e70-41bc-a208-30ab16c026c1"
+  },
+  "oni_cult_anvil": {
+    "artist": "Yeong-Hao Han",
+    "scryfall_id": "c275470f-83d2-4341-9757-a570ec19a181"
   },
   "oona_queen_of_the_fae": {
     "artist": "Adam Rex",

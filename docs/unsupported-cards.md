@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **459** capabilities.
+**539 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -161,7 +161,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
-| [construct-1-1-c-artifact](#construct-1-1-c-artifact) | 1 | 6085 | token |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-exception-name](#copy-exception-name) | 1 | 9876 | op |
@@ -3287,20 +3286,6 @@ Blocks **1** card.
 
 - **Rassilon, the War President** (rank 17639) — `rassilon_the_war_president`
   - Each noncreature spell you cast from exile has conspire. (As you cast that spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy.)
-
-</details>
-
-## construct-1-1-c-artifact
-
-Blocks **1** card.
-
-- **(token)** a 1/1 colorless Construct artifact creature token with no abilities
-  <br>Why the existing vocabulary won't do: token_ids has Construct tokens only at 0/0 with a +1/+1-per-artifact static, 4/4, 4/4 flying haste and 6/12 trample; none is a vanilla 1/1, and the other 1/1 colorless artifact creatures (servo, myr, gnome, soldier) have the wrong creature type. The trigger itself is expressible (leaves_battlefield with batched, max_per_turn 1 and an is_your_turn condition), as is the {T}, sacrifice-an-artifact damage/gain-life ability.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oni-Cult Anvil** (rank 6085) — `oni_cult_anvil`
-  - Whenever one or more artifacts you control leave the battlefield during your turn, create a 1/1 colorless Construct artifact creature token. This ability triggers only once each turn.
 
 </details>
 
