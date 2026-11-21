@@ -1,0 +1,18 @@
+{
+  "card_id": "oni_cult_anvil",
+  "name": "Oni-Cult Anvil",
+  "oracle_text": "Whenever one or more artifacts you control leave the battlefield during your turn, create a 1/1 colorless Construct artifact creature token. This ability triggers only once each turn.\n{T}, Sacrifice an artifact: This artifact deals 1 damage to each opponent. You gain 1 life.",
+  "blocked_sentences": [
+    "Whenever one or more artifacts you control leave the battlefield during your turn, create a 1/1 colorless Construct artifact creature token. This ability triggers only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "construct_1_1_c_artifact",
+      "kind": "token",
+      "what": "a 1/1 colorless Construct artifact creature token with no abilities",
+      "why_existing_wont_do": "token_ids has Construct tokens only at 0/0 with a +1/+1-per-artifact static, 4/4, 4/4 flying haste and 6/12 trample; none is a vanilla 1/1, and the other 1/1 colorless artifact creatures (servo, myr, gnome, soldier) have the wrong creature type. The trigger itself is expressible (leaves_battlefield with batched, max_per_turn 1 and an is_your_turn condition), as is the {T}, sacrifice-an-artifact damage/gain-life ability."
+    }
+  ],
+  "closest_existing": ["construct_0_0_c_artifact_buff", "servo_1_1_c"],
+  "confidence": "high"
+}

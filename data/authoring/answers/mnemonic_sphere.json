@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "mnemonic_sphere",
+    "name": "Mnemonic Sphere",
+    "oracle_text": "{1}{U}, Sacrifice this artifact: Draw two cards.\nChannel — {U}, Discard this card: Draw a card.",
+    "mana_cost": "{1}{U}",
+    "types": ["Artifact"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}{U}, Sacrifice this artifact: Draw two cards",
+        "cost": {"mana": "{1}{U}", "sacrifice": {"self_only": true, "zone": "battlefield"}},
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 2}}]
+      },
+      {
+        "kind": "activated",
+        "text": "Channel — {U}, Discard this card: Draw a card",
+        "active_zones": ["hand"],
+        "cost": {"mana": "{U}", "discard_self": true},
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
