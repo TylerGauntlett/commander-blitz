@@ -15699,6 +15699,13 @@
     },
     "zone": "exile"
   },
+  "mnemonic_sphere": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "moan_of_the_unhallowed": {
     "battlefield_count": 34,
     "tokens": {
@@ -16174,6 +16181,13 @@
   "mutilate": {
     "zone": "graveyard"
   },
+  "muzzio_visionary_architect": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mycoloth": {
     "battlefield_count": 31,
     "counters": {
@@ -16187,6 +16201,16 @@
   },
   "mycosynth_fiend": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mycosynth_wellspring": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "myr_battlesphere": {
@@ -20710,6 +20734,10 @@
   "scattered_groves": {
     "zone": "battlefield"
   },
+  "scavenged_brawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scavenger_grounds": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21245,6 +21273,14 @@
   },
   "servant_of_the_conduit": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "servo_schematic": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "servo_1_1_c"
+    },
     "zone": "battlefield"
   },
   "setessan_champion": {

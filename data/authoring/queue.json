@@ -176762,12 +176762,12 @@
     },
     "Mnemonic Sphere": {
       "edhrec_rank": 11564,
-      "gate": "template",
+      "gate": null,
       "name": "Mnemonic Sphere",
-      "reason": "no template for: {1}{U}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "6dd6a9d8-6ac3-49be-a87e-4d91fa8d96a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mnemonic Wall": {
@@ -181532,12 +181532,12 @@
     },
     "Muzzio, Visionary Architect": {
       "edhrec_rank": 13196,
-      "gate": "template",
+      "gate": null,
       "name": "Muzzio, Visionary Architect",
-      "reason": "no template for: {3}{U}, {T}: Look at the top X cards of your library, where X is the greatest mana value a",
+      "reason": "",
       "scryfall_id": "f6726c12-d484-4ab7-9d5d-2a1561602d3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Muzzle": {
@@ -181662,12 +181662,12 @@
     },
     "Mycosynth Wellspring": {
       "edhrec_rank": 2394,
-      "gate": "template",
+      "gate": null,
       "name": "Mycosynth Wellspring",
-      "reason": "no template for: When this artifact enters or is put into a graveyard from the battlefield, you may search ",
+      "reason": "",
       "scryfall_id": "5d951e0f-3f20-4c1c-ba5a-8cd17dfe5f0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myojin of Blooming Dawn": {
@@ -235212,12 +235212,12 @@
     },
     "Scavenged Brawler": {
       "edhrec_rank": 3904,
-      "gate": "template",
+      "gate": null,
       "name": "Scavenged Brawler",
-      "reason": "no template for: {5}, Exile this card from your graveyard: Choose target creature. Put four +1/+1 counters,",
+      "reason": "",
       "scryfall_id": "3e85dbfe-135d-48a8-be11-399f221073ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scavenged Weaponry": {
@@ -241292,12 +241292,12 @@
     },
     "Servo Schematic": {
       "edhrec_rank": 5298,
-      "gate": "template",
+      "gate": null,
       "name": "Servo Schematic",
-      "reason": "no template for: When this artifact enters or is put into a graveyard from the battlefield, create a 1/1 co",
+      "reason": "",
       "scryfall_id": "723b5b4d-120c-4396-8e7c-ed62302f463d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seshiro the Anointed": {
