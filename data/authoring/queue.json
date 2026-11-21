@@ -5882,12 +5882,12 @@
     },
     "Alela, Artful Provocateur": {
       "edhrec_rank": 5226,
-      "gate": "template",
+      "gate": null,
       "name": "Alela, Artful Provocateur",
-      "reason": "no template for: Other creatures you control with flying get +1/+0",
+      "reason": "",
       "scryfall_id": "31c99a7d-a70b-4599-9bd2-be7a5cac28ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alela, Cunning Conqueror": {
@@ -13352,12 +13352,12 @@
     },
     "Armix, Filigree Thrasher": {
       "edhrec_rank": 5967,
-      "gate": "template",
+      "gate": null,
       "name": "Armix, Filigree Thrasher",
-      "reason": "no template for: Whenever Armix attacks, you may discard a card. When you do, target creature defending pla",
+      "reason": "",
       "scryfall_id": "fe688c90-2dcf-48b9-a8b5-bea3500bb0a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armor Sliver": {
@@ -46212,12 +46212,12 @@
     },
     "Chrome Courier": {
       "edhrec_rank": 16115,
-      "gate": "template",
+      "gate": null,
       "name": "Chrome Courier",
-      "reason": "no template for: When this creature enters, reveal the top two cards of your library. Put one of them into ",
+      "reason": "",
       "scryfall_id": "47a40b66-a700-4308-99f3-f3d40db30375",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chrome Dome": {
@@ -55282,12 +55282,12 @@
     },
     "Cranial Plating": {
       "edhrec_rank": 2384,
-      "gate": "template",
+      "gate": null,
       "name": "Cranial Plating",
-      "reason": "no template for: Equipped creature gets +1/+0 for each artifact you control",
+      "reason": "",
       "scryfall_id": "4b2253d5-f58c-4618-be1e-16e1808806fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cranial Ram": {
@@ -68642,12 +68642,12 @@
     },
     "Digsite Engineer": {
       "edhrec_rank": 4829,
-      "gate": "template",
+      "gate": null,
       "name": "Digsite Engineer",
-      "reason": "no template for: Whenever you cast an artifact spell, you may pay {2}. If you do, create a 0/0 colorless Co",
+      "reason": "",
       "scryfall_id": "5270882b-2382-450e-bb0c-7804be4f19ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dihada's Ploy": {
@@ -86482,12 +86482,12 @@
     },
     "Etched Champion": {
       "edhrec_rank": 9780,
-      "gate": "template",
+      "gate": null,
       "name": "Etched Champion",
-      "reason": "no template for: Metalcraft — This creature has protection from each color as long as you control three or ",
+      "reason": "",
       "scryfall_id": "e87347d9-fa02-42b9-8ae2-60374a70ece5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Etched Cornfield": {

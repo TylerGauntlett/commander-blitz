@@ -484,6 +484,13 @@
     },
     "zone": "battlefield"
   },
+  "alela_artful_provocateur": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "alela_cunning_conqueror": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1307,6 +1314,10 @@
       "count": 2,
       "id": "clue_token"
     },
+    "zone": "battlefield"
+  },
+  "armix_filigree_thrasher": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "armorcraft_judge": {
@@ -4047,6 +4058,19 @@
   "chrome_cat": {
     "zone": "battlefield"
   },
+  "chrome_courier": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "chrome_host_seedshark": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4919,6 +4943,10 @@
         "lifelink"
       ]
     },
+    "zone": "battlefield"
+  },
+  "cranial_plating": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "crash_of_rhinos": {
@@ -6116,6 +6144,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "digsite_engineer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "diluvian_primordial": {
     "battlefield_count": 33,
@@ -7594,6 +7626,10 @@
     "zone": "battlefield"
   },
   "etali_primal_storm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "etched_champion": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

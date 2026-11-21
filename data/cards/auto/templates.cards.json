@@ -6327,6 +6327,83 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "keywords": [
+              "flying"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other creatures you control with flying get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "faerie_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "alela_artful_provocateur",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Alela, Artful Provocateur",
+      "oracle_text": "Flying, deathtouch, lifelink\nOther creatures you control with flying get +1/+0.\nWhenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -15524,6 +15601,148 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "armix_thrash",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1
+              },
+              "player": "you",
+              "prompt": "Discard a card to give target creature defending player controls -X/-X?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Armix attacks, you may discard a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "times": [
+                  {
+                    "sum": [
+                      {
+                        "count": {
+                          "controller": "you",
+                          "types": [
+                            "Artifact"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      {
+                        "count": {
+                          "controller": "you",
+                          "types": [
+                            "Artifact"
+                          ],
+                          "zone": "graveyard"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "sum": [
+                      {
+                        "count": {
+                          "controller": "you",
+                          "types": [
+                            "Artifact"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      {
+                        "count": {
+                          "controller": "you",
+                          "types": [
+                            "Artifact"
+                          ],
+                          "zone": "graveyard"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "const": -1
+                  }
+                ]
+              }
+            }
+          ],
+          "id": "armix_thrash",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "armix_filigree_thrasher",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Armix, Filigree Thrasher",
+      "oracle_text": "Whenever Armix attacks, you may discard a card. When you do, target creature defending player controls gets -X/-X until end of turn, where X is the number of artifacts you control plus the number of artifact cards in your graveyard.\nPartner (You can have two commanders if both have partner.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -49786,6 +50005,79 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "as": "courier_taken",
+              "destination": "hand",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "graveyard"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "courier_taken",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, reveal the top two cards of your library. Put one of them into your hand and the other into your graveyard. If you put an artifact card into your hand this way, you gain 3 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "chrome_courier",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Chrome Courier",
+      "oracle_text": "Flying\nWhen this creature enters, reveal the top two cards of your library. Put one of them into your hand and the other into your graveyard. If you put an artifact card into your hand this way, you gain 3 life.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Thopter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "mana_value_of": {
                   "binding": "subject"
                 }
@@ -60084,6 +60376,103 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Equipped creature gets +1/+0 for each artifact you control.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{B}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "attach_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "attach_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{B}{B}: Attach this Equipment to target creature you control."
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "cranial_plating",
+      "mana_cost": "{2}",
+      "name": "Cranial Plating",
+      "oracle_text": "Equipped creature gets +1/+0 for each artifact you control.\n{B}{B}: Attach this Equipment to target creature you control.\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -73834,6 +74223,62 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "construct_0_0_c_artifact_buff"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to create a 0/0 Construct token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you may pay {2}. If you do, create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "digsite_engineer",
+      "mana_cost": "{2}{W}",
+      "name": "Digsite Engineer",
+      "oracle_text": "Whenever you cast an artifact spell, you may pay {2}. If you do, create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -91339,6 +91784,56 @@
       ],
       "toughness": 6,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "protection",
+          "from_colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+          ],
+          "kind": "static",
+          "text": "Metalcraft — This creature has protection from each color as long as you control three or more artifacts."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "etched_champion",
+      "mana_cost": "{3}",
+      "name": "Etched Champion",
+      "oracle_text": "Metalcraft — This creature has protection from each color as long as you control three or more artifacts.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
