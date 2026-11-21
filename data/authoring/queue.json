@@ -167732,12 +167732,12 @@
     },
     "Marionette Master": {
       "edhrec_rank": 1507,
-      "gate": "template",
+      "gate": null,
       "name": "Marionette Master",
-      "reason": "no template for: Fabricate 3",
+      "reason": "",
       "scryfall_id": "236c3425-17a2-404e-8630-8dbeb9c3981d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mariposa Military Base": {
@@ -219892,12 +219892,12 @@
     },
     "Relic of Progenitus": {
       "edhrec_rank": 4785,
-      "gate": "template",
+      "gate": null,
       "name": "Relic of Progenitus",
-      "reason": "no template for: {T}: Target player exiles a card from their graveyard",
+      "reason": "",
       "scryfall_id": "26b46701-9fe0-4d6e-8aaf-e0a677f9851f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic of Sauron": {
@@ -243062,12 +243062,12 @@
     },
     "Sharuum the Hegemon": {
       "edhrec_rank": 7278,
-      "gate": "template",
+      "gate": null,
       "name": "Sharuum the Hegemon",
-      "reason": "no template for: When Sharuum enters, you may return target artifact card from your graveyard to the battle",
+      "reason": "",
       "scryfall_id": "2d7373e7-385f-4887-b1c7-af6d422dd70a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shatter": {
@@ -275882,12 +275882,12 @@
     },
     "Tawnos, Solemn Survivor": {
       "edhrec_rank": 14907,
-      "gate": "template",
+      "gate": null,
       "name": "Tawnos, Solemn Survivor",
-      "reason": "no template for: {2}, {T}: Create a token that's a copy of up to one target artifact token you control. Mil",
+      "reason": "",
       "scryfall_id": "63a7a0ec-2e71-4a32-bed8-dfcf1c48b8ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tawnos, Urza's Apprentice": {
@@ -283832,12 +283832,12 @@
     },
     "Thopter Shop": {
       "edhrec_rank": 7762,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Shop",
-      "reason": "no template for: Whenever one or more artifact creatures you control die, draw a card. This ability trigger",
+      "reason": "",
       "scryfall_id": "d42ad683-3336-4435-a605-571e53063cb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thopter Spy Network": {
@@ -299832,12 +299832,12 @@
     },
     "Urza, Chief Artificer": {
       "edhrec_rank": 4744,
-      "gate": "template",
+      "gate": null,
       "name": "Urza, Chief Artificer",
-      "reason": "no template for: Affinity for artifact creatures",
+      "reason": "",
       "scryfall_id": "30f27d74-2a46-478e-950b-5d3883be555a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urza, Lord High Artificer": {

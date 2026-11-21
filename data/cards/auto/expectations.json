@@ -14873,6 +14873,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "marionette_master": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "marisi_s_twinclaws": {
     "zone": "battlefield"
   },
@@ -19388,6 +19396,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "relic_of_progenitus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_of_sauron": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21326,6 +21338,13 @@
     "zone": "battlefield"
   },
   "sharlayan_nation_of_scholars": {
+    "zone": "battlefield"
+  },
+  "sharuum_the_hegemon": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "shatter_the_sky": {
@@ -24048,6 +24067,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tawnos_solemn_survivor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tcri_building": {
     "life": {
       "0": 41
@@ -24974,6 +25000,13 @@
   },
   "thopter_fabricator": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thopter_shop": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "thopter_spy_network": {
@@ -26447,6 +26480,10 @@
     "zone": "battlefield"
   },
   "ursine_monstrosity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "urza_chief_artificer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

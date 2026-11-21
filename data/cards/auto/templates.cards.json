@@ -178230,6 +178230,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put three +1/+1 counters on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "create_token",
+                      "token": "servo_1_1_c"
+                    }
+                  ],
+                  "label": "Create three 1/1 colorless Servo artifact creature tokens."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Fabricate 3 (When this creature enters, put three +1/+1 counters on it or create three 1/1 colorless Servo artifact creature tokens.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever an artifact you control is put into a graveyard from the battlefield, target opponent loses life equal to this creature's power.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "marionette_master",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Marionette Master",
+      "oracle_text": "Fabricate 3 (When this creature enters, put three +1/+1 counters on it or create three 1/1 colorless Servo artifact creature tokens.)\nWhenever an artifact you control is put into a graveyard from the battlefield, target opponent loses life equal to this creature's power.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R",
@@ -231750,6 +231855,76 @@
           },
           "effects": [
             {
+              "objects": {
+                "chooser": {
+                  "target": "t1"
+                },
+                "controller": "any",
+                "count": 1,
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "{T}: Target player exiles a card from their graveyard."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Exile this artifact: Exile all graveyards. Draw a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "relic_of_progenitus",
+      "mana_cost": "{1}",
+      "name": "Relic of Progenitus",
+      "oracle_text": "{T}: Target player exiles a card from their graveyard.\n{1}, Exile this artifact: Exile all graveyards. Draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -254430,6 +254605,79 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return the targeted artifact card from your graveyard to the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Sharuum enters, you may return target artifact card from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "sharuum_the_hegemon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{U}{B}",
+      "name": "Sharuum the Hegemon",
+      "oracle_text": "Flying\nWhen Sharuum enters, you may return target artifact card from your graveyard to the battlefield.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -288732,6 +288980,116 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Create a token that's a copy of up to one target artifact token you control. Mill two cards."
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "as": "exiled",
+              "count": 1
+            },
+            "mana": "{1}{W}{U}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 2,
+              "is_token": true,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "add_types": [
+                  "Artifact"
+                ]
+              },
+              "objects": {
+                "binding": "exiled",
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{1}{W}{U}{B}, {T}, Sacrifice two artifact tokens, Exile an artifact or creature card from your graveyard: Create a token that's a copy of the exiled card, except it's an artifact in addition to its other types. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tawnos_solemn_survivor",
+      "mana_cost": "{1}{U}",
+      "name": "Tawnos, Solemn Survivor",
+      "oracle_text": "{2}, {T}: Create a token that's a copy of up to one target artifact token you control. Mill two cards.\n{1}{W}{U}{B}, {T}, Sacrifice two artifact tokens, Exile an artifact or creature card from your graveyard: Create a token that's a copy of the exiled card, except it's an artifact in addition to its other types. Activate only as a sorcery.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -301170,6 +301528,63 @@
         "Vehicle"
       ],
       "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more artifact creatures you control die, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}, {T}: Create a 1/1 colorless Thopter artifact creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "thopter_shop",
+      "mana_cost": "{3}",
+      "name": "Thopter Shop",
+      "oracle_text": "Whenever one or more artifact creatures you control die, draw a card. This ability triggers only once each turn.\n{2}{W}, {T}: Create a 1/1 colorless Thopter artifact creature token with flying.",
+      "source": "auto",
       "types": [
         "Artifact"
       ]
@@ -317358,6 +317773,79 @@
         "Mutant"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Artifact creatures you control have menace."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "construct_0_0_c_artifact_buff"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Artifact",
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "urza_chief_artificer",
+      "mana_cost": "{3}{W}{U}{B}",
+      "name": "Urza, Chief Artificer",
+      "oracle_text": "Affinity for artifact creatures (This spell costs {1} less to cast for each artifact creature you control.)\nArtifact creatures you control have menace.\nAt the beginning of your end step, create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
