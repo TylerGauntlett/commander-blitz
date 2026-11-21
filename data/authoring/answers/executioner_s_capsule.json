@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "executioner_s_capsule",
+    "name": "Executioner's Capsule",
+    "oracle_text": "{1}{B}, {T}, Sacrifice this artifact: Destroy target nonblack creature.",
+    "mana_cost": "{B}",
+    "types": ["Artifact"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}{B}, {T}, Sacrifice this artifact: Destroy target nonblack creature.",
+        "cost": {
+          "mana": "{1}{B}",
+          "tap": true,
+          "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "any",
+              "types": ["Creature"],
+              "not_colors": ["B"]
+            }
+          }
+        ],
+        "effects": [
+          { "op": "destroy", "objects": { "target": "t1" } }
+        ]
+      }
+    ]
+  },
+  "expectation": { "zone": "battlefield", "battlefield_count": 33 }
+}
