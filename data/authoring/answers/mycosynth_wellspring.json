@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "mycosynth_wellspring",
+    "name": "Mycosynth Wellspring",
+    "oracle_text": "When this artifact enters or is put into a graveyard from the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+    "mana_cost": "{2}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters or is put into a graveyard from the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "hand",
+            "reveal": true,
+            "selector": {"types": ["Land"], "supertypes": ["Basic"]}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters or is put into a graveyard from the battlefield, you may search your library for a basic land card, reveal it, put it into your hand, then shuffle.",
+        "trigger": {"event": "dies", "source": "self"},
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "hand",
+            "reveal": true,
+            "selector": {"types": ["Land"], "supertypes": ["Basic"]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 2},
+    "library_size": {"0": 39}
+  }
+}
