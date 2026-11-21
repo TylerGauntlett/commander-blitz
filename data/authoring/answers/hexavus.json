@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "hexavus",
+    "name": "Hexavus",
+    "oracle_text": "Flying\nThis creature enters with six +1/+1 counters on it.\n{1}, Remove a +1/+1 counter from this creature: Put a flying counter on another target creature.\n{1}, Remove a counter from another creature you control: Put a +1/+1 counter on this creature.",
+    "mana_cost": "{6}",
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Construct"],
+    "colors": [],
+    "color_identity": [],
+    "power": 0,
+    "toughness": 0,
+    "keywords": ["flying"],
+    "replacements": [
+      {"event": "self_enters_with_counters", "counter": "+1/+1", "amount": {"const": 6}}
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}, Remove a +1/+1 counter from this creature: Put a flying counter on another target creature.",
+        "cost": {"mana": "{1}", "remove_counters": {"amount": 1, "counter": "+1/+1"}},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "exclude_self": true}
+          }
+        ],
+        "effects": [
+          {"op": "add_counters", "counter": "flying", "amount": {"const": 1}, "objects": {"target": "t1"}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}, Remove a counter from another creature you control: Put a +1/+1 counter on this creature.",
+        "cost": {
+          "mana": "{1}",
+          "remove_counters_from_among": {"count": 1, "controller": "you", "types": ["Creature"], "exclude_self": true}
+        },
+        "effects": [
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "counters": {"kind": "+1/+1", "amount": 6},
+    "battlefield_count": 33
+  }
+}
