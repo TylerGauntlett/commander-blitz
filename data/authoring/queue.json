@@ -14832,12 +14832,12 @@
     },
     "Ashnod the Uncaring": {
       "edhrec_rank": 13248,
-      "gate": "template",
+      "gate": null,
       "name": "Ashnod the Uncaring",
-      "reason": "no template for: Whenever you activate an ability of an artifact or creature that isn't a mana ability, if ",
+      "reason": "",
       "scryfall_id": "8f3d67c1-3142-44b4-8f83-0ca6177cf9ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashnod's Altar": {

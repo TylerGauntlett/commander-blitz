@@ -4292,6 +4292,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
             )
+    if op == "copy_ability" and "sid" in effect:
+        # "Copy **that ability**" (Ashnod the Uncaring): the ability is named by
+        # value, not chosen. A malformed expression evaluates to 0, matches no
+        # stack item and copies nothing; beside a `target` one of the two
+        # would be ignored.
+        validate_value(effect["sid"], f"{where}.sid")
+        if "target" in effect:
+            raise DslError(
+                f"{where}: copy_ability takes 'sid' or 'target', not both -- one "
+                f"names the ability that fired this trigger, the other lets its "
+                f"controller pick one"
+            )
     if "all_if" in effect:
         # Entwine. Only `choose_mode` has modes to take all of, so anywhere else
         # the key would load, be ignored, and leave a card that reads "choose

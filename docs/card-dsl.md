@@ -503,6 +503,24 @@ captured, the announced `x` and its ability kind, and goes on top of the stack.
 `new_targets` is offered from the **ability's** own target specs, not the
 card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
+`sid` names the ability by value instead of by target — "whenever you activate
+an ability …, you may copy **that ability**" (Ashnod the Uncaring). An
+`ability_activated` trigger carries the stack item the activation became as
+`{"binding": "sid"}`:
+
+```jsonc
+{ "op": "may", "prompt": "Copy that ability?",
+  "effects": [ { "op": "copy_ability", "sid": { "binding": "sid" },
+                 "new_targets": true } ] }
+```
+
+"That ability" does not target, so nothing is announced and the trigger cannot
+fizzle; an `ability_on_stack` target is the near miss and is Lithoform Engine,
+which copies whichever ability its controller picks. An ability that has left
+the stack by the time the copy resolves — countered, or resolved — is not
+copied, the answer `copy_spell` gives a `spell_cast` trigger's `sid`. The loader
+refuses `sid` beside `target` and a malformed `sid` expression.
+
 ### `that_targets` — a spell or ability by what it targets
 
 "Sacrifice this creature: Counter target spell or ability **that targets you or a
@@ -7257,7 +7275,8 @@ never punishes an equip, a cracked fetchland or a Signet. `becomes_target` is th
 other, and it sees nothing at all when an ability has no targets.
 
 Its subject is the **permanent whose ability it was**, so `filter` reads that
-permanent; its `controller` clause is the **player who activated it**, which is
+permanent; its `sid` binding is the activated ability on the stack, which
+`copy_ability` reads as "copy that ability". Its `controller` clause is the **player who activated it**, which is
 not the same question — an opponent equipping a creature *you* control is their
 activation of their ability on your permanent, and the printed line says that
 triggers.

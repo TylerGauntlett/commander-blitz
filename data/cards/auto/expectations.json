@@ -1465,6 +1465,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ashnod_the_uncaring": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aspect_of_gorgon": {
     "zone": [
       "battlefield",

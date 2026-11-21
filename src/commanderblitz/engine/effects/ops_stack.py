@@ -790,10 +790,23 @@ def op_copy_ability(ctx: EffectContext, spec: Mapping[str, Any]):
     wrong pool -- usually empty, since the card that grants an activated ability
     rarely targets at its own level -- so this asks `ability_of` for the specs the
     ability actually declared.
+
+    ``sid`` names the ability by value instead of by target -- "Whenever you
+    activate an ability …, you may copy **that ability**" (Ashnod the
+    Uncaring). The trigger does not target, so nothing is announced and nothing
+    can make it fizzle; ``{"binding": "sid"}`` reads the stack item the
+    `ability_activated` event named, which `Game._activate` allocated before the
+    cost was paid and pushed under that sid before any trigger reached the
+    stack. The same answer as a `spell_cast` trigger's `copy_spell`: an ability
+    that has already left the stack -- countered, or resolved -- is not there to
+    copy, and the op does nothing.
     """
 
-    refs = ctx.targets.get(str(spec.get("target", "t1")), ())
-    sids = [ref.id for ref in refs if getattr(ref, "kind", None) == "stack"]
+    if "sid" in spec:
+        sids = [evaluate_value(ctx, spec["sid"])]
+    else:
+        refs = ctx.targets.get(str(spec.get("target", "t1")), ())
+        sids = [ref.id for ref in refs if getattr(ref, "kind", None) == "stack"]
     for sid in sids:
         original = ctx.state.stack_item(sid)
         if original is None or original.is_spell:

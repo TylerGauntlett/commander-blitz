@@ -17238,6 +17238,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_ability",
+                  "sid": {
+                    "binding": "sid"
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Copy that ability?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)",
+          "trigger": {
+            "controller": "you",
+            "event": "ability_activated",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            "mana_ability": false,
+            "sacrificed_to_activate": true
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "ashnod_the_uncaring",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{U}{B}{R}",
+      "name": "Ashnod the Uncaring",
+      "oracle_text": "Deathtouch\nWhenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

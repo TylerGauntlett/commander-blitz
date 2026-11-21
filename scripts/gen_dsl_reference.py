@@ -464,7 +464,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              "Doing something to a spell that is not countering it"),
     "reflexive_trigger": ("Stack", "\"When you do\": queue a trigger off the preceding effect.",
                           '"When you do" — reflexive triggered abilities'),
-    "copy_ability": ("Stack", "Copy an activated or triggered ability; `new_targets` re-aims it.",
+    "copy_ability": ("Stack", "Copy an activated or triggered ability, by `target` or by `sid` (\"copy that ability\"); `new_targets` re-aims it.",
                      None),
     "choose_new_targets": ("Stack", "Choose new targets for a spell or ability already on the stack (115.7).",
                            '"You may choose new targets for target spell" — retargeting the original'),

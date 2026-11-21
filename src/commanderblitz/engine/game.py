@@ -1375,6 +1375,13 @@ class Game:
         # sacrificed to activate it". Known now although the cost is paid
         # below: X has been announced, and `pay` takes exactly that many or the
         # activation does not happen (`costs.cost_sacrifice_count`).
+        #
+        # `sid` is the stack item this activation becomes, allocated now so a
+        # trigger can name it -- "copy **that ability**" (Ashnod the Uncaring)
+        # reads it as `{"binding": "sid"}`. The item itself is pushed below,
+        # under this same sid, and is on the stack before any trigger this
+        # wakes is (603.3).
+        sid = state.alloc_sid()
         triggers.fire(
             state,
             EventType.ABILITY_ACTIVATED,
@@ -1384,6 +1391,7 @@ class Game:
             card=card.id,
             mana_ability=False,
             sacrificed=cost_sacrifice_count(ability.cost, x),
+            sid=sid,
         )
 
         # What the cost named -- Station's "the tapped creature", Gisa's "the
@@ -1448,6 +1456,7 @@ class Game:
             modes=modes,
             modes_answered=ability.cast_time_modes is not None,
             bindings=bindings,
+            sid=sid,
         )
         if ability.is_cycling:
             # Fired *after* the cycling ability is on the stack, and the order

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **450** capabilities.
+**532 cards** blocked by **449** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -163,7 +163,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
-| [copy-triggering-ability](#copy-triggering-ability) | 1 | 13248 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
@@ -3301,20 +3300,6 @@ Blocks **1** card.
 
 - **Exterminator Magmarch** (rank 13586) — `exterminator_magmarch`
   - Whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents. Copy that spell. The copy targets the chosen permanent.
-
-</details>
-
-## copy-triggering-ability
-
-Blocks **1** card.
-
-- **(op)** copy the activated ability that caused this trigger ("copy that ability") with new_targets, without targeting it -- the stack item bound from the triggering event
-  <br>Why the existing vocabulary won't do: `copy_ability` reads stack refs from a target spec (`target`, default t1); a triggered ability saying "that ability" does not target, and the ability_activated event does not bind the new stack item's sid for the effect to read
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashnod the Uncaring** (rank 13248) — `ashnod_the_uncaring`
-  - Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)
 
 </details>
 
