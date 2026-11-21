@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "sacrificed_to_activate",
-      "kind": "trigger_event",
-      "what": "an `ability_activated` trigger restriction (or event payload) that fires only when the activation's cost sacrificed one or more permanents -- the ability's own `sacrifice`/`sacrifice_x` cost, not permanents sacrificed by mana abilities used to pay it",
-      "why_existing_wont_do": "`game.py` fires ABILITY_ACTIVATED with only player/source/ability/card/mana_ability; `trigger_keys` (`mana_ability`, `filter`, `condition`) and `condition_keys` read the source's printed face or the board, nothing about what the cost paid"
-    },
-    {
       "capability": "copy_triggering_ability",
       "kind": "op",
       "what": "copy the activated ability that caused this trigger (\"copy that ability\") with new_targets, without targeting it -- the stack item bound from the triggering event",

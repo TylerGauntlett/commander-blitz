@@ -57,6 +57,7 @@ from .costs import (
     can_pay,
     can_pay_mana,
     commander_cost,
+    cost_sacrifice_count,
     cost_x_ceiling,
     defined_x,
     mana_amount,
@@ -1368,6 +1369,12 @@ class Game:
         # `mana_ability` is what separates this from `_activate_mana`'s
         # identical event type; without it a listener cannot tell a fetchland's
         # sacrifice ability from the same land's tap.
+        #
+        # `sacrificed` is how many permanents this activation's own cost
+        # sacrifices -- Ashnod the Uncaring's "if one or more permanents were
+        # sacrificed to activate it". Known now although the cost is paid
+        # below: X has been announced, and `pay` takes exactly that many or the
+        # activation does not happen (`costs.cost_sacrifice_count`).
         triggers.fire(
             state,
             EventType.ABILITY_ACTIVATED,
@@ -1376,6 +1383,7 @@ class Game:
             ability=action.ability_index,
             card=card.id,
             mana_ability=False,
+            sacrificed=cost_sacrifice_count(ability.cost, x),
         )
 
         # What the cost named -- Station's "the tapped creature", Gisa's "the

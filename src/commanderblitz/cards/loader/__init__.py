@@ -4019,6 +4019,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
+        if model.trigger.sacrificed_to_activate is not None and (
+            model.trigger.event != "ability_activated" or model.trigger.mana_ability is not False
+        ):
+            # Only the non-mana activation path counts what its cost
+            # sacrificed: a mana ability's X is announced after the event fires,
+            # and the mana abilities the payment solver taps emit no event at
+            # all. Accepting it anywhere else would be a restriction that never
+            # applies, or one that silently misses every mana activation.
+            raise DslError(
+                f"{where}: 'sacrificed_to_activate' needs an ability_activated "
+                "trigger with 'mana_ability': false"
+            )
+
         if model.trigger.targeted_by is not None and model.trigger.event != "becomes_target":
             # Same reasoning as `mana_ability` above: only BECAME_TARGET is
             # tagged with what did the targeting, so anywhere else this would
@@ -4273,6 +4286,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             put_by=model.trigger.put_by,
             removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
+            sacrificed_to_activate=model.trigger.sacrificed_to_activate,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,

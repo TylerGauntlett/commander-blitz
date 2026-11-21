@@ -592,6 +592,12 @@ class TriggerModel(BaseModel):
     #: indistinguishable to a listener; without this clause Harsh Mentor is a
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
+    #: For ``ability_activated`` with ``mana_ability: false``: "…if one or more
+    #: permanents were sacrificed to activate it" (Ashnod the Uncaring).
+    #: ``true`` keeps activations whose own cost sacrificed a permanent,
+    #: ``false`` those whose cost sacrificed none. Permanents sacrificed by mana
+    #: abilities that paid the cost never count.
+    sacrificed_to_activate: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
     #: only (activated and triggered alike), ``"activated_ability"`` on

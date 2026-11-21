@@ -917,6 +917,15 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
+    #: ``ability_activated`` only, beside ``mana_ability: False``: "…if one or
+    #: more permanents were **sacrificed to activate it**" (Ashnod the
+    #: Uncaring).  ``True`` fires only when the activation's own cost
+    #: sacrificed at least one permanent, ``False`` only when it sacrificed
+    #: none, ``None`` either way.  Read off the event's ``sacrificed`` count,
+    #: which `costs.cost_sacrifice_count` takes from the ability's ``sacrifice``,
+    #: list-form ``sacrifice`` and ``sacrifice_x`` costs -- so a Treasure
+    #: sacrificed for mana to pay the cost is not counted.
+    sacrificed_to_activate: bool | None = None
     #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
     #: Dragon), as against ward's "a spell or ability", which is the unclaused
     #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities

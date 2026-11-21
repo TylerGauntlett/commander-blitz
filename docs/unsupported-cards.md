@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **451** capabilities.
+**533 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -398,7 +398,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
-| [sacrificed-to-activate](#sacrificed-to-activate) | 1 | 13248 | trigger_event |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
@@ -6654,20 +6653,6 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
-
-</details>
-
-## sacrificed-to-activate
-
-Blocks **1** card.
-
-- **(trigger_event)** an `ability_activated` trigger restriction (or event payload) that fires only when the activation's cost sacrificed one or more permanents -- the ability's own `sacrifice`/`sacrifice_x` cost, not permanents sacrificed by mana abilities used to pay it
-  <br>Why the existing vocabulary won't do: `game.py` fires ABILITY_ACTIVATED with only player/source/ability/card/mana_ability; `trigger_keys` (`mana_ability`, `filter`, `condition`) and `condition_keys` read the source's printed face or the board, nothing about what the cost paid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashnod the Uncaring** (rank 13248) — `ashnod_the_uncaring`
-  - Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy. (Sacrificing an artifact for mana to activate an ability doesn't count.)
 
 </details>
 

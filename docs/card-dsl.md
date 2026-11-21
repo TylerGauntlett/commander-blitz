@@ -6300,6 +6300,7 @@ and the filter keys are
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
+    "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
@@ -7285,6 +7286,28 @@ abilities the *payment solver* taps for itself (`{T}: Add {G}` on a land, tapped
 automatically to cast a spell) never reach an activation path at all and emit
 nothing, so `mana_ability: true` sees only mana abilities a player activated by
 hand. `mana_ability: false` — the printed clause — is unaffected.
+
+`sacrificed_to_activate` is "if one or more permanents were **sacrificed to
+activate it**" (Ashnod the Uncaring). `true` fires only when the activation's own
+cost sacrificed at least one permanent; `false` only when it sacrificed none;
+omitted is either. The count is `costs.cost_sacrifice_count` over the ability's
+`sacrifice` (its `count`), list-form `sacrifice` (every part's `count`) and
+`sacrifice_x` (the announced X, so X = 0 counts nothing), carried on the event
+as `sacrificed`. It is known although the event fires before the cost is paid,
+because `pay` takes exactly that many or the activation does not happen. A
+Treasure sacrificed for mana to pay the cost is not counted — that sacrifice
+paid the Treasure's own mana ability, which is the reminder text's "doesn't
+count". The loader refuses the key on any other event and without
+`mana_ability: false`: a mana ability announces its X after the event fires, and
+the solver's own taps fire nothing, so the count would be missing there.
+`condition` is the near miss and cannot reach it — no condition key reads what a
+cost paid.
+
+```jsonc
+{ "event": "ability_activated", "controller": "you", "mana_ability": false,
+  "sacrificed_to_activate": true,
+  "filter": { "any_types": ["Artifact", "Creature"] } }
+```
 
 `zone` and `any_types` in a **trigger filter** are honoured. Harsh Mentor needs
 both, and needs them in the narrowing direction: `types` is a conjunction, so "an
