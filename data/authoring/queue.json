@@ -165372,12 +165372,12 @@
     },
     "Maja, Bretagard Protector": {
       "edhrec_rank": 3383,
-      "gate": "template",
+      "gate": null,
       "name": "Maja, Bretagard Protector",
-      "reason": "no template for: Other creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "a83c1527-92e9-429f-9bb7-164fb94b33dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Majestic Auricorn": {
@@ -239592,12 +239592,12 @@
     },
     "Selesnya Evangel": {
       "edhrec_rank": 13545,
-      "gate": "template",
+      "gate": null,
       "name": "Selesnya Evangel",
-      "reason": "no template for: {1}, {T}, Tap an untapped creature you control: Create a 1/1 green Saproling creature toke",
+      "reason": "",
       "scryfall_id": "2d929bda-150c-484a-910e-eee19297c77e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selesnya Guildgate": {
@@ -239612,12 +239612,12 @@
     },
     "Selesnya Guildmage": {
       "edhrec_rank": 16563,
-      "gate": "template",
+      "gate": null,
       "name": "Selesnya Guildmage",
-      "reason": "no template for: {3}{G}: Create a 1/1 green Saproling creature token",
+      "reason": "",
       "scryfall_id": "954b8e86-284a-4a6f-ac35-896afd414f8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selesnya Keyrune": {
@@ -293342,12 +293342,12 @@
     },
     "Trostani Discordant": {
       "edhrec_rank": 9358,
-      "gate": "template",
+      "gate": null,
       "name": "Trostani Discordant",
-      "reason": "no template for: Other creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "79d61bba-4404-4336-8290-51d1576f728d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trostani's Judgment": {
@@ -300622,12 +300622,12 @@
     },
     "Valor in Akros": {
       "edhrec_rank": 11103,
-      "gate": "template",
+      "gate": null,
       "name": "Valor in Akros",
-      "reason": "no template for: Whenever a creature you control enters, creatures you control get +1/+1 until end of turn",
+      "reason": "",
       "scryfall_id": "6e20c0de-c9fa-463c-965a-2e868f7965b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Valor of the Worthy": {
@@ -303082,12 +303082,12 @@
     },
     "Verdant Force": {
       "edhrec_rank": 5255,
-      "gate": "template",
+      "gate": null,
       "name": "Verdant Force",
-      "reason": "no template for: At the beginning of each upkeep, create a 1/1 green Saproling creature token",
+      "reason": "",
       "scryfall_id": "0a72a7ae-8c40-4c8e-8fb5-f5f2e1a71792",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verdant Haven": {
@@ -306752,12 +306752,12 @@
     },
     "Voice of Many": {
       "edhrec_rank": 10630,
-      "gate": "template",
+      "gate": null,
       "name": "Voice of Many",
-      "reason": "no template for: When this creature enters, draw a card for each opponent who controls fewer creatures than",
+      "reason": "",
       "scryfall_id": "d8fc52ba-d7fc-426a-8c15-7237bdb498c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voice of Reason": {

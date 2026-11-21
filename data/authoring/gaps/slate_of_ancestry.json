@@ -1,0 +1,14 @@
+{
+  "card_id": "slate_of_ancestry",
+  "name": "Slate of Ancestry",
+  "oracle_text": "{4}, {T}, Discard your hand: Draw a card for each creature you control.",
+  "blocked_sentences": ["{4}, {T}, Discard your hand: Draw a card for each creature you control"],
+  "needs": [{
+    "capability": "discard_hand_cost",
+    "kind": "cost",
+    "what": "an activated-ability cost \"Discard your hand\" that discards every card in the payer's hand (zero cards is still payable, so an empty hand does not block activation), paid alongside mana and {T}",
+    "why_existing_wont_do": "`discard` takes a fixed count and makes the cost unpayable when the hand is smaller; `discard_x` lets the player announce any X up to the hand size rather than forcing the whole hand; `x_value` could pin X but only fills an {X} in the cost's mana, and this cost is a fixed {4}. Nothing in cost_keys discards the entire hand"
+  }],
+  "closest_existing": ["discard_x", "discard"],
+  "confidence": "high"
+}

@@ -14524,6 +14524,13 @@
   "mahamoti_djinn": {
     "zone": "battlefield"
   },
+  "maja_bretagard_protector": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "majestic_genesis": {
     "battlefield_count": 32,
     "library_size": {
@@ -20873,7 +20880,15 @@
       "0": 41
     }
   },
+  "selesnya_evangel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "selesnya_guildgate": {
+    "zone": "battlefield"
+  },
+  "selesnya_guildmage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "selesnya_sanctuary": {
@@ -25714,6 +25729,14 @@
   "tropical_island": {
     "zone": "battlefield"
   },
+  "trostani_discordant": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "soldier_1_1_w_lifelink"
+    },
+    "zone": "battlefield"
+  },
   "trouble_in_pairs": {
     "battlefield_count": 33,
     "hand_size": {
@@ -26403,6 +26426,10 @@
       "0": 44
     }
   },
+  "valor_in_akros": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "valorous_stance": {
     "battlefield_count": 32,
     "granted": {
@@ -26671,6 +26698,10 @@
       "power": 3,
       "toughness": 3
     },
+    "zone": "battlefield"
+  },
+  "verdant_force": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "verdant_kraken": {
@@ -26965,6 +26996,15 @@
   },
   "vodalian_wave_knight": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "voice_of_many": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "voice_of_victory": {
