@@ -12385,6 +12385,10 @@
     },
     "zone": "battlefield"
   },
+  "jade_mage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jade_orb_of_dragonkind": {
     "zone": "battlefield"
   },
@@ -12407,6 +12411,10 @@
     "zone": "battlefield"
   },
   "jasmine_boreal": {
+    "zone": "battlefield"
+  },
+  "jaspera_sentinel": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "jaws_of_defeat": {
@@ -12754,6 +12762,15 @@
     "zone": "battlefield"
   },
   "karametra_s_acolyte": {
+    "zone": "battlefield"
+  },
+  "karametra_s_favor": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "kardur_doomscourge": {
@@ -14723,6 +14740,14 @@
     },
     "zone": "battlefield"
   },
+  "march_of_the_multitudes": {
+    "battlefield_count": 52,
+    "tokens": {
+      "count": 20,
+      "id": "soldier_1_1_w_lifelink"
+    },
+    "zone": "graveyard"
+  },
   "marchesa_s_decree": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16475,6 +16500,13 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "nissa_s_expedition": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "nissa_vital_force": {
     "battlefield_count": 33,

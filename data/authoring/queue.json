@@ -141702,12 +141702,12 @@
     },
     "Jade Mage": {
       "edhrec_rank": 9805,
-      "gate": "template",
+      "gate": null,
       "name": "Jade Mage",
-      "reason": "no template for: {2}{G}: Create a 1/1 green Saproling creature token",
+      "reason": "",
       "scryfall_id": "c7c721a5-9fcf-42dc-9b6d-a50cdca839ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jade Monolith": {
@@ -142172,12 +142172,12 @@
     },
     "Jaspera Sentinel": {
       "edhrec_rank": 6005,
-      "gate": "template",
+      "gate": null,
       "name": "Jaspera Sentinel",
-      "reason": "no template for: {T}, Tap an untapped creature you control: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "98dd6832-60a1-4807-acc0-f33c65f58b18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Javelin of Lightning": {
@@ -145922,12 +145922,12 @@
     },
     "Karametra's Favor": {
       "edhrec_rank": 12412,
-      "gate": "template",
+      "gate": null,
       "name": "Karametra's Favor",
-      "reason": "no template for: When this Aura enters, draw a card",
+      "reason": "",
       "scryfall_id": "98a5336d-7bd7-453e-abb0-c37e55e375bd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karametra, God of Harvests": {
@@ -167382,12 +167382,12 @@
     },
     "March of the Multitudes": {
       "edhrec_rank": 2957,
-      "gate": "template",
+      "gate": null,
       "name": "March of the Multitudes",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "8ccfeffc-dc19-404a-81ef-1cd13a1ad50d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "March of the Returned": {
@@ -187672,12 +187672,12 @@
     },
     "Nissa's Expedition": {
       "edhrec_rank": 9994,
-      "gate": "template",
+      "gate": null,
       "name": "Nissa's Expedition",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "b0c175f4-7a4e-4530-b129-62d4b5899695",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nissa's Judgment": {
