@@ -1,0 +1,31 @@
+{
+  "card": {
+    "id": "dauntless_escort",
+    "name": "Dauntless Escort",
+    "oracle_text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn.",
+    "mana_cost": "{1}{G}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Rhino", "Soldier"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn.",
+        "cost": {
+          "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}
+        },
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "keywords": ["indestructible"],
+            "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": "all"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

@@ -1,0 +1,100 @@
+{
+  "card": {
+    "id": "holdout_settlement",
+    "name": "Holdout Settlement",
+    "oracle_text": "{T}: Add {C}. ({C} represents colorless mana.)\n{T}, Tap an untapped creature you control: Add one mana of any color.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ],
+        "text": "{T}: Add {C}. ({C} represents colorless mana.)"
+      },
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true,
+          "tap_permanents": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "effects": [
+                  {
+                    "mana": "{W}",
+                    "op": "add_mana"
+                  }
+                ],
+                "label": "White"
+              },
+              {
+                "effects": [
+                  {
+                    "mana": "{U}",
+                    "op": "add_mana"
+                  }
+                ],
+                "label": "Blue"
+              },
+              {
+                "effects": [
+                  {
+                    "mana": "{B}",
+                    "op": "add_mana"
+                  }
+                ],
+                "label": "Black"
+              },
+              {
+                "effects": [
+                  {
+                    "mana": "{R}",
+                    "op": "add_mana"
+                  }
+                ],
+                "label": "Red"
+              },
+              {
+                "effects": [
+                  {
+                    "mana": "{G}",
+                    "op": "add_mana"
+                  }
+                ],
+                "label": "Green"
+              }
+            ]
+          }
+        ],
+        "text": "{T}, Tap an untapped creature you control: Add one mana of any color."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

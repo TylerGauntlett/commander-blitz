@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "emmara_soul_of_the_accord",
+    "name": "Emmara, Soul of the Accord",
+    "oracle_text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+    "mana_cost": "{G}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Elf", "Cleric"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever Emmara becomes tapped, create a 1/1 white Soldier creature token with lifelink.",
+        "trigger": {"event": "becomes_tapped", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "soldier_1_1_w_lifelink", "amount": {"const": 1}, "controller": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
