@@ -2142,6 +2142,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: reveal_until 'controller' is \"you\" and needs "
                 f"destination or may_destination 'battlefield'"
             )
+        # "Equal to the number of cards revealed this way": every card the
+        # walk revealed, not only the matches `as` records. A non-string would
+        # be stringified into a name nothing reads back, and the count would be 0.
+        if "revealed_as" in effect and not (
+            isinstance(effect["revealed_as"], str) and effect["revealed_as"]
+        ):
+            raise DslError(
+                f"{where}: reveal_until 'revealed_as' must be a non-empty binding "
+                f"name, got {effect['revealed_as']!r}"
+            )
+    if "revealed_as" in effect and op != "reveal_until":
+        # Only reveal_until's walk reads the key; elsewhere it would load and
+        # every count of it would be 0.
+        raise DslError(
+            f"{where}: 'revealed_as' records the cards a reveal_until walk "
+            f"revealed and only reveal_until reads it, not {op!r}"
+        )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
     # ability that later plays it would still work, so nothing downstream would

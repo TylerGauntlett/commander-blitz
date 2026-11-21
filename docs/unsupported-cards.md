@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**537 cards** blocked by **455** capabilities.
+**536 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -399,7 +399,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
-| [reveal-until-revealed-count](#reveal-until-revealed-count) | 1 | 8548 | value |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sacrificed-to-activate](#sacrificed-to-activate) | 1 | 13248 | trigger_event |
@@ -6676,20 +6675,6 @@ Blocks **1** card.
 
 - **Gandalf, Westward Voyager** (rank 12729) — `gandalf_westward_voyager`
   - Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card
-
-</details>
-
-## reveal-until-revealed-count
-
-Blocks **1** card.
-
-- **(value)** a binding on `reveal_until` recording EVERY card revealed by the walk (the match plus the cards walked past, e.g. `revealed_as: "revealed"`), so a following `damage` to `player: "you"` with `amount: {"count_of"/"count": {"binding": "revealed"}}` reads "deals damage to you equal to the number of cards revealed this way" -- zero cards found still counts every card revealed
-  <br>Why the existing vocabulary won't do: `op_reveal_until` (ops_cards.py) keeps its `revealed` list local and its `as` binding records only the hits that moved (one card here), so a count of it is always 1 or 0, not the number revealed. No value in `value_keys` reads a reveal's size. The rest is expressible: an activated ability with cost `{tap: true, sacrifice: {types: [Artifact]}}`, `reveal_until` with `objects: {types: [Artifact]}`, `destination: "battlefield"` and its default random bottoming, then `damage` with `player: "you"`; only the amount of that damage is blocked.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Audacious Reshapers** (rank 8548) — `audacious_reshapers`
-  - {T}, Sacrifice an artifact: Reveal cards from the top of your library until you reveal an artifact card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. This creature deals damage to you equal to the number of cards revealed this way.
 
 </details>
 

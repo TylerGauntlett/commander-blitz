@@ -17217,6 +17217,28 @@ Jhoira loads and hands the opponent their own historic card for free.
 oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
 empty list, so the loss is zero.
 
+### "The number of cards revealed this way" — `revealed_as`
+
+```jsonc
+// Audacious Reshapers -- "{T}, Sacrifice an artifact: Reveal cards from the top
+// of your library until you reveal an artifact card. Put that card onto the
+// battlefield and the rest on the bottom of your library in a random order. This
+// creature deals damage to you equal to the number of cards revealed this way."
+{ "op": "reveal_until", "objects": { "types": ["Artifact"] },
+  "destination": "battlefield", "revealed_as": "revealed" },
+{ "op": "damage", "player": "you",
+  "amount": { "count": { "binding": "revealed" } } }
+```
+
+`revealed_as` binds every card the walk revealed — the matches and every card
+walked past — as a list, extended across every seat walked. A scan that ran the
+library out with no match still revealed every card it passed, and all of them
+count; an `amount` of zero reveals nothing and counts zero. The loader refuses a
+non-string name and the key on any op but `reveal_until`.
+
+`as` is the near miss: it records only the matches that moved, so a count of it
+is the number *found* — one or zero here — not the number revealed.
+
 ### "You may put that card onto the battlefield. If you don't …" — `may_destination`
 
 ```jsonc

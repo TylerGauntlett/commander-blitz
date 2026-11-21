@@ -18810,6 +18810,67 @@
     {
       "abilities": [
         {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "op": "reveal_until",
+              "rest_to_bottom": true,
+              "revealed_as": "revealed"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "revealed"
+                }
+              },
+              "op": "damage",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice an artifact: Reveal cards from the top of your library until you reveal an artifact card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. This creature deals damage to you equal to the number of cards revealed this way."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "audacious_reshapers",
+      "mana_cost": "{2}{R}",
+      "name": "Audacious Reshapers",
+      "oracle_text": "{T}, Sacrifice an artifact: Reveal cards from the top of your library until you reveal an artifact card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. This creature deals damage to you equal to the number of cards revealed this way.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [

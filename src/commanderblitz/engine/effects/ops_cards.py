@@ -3043,6 +3043,15 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     ``{"mana_value_of": {"objects": {"binding": …}}}`` reads "that permanent's
     mana value" (zero when the scan found nothing).
 
+    ``revealed_as`` records **every** card the walk revealed -- the matches and
+    the cards walked past, in the order they were revealed -- as a list, so
+    ``{"count": {"binding": …}}`` reads "equal to the number of cards revealed
+    this way" (Audacious Reshapers). A scan that ran the library out with no
+    match still revealed every card it passed, and they all count; ``amount`` 0
+    reveals nothing and counts 0. Extended across seats the way ``as`` is.
+    ``as`` is the near miss: it holds only the matches that moved, so a count of
+    it is the number found, not the number revealed.
+
     ``controller: "you"`` is "target opponent reveals cards … **you** put that
     card onto the battlefield under your control" -- Jhoira, Weatherlight
     Corsair. Without it a match enters under the seat whose library was
@@ -3081,6 +3090,10 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         # "each_player"` walk binds every seat's matches, not the last one's.
         previous = ctx.bindings.get(str(binding))
         ctx.bindings[str(binding)] = list(previous) if isinstance(previous, list) else []
+    revealed_binding = spec.get("revealed_as")
+    if revealed_binding:
+        previous = ctx.bindings.get(str(revealed_binding))
+        ctx.bindings[str(revealed_binding)] = list(previous) if isinstance(previous, list) else []
 
     for pid in select_players(ctx, spec.get("player", "you")):
         # A snapshot taken up front, because a reveal changes no zone: unlike
@@ -3096,6 +3109,10 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
                     break
         if not revealed:
             continue
+        if revealed_binding:
+            # Recorded before anything moves: an object keeps its id across a
+            # zone change, so the record is the same cards wherever they end up.
+            ctx.bindings[str(revealed_binding)].extend(revealed)
 
         ctx.state.emit(
             "reveal",
