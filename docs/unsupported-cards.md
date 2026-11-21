@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **452** capabilities.
+**534 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -130,7 +130,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
-| [cast-from-among-paying](#cast-from-among-paying) | 1 | 10387 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
@@ -2830,20 +2829,6 @@ Blocks **1** card.
 
 - **The Face of Boe** (rank 16296) — `the_face_of_boe`
   - {T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery.
-
-</details>
-
-## cast-from-among-paying
-
-Blocks **1** card.
-
-- **(op)** look_at_top's exile-and-cast shape (Herald of Amity: exile top N, you may cast ONE matching spell from among them, rest to the bottom in a random order) but with the cast made during resolution at the card's own mana cost rather than free -- e.g. a `cast_paying: true` alternative to `cast_free` on look_at_top, or a `limit: 1` on cast_card plus a random-order bottom for the uncast exiled cards
-  <br>Why the existing vocabulary won't do: look_at_top's cast_free and exile_until's cast_free cast without paying, a strictly better card. cast_card pays the mana cost but offers every card in its pool as its own 'you may', so it would allow casting several Vehicles/artifact creatures where the card allows one, and its uncast leftovers would need put_on_top with bottom:true, which tucks in pool order (or owner's chosen order), not a random order. grant_playable/playable_this_turn leaves a later permission, not a cast during resolution, and the cards would not then go to the bottom.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sanwell, Avenger Ace** (rank 10387) — `sanwell_avenger_ace`
-  - Whenever Sanwell becomes tapped, exile the top six cards of your library. You may cast a Vehicle or artifact creature spell from among them. Then put the rest on the bottom of your library in a random order.
 
 </details>
 

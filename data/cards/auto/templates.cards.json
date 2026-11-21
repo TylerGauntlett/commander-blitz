@@ -244465,6 +244465,89 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "attacking": true,
+              "controller": "you",
+              "types": [
+                "Artifact",
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "As long as an artifact creature you control is attacking, prevent all damage that would be dealt to Sanwell."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "cast_paying": true,
+              "objects": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Artifact",
+                      "Creature"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Sanwell becomes tapped, exile the top six cards of your library. You may cast a Vehicle or artifact creature spell from among them. Then put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sanwell_avenger_ace",
+      "mana_cost": "{1}{W}",
+      "name": "Sanwell, Avenger Ace",
+      "oracle_text": "As long as an artifact creature you control is attacking, prevent all damage that would be dealt to Sanwell.\nWhenever Sanwell becomes tapped, exile the top six cards of your library. You may cast a Vehicle or artifact creature spell from among them. Then put the rest on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "U"

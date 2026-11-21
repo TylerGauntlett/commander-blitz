@@ -272,6 +272,11 @@ required — defaulted it would look at one card and say nothing about it.
 
 `cast_free` sends what was picked to the **stack** instead of to a destination
 zone — see [Casting for free out of the window](card-dsl-cookbook.md#casting-for-free-out-of-the-window).
+`cast_paying` is the same cast at the card's own mana cost — Sanwell, Avenger
+Ace's "you may cast a Vehicle or artifact creature spell from among them" —
+offered only when a line is payable, so an unaffordable pick folds back into the
+rest. It is refused beside `cast_free` and off `look_at_top`; `cast_card` is the
+near miss, which offers every card of its pool rather than one pick.
 
 `destinations` splits one look into ordered steps, each drawing from what the
 earlier ones left — Expressive Iteration's "put one of them into your hand, put

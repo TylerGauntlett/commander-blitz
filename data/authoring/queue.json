@@ -233022,12 +233022,12 @@
     },
     "Sanwell, Avenger Ace": {
       "edhrec_rank": 10387,
-      "gate": "template",
+      "gate": null,
       "name": "Sanwell, Avenger Ace",
-      "reason": "no template for: As long as an artifact creature you control is attacking, prevent all damage that would be",
+      "reason": "",
       "scryfall_id": "6b7cd9f1-6501-46ae-9f98-bb69644405bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sapling Nursery": {

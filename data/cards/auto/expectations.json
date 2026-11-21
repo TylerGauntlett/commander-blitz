@@ -20449,6 +20449,10 @@
   "sanitation_automaton": {
     "zone": "battlefield"
   },
+  "sanwell_avenger_ace": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sapphire_medallion": {
     "battlefield_count": 33,
     "hand_size": {

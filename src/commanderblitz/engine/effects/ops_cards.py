@@ -807,7 +807,10 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     second spelling that only this op understands.
 
     ``cast_free`` sends what was picked to the **stack** instead of to a
-    destination zone -- see :func:`_cast_from_window`.
+    destination zone -- see :func:`_cast_from_window`. ``cast_paying`` is the
+    same cast at the card's own mana cost (Sanwell, Avenger Ace: "You may cast
+    a Vehicle or artifact creature spell from among them"), through
+    `_cast_paying_mana_cost`, the price `cast_card` charges.
 
     ``as`` records the cards this op actually took, and is what lets a *later*
     effect name them. Necropotence is the card: "exile the top card of your
@@ -855,7 +858,8 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
-    cast_free = bool(spec.get("cast_free"))
+    cast_paying = bool(spec.get("cast_paying"))
+    cast_free = bool(spec.get("cast_free")) or cast_paying
     selector = spec.get("objects") or spec.get("selector") or {}
     binding = spec.get("as")
     # "…onto the battlefield **under your control**" (Lonis, Cryptozoologist):
@@ -948,7 +952,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 ctx, pool, selector, "Look at the top of the library", "look_at_top"
             )
             if cast_free:
-                taken = set((yield from _cast_from_window(ctx, pid, picked)))
+                taken = set((yield from _cast_from_window(ctx, pid, picked, paying=cast_paying)))
             else:
                 taken = set(
                     (
@@ -1014,7 +1018,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(binding)] = bound
 
 
-def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
+def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int], *, paying: bool = False):
     """ "You may cast a spell … from among them without paying its mana cost."
 
     Perception Bobblehead. Ripple's shape -- offer, cast, fold the refusals back
@@ -1045,11 +1049,20 @@ def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
     triggers fire and it can be countered -- and it is offered rather than
     forced, because the printed word is "may". A cast that cannot happen (no
     legal target) is a refusal, not a crash, and folds back into the rest too.
+
+    ``paying`` is the printed cast without "without paying its mana cost"
+    (Sanwell, Avenger Ace): the same offer at the card's own price through
+    `_cast_paying_mana_cost`, which offers only a payable line, so a card the
+    caster cannot afford folds back into the rest like a declined one.
     """
     cast: list[int] = []
     for oid in picked:
         obj = ctx.state.objects.get(oid)
         if obj is None:
+            continue
+        if paying:
+            if (yield from _cast_paying_mana_cost(ctx, pid, oid)):
+                cast.append(oid)
             continue
         name = ctx.state.card_of(obj).name
         if (

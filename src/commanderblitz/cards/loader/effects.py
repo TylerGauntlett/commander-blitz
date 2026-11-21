@@ -1618,6 +1618,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"only it reads the free cast, not {op!r} (see `play_exiled` for a "
             f"free cast from exile)"
         )
+    if "cast_paying" in effect:
+        # "You may cast a Vehicle or artifact creature spell from among them"
+        # (Sanwell, Avenger Ace): the paid twin of `cast_free`, read only by
+        # look_at_top. Beside `cast_free` one price would be silently dropped.
+        if op != "look_at_top":
+            raise DslError(
+                f"{where}: 'cast_paying' is a look_at_top key, not {op!r} "
+                f"(see `cast_card` for a paid cast from any pool)"
+            )
+        if not isinstance(effect["cast_paying"], bool):
+            raise DslError(f"{where}: look_at_top 'cast_paying' is a boolean")
+        if effect.get("cast_free"):
+            raise DslError(
+                f"{where}: look_at_top takes 'cast_free' or 'cast_paying', not both -- "
+                f"the spell is free or it is paid for"
+            )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.
@@ -1928,19 +1944,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown look_at_top destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        casts = bool(effect.get("cast_free") or effect.get("cast_paying"))
         # `cast_free` sends what was picked to the **stack**; `destination`,
         # `tapped` and `playable_this_turn` all describe a card arriving in a
         # zone and are read only on the branch `cast_free` replaces. Written
         # together they load clean and one half is silently dropped -- and
         # `playable_this_turn` is the impulse permission, "play it later at its
         # printed cost", which is the opposite card from "cast it now for free".
-        if effect.get("cast_free"):
+        if casts:
             clashing = [
                 key for key in ("destination", "tapped", "playable_this_turn") if key in effect
             ]
             if clashing:
                 raise DslError(
-                    f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
+                    f"{where}: look_at_top's cast takes no {sorted(clashing)} -- "
                     f"the picked card goes to the stack, not to a zone"
                 )
         # "Exile the top card of your library **face down**." Only exile can be
@@ -1987,17 +2004,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: look_at_top 'counters' maps a counter kind to a "
                     f"positive amount, e.g. {{'+1/+1': 3}}"
                 )
-            if destination != "battlefield" or effect.get("cast_free"):
+            if destination != "battlefield" or casts:
                 raise DslError(
                     f"{where}: look_at_top 'counters' are what a card enters the "
                     f"battlefield with and need destination 'battlefield'; got "
-                    f"{'cast_free' if effect.get('cast_free') else repr(destination)}"
+                    f"{'a cast' if casts else repr(destination)}"
                 )
         if "counters_if" in effect:
             if "counters" not in effect:
                 raise DslError(f"{where}: look_at_top 'counters_if' guards nothing without 'counters'")
             validate_selector(effect["counters_if"], f"{where}.counters_if")
-        if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
+        if effect.get("face_down") and (destination != "exile" or casts):
             raise DslError(
                 f"{where}: look_at_top 'face_down' needs destination 'exile' "
                 f"(a card is only face down in exile); got {destination!r}"
@@ -2018,7 +2035,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # replaces the arrival with a cast, so anywhere else the key would load
         # and say nothing.
         if "controller" in effect:
-            arrives = effect.get("cast_free") is not True and (
+            arrives = not casts and (
                 destination == "battlefield"
                 if not effect.get("destinations")
                 else any(
