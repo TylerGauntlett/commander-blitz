@@ -1969,6 +1969,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # failure this whole pass exists to stop. `cast_free` is refused with it
         # for the same reason the three keys above are: it replaces the branch
         # that would honour it.
+        # "…with total mana value 4 or less" (Ao, the Dawn Sky; Smelting Vat).
+        # Read only by the single pick, so beside `destinations` it would load
+        # and cap nothing. The cap bounds how much; the count bounds how many
+        # and must let the chooser stop short -- "all" would take every card
+        # whatever the sum, and a mandatory number is a demand the cap can make
+        # impossible to meet.
+        if "total_mana_value" in effect:
+            validate_value(effect["total_mana_value"], f"{where}.total_mana_value")
+            if effect.get("destinations"):
+                raise DslError(
+                    f"{where}: 'total_mana_value' caps look_at_top's single pick, "
+                    f"not its 'destinations' steps"
+                )
+            objects = effect.get("objects") or effect.get("selector")
+            count = objects.get("count") if isinstance(objects, Mapping) else None
+            if not (
+                count == "any"
+                or (count not in (None, "all") and isinstance(objects, Mapping)
+                    and objects.get("optional") is True)
+            ):
+                raise DslError(
+                    f"{where}: 'total_mana_value' needs 'objects' with count: \"any\" "
+                    f"or an optional count (\"up to N\")"
+                )
         # "Put one into your hand, one on the bottom and exile one" (Expressive
         # Iteration); "a creature card and/or a land card" (Kiora, Master of the
         # Depths). A step's `to` is a zone the op can reach, its `selector` a

@@ -13500,6 +13500,41 @@ A cap of zero is refused — a spec that can only ever choose nothing, printed a
 though it chose something — as is one on a `player` or `spell` target, neither
 of which has a mana value for it to add up.
 
+## "…cards with total mana value 4 or less from among them" — a cap on a look's picks
+
+Ao, the Dawn Sky and Smelting Vat:
+
+```jsonc
+// Ao — "Look at the top seven cards of your library. Put any number of nonland
+// permanent cards with total mana value 4 or less from among them onto the battlefield."
+{ "op": "look_at_top", "amount": 7, "total_mana_value": 4,
+  "objects": { "any_types": ["Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"],
+               "not_types": ["Land"], "count": "any" },
+  "destination": "battlefield", "rest_to_bottom": true }
+
+// Smelting Vat — "…up to two noncreature artifact cards with total mana value less
+// than or equal to the sacrificed artifact's mana value…"
+{ "op": "look_at_top", "amount": 8,
+  "total_mana_value": { "mana_value_of": { "binding": "sacrificed" } },
+  "objects": { "types": ["Artifact"], "not_types": ["Creature"], "count": 2, "optional": true },
+  "destination": "battlefield", "rest_to_bottom": true }
+```
+
+`total_mana_value` on `look_at_top` is a value expression, read once as the op
+resolves, capping the **sum** of the printed mana values of the cards taken
+(202.3b: an X is 0 off the stack). Cards in a looked-at window are not targets,
+so the target key of the same name does not reach them. The pick is asked one
+card at a time (`ops_cards._pick_within_total_mana_value`), each question
+offering only what still fits under what is left; the chooser may stop at any
+point, and the selector's `count` bounds how many. Mana values are never
+negative, so every legal set is reachable that way.
+
+The loader requires `count: "any"` or an `optional` integer count ("up to
+two") — `"all"` or a mandatory number would demand picks the cap can forbid —
+and refuses the key beside `destinations`, whose steps it would not cap. The
+near miss is a per-card `mana_value` ceiling in the selector, which lets Ao put
+three 4-drops onto the battlefield.
+
 ## "…with total power 10 or less" — the same cap, summing power
 
 Reunion of the House:

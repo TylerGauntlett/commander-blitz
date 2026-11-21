@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **454** capabilities.
+**534 cards** blocked by **453** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -75,7 +75,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
-| [total-mana-value-selection](#total-mana-value-selection) | 2 | 4244 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
 | [undaunted](#undaunted) | 2 | 3405 | value |
@@ -2012,24 +2011,6 @@ Blocks **2** cards.
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 - **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
   - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
-
-</details>
-
-## total-mana-value-selection
-
-Blocks **2** cards.
-
-- **(op)** a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom
-  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops).
-- **(op)** a `total_mana_value` cap on look_at_top's pick that takes a value expression, not only a literal: choose up to N cards from the revealed window whose combined mana value is at most V, where V here is `{"mana_value_of": {"binding": "sacrificed"}}` read from the activation's sacrifice cost -- e.g. look_at_top amount 8, objects {types: [Artifact], not_types: [Creature], count: 2, optional: true}, total_mana_value <value>, destination battlefield, rest_to_bottom
-  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (an int, checked by targeting.py _within_total) and in cost_reduction; cards in a look_at_top window are not targets, and look_at_top's op_options carry no running budget over the picks. A per-card `mana_value` <= sacrificed MV selector is a strictly better card (two cards each up to that MV), so it would be an approximation.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
-  - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
-- **Smelting Vat** (rank 13767) — `smelting_vat`
-  - {1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order.
 
 </details>
 

@@ -178,7 +178,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield.",
                        None),
     "search_zones": ("Cards", "One search over the union of two or more of your own zones.", None),
-    "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost.", None),
+    "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost; `total_mana_value` caps the picks' summed mana value.", None),
     "look_at_hand": ("Cards", "Look at a player's hand (private: only you see it).", None),
     "return_to_hand": ("Cards", "Return objects to their owners' hands.", None),
     "return_from_graveyard": ("Cards", "Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `\"choose\"`) returns it face down as a 2/2.",

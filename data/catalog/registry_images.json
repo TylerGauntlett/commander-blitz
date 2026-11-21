@@ -807,6 +807,10 @@
     "artist": "James Zapata",
     "scryfall_id": "aa6d7bbe-0418-4a58-a97b-13b50eb0b642"
   },
+  "ao_the_dawn_sky": {
+    "artist": "Chris Rahn",
+    "scryfall_id": "e002d351-3795-4cd9-b389-9ed81077845e"
+  },
   "ape_3_3_g": {
     "artist": "Lars Grant-West",
     "scryfall_id": "4b2ee605-3c7a-4769-978d-3199bdc7c504"
@@ -18972,6 +18976,10 @@
   "smaug_wicked_worm": {
     "artist": "Tyler Jacobson",
     "scryfall_id": "189a7d55-c3ec-4402-a3b3-72817f533e87"
+  },
+  "smelting_vat": {
+    "artist": "Robin Olausson",
+    "scryfall_id": "9f1ea23c-69ef-4051-b747-3af3aa5c38f0"
   },
   "smirking_spelljacker": {
     "artist": "Borja Pindado",

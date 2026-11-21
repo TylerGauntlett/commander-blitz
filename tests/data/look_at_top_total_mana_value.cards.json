@@ -1,0 +1,31 @@
+{
+  "_comment": "Cards that exist only for the total-mana-value test (tests/unit/zones/test_look_at_top_total_mana_value.py). `t_tmv_vat` is Smelting Vat at no mana cost, so the activation needs only the tap and the sacrifice.",
+  "cards": [
+    {
+      "id": "t_tmv_vat",
+      "name": "Test Total Mana Value Vat",
+      "oracle_text": "{T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "cost": {
+            "tap": true,
+            "sacrifice": {"zone": "battlefield", "controller": "you", "types": ["Artifact"], "exclude_self": true, "count": 1, "as": "sacrificed"}
+          },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "amount": 8,
+              "objects": {"types": ["Artifact"], "not_types": ["Creature"], "count": 2, "optional": true},
+              "total_mana_value": {"mana_value_of": {"binding": "sacrificed"}},
+              "destination": "battlefield",
+              "rest_to_bottom": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

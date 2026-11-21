@@ -974,6 +974,10 @@
   "anvilwrought_raptor": {
     "zone": "battlefield"
   },
+  "ao_the_dawn_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "apex_altisaur": {
     "zone": [
       "battlefield",
@@ -22335,6 +22339,10 @@
       "count": 1,
       "id": "treasure_token"
     },
+    "zone": "battlefield"
+  },
+  "smelting_vat": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "smirking_spelljacker": {

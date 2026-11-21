@@ -790,6 +790,48 @@ def _move_found(
     return moved
 
 
+def _pick_within_total_mana_value(
+    ctx: EffectContext, pool: list[int], selector: Mapping[str, Any], cap: int
+):
+    """Up to the selector's count of ``pool``, their total mana value at most ``cap``.
+
+    A constraint **between** the picks, so no selector clause can state it: a
+    per-card `mana_value` ceiling of 4 lets Ao put three 4-drops onto the
+    battlefield. Asked one card at a time, the way `choose_permanents`'s
+    `max_total_power` is (`_choose_within_total_power`): `ask_objects` takes
+    counts, not sums, so one subset question could be answered over the cap.
+    Each question offers only what still fits under what is left, and the
+    chooser may stop at any point. Mana values are never negative, so every
+    prefix of a legal set is itself legal and asking in steps loses no answer.
+
+    The mana value is the card's printed one (202.3b: an X in a library card's
+    cost is 0). The selector's ``count`` is ``"any"`` or an optional integer
+    (the loader holds it): "up to two" is the ceiling on how many, the cap on
+    how much.
+    """
+    count_spec = selector.get("count", "any")
+    limit = len(pool) if count_spec == "any" else int(evaluate_value(ctx, count_spec))
+    one_more = {**selector, "count": 1, "optional": True}
+    budget = int(cap)
+    picked: list[int] = []
+
+    def mana_value(oid: int) -> int:
+        return ctx.state.card_of(ctx.state.objects[oid]).mana_value
+
+    while len(picked) < limit:
+        fits = [oid for oid in pool if oid not in picked and mana_value(oid) <= budget]
+        if not fits:
+            break
+        chosen = yield from pick_from_pool(
+            ctx, fits, one_more, f"Take a card ({budget} mana value left)", "look_at_top"
+        )
+        if not chosen:
+            break
+        picked.append(chosen[0])
+        budget -= mana_value(chosen[0])
+    return picked
+
+
 @register("look_at_top")
 def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     """Look at the top N cards of a library and take some of what is there.
@@ -854,6 +896,13 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     enters with three additional +1/+1 counters on it." See :func:`_enters_with`.
     An `as` and a following `add_counters` is the near miss: a second placement,
     on a creature that was already on the battlefield at its printed size.
+
+    ``total_mana_value`` caps the **sum** of the picked cards' mana values --
+    Ao, the Dawn Sky: "any number of nonland permanent cards with total mana
+    value 4 or less"; Smelting Vat: "up to two noncreature artifact cards with
+    total mana value less than or equal to the sacrificed artifact's mana
+    value", a value expression read once as the op resolves. See
+    :func:`_pick_within_total_mana_value`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
@@ -948,9 +997,14 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 remaining = [oid for oid in remaining if oid not in picked]
             bound.extend(taken)
         elif pool:
-            picked = yield from pick_from_pool(
-                ctx, pool, selector, "Look at the top of the library", "look_at_top"
-            )
+            if "total_mana_value" in spec:
+                picked = yield from _pick_within_total_mana_value(
+                    ctx, pool, selector, evaluate_value(ctx, spec["total_mana_value"])
+                )
+            else:
+                picked = yield from pick_from_pool(
+                    ctx, pool, selector, "Look at the top of the library", "look_at_top"
+                )
             if cast_free:
                 taken = set((yield from _cast_from_window(ctx, pid, picked, paying=cast_paying)))
             else:

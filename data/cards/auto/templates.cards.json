@@ -11695,6 +11695,112 @@
         {
           "effects": [
             {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 7
+                      },
+                      "destination": "battlefield",
+                      "objects": {
+                        "any_types": [
+                          "Artifact",
+                          "Creature",
+                          "Enchantment",
+                          "Planeswalker",
+                          "Battle"
+                        ],
+                        "count": "any",
+                        "not_types": [
+                          "Land"
+                        ]
+                      },
+                      "op": "look_at_top",
+                      "player": "you",
+                      "rest_to_bottom": true,
+                      "total_mana_value": {
+                        "const": 4
+                      }
+                    }
+                  ],
+                  "label": "Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "any_of": [
+                          {
+                            "types": [
+                              "Creature"
+                            ]
+                          },
+                          {
+                            "subtypes": [
+                              "Vehicle"
+                            ]
+                          }
+                        ],
+                        "controller": "you",
+                        "count": "all",
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put two +1/+1 counters on each permanent you control that's a creature or Vehicle."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Ao dies, choose one —\n• Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\n• Put two +1/+1 counters on each permanent you control that's a creature or Vehicle.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ao_the_dawn_sky",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Ao, the Dawn Sky",
+      "oracle_text": "Flying, vigilance\nWhen Ao dies, choose one —\n• Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\n• Put two +1/+1 counters on each permanent you control that's a creature or Vehicle.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "self_only": true
               },
@@ -266652,6 +266758,64 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 8
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 2,
+                "not_types": [
+                  "Creature"
+                ],
+                "optional": true,
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true,
+              "total_mana_value": {
+                "mana_value_of": {
+                  "binding": "sacrificed"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "smelting_vat",
+      "mana_cost": "{4}",
+      "name": "Smelting Vat",
+      "oracle_text": "{1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

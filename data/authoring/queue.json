@@ -10092,12 +10092,12 @@
     },
     "Ao, the Dawn Sky": {
       "edhrec_rank": 4244,
-      "gate": "template",
+      "gate": null,
       "name": "Ao, the Dawn Sky",
-      "reason": "no template for: When Ao dies, choose one —",
+      "reason": "",
       "scryfall_id": "e002d351-3795-4cd9-b389-9ed81077845e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Apathy": {
@@ -252802,12 +252802,12 @@
     },
     "Smelting Vat": {
       "edhrec_rank": 13767,
-      "gate": "template",
+      "gate": null,
       "name": "Smelting Vat",
-      "reason": "no template for: {1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up t",
+      "reason": "",
       "scryfall_id": "9f1ea23c-69ef-4051-b747-3af3aa5c38f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smile at Death": {
