@@ -4862,12 +4862,12 @@
     },
     "Ajani, Caller of the Pride": {
       "edhrec_rank": 4440,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani, Caller of the Pride",
-      "reason": "no template for: +1: Put a +1/+1 counter on up to one target creature",
+      "reason": "",
       "scryfall_id": "345f7610-5b95-4d24-9ab0-e18d27ccabed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ajani, Inspiring Leader": {
@@ -16342,12 +16342,12 @@
     },
     "Aura Mutation": {
       "edhrec_rank": 2653,
-      "gate": "template",
+      "gate": null,
       "name": "Aura Mutation",
-      "reason": "no template for: Destroy target enchantment. Create X 1/1 green Saproling creature tokens, where X is that ",
+      "reason": "",
       "scryfall_id": "31bddc53-fa0c-4aa5-a92a-fa247e5330db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aura Shards": {
@@ -38502,12 +38502,12 @@
     },
     "Camaraderie": {
       "edhrec_rank": 4920,
-      "gate": "template",
+      "gate": null,
       "name": "Camaraderie",
-      "reason": "no template for: You gain X life and draw X cards, where X is the number of creatures you control. Creature",
+      "reason": "",
       "scryfall_id": "3842aa5c-304d-4827-94e6-e597bb49af97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Camel": {
@@ -47202,12 +47202,12 @@
     },
     "Citywide Bust": {
       "edhrec_rank": 7710,
-      "gate": "template",
+      "gate": null,
       "name": "Citywide Bust",
-      "reason": "no template for: Destroy all creatures with toughness 4 or greater",
+      "reason": "",
       "scryfall_id": "c249e9db-41a7-4da8-99b3-d7854c538713",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Civic Gardener": {
@@ -49962,12 +49962,12 @@
     },
     "Collective Blessing": {
       "edhrec_rank": 7982,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Blessing",
-      "reason": "no template for: Creatures you control get +3/+3",
+      "reason": "",
       "scryfall_id": "9d04689e-d673-40fd-93f0-d228d3bb338f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Brutality": {
@@ -50052,12 +50052,12 @@
     },
     "Collective Unconscious": {
       "edhrec_rank": 6051,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Unconscious",
-      "reason": "no template for: Draw a card for each creature you control",
+      "reason": "",
       "scryfall_id": "1219978f-c269-4b59-9ec1-0e7bc83059fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Voyage": {

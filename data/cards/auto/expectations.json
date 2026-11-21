@@ -356,6 +356,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "ajani_caller_of_the_pride": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ajani_s_chosen": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1571,6 +1578,10 @@
   "aura_gnarlid": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "aura_mutation": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "auramancer": {
     "battlefield_count": 33,
@@ -3372,6 +3383,21 @@
   "callidus_assassin": {
     "zone": "battlefield"
   },
+  "camaraderie": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "canal_monitor": {
     "zone": "battlefield"
   },
@@ -4104,6 +4130,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "citywide_bust": {
+    "zone": "graveyard"
+  },
   "claim_jumper": {
     "zone": "battlefield"
   },
@@ -4303,6 +4332,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "collective_blessing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "collective_defiance": {
     "graveyard_size": {
       "0": 4
@@ -4321,6 +4354,15 @@
   },
   "collective_resistance": {
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "collective_unconscious": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
     "zone": "graveyard"
   },
   "colorful_feiyi_sparrow": {

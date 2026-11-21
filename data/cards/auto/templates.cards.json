@@ -4827,6 +4827,110 @@
     {
       "abilities": [
         {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+1: Put a +1/+1 counter on up to one target creature."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "keywords": [
+                "flying",
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Target creature gains flying and double strike until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "amount": {
+                "life_of": "you"
+              },
+              "op": "create_token",
+              "token": "cat_2_2_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: Create X 2/2 white Cat creature tokens, where X is your life total."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ajani_caller_of_the_pride",
+      "loyalty": 4,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Ajani, Caller of the Pride",
+      "oracle_text": "+1: Put a +1/+1 counter on up to one target creature.\n−3: Target creature gains flying and double strike until end of turn.\n−8: Create X 2/2 white Cat creature tokens, where X is your life total.",
+      "source": "auto",
+      "subtypes": [
+        "Ajani"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -18809,6 +18913,61 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "aura_mutation",
+      "mana_cost": "{G}{W}",
+      "name": "Aura Mutation",
+      "oracle_text": "Destroy target enchantment. Create X 1/1 green Saproling creature tokens, where X is that enchantment's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "var": "victim"
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "saproling_1_1_g"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -40668,6 +40827,58 @@
     },
     {
       "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "camaraderie",
+      "mana_cost": "{4}{G}{W}",
+      "name": "Camaraderie",
+      "oracle_text": "You gain X life and draw X cards, where X is the number of creatures you control. Creatures you control get +1/+1 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -50522,6 +50733,41 @@
       "colors": [
         "W"
       ],
+      "id": "citywide_bust",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Citywide Bust",
+      "oracle_text": "Destroy all creatures with toughness 4 or greater.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "toughness": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "claim_jumper",
       "keywords": [
         "vigilance"
@@ -52940,6 +53186,43 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Creatures you control get +3/+3.",
+          "toughness": {
+            "const": 3
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "collective_blessing",
+      "mana_cost": "{3}{G}{G}{W}",
+      "name": "Collective Blessing",
+      "oracle_text": "Creatures you control get +3/+3.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -53258,6 +53541,31 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "collective_unconscious",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Collective Unconscious",
+      "oracle_text": "Draw a card for each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
