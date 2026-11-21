@@ -30,5 +30,5 @@
       {"op": "destroy", "objects": {"target": "t2"}}
     ]
   },
-  "expectation": {"zone": "exile"}
+  "expectation": {"zone": "exile", "graveyard_size": {"0": 2}, "battlefield_count": 32}
 }
