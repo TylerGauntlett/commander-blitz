@@ -16639,6 +16639,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "nullmage_shepherd": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "nymris_oona_s_trickster": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17284,6 +17289,16 @@
     },
     "zone": "graveyard"
   },
+  "overrun": {
+    "battlefield_count": 32,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "overseer_of_the_damned": {
     "zone": "battlefield"
   },
@@ -17297,6 +17312,13 @@
   },
   "oversold_cemetery": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "overwhelming_instinct": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "overwhelming_stampede": {
@@ -18112,6 +18134,13 @@
   },
   "preeminent_captain": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "presence_of_gond": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "price_of_fame": {
@@ -19902,6 +19931,16 @@
     },
     "zone": "graveyard"
   },
+  "rootborn_defenses": {
+    "battlefield_count": 32,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "rootbound_crag": {
     "zone": "battlefield"
   },
@@ -20485,6 +20524,14 @@
   },
   "scathe_zombies": {
     "zone": "battlefield"
+  },
+  "scatter_the_seeds": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 3,
+      "id": "saproling_1_1_g"
+    },
+    "zone": "graveyard"
   },
   "scattered_groves": {
     "zone": "battlefield"

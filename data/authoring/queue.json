@@ -189392,12 +189392,12 @@
     },
     "Nullmage Shepherd": {
       "edhrec_rank": 5961,
-      "gate": "template",
+      "gate": null,
       "name": "Nullmage Shepherd",
-      "reason": "no template for: Tap four untapped creatures you control: Destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "9277591c-cf20-4f82-b308-84e69c51113a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nullpriest of Oblivion": {
@@ -196122,12 +196122,12 @@
     },
     "Overrun": {
       "edhrec_rank": 1713,
-      "gate": "template",
+      "gate": null,
       "name": "Overrun",
-      "reason": "no template for: Creatures you control get +3/+3 and gain trample until end of turn",
+      "reason": "",
       "scryfall_id": "1d8e9cbb-8bf4-4a48-a58e-79deb3abdf7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overseer of Vault 76": {
@@ -196252,12 +196252,12 @@
     },
     "Overwhelming Instinct": {
       "edhrec_rank": 13521,
-      "gate": "template",
+      "gate": null,
       "name": "Overwhelming Instinct",
-      "reason": "no template for: Whenever you attack with three or more creatures, draw a card",
+      "reason": "",
       "scryfall_id": "92f16878-1e46-4a00-a9cc-cedd316d04b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overwhelming Intellect": {
@@ -206372,12 +206372,12 @@
     },
     "Presence of Gond": {
       "edhrec_rank": 7730,
-      "gate": "template",
+      "gate": null,
       "name": "Presence of Gond",
-      "reason": "no template for: Enchanted creature has \"{T}: Create a 1/1 green Elf Warrior creature token.\"",
+      "reason": "",
       "scryfall_id": "74e28915-216d-45c1-a3fc-aa34120afddf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Presence of the Master": {
@@ -227262,12 +227262,12 @@
     },
     "Rootborn Defenses": {
       "edhrec_rank": 1341,
-      "gate": "template",
+      "gate": null,
       "name": "Rootborn Defenses",
-      "reason": "no template for: Populate. Creatures you control gain indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "eb3ef4da-27c0-4364-a198-f70bea869d9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rootbound Crag": {
@@ -235132,12 +235132,12 @@
     },
     "Scatter the Seeds": {
       "edhrec_rank": 8683,
-      "gate": "template",
+      "gate": null,
       "name": "Scatter the Seeds",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "39f59d34-8166-4ac9-8684-33efa315e4db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scatter to the Winds": {
