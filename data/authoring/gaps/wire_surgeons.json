@@ -1,0 +1,18 @@
+{
+  "card_id": "wire_surgeons",
+  "name": "Wire Surgeons",
+  "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\nEach artifact creature card in your graveyard has encore. Its encore cost is equal to its mana cost. (Exile it and pay its mana cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": [
+    "Each artifact creature card in your graveyard has encore. Its encore cost is equal to its mana cost. (Exile it and pay its mana cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+  ],
+  "needs": [
+    {
+      "capability": "encore",
+      "kind": "static_effect",
+      "what": "a static that grants the encore activated ability to cards in its controller's graveyard matching a filter (artifact creature cards), with the encore cost set to each card's own printed mana cost; activation exiles the card from the graveyard as a cost, is sorcery-speed only, and for each opponent creates a token copy of the exiled card that has haste, must attack that opponent this turn if able, and is sacrificed at the beginning of the next end step",
+      "why_existing_wont_do": "The grant_ability static hands over an ability only to permanents on the battlefield (the packet notes say a granted activated ability works on the battlefield only), and there is no grants_encore analogue to grants_flashback/grants_retrace; grant_warp and granted_alternative_cost grant cast permissions, not an activated graveyard ability; nor is there a cost or value meaning 'this card's own mana cost' for a granted ability. The resolution half (copy_permanent with attacking per for_each_player, haste, delayed sacrifice) might be composable, but nothing can put the ability on the graveyard card"
+    }
+  ],
+  "closest_existing": ["grants_flashback", "grants_retrace", "grant_ability", "copy_permanent", "embalm"],
+  "confidence": "high"
+}
