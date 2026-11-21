@@ -251462,12 +251462,12 @@
     },
     "Slate of Ancestry": {
       "edhrec_rank": 10008,
-      "gate": "template",
+      "gate": null,
       "name": "Slate of Ancestry",
-      "reason": "no template for: {4}, {T}, Discard your hand: Draw a card for each creature you control",
+      "reason": "",
       "scryfall_id": "68a65a3f-01a4-4c3b-bbd3-62cc23a8f646",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slaughter": {

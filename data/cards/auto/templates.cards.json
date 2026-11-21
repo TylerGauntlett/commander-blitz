@@ -262725,6 +262725,38 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "creatures_you_control": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}, Discard your hand: Draw a card for each creature you control"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "slate_of_ancestry",
+      "mana_cost": "{4}",
+      "name": "Slate of Ancestry",
+      "oracle_text": "{4}, {T}, Discard your hand: Draw a card for each creature you control.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

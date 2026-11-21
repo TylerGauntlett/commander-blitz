@@ -22015,6 +22015,13 @@
   "slash_panther": {
     "zone": "battlefield"
   },
+  "slate_of_ancestry": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "slaughter_the_strong": {
     "zone": "graveyard"
   },
