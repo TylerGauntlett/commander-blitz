@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "collective_blessing",
+    "name": "Collective Blessing",
+    "oracle_text": "Creatures you control get +3/+3.",
+    "mana_cost": "{3}{G}{G}{W}",
+    "types": ["Enchantment"],
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "text": "Creatures you control get +3/+3.",
+        "affects": {"controller": "you", "types": ["Creature"]},
+        "power": {"const": 3},
+        "toughness": {"const": 3}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

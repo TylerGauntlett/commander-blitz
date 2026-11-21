@@ -1,0 +1,20 @@
+{
+  "card": {
+    "id": "aura_mutation",
+    "name": "Aura Mutation",
+    "oracle_text": "Destroy target enchantment. Create X 1/1 green Saproling creature tokens, where X is that enchantment's mana value.",
+    "mana_cost": "{G}{W}",
+    "types": ["Instant"],
+    "colors": ["G", "W"],
+    "color_identity": ["G", "W"],
+    "targets": [
+      {"id": "t1", "kind": "permanent", "count": 1, "selector": {"types": ["Enchantment"], "controller": "any", "zone": "battlefield"}}
+    ],
+    "spell_effects": [
+      {"op": "snapshot", "as": "victim", "target": "t1"},
+      {"op": "destroy", "objects": {"target": "t1"}},
+      {"op": "create_token", "token": "saproling_1_1_g", "player": "you", "amount": {"mana_value_of": {"var": "victim"}}}
+    ]
+  },
+  "expectation": {"zone": "graveyard", "opponent_battlefield_count": 5}
+}
