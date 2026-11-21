@@ -57,7 +57,7 @@
     },
     {
       "id": "t_lsor_legend",
-      "name": "Test Legendary Body",
+      "name": "Test Legendary Sorcery Body",
       "oracle_text": "",
       "mana_cost": "{W}",
       "supertypes": [
@@ -80,7 +80,7 @@
     },
     {
       "id": "t_lsor_relic",
-      "name": "Test Legendary Relic",
+      "name": "Test Legendary Sorcery Relic",
       "oracle_text": "",
       "mana_cost": "{1}",
       "supertypes": [
