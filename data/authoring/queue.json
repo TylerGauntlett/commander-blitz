@@ -47182,12 +47182,12 @@
     },
     "Cityscape Leveler": {
       "edhrec_rank": 2111,
-      "gate": "template",
+      "gate": null,
       "name": "Cityscape Leveler",
-      "reason": "no template for: When you cast this spell and whenever this creature attacks, destroy up to one target nonl",
+      "reason": "",
       "scryfall_id": "15564a92-7980-438e-b4cb-8ffb50fb6393",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Citywatch Sphinx": {
@@ -142302,12 +142302,12 @@
     },
     "Jaya's Immolating Inferno": {
       "edhrec_rank": 2227,
-      "gate": "template",
+      "gate": null,
       "name": "Jaya's Immolating Inferno",
-      "reason": "no template for: deals X damage to each of up to three targets",
+      "reason": "",
       "scryfall_id": "d41277c6-95f8-4f0e-ad4a-43b8bb7cdb19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jaya's Phoenix": {
@@ -145402,12 +145402,12 @@
     },
     "Kamahl's Druidic Vow": {
       "edhrec_rank": 5972,
-      "gate": "template",
+      "gate": null,
       "name": "Kamahl's Druidic Vow",
-      "reason": "no template for: Look at the top X cards of your library. You may put any number of land and/or legendary p",
+      "reason": "",
       "scryfall_id": "bf95ef60-e67b-466d-a6cb-d487ffa88b72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kamahl's Sledge": {
@@ -146152,12 +146152,12 @@
     },
     "Karn's Temporal Sundering": {
       "edhrec_rank": 4030,
-      "gate": "template",
+      "gate": null,
       "name": "Karn's Temporal Sundering",
-      "reason": "no template for: Target player takes an extra turn after this one. Return up to one target nonland permanen",
+      "reason": "",
       "scryfall_id": "7a64c1a4-02ce-49d2-97f2-970b8c33672d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karn's Touch": {
@@ -207262,12 +207262,12 @@
     },
     "Primevals' Glorious Rebirth": {
       "edhrec_rank": 2618,
-      "gate": "template",
+      "gate": null,
       "name": "Primevals' Glorious Rebirth",
-      "reason": "no template for: Return all legendary permanent cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "e11471f9-6bf4-4b31-8eb6-f5f9e8abd797",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primitive Etchings": {
@@ -320842,12 +320842,12 @@
     },
     "Yawgmoth's Vile Offering": {
       "edhrec_rank": 6032,
-      "gate": "template",
+      "gate": null,
       "name": "Yawgmoth's Vile Offering",
-      "reason": "no template for: Put up to one target creature or planeswalker card from a graveyard onto the battlefield u",
+      "reason": "",
       "scryfall_id": "31825ceb-d795-4ad7-81d8-77ab34c272f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yawgmoth's Will": {

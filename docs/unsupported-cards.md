@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **451** capabilities.
+**533 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -287,7 +287,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
-| [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -5070,20 +5069,6 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
-
-</details>
-
-## legendary-sorcery
-
-Blocks **1** card.
-
-- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
-  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
-  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 

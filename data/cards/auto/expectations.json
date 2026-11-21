@@ -4158,6 +4158,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cityscape_leveler": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "citywide_bust": {
     "zone": "graveyard"
   },
@@ -12490,6 +12495,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jaya_s_immolating_inferno": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "jazal_goldmane": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12770,6 +12780,9 @@
   "kalonian_tusker": {
     "zone": "battlefield"
   },
+  "kamahl_s_druidic_vow": {
+    "zone": "graveyard"
+  },
   "kamber_the_plunderer": {
     "battlefield_count": 33,
     "hand_size": {
@@ -12856,6 +12869,13 @@
   },
   "karn_s_bastion": {
     "zone": "battlefield"
+  },
+  "karn_s_temporal_sundering": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "exile"
   },
   "karplusan_forest": {
     "zone": "battlefield"
@@ -18335,6 +18355,16 @@
   },
   "primeval_titan": {
     "zone": "battlefield"
+  },
+  "primevals_glorious_rebirth": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "primoc_escapee": {
     "zone": "battlefield"
@@ -28498,6 +28528,13 @@
   },
   "yavimaya_wurm": {
     "zone": "battlefield"
+  },
+  "yawgmoth_s_vile_offering": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "exile"
   },
   "yes_man_personal_securitron": {
     "battlefield_count": 33,

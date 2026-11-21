@@ -51061,6 +51061,179 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "controller_of": "victim"
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "powerstone_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you cast this spell and whenever this creature attacks, destroy up to one target nonland permanent. Its controller creates a tapped Powerstone token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "controller_of": "victim"
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "powerstone_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you cast this spell and whenever this creature attacks, destroy up to one target nonland permanent. Its controller creates a tapped Powerstone token.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{8}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {8}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cityscape_leveler",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Cityscape Leveler",
+      "oracle_text": "Trample\nWhen you cast this spell and whenever this creature attacks, destroy up to one target nonland permanent. Its controller creates a tapped Powerstone token.\nUnearth {8}",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 8,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -148827,6 +149000,49 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "jaya_s_immolating_inferno",
+      "mana_cost": "{X}{R}{R}",
+      "name": "Jaya's Immolating Inferno",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nJaya's Immolating Inferno deals X damage to each of up to three targets.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -152202,6 +152418,61 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kamahl_s_druidic_vow",
+      "mana_cost": "{X}{G}{G}",
+      "name": "Kamahl's Druidic Vow",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nLook at the top X cards of your library. You may put any number of land and/or legendary permanent cards with mana value X or less from among them onto the battlefield. Put the rest into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "destination": "battlefield",
+          "objects": {
+            "any_of": [
+              {
+                "types": [
+                  "Land"
+                ]
+              },
+              {
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "supertypes": [
+                  "Legendary"
+                ]
+              }
+            ],
+            "count": "any",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            }
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to": "graveyard"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -153492,6 +153763,62 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "exiles_itself": true,
+      "id": "karn_s_temporal_sundering",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Karn's Temporal Sundering",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nTarget player takes an extra turn after this one. Return up to one target nonland permanent to its owner's hand. Exile Karn's Temporal Sundering.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "extra_turn",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "objects": {
+            "target": "t2"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "id": "t2",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "any",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -219762,6 +220089,50 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "primevals_glorious_rebirth",
+      "mana_cost": "{5}{W}{B}",
+      "name": "Primevals' Glorious Rebirth",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nReturn all legendary permanent cards from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "count": "all",
+            "supertypes": [
+              "Legendary"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -340518,6 +340889,70 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "id": "yawgmoth_s_vile_offering",
+      "mana_cost": "{4}{B}",
+      "name": "Yawgmoth's Vile Offering",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nPut up to one target creature or planeswalker card from a graveyard onto the battlefield under your control. Destroy up to one target creature or planeswalker. Exile Yawgmoth's Vile Offering.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        },
+        {
+          "objects": {
+            "target": "t2"
+          },
+          "op": "destroy"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "any",
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
