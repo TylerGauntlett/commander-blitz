@@ -24162,12 +24162,12 @@
     },
     "Beskir Shieldmate": {
       "edhrec_rank": 18865,
-      "gate": "template",
+      "gate": null,
       "name": "Beskir Shieldmate",
-      "reason": "no template for: When this creature dies, create a 1/1 white Human Warrior creature token",
+      "reason": "",
       "scryfall_id": "dfc1df84-9c47-444b-9d58-d9c7bed51c66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Besmirch": {
@@ -51872,12 +51872,12 @@
     },
     "Connecting the Dots": {
       "edhrec_rank": 9768,
-      "gate": "template",
+      "gate": null,
       "name": "Connecting the Dots",
-      "reason": "no template for: Whenever a creature you control attacks, exile the top card of your library face down",
+      "reason": "",
       "scryfall_id": "597b8c60-d06b-425b-9fca-f2e3dfb45623",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Connive // Concoct": {
@@ -189262,12 +189262,12 @@
     },
     "Null Brooch": {
       "edhrec_rank": 14177,
-      "gate": "template",
+      "gate": null,
       "name": "Null Brooch",
-      "reason": "no template for: {2}, {T}, Discard your hand: Counter target noncreature spell",
+      "reason": "",
       "scryfall_id": "d5d5a0c6-916c-428a-ae66-8adc8844e56e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Null Caller": {
@@ -268012,12 +268012,12 @@
     },
     "Subira, Tulzidi Caravanner": {
       "edhrec_rank": 7928,
-      "gate": "template",
+      "gate": null,
       "name": "Subira, Tulzidi Caravanner",
-      "reason": "no template for: {1}: Another target creature with power 2 or less can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "0d265a5d-af6b-47b6-8287-a810f014bee0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Subjugate the Hobbits": {
@@ -299892,12 +299892,12 @@
     },
     "Usher of the Fallen": {
       "edhrec_rank": 18896,
-      "gate": "template",
+      "gate": null,
       "name": "Usher of the Fallen",
-      "reason": "no template for: Boast — {1}{W}: Create a 1/1 white Human Warrior creature token",
+      "reason": "",
       "scryfall_id": "24e58478-c6a8-4f86-854a-a489c99bd777",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uthden Troll": {

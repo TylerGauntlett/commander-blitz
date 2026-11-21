@@ -26860,6 +26860,48 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_warrior_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create a 1/1 white Human Warrior creature token.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "beskir_shieldmate",
+      "mana_cost": "{1}{W}",
+      "name": "Beskir Shieldmate",
+      "oracle_text": "When this creature dies, create a 1/1 white Human Warrior creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -56331,6 +56373,72 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "face_down": true,
+              "link": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control attacks, exile the top card of your library face down.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        },
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{1}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "connecting_the_dots",
+      "mana_cost": "{1}{R}",
+      "name": "Connecting the Dots",
+      "oracle_text": "Whenever a creature you control attacks, exile the top card of your library face down. (You can't look at it.)\n{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -198830,6 +198938,47 @@
       "abilities": [
         {
           "cost": {
+            "discard_hand": true,
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "{2}, {T}, Discard your hand: Counter target noncreature spell."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "null_brooch",
+      "mana_cost": "{4}",
+      "name": "Null Brooch",
+      "oracle_text": "{2}, {T}, Discard your hand: Counter target noncreature spell.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap_permanents": {
               "controller": "you",
               "count": 4,
@@ -276663,6 +276812,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "power": {
+                  "op": "<=",
+                  "value": 2
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}: Another target creature with power 2 or less can't be blocked this turn."
+        },
+        {
+          "cost": {
+            "discard_hand": true,
+            "mana": "{1}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card.",
+              "trigger": {
+                "condition": {
+                  "cmp": "<=",
+                  "left": {
+                    "power_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "right": {
+                    "const": 2
+                  }
+                },
+                "controller": "you",
+                "event": "deals_combat_damage_to_player"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, {T}, Discard your hand: Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "subira_tulzidi_caravanner",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Subira, Tulzidi Caravanner",
+      "oracle_text": "Haste\n{1}: Another target creature with power 2 or less can't be blocked this turn.\n{1}{R}, {T}, Discard your hand: Until end of turn, whenever a creature you control with power 2 or less deals combat damage to a player, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -316492,6 +316746,55 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "attacked_this_turn": true,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "human_warrior_1_1_w"
+            }
+          ],
+          "is_boast": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Boast — {1}{W}: Create a 1/1 white Human Warrior creature token. (Activate only if this creature attacked this turn and only once each turn.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "usher_of_the_fallen",
+      "mana_cost": "{W}",
+      "name": "Usher of the Fallen",
+      "oracle_text": "Boast — {1}{W}: Create a 1/1 white Human Warrior creature token. (Activate only if this creature attacked this turn and only once each turn.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

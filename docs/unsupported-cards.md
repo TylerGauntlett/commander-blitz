@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **450** capabilities.
+**533 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -145,6 +145,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
+| [choose-permanents-with-different-names](#choose-permanents-with-different-names) | 1 | 7059 | selector |
 | [choose-x-modes](#choose-x-modes) | 1 | 8838 | engine |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
@@ -3040,6 +3041,20 @@ Blocks **1** card.
 
 - **The Master, Gallifrey's End** (rank 12040) — `the_master_gallifrey_s_end`
   - If you do, choose an opponent with the most life among your opponents.
+
+</details>
+
+## choose-permanents-with-different-names
+
+Blocks **1** card.
+
+- **(selector)** a battlefield selector constraint for a chosen set of permanents that each have different names (choose any number of artifact or creature tokens you control, no two sharing a name), usable as the objects of copy_permanent so that one token copy is created for each chosen permanent
+  <br>Why the existing vocabulary won't do: distinct_names exists but the loader accepts it only on search_library and search_zones (it narrows a library/zone search after each pick); copy_permanent's options (amount, as, objects, ...) and the selector keys (any_types, is_token, controller, optional, count, shares_a_name_with, not_name) have no way to force the chosen battlefield objects to have pairwise different names, so writing copy_permanent over all artifact/creature tokens would copy two same-named tokens, which the card forbids
+
+<details><summary>Cards waiting on this</summary>
+
+- **Battle for Bretagard** (rank 7059) — `battle_for_bretagard`
+  - III — Choose any number of artifact tokens and/or creature tokens you control with different names. For each of them, create a token that's a copy of it.
 
 </details>
 

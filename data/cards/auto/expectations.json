@@ -2217,6 +2217,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "beskir_shieldmate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bespoke_battlewagon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4595,6 +4599,13 @@
   },
   "conjurer_s_mantle": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "connecting_the_dots": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "connive_concoct": {
@@ -16646,6 +16657,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "null_brooch": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "nullmage_shepherd": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -23207,6 +23225,13 @@
     },
     "zone": "battlefield"
   },
+  "subira_tulzidi_caravanner": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "subjugate_the_hobbits": {
     "graveyard_size": {
       "0": 3
@@ -26370,6 +26395,10 @@
     "zone": "battlefield"
   },
   "urza_s_tower": {
+    "zone": "battlefield"
+  },
+  "usher_of_the_fallen": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "uthros_titanic_godcore": {
