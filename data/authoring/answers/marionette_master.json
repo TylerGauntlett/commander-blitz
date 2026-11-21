@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "marionette_master",
+    "name": "Marionette Master",
+    "oracle_text": "Fabricate 3 (When this creature enters, put three +1/+1 counters on it or create three 1/1 colorless Servo artifact creature tokens.)\nWhenever an artifact you control is put into a graveyard from the battlefield, target opponent loses life equal to this creature's power.",
+    "mana_cost": "{4}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Artificer"],
+    "power": 1,
+    "toughness": 3,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Fabricate 3 (When this creature enters, put three +1/+1 counters on it or create three 1/1 colorless Servo artifact creature tokens.)",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "Put three +1/+1 counters on it.",
+                "effects": [
+                  {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 3}, "objects": {"self_only": true}}
+                ]
+              },
+              {
+                "label": "Create three 1/1 colorless Servo artifact creature tokens.",
+                "effects": [
+                  {"op": "create_token", "token": "servo_1_1_c", "amount": {"const": 3}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an artifact you control is put into a graveyard from the battlefield, target opponent loses life equal to this creature's power.",
+        "trigger": {
+          "event": "leaves_battlefield",
+          "controller": "you",
+          "filter": {"types": ["Artifact"]},
+          "to_zones": ["graveyard"]
+        },
+        "targets": [
+          {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+        ],
+        "effects": [
+          {"op": "lose_life", "player": {"target": "t1"}, "amount": {"power_of": {"self": true}}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "+1/+1", "amount": 3}
+  }
+}
