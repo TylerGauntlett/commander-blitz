@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "connecting_the_dots",
+    "name": "Connecting the Dots",
+    "oracle_text": "Whenever a creature you control attacks, exile the top card of your library face down. (You can't look at it.)\n{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands.",
+    "mana_cost": "{1}{R}",
+    "types": ["Enchantment"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a creature you control attacks, exile the top card of your library face down.",
+        "trigger": {"event": "attacks", "controller": "you"},
+        "effects": [
+          {
+            "op": "look_at_top",
+            "player": "you",
+            "amount": {"const": 1},
+            "objects": {"count": "all"},
+            "destination": "exile",
+            "face_down": true,
+            "link": true
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands.",
+        "cost": {
+          "mana": "{1}{R}",
+          "discard_hand": true,
+          "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}
+        },
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "objects": {"zone": "exile", "controller": "any", "exiled_with": "self", "count": "all"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
