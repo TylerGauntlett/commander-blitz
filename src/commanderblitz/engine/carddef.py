@@ -392,6 +392,14 @@ class Cost:
     #: lets the player pick, so a Krosan Tusker could be "cycled" by pitching
     #: something else and staying in hand.
     discard_self: bool = False
+    #: "{4}, {T}, **Discard your hand**:" -- Slate of Ancestry. Every card in
+    #: the payer's hand, whatever its size and with no choice about which go.
+    #: An empty hand pays it in full: discarding no cards is still discarding
+    #: your hand, so the cost never makes the ability unplayable. Not
+    #: ``discard`` with a count, which is a number the card fixes and refuses
+    #: a hand smaller than it, and not ``discard_x``, where the player picks
+    #: how many go.
+    discard_hand: bool = False
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix
@@ -620,6 +628,7 @@ class Cost:
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
             ),
             discard_self=bool(spec.get("discard_self", False)),
+            discard_hand=bool(spec.get("discard_hand", False)),
             discard_x=bool(spec.get("discard_x")),
             sacrifice_x=(dict(spec["sacrifice_x"]) if spec.get("sacrifice_x") else None),
             tap_x=(dict(spec["tap_x"]) if spec.get("tap_x") is not None else None),
@@ -737,6 +746,7 @@ class Cost:
             and self.tap_x is None
             and self.remove_counters_x is None
             and not self.discard_self
+            and not self.discard_hand
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
             # `costs.solver_taps` reads this, and `legality._activate_actions`
@@ -796,6 +806,8 @@ class Cost:
             parts.append("Discard X")
         if self.discard_self:
             parts.append("Discard this card")
+        if self.discard_hand:
+            parts.append("Discard your hand")
         if self.exile_self:
             parts.append("Exile this permanent")
         if self.tuck_self:

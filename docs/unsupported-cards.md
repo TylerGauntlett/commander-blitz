@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **451** capabilities.
+**532 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -186,7 +186,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dinosaur-2-2-rw-flying-haste-token](#dinosaur-2-2-rw-flying-haste-token) | 1 | 5193 | token |
 | [discard-cost-binding](#discard-cost-binding) | 1 | 5635 | cost |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
-| [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
@@ -3625,20 +3624,6 @@ Blocks **1** card.
 
 - **Veronica, Dissident Scribe** (rank 8688) — `veronica_dissident_scribe`
   - Whenever you discard one or more nonland cards for the first time each turn, create a Junk token. (It's an artifact with "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.")
-
-</details>
-
-## discard-your-hand
-
-Blocks **1** card.
-
-- **(cost)** a cost key that throws away the payer's entire hand, whatever its size -- 'discard_hand: true' (or a 'discard' that accepts a value expression rather than a literal) -- payable with any hand including an empty one, and pricing itself at activation time rather than at load time
-  <br>Why the existing vocabulary won't do: 'discard' is a fixed integer: Cost.discard is loaded as int(spec.get('discard', 0)) and can_pay refuses the cost when _discard_pool is smaller than that number, so no constant is right -- 'discard: 7' is unpayable holding six cards, and 'discard: 0' charges nothing at all and hands over three mana for free. The cost language has no value leaf, so 'cards_in_hand' (a value_key, usable only in an amount) cannot be spent there. 'discard_selector' only narrows *which* cards may go, never how many. 'discard_self' throws the source alone, and this source is an artifact on the battlefield, not a card in hand. Writing it as the 'discard' op with amount {"cards_in_hand": ...} in the ability's effects moves the payment to resolution, which the packet forbids for exactly the reason this card demonstrates: the hand would still be intact while the ability is on the stack, turning a card whose whole design is 'the hand is gone before the mana arrives' into a free three-mana ritual you may respond to by casting the cards first.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
-  - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
 
 </details>
 

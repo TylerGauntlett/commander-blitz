@@ -2271,6 +2271,13 @@ def pay(
                 purpose="remove_counter_cost",
             )
 
+    if cost.discard_hand:
+        # "Discard your hand": every card, at once and with no choice, so no
+        # `ask_objects`. An empty hand discards nothing and the cost is still
+        # paid -- `can_pay` never refuses it. Paid as the ability goes on the
+        # stack (601.2h), so the hand is gone before anyone can respond.
+        yield from _discard(state, pid, list(state.players[pid].hand))
+
     if cost.discard_self and source_oid is not None:
         # No `ask_objects`: which card goes is not a choice, it is *this* card.
         # That is the whole difference from `discard`, and asking would let the

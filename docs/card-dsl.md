@@ -5131,6 +5131,27 @@ Not `discard`, which is a number the card fixes. The loader refuses it beside
 or `loyalty_x` (an ability announces one X), and anywhere but an activated
 ability's cost.
 
+### `discard_hand` — discard your hand as a cost
+
+"{4}, {T}, Discard your hand: Draw a card for each creature you control." —
+Slate of Ancestry.
+
+```jsonc
+"cost": { "mana": "{4}", "tap": true, "discard_hand": true },
+"effects": [{ "op": "draw", "amount": { "creatures_you_control": true } }]
+```
+
+Every card in the payer's hand goes, at once and with no choice, as the cost is
+paid (601.2h), so the hand is gone before the ability can be responded to. An
+empty hand pays it in full: the ability stays on offer, and the cost never
+refuses it.
+
+Not `discard` with a count, which the card fixes and which refuses a hand
+smaller than it, and not `discard_x`, where the player chooses how many go. The
+effect-side twin is the `discard` op's `whole_hand`, which discards on
+resolution. The loader refuses `discard_hand` beside `discard`, `discard_x`,
+`discard_self` or `discard_selector`, each a second answer to which cards go.
+
 ### `sacrifice_x` — sacrifice X permanents, X announced
 
 "{3}{B}, Sacrifice X Foods: Creatures you control get +X/+0 and gain menace
