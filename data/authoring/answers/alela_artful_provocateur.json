@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "alela_artful_provocateur",
+    "name": "Alela, Artful Provocateur",
+    "oracle_text": "Flying, deathtouch, lifelink\nOther creatures you control with flying get +1/+0.\nWhenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.",
+    "mana_cost": "{1}{W}{U}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Faerie", "Warlock"],
+    "supertypes": ["Legendary"],
+    "colors": ["B", "U", "W"],
+    "color_identity": ["B", "U", "W"],
+    "power": 2,
+    "toughness": 3,
+    "keywords": ["flying", "deathtouch", "lifelink"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other creatures you control with flying get +1/+0.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "keywords": ["flying"],
+          "exclude_self": true
+        },
+        "power": {"const": 1},
+        "toughness": {"const": 0}
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"any_types": ["Artifact", "Enchantment"]}
+        },
+        "effects": [
+          {"op": "create_token", "token": "faerie_1_1_u_flying"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "chrome_courier",
+    "name": "Chrome Courier",
+    "oracle_text": "Flying\nWhen this creature enters, reveal the top two cards of your library. Put one of them into your hand and the other into your graveyard. If you put an artifact card into your hand this way, you gain 3 life.",
+    "mana_cost": "{1}{W}{U}",
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Thopter"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, reveal the top two cards of your library. Put one of them into your hand and the other into your graveyard. If you put an artifact card into your hand this way, you gain 3 life.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "look_at_top",
+            "player": "you",
+            "amount": {"const": 2},
+            "objects": {"count": 1},
+            "destination": "hand",
+            "rest_to": "graveyard",
+            "as": "courier_taken"
+          },
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "courier_taken", "types": ["Artifact"], "zone": "hand"}},
+            "then": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 2},
+    "library_size": {"0": 38},
+    "graveyard_size": {"0": 3}
+  }
+}
