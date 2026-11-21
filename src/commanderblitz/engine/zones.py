@@ -2064,6 +2064,10 @@ def _enter_battlefield(
                 # (Phyrexian Metamorph).
                 types_added = exception.get("add_types")
                 obj.copying_add_types = frozenset(types_added) if types_added else None
+                # "…except it's an artifact" (Machine God's Effigy): the type
+                # line replaced rather than added to.
+                retyped = exception.get("set_types")
+                obj.copying_set_types = frozenset(retyped) if retyped else None
                 # "…it's a Zombie in addition to its other types", "…it's
                 # white", "…the token has no mana cost" (Vizier of Many Faces;
                 # Deceptive Frostkite's Dragon) -- `copy_permanent`'s keys of

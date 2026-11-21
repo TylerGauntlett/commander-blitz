@@ -1,0 +1,49 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_set_types.py. t_eaxt_effigy is Machine God's Effigy's type clause without its quoted mana ability: an artifact that may enter as a copy of any creature on the battlefield, except it's an artifact. t_eaxt_mirror is the same clause until end of turn. t_eaxt_golem is an Artifact Creature - Equipment Golem, so a copy that is only an Artifact keeps the artifact subtype and loses the creature one.",
+  "cards": [
+    {
+      "id": "t_eaxt_effigy",
+      "name": "Test Effigy",
+      "oracle_text": "You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact. (It's not a creature.)",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "except_": {"set_types": ["Artifact"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eaxt_mirror",
+      "name": "Test Effigy Mirror",
+      "oracle_text": "You may have this artifact enter as a copy of any creature on the battlefield until end of turn, except it's an artifact.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "duration": "end_of_turn",
+          "except_": {"set_types": ["Artifact"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eaxt_golem",
+      "name": "Test Glass Golem",
+      "mana_cost": "{3}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Equipment", "Golem"],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

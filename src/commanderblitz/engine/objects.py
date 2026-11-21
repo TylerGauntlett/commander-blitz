@@ -223,6 +223,13 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: The card types the copy has *instead of* the copied ones (707.9b) --
+    #: Machine God's Effigy's "…except it's an artifact", with no "in addition
+    #: to its other types". `GameState.card_of` replaces the copied face's
+    #: types with these and drops every subtype of a type it no longer has
+    #: (205.1b), so the copy of a Bear is a bare Artifact. Written, read and
+    #: cleared beside `copying_add_types`, for its reasons.
+    copying_set_types: frozenset[str] | None = None
     #: Creature and other subtypes the copy carries *in addition to* the copied
     #: ones (707.9b) -- Vizier of Many Faces' "…it's a Zombie in addition to
     #: its other types", Deceptive Frostkite's Dragon. Written, read and
@@ -1534,6 +1541,7 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_set_types = None
         self.copying_add_subtypes = None
         self.copying_colors = None
         self.copying_no_mana_cost = False

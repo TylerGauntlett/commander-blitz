@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **453** capabilities.
+**534 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -211,7 +211,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
 | [enters-as-copy-grant-ability](#enters-as-copy-grant-ability) | 1 | 2862 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
-| [enters-as-copy-set-types](#enters-as-copy-set-types) | 1 | 2862 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
@@ -3966,7 +3965,7 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(replacement)** an exception key on a self_enters_as_copy replacement's except_ that adds a quoted ability (by grantable_abilities index) to the copiable values, here the mana ability "{T}: Add {U}.", so it is part of the copy and survives being copied again
-  <br>Why the existing vocabulary won't do: except_ has add_keywords only, for keyword abilities; the grant_ability op and static grant to a permanent rather than writing into its copiable values, and nothing here grants an activated mana ability as part of the copy
+  <br>Why the existing vocabulary won't do: except_ has add_keywords only, for keyword abilities; the grant_ability op and static grant to a permanent rather than writing into its copiable values, and nothing here grants an activated mana ability as part of the copy; the type half is expressible (except_.set_types ["Artifact"]), so this exception is the card's only gap
 
 <details><summary>Cards waiting on this</summary>
 
@@ -3986,20 +3985,6 @@ Blocks **1** card.
 
 - **The Master, Formed Anew** (rank 19072) — `the_master_formed_anew`
   - You may have The Master enter as a copy of a creature card in exile with a takeover counter on it.
-
-</details>
-
-## enters-as-copy-set-types
-
-Blocks **1** card.
-
-- **(replacement)** a 'set_types' exception on a self_enters_as_copy replacement's except_ (707.9b): the copy's card types are REPLACED by the printed list (here exactly ["Artifact"]), so the copy is not a creature, its creature subtypes go away (205.1b), and its copied power/toughness stop mattering
-  <br>Why the existing vocabulary won't do: The packet's reference has no self_enters_as_copy replacement at all; in the engine, ENTERS_COPY_EXCEPT_KEYS (cards/loader) carries add_types (Phyrexian Metamorph's 'in addition to its other types'), add_subtypes, add_keywords, colors, no_mana_cost, remove_supertypes, name, enters_with and condition, but nothing that replaces the type line, so 'except it's an artifact' would arrive as an artifact creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Machine God's Effigy** (rank 2862) — `machine_god_s_effigy`
-  - You may have this artifact enter as a copy of any creature on the battlefield, except it's an artifact and it has "{T}: Add {U}."
 
 </details>
 

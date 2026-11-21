@@ -121,7 +121,8 @@
    "enters_with",
    "name",
    "no_mana_cost",
-   "remove_supertypes"
+   "remove_supertypes",
+   "set_types"
   ],
   "FIRST_ACTIVATION_TARGETING_KEYS": [
    "controller",

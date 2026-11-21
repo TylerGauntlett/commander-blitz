@@ -457,10 +457,15 @@ def load_deck_file(path: Path) -> DeckModel:
 #: Many Faces' "…the token has no mana cost, it's white, and it's a Zombie in
 #: addition to its other types". ``condition`` makes the whole exception
 #: conditional -- Vizier's "except **if this creature was embalmed**".
+#: ``set_types`` is the replacement beside ``add_types``' addition: Machine
+#: God's Effigy's "…except it's an artifact" with no "in addition", so the copy
+#: of a creature is an Artifact and nothing else, and its creature types go
+#: with the Creature it no longer is (205.1b).
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
         "add_types",
+        "set_types",
         "add_subtypes",
         "colors",
         "no_mana_cost",
@@ -531,6 +536,24 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
         for t in added:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}.add_types: unknown card type {t!r}")
+    if "set_types" in spec:
+        # "…except it's an artifact" (Machine God's Effigy): the copy's card
+        # types *instead of* the copied ones. Dropped, a copy of a creature is
+        # an artifact creature that attacks, blocks and dies to a wrath -- a
+        # different card from the printed one.
+        retyped = spec["set_types"]
+        if not isinstance(retyped, list) or not retyped:
+            raise DslError(f"{where}.set_types: must be a non-empty list")
+        for t in retyped:
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}.set_types: unknown card type {t!r}")
+        if "add_types" in spec:
+            # One printed clause says either "in addition to its other types"
+            # or not; both keys at once is a type line nobody prints.
+            raise DslError(
+                f"{where}: 'set_types' replaces the card types and 'add_types' adds to "
+                f"them -- write the whole type line in 'set_types'"
+            )
     if "remove_supertypes" in spec:
         # "…and it isn't legendary" (Spark Double). Dropped, the copy of a
         # legendary permanent is binned by the legend rule beside its original.

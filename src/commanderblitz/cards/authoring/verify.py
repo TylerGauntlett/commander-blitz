@@ -3039,6 +3039,20 @@ def _covered(card: CardDef, line: str) -> bool:
                 exception.get("add_types") or exception.get("add_subtypes")
             ):
                 continue
+            # "…except it's an artifact" with no "in addition" (Machine God's
+            # Effigy) replaces the type line: ``set_types``, and an
+            # ``add_types`` would claim it as an artifact creature. The other
+            # way round, ``set_types`` cannot claim an "in addition" sentence.
+            replaces_types = (
+                "in addition to its other types" not in lowered
+                and re.search(
+                    r"except it's an? (?:artifact|enchantment|land|creature|planeswalker)\b",
+                    lowered,
+                )
+                is not None
+            ) or "loses all other card types" in lowered
+            if replaces_types != bool(exception.get("set_types")):
+                continue
             # "…with a number of additional +1/+1 counters on it" (The
             # Mimeoplasm) is the same half without the words "enters with".
             if "additional" in lowered and "counter" in lowered and not exception.get(

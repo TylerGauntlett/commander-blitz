@@ -177,6 +177,7 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.copying_keywords = frozenset(added) if added else None
         obj.copying_remove_supertypes = None
         obj.copying_add_types = frozenset(types_added) if types_added else None
+        obj.copying_set_types = None
         obj.copying_add_subtypes = None
         obj.copying_colors = None
         obj.copying_no_mana_cost = False

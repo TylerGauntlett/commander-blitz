@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 from .actions import PendingDecision
 from .carddef import CardDef
-from .characteristics import chars
+from .characteristics import chars, subtype_survives
 from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
 from .mana import ManaCost
@@ -671,6 +671,22 @@ class GameState:
                 # rule (704.5j) sees a Legendary copy of a nonlegendary card.
                 copied = replace(
                     copied, supertypes=copied.supertypes | obj.copying_add_supertypes
+                )
+            if obj.copying_set_types:
+                # "…except it's an artifact" (Machine God's Effigy): the
+                # copy's card types *instead of* the copied ones, so a copy of
+                # a creature is no creature. The subtypes of a type it no
+                # longer has go with it (205.1b), exactly as under a
+                # `set_types` static: the copy of a Bear is no Bear, and no
+                # Bear lord or creature-type count sees it.
+                copied = replace(
+                    copied,
+                    types=obj.copying_set_types,
+                    subtypes=frozenset(
+                        sub
+                        for sub in copied.subtypes
+                        if subtype_survives(sub, obj.copying_set_types)
+                    ),
                 )
             if obj.copying_add_types:
                 # "…except it's an artifact in addition to its other types"

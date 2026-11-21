@@ -3648,6 +3648,7 @@ The other keys, each a copiable value the copy carries until it ends:
 |---|---|
 | `add_keywords` | keywords added to the copied face |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
+| `set_types` | the card types the copy has *instead of* the copied ones, on `copying_set_types`; every subtype of a type it no longer has goes with it (205.1b), so Machine God's Effigy's "…except it's an artifact" (`["Artifact"]`) makes the copy of a Bear a bare Artifact. The near miss is `add_types`, which is right only when the card prints "in addition to its other types"; the two are refused together |
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
 | `colors` | `copy_permanent`'s key of the same name: the copy's colours instead of the copied ones, on `copying_colors` |
 | `no_mana_cost` | `copy_permanent`'s key of the same name: the copy has no mana cost (202.1b), on `copying_no_mana_cost`; its mana value is 0 |
@@ -3671,8 +3672,8 @@ that face. The printed card's other replacements stay the ones read.
 
 The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
 key, an empty exception (a `condition` alone is one), an empty list, an unknown
-keyword, colour, supertype or counter, a malformed condition, an empty name and a
-`no_mana_cost` that is not `true`.
+keyword, colour, card type, supertype or counter, a malformed condition, an empty
+name, a `no_mana_cost` that is not `true`, and `set_types` beside `add_types`.
 
 A copy applied as a permanent enters overwrites every copiable value the object
 had (613.2a, 707.2), so a token's own creating exception (`copy_overrides`) does
