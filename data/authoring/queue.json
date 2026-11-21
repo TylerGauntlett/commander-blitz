@@ -91492,12 +91492,12 @@
     },
     "Farid, Enterprising Salvager": {
       "edhrec_rank": 10737,
-      "gate": "template",
+      "gate": null,
       "name": "Farid, Enterprising Salvager",
-      "reason": "no template for: Whenever a nontoken artifact you control is put into a graveyard from the battlefield, cre",
+      "reason": "",
       "scryfall_id": "003367c7-6cb8-4451-8349-76ce5d21e367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Farideh's Fireball": {

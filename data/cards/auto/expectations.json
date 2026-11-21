@@ -8201,6 +8201,10 @@
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
   },
+  "farid_enterprising_salvager": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "farseek": {
     "battlefield_count": 33,
     "graveyard_size": {

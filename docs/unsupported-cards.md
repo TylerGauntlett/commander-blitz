@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **460** capabilities.
+**540 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -410,7 +410,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
-| [scrap-token](#scrap-token) | 1 | 10737 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -6839,20 +6838,6 @@ Blocks **1** card.
 
 - **Young Deathclaws** (rank 11499) — `young_deathclaws`
   - Each creature card in your graveyard has scavenge. The scavenge cost is equal to its mana cost.
-
-</details>
-
-## scrap-token
-
-Blocks **1** card.
-
-- **(token)** a colorless artifact token named Scrap with no abilities and no subtypes (token id e.g. scrap_token)
-  <br>Why the existing vocabulary won't do: token_ids has no Scrap; the nearest colorless noncreature artifact tokens (treasure_token, clue_token, junk_token, replicated_ring_token) all carry abilities or a subtype, so substituting one would give Farid a different token. The trigger itself (put_into_graveyard from battlefield, filter types Artifact, is_token false, controller you) and the modal sacrifice ability (sacrifice cost, choose_mode with add_counters+grant_keyword menace, goad, discard then draw) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Farid, Enterprising Salvager** (rank 10737) — `farid_enterprising_salvager`
-  - Whenever a nontoken artifact you control is put into a graveyard from the battlefield, create a colorless artifact token named Scrap.
 
 </details>
 

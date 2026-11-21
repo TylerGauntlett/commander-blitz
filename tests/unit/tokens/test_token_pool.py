@@ -3300,6 +3300,30 @@ class TestTheReplicatedRingIsASnowManaRock:
         assert ability.is_mana_ability and ability.cost.sacrifice is None
 
 
+class TestFaridsScrapIsABlankArtifact:
+    """Farid, Enterprising Salvager: *"create a colorless artifact token named
+    Scrap."* The token prints nothing else: no subtype, no ability, no keyword.
+    `treasure_token` and `clue_token` are the near misses -- colorless
+    noncreature artifacts, but each carries a subtype and a sacrifice ability,
+    so a Farid handed one would be a card that makes mana or draws (111.4)."""
+
+    def test_it_is_a_colorless_artifact_with_nothing_else(self, pool):
+        token = pool.get("scrap_token")
+        assert token is not None and token.is_token
+        assert token.name == "Scrap"
+        assert list(token.types) == ["Artifact"]
+        assert not token.supertypes and not token.subtypes
+        assert not token.colors
+        assert (token.power, token.toughness) == (None, None)
+        assert not token.keywords and not token.abilities
+
+    def test_the_treasure_and_clue_are_still_separate_tokens(self, pool):
+        for token_id, subtype in (("treasure_token", "Treasure"), ("clue_token", "Clue")):
+            token = pool.get(token_id)
+            assert list(token.subtypes) == [subtype]
+            assert token.abilities[0].cost.sacrifice
+
+
 class TestEverquillsFeatherReturnsAPhoenix:
     """Everquill Phoenix: *"a red artifact token named Feather with '{1},
     Sacrifice this token: Return target Phoenix card from your graveyard to the

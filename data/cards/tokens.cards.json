@@ -6107,6 +6107,17 @@
       ]
     },
     {
+      "id": "scrap_token",
+      "name": "Scrap",
+      "oracle_text": "",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "thopter_1_1_u_flying",
       "name": "Thopter Token",
       "oracle_text": "1/1 blue Thopter artifact creature token with flying.",

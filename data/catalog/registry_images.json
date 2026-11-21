@@ -6924,6 +6924,10 @@
     "artist": "Brandon Kitkouski",
     "scryfall_id": "8e4622e0-7723-415f-9afe-fc34619d49cc"
   },
+  "farid_enterprising_salvager": {
+    "artist": "Bruno Biazotto",
+    "scryfall_id": "003367c7-6cb8-4451-8349-76ce5d21e367"
+  },
   "farseek": {
     "artist": "Rimas Valeikis",
     "scryfall_id": "598f6334-4baf-4f9a-a70c-0cc1e8af68c9"
@@ -17660,6 +17664,10 @@
   "scouting_hawk": {
     "artist": "Ilse Gort",
     "scryfall_id": "bce2209e-7a5c-4394-876c-e0f68cfba9ca"
+  },
+  "scrap_token": {
+    "artist": "Drew Tucker",
+    "scryfall_id": "f36fdf0d-035d-4313-87f5-4a2502a20518"
   },
   "scrap_trawler": {
     "artist": "Daarken",
