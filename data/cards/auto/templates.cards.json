@@ -318019,6 +318019,41 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "urza_s_ruinous_blast",
+      "mana_cost": "{4}{W}",
+      "name": "Urza's Ruinous Blast",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nExile all nonland permanents that aren't legendary.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_supertypes": [
+              "Legendary"
+            ],
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        }
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "chapter": 1,

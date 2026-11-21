@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **452** capabilities.
+**535 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -56,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
-| [legendary-sorcery](#legendary-sorcery) | 2 | 1611 | engine |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
@@ -289,6 +288,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [jump-start](#jump-start) | 1 | 14777 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
+| [legendary-sorcery](#legendary-sorcery) | 1 | 6032 | engine |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
@@ -1658,24 +1658,6 @@ Blocks **2** cards.
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
 - **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
   - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
-
-</details>
-
-## legendary-sorcery
-
-Blocks **2** cards.
-
-- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise. The verification sandbox will also need a legendary creature on player 0's side for such a card, since the position's only legend is the opponent's
-  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule, copy characteristics and deck construction; nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play, a one-sided wrath with no precondition. cast_only_during and the other card-level riders only gate timing, and alternative_cost's condition gates a price rather than the cast itself; there is no card-level cast condition key. The rest of the card is expressible once this lands: one exile op over {"zone": "battlefield", "controller": "any", "not_types": ["Land"], "not_supertypes": ["Legendary"], "count": "all"}
-- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
-  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urza's Ruinous Blast** (rank 1611) — `urza_s_ruinous_blast`
-  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
-- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
-  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 
@@ -5103,6 +5085,20 @@ Blocks **1** card.
 
 - **Bounty Board** (rank 5109) — `bounty_board`
   - Whenever a creature with a bounty counter on it dies, each of its controller's opponents draws a card and gains 2 life.
+
+</details>
+
+## legendary-sorcery
+
+Blocks **1** card.
+
+- **(engine)** rule 205.4e casting restriction: a spell with both the Legendary supertype and the Sorcery type (and likewise a legendary instant) may be cast only if its caster controls a legendary creature or a legendary planeswalker; the engine's cast-legality check must read the card's supertypes and refuse the cast otherwise
+  <br>Why the existing vocabulary won't do: The engine reads Legendary only for the legend rule (sba.py) and deck construction (registry.py); nothing in casting checks it, so supertypes: ["Legendary"] on a sorcery is inert and the card would be castable with no legend in play. cast_only_during and condition-gated card riders only cover timing; there is no card-level cast condition key that could express the restriction by hand. The rest of the card (return_from_graveyard with an optional any_types Creature/Planeswalker card_in_graveyard target, destroy with an optional permanent target, exiles_itself) is expressible once this lands.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yawgmoth's Vile Offering** (rank 6032) — `yawgmoth_s_vile_offering`
+  - (You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)
 
 </details>
 

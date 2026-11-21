@@ -29,7 +29,7 @@ from .characteristics import (
     static_timestamp,
     with_granted_types,
 )
-from .enums import Step, Zone
+from .enums import Step, Supertype, Zone
 from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
 from .player import MAX_HAND_SIZE
@@ -2475,6 +2475,26 @@ def in_cast_window(state: GameState, pid: int, window: CastWindow) -> bool:
     return window.steps is None or state.step in window.steps
 
 
+def controls_a_legend_that_casts(state: GameState, pid: int) -> bool:
+    """Whether ``pid`` controls a legendary creature or legendary planeswalker.
+
+    The condition 205.4e puts on casting a legendary instant or sorcery. The
+    derived characteristics, not the printed ones: an animated legendary
+    artifact is a legendary creature while it is animated, and a copy made
+    "except it's legendary" is one.
+    """
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.controller != pid:
+            continue
+        current = chars(state, oid)
+        if Supertype.LEGENDARY.value in current.supertypes and (
+            "Creature" in current.types or "Planeswalker" in current.types
+        ):
+            return True
+    return False
+
+
 def player_cant_cast_spells(
     state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
 ) -> bool:
@@ -2529,6 +2549,18 @@ def player_cant_cast_spells(
         # for every cast, so it is a "can't" asked here, where the free casts
         # (cascade, suspend, madness, a copy) ask as well -- not a timing
         # window in `casting._timing_ok`, which those casts skip.
+        return True
+    if (
+        card is not None
+        and card.is_legendary
+        and not card.is_permanent
+        and not controls_a_legend_that_casts(state, pid)
+    ):
+        # 205.4e: "A player can't cast a legendary instant or sorcery spell
+        # unless that player controls a legendary creature or a legendary
+        # planeswalker." Urza's Ruinous Blast. Read off the printed supertype,
+        # so the card needs no key of its own, and asked here because the
+        # restriction holds for every cast, the free ones included (601.3).
         return True
     if any(
         pid in lock.affects and set(lock.zones) >= _SHUTS_EVERY_ZONE for lock in state.cast_locks

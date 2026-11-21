@@ -26500,6 +26500,11 @@
   "urza_s_power_plant": {
     "zone": "battlefield"
   },
+  "urza_s_ruinous_blast": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 3,
+    "zone": "graveyard"
+  },
   "urza_s_saga": {
     "battlefield_count": 33,
     "counters": {

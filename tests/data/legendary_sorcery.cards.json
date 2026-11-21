@@ -1,0 +1,96 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_legendary_sorcery.py. t_lsor_blast is Urza's Ruinous Blast's restriction on a cheap legendary sorcery that draws a card; t_lsor_instant the same as a legendary instant; t_lsor_legend a vanilla legendary creature; t_lsor_walker a legendary planeswalker; t_lsor_relic a legendary noncreature artifact, which does not count.",
+  "cards": [
+    {
+      "id": "t_lsor_blast",
+      "name": "Test Legendary Blast",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nDraw a card.",
+      "mana_cost": "{W}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_lsor_instant",
+      "name": "Test Legendary Instant",
+      "oracle_text": "(You may cast a legendary instant only if you control a legendary creature or planeswalker.)\nDraw a card.",
+      "mana_cost": "{W}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_lsor_legend",
+      "name": "Test Legendary Body",
+      "oracle_text": "",
+      "mana_cost": "{W}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_lsor_relic",
+      "name": "Test Legendary Relic",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

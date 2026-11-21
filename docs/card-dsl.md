@@ -4588,6 +4588,18 @@ cast. `cast_during` and `step_is` are the near misses: they are conditions read
 inside effects, so an `if` on one lets the spell be cast anywhere and do
 nothing.
 
+```jsonc
+// Urza's Ruinous Blast — "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)"
+{ "supertypes": ["Legendary"], "types": ["Sorcery"] }
+```
+
+A legendary instant or sorcery needs no key: 205.4e's restriction is read off
+the supertype. `player_statics.player_cant_cast_spells` refuses the cast unless
+the caster controls a legendary creature or a legendary planeswalker
+(`controls_a_legend_that_casts`, over the derived characteristics, so a
+legendary artifact that is not a creature does not count). The reminder
+sentence is printed and needs nothing either.
+
 ### Choosing a permanent or card type, and reading it back
 
 ```jsonc

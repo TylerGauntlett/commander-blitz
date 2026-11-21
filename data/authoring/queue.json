@@ -299772,12 +299772,12 @@
     },
     "Urza's Ruinous Blast": {
       "edhrec_rank": 1611,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Ruinous Blast",
-      "reason": "no template for: Exile all nonland permanents that aren't legendary",
+      "reason": "",
       "scryfall_id": "76b10977-64eb-4a50-a481-d67cc2950f56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urza's Saga": {
