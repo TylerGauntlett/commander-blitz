@@ -3507,3 +3507,26 @@ class TestReignOfThePitsDemonIsAnXXBlackFlier:
     def test_the_near_misses_are_still_separate_tokens(self, pool):
         assert sorted(pool.get("vampire_demon_4_3_wb_flying").colors) == ["B", "W"]
         assert not pool.get("aetherborn_x_x_b").keywords
+
+
+class TestMajasHumanWarriorIsBothTypes:
+    """Maja, Bretagard Protector: *"Landfall — Whenever a land you control
+    enters, create a **1/1 white Human Warrior** creature token."*
+
+    Two near misses: `human_1_1_w` is a Human and no Warrior, and
+    `warrior_1_1_w` a Warrior and no Human. Rule 111.4: a token is exactly
+    what its creating effect says.
+    """
+
+    def test_it_is_a_white_human_warrior(self, pool):
+        token = pool.get("human_warrior_1_1_w")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["W"]
+        assert sorted(token.subtypes) == ["Human", "Warrior"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert "Warrior" not in pool.get("human_1_1_w").subtypes
+        assert "Human" not in pool.get("warrior_1_1_w").subtypes
