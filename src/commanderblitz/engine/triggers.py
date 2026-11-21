@@ -1001,11 +1001,20 @@ def _per_counter_events(spec: TriggerSpec, events: list[GameEvent]) -> list[Game
     takes, so a removal of N is handed over as N copies, each with `amount` 1.
     Copies rather than more fired events, `_per_player_events`' reason: a second
     event would fire every other listener again.
+
+    Only a removal is split. Every event is offered to every listener before
+    `_matches` reads its type, so splitting a `counter_placed` too would hand
+    a listening Watcher of Hours one copy per +1/+1 counter a doubling Mossborn
+    Hydra just received -- copies its own `_matches` then throws away, and a
+    count that grows without bound.
     """
     if spec.event != "counter_removed":
         return events
     heard: list[GameEvent] = []
     for event in events:
+        if event.type != EventType.COUNTER_REMOVED:
+            heard.append(event)
+            continue
         amount = int(event.data.get("amount") or 0)
         heard.extend(replace(event, data={**event.data, "amount": 1}) for _ in range(amount))
     return heard
