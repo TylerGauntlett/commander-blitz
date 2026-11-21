@@ -196382,12 +196382,12 @@
     },
     "Oviya, Automech Artisan": {
       "edhrec_rank": 3350,
-      "gate": "template",
+      "gate": null,
       "name": "Oviya, Automech Artisan",
-      "reason": "no template for: Each creature that's attacking one of your opponents has trample",
+      "reason": "",
       "scryfall_id": "6d6eae8b-73de-4d79-bbe5-2921db1987b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Owen Grady, Raptor Trainer": {

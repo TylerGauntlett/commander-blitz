@@ -17549,6 +17549,13 @@
     },
     "zone": "graveyard"
   },
+  "oviya_automech_artisan": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ox_drover": {
     "battlefield_count": 33,
     "hand_size": {

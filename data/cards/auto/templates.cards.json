@@ -210411,6 +210411,129 @@
       "abilities": [
         {
           "affects": {
+            "attacking_player": "opponent",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Each creature that's attacking one of your opponents has trample."
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "any_of": [
+                    {
+                      "types": [
+                        "Creature"
+                      ]
+                    },
+                    {
+                      "subtypes": [
+                        "Vehicle"
+                      ]
+                    }
+                  ],
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "as": "oviya_put",
+                  "objects": {
+                    "any_of": [
+                      {
+                        "types": [
+                          "Creature"
+                        ]
+                      },
+                      {
+                        "subtypes": [
+                          "Vehicle"
+                        ]
+                      }
+                    ],
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "oviya_put",
+                      "types": [
+                        "Artifact"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "binding": "oviya_put",
+                        "count": "all"
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a creature or Vehicle card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, {T}: You may put a creature or Vehicle card from your hand onto the battlefield. If you put an artifact onto the battlefield this way, put two +1/+1 counters on it."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "oviya_automech_artisan",
+      "mana_cost": "{3}{G}",
+      "name": "Oviya, Automech Artisan",
+      "oracle_text": "Each creature that's attacking one of your opponents has trample.\n{G}, {T}: You may put a creature or Vehicle card from your hand onto the battlefield. If you put an artifact onto the battlefield this way, put two +1/+1 counters on it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "blockers": {
