@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "nissa_s_expedition",
+    "name": "Nissa's Expedition",
+    "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nSearch your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+    "mana_cost": "{4}{G}",
+    "types": ["Sorcery"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "pay_generic_with": "tap_creatures",
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 2,
+        "destination": "battlefield",
+        "tapped": true,
+        "selector": {"types": ["Land"], "supertypes": ["Basic"]}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 34,
+    "library_size": {"0": 38}
+  }
+}
