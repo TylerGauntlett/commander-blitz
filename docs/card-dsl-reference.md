@@ -22,7 +22,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
-| [Card-level costs](#card-level-costs) | 35 |
+| [Card-level costs](#card-level-costs) | 36 |
 | [Keywords](#keywords) | 47 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
@@ -896,6 +896,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
+| `offering` | Offering: a selector for the sacrificed permanent; the printed cost less its mana cost, colour included, at instant timing. | [Offering](card-dsl-cookbook.md#offering) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
 | `plot` | Plot cost: pay it to exile this from hand, then cast it free on a later turn. | [Plot](card-dsl.md#plot) |
 | `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |

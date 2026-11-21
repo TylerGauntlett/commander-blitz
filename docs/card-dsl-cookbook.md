@@ -7376,7 +7376,7 @@ them where it is sitting:
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
-"emerge_subtype": "Goblin"                  // offering: only that type may be eaten
+"offering": { "types": ["Artifact"] }      // eat a matching permanent at instant speed, pay the difference
 "pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_additional_cost": { "discard": 1 } // …or paying any other cost on top (Dragon Man)
@@ -8215,6 +8215,39 @@ it.
 The flag is written onto the object *before* `spell_effects` run, for
 `cast_from_graveyard`'s reason: written after, every overloaded spell resolves
 as the targeted half, with no targets, which is nothing at all.
+
+#### Offering
+
+```jsonc
+"mana_cost": "{7}{R}{R}",
+"offering": { "types": ["Artifact"] }       // "Artifact offering"; Goblin offering is { "subtypes": ["Goblin"] }
+```
+
+"You may cast this card any time you could cast an instant by sacrificing a
+[quality] permanent and paying the difference in mana costs" (702.48a). The
+value is a permanent selector naming the quality; `controller: you` and the
+battlefield are implied, and the match reads derived characteristics, so a
+permanent granted the type is fodder.
+
+- **One cast line per matching permanent** (capped, biggest first), the
+  emerge shape, labelled "(offering, sacrificing …)". The sacrifice is paid after
+  the mana (601.2g), so an artifact that taps for mana can help pay for the
+  spell that eats it.
+- **The price is the printed cost less the sacrifice's mana cost, colour
+  included** (`ManaCost.reduced_by_mana_cost`). A coloured symbol takes a pip of
+  its colour off, and where the spell demands none of that colour it takes one
+  generic instead: `{7}{R}{R}` less `{1}{R}` is `{6}{R}`, less `{2}{G}{G}` is
+  `{3}{R}{R}`. The generic remainder nets with every other discount, the
+  commander tax included, and clamps at zero.
+- **Instant timing is the offering line's alone.** The card gets no flash: at
+  sorcery timing the printed line is offered beside the offering lines, at
+  instant timing only the offering lines are (`casting.offering_timing_owed`).
+  Do not add the `flash` keyword for the reminder text — that is a strictly
+  better card.
+
+Not `emerge`: emerge is a separate alternative cost, eats only creatures and
+reduces by mana value, generic only. The loader refuses a card with both, and an
+empty selector.
 
 #### Rebound
 

@@ -29472,6 +29472,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attacking_player": "opponent",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Creatures attacking your opponents have double strike."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "blast_furnace_hellkite",
+      "keywords": [
+        "flying",
+        "double_strike"
+      ],
+      "mana_cost": "{7}{R}{R}",
+      "name": "Blast-Furnace Hellkite",
+      "offering": {
+        "types": [
+          "Artifact"
+        ]
+      },
+      "oracle_text": "Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)\nFlying, double strike\nCreatures attacking your opponents have double strike.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

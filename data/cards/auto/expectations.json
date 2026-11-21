@@ -2439,6 +2439,17 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "blast_furnace_hellkite": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "double_strike"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "blast_zone": {
     "battlefield_count": 33,
     "counters": {

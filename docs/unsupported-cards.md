@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **456** capabilities.
+**537 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -343,7 +343,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
-| [offering](#offering) | 1 | 4093 | cost |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -5878,20 +5877,6 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
-
-</details>
-
-## offering
-
-Blocks **1** card.
-
-- **(cost)** an optional card-level alternative way to cast (702.48, '<Type> offering') parameterised by a permanent filter (here types: [Artifact]): the caster sacrifices one matching permanent they control as the spell is cast, the spell may then be cast any time they could cast an instant, and its total cost is reduced by the sacrificed permanent's mana cost symbol by symbol, coloured symbols included ({7}{R}{R} minus a {1}{R} artifact leaves {6}{R}), with the sacrificed object's mana cost read as the cost is locked in
-  <br>Why the existing vocabulary won't do: emerge is the closest: it sacrifices a creature and reduces by mana VALUE as generic only, and grants no flash timing; as_though_flash / flash_cost give instant timing but take no sacrifice and no cost reduction keyed to the sacrificed object; additional_cost with sacrifice plus cost_reduction cannot read the sacrificed object's coloured mana cost, and cost_reduction_keys only reduce generic
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blast-Furnace Hellkite** (rank 4093) — `blast_furnace_hellkite`
-  - Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)
 
 </details>
 

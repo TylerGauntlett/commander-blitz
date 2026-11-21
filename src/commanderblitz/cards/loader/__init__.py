@@ -2508,10 +2508,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # to pay and the rider never fires, so the card reads "buyback" and
         # goes to the graveyard like anything else.
         raise DslError(f"{where}: 'buyback' needs a 'kicker' cost to attach to")
-    if model.emerge_subtype is not None and model.emerge is None:
-        # A narrowing with nothing to narrow. The card would look like an
-        # offering card and have no alternative cast line at all.
-        raise DslError(f"{where}: 'emerge_subtype' needs an 'emerge' cost to narrow")
+    if model.offering is not None:
+        # "<Quality> offering": the selector names the quality, so an empty
+        # one is "sacrifice any permanent", which no card prints.
+        if not model.offering:
+            raise DslError(f"{where}: 'offering' needs a selector naming what is sacrificed")
+        validate_selector(model.offering, f"{where}.offering")
+        if model.emerge is not None:
+            # Both are one cast line per sacrificed permanent, told apart by
+            # nothing on the action, and no card prints both.
+            raise DslError(f"{where}: a card may not have both 'emerge' and 'offering'")
     alternative_cost = None
     alternative_condition = None
     if model.alternative_cost is not None:
@@ -2942,7 +2948,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         evoke_label=model.evoke_label,
         warp=warp,
         pay_generic_with=model.pay_generic_with,
-        emerge_subtype=model.emerge_subtype,
+        offering=dict(model.offering) if model.offering is not None else None,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
         graveyard_cast_exiles=model.graveyard_cast == "exile" and model.mayhem is None,

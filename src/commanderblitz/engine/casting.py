@@ -599,6 +599,19 @@ def flash_if_targets_owed(state: GameState, pid: int, card: CardDef) -> bool:
     return not _timing_ok(state, pid, card, sorcery_timing(state, pid), priced=False)
 
 
+def offering_timing_owed(state: GameState, pid: int, card: CardDef) -> bool:
+    """Is casting this card now legal **only** by its offering (702.48a)?
+
+    "You may cast this card any time you could cast an instant by sacrificing
+    …": the instant timing belongs to the offering line alone. At sorcery
+    timing, or under another permission, every line is offered as printed;
+    otherwise only the lines that sacrifice are. `flash_cost_owed`'s question.
+    """
+    if card.offering is None:
+        return False
+    return not _timing_ok(state, pid, card, sorcery_timing(state, pid), priced=False)
+
+
 def flash_if_targets_ok(state: GameState, pid: int, card: CardDef, targets) -> bool:
     """Whether a tuple satisfies the card's `flash_if_targets` condition: some
     object it targets matches the filter."""
@@ -667,7 +680,14 @@ def _timing_ok(
     # and enforced per line by `_cast_variant`. `priced=False` is
     # `flash_cost_owed` and `flash_if_targets_owed` asking whether the cast
     # would be legal without either.
-    return priced and (card.flash_cost is not None or card.flash_if_targets is not None)
+    # Offering's "any time you could cast an instant" (702.48a) is the third,
+    # and binds the cast the same way: `_cast_variant` offers only the
+    # offering lines when it is what makes the cast legal.
+    return priced and (
+        card.flash_cost is not None
+        or card.flash_if_targets is not None
+        or card.offering is not None
+    )
 
 
 def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
@@ -1147,7 +1167,12 @@ def _cast_options(
     # depends on which one goes: the cost is reduced by that creature's mana
     # value. Same reason kicked and unkicked are two actions rather than one
     # with a flag -- the player is choosing, and the choice changes the cost.
-    if card.emerge is not None and state.objects[oid].zone is Zone.HAND:
+    # Offering (702.48a) is the same shape: one line per matching permanent,
+    # priced off which one goes. `_cast_variant` tells the two apart by which
+    # field the card has -- the loader refuses a card with both.
+    if (
+        card.emerge is not None or card.offering is not None
+    ) and state.objects[oid].zone is Zone.HAND:
         for victim in _emerge_fodder(state, pid, oid):
             out += _cast_variant(
                 state,
@@ -1907,7 +1932,13 @@ def _pay_generic_ceiling(
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
-    """Creatures this player could sacrifice to emerge, cheapest reduction last.
+    """What this player could sacrifice to emerge or offering, cheapest last.
+
+    Emerge eats any creature. Offering eats a permanent matching the card's
+    `offering` selector -- "Artifact offering", "Goblin offering" -- read off
+    *derived* characteristics, so a changeling or a granted type is legal
+    fodder, which is the rule and is also the only reason anybody plays those
+    cards together.
 
     Capped, because every one of them is a separate cast action multiplied by
     every legal target tuple -- the same swamping `MAX_TARGET_OPTIONS` exists to
@@ -1922,21 +1953,25 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
     question has to be asked again here. A protected creature is simply not a
     line on offer; with no other fodder the emerge cast is not legal at all.
     """
-    # "Sacrifice a **Goblin**" -- offering, which is emerge with the fodder
-    # narrowed to one creature type. Read off *derived* subtypes, so a
-    # changeling or a granted type is legal fodder, which is the rule and is
-    # also the only reason anybody plays those two cards together.
-    subtype = state.card(oid).emerge_subtype
-    creatures = [
-        other
-        for other in state.battlefield
-        if (obj := state.objects.get(other)) is not None
-        and obj.controller == pid
-        and other != oid
-        and "Creature" in (c := chars(state, other)).types
-        and (subtype is None or subtype in c.subtypes)
-        and not sacrifice_forbidden(state, other)
-    ]
+    offering = state.card(oid).offering
+    if offering is not None:
+        spec = {"controller": "you", "zone": "battlefield", **offering}
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+        creatures = [
+            other
+            for other in resolve_pool(ctx, spec)
+            if other != oid and not sacrifice_forbidden(state, other)
+        ]
+    else:
+        creatures = [
+            other
+            for other in state.battlefield
+            if (obj := state.objects.get(other)) is not None
+            and obj.controller == pid
+            and other != oid
+            and "Creature" in chars(state, other).types
+            and not sacrifice_forbidden(state, other)
+        ]
     creatures.sort(key=lambda c: (-state.card(c).mana_value, c))
     return creatures[:4]
 
@@ -2285,6 +2320,8 @@ def _cast_variant(
     # The non-mana half is proved payable now and charged by `Game._cast`
     # after the mana (601.2g-h); the mana half is folded into the price below.
     # A face-down spell is a nameless 2/2 (708.2) with no permission to use.
+    if emerge_oid is None and offering_timing_owed(state, pid, card):
+        return []
     flash_owed = flash_cost_owed(state, pid, card)
     if flash_owed and (
         face_down or not can_pay(state, pid, card.flash_cost.without_mana(), oid)
@@ -2450,6 +2487,13 @@ def _cast_variant(
         variant_less += variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
         cost = card.emerge
+    elif emerge_oid is not None and card.offering is not None:
+        # The printed cost, its coloured pips reduced by the sacrifice's; the
+        # generic rest of the reduction is netted with the discounts below.
+        cost, offering_less = card.mana_cost.reduced_by_mana_cost(
+            state.card(emerge_oid).mana_cost
+        )
+        variant_less += offering_less
     elif evoked and card.evoke is not None:
         cost = card.evoke
     elif warp is not None:
@@ -2617,7 +2661,7 @@ def _cast_variant(
         if "tap_creatures" in currencies and convoke_pips(cost):
             room = max(0, cost.generic + extra_generic - discount)
             prices = _convoke_prices(state, pid, oid, currencies, cost, pay_generic, room)
-        if emerge_oid is not None:
+        if emerge_oid is not None and card.emerge is not None:
             # The sacrifice pays for part of the spell. Generic-only and clamped by
             # `pay`, like every other reduction here.
             discount += state.card(emerge_oid).mana_value
@@ -2760,7 +2804,8 @@ def _cast_variant(
             # the client groups rows by `base_label`.
             label_base += f" (escape {escape}, exile {escape_exile})"
         if emerge_oid is not None:
-            label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
+            word = "offering" if card.offering is not None else "emerge"
+            label_base += f" ({word}, sacrificing {state.card(emerge_oid).name})"
         if extra_generic:
             label_base += f" (+{extra_generic})"
         if phyrexian:

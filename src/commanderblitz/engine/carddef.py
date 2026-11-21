@@ -1930,9 +1930,13 @@ class CardDef:
     #: Convoke, improvise and delve: `"tap_creatures"`, `"tap_artifacts"` or
     #: `"exile_from_graveyard"`.
     pay_generic_with: str | None = None
-    #: Offering: the creature type the sacrifice must be. ``None`` is emerge
-    #: proper, which takes any creature.
-    emerge_subtype: str | None = None
+    #: Offering (702.48): "Artifact offering", "Goblin offering". The selector
+    #: the sacrificed permanent must match. The offering line is the printed
+    #: cost reduced by that permanent's mana cost symbol by symbol, coloured
+    #: symbols included (`ManaCost.reduced_by_mana_cost`), and is castable
+    #: any time its caster could cast an instant; the printed line keeps the
+    #: card's own timing.
+    offering: dict[str, Any] | None = None
     #: "This spell costs {X} less to cast."  See `cost_reduction.cost_reduction`, and
     #: `costs.reduction_amount` for the shapes -- it is **variant-blind** by
     #: design: Ghalta costs less however it is cast, so `_cast_variant` applies

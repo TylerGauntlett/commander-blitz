@@ -26362,12 +26362,12 @@
     },
     "Blast-Furnace Hellkite": {
       "edhrec_rank": 4093,
-      "gate": "template",
+      "gate": null,
       "name": "Blast-Furnace Hellkite",
-      "reason": "no template for: Artifact offering",
+      "reason": "",
       "scryfall_id": "04c349f2-69b1-48dd-a547-f2b55f542700",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blasted Landscape": {

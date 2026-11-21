@@ -281,6 +281,59 @@ class ManaCost:
             hybrid=self.hybrid,
         )
 
+    def reduced_by_mana_cost(self, other: ManaCost) -> tuple[ManaCost, int]:
+        """This cost reduced by another object's mana cost, symbol by symbol.
+
+        Offering (702.48a): "the total cost to cast this spell is reduced by
+        the sacrificed permanent's mana cost" -- and the reminder text's "mana
+        cost includes color". Returns the cost with its coloured demands
+        reduced and the **generic** reduction left over, which the caller nets
+        against the generic part the way every other discount is netted, so
+        a commander tax or a surcharge is reduced by it too and nothing goes
+        below zero.
+
+        - A coloured or ``{C}`` symbol takes one matching pip off (118.7b);
+          where this cost demands fewer of that symbol, the excess reduces the
+          generic part instead (118.7c). ``{7}{R}{R}`` less ``{1}{R}`` is
+          ``{6}{R}``; ``{7}{R}{R}`` less ``{G}`` is ``{6}{R}{R}``.
+        - A generic number reduces generic (118.7a). ``X`` is 0 off the stack.
+        - A hybrid or Phyrexian symbol is reduced by one half of it, chosen as
+          the reduction is applied (118.7d): a coloured half this cost still
+          demands, else the half worth the most generic. Taking the demanded
+          pip is never worse than taking one generic, since any payment for
+          the other result also pays this one. The choice is made here rather
+          than asked, so a ``{2/W}`` takes a demanded ``{W}`` over two generic
+          and a ``{W/U}`` against a cost demanding both takes the ``{W}``.
+
+        ``text`` stays the printed cost, as `as_any_type` leaves it.
+        """
+        colored = list(self.colored)
+        generic_less = other.generic
+
+        def take(index: int) -> bool:
+            if colored[index] > 0:
+                colored[index] -= 1
+                return True
+            return False
+
+        for index, count in enumerate(other.colored):
+            for _ in range(count):
+                if not take(index):
+                    generic_less += 1
+        for pip in other.hybrid:
+            if not any(take(index) for index in sorted(pip.symbols)):
+                generic_less += pip.generic if pip.generic is not None else 1
+        return (
+            ManaCost(
+                generic=self.generic,
+                colored=tuple(colored),
+                x_count=self.x_count,
+                text=self.text,
+                hybrid=self.hybrid,
+            ),
+            generic_less,
+        )
+
     @property
     def phyrexian_count(self) -> int:
         """How many Phyrexian pips this cost has -- how many life lines it offers."""

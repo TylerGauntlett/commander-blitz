@@ -5082,11 +5082,51 @@
       ],
       "power": 4,
       "toughness": 4,
-      "keywords": [
-        "flash"
+      "offering": {
+        "subtypes": [
+          "Goblin"
+        ]
+      }
+    },
+    {
+      "id": "t_artifact_offering",
+      "name": "Test Artifact Offering",
+      "oracle_text": "Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)\nFlying",
+      "mana_cost": "{7}{R}{R}",
+      "types": [
+        "Creature"
       ],
-      "emerge": "{4}{R}",
-      "emerge_subtype": "Goblin"
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "keywords": [
+        "flying"
+      ],
+      "offering": {
+        "types": [
+          "Artifact"
+        ]
+      }
+    },
+    {
+      "id": "t_red_relic",
+      "name": "Test Red Relic",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "id": "t_green_relic",
+      "name": "Test Green Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}{G}{G}",
+      "types": [
+        "Artifact"
+      ]
     },
     {
       "id": "t_own_discard_watcher",

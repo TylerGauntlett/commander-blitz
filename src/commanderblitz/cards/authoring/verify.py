@@ -2654,6 +2654,16 @@ def _covered(card: CardDef, line: str) -> bool:
     # the "it's sacrificed when it enters" trigger it really does have.
     if card.emerge is not None and stripped.lower().startswith("emerge "):
         return True
+    # "Artifact offering (…)", "Goblin offering (…)": the card-level `offering`,
+    # emerge's slot for emerge's reason. Strict on the quality: the selector
+    # must be exactly the one printed word, as a card type or a subtype, so
+    # `{"types": ["Creature"]}` cannot claim a printed "Artifact offering".
+    if card.offering is not None and (
+        printed := re.match(r"^([A-Za-z][A-Za-z'-]*) offering\b", stripped)
+    ):
+        quality = printed.group(1)
+        if dict(card.offering) in ({"types": [quality]}, {"subtypes": [quality]}):
+            return True
     # The em dash is the non-mana spelling: "Evoke—Exile a green card from
     # your hand." (Endurance), whose price is not a mana string.
     if card.evoke is not None and stripped.lower().startswith(("evoke ", "evoke—", "evoke-")):

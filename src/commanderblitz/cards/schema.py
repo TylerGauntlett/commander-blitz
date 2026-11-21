@@ -2029,11 +2029,13 @@ class CardModel(BaseModel):
     pay_generic_with: (
         Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
     ) = None
-    #: **Offering**: the creature type the emerge sacrifice must be —
-    #: "sacrifice a Goblin". Offering is emerge with the fodder narrowed and
-    #: the timing widened, so it is a qualifier on that field rather than a
-    #: field of its own.
-    emerge_subtype: str | None = None
+    #: **Offering** (702.48): the selector the sacrificed permanent must
+    #: match -- ``{"types": ["Artifact"]}`` for "Artifact offering",
+    #: ``{"subtypes": ["Goblin"]}`` for "Goblin offering". Adds one cast line
+    #: per matching permanent you control, castable any time you could cast
+    #: an instant, at the printed cost reduced by that permanent's mana cost,
+    #: coloured symbols included.
+    offering: dict[str, Any] | None = None
     #: "This spell costs {X} less to cast, where X is the total power of
     #: creatures you control."  Reduces the *generic* part of the cost only,
     #: never below zero and never the coloured pips -- which is what the rules

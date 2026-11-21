@@ -590,6 +590,14 @@ class Game:
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
             extra -= state.card(action.emerge_oid).mana_value
+        elif action.emerge_oid is not None and card.offering is not None:
+            # Offering (702.48a): the printed cost reduced by the sacrifice's
+            # mana cost, coloured symbols included, read as `_cast_variant`
+            # read it -- the permanent is still on the battlefield here.
+            cost, offering_less = card.mana_cost.reduced_by_mana_cost(
+                state.card(action.emerge_oid).mana_cost
+            )
+            extra -= offering_less
         elif action.escape is not None:
             # A granted escape's mana half, read off the action for `warp`'s
             # reason: Underworld Breach may be gone by the time this is paid.

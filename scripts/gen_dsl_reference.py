@@ -1259,6 +1259,8 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "cost_reduction": ("This spell costs less to cast.", H_COST_REDUCTION),
     "dredge": ("Dredge N.", H_DREDGE),
     "emerge": ("Emerge cost.", None),
+    "offering": ("Offering: a selector for the sacrificed permanent; the printed cost less its mana cost, colour included, at instant timing.",
+                 "Offering"),
     "evoke": ("Evoke cost (mana or a full cost, as a pitch evoke); the cast is evoked.", None),
     "impending": ("Impending N and its cost.", "Impending — a creature that is not one until it counts down"),
     "flashback": ("Flashback cost.", "Flashback"),
