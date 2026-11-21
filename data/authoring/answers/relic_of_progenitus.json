@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "relic_of_progenitus",
+    "name": "Relic of Progenitus",
+    "oracle_text": "{T}: Target player exiles a card from their graveyard.\n{1}, Exile this artifact: Exile all graveyards. Draw a card.",
+    "mana_cost": "{1}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Target player exiles a card from their graveyard.",
+        "cost": {"tap": true},
+        "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {}}],
+        "effects": [
+          {
+            "op": "exile",
+            "objects": {
+              "chooser": {"target": "t1"},
+              "controller": "any",
+              "player": {"target": "t1"},
+              "zone": "graveyard",
+              "count": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}, Exile this artifact: Exile all graveyards. Draw a card.",
+        "cost": {"mana": "{1}", "exile_self": true},
+        "effects": [
+          {"op": "exile", "objects": {"controller": "any", "count": "all", "zone": "graveyard"}},
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
