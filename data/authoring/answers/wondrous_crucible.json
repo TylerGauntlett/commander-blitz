@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "wondrous_crucible",
+    "name": "Wondrous Crucible",
+    "oracle_text": "Permanents you control have ward {2}.\nAt the beginning of your end step, mill two cards, then exile a nonland card at random from your graveyard. Copy it. You may cast the copy without paying its mana cost. (A copy of a permanent spell becomes a token.)",
+    "mana_cost": "{7}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "ward",
+        "affects": {"controller": "you"},
+        "cost": {"mana": "{2}"},
+        "text": "Permanents you control have ward {2}."
+      },
+      {
+        "kind": "triggered",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {"op": "mill", "amount": {"const": 2}, "player": "you"},
+          {
+            "op": "exile",
+            "objects": {"zone": "graveyard", "controller": "you", "not_types": ["Land"], "random": true, "count": 1},
+            "as": "crucible_exiled"
+          },
+          {"op": "cast_copy", "objects": {"binding": "crucible_exiled"}, "optional": true}
+        ],
+        "text": "At the beginning of your end step, mill two cards, then exile a nonland card at random from your graveyard. Copy it. You may cast the copy without paying its mana cost."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

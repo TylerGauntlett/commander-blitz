@@ -1,0 +1,90 @@
+{
+  "card": {
+    "id": "terisiare_s_devastation",
+    "name": "Terisiare's Devastation",
+    "oracle_text": "You lose X life and create X tapped Powerstone tokens. Then all creatures get -1/-1 until end of turn for each artifact you control. (The tokens are artifacts with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
+    "mana_cost": "{X}{2}{B}{B}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "spell_effects": [
+      {
+        "op": "lose_life",
+        "player": "you",
+        "amount": {
+          "x": true
+        }
+      },
+      {
+        "op": "create_token",
+        "token": "powerstone_token",
+        "amount": {
+          "x": true
+        },
+        "tapped": true
+      },
+      {
+        "op": "pump",
+        "duration": "until_end_of_turn",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "any",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        },
+        "power": {
+          "times": [
+            {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ]
+              }
+            },
+            {
+              "const": -1
+            }
+          ]
+        },
+        "toughness": {
+          "times": [
+            {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ]
+              }
+            },
+            {
+              "const": -1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 20
+    },
+    "tokens": {
+      "id": "powerstone_token",
+      "count": 20
+    },
+    "battlefield_count": 50,
+    "opponent_battlefield_count": 4
+  }
+}
