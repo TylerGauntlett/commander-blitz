@@ -100486,6 +100486,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Filigree Attendant's power is equal to the number of artifacts you control.",
+          "toughness": {
+            "const": 3
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "filigree_attendant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Filigree Attendant",
+      "oracle_text": "Flying\nFiligree Attendant's power is equal to the number of artifacts you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Homunculus"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -134351,6 +134397,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flying",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Remove a +1/+1 counter from this creature: Put a flying counter on another target creature."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters_from_among": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Remove a counter from another creature you control: Put a +1/+1 counter on this creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hexavus",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}",
+      "name": "Hexavus",
+      "oracle_text": "Flying\nThis creature enters with six +1/+1 counters on it.\n{1}, Remove a +1/+1 counter from this creature: Put a flying counter on another target creature.\n{1}, Remove a counter from another creature you control: Put a +1/+1 counter on this creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "const": 6
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "hexplate_golem",
@@ -142270,6 +142413,61 @@
         "Warrior"
       ],
       "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ]
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "shroud"
+          ],
+          "kind": "static",
+          "text": "Metalcraft — Artifacts you control have shroud as long as you control three or more artifacts."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "indomitable_archangel",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Indomitable Archangel",
+      "oracle_text": "Flying\nMetalcraft — Artifacts you control have shroud as long as you control three or more artifacts. (An artifact with shroud can't be the target of spells or abilities.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -154113,6 +154311,67 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "face_down": true,
+              "link": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}, {T}: Look at the top card of your library, then exile it face down."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "owner": "you",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Until end of turn, you may play cards you own exiled with Kayla's Music Box."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "kayla_s_music_box",
+      "mana_cost": "{2}",
+      "name": "Kayla's Music Box",
+      "oracle_text": "{W}, {T}: Look at the top card of your library, then exile it face down. (You may look at it any time.)\n{T}: Until end of turn, you may play cards you own exiled with Kayla's Music Box.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -167981,6 +168240,66 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Artifact"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "liquimetal_torque",
+      "mana_cost": "{2}",
+      "name": "Liquimetal Torque",
+      "oracle_text": "{T}: Add {C}.\n{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "count": 1,
@@ -177232,6 +177551,71 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "march_of_progress",
+      "mana_cost": "{2}{U}",
+      "name": "March of Progress",
+      "oracle_text": "Choose target artifact creature you control. For each creature chosen this way, create a token that's a copy of it.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\")",
+      "overload": "{6}{U}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "copy_permanent"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -289816,6 +290200,42 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Artifact creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tempered_steel",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Tempered Steel",
+      "oracle_text": "Artifact creatures you control get +2/+2.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

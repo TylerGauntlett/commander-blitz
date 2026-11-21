@@ -94862,12 +94862,12 @@
     },
     "Filigree Attendant": {
       "edhrec_rank": 8189,
-      "gate": "template",
+      "gate": null,
       "name": "Filigree Attendant",
-      "reason": "no template for: 's power is equal to the number of artifacts you control",
+      "reason": "",
       "scryfall_id": "599baa0b-57bd-4d26-8404-355b1ec187e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Filigree Crawler": {
@@ -127032,12 +127032,12 @@
     },
     "Hexavus": {
       "edhrec_rank": 7989,
-      "gate": "template",
+      "gate": null,
       "name": "Hexavus",
-      "reason": "no template for: This creature enters with six +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "b599064e-1c44-4df0-ac7d-d2eb0ba44b16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hexbane Tortoise": {
@@ -135792,12 +135792,12 @@
     },
     "Indomitable Archangel": {
       "edhrec_rank": 6870,
-      "gate": "template",
+      "gate": null,
       "name": "Indomitable Archangel",
-      "reason": "no template for: Metalcraft — Artifacts you control have shroud as long as you control three or more artifa",
+      "reason": "",
       "scryfall_id": "e2d7a901-238c-4ea3-a6cb-6c9b4cea2ad6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indomitable Creativity": {
@@ -147052,12 +147052,12 @@
     },
     "Kayla's Music Box": {
       "edhrec_rank": 18665,
-      "gate": "template",
+      "gate": null,
       "name": "Kayla's Music Box",
-      "reason": "no template for: {W}, {T}: Look at the top card of your library, then exile it face down",
+      "reason": "",
       "scryfall_id": "673aaf8d-6716-4f2d-ad2a-b18430c13367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kayla's Reconstruction": {
@@ -159422,12 +159422,12 @@
     },
     "Liquimetal Torque": {
       "edhrec_rank": 514,
-      "gate": "template",
+      "gate": null,
       "name": "Liquimetal Torque",
-      "reason": "no template for: {T}: Target nonland permanent becomes an artifact in addition to its other types until end",
+      "reason": "",
       "scryfall_id": "1e7fd748-fc8f-4553-91a9-a049e5db68e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lita, Little Orphan Amphibian": {
@@ -167302,12 +167302,12 @@
     },
     "March of Progress": {
       "edhrec_rank": 4926,
-      "gate": "template",
+      "gate": null,
       "name": "March of Progress",
-      "reason": "no template for: Choose target artifact creature you control. For each creature chosen this way, create a t",
+      "reason": "",
       "scryfall_id": "3e26cae1-64d9-43a2-9a86-55f9b69905ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "March of Reckless Joy": {
@@ -277012,12 +277012,12 @@
     },
     "Tempered Steel": {
       "edhrec_rank": 3663,
-      "gate": "template",
+      "gate": null,
       "name": "Tempered Steel",
-      "reason": "no template for: Artifact creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "143cf473-681c-41b3-8719-55b878382368",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempered Veteran": {

@@ -8467,6 +8467,10 @@
   "fighting_drake": {
     "zone": "battlefield"
   },
+  "filigree_attendant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "final_act": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -11327,6 +11331,14 @@
     },
     "zone": "graveyard"
   },
+  "hexavus": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "hexplate_golem": {
     "zone": "battlefield"
   },
@@ -11946,6 +11958,16 @@
     ]
   },
   "indomitable_ancients": {
+    "zone": "battlefield"
+  },
+  "indomitable_archangel": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 0,
+      "keywords": [
+        "shroud"
+      ]
+    },
     "zone": "battlefield"
   },
   "indomitable_might": {
@@ -12875,6 +12897,10 @@
       "amount": 5,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "kayla_s_music_box": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kaza_roil_chaser": {
@@ -14023,6 +14049,10 @@
   "linvala_the_preserver": {
     "zone": "battlefield"
   },
+  "liquimetal_torque": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lita_little_orphan_amphibian": {
     "zone": "battlefield"
   },
@@ -14785,6 +14815,10 @@
   },
   "marble_diamond": {
     "zone": "battlefield"
+  },
+  "march_of_progress": {
+    "battlefield_count": 32,
+    "zone": "graveyard"
   },
   "march_of_the_canonized": {
     "battlefield_count": 53,
@@ -24140,6 +24174,13 @@
   },
   "temmet_naktamun_s_will": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tempered_steel": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "tempest_drake": {
