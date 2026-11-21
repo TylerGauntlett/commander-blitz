@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 34 |
+| [Static filter keys](#static-filter-keys) | 35 |
 | [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 24 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -1022,6 +1022,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
+| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |

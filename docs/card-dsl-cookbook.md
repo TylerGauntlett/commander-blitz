@@ -14314,6 +14314,25 @@ control attacking **that player** get +2/+0" is the `defender` of its own
 pod. Only a binding is taken, and a trigger filter refuses it: nothing is bound
 when a trigger filter is asked, so it would match nothing.
 
+A static's `affects` takes the word forms too. "Creatures attacking your
+opponents have double strike" (Blast-Furnace Hellkite) is a `grant_keyword`
+over every controller's creatures, because the sentence names whom they attack
+and not whose they are:
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["double_strike"],
+  "affects": { "types": ["Creature"], "controller": "any", "attacking_player": "opponent" } }
+```
+
+"You" and "opponent" are relative to the static's controller, so at a pod one
+opponent's creature attacking another opponent has it and a creature attacking
+you does not. Leaving `controller` off defaults it to `"you"`, which is the
+narrower "creatures you control attacking your opponents". `attacking: true` is
+the near miss and is wider twice over: it reaches the creature attacking you and
+the one attacking a planeswalker. The loader refuses the binding form (a static
+binds nothing) and `or_planeswalkers` there, because that widening asks the
+walker's derived types, which a static's `affects` is evaluated inside.
+
 ## An additional combat phase
 
 ```jsonc

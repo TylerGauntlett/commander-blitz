@@ -44,6 +44,7 @@ from commanderblitz.engine.characteristics import (
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
 from commanderblitz.engine.effects.selectors import (
+    ATTACKING_PLAYER_WORDS,
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
@@ -4694,6 +4695,16 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         raise DslError(
             f"{path}.modified: true only -- a counter, an Equipment, or an Aura "
             f"you control on the permanent"
+        )
+    # "Creatures attacking **your opponents**": a word naming whom, relative to
+    # the static's controller. `true` is the tempting spelling -- it is how
+    # `attacking` is written -- and would name nobody; the effect selector's
+    # `{"binding": name}` form names a seat a static never binds.
+    if "attacking_player" in filt and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS:
+        raise DslError(
+            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} -- "
+            f"whom the creature attacks, a player and never a planeswalker or "
+            f"battle; use 'attacking' for true/false"
         )
     if not top:
         # The top level is checked by the caller's loop over every filter key.

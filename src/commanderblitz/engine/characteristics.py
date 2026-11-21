@@ -3417,6 +3417,18 @@ def _matches_wherever(
         attacking = bool(combat and combat.attacking(obj.oid))
         if attacking != bool(selector["attacking"]):
             return False
+    # "Creatures **attacking your opponents** have double strike" (Blast-Furnace
+    # Hellkite). Whom the creature attacks, relative to the static's controller:
+    # a player, never a planeswalker or battle that player controls (506.2).
+    # `combat.attackers` and `attacking_permanent` are written by declaring
+    # attackers and by nothing in this pipeline, so this is an input for
+    # `attacking`'s reason. Without `or_planeswalkers` the shared matcher never
+    # asks `chars` about the walker, so the answer cannot recurse.
+    if (who := selector.get("attacking_player")) is not None:
+        from .effects.selectors import attacking_player_matches
+
+        if not attacking_player_matches(combat, obj.oid, str(who), source.controller, state):
+            return False
     if "blocking" in selector:
         blocking = bool(combat and combat.blocking(obj.oid))
         if blocking != bool(selector["blocking"]):

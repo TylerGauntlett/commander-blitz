@@ -446,6 +446,7 @@
    "attached_to",
    "attached_to_host",
    "attacking",
+   "attacking_player",
    "blocking",
    "colorless",
    "colors",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **457** capabilities.
+**538 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -109,7 +109,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
-| [attacking-player-filter](#attacking-player-filter) | 1 | 4093 | selector |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -2541,21 +2540,6 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
-
-</details>
-
-## attacking-player-filter
-
-Blocks **1** card.
-
-- **(selector)** a static affects-filter key meaning 'attacking one of the source controller's opponents' (the defending player of the creature's attack is an opponent of the static's controller, not a planeswalker or battle), for a grant_keyword static over creatures of any controller
-  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attacking`, but the engine reads it as a boolean (selectors.py / characteristics.py compare bool(combat.attacking(oid))), so it would also grant double strike to an opponent's creatures attacking you and to creatures attacking planeswalkers; `defending`/`attacking` binding forms exist only on token-creation ops, not static filters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blast-Furnace Hellkite** (rank 4093) — `blast_furnace_hellkite`
-  - Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)
-  - Creatures attacking your opponents have double strike.
 
 </details>
 
@@ -5908,7 +5892,6 @@ Blocks **1** card.
 
 - **Blast-Furnace Hellkite** (rank 4093) — `blast_furnace_hellkite`
   - Artifact offering (You may cast this spell as though it had flash by sacrificing an artifact and paying the difference in mana costs between this and the sacrificed artifact. Mana cost includes color.)
-  - Creatures attacking your opponents have double strike.
 
 </details>
 

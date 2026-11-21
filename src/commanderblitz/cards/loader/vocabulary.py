@@ -1372,7 +1372,24 @@ STATIC_FILTER_KEYS = frozenset(
 #: as 0 (202.3e), which no layer moves -- as printed as `mana_cost` -- written
 #: as the cast lock's literal comparison, because a face matched alone has no
 #: context to evaluate a value spec against.
-STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of", "modified", "mana_value"}
+#:
+#: ``attacking_player`` is affects-only too: "Creatures **attacking your
+#: opponents** have double strike" (Blast-Furnace Hellkite), "Each creature
+#: that's attacking one of your opponents has trample" (Oviya, Automech
+#: Artisan). The selector language's word for whom an attacker attacks --
+#: ``"you"``, ``"opponent"``, ``"any"`` or ``"most_life"``, relative to the
+#: static's controller, and always a *player*, never a planeswalker or battle
+#: (506.2) -- read off `combat.attackers` and `combat.attacking_permanent`,
+#: board state no layer writes, so it is a pipeline input for `attacking`'s
+#: reason. Not its ``or_planeswalkers`` widening, which asks the walker's
+#: derived types and so would read the pipeline's own output; and not the
+#: ``{"binding": name}`` form, since a static binds nothing.
+STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {
+    "any_of",
+    "modified",
+    "mana_value",
+    "attacking_player",
+}
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")
