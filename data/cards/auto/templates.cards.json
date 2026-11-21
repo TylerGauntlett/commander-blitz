@@ -282735,6 +282735,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "shuffle": true
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Basic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "sylvan_reclamation",
+      "mana_cost": "{3}{G}{W}",
+      "name": "Sylvan Reclamation",
+      "oracle_text": "Exile up to two target artifacts and/or enchantments.\nBasic landcycling {2} ({2}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "controller": "any",
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
