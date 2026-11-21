@@ -1,0 +1,711 @@
+{
+  "id": "scd_token_triumph",
+  "name": "Token Triumph",
+  "commanders": [
+    "emmara_soul_of_the_accord"
+  ],
+  "color_identity": [
+    "G",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "SCD",
+    "set_name": "Starter Commander Decks",
+    "date": "2022-12-02"
+  },
+  "notes": "Starter Commander Decks precon, card for card (https://mtgjson.com/api/v5/decks/TokenTriumph_SCD.json).",
+  "tags": [
+    "Tokens",
+    "Go wide",
+    "Anthems",
+    "Convoke"
+  ],
+  "strategy": "Emmara, Soul of the Accord makes a 1/1 Soldier with lifelink each time she becomes tapped, and the rest of the deck fills the board the same way: Scatter the Seeds, March of the Multitudes, Jade Mage, Selesnya Evangel, Selesnya Guildmage, Verdant Force, Trostani Discordant and Maja, Bretagard Protector all make creatures, and convoke turns that board into mana. Collective Blessing, Dictate of Heliod, Valor in Akros and Overrun make the tokens lethal, Rootborn Defenses and Dauntless Escort protect them from a sweeper, and Camaraderie, Collective Unconscious, Slate of Ancestry and Mentor of the Meek turn the creature count into cards. Path to Exile, Citywide Bust, Aura Mutation and Sylvan Reclamation handle what the tokens cannot.",
+  "archetype": "go_wide",
+  "ratings": {
+    "speed": 3,
+    "complexity": 2,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 2
+  },
+  "signature": [
+    {
+      "card_id": "emmara_soul_of_the_accord",
+      "why": "Every time she becomes tapped, attacking included, she makes a 1/1 white Soldier with lifelink, so the board grows every turn she swings."
+    },
+    {
+      "card_id": "march_of_the_multitudes",
+      "why": "Convoke with the whole team to make X 1/1 Soldiers with lifelink, often at instant speed at the end of an opponent's turn."
+    },
+    {
+      "card_id": "overrun",
+      "why": "Creatures you control get +3/+3 and trample until end of turn, which turns a wide board of tokens into a kill."
+    },
+    {
+      "card_id": "slate_of_ancestry",
+      "why": "Discard your hand to draw a card for each creature you control, refilling after the tokens have emptied it."
+    }
+  ],
+  "printings": {
+    "ajani_caller_of_the_pride": {
+      "scryfall_id": "6121cf58-93d0-4430-a4a2-91778ba65249",
+      "artist": "D. Alexander Gregory",
+      "set_code": "scd",
+      "collector_number": "6"
+    },
+    "arcane_signet": {
+      "scryfall_id": "02cb9420-fbfb-4123-a830-a992ff470db6",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "257"
+    },
+    "aura_mutation": {
+      "scryfall_id": "31bddc53-fa0c-4aa5-a92a-fa247e5330db",
+      "artist": "Olivier Bernard",
+      "set_code": "scd",
+      "collector_number": "217"
+    },
+    "avacyn_s_pilgrim": {
+      "scryfall_id": "418bf817-433a-4d9a-bea7-827014184269",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "scd",
+      "collector_number": "171"
+    },
+    "blossoming_sands": {
+      "scryfall_id": "8957976e-d8f5-428a-a775-a73acb898401",
+      "artist": "Sarah Finnigan",
+      "set_code": "scd",
+      "collector_number": "291"
+    },
+    "camaraderie": {
+      "scryfall_id": "3842aa5c-304d-4827-94e6-e597bb49af97",
+      "artist": "Sidharth Chaturvedi",
+      "set_code": "scd",
+      "collector_number": "219"
+    },
+    "canopy_vista": {
+      "scryfall_id": "4098ed6f-a0aa-41c3-97d5-22013ffee175",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "292"
+    },
+    "champion_of_lambholt": {
+      "scryfall_id": "812c252d-9947-4bd4-8097-670be91c338e",
+      "artist": "Christopher Moeller",
+      "set_code": "scd",
+      "collector_number": "174"
+    },
+    "citanul_hierophants": {
+      "scryfall_id": "79c3190a-a18b-41b6-9626-5fd12edb4e36",
+      "artist": "Vincent Evans",
+      "set_code": "scd",
+      "collector_number": "175"
+    },
+    "citywide_bust": {
+      "scryfall_id": "c249e9db-41a7-4da8-99b3-d7854c538713",
+      "artist": "Victor Adame Minguez",
+      "set_code": "scd",
+      "collector_number": "11"
+    },
+    "collective_blessing": {
+      "scryfall_id": "9d04689e-d673-40fd-93f0-d228d3bb338f",
+      "artist": "Svetlin Velinov",
+      "set_code": "scd",
+      "collector_number": "222"
+    },
+    "collective_unconscious": {
+      "scryfall_id": "1219978f-c269-4b59-9ec1-0e7bc83059fe",
+      "artist": "Andrew Goldhawk",
+      "set_code": "scd",
+      "collector_number": "176"
+    },
+    "command_tower": {
+      "scryfall_id": "cae0c9e0-3be9-4151-9d59-658a032c30e9",
+      "artist": "Evan Shipard",
+      "set_code": "scd",
+      "collector_number": "297"
+    },
+    "commander_s_insignia": {
+      "scryfall_id": "12b2b04b-27d1-4b5d-9bd6-9678f203cf20",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "scd",
+      "collector_number": "13"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "686b4c7f-5b42-4625-8ff9-782795eec264",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "scd",
+      "collector_number": "261"
+    },
+    "conclave_tribunal": {
+      "scryfall_id": "1dc26b58-1b10-41a3-8155-bbc8f189de15",
+      "artist": "Seb McKinnon",
+      "set_code": "scd",
+      "collector_number": "14"
+    },
+    "curse_of_bounty": {
+      "scryfall_id": "37d5b1a2-01c6-475f-86cc-c911802e6033",
+      "artist": "Kieran Yanner",
+      "set_code": "scd",
+      "collector_number": "178"
+    },
+    "dauntless_escort": {
+      "scryfall_id": "9884a2a9-8ee4-4d27-b410-a4568f45f6f4",
+      "artist": "Volkan Baǵa",
+      "set_code": "scd",
+      "collector_number": "223"
+    },
+    "dawn_of_hope": {
+      "scryfall_id": "a02540fc-42ee-4f61-99c8-efdd1a70373c",
+      "artist": "Sung Choi",
+      "set_code": "scd",
+      "collector_number": "17"
+    },
+    "devouring_light": {
+      "scryfall_id": "a22f129b-18a6-4328-aa83-1079be811dcf",
+      "artist": "Slawomir Maniak",
+      "set_code": "scd",
+      "collector_number": "18"
+    },
+    "dictate_of_heliod": {
+      "scryfall_id": "fe2f3830-d822-4cb5-a88a-df5c5b9020a4",
+      "artist": "G-host Lee",
+      "set_code": "scd",
+      "collector_number": "19"
+    },
+    "elfhame_palace": {
+      "scryfall_id": "d4494799-3bd6-47d4-bf9e-e24c8e537ab2",
+      "artist": "Jerry Tiritilli",
+      "set_code": "scd",
+      "collector_number": "299"
+    },
+    "emmara_soul_of_the_accord": {
+      "scryfall_id": "e8510a1e-62ca-462c-b036-d1312729f27d",
+      "artist": "Kai Carpenter",
+      "set_code": "scd",
+      "collector_number": "2"
+    },
+    "eternal_witness": {
+      "scryfall_id": "8f455581-2c22-40fa-a9d5-8df1b873f465",
+      "artist": "Chris Rahn",
+      "set_code": "scd",
+      "collector_number": "181"
+    },
+    "farhaven_elf": {
+      "scryfall_id": "8e4622e0-7723-415f-9afe-fc34619d49cc",
+      "artist": "Brandon Kitkouski",
+      "set_code": "scd",
+      "collector_number": "182"
+    },
+    "felidar_retreat": {
+      "scryfall_id": "73febb87-d56b-4214-b429-a606f671e992",
+      "artist": "Ralph Horsley",
+      "set_code": "scd",
+      "collector_number": "22"
+    },
+    "forest": {
+      "scryfall_id": "2950dace-a653-47e4-a80a-a3de5db8d491",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "349"
+    },
+    "fortified_village": {
+      "scryfall_id": "45dd62f8-b478-431f-affc-dd1a20bf9f76",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "301"
+    },
+    "graypelt_refuge": {
+      "scryfall_id": "445ffa4d-d5ca-4ba6-b589-40d8490a4032",
+      "artist": "Philip Straub",
+      "set_code": "scd",
+      "collector_number": "303"
+    },
+    "great_oak_guardian": {
+      "scryfall_id": "025d451d-2fe0-46af-b28f-44f5d297f56a",
+      "artist": "Steven Belledin",
+      "set_code": "scd",
+      "collector_number": "186"
+    },
+    "harmonize": {
+      "scryfall_id": "ada28221-e5be-4d87-9dc7-649e01ca1e24",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "187"
+    },
+    "harvest_season": {
+      "scryfall_id": "8d4329d0-f4ae-41c8-9b21-0957ba9f53fc",
+      "artist": "Shreya Shetty",
+      "set_code": "scd",
+      "collector_number": "188"
+    },
+    "holdout_settlement": {
+      "scryfall_id": "abaf9baa-f9f6-429f-adad-af57d010a80a",
+      "artist": "Kieran Yanner",
+      "set_code": "scd",
+      "collector_number": "305"
+    },
+    "hornet_nest": {
+      "scryfall_id": "579b6909-a2e1-45d1-aa02-9318c468f9b0",
+      "artist": "Adam Paquette",
+      "set_code": "scd",
+      "collector_number": "189"
+    },
+    "hornet_queen": {
+      "scryfall_id": "8018058f-4bec-45b1-9a07-71ea1eb84e7f",
+      "artist": "Martina Pilcerova",
+      "set_code": "scd",
+      "collector_number": "190"
+    },
+    "hour_of_reckoning": {
+      "scryfall_id": "91961188-da2e-4ba5-b938-154719ea0659",
+      "artist": "Joseph Meehan",
+      "set_code": "scd",
+      "collector_number": "26"
+    },
+    "idol_of_oblivion": {
+      "scryfall_id": "659d8632-3326-40b2-bb07-0677b0aad2b8",
+      "artist": "Piotr Dura",
+      "set_code": "scd",
+      "collector_number": "268"
+    },
+    "jade_mage": {
+      "scryfall_id": "cbfba01e-2836-479b-afce-21e1e6e99c08",
+      "artist": "Izzy",
+      "set_code": "scd",
+      "collector_number": "193"
+    },
+    "jaspera_sentinel": {
+      "scryfall_id": "35ce5807-6ac6-4058-9eef-4cec5e3fd3a6",
+      "artist": "Raoul Vitale",
+      "set_code": "scd",
+      "collector_number": "194"
+    },
+    "karametra_s_favor": {
+      "scryfall_id": "98a5336d-7bd7-453e-abb0-c37e55e375bd",
+      "artist": "Chase Stone",
+      "set_code": "scd",
+      "collector_number": "195"
+    },
+    "leafkin_druid": {
+      "scryfall_id": "ad86f40b-0d8d-4186-9a43-b0f0f2542280",
+      "artist": "Filip Burburan",
+      "set_code": "scd",
+      "collector_number": "196"
+    },
+    "loyal_guardian": {
+      "scryfall_id": "1ba0c356-ed47-4fd1-a054-444bef004508",
+      "artist": "Robbie Trevino",
+      "set_code": "scd",
+      "collector_number": "198"
+    },
+    "maja_bretagard_protector": {
+      "scryfall_id": "b1cb8ba0-484e-433b-8d1a-2b0966f92a0e",
+      "artist": "Lie Setiawan",
+      "set_code": "scd",
+      "collector_number": "235"
+    },
+    "march_of_the_multitudes": {
+      "scryfall_id": "8ccfeffc-dc19-404a-81ef-1cd13a1ad50d",
+      "artist": "Zack Stella",
+      "set_code": "scd",
+      "collector_number": "236"
+    },
+    "mentor_of_the_meek": {
+      "scryfall_id": "ef899443-579e-48df-b933-e0058173f8f6",
+      "artist": "Jana Schirmer & Johannes Voss",
+      "set_code": "scd",
+      "collector_number": "28"
+    },
+    "nissa_s_expedition": {
+      "scryfall_id": "b0c175f4-7a4e-4530-b129-62d4b5899695",
+      "artist": "Dan Murayama Scott",
+      "set_code": "scd",
+      "collector_number": "199"
+    },
+    "nullmage_shepherd": {
+      "scryfall_id": "ceef4625-4002-4850-89e3-bc9fd162e4e6",
+      "artist": "Campbell White",
+      "set_code": "scd",
+      "collector_number": "200"
+    },
+    "overrun": {
+      "scryfall_id": "8ba32dbb-6ce2-4104-b902-ddb1b28966df",
+      "artist": "Carl Critchlow",
+      "set_code": "scd",
+      "collector_number": "201"
+    },
+    "overwhelming_instinct": {
+      "scryfall_id": "92f16878-1e46-4a00-a9cc-cedd316d04b3",
+      "artist": "Ron Spears",
+      "set_code": "scd",
+      "collector_number": "202"
+    },
+    "path_to_exile": {
+      "scryfall_id": "95761a9f-fea7-4f8f-b3c4-0b4c596c9f04",
+      "artist": "Todd Lockwood",
+      "set_code": "scd",
+      "collector_number": "29"
+    },
+    "plains": {
+      "scryfall_id": "b41e0881-6ecb-4b1b-816b-d80a74a414ac",
+      "artist": "Alayna Danner",
+      "set_code": "scd",
+      "collector_number": "333"
+    },
+    "presence_of_gond": {
+      "scryfall_id": "cd68e154-d092-4004-bc58-5554d807e26a",
+      "artist": "Brandon Kitkouski",
+      "set_code": "scd",
+      "collector_number": "203"
+    },
+    "reclamation_sage": {
+      "scryfall_id": "950f6323-e9b9-4170-a57c-7741960a86ae",
+      "artist": "Clint Cearley",
+      "set_code": "scd",
+      "collector_number": "205"
+    },
+    "rishkar_peema_renegade": {
+      "scryfall_id": "cc7a4cb5-5010-48db-9564-7ca41d58b864",
+      "artist": "Todd Lockwood",
+      "set_code": "scd",
+      "collector_number": "207"
+    },
+    "rootborn_defenses": {
+      "scryfall_id": "644c5708-6e1e-4b59-a78e-1d91c181d19f",
+      "artist": "Mark Zug",
+      "set_code": "scd",
+      "collector_number": "32"
+    },
+    "scatter_the_seeds": {
+      "scryfall_id": "39f59d34-8166-4ac9-8684-33efa315e4db",
+      "artist": "Rob Alexander",
+      "set_code": "scd",
+      "collector_number": "209"
+    },
+    "scavenging_ooze": {
+      "scryfall_id": "c63cf563-11c5-4068-8df3-7bfdaac08144",
+      "artist": "Austin Hsu",
+      "set_code": "scd",
+      "collector_number": "210"
+    },
+    "selesnya_evangel": {
+      "scryfall_id": "8f5d1f97-ebb9-4320-9d5f-408cf9de826d",
+      "artist": "Rob Alexander",
+      "set_code": "scd",
+      "collector_number": "241"
+    },
+    "selesnya_guildmage": {
+      "scryfall_id": "91d023e6-b50f-4bfa-8b05-aa349552d29a",
+      "artist": "Mark Zug",
+      "set_code": "scd",
+      "collector_number": "242"
+    },
+    "slate_of_ancestry": {
+      "scryfall_id": "68a65a3f-01a4-4c3b-bbd3-62cc23a8f646",
+      "artist": "Corey D. Macourek",
+      "set_code": "scd",
+      "collector_number": "275"
+    },
+    "sol_ring": {
+      "scryfall_id": "1b023575-4cb5-434f-92ef-d3b81aaa3c3e",
+      "artist": "Mike Bierek",
+      "set_code": "scd",
+      "collector_number": "276"
+    },
+    "sporemound": {
+      "scryfall_id": "8faa01c6-f6c6-4348-a6f3-39793b5ef6d0",
+      "artist": "Svetlin Velinov",
+      "set_code": "scd",
+      "collector_number": "212"
+    },
+    "sylvan_reclamation": {
+      "scryfall_id": "3d1ac0d1-11ce-4abd-a5da-6cba5de714d8",
+      "artist": "Seb McKinnon",
+      "set_code": "scd",
+      "collector_number": "248"
+    },
+    "talisman_of_unity": {
+      "scryfall_id": "a6954371-0733-444a-af1e-38199ca45e42",
+      "artist": "Mike Dringenberg",
+      "set_code": "scd",
+      "collector_number": "284"
+    },
+    "temple_of_plenty": {
+      "scryfall_id": "94acfe89-5221-4cd4-a308-edee986de1dc",
+      "artist": "Chris Ostrowski",
+      "set_code": "scd",
+      "collector_number": "327"
+    },
+    "thunderfoot_baloth": {
+      "scryfall_id": "743b53fb-8e9d-4984-91c1-508eb99938ea",
+      "artist": "Nicholas Gregory",
+      "set_code": "scd",
+      "collector_number": "213"
+    },
+    "tranquil_expanse": {
+      "scryfall_id": "7fcf94e9-d370-458f-8bc4-66609f8b6b91",
+      "artist": "Cliff Childs",
+      "set_code": "scd",
+      "collector_number": "330"
+    },
+    "trostani_discordant": {
+      "scryfall_id": "d1706e61-1804-410b-b82f-8e862555fe1a",
+      "artist": "Chase Stone",
+      "set_code": "scd",
+      "collector_number": "253"
+    },
+    "valor_in_akros": {
+      "scryfall_id": "3877146c-da55-4edd-8335-be038f4bf620",
+      "artist": "Chris Rallis",
+      "set_code": "scd",
+      "collector_number": "39"
+    },
+    "verdant_force": {
+      "scryfall_id": "c9c5e3b2-fbb6-45af-8977-833922302eb3",
+      "artist": "DiTerlizzi",
+      "set_code": "scd",
+      "collector_number": "214"
+    },
+    "vitu_ghazi_the_city_tree": {
+      "scryfall_id": "4c593a74-cf36-43a1-be4e-63ab2fbd180e",
+      "artist": "Martina Pilcerova",
+      "set_code": "scd",
+      "collector_number": "332"
+    },
+    "voice_of_many": {
+      "scryfall_id": "d8fc52ba-d7fc-426a-8c15-7237bdb498c3",
+      "artist": "Greg Staples",
+      "set_code": "scd",
+      "collector_number": "215"
+    },
+    "white_sun_s_zenith": {
+      "scryfall_id": "b46f1b5a-da71-4723-afc6-4ab2a569311b",
+      "artist": "Mike Bierek",
+      "set_code": "scd",
+      "collector_number": "41"
+    }
+  },
+  "cards": [
+    {
+      "id": "ajani_caller_of_the_pride"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "aura_mutation"
+    },
+    {
+      "id": "avacyn_s_pilgrim"
+    },
+    {
+      "id": "blossoming_sands"
+    },
+    {
+      "id": "camaraderie"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "champion_of_lambholt"
+    },
+    {
+      "id": "citanul_hierophants"
+    },
+    {
+      "id": "citywide_bust"
+    },
+    {
+      "id": "collective_blessing"
+    },
+    {
+      "id": "collective_unconscious"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commander_s_insignia"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "conclave_tribunal"
+    },
+    {
+      "id": "curse_of_bounty"
+    },
+    {
+      "id": "dauntless_escort"
+    },
+    {
+      "id": "dawn_of_hope"
+    },
+    {
+      "id": "devouring_light"
+    },
+    {
+      "id": "dictate_of_heliod"
+    },
+    {
+      "id": "elfhame_palace"
+    },
+    {
+      "id": "eternal_witness"
+    },
+    {
+      "id": "farhaven_elf"
+    },
+    {
+      "id": "felidar_retreat"
+    },
+    {
+      "id": "forest",
+      "qty": 15
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "graypelt_refuge"
+    },
+    {
+      "id": "great_oak_guardian"
+    },
+    {
+      "id": "harmonize"
+    },
+    {
+      "id": "harvest_season"
+    },
+    {
+      "id": "holdout_settlement"
+    },
+    {
+      "id": "hornet_nest"
+    },
+    {
+      "id": "hornet_queen"
+    },
+    {
+      "id": "hour_of_reckoning"
+    },
+    {
+      "id": "idol_of_oblivion"
+    },
+    {
+      "id": "jade_mage"
+    },
+    {
+      "id": "jaspera_sentinel"
+    },
+    {
+      "id": "karametra_s_favor"
+    },
+    {
+      "id": "leafkin_druid"
+    },
+    {
+      "id": "loyal_guardian"
+    },
+    {
+      "id": "maja_bretagard_protector"
+    },
+    {
+      "id": "march_of_the_multitudes"
+    },
+    {
+      "id": "mentor_of_the_meek"
+    },
+    {
+      "id": "nissa_s_expedition"
+    },
+    {
+      "id": "nullmage_shepherd"
+    },
+    {
+      "id": "overrun"
+    },
+    {
+      "id": "overwhelming_instinct"
+    },
+    {
+      "id": "path_to_exile"
+    },
+    {
+      "id": "plains",
+      "qty": 14
+    },
+    {
+      "id": "presence_of_gond"
+    },
+    {
+      "id": "reclamation_sage"
+    },
+    {
+      "id": "rishkar_peema_renegade"
+    },
+    {
+      "id": "rootborn_defenses"
+    },
+    {
+      "id": "scatter_the_seeds"
+    },
+    {
+      "id": "scavenging_ooze"
+    },
+    {
+      "id": "selesnya_evangel"
+    },
+    {
+      "id": "selesnya_guildmage"
+    },
+    {
+      "id": "slate_of_ancestry"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sporemound"
+    },
+    {
+      "id": "sylvan_reclamation"
+    },
+    {
+      "id": "talisman_of_unity"
+    },
+    {
+      "id": "temple_of_plenty"
+    },
+    {
+      "id": "thunderfoot_baloth"
+    },
+    {
+      "id": "tranquil_expanse"
+    },
+    {
+      "id": "trostani_discordant"
+    },
+    {
+      "id": "valor_in_akros"
+    },
+    {
+      "id": "verdant_force"
+    },
+    {
+      "id": "vitu_ghazi_the_city_tree"
+    },
+    {
+      "id": "voice_of_many"
+    },
+    {
+      "id": "white_sun_s_zenith"
+    }
+  ]
+}
