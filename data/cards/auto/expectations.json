@@ -9980,6 +9980,13 @@
     },
     "zone": "battlefield"
   },
+  "glint_raker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "glissa_s_courier": {
     "zone": "battlefield"
   },
@@ -11238,6 +11245,13 @@
     "battlefield_count": 33,
     "library_size": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "herald_of_anguish": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -14084,6 +14098,13 @@
   "lita_little_orphan_amphibian": {
     "zone": "battlefield"
   },
+  "lithoform_engine": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "living_death": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -15580,6 +15601,10 @@
   "mirrormade": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "mirrorworks": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mischievous_mystic": {

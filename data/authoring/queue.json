@@ -110942,12 +110942,12 @@
     },
     "Glint Raker": {
       "edhrec_rank": 19757,
-      "gate": "template",
+      "gate": null,
       "name": "Glint Raker",
-      "reason": "no template for: This creature gets +X/+0, where X is the greatest mana value among artifacts you control",
+      "reason": "",
       "scryfall_id": "7520ee10-3ed1-40eb-86a0-3e463a5fba76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glint Weaver": {
@@ -126162,12 +126162,12 @@
     },
     "Herald of Anguish": {
       "edhrec_rank": 11057,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Anguish",
-      "reason": "no template for: At the beginning of your end step, each opponent discards a card",
+      "reason": "",
       "scryfall_id": "fec860f2-6ef0-4b74-9672-72b4de2b55ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Dromoka": {
@@ -159482,12 +159482,12 @@
     },
     "Lithoform Engine": {
       "edhrec_rank": 1718,
-      "gate": "template",
+      "gate": null,
       "name": "Lithoform Engine",
-      "reason": "no template for: {2}, {T}: Copy target activated or triggered ability you control. You may choose new targe",
+      "reason": "",
       "scryfall_id": "c579956f-900a-4574-a68b-3c1d92ea67b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lithomancer's Focus": {
@@ -175512,12 +175512,12 @@
     },
     "Mirrorworks": {
       "edhrec_rank": 3023,
-      "gate": "template",
+      "gate": null,
       "name": "Mirrorworks",
-      "reason": "no template for: Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create ",
+      "reason": "",
       "scryfall_id": "a762e84d-db04-4ede-bc0b-ddcfff9549af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miscalculation": {

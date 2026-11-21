@@ -117777,6 +117777,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "text": "This creature gets +X/+0, where X is the greatest mana value among artifacts you control.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": 1,
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to": "graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Reveal that many cards from the top of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may reveal that many cards from the top of your library. Put an artifact card revealed this way into your hand and the rest into your graveyard.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "glint_raker",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Glint Raker",
+      "oracle_text": "Flying\nThis creature gets +X/+0, where X is the greatest mana value among artifacts you control.\nWhenever this creature deals combat damage to a player, you may reveal that many cards from the top of your library. Put an artifact card revealed this way into your hand and the rest into your graveyard.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Drake"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -133302,6 +133383,92 @@
         "Griffin"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each opponent discards a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": -2
+              },
+              "toughness": {
+                "const": -2
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{B}, Sacrifice an artifact: Target creature gets -2/-2 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "herald_of_anguish",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Herald of Anguish",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nFlying\nAt the beginning of your end step, each opponent discards a card.\n{1}{B}, Sacrifice an artifact: Target creature gets -2/-2 until end of turn.",
+      "pay_generic_with": "tap_artifacts",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -168854,6 +169021,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell",
+              "target": "spell"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "spell",
+              "kind": "spell",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "copy_spell",
+              "target": "spell"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "spell",
+              "kind": "spell",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              }
+            }
+          ],
+          "text": "{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "lithoform_engine",
+      "mana_cost": "{4}",
+      "name": "Lithoform Engine",
+      "oracle_text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.\n{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -186064,6 +186330,54 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to create a token that's a copy of that artifact?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of that artifact.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false,
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mirrorworks",
+      "mana_cost": "{5}",
+      "name": "Mirrorworks",
+      "oracle_text": "Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of that artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
