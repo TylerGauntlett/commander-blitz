@@ -1,0 +1,16 @@
+{
+  "card_id": "smelting_vat",
+  "name": "Smelting Vat",
+  "oracle_text": "{1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order.",
+  "blocked_sentences": [
+    "{1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up to two noncreature artifact cards with total mana value less than or equal to the sacrificed artifact's mana value from among them onto the battlefield and the rest on the bottom of your library in a random order."
+  ],
+  "needs": [{
+    "capability": "total_mana_value_selection",
+    "kind": "op",
+    "what": "a `total_mana_value` cap on look_at_top's pick that takes a value expression, not only a literal: choose up to N cards from the revealed window whose combined mana value is at most V, where V here is `{\"mana_value_of\": {\"binding\": \"sacrificed\"}}` read from the activation's sacrifice cost -- e.g. look_at_top amount 8, objects {types: [Artifact], not_types: [Creature], count: 2, optional: true}, total_mana_value <value>, destination battlefield, rest_to_bottom",
+    "why_existing_wont_do": "total_mana_value exists only as a target_keys entry (an int, checked by targeting.py _within_total) and in cost_reduction; cards in a look_at_top window are not targets, and look_at_top's op_options carry no running budget over the picks. A per-card `mana_value` <= sacrificed MV selector is a strictly better card (two cards each up to that MV), so it would be an approximation."
+  }],
+  "closest_existing": ["look_at_top", "target total_mana_value", "mana_value_of"],
+  "confidence": "high"
+}
