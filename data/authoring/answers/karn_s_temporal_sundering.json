@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "karn_s_temporal_sundering",
+    "name": "Karn's Temporal Sundering",
+    "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nTarget player takes an extra turn after this one. Return up to one target nonland permanent to its owner's hand. Exile Karn's Temporal Sundering.",
+    "mana_cost": "{4}{U}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Sorcery"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "exiles_itself": true,
+    "targets": [
+      {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "any"}},
+      {"id": "t2", "kind": "permanent", "optional": true, "selector": {"not_types": ["Land"], "zone": "battlefield", "controller": "any"}}
+    ],
+    "spell_effects": [
+      {"op": "extra_turn", "player": {"target": "t1"}},
+      {"op": "return_to_hand", "objects": {"target": "t2"}}
+    ]
+  },
+  "expectation": {"zone": "exile"}
+}

@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "primevals_glorious_rebirth",
+    "name": "Primevals' Glorious Rebirth",
+    "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nReturn all legendary permanent cards from your graveyard to the battlefield.",
+    "mana_cost": "{5}{W}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Sorcery"],
+    "colors": ["B", "W"],
+    "color_identity": ["B", "W"],
+    "spell_effects": [
+      {
+        "op": "return_from_graveyard",
+        "destination": "battlefield",
+        "controller": "you",
+        "objects": {
+          "zone": "graveyard",
+          "controller": "you",
+          "count": "all",
+          "supertypes": ["Legendary"],
+          "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker", "Battle"]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": {"0": 3},
+    "battlefield_count": 32,
+    "hand_size": {"0": 1}
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "kamahl_s_druidic_vow",
+    "name": "Kamahl's Druidic Vow",
+    "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nLook at the top X cards of your library. You may put any number of land and/or legendary permanent cards with mana value X or less from among them onto the battlefield. Put the rest into your graveyard.",
+    "mana_cost": "{X}{G}{G}",
+    "supertypes": ["Legendary"],
+    "types": ["Sorcery"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "spell_effects": [
+      {
+        "op": "look_at_top",
+        "player": "you",
+        "amount": {"x": true},
+        "destination": "battlefield",
+        "objects": {
+          "count": "any",
+          "mana_value": {"op": "<=", "value": {"x": true}},
+          "any_of": [
+            {"types": ["Land"]},
+            {"supertypes": ["Legendary"], "not_types": ["Instant", "Sorcery"]}
+          ]
+        },
+        "rest_to": "graveyard"
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}
