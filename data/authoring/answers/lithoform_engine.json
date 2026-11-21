@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "lithoform_engine",
+    "name": "Lithoform Engine",
+    "oracle_text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.\n{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+    "mana_cost": "{4}",
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.",
+        "cost": {"mana": "{2}", "tap": true},
+        "targets": [
+          {"id": "t1", "kind": "ability_on_stack", "count": 1, "selector": {"controller": "you"}}
+        ],
+        "effects": [
+          {"op": "copy_ability", "target": "t1", "new_targets": true}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+        "cost": {"mana": "{3}", "tap": true},
+        "targets": [
+          {"id": "spell", "kind": "spell", "count": 1, "selector": {"controller": "you", "any_types": ["Instant", "Sorcery"]}}
+        ],
+        "effects": [
+          {"op": "copy_spell", "target": "spell", "new_targets": true}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+        "cost": {"mana": "{4}", "tap": true},
+        "targets": [
+          {"id": "spell", "kind": "spell", "count": 1, "selector": {"controller": "you", "not_types": ["Instant", "Sorcery"]}}
+        ],
+        "effects": [
+          {"op": "copy_spell", "target": "spell"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

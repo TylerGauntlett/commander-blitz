@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "herald_of_anguish",
+    "name": "Herald of Anguish",
+    "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nFlying\nAt the beginning of your end step, each opponent discards a card.\n{1}{B}, Sacrifice an artifact: Target creature gets -2/-2 until end of turn.",
+    "mana_cost": "{5}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Demon"],
+    "power": 5,
+    "toughness": 5,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying"],
+    "pay_generic_with": "tap_artifacts",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, each opponent discards a card.",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {"op": "discard", "amount": {"const": 1}, "player": "each_opponent"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{B}, Sacrifice an artifact: Target creature gets -2/-2 until end of turn.",
+        "cost": {
+          "mana": "{1}{B}",
+          "sacrifice": {"controller": "you", "count": 1, "types": ["Artifact"], "zone": "battlefield"}
+        },
+        "targets": [
+          {"id": "t1", "kind": "permanent", "count": 1, "selector": {"types": ["Creature"], "zone": "battlefield"}}
+        ],
+        "effects": [
+          {"op": "pump", "objects": {"target": "t1"}, "power": {"const": -2}, "toughness": {"const": -2}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}
