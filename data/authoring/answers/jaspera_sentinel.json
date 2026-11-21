@@ -1,0 +1,101 @@
+{
+  "card": {
+    "id": "jaspera_sentinel",
+    "name": "Jaspera Sentinel",
+    "oracle_text": "Reach\n{T}, Tap an untapped creature you control: Add one mana of any color.",
+    "mana_cost": "{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Elf",
+      "Rogue"
+    ],
+    "power": 1,
+    "toughness": 2,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "keywords": [
+      "reach"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "text": "{T}, Tap an untapped creature you control: Add one mana of any color.",
+        "cost": {
+          "tap": true,
+          "tap_permanents": {
+            "controller": "you",
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "exclude_self": true
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "White",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "Blue",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "Black",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "Red",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "Green",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
