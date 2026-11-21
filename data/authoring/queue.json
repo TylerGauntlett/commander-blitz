@@ -87902,12 +87902,12 @@
     },
     "Executioner's Capsule": {
       "edhrec_rank": 7101,
-      "gate": "template",
+      "gate": null,
       "name": "Executioner's Capsule",
-      "reason": "no template for: {1}{B}, {T}, Sacrifice this artifact: Destroy target nonblack creature",
+      "reason": "",
       "scryfall_id": "73a54823-a5fd-4055-a435-a6bdbd6bedff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Executioner's Hood": {
@@ -107292,12 +107292,12 @@
     },
     "Geth, Lord of the Vault": {
       "edhrec_rank": 8113,
-      "gate": "template",
+      "gate": null,
       "name": "Geth, Lord of the Vault",
-      "reason": "no template for: {X}{B}: Put target artifact or creature card with mana value X from an opponent's graveyar",
+      "reason": "",
       "scryfall_id": "82f6a6c6-2755-4a6b-a9f9-06cae30be4e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geth, Thane of Contracts": {

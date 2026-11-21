@@ -7819,6 +7819,10 @@
     },
     "zone": "graveyard"
   },
+  "executioner_s_capsule": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "executioner_s_hood": {
     "zone": "battlefield"
   },
@@ -9591,6 +9595,10 @@
       "id": "map_token"
     },
     "zone": "graveyard"
+  },
+  "geth_lord_of_the_vault": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "geth_s_summons": {
     "battlefield_count": 33,
