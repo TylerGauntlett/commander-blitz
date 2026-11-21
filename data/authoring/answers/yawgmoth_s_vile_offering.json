@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "yawgmoth_s_vile_offering",
+    "name": "Yawgmoth's Vile Offering",
+    "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nPut up to one target creature or planeswalker card from a graveyard onto the battlefield under your control. Destroy up to one target creature or planeswalker. Exile Yawgmoth's Vile Offering.",
+    "mana_cost": "{4}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "exiles_itself": true,
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "card_in_graveyard",
+        "count": 1,
+        "optional": true,
+        "selector": {"any_types": ["Creature", "Planeswalker"], "controller": "any", "zone": "graveyard"}
+      },
+      {
+        "id": "t2",
+        "kind": "permanent",
+        "count": 1,
+        "optional": true,
+        "selector": {"any_types": ["Creature", "Planeswalker"], "zone": "battlefield"}
+      }
+    ],
+    "spell_effects": [
+      {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"},
+      {"op": "destroy", "objects": {"target": "t2"}}
+    ]
+  },
+  "expectation": {"zone": "exile"}
+}
