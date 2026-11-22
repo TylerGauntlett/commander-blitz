@@ -328,8 +328,9 @@ jobs:
     # Four stages in series under coverage (unit, every card works, HTTP API,
     # AI); every card works and the AI arena grow with the pool. The limit
     # leaves room for a runner that hands xdist half the cores, which doubles
-    # every stage at once.
-    timeout-minutes: 75
+    # every stage at once. At 75 the four filled about an hour on a
+    # standard runner and a slower one tipped them over it.
+    timeout-minutes: 95
     steps:
       - uses: actions/checkout@v7
         with:
