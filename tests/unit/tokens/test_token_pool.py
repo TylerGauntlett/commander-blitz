@@ -3617,3 +3617,51 @@ class TestMajasHumanWarriorIsBothTypes:
     def test_the_near_misses_are_still_separate_tokens(self, pool):
         assert "Warrior" not in pool.get("human_1_1_w").subtypes
         assert "Human" not in pool.get("warrior_1_1_w").subtypes
+
+
+class TestTheAstartesWarriorHasVigilance:
+    """Birth of the Imperium, Marneus Calgar, Defenders of Humanity and the rest
+    of Forces of the Imperium: *"create a **2/2 white Astartes Warrior**
+    creature token **with vigilance**."*
+
+    The near miss is `knight_2_2_w_vigilance`: same body, same keyword, wrong
+    creature types -- and the deck counts Astartes and Warriors. Rule 111.4:
+    a token is exactly what its creating effect says.
+    """
+
+    def test_it_is_a_white_astartes_warrior_with_vigilance(self, pool):
+        token = pool.get("astartes_warrior_2_2_w_vigilance")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["W"]
+        assert sorted(token.subtypes) == ["Astartes", "Warrior"]
+        assert list(token.keywords) == ["vigilance"]
+        assert not token.abilities
+
+    def test_the_knight_is_still_a_separate_token(self, pool):
+        knight = pool.get("knight_2_2_w_vigilance")
+        assert "Astartes" not in knight.subtypes
+
+
+class TestTheDatasmithsRobotCantBlock:
+    """Cybernetica Datasmith: *"create a **4/4 colorless Robot artifact**
+    creature token with **"This token can't block."**"*
+
+    The near misses are the 3/3 Robot gap other cards file and the red Pirate
+    that also can't block; neither is a colourless 4/4 artifact.
+    """
+
+    def test_it_is_a_colorless_four_four_artifact_robot(self, pool):
+        token = pool.get("robot_4_4_c_cant_block")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.colors
+        assert "Artifact" in token.types
+        assert list(token.subtypes) == ["Robot"]
+
+    def test_it_cant_block(self, pool):
+        token = pool.get("robot_4_4_c_cant_block")
+        assert [a.static.get("effect") for a in token.abilities] == ["cant_block"]
+
+    def test_the_pirate_is_still_a_separate_token(self, pool):
+        assert sorted(pool.get("pirate_4_2_r_cant_block").colors) == ["R"]

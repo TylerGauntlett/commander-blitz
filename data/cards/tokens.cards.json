@@ -1636,6 +1636,57 @@
       "is_token": true
     },
     {
+      "id": "astartes_warrior_2_2_w_vigilance",
+      "name": "Astartes Warrior Token",
+      "oracle_text": "2/2 white Astartes Warrior creature token with vigilance.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "robot_4_4_c_cant_block",
+      "name": "Robot Token",
+      "oracle_text": "4/4 colorless Robot artifact creature token with \"This token can't block.\"",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Robot"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't block.",
+          "effect": "cant_block",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
       "id": "pirate_4_2_r_cant_block",
       "name": "Pirate Token",
       "oracle_text": "4/2 red Pirate creature token with \"This token can't block.\"",
