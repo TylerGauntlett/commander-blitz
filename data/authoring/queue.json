@@ -83852,12 +83852,12 @@
     },
     "Endurance": {
       "edhrec_rank": 1343,
-      "gate": "template",
+      "gate": null,
       "name": "Endurance",
-      "reason": "no template for: When this creature enters, up to one target player puts all the cards from their graveyard",
+      "reason": "",
       "scryfall_id": "b770471c-1bf7-4179-8418-dcd790ca5405",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endurance Bobblehead": {
@@ -293122,12 +293122,12 @@
     },
     "Triumph of Saint Katherine": {
       "edhrec_rank": 13215,
-      "gate": "template",
+      "gate": null,
       "name": "Triumph of Saint Katherine",
-      "reason": "no template for: Praesidium Protectiva — When this creature is put into your graveyard from the battlefield",
+      "reason": "",
       "scryfall_id": "5eb88b0e-2582-4393-958e-490c07bde8ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triumph of the Hordes": {

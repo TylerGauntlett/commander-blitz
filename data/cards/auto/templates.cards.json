@@ -90336,6 +90336,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "bottom": true,
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "put_on_top",
+              "random_order": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "optional": true,
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Evoke—Exile a green card from your hand.",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "evoke": {
+        "exile_from_hand": {
+          "colors": [
+            "G"
+          ]
+        }
+      },
+      "id": "endurance",
+      "keywords": [
+        "flash",
+        "reach"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "name": "Endurance",
+      "oracle_text": "Flash\nReach\nWhen this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.\nEvoke—Exile a green card from your hand.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Incarnation"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -315207,6 +315294,69 @@
         "Rogue"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": 6,
+              "as": "pile",
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top"
+            },
+            {
+              "as": "pile",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "pile"
+              },
+              "op": "put_on_top",
+              "random_order": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Praesidium Protectiva — When this creature is put into your graveyard from the battlefield, exile it and the top six cards of your library in a face-down pile. If you do, shuffle that pile and put it back on top of your library.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "triumph_of_saint_katherine",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{4}{W}",
+      "miracle": "{1}{W}",
+      "name": "Triumph of Saint Katherine",
+      "oracle_text": "Lifelink\nPraesidium Protectiva — When this creature is put into your graveyard from the battlefield, exile it and the top six cards of your library in a face-down pile. If you do, shuffle that pile and put it back on top of your library.\nMiracle {1}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

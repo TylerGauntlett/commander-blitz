@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **454** capabilities.
+**534 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -378,8 +378,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
-| [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [random-order-top](#random-order-top) | 1 | 13215 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -6372,34 +6370,6 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
-
-</details>
-
-## random-order-bottom
-
-Blocks **1** card.
-
-- **(op)** a `random_order` option on `put_on_top` (with `bottom: true`) that places the moved cards on the bottom of the library in a random order, for 'puts all the cards from their graveyard on the bottom of their library in a random order' (Endurance, also Tormod's Crypt-style tucks, cascade/discover leftovers).
-  <br>Why the existing vocabulary won't do: `put_on_top` (ops_cards.py) offers `bottom` and `any_order` (owner chooses order) or pool order; neither is random, and a `shuffle` op afterwards would randomise the whole library, not just the bottom segment.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Endurance** (rank 1343) — `endurance`
-  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
-
-</details>
-
-## random-order-top
-
-Blocks **1** card.
-
-- **(op)** a `random_order` option on `put_on_top` (top of library, not bottom) that places a bound set of cards -- here the dying card plus the top six cards of its owner's library, exiled face down together as one pile with an `as` binding, gated on 'if you do' -- back on top of the library in a random order, so neither player learns the order. Sibling of `random_order_bottom` (Endurance); one `random_order` flag honouring both `bottom: true` and the default top would close both.
-  <br>Why the existing vocabulary won't do: `put_on_top` (op_put_on_top in ops_cards.py) offers only `any_order` (the owner chooses, so they would know where the miracle card sits) or pool order; `look_at_top` can exile the six face down with `as` but has no random-order return to the top, and a `shuffle` op afterwards would randomise the whole library instead of only the seven-card pile.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Triumph of Saint Katherine** (rank 13215) — `triumph_of_saint_katherine`
-  - Praesidium Protectiva — When this creature is put into your graveyard from the battlefield, exile it and the top six cards of your library in a face-down pile. If you do, shuffle that pile and put it back on top of your library.
 
 </details>
 

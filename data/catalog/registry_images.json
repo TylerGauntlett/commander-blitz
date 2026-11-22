@@ -6396,6 +6396,10 @@
     "artist": "Ryan Yee",
     "scryfall_id": "859a3a66-dae9-4a67-936d-2681397a6bc2"
   },
+  "endurance": {
+    "artist": "Paolo Parente",
+    "scryfall_id": "b770471c-1bf7-4179-8418-dcd790ca5405"
+  },
   "endurance_bobblehead": {
     "artist": "Alex Brock",
     "scryfall_id": "8768789b-c414-4e35-bff3-d06a69dccff6"
@@ -22171,6 +22175,10 @@
   "triton_shorethief": {
     "artist": "Howard Lyon",
     "scryfall_id": "d8f0fe22-dc89-4ad8-b5f6-6d91b61f1385"
+  },
+  "triumph_of_saint_katherine": {
+    "artist": "David Astruga",
+    "scryfall_id": "5eb88b0e-2582-4393-958e-490c07bde8ac"
   },
   "trokin_high_guard": {
     "artist": "Ron Spencer",

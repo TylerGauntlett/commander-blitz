@@ -7516,6 +7516,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "endurance": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 42
+    },
+    "zone": "battlefield"
+  },
   "endurance_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26233,6 +26243,16 @@
     "zone": "battlefield"
   },
   "triton_shorethief": {
+    "zone": "battlefield"
+  },
+  "triumph_of_saint_katherine": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "trokin_high_guard": {
