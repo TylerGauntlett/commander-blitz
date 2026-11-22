@@ -281012,12 +281012,12 @@
     },
     "The Golden Throne": {
       "edhrec_rank": 4368,
-      "gate": "template",
+      "gate": null,
       "name": "The Golden Throne",
-      "reason": "no template for: Arcane Life-support — If you would lose the game, instead exile and your life total become",
+      "reason": "",
       "scryfall_id": "b9110c5b-bfe5-4164-ba26-7a7f01dabf4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Goose Mother": {

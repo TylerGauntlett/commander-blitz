@@ -300411,6 +300411,73 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "replace_lose_game",
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": 1,
+              "op": "set_life_total"
+            }
+          ],
+          "kind": "static",
+          "text": "Arcane Life-support — If you would lose the game, instead exile The Golden Throne and your life total becomes 1."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "A Thousand Souls Die Every Day — {T}, Sacrifice a creature: Add three mana in any combination of colors."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_golden_throne",
+      "mana_cost": "{4}",
+      "name": "The Golden Throne",
+      "oracle_text": "Arcane Life-support — If you would lose the game, instead exile The Golden Throne and your life total becomes 1.\nA Thousand Souls Die Every Day — {T}, Sacrifice a creature: Add three mana in any combination of colors.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

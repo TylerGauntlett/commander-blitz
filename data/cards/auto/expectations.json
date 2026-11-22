@@ -25002,6 +25002,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_golden_throne": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_goose_mother": {
     "battlefield_count": 43,
     "counters": {
