@@ -23302,12 +23302,12 @@
     },
     "Belisarius Cawl": {
       "edhrec_rank": 12878,
-      "gate": "template",
+      "gate": null,
       "name": "Belisarius Cawl",
-      "reason": "no template for: Ultima Founding — {T}, Tap two untapped artifacts you control: Create a 2/2 white Astartes",
+      "reason": "",
       "scryfall_id": "102746f5-ba25-45f2-943e-55f9a4458fa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bell Borca, Spectral Sergeant": {
@@ -59472,12 +59472,12 @@
     },
     "Cybernetica Datasmith": {
       "edhrec_rank": 16917,
-      "gate": "template",
+      "gate": null,
       "name": "Cybernetica Datasmith",
-      "reason": "no template for: Protection from Robots",
+      "reason": "",
       "scryfall_id": "28624370-ba28-4879-bd43-0a00761e780d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cybership": {
@@ -65162,12 +65162,12 @@
     },
     "Defenders of Humanity": {
       "edhrec_rank": 11133,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Defenders of Humanity",
-      "reason": "no template for: When this enchantment enters, create X 2/2 white Astartes Warrior creature tokens with vig",
+      "reason": "astartes_warrior_2_2_w_vigilance tokens is 20, expected 27; your battlefield is 53, expected 60",
       "scryfall_id": "495c6b21-3e2b-417c-9387-6747993cbffe",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Defenestrate": {
@@ -137302,12 +137302,12 @@
     },
     "Inquisitorial Rosette": {
       "edhrec_rank": 6855,
-      "gate": "template",
+      "gate": null,
       "name": "Inquisitorial Rosette",
-      "reason": "no template for: Inquisition Agents — Whenever equipped creature attacks, create a 2/2 white Astartes Warri",
+      "reason": "",
       "scryfall_id": "d44935ea-e8f4-45b1-8bce-e8665317d801",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Insatiable Appetite": {
@@ -168032,12 +168032,12 @@
     },
     "Marneus Calgar": {
       "edhrec_rank": 5282,
-      "gate": "template",
+      "gate": null,
       "name": "Marneus Calgar",
-      "reason": "no template for: Master Tactician — Whenever one or more tokens you control enter, draw a card",
+      "reason": "",
       "scryfall_id": "e7517e8e-b424-4731-ba9d-6132bdefa6bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maro": {
@@ -286142,12 +286142,12 @@
     },
     "Thunderhawk Gunship": {
       "edhrec_rank": 3534,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Thunderhawk Gunship",
-      "reason": "no template for: When this Vehicle enters, create two 2/2 white Astartes Warrior creature tokens with vigil",
+      "reason": "astartes_warrior_2_2_w_vigilance tokens is 0, expected 2; your battlefield is 33, expected 35",
       "scryfall_id": "6790720a-e1f3-4533-acd8-b002c8e91929",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Thunderhead Gunner": {
@@ -286512,12 +286512,12 @@
     },
     "Thunderwolf Cavalry": {
       "edhrec_rank": 15117,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderwolf Cavalry",
-      "reason": "no template for: Crushing Teeth — Whenever this creature deals combat damage to a player, put a +1/+1 count",
+      "reason": "",
       "scryfall_id": "3ec9bc4f-d8b8-4c68-bc4a-923b03a971cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thurid, Mare of Destiny": {
@@ -296172,12 +296172,12 @@
     },
     "Ultramarines Honour Guard": {
       "edhrec_rank": 6434,
-      "gate": "template",
+      "gate": null,
       "name": "Ultramarines Honour Guard",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "07114048-6fab-4d73-850e-1f0158a04e7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultron Drone": {
@@ -301092,12 +301092,12 @@
     },
     "Vanguard Suppressor": {
       "edhrec_rank": 8923,
-      "gate": "template",
+      "gate": null,
       "name": "Vanguard Suppressor",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "3331d7dd-95c8-4813-a1eb-3966a2c08502",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanguard of Brimaz": {
@@ -322422,12 +322422,12 @@
     },
     "Zephyrim": {
       "edhrec_rank": 11486,
-      "gate": "template",
+      "gate": null,
       "name": "Zephyrim",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "3698b37f-0d86-42ea-9031-8f7e54b5d953",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zerapa Minotaur": {

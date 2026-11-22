@@ -2182,6 +2182,10 @@
     },
     "zone": "battlefield"
   },
+  "belisarius_cawl": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bello_bard_of_the_brambles": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5351,6 +5355,13 @@
   },
   "cybermen_squadron": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cybernetica_datasmith": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "cyclonic_rift": {
@@ -12212,6 +12223,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "inquisitorial_rosette": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "insatiable_avarice": {
     "hand_size": {
       "0": 4
@@ -15064,6 +15079,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "marneus_calgar": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "marsh_boa": {
     "zone": "battlefield"
@@ -25552,6 +25574,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thunderwolf_cavalry": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tiamat": {
     "battlefield_count": 33,
     "hand_size": {
@@ -26462,6 +26488,10 @@
     "opponent_battlefield_count": 4,
     "zone": "library"
   },
+  "ultramarines_honour_guard": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ultron_unlimited": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26965,6 +26995,13 @@
   },
   "vanguard_seraph": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "vanguard_suppressor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "vanishing_verse": {
@@ -28965,6 +29002,9 @@
     ]
   },
   "zephyr_sprite": {
+    "zone": "battlefield"
+  },
+  "zephyrim": {
     "zone": "battlefield"
   },
   "zetalpa_primal_dawn": {
