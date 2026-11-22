@@ -1359,6 +1359,36 @@ spell goes. The near misses are `cast_from_hand`'s and `cast_card`'s `exiles`,
 the same rider on a cast made during the effect's resolution rather than a
 permission to cast later at the printed price.
 
+### "When you cast a spell this way, …"
+
+```jsonc
+// The Ruinous Powers, inside its upkeep trigger after choosing "victim"
+{ "op": "look_at_top", "player": { "binding": "victim" }, "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "playable": "this_turn",
+  "any_color": true, "playable_cast_trigger": "ruin" }
+// ...and, among the card's abilities
+{ "kind": "reflexive", "id": "ruin",
+  "text": "When you cast a spell this way, its owner loses life equal to its mana value.",
+  "effects": [ { "op": "lose_life", "player": { "owner_of": "subject" },
+                 "amount": { "mana_value_of": { "binding": "subject" } } } ] }
+```
+
+`playable_cast_trigger` names a `kind: "reflexive"` ability on the same card
+that the permission fires when the effect's controller casts a spell under it
+(603.12's shape: a trigger linked to what the effect allowed). It rides on
+`exile` or `look_at_top` beside a `playable` duration, or on `grant_playable`.
+The grant writes a `CastThisWayLink` onto the card; `Game._cast` reads it while
+the permission is live and the caster holds it, and
+`triggers.queue_cast_this_way` queues the ability with the spell bound as
+`subject`, so it goes on the stack above the spell. A land played under the
+permission is not cast and fires nothing. The ability is found through the
+snapshotted card id after its source has left.
+
+The loader refuses it without a permission, with an id naming no reflexive
+ability on the card, and beside `playable_by: "owner"` ("when **you** cast").
+The near miss is a `spell_cast` trigger filtered to spells cast from exile,
+which also fires for a card cast from exile under any other permission.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's
@@ -1896,6 +1926,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_addend": 1 }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "opponent", "lose_instead": true }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
@@ -6012,6 +6043,27 @@ creature.
 but deliberately not in `affects`. "Unless you control a creature named X" is a
 question about the board; "each creature named X gets +1/+1" is not a card.
 
+### "…must attack with at least one creature" — a requirement on a player
+
+    Seeker of Slaanesh — "Allure of Slaanesh — Each opponent must attack with
+    at least one creature each combat if able."
+
+```jsonc
+{ "kind": "static", "effect": "must_attack_with_at_least_one_creature",
+  "affects_player": "opponent" }
+```
+
+A player-wide static: it binds the named players' declarations, and no
+creature owes it. `attacks_if_able` with `affects: {"controller": "opponent"}`
+is the near miss and a much stronger card — that compels every creature.
+`combat.attack_with_one_unmet` withholds **Done attacking** from an affected
+player's empty declaration while a legal declaration with an attacker in it
+costs nothing: a creature that can attack without a tax (508.1d: no cost is
+owed to obey a requirement) and may attack alone, or two such creatures, which
+together break no can't-attack-alone restriction. Any one attacker meets it.
+Read live at every declaration, so each extra combat is bound too. The loader
+refuses `affects` and `amount` on it; `condition` is the only other key.
+
 ## "That player can't attack you"
 
     Call for Aid — "…You can't attack that player this turn."
@@ -6241,6 +6293,21 @@ its own `untap` op before `must_block`. A creature carrying both is narrowed to
 the named attacker by `legal_blocks`, which obeys both at once. The loader
 refuses `must_block_any` without `objects` or with an `attacker`; "blocks this
 creature this turn" is a near miss neither op says.
+
+The continuous form is the `blocks_if_able` static, `must_block_any`'s
+requirement held for as long as the static applies and read live by
+`player_statics.block_compelled` at the same `block_any_required`, so it binds
+every combat and nothing spends it. Khârn the Betrayer's "attacks or blocks each
+combat if able" is it beside `attacks_if_able`: a creature attacks only on its
+controller's turn and blocks only on someone else's, so the two never bind the
+same combat and together are exactly the printed line.
+
+```jsonc
+{ "kind": "static", "effect": "attacks_if_able", "affects": { "self_only": true } },
+{ "kind": "static", "effect": "blocks_if_able",  "affects": { "self_only": true } }
+```
+
+Its `affects` reads derived characteristics, as `attacks_if_able`'s does.
 
 ## Goad
 
@@ -7488,6 +7555,13 @@ them where it is sitting:
 // Dragon Man, Reformed Robot: "You may cast this card from your graveyard by
 // discarding a card in addition to paying its other costs."
 "graveyard_additional_cost": { "discard": 1 }
+
+// Helbrute: "Sarcophagus — You may cast this card from your graveyard by
+// exiling another creature card from your graveyard in addition to paying its
+// other costs."
+"graveyard_additional_cost": {
+  "exile_from_graveyard": { "count": 1, "types": ["Creature"], "exclude_self": true }
+}
 ```
 
 Retrace's permission with the card's own additional cost. Both compile to one
@@ -7503,9 +7577,14 @@ a land discard) or a `graveyard_cost`, a cost that charges nothing or has an X,
 and `tap`, `untap`, `mana_reduction` or `x_value` in it. The near misses each
 price something else: `graveyard_cost` is an *alternative* cost that replaces
 the mana cost, and a `cast_from_graveyard` static with `active_zones:
-["graveyard"]` (Gravecrawler) grants the printed price with nothing added. A
-permanent's printed line is claimed by the residual gate only when the discard
-it names is the one charged.
+["graveyard"]` (Gravecrawler) grants the printed price with nothing added. The cost is
+paid with the card being cast as its source, the source legality priced it
+with, so `exclude_self` is the printed "another": the card, still in the
+graveyard as its costs are paid, is never offered to exile itself. A
+permanent's printed line, past any ability word, is claimed by the residual
+gate only when the payment it names ("discarding a [type] card", "exiling
+another [type] card from your graveyard") reads as the very cost charged; any
+other payment stays residual.
 
 #### Convoke, improvise and delve
 
@@ -9568,6 +9647,30 @@ applies every addend before every multiplier, the larger gain and the order the
 gaining player picks, whichever permanent arrived first. A player who wanted the
 smaller gain cannot have it; that divergence is in `docs/rules-coverage.md`.
 
+### "If an opponent would gain life, that player loses that much life instead"
+
+```jsonc
+// Plague Drone, Tainted Remedy
+{ "kind": "static",
+  "text": "If an opponent would gain life, that player loses that much life instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "opponent",
+  "lose_instead": true }
+```
+
+The third axis of the same static, exclusive with `gain_multiplier` and
+`gain_addend` (two is a load error); only `true` is accepted. The gain never
+happens — no `LIFE_GAINED`, so no "whenever you gain life" payoff — and the
+player loses that much life through `lose_life`, one `LIFE_LOST`, so a loss
+replacement such as Bloodletter of Aclazotz applies to it. Lifelink reaches it.
+Against a gain doubler or addend the gaining player orders the replacements
+(616.1) and, once this one applies, the event is a loss no gain replacement
+touches: `gain_life` applies it first, so the loss is the unmodified amount.
+A second one finds nothing left to replace (614.5). `cant_gain_life` and a
+locked life total win: a gain that cannot happen is no event, and nobody loses
+life. Not `cant_gain_life` (nobody loses life) and not a `you_gain_life`
+trigger with `lose_life` (the gain happens, then the stack).
+
 ## "Your opponents can't gain life"
 
 ```jsonc
@@ -10218,6 +10321,40 @@ The loader accepts `remove_counters` only on `prevent_damage`, only beside
 above is the wrong one for a kind whose loss helps. The near misses are
 `counter`, which puts "that many" on, and a `damage_prevented` trigger with
 `remove_counters`, a second ability on the stack.
+
+## Damage prevented, and then something else
+
+```jsonc
+// Khârn the Betrayer: If damage would be dealt to Khârn the Betrayer, prevent
+//                     that damage and an opponent of your choice gains control of it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "affects": { "self_only": true },
+  "effects": [
+    { "op": "choose_player", "players": "each_opponent", "as": "betrayed_to" },
+    { "op": "gain_control", "objects": { "binding": "shielded" },
+      "player": { "binding": "betrayed_to" }, "duration": "permanent" } ] }
+```
+
+The total shield with a 615.5 rider: `effects` is what "takes place immediately
+afterward". The prevention happens inside `primitives.damage_permanent`, as the
+two shields above do, with `reason: "prevent_with_effects"`; the effects, which
+may ask, are armed on `state.armed_delays` and run off the stack at the engine's
+next suspension point, after state-based actions, as the `prevent_damage` ops'
+"prevented this way" riders run. They run as the static's controller at that
+moment, with the shielded permanent as `{"binding": "shielded"}` and the
+prevented damage as `{"binding": "amount"}`. Answered by
+`characteristics.damage_prevented_with_effects` and kept out of
+`prevents_all_damage`.
+
+It sits beside the Horde's shield, after every shield that costs nothing
+(616.1), once per combat damage event (510.2), and under "damage can't be
+prevented" the damage lands and the effects still run (615.12).
+
+The loader accepts `effects` on `prevent_damage` only beside `prevent_all` over
+`affects`, never beside `counter` or `remove_counters`, and validates each
+effect as it would an ability's. The near misses are a `damage_prevented`
+trigger, a second ability on the stack, and `gain_control` with `player:
+"opponent"`, which names every opponent where the card names one of your choice.
 
 ## Preventing all damage to or by a **permanent**, for a while
 
@@ -11875,6 +12012,30 @@ answer), and a non-literal kept subtype.
 **The near miss is `become_copy`**, which copies every copiable value —
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
+
+### A size read off the card this permanent exiled
+
+Drach'Nyen: "When Drach'Nyen enters, exile up to one target creature. ...
+Equipped creature has menace and gets +X/+0, where X is the exiled card's power."
+
+```jsonc
+// beside an enters trigger whose `exile` carries `link: true`
+{ "kind": "static", "effect": "buff", "affects": { "attached": true },
+  "power": { "exiled_card_power": "self" }, "toughness": { "const": 0 } }
+```
+
+The static value `exiled_card_power` is the power of the newest card in the
+source's `exiled_cards` still in exile with its `exiled_by` intact
+(`characteristics.last_exiled_card`) — the card its own linked ability exiled
+(607.2a) — read there with its characteristic-defining abilities
+(604.3, `characteristics.card_in_exile_characteristics`), so a `*/*` card is
+its number in exile, counted for its owner. It is 0 when nothing was exiled,
+once the card has left exile or was exiled again by something else, when a
+token ceased to exist there, and for a flickered source, which is a new object
+with nothing exiled with it (400.7). A static, so it follows every re-equip.
+`"self"` is the only spec. The near misses are the effect-side `power_of`,
+evaluated once, and `extreme_value`, which reads only mana value; neither can
+name the linked card.
 
 ### `grant_exiled_abilities` — abilities lent by the cards exiled with a permanent
 
@@ -15398,6 +15559,25 @@ in response was already dropped on resolution (608.2b), so it arrives here as an
 empty pool, and the other half is not performed alone. Both keys are required,
 and `duration` is refused, because every printed exchange is permanent.
 
+### When you lose control of it
+
+```jsonc
+// Khârn the Betrayer — "When you lose control of Khârn the Betrayer, draw two cards."
+{ "kind": "triggered",
+  "trigger": { "event": "lose_control" },
+  "effects": [ { "op": "draw", "amount": { "const": 2 } } ] }
+```
+
+`lose_control` listens to the `control_changed` event every route above fires
+through `change_control`, a steal, a handback and an exchange alike. It is a
+self trigger: the loader supplies `source: "self"` and refuses a `controller`
+or a `filter`. The ability belongs to the player who **lost** control:
+603.10a makes it a look-back trigger, and 603.3a gives it to whoever controlled
+the source when it triggered, so `triggers._queue` takes the event's `from`
+rather than the permanent's controller now. A thief therefore draws too when
+the permanent goes home. `leaves_battlefield` is the near miss: a control
+change is not a zone change.
+
 ## Exhaust — "Activate each exhaust ability only once"
 
 ```jsonc
@@ -17496,6 +17676,64 @@ never arose. On `search_library` and `search_zones` the loader admits only
 and a `destination_if` beside it — `destination_if` matches the card's printed
 face and never asks. Wrapping the search in `if` + `may` is the near miss: it
 asks battlefield-or-hand before the card is found.
+
+## A spell given cascade — `next_spell_gains_cascade`
+
+```jsonc
+// Sloppity Bilepiper: "{2}, {T}, Sacrifice a creature: The next creature
+// spell you cast this turn has cascade."
+{ "op": "next_spell_gains_cascade", "affects_spells": { "types": ["Creature"] } }
+// Bigger on the Inside: "The next spell they cast this turn has cascade."
+{ "op": "next_spell_gains_cascade", "player": { "target": "t1" } }
+```
+
+The spell itself **has** cascade (702.85a). The op writes a
+`structs.CascadeGrant` for each `player` (default `"you"`); the first cast
+matching `affects_spells` binds it to that spell's stack item in
+`GameState._tally`, before the cast's triggers are gathered, and
+`triggers._candidate_abilities` then yields the rules-supplied
+`carddef.CASCADE_TRIGGER` off the spell, once per grant (702.85c). So the
+trigger's source and controller are the spell's, its walk is down the caster's
+library, its ceiling is the spell's mana value with its X (202.3e), and it
+resolves whatever became of the permanent that granted it. An unspent grant
+ends at cleanup.
+
+`affects_spells` reads the printed face (`SPELL_FILTER_KEYS` without
+`controller`; absent, any spell). The loader refuses a `duration`,
+`max_mana_value`, `types` or `affects` beside it, since each would be read by
+nothing.
+
+The near miss is a `delayed_trigger` on `spell_cast` running `cascade` with
+`max_mana_value: {"mana_value_of": {"binding": "subject"}}`: that ability
+belongs to the granting permanent, not the spell, and walks its controller's
+library rather than the caster's.
+
+## Spells a static gives cascade — `spells_have_cascade`
+
+```jsonc
+// Abaddon the Despoiler: "During your turn, spells you cast from your hand
+// with mana value X or less have cascade, where X is the total amount of life
+// your opponents have lost this turn."
+{ "kind": "static", "effect": "spells_have_cascade",
+  "affects_spells": { "from_zone": "hand" },
+  "max_mana_value": { "life_lost_this_turn": "opponent" },
+  "condition": { "is_your_turn": true } }
+```
+
+`next_spell_gains_cascade`'s grant as a static: each spell it matches has the
+rules' `carddef.CASCADE_TRIGGER`, sourced from the spell, once per static
+(`player_statics.static_cascade_instances`, read by
+`triggers._candidate_abilities` as the cast's triggers are gathered). The
+caster is always the static's controller and the spell must have been cast.
+`affects_spells` is required: the printed face (`SPELL_FILTER_KEYS` without
+`controller`) plus `from_zone` / `not_from_zone`, the zone it was cast from.
+`max_mana_value` is a static value compared with the spell's mana value, its X
+included, re-read whenever the question is asked; the loader refuses it on any
+other static. `condition` is the ordinary "as long as".
+
+The near miss is a `spell_cast` trigger on the permanent running `cascade` with
+the subject's mana value as its ceiling: that ability is the permanent's, and
+it leaves with it.
 
 ## Discover — cascade's walk, N or less, cast or hand
 

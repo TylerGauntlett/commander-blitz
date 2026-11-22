@@ -19,6 +19,7 @@ from .structs import (
     AttackRestriction,
     AttackTax,
     BlockProhibition,
+    CascadeGrant,
     CastLock,
     CombatFog,
     CombatState,
@@ -45,6 +46,7 @@ from .structs import (
     UncounterableGrant,
 )
 from .temp_effects import (
+    bind_next_spell_cascade_grants,
     bind_next_spell_uncounterable_grants,
     consume_next_spell_discounts,
     consume_next_spell_flash_permissions,
@@ -490,6 +492,10 @@ class GameState:
     #: and swept in the cleanup step; empty in every game that plays none of
     #: these.
     uncounterable_grants: list[UncounterableGrant] = field(default_factory=list)
+    #: "The next creature spell you cast this turn has cascade" -- see
+    #: :class:`structs.CascadeGrant`. Bound by the cast in `_tally`, read by
+    #: `triggers._candidate_abilities` and swept in the cleanup step.
+    cascade_grants: list[CascadeGrant] = field(default_factory=list)
     #: "Until your next turn, your opponents can't cast spells from anywhere
     #: other than their hands" -- see :class:`structs.CastLock`.
     #:
@@ -1161,6 +1167,9 @@ class GameState:
                 # did not happen spends no ordinal.
                 ledger.life_losses[pid] = ledger.life_losses.get(pid, 0) + 1
                 data["nth"] = ledger.life_losses[pid]
+                # The amount is a static's input (`life_lost_this_turn`, Abaddon
+                # the Despoiler's ceiling), and `chars` caches per `char_version`.
+                self.bump_chars()
         elif event.type == EventType.LIFE_GAINED:
             # Witch of the Moors. Off the event rather than in `gain_life`, for
             # the reason every other tally here is: lifelink and the op both
@@ -1272,6 +1281,11 @@ class GameState:
                     bind_next_spell_uncounterable_grants(
                         self, pid, self.card(spell), data.get("sid")
                     )
+                # "The next creature spell you cast this turn has cascade"
+                # (Sloppity Bilepiper) -- bound here, before `collect` reads
+                # the event, so the spell has cascade as its cast triggers.
+                if self.cascade_grants and (spell := data.get("oid")) in self.objects:
+                    bind_next_spell_cascade_grants(self, pid, self.card(spell), data.get("sid"))
                 # The count is a static's input (`spells_cast_this_turn`, Captain
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.

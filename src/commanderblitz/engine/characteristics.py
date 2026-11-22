@@ -317,6 +317,21 @@ def last_exiled_creature_card(state: GameState, source: GameObject) -> GameObjec
     return None
 
 
+def last_exiled_card(state: GameState, source: GameObject) -> GameObject | None:
+    """The last card exiled with ``source`` that is still there, of any type.
+
+    "The exiled card" of a linked ability pair (607.2a) -- Drach'Nyen's "X is
+    the exiled card's power". `last_exiled_creature_card`'s walk without its
+    creature test: a card exiled as a creature is asked about as the card it is
+    in exile, whatever that is.
+    """
+    for oid in reversed(source.exiled_cards):
+        card = state.objects.get(oid)
+        if card is not None and card.zone is Zone.EXILE and card.exiled_by == source.oid:
+            return card
+    return None
+
+
 def printed_creature_types(card: CardDef) -> frozenset[str]:
     """The creature types a card **face** has wherever it is -- 205.3m and 604.3.
 
@@ -2330,6 +2345,17 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             state.card_of(obj).mana_cost.symbols_of_any(colors)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
         )
+    if "exiled_card_power" in expr:
+        # Drach'Nyen: "Equipped creature ... gets +X/+0, where X is the exiled
+        # card's power." The card linked to this source by its own exile
+        # (`exiled_cards`, so a previous incarnation's card is not found,
+        # 400.7), read off the card in exile with its CDAs (604.3); 0 once it
+        # has left exile or ceased to exist (a token), and 0 when nothing was
+        # exiled.
+        card = last_exiled_card(state, source)
+        if card is None:
+            return 0
+        return card_in_exile_characteristics(state, card)[0]
     if "greatest_commander_mana_value" in expr:
         # Tangleweave Armor: "+X/+X, where X is the greatest mana value among
         # your commanders." Read off the commander's printed card wherever it is
@@ -2470,6 +2496,14 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # step empties it.
         pids = _static_players(state, source, expr["life_gained_this_turn"])
         return sum(state.turn_ledger.life_gained.get(p, 0) for p in pids)
+    if "life_lost_this_turn" in expr:
+        # Abaddon the Despoiler: "…mana value X or less …, where X is the total
+        # amount of life your opponents have lost this turn." The effect side's
+        # loss tally in its bare player-spec form, summed. A pipeline input on
+        # `life_gained_this_turn`'s terms: `_tally` writes it off LIFE_LOST and
+        # bumps `char_version`, and the cleanup step empties it.
+        pids = _static_players(state, source, expr["life_lost_this_turn"])
+        return sum(state.turn_ledger.life_lost.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with
@@ -3640,7 +3674,10 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
         # Unbreathing Horde's shield is answered by `damage_removes_counters`,
         # later in `damage_permanent`: it prevents the same damage but also
         # costs a counter, so it is the last total shield applied, not this one.
+        # Khârn's is answered by `damage_prevented_with_effects` for the same
+        # reason: it prevents the same damage and then gives Khârn away.
         and not static.get("remove_counters")
+        and not static.get("effects")
         and (is_combat or not static.get("combat_only"))
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
@@ -3705,6 +3742,35 @@ def damage_removes_counters(
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, str(spec["counter"]), int(spec.get("amount", 1))
+    return None
+
+
+def damage_prevented_with_effects(
+    state: GameState, oid: int, *, is_combat: bool = False
+) -> tuple[GameObject, Mapping[str, Any]] | None:
+    """The total shield with a 615.5 rider on this permanent, if any.
+
+    "If damage would be dealt to Khârn the Betrayer, prevent that damage and
+    an opponent of your choice gains control of it." A `prevent_damage` static
+    with ``prevent_all`` and ``effects``: one prevention (615) whose additional
+    effect "takes place immediately afterward" (615.5), so the effects are run
+    by `primitives.damage_permanent` off the stack, as the `prevent_damage`
+    ops' "prevented this way" riders are, and never as a trigger.
+
+    Returns the first such static's source and the static, or ``None``. First
+    and not every one, for `damage_into_counters`' reason: once one shield has
+    prevented the damage there is none left for a second to replace (616.1).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage" or not static.get("effects"):
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return source_obj, static
     return None
 
 

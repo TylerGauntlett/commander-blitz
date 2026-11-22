@@ -3617,6 +3617,21 @@ happened this turn. A filter
 key is refused, as is anything that is not a player spec. `count` is the near
 miss: no filter over a board can say how much energy left a player this turn.
 
+### A reduction that reads the turn's dead
+
+```jsonc
+// Blood for the Blood God! — "This spell costs {1} less to cast for each
+//  creature that died this turn."
+"cost_reduction": { "creatures_died_this_turn": "all" }
+```
+
+The other ledger head: `{1}` less per creature in the `creatures_died_this_turn`
+value leaf, keyed by who controlled the creature as it died, so `"all"` is "each
+creature" (tokens included) and `"you"` is "each creature you controlled". It
+takes a player spec, not a filter, and anything else is refused. Generic only,
+like every reduction. `count` is the near miss: its filter walks a battlefield
+the dead have left.
+
 ### A target pool that only exists once X is known
 
 ```jsonc
@@ -3965,8 +3980,8 @@ card's own owner's copy of that zone.
 
 **Two axes, one per static.** `damage_multiplier` is "double that damage" (2 or
 more) and `damage_addend` is "that much damage plus N" (1 or more); the loader
-requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`
-and `gain_addend`. Several statics multiply and add independently, each applied
+requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`,
+`gain_addend` and `lose_instead`. Several statics multiply and add independently, each applied
 once to the event (614.5), so two Thors add 2. The near miss for the addend is a
 "whenever a source you control deals damage" trigger dealing 1 more: that is a
 second damage event on the stack, not a bigger one.
@@ -6828,7 +6843,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `lose_control` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
@@ -7943,6 +7958,7 @@ smaller than the effect-side `value_keys`:
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"cards_drawn_this_turn": …}` | how many cards the players have drawn this turn, off `GameState.cards_drawn_this_turn`; the bare player spec only, and `primitives.draw_cards` and the untap step's reset both bump `char_version`, so an anthem grows with each draw (Knowledge Is Power) |
 | `{"life_gained_this_turn": …}` | how much life the players have gained this turn, off `TurnLedger.life_gained`; the bare player spec only, and the LIFE_GAINED fold and the cleanup step both bump `char_version`. "If you gained life this turn" is a `cmp` `>` 0 — gained, not up on the turn, so a gain since lost still counts (Oathsworn Vampire's graveyard permission, on Gravecrawler's [`active_zones: ["graveyard"]` shape](card-dsl-cookbook.md)) |
+| `{"life_lost_this_turn": …}` | how much life the players have lost this turn, summed, off `TurnLedger.life_lost`; the bare player spec only, and the LIFE_LOST fold and the cleanup step both bump `char_version`. Abaddon the Despoiler's cascade ceiling, `{"life_lost_this_turn": "opponent"}` |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -8121,7 +8137,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn`, `creatures_died_this_turn`, `cards_drawn_this_turn`, `life_gained_this_turn` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn`, `creatures_died_this_turn`, `cards_drawn_this_turn`, `life_gained_this_turn`, `life_lost_this_turn` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |

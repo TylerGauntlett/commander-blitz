@@ -1,0 +1,18 @@
+{
+  "_comment": "Cards that exist only for tests/unit/ledger/test_cost_reduction_creatures_died.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_crd_blood` is Blood for the Blood God!'s price on a plain instant that draws a card: {6}{B}{R}, {1} less for each creature that died this turn. The dying creatures are `t_eb_bear` and the Eldrazi Scion token.",
+  "cards": [
+    {
+      "id": "t_crd_blood",
+      "name": "Test Blood Price",
+      "oracle_text": "This spell costs {1} less to cast for each creature that died this turn.\nDraw a card.",
+      "mana_cost": "{6}{B}{R}",
+      "types": ["Instant"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"],
+      "cost_reduction": {"creatures_died_this_turn": "all"},
+      "spell_effects": [
+        {"op": "draw", "text": "Draw a card.", "amount": {"const": 1}}
+      ]
+    }
+  ]
+}

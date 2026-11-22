@@ -903,7 +903,11 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
         elif card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
-            ok = yield from pay(state, pid, card.retrace_cost, None)
+            # The card being cast is the cost's source, as it is where legality
+            # priced the line: Helbrute's "exiling *another* creature card"
+            # (`exclude_self`) must not offer the card itself, still in the
+            # graveyard while its costs are paid.
+            ok = yield from pay(state, pid, card.retrace_cost, oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
@@ -1123,6 +1127,15 @@ class Game:
         permission_exiles = (
             obj.playable_exiles and obj.playable_live(state.turn)
         ) or graveyard_flashback
+        # "When you cast a spell this way, …" (The Ruinous Powers): the
+        # permission's own reflexive ability, read off the same live grant and
+        # before `push_spell` moves the card and clears it. Only the holder's
+        # cast is "this way".
+        cast_this_way = (
+            obj.playable_cast_trigger
+            if obj.playable_by == pid and obj.playable_live(state.turn)
+            else None
+        )
 
         item = stack.push_spell(
             state,
@@ -1230,6 +1243,10 @@ class Game:
             # left the stack; `targets_of_spell` is the live question.
             spell_target_count=len(item.targets),
         )
+        if cast_this_way is not None:
+            # After the cast event, so the ability sits with the spell's other
+            # cast triggers and goes on the stack above the spell (603.3).
+            triggers.queue_cast_this_way(state, cast_this_way, oid, pid)
 
     def _activate(self, pid: int, action: Action) -> Generator[Any, list[int]]:
         state = self.state

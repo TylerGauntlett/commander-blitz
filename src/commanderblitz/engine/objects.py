@@ -18,7 +18,7 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import AttackMark, CastRider, PermanentShield, TempEffect
+from .structs import AttackMark, CastRider, CastThisWayLink, PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data,
 #: except a P/T-modifying spelling (`pt_counter`), which any kind may be.
@@ -838,6 +838,9 @@ class GameObject:
     #: graveyard -- repeatable for the rest of the turn, and strictly better
     #: than the printed card.
     playable_exiles: bool = False
+    #: "When you cast a spell this way, …" (The Ruinous Powers): the reflexive
+    #: ability the permission fires when it is used. See `CastThisWayLink`.
+    playable_cast_trigger: CastThisWayLink | None = None
     #: Whether this object was cast for its **overload** cost. Same contract as
     #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
     #: permanent's own enters trigger may read it.
@@ -1617,6 +1620,7 @@ class GameObject:
         self.playable_sorcery_only = False
         self.playable_cast_only = False
         self.playable_exiles = False
+        self.playable_cast_trigger = None
         self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False

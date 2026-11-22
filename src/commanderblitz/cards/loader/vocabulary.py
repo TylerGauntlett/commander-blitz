@@ -334,6 +334,13 @@ STATIC_EFFECTS = frozenset(
         # never at scheduling time, so a turn queued before the permanent arrived
         # is still skipped. Only extra turns -- the ordinary order has no reader.
         "skip_extra_turn",
+        # "Each opponent must attack with at least one creature each combat if
+        # able." Seeker of Slaanesh. A requirement on a *player's* declaration
+        # rather than on any creature (508.1d), so it is not `attacks_if_able`
+        # with an `affects`: that compels every creature it matches. Read by
+        # `combat.attack_with_one_unmet`, which withholds "Done attacking" from
+        # an empty declaration while some creature could attack for free.
+        "must_attack_with_at_least_one_creature",
         # "You may play lands from your graveyard." Crucible of Worlds; with an
         # optional `affects_spells` on the printed face, "You may play
         # **Desert** lands from your graveyard" (Hazezon, Shaper of Sand). Read
@@ -492,6 +499,12 @@ STATIC_EFFECTS = frozenset(
         # player casts, which the card-level `uncounterable` flag cannot make:
         # that one is a card saying it about itself.
         "spells_cant_be_countered",
+        # "Spells you cast from your hand with mana value X or less have
+        # cascade" -- Abaddon the Despoiler. Read by `triggers.collect` off a
+        # spell on the stack, through `player_statics.static_cascade_instances`,
+        # rather than by the characteristics pipeline: what it grants is the
+        # rules' cascade trigger, and a spell is not a permanent.
+        "spells_have_cascade",
         # Vorinclex's two halves.  Both are read at the mana choke point rather
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.
@@ -577,6 +590,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Khârn the Betrayer's "attacks or blocks each combat if able", the
+        # blocking half (the attacking half is `attacks_if_able` beside it):
+        # the continuous twin of the `must_block_any` op, read live by
+        # `player_statics.block_compelled` at the op's enforcement point,
+        # `combat.block_any_required`. A static rather than the op because the
+        # printed line binds every combat for as long as it applies, where the
+        # op records one turn.
+        "blocks_if_able",
         # Coercive Impetus and the Impetus cycle: "Enchanted creature … is
         # goaded." Goad held as a continuous effect (701.38), read by
         # `player_statics.goaders` beside the `goad` op's mark. Neither
@@ -967,6 +988,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "maximum_hand_size",
         "skip_draw_step",
         "skip_extra_turn",
+        "must_attack_with_at_least_one_creature",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
@@ -1488,6 +1510,11 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: value leaf of the same name reads, taking a player spec rather than a
 #: filter. A ledger is answerable at pricing time -- it is written only by
 #: `GameState._tally`, never by anything on the stack.
+#: ``creatures_died_this_turn`` is Blood for the Blood God!'s "{1} less for
+#: each creature that died this turn": the same per-turn ledger the value leaf
+#: of the same name reads (keyed by the creature's controller as it died), so
+#: it takes a player spec -- ``"all"`` for any controller. `count` is the near
+#: miss and cannot say it: a dead creature is no longer on the battlefield.
 #: ``distinct_mana_values`` is Eris, Roar of the Storm's "for each **different**
 #: mana value among instant and sorcery cards in your graveyard": a count of
 #: printed mana values rather than of cards, so two instants of mana value 2
@@ -1495,6 +1522,7 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 COST_REDUCTION_KEYS = frozenset(
     {
         "count",
+        "creatures_died_this_turn",
         "distinct_mana_values",
         "energy_spent_this_turn",
         "greatest_count",
@@ -1843,6 +1871,14 @@ STATIC_DRAWS_KEYS = frozenset({"cards_drawn_this_turn"})
 #: `creatures_died_this_turn`'s terms, and takes the same bare player specs.
 STATIC_LIFE_GAINED_KEYS = frozenset({"life_gained_this_turn"})
 
+#: The per-turn life-loss leaf -- Abaddon the Despoiler's "mana value X or less
+#: …, where X is the total amount of life your opponents have lost this turn".
+#: `TurnLedger.life_lost` is written only by `GameState._tally` folding
+#: LIFE_LOST and emptied only by the cleanup step, never by a layer, and both
+#: funnels bump `char_version`. So it is a pipeline input on
+#: `life_gained_this_turn`'s terms, and takes the same bare player specs.
+STATIC_LIFE_LOST_KEYS = frozenset({"life_lost_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1881,6 +1917,12 @@ STATIC_LIFE_GAINED_KEYS = frozenset({"life_gained_this_turn"})
 #: graveyard": the effect side's leaf held to ``of: "card_type"`` over a counting
 #: filter off the battlefield, where a card's types are its printed face's and no
 #: layer can change them.
+#: `exiled_card_power` is Drach'Nyen's "+X/+0, where X is the exiled card's
+#: power": the power of the last card linked to this source by its own exile
+#: (607.2a, `exiled_cards`) that is still in exile, read off the card there
+#: with its characteristic-defining abilities (604.3) as Duplicant's size is.
+#: ``"self"`` only. A pipeline input: the link is written by `link_exiled` and
+#: the card's characteristics in exile are its printed ones.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1896,6 +1938,7 @@ STATIC_VALUE_KEYS = (
             "commander_casts_this_game",
             "extreme_value",
             "distinct",
+            "exiled_card_power",
         }
     )
     | STATIC_LIFE_KEYS
@@ -1906,6 +1949,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_DEATHS_KEYS
     | STATIC_DRAWS_KEYS
     | STATIC_LIFE_GAINED_KEYS
+    | STATIC_LIFE_LOST_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

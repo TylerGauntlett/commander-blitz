@@ -15,6 +15,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import (
+    CASCADE_TRIGGER,
     CLOAK_WARD,
     DECAYED_TRIGGER,
     DETHRONE_TRIGGER,
@@ -54,9 +55,15 @@ from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .mana import origin_matches
 from .objects import GameObject
-from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
+from .player_statics import (
+    commander_subtypes,
+    goaders,
+    players_doubling_land_triggers,
+    static_cascade_instances,
+)
 from .state import MAX_TRIGGERS_PER_STEP
-from .structs import DelayedTrigger, TriggerInstance
+from .structs import CastThisWayLink, DelayedTrigger, TriggerInstance
+from .temp_effects import granted_cascade_instances
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -483,6 +490,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: event existed; what did not was the untap *step* saying which permanents
     #: it untapped, which is where inspired fires nearly every time.
     "becomes_untapped": EventType.UNTAPPED,
+    #: "When you lose control of this permanent, …" (Khârn the Betrayer's
+    #: Sigil of Corruption). Every control change goes through
+    #: `primitives.change_control`, which fires CONTROL_CHANGED with ``from``
+    #: and ``to``; nothing listened. Self only (the loader supplies
+    #: `source: "self"`), and the ability is controlled by the player who
+    #: **lost** control: 603.10a makes "a player loses control of an object"
+    #: a look-back trigger, so it triggers as the permanent was before the
+    #: event, and 603.3a gives the ability to the player who controlled its
+    #: source then -- ``from``, not the permanent's controller now. See
+    #: `_queue`.
+    "lose_control": EventType.CONTROL_CHANGED,
     #: "Whenever this creature becomes tapped, …" -- the Legolas's Quick Reflexes
     #: grant, City of Brass, the whole Kithkin/rogue lineage. `EventType.TAPPED`
     #: has fired from `primitives.tap_permanent` since tapping existed and simply
@@ -778,6 +796,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # scopes them to the creature that was, or was not, blocked.
         "becomes_blocked",
         "attacks_unblocked",
+        # The permanent that changed hands, so `source: "self"` is "control of
+        # *this* permanent".
+        "lose_control",
         # The permanent that untapped, and the one that tapped.
         "becomes_untapped",
         "becomes_tapped",
@@ -1626,6 +1647,13 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             continue
         seen.add(item.oid)
         yield from emit_from(obj, Zone.STACK)
+        # A spell that was *given* cascade (702.85a) -- "the next creature
+        # spell you cast this turn has cascade" -- has the rules' trigger once
+        # per instance (702.85c), with the spell itself as the source.
+        # The same for a static that gives matching spells cascade (Abaddon
+        # the Despoiler), read as the cast is.
+        for _ in range(granted_cascade_instances(state, item) + static_cascade_instances(state, item)):
+            yield obj, CASCADE_TRIGGER
 
     for p in state.players:
         for zone in (Zone.COMMAND, Zone.GRAVEYARD, Zone.HAND, Zone.EXILE):
@@ -1994,7 +2022,10 @@ def _matches(
         elif _ordinal(state, spec, event, obj) != spec.nth:
             return False
 
-    actor = _actor(state, spec.event, event, subject_oid)
+    # "When **you** lose control of": the actor is the player who lost it, and
+    # that is the ability's controller by `_queue`'s 603.3a, never the
+    # permanent's controller now -- so no `controller` clause is compared.
+    actor = None if spec.event == "lose_control" else _actor(state, spec.event, event, subject_oid)
     if actor is not None:
         if spec.controller == "you" and actor != obj.controller:
             return False
@@ -3353,6 +3384,12 @@ def _queue(
         bindings["moved"] = [bindings["subject"]] if "subject" in bindings else []
 
     card = state.card_of(obj)
+    # 603.3a: the player who controlled the source when it triggered. For a
+    # look-back "when you lose control of" (603.10a) that is the seat control
+    # moved *from*; by now `obj.controller` is the seat it moved to.
+    controller = obj.controller
+    if spec.event == "lose_control" and event.data.get("from") is not None:
+        controller = int(event.data["from"])
     # `ability_index` is read back against whichever list `granted_by` names, so
     # the two are settled together -- see `_granter_of`.
     granted_by, ability_index = _granter_of(state, obj, ability)
@@ -3360,7 +3397,7 @@ def _queue(
         TriggerInstance(
             source_oid=obj.oid,
             ability_index=ability_index,
-            controller=obj.controller,
+            controller=controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
             # Snapshotted now, while the object still exists -- see
@@ -3371,7 +3408,7 @@ def _queue(
     )
     state.emit(
         EventType.ABILITY_TRIGGERED,
-        player=obj.controller,
+        player=controller,
         source=obj.oid,
         # The client names the source from this; without it every trigger in
         # the log and the effects layer read "An ability triggers", which is
@@ -3649,3 +3686,42 @@ def drain_to_stack(state: GameState):
     for trig in order:
         yield from push_triggered_ability(state, trig)
         state.pending_triggers = [t for t in state.pending_triggers if t is not trig]
+
+
+def queue_cast_this_way(state: GameState, link: CastThisWayLink, spell_oid: int, pid: int) -> None:
+    """Fire a permission's "when you cast a spell this way, …" for ``spell_oid``.
+
+    The Ruinous Powers. The ability is a ``kind: "reflexive"`` one on the
+    granting card, fired by the cast itself rather than by a `reflexive_trigger`
+    op: the instruction it reflects on is "you may play that card", carried out
+    when ``pid`` casts under it. The spell is bound as ``subject``, the shape a
+    `spell_cast` trigger binds it in, so "its owner" and "its mana value" read
+    the spell. ``def_id`` is the snapshot `stack.ability_of` falls back on once
+    the source has left.
+    """
+    card = state.registry.get(link.def_id) if link.def_id in state.registry else None
+    ability = (
+        card.abilities[link.ability_index]
+        if card is not None and link.ability_index < len(card.abilities)
+        else None
+    )
+    name = card.name if card is not None else "?"
+    text = ability.text if ability is not None and ability.text else "cast this way"
+    state.pending_triggers.append(
+        TriggerInstance(
+            source_oid=link.source,
+            ability_index=link.ability_index,
+            controller=link.controller,
+            bindings={"self": link.source, "subject": spell_oid, "event_player": pid},
+            description=f"{name}: {text}",
+            def_id=link.def_id,
+        )
+    )
+    state.emit(
+        EventType.ABILITY_TRIGGERED,
+        player=link.controller,
+        source=link.source,
+        card=link.def_id,
+        ability=link.ability_index,
+        trigger="cast_this_way",
+    )

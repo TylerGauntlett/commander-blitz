@@ -15,6 +15,7 @@ from ..stack import pull_spell_off_stack
 from ..temp_effects import sacrifice_forbidden
 from ..turn import phase_in, phase_out
 from ..zones import (
+    cast_this_way_link,
     destroy,
     end_permissions_until_next_exile,
     exile,
@@ -419,6 +420,10 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # carried onto the stack item by the cast made under it.
                 obj.playable_exiles = bool(spec.get("playable_exiles"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
+                # "When you cast a spell this way, …" (The Ruinous Powers).
+                obj.playable_cast_trigger = cast_this_way_link(
+                    ctx.state, ctx.source_oid, ctx.controller, spec.get("playable_cast_trigger")
+                )
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.

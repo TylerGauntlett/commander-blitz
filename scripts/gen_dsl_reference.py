@@ -219,7 +219,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  'Hideaway — "that one, from there"'),
     "play_exiled": ("Cards", "Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                     '"You may play the exiled card this turn" — impulse draw'),
-    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard.",
+    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it; `playable_pay_life_instead` prices them in life equal to their mana value instead; `limit` caps one resolution's cards at that many plays; `playable_cast_only` narrows it to casting, so no land is played; `playable_exiles` exiles the spell cast under it instead of putting it into a graveyard; `playable_cast_trigger` names a reflexive ability fired when a spell is cast under it.",
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `max_per_turn` caps the casts, `grants_flashback` exiles each, `unmetered` declares neither; `escape` grants them escape instead, at that cost only.",
                              "Casting out of every graveyard, until end of turn"),
@@ -458,6 +458,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 H_COUNTER_TO_EXILE),
     "uncounterable_this_turn": ("Stack", "Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source.",
                                 '"Creature spells you cast this turn can\'t be countered"'),
+    "next_spell_gains_cascade": ("Stack", "The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself.",
+                                 "A spell given cascade — `next_spell_gains_cascade`"),
     "copy_spell": ("Stack", "Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed.",
                    '"You may choose new targets for the copy"'),
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),
@@ -844,6 +846,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                               "card is drawn; the bare player spec only.", None),
     "life_gained_this_turn": ("Life a player spec's players have gained this turn, re-read as each "
                               "gain happens; the bare player spec only.", None),
+    "life_lost_this_turn": ("Life a player spec's players have lost this turn, summed and re-read as "
+                            "each loss happens; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),
@@ -851,6 +855,9 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                       None),
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
+    "exiled_card_power": ("The power of the card this permanent exiled, while it stays in exile; "
+                          "`\"self\"` only, 0 with none.",
+                          "A size read off the card this permanent exiled"),
     "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; or `{player, filter}` "
                               "for spells of a type, matched on printed faces.",
                               '"As long as an opponent has cast a spell this turn"'),
@@ -933,6 +940,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                              "Vanishing — a permanent that counts itself out"),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
+    "lose_control": ("You lose control of this permanent; the ability is the former "
+                     "controller's (603.10a).", "When you lose control of it"),
     "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
                   '"Whenever an opponent loses life"'),
     "investigates": ("A player investigates, once per investigation; `nth` counts that player's investigations this turn.",
@@ -989,6 +998,8 @@ STATICS: dict[str, Entry] = {
                         "(`defending`: only a named player obeys it).", "The continuous form"),
     "black_mana_as_phyrexian": ("The player may pay life for each {B} in a cost.",
                                 '`black_mana_as_phyrexian` — K\'rrik\'s "For each {B} in a cost"'),
+    "blocks_if_able": ("Matching creatures block each combat if able (any attacker obeys it).",
+                       "Block requirements"),
     "block_restriction": ("Matching creatures can't block, or can only block under a rule.",
                           "Block restrictions"),
     "block_tax": ("Matching creatures can't block unless their controller pays.",
@@ -1091,6 +1102,8 @@ STATICS: dict[str, Entry] = {
                        "Player-wide statics"),
     "mana_becomes_colorless": ("Unspent mana the player would lose becomes colorless instead.",
                                "Player-wide statics"),
+    "must_attack_with_at_least_one_creature": ("The player must attack with at least one creature each combat if able.",
+                                               '"…must attack with at least one creature" — a requirement on a player'),
     "no_hand_limit": ("The player has no maximum hand size.", None),
     "maximum_hand_size": ("The player's maximum hand size is N; the newest hand-size effect wins.",
                           "Player-wide statics"),
@@ -1108,7 +1121,7 @@ STATICS: dict[str, Entry] = {
     "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
-    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, or all of it at the cost of N +1/+1 counters) or N of each damage to a seat from a matching dealer.",
+    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer.",
                        "Absorb, which is not protection with a number"),
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",
@@ -1122,7 +1135,7 @@ STATICS: dict[str, Entry] = {
     "replace_empty_draw": ("If the player would draw from an empty library, something else happens.",
                            None),
     "replace_graveyard": ("If a matching card would go to a graveyard, it goes elsewhere.", None),
-    "replace_life_gain": ("If the player would gain life, they gain more instead.",
+    "replace_life_gain": ("If the player would gain life, they gain more, or lose that much, instead.",
                           '"If you would gain life, you gain twice that much life instead"'),
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),
@@ -1155,6 +1168,8 @@ STATICS: dict[str, Entry] = {
                             "Making *other* spells cost more, in life"),
     "spell_cost_reduction": ("Matching spells cost less to cast.", "Making *other* spells cheaper"),
     "spells_cant_be_countered": ("Matching spells can't be countered.", H_CANT_COUNTER),
+    "spells_have_cascade": ("Matching spells you cast (`affects_spells`, with its origin zone) with mana value `max_mana_value` or less have cascade.",
+                            "Spells a static gives cascade — `spells_have_cascade`"),
     "spend_mana_as_any_color": ("The player may spend mana as though it were any color.",
                                 "`spend_mana_as_any_color` — Chromatic Orrery's colour waiver"),
     "untap_during_each_untap_step": ("Matching permanents untap during each other player's untap step too.",
@@ -1166,6 +1181,9 @@ STATICS: dict[str, Entry] = {
 COST_REDUCTION: dict[str, Entry] = {
     "amount": ("Costs N less (usually gated on a `condition`).", H_CHEAPER),
     "count": ("Costs {1} less for each object a filter finds.", H_CHEAPER),
+    "creatures_died_this_turn": ("Costs {1} less for each creature that died this turn "
+                                 "under the named players.",
+                                 "A reduction that reads the turn's dead"),
     "distinct_mana_values": ("…for each different printed mana value among a filter's objects.",
                              "A reduction that counts mana values"),
     "energy_spent_this_turn": ("Costs {1} less for each {E} a player paid or lost this turn.",

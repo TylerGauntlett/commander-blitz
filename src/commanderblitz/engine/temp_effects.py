@@ -29,6 +29,7 @@ from .structs import (
     AttackRestriction,
     AttackTax,
     BlockProhibition,
+    CascadeGrant,
     CastLock,
     CombatFog,
     DamageRedirect,
@@ -877,6 +878,67 @@ def clear_uncounterable_grants(state: GameState, duration: str) -> None:
         grant
         for grant in state.uncounterable_grants
         if grant.duration != duration or (grant.sid is not None and grant.sid in live)
+    ]
+
+
+def grant_next_spell_cascade(
+    state: GameState,
+    pid: int,
+    *,
+    affects_spells: Mapping[str, Any] | None = None,
+    source: int | None = None,
+) -> None:
+    """``pid``'s next spell matching ``affects_spells`` this turn has cascade.
+
+    Never deduplicated: two Bilepiper activations are two instances of cascade
+    on the same next creature spell, and each triggers separately (702.85c).
+    """
+    state.cascade_grants.append(
+        CascadeGrant(
+            player=pid,
+            affects_spells=dict(affects_spells) if affects_spells else None,
+            source=source,
+        )
+    )
+
+
+def bind_next_spell_cascade_grants(
+    state: GameState, pid: int, card: CardDef, sid: int | None
+) -> None:
+    """Spend every unbound cascade grant this cast answers on this spell.
+
+    `bind_next_spell_uncounterable_grants`' fold, for its reason: every cast
+    road passes through `GameState._tally`, and it runs before `triggers.collect`
+    reads the SPELL_CAST event -- so the spell already has cascade when its own
+    cast triggers are gathered. A grant whose filter this spell misses waits.
+    """
+    if sid is None:
+        return
+    state.cascade_grants = [
+        replace(grant, sid=sid)
+        if grant.sid is None
+        and grant.player == pid
+        and (not grant.affects_spells or _matches_printed(card, grant.affects_spells))
+        else grant
+        for grant in state.cascade_grants
+    ]
+
+
+def granted_cascade_instances(state: GameState, item: StackItem) -> int:
+    """How many instances of cascade one-shot grants have given this spell."""
+    if not state.cascade_grants or not item.is_spell:
+        return 0
+    return sum(1 for grant in state.cascade_grants if grant.sid is not None and grant.sid == item.sid)
+
+
+def clear_cascade_grants(state: GameState) -> None:
+    """Drop the cascade grants at cleanup: unspent ones end with "this turn", and
+    a spent one keeps only while its spell is still on the stack."""
+    if not state.cascade_grants:
+        return
+    live = {item.sid for item in state.stack}
+    state.cascade_grants = [
+        grant for grant in state.cascade_grants if grant.sid is not None and grant.sid in live
     ]
 
 

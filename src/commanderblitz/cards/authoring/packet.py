@@ -858,6 +858,10 @@ def reference() -> dict:
             " after \"you may cast it\" is `playable_exiles: true` on the same"
             " `exile` or `grant_playable` permission (it holds when the spell is"
             " countered or fizzles too);"
+            " \"when you cast a spell this way, …\" is `playable_cast_trigger:"
+            " \"<id>\"` on the same `exile`, `look_at_top` or `grant_playable`"
+            " permission, naming a `kind: \"reflexive\"` ability with that `id`"
+            " on the card, whose effects read the spell as `subject`;"
             " \"you may play one of those cards\" is `grant_playable` with"
             " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
@@ -877,6 +881,11 @@ def reference() -> dict:
             " `reflexive_trigger` whose ability reads `{\"binding\": \"paid\"}`."
             " The player picks 1..what they can pay in that colour. NOT `x`"
             " with `{X}` (any colour would pay), NOT `pay.times`, NOT `repeat`.",
+            "\"Equipped creature gets +X/+0, where X is the exiled card's"
+            " power\" beside \"When this enters, exile up to one target"
+            " creature\" is a `buff` static with `power: {\"exiled_card_power\":"
+            " \"self\"}`, the trigger's `exile` carrying `link: true`. NOT"
+            " `power_of` (read once) and NOT `extreme_value`.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
@@ -884,7 +893,11 @@ def reference() -> dict:
             " it is NOT a `you_gain_life` trigger that gains again. \"You gain"
             " that much life plus 1 instead\" is the same static with"
             " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
-            " never both).",
+            " never both). \"If an opponent would gain life, that player loses"
+            " that much life instead\" is the same static with"
+            " `affects_player: \"opponent\"` and `lose_instead: true` (no"
+            " `LIFE_GAINED`; NOT `cant_gain_life`, NOT a `you_gain_life`"
+            " trigger with `lose_life`).",
             "\"It deals that much damage plus 1 instead\" is the static"
             " `replace_damage` with `damage_addend: 1` in place of"
             " `damage_multiplier` (one or the other, never both), filtered as"
@@ -1005,7 +1018,9 @@ def reference() -> dict:
             " filter, `amount` is a flat number and needs a `condition`,"
             " `energy_spent_this_turn` takes a player spec (\"{1} less for each"
             " {E} you've paid or lost this turn\" is"
-            " `{\"energy_spent_this_turn\": \"you\"}`) -- and"
+            " `{\"energy_spent_this_turn\": \"you\"}`), and so does"
+            " `creatures_died_this_turn` (\"{1} less for each creature that died"
+            " this turn\" is `{\"creatures_died_this_turn\": \"all\"}`) -- and"
             " a filter may use `cost_reduction_filter_keys` only. Every key in"
             " that list is honoured, so \"for each legendary creature you"
             " control\" is"

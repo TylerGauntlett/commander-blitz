@@ -890,12 +890,12 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         0,
         [
             *_props(registry, OWN_GRAVEYARD_ROLES + spare_graveyard_roles(under_test)),
-            *graveyard_spell_props(registry, under_test, 0),
+            *graveyard_target_props(registry, under_test, 0),
         ],
     )
-    # Player 1's graveyard is empty for every card but one that targets an
-    # instant or sorcery card in it -- see `graveyard_spell_props`.
-    if opponent_yard := graveyard_spell_props(registry, under_test, 1):
+    # Player 1's graveyard is empty for every card but one that must target an
+    # instant, sorcery or creature card in it -- see `graveyard_target_props`.
+    if opponent_yard := graveyard_target_props(registry, under_test, 1):
         builder.graveyard(1, opponent_yard)
     # Forty cards, and the **second** one is deliberately not a land. The pile
     # used to be forty basic lands, which made Cultivator Colossus -- "put a
@@ -1058,15 +1058,16 @@ def spare_graveyard_roles(card: CardDef | None) -> tuple[str, ...]:
 
 
 _SPELL_TYPES = frozenset({"Instant", "Sorcery"})
+_CREATURE_TYPES = frozenset({"Creature"})
 
 
-def _graveyard_spell_specs(card: CardDef | None, seat: int) -> list[Any]:
-    """``card``'s required spell targets that want an instant or sorcery card in ``seat``'s graveyard.
+def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[str]) -> list[Any]:
+    """``card``'s required spell targets that want a card of ``kinds`` in ``seat``'s graveyard.
 
     Only the spell's own ``targets``: an ability's are the activated-ability
     test's business, and an ``optional`` or ``up_to`` spec is castable with no
     choice at all (Mizzix's Mastery, Finale of Promise), so it needs no prop.
-    "Selects Instant/Sorcery" means its ``types`` or ``any_types`` name nothing
+    "Selects ``kinds``" means its ``types`` or ``any_types`` name nothing
     else. Seat 0 is "your graveyard", the default; seat 1 is a selector whose
     ``controller`` or ``owner`` is ``opponent``.
     """
@@ -1082,12 +1083,17 @@ def _graveyard_spell_specs(card: CardDef | None, seat: int) -> list[Any]:
         named = {str(t) for t in selector.get("types") or ()} | {
             str(t) for t in selector.get("any_types") or ()
         }
-        if not named or not named <= _SPELL_TYPES:
+        if not named or not named <= kinds:
             continue
         whose = selector.get("controller", selector.get("owner", "you"))
         if {"you": 0, "opponent": 1}.get(str(whose)) == seat:
             out.append(spec)
     return out
+
+
+def _graveyard_spell_specs(card: CardDef | None, seat: int) -> list[Any]:
+    """``card``'s required spell targets that want an instant or sorcery card in ``seat``'s graveyard."""
+    return _graveyard_target_specs(card, seat, _SPELL_TYPES)
 
 
 def quiet_graveyard_spell(registry: CardRegistry, selector: Any) -> str | None:
@@ -1122,24 +1128,57 @@ def quiet_graveyard_spell(registry: CardRegistry, selector: Any) -> str | None:
     return None
 
 
-def graveyard_spell_props(registry: CardRegistry, card: CardDef | None, seat: int) -> list[str]:
-    """Instant or sorcery cards for ``seat``'s sandbox graveyard, if ``card`` must target one there.
+def quiet_graveyard_creature(registry: CardRegistry, selector: Any) -> str | None:
+    """The quietest creature card ``selector``'s types accept, or None if the pool has none.
+
+    The prop is not merely pointed at: Nurgle's Conscription puts it onto the
+    battlefield under your control, so it must carry **no abilities** -- no
+    enters trigger, no static, no replacement to fold into the verdict -- and
+    be neither legendary (the opponent's board holds the position's one
+    legend) nor a token nor a face of another card. The fewest keywords, then
+    the id, so the position is identical run to run: :func:`quiet_tribal_body`'s
+    standard.
+    """
+    types = {str(t) for t in selector.get("types") or ()}
+    either = {str(t) for t in selector.get("any_types") or ()}
+    match = sorted(
+        (
+            c
+            for c in registry
+            if c.is_creature
+            and not c.is_token
+            and c.front_face is None
+            and "Legendary" not in c.supertypes
+            and types <= set(c.types)
+            and (not either or either & set(c.types))
+            and not c.abilities
+        ),
+        key=lambda c: (len(c.keywords), c.id),
+    )
+    return match[0].id if match else None
+
+
+def graveyard_target_props(registry: CardRegistry, card: CardDef | None, seat: int) -> list[str]:
+    """Cards for ``seat``'s sandbox graveyard, if ``card`` must target one there.
 
     The sandbox graveyards hold creature cards (player 0's) or nothing (player
     1's), so a spell with a mandatory "target instant or sorcery card from your
     graveyard" (Surge to Victory) or "... from an opponent's graveyard" (Arcane
-    Heist) had no legal choice, could not be cast (601.2c), and gate 4 rejected
-    a correct card as "not playable in the sandbox". Marking the target
-    optional would describe a different card, so the prop is added rather than
-    the gate relaxed -- the call `small_creature` and
+    Heist), or "target creature card from an opponent's graveyard" (Nurgle's
+    Conscription), had no legal choice, could not be cast (601.2c), and gate 4
+    rejected a correct card as "not playable in the sandbox". Marking the
+    target optional would describe a different card, so the prop is added
+    rather than the gate relaxed -- the call `small_creature` and
     :func:`spare_graveyard_roles` record.
 
-    **Only** for a card :func:`_graveyard_spell_specs` names, one card per
-    target the spec counts, so every other card's graveyards -- and every
-    authored `graveyard_size` -- are what they were. An addition rather than a
-    swap, since the creature props in player 0's graveyard are load-bearing for
+    An instant or sorcery card in either seat; a creature card only in the
+    opponent's, since your graveyard already holds two. **Only** for a card
+    :func:`_graveyard_target_specs` names, one card per target the spec
+    counts, so every other card's graveyards -- and every authored
+    `graveyard_size` -- are what they were. An addition rather than a swap,
+    since the creature props in player 0's graveyard are load-bearing for
     reanimation and the opponent's graveyard has no slot to swap. Returns
-    nothing when the pool has no quiet instant or sorcery, and the card then
+    nothing when the pool has no quiet card of the kind, and the card then
     fails gate 4 honestly.
     """
     out: list[str] = []
@@ -1147,6 +1186,11 @@ def graveyard_spell_props(registry: CardRegistry, card: CardDef | None, seat: in
         pick = quiet_graveyard_spell(registry, spec.selector)
         if pick is not None:
             out.extend([pick] * spec.count)
+    if seat == 1:
+        for spec in _graveyard_target_specs(card, seat, _CREATURE_TYPES):
+            pick = quiet_graveyard_creature(registry, spec.selector)
+            if pick is not None:
+                out.extend([pick] * spec.count)
     return out
 
 
@@ -2404,13 +2448,64 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
-#: "You may cast this card from your graveyard by discarding a [land] card in
-#: addition to paying its other costs." The noun, when printed, is the card
-#: type the discard is narrowed to.
+#: "You may cast this card from your graveyard by <paying> in addition to
+#: paying its other costs." The group is the printed payment, which
+#: `_printed_graveyard_additional_cost` reads into the one `Cost` it means.
 _GRAVEYARD_ADDITIONAL_LINE = re.compile(
-    r"you may cast (?:~|this card) from your graveyard by discarding an? "
-    r"(?:(\w+) )?card in addition to paying its other costs"
+    r"you may cast (?:~|this card) from your graveyard by (.+?) "
+    r"in addition to paying its other costs"
 )
+#: "discarding a [land] card": the noun, when printed, is the card type the
+#: discard is narrowed to.
+_GRAVEYARD_ADDITIONAL_DISCARD = re.compile(r"discarding an? (?:(\w+) )?card")
+#: "exiling another [creature] card from your graveyard" (Helbrute), or "a(n)"
+#: for "another": "another" is `exclude_self`, the noun the card type the
+#: exile is narrowed to.
+_GRAVEYARD_ADDITIONAL_EXILE = re.compile(
+    r"exiling (?:(another) |an? )(?:(\w+) )?card from your graveyard"
+)
+
+
+def _printed_graveyard_additional_cost(payment: str) -> Cost | None:
+    """The one `Cost` a printed graveyard-cast payment means, or None.
+
+    Only spellings with exactly one reading: the discard of a (typed) card, or
+    the exile of one (typed, "another") card from your own graveyard. Anything
+    else is not a payment this claim can read, and the line stays residual.
+    """
+    if match := _GRAVEYARD_ADDITIONAL_DISCARD.fullmatch(payment):
+        noun = match.group(1)
+        if noun is None:
+            return Cost(discard=1)
+        return Cost(discard=1, discard_selector={"types": [noun.capitalize()]})
+    if match := _GRAVEYARD_ADDITIONAL_EXILE.fullmatch(payment):
+        another, noun = match.groups()
+        spec: dict[str, Any] = {"count": 1}
+        if noun is not None:
+            spec["types"] = [noun.capitalize()]
+        if another:
+            spec["exclude_self"] = True
+        return Cost(exile_from_graveyard=spec)
+    return None
+
+
+def _canonical_graveyard_exile(cost: Cost) -> Cost:
+    """``cost`` with its graveyard-exile spec written out the way it is read.
+
+    `costs._graveyard_pool` defaults ``count`` to 1 and ``controller`` to you,
+    and ``as``/``link`` name the exiled cards without narrowing them, so an
+    author's ``{"types": ["Creature"]}`` and the printed reading's
+    ``{"count": 1, "types": ["Creature"]}`` are the same payment.
+    """
+    if not cost.exile_from_graveyard:
+        return cost
+    spec = {k: v for k, v in cost.exile_from_graveyard.items() if k not in ("as", "link")}
+    spec["count"] = int(spec.get("count", 1) or 1)
+    if spec.get("controller") == "you":
+        del spec["controller"]
+    if not spec.get("exclude_self"):
+        spec.pop("exclude_self", None)
+    return replace(cost, exile_from_graveyard=spec)
 
 def _claims_numbered_line(card: CardDef, stripped: str, word: str, n: int) -> bool:
     """Whether a printed keyword line holding "<word> N" is exactly this card's.
@@ -2579,19 +2674,21 @@ def _covered(card: CardDef, line: str) -> bool:
         return match is not None and _declares_printed_cost(match.group(1), card.strive)
 
     # "You may cast this card from your graveyard by discarding a card in
-    # addition to paying its other costs." (Dragon Man, Reformed Robot) is
-    # `graveyard_additional_cost` -- retrace's card-level permission, which no
-    # ability could honestly carry. Strict on the cost: the printed discard
-    # has to be the one charged, so a card discarding "a land card" cannot
-    # claim "discarding a card", and any other printed cost stays residual.
-    if card.retrace:
-        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(folded_line.lower())
+    # addition to paying its other costs." (Dragon Man, Reformed Robot), and
+    # "Sarcophagus — ... by exiling another creature card from your graveyard
+    # ..." (Helbrute), are `graveyard_additional_cost` -- retrace's card-level
+    # permission, which no ability could honestly carry. Strict on the cost:
+    # the printed payment is read into the one `Cost` it means, and that has
+    # to be the one charged, so a card discarding "a land card" cannot claim
+    # "discarding a card", nor an exile of any card "another creature card".
+    # A payment with no single reading stays residual. An ability word before
+    # the sentence is italic text with no rules meaning (207.2c), read past.
+    if card.retrace and card.retrace_cost is not None:
+        sentence = fold_self_reference(_ABILITY_WORD_PREFIX.sub("", stripped), card.name)
+        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(sentence.lower())
         if match is not None:
-            noun = match.group(1)
-            wanted = Cost(discard=1) if noun is None else Cost(
-                discard=1, discard_selector={"types": [noun.capitalize()]}
-            )
-            return card.retrace_cost == wanted
+            wanted = _printed_graveyard_additional_cost(match.group(1))
+            return wanted is not None and _canonical_graveyard_exile(card.retrace_cost) == wanted
 
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack

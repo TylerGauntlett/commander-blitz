@@ -411,6 +411,32 @@ class CastRider:
 
 
 @dataclass(frozen=True)
+class CastThisWayLink:
+    """ "When you cast a spell this way, …" -- the reflexive ability a "you may
+    play it" permission fires when a spell is cast under it.
+
+    The Ruinous Powers: "Until end of turn, you may play that card … When you
+    cast a spell this way, its owner loses life equal to its mana value." A
+    trigger linked to the permission (603.12's shape: the effect that granted it
+    says what happens when it is used), so no `EventType` watch can stand in
+    for it -- a `spell_cast` trigger cannot tell a spell cast under this grant
+    from one cast from exile some other way.
+
+    Written onto the permitted card by the grant (`GameObject.playable_cast_trigger`)
+    and read by `Game._cast` while the permission is live. ``source`` and
+    ``def_id`` name the granting object and its card, snapshotted so the
+    ability is found after the source has left; ``ability_index`` is the
+    granting card's ``kind: "reflexive"`` ability; ``controller`` is the
+    permission's holder, who controls the trigger.
+    """
+
+    source: int
+    def_id: str
+    ability_index: int
+    controller: int
+
+
+@dataclass(frozen=True)
 class AttackMark:
     """"Target creature attacks **that player** each combat if able." A
     requirement written on one creature that names the defending player --
@@ -1349,6 +1375,34 @@ class UncounterableGrant:
     duration: str = "this_turn"
     #: The object whose ability installed it, for the log. Not part of the
     #: lifetime.
+    source: int | None = None
+
+
+@dataclass(frozen=True)
+class CascadeGrant:
+    """"The next creature spell you cast this turn has cascade." -- Sloppity
+    Bilepiper. Rules 702.85a, 611.2a.
+
+    `UncounterableGrant`'s ``next_spell`` shape with an ability instead of a
+    shield: owned by the player (the Bilepiper may be gone before the spell is
+    cast), bound by the first matching cast to that spell's stack item
+    (``sid``), and swept at cleanup. What it gives is **the spell's own
+    cascade**: `triggers._candidate_abilities` yields the rules-supplied
+    `carddef.CASCADE_TRIGGER` off the bound spell, so the trigger's source is
+    the spell, its ceiling is that spell's mana value, and it resolves whatever
+    became of the permanent that granted it.
+
+    ``affects_spells`` is the printed-face filter ("creature", "noncreature");
+    ``None`` is the next spell of any kind (Bigger on the Inside).
+    """
+
+    #: Whose next spell gains cascade.
+    player: int
+    #: The printed-face filter; ``None`` matches every spell.
+    affects_spells: Mapping[str, Any] | None = None
+    #: The stack item it was bound to by the cast that spent it.
+    sid: int | None = None
+    #: The object whose ability installed it, for the log.
     source: int | None = None
 
 

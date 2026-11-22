@@ -1084,6 +1084,12 @@ class AbilityModel(BaseModel):
     #: until end of turn, staged on the spell the way a `mana_grant`'s are.
     #: Refused on every other static.
     cast_gains_keywords: list[str] = Field(default_factory=list)
+    #: ``spells_have_cascade``: "spells you cast from your hand **with mana
+    #: value X or less** have cascade, where X is the total amount of life your
+    #: opponents have lost this turn" (Abaddon the Despoiler). A static value,
+    #: re-read whenever the question is asked, compared with the spell's mana
+    #: value (its X included). Refused on every other static.
+    max_mana_value: Any = None
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)
@@ -1404,6 +1410,12 @@ class AbilityModel(BaseModel):
     #: uses exactly one of ``gain_multiplier`` and ``gain_addend``, and the
     #: addend is refused below 1 because 0 replaces a gain with itself.
     gain_addend: int | None = None
+    #: ``replace_life_gain``: the gain becomes a loss of that much life by the
+    #: same player. Plague Drone's and Tainted Remedy's "If an opponent would
+    #: gain life, that player loses that much life instead" is ``true``. The
+    #: third axis of the same static, exclusive with ``gain_multiplier`` and
+    #: ``gain_addend``; only ``true`` is accepted.
+    lose_instead: bool | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1

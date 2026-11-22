@@ -261,6 +261,54 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "from_zone": "hand"
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "spells_have_cascade",
+          "kind": "static",
+          "max_mana_value": {
+            "life_lost_this_turn": "opponent"
+          },
+          "text": "Mark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "abaddon_the_despoiler",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{U}{B}{R}",
+      "name": "Abaddon the Despoiler",
+      "oracle_text": "Trample\nMark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -17498,6 +17546,100 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "revealed",
+                  "destination": "battlefield",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "reveal_until",
+                  "player": "you",
+                  "shuffle_rest": true
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "revealed",
+                      "subtypes": [
+                        "Demon"
+                      ]
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "power_of": {
+                          "binding": "revealed"
+                        }
+                      },
+                      "op": "damage",
+                      "player": "each_opponent",
+                      "source_object": {
+                        "binding": "revealed"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ruinous Ascension — When this creature deals combat damage to a player, sacrifice it. If you do, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield, then shuffle the rest into your library. If that creature is a Demon, it deals damage equal to its power to each opponent.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "aspiring_champion",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Aspiring Champion",
+      "oracle_text": "Menace\nRuinous Ascension — When this creature deals combat damage to a player, sacrifice it. If you do, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield, then shuffle the rest into your library. If that creature is a Demon, it deals damage equal to its power to each opponent.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "G"
@@ -25762,6 +25904,118 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Demon"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Demon"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prince of Chaos — When Be'lakor enters, you draw X cards and you lose X life, where X is the number of Demons you control",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Lord of Torment — Whenever another Demon you control enters, it deals damage equal to its power to any target",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Demon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "be_lakor_the_dark_master",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{B}{R}",
+      "name": "Be'lakor, the Dark Master",
+      "oracle_text": "Flying\nPrince of Chaos — When Be'lakor enters, you draw X cards and you lose X life, where X is the number of Demons you control.\nLord of Torment — Whenever another Demon you control enters, it deals damage equal to its power to any target.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -27988,6 +28242,85 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted permanent has \"{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade.\""
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "any_one_color": true,
+              "op": "add_mana",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "next_spell_gains_cascade",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
+        }
+      ],
+      "id": "bigger_on_the_inside",
+      "mana_cost": "{3}{R}{G}",
+      "name": "Bigger on the Inside",
+      "oracle_text": "Enchant artifact or land\nEnchanted permanent has \"{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade.\" (When they cast their next spell, they exile cards from the top of their library until they exile a nonland card that costs less. They may cast it without paying its mana cost. They put the exiled cards on the bottom in a random order.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -28147,6 +28480,73 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bile_blight",
+      "mana_cost": "{B}{B}",
+      "name": "Bile Blight",
+      "oracle_text": "Target creature and all other creatures with the same name as that creature get -3/-3 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "victim",
+            "shares_a_name_with": "victim",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -30271,6 +30671,61 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blight_grenade",
+      "mana_cost": "{4}{B}",
+      "name": "Blight Grenade",
+      "oracle_text": "Destroy target creature.\nAll creatures get -3/-3 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -31138,6 +31593,49 @@
     },
     {
       "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "cost_reduction": {
+        "creatures_died_this_turn": "all"
+      },
+      "exiles_itself": true,
+      "id": "blood_for_the_blood_god",
+      "mana_cost": "{8}{B}{B}{R}",
+      "name": "Blood for the Blood God!",
+      "oracle_text": "This spell costs {1} less to cast for each creature that died this turn.\nDiscard your hand, then draw eight cards. Blood for the Blood God! deals 8 damage to each opponent. Exile Blood for the Blood God!",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "whole_hand": true
+        },
+        {
+          "amount": {
+            "const": 8
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 8
+          },
+          "op": "damage",
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -31400,6 +31898,48 @@
         "Berserker"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Devastating Charge — Other creatures you control have trample."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodcrusher_of_khorne",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Bloodcrusher of Khorne",
+      "oracle_text": "Trample\nDevastating Charge — Other creatures you control have trample.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Knight"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -32208,6 +32748,60 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, untap it. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_attack_attacked_players",
+          "kind": "static",
+          "text": "This creature can't attack a player it has already attacked this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodthirster",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Bloodthirster",
+      "oracle_text": "Flying, trample\nWhenever this creature deals combat damage to a player, untap it. After this phase, there is an additional combat phase.\nThis creature can't attack a player it has already attacked this turn.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -48833,6 +49427,250 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "cannon_chosen",
+                  "objects": {
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a nonland permanent that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "cannon_chosen",
+                "count": 1,
+                "random": true
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "cannon_chosen",
+                  "objects": {
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a nonland permanent that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "cannon_chosen",
+                "count": 1,
+                "random": true
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "chaos_defiler",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Chaos Defiler",
+      "oracle_text": "Trample\nBattle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Construct"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "chaos_mutation",
+      "mana_cost": "{3}{U}{R}",
+      "name": "Chaos Mutation",
+      "oracle_text": "Exile any number of target creatures controlled by different players. For each creature exiled this way, its controller reveals cards from the top of their library until they reveal a creature card, puts that card onto the battlefield, then puts the rest on the bottom of their library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "objects": {
+                "binding": "each"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "each"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "reveal_until",
+                  "player": {
+                    "controller_of": "victim"
+                  },
+                  "rest_to_bottom": true
+                }
+              ],
+              "objects": {
+                "binding": "each",
+                "zone": "exile"
+              },
+              "op": "for_each"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Lord of Chaos — At the beginning of combat on your turn, another target creature you control gains double strike until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "chaos_terminator_lord",
+      "mana_cost": "{3}{R}",
+      "name": "Chaos Terminator Lord",
+      "oracle_text": "Lord of Chaos — At the beginning of combat on your turn, another target creature you control gains double strike until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -67573,6 +68411,48 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "not_types": [
+                  "Creature"
+                ]
+              },
+              "op": "next_spell_gains_cascade"
+            }
+          ],
+          "kind": "activated",
+          "text": "Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade. (When you cast that spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dark_apostle",
+      "mana_cost": "{3}{R}",
+      "name": "Dark Apostle",
+      "oracle_text": "Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade. (When you cast that spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warlock"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -73459,6 +74339,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "deny_reality",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Deny Reality",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nReturn target permanent to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "U",
@@ -79298,6 +80233,119 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Echo of the First Murder — When Drach'Nyen enters, exile up to one target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "exiled_card_power": "self"
+          },
+          "text": "Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "drach_nyen",
+      "mana_cost": "{4}{B}{R}",
+      "name": "Drach'Nyen",
+      "oracle_text": "Echo of the First Murder — When Drach'Nyen enters, exile up to one target creature.\nDaemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -125592,6 +126640,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": "<",
+                    "left": {
+                      "life_of": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "life_of": "you"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "create_token",
+                      "token": "plaguebearer_of_nurgle_1_3_b"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. Then for each opponent who has less life than you, create a 1/3 black Demon creature token named Plaguebearer of Nurgle.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "great_unclean_one",
+      "mana_cost": "{4}{B}",
+      "name": "Great Unclean One",
+      "oracle_text": "Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. Then for each opponent who has less life than you, create a 1/3 black Demon creature token named Plaguebearer of Nurgle.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -133635,6 +134752,43 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "graveyard_additional_cost": {
+        "exile_from_graveyard": {
+          "count": 1,
+          "exclude_self": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "helbrute",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Helbrute",
+      "oracle_text": "Haste\nSarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Dreadnought"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -135174,6 +136328,58 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Demon"
+            ]
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Locus of Slaanesh — Demon spells you cast cost {2} less to cast."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Demon"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Demons you control have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "herald_of_slaanesh",
+      "mana_cost": "{2}{R}",
+      "name": "Herald of Slaanesh",
+      "oracle_text": "Locus of Slaanesh — Demon spells you cast cost {2} less to cast.\nOther Demons you control have haste.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -135498,6 +136704,49 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "heralds_of_tzeentch",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Heralds of Tzeentch",
+      "oracle_text": "Flying\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -157382,6 +158631,68 @@
           "effects": [
             {
               "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Symphony of Pain — Whenever you cast a spell from anywhere other than your hand, this creature deals damage equal to that spell's mana value to target opponent",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "keeper_of_secrets",
+      "keywords": [
+        "first_strike",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Keeper of Secrets",
+      "oracle_text": "First strike, haste\nSymphony of Pain — Whenever you cast a spell from anywhere other than your hand, this creature deals damage equal to that spell's mana value to target opponent.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "create_token",
@@ -158680,6 +159991,91 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "blocks_if_able",
+          "kind": "static",
+          "text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.",
+          "trigger": {
+            "event": "lose_control"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "prevent_damage",
+          "effects": [
+            {
+              "as": "betrayed_to",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to gain control of Khârn the Betrayer"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "binding": "shielded"
+              },
+              "op": "gain_control",
+              "player": {
+                "binding": "betrayed_to"
+              }
+            }
+          ],
+          "kind": "static",
+          "prevent_all": true,
+          "text": "The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "kharn_the_betrayer",
+      "mana_cost": "{3}{R}",
+      "name": "Khârn the Betrayer",
+      "oracle_text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able.\nSigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.\nThe Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Berserker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -158865,6 +160261,104 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kill_maim_burn",
+      "mana_cost": "{3}{B}{R}",
+      "name": "Kill! Maim! Burn!",
+      "oracle_text": "Choose one or more —\n• Destroy target artifact.\n• Destroy target creature.\n• Kill! Maim! Burn! deals 3 damage to target player.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "killed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target creature."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "damage",
+                  "player": {
+                    "target": "burned"
+                  }
+                }
+              ],
+              "label": "Kill! Maim! Burn! deals 3 damage to target player."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "killed",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -162232,6 +163726,87 @@
       "toughness": 6,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "foe",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "random": true
+            },
+            {
+              "defender": {
+                "binding": "foe"
+              },
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "must_attack_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Frenzied Rampage — At the beginning of combat on your turn, choose an opponent at random. This creature attacks that player this combat if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent",
+                "random": true
+              }
+            }
+          ],
+          "text": "When this creature dies, it deals 4 damage to target opponent chosen at random.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "knight_rampager",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Knight Rampager",
+      "oracle_text": "Trample\nFrenzied Rampage — At the beginning of combat on your turn, choose an opponent at random. This creature attacks that player this combat if able.\nWhen this creature dies, it deals 4 damage to target opponent chosen at random.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Knight"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -167788,6 +169363,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "let_the_galaxy_burn",
+      "mana_cost": "{X}{5}{R}",
+      "name": "Let the Galaxy Burn",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nLet the Galaxy Burn deals X plus 2 damage to each creature that didn't enter this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "x": true
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "entered_this_turn": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -173150,6 +174784,60 @@
           "affects": {
             "self_only": true
           },
+          "cost": {
+            "mana": "{3}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {3}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Architect of Deception — When this creature enters, draw three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lord_of_change",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{U}",
+      "name": "Lord of Change",
+      "oracle_text": "Flying, ward {3}\nArchitect of Deception — When this creature enters, draw three cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
           "effect": "set_pt",
           "kind": "static",
           "power": {
@@ -175434,6 +177122,91 @@
       "toughness": 3,
       "types": [
         "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "lucius",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "duration": "until_it_fires",
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "lucius",
+                    "zone": "exile"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When that creature leaves the battlefield, return this card from exile to the battlefield under its owner's control.",
+              "trigger": {
+                "controller": "any",
+                "event": "leaves_battlefield",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Armour of Shrieking Souls — When Lucius the Eternal dies, exile it and choose target creature an opponent controls. When that creature leaves the battlefield, return this card from exile to the battlefield under its owner's control.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "lucius_the_eternal",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Lucius the Eternal",
+      "oracle_text": "Haste\nArmour of Shrieking Souls — When Lucius the Eternal dies, exile it and choose target creature an opponent controls. When that creature leaves the battlefield, return this card from exile to the battlefield under its owner's control.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },
@@ -177990,6 +179763,74 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "is_token": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Unearthly Power — Instant and sorcery spells you cast cost {1} less to cast for each creature token you control."
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "spawn_3_3_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blade of Magnus — Whenever Magnus the Red deals combat damage to a player, create a 3/3 red Spawn creature token.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "magnus_the_red",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{R}",
+      "name": "Magnus the Red",
+      "oracle_text": "Flying\nUnearthly Power — Instant and sorcery spells you cast cost {1} less to cast for each creature token you control.\nBlade of Magnus — Whenever Magnus the Red deals combat damage to a player, create a 3/3 red Spawn creature token.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Primarch"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{X}",
             "tap": true
@@ -179584,6 +181425,57 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mandate_of_abaddon",
+      "mana_cost": "{3}{B}",
+      "name": "Mandate of Abaddon",
+      "oracle_text": "Choose target creature you control. Destroy all creatures with power less than that creature's power.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "power": {
+              "op": "<",
+              "value": {
+                "power_of": {
+                  "target": "t1"
+                }
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -192438,6 +194330,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "paid_x"
+                  },
+                  "op": "create_token",
+                  "token": "astartes_warrior_2_2_b_menace"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}"
+              },
+              "x": {
+                "as": "paid_x",
+                "max": {
+                  "life_lost_this_turn": "you"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Primarch of the Death Guard — At the beginning of your end step, you may pay {X}. If you do, create X 2/2 black Astartes Warrior creature tokens with menace. X can't be greater than the amount of life you lost this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mortarion_daemon_primarch",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}",
+      "name": "Mortarion, Daemon Primarch",
+      "oracle_text": "Flying\nPrimarch of the Death Guard — At the beginning of your end step, you may pay {X}. If you do, create X 2/2 black Astartes Warrior creature tokens with menace. X can't be greater than the amount of life you lost this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Primarch"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W",
         "B"
@@ -195011,6 +196964,74 @@
         "Shapeshifter"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "damage",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "flip_coin"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Warp Vortex — When this creature enters, flip a coin for each opponent you have. For each flip you win, draw a card. For each flip you lose, this creature deals 3 damage to that player.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "mutalith_vortex_beast",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{U}{R}",
+      "name": "Mutalith Vortex Beast",
+      "oracle_text": "Trample\nWarp Vortex — When this creature enters, flip a coin for each opponent you have. For each flip you win, draw a card. For each flip you lose, this creature deals 3 damage to that player.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Beast"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -202442,6 +204463,78 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "spells_cast_this_turn": "you"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Sonic Blaster — When this creature enters, it deals damage equal to the number of spells you've cast this turn to any target.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "noise_marine",
+      "mana_cost": "{4}{R}",
+      "name": "Noise Marine",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nSonic Blaster — When this creature enters, it deals damage equal to the number of spells you've cast this turn to any target.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "any",
             "types": [
@@ -203299,6 +205392,124 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nurgle_s_conscription",
+      "mana_cost": "{4}{B}",
+      "name": "Nurgle's Conscription",
+      "oracle_text": "Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "conscripted",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield",
+          "tapped": true
+        },
+        {
+          "objects": {
+            "controller": {
+              "owner_of": "conscripted"
+            },
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "plaguebearer_of_nurgle_1_3_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, return this card to its owner's hand and you create a 1/3 black Demon creature token named Plaguebearer of Nurgle.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nurgle_s_rot",
+      "mana_cost": "{B}",
+      "name": "Nurgle's Rot",
+      "oracle_text": "Enchant creature an opponent controls\nWhen enchanted creature dies, return this card to its owner's hand and you create a 1/3 black Demon creature token named Plaguebearer of Nurgle.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -214218,6 +216429,40 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flashback": {
+        "mana": "{4}{R}"
+      },
+      "id": "past_in_flames",
+      "mana_cost": "{3}{R}",
+      "name": "Past in Flames",
+      "oracle_text": "Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.\nFlashback {4}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as_flashback": true,
+          "objects": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "grant_playable"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -218699,6 +220944,86 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Coruscating Flames — Whenever you cast an instant or sorcery spell, this creature deals 2 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "blue_horror_2_2_ur_spell_ping"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Split — When this creature dies, create two 2/2 blue and red Demon Horror creature tokens named Blue Horror with \"Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target.\"",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "pink_horror",
+      "mana_cost": "{3}{U}{R}",
+      "name": "Pink Horror",
+      "oracle_text": "Coruscating Flames — Whenever you cast an instant or sorcery spell, this creature deals 2 damage to any target.\nSplit — When this creature dies, create two 2/2 blue and red Demon Horror creature tokens named Blue Horror with \"Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Horror"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "self_only": true,
                 "zone": "battlefield"
@@ -219328,6 +221653,39 @@
         "Beast"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "effect": "replace_life_gain",
+          "kind": "static",
+          "lose_instead": true,
+          "text": "Rot Fly — If an opponent would gain life, that player loses that much life instead."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "plague_drone",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Plague Drone",
+      "oracle_text": "Flying\nRot Fly — If an opponent would gain life, that player loses that much life instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -221521,6 +223879,61 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Curse of the Walking Pox — Whenever you cast a spell from anywhere other than your hand, return this card from your graveyard to the battlefield tapped.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "poxwalkers",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Poxwalkers",
+      "oracle_text": "Deathtouch\nCurse of the Walking Pox — Whenever you cast a spell from anywhere other than your hand, return this card from your graveyard to the battlefield tapped.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -238905,6 +241318,42 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "reverberate",
+      "mana_cost": "{R}{R}",
+      "name": "Reverberate",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "new_targets": true,
+          "op": "copy_spell",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -254368,6 +256817,38 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "must_attack_with_at_least_one_creature",
+          "kind": "static",
+          "text": "Allure of Slaanesh — Each opponent must attack with at least one creature each combat if able."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "seeker_of_slaanesh",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Seeker of Slaanesh",
+      "oracle_text": "Haste\nAllure of Slaanesh — Each opponent must attack with at least one creature each combat if able.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -268966,6 +271447,55 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "next_spell_gains_cascade"
+            }
+          ],
+          "kind": "activated",
+          "text": "Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade. (When you next cast a creature spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sloppity_bilepiper",
+      "mana_cost": "{3}{B}",
+      "name": "Sloppity Bilepiper",
+      "oracle_text": "Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade. (When you next cast a creature spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -291287,6 +293817,96 @@
         {
           "effects": [
             {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "creatures_died_this_turn": "all"
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "lose_life",
+                  "player": "you"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 7
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 7
+                  },
+                  "op": "lose_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "The Seven-fold Chant — At the beginning of your end step, if a creature died this turn, you draw a card and you lose 1 life. If seven or more creatures died this turn, instead you draw seven cards and you lose 7 life",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "creatures_died_this_turn": "all"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "tallyman_of_nurgle",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Tallyman of Nurgle",
+      "oracle_text": "Lifelink\nThe Seven-fold Chant — At the beginning of your end step, if a creature died this turn, you draw a card and you lose 1 life. If seven or more creatures died this turn, instead you draw seven cards and you lose 7 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -300943,6 +303563,121 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "duration": "while_source_on_battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — For each opponent, gain control of up to one target nonlegendary creature that player controls for as long as this Saga remains on the battlefield."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "owner": "opponent",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Draw a card for each creature you control but don't own."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "chosen",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": "any",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a creature to destroy"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player",
+              "starting_with": "you"
+            },
+            {
+              "objects": {
+                "binding": "chosen"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Starting with you, each player chooses a creature. Destroy each creature chosen this way."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "the_horus_heresy",
+      "mana_cost": "{3}{U}{B}{R}",
+      "name": "The Horus Heresy",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — For each opponent, gain control of up to one target nonlegendary creature that player controls for as long as this Saga remains on the battlefield.\nII — Draw a card for each creature you control but don't own.\nIII — Starting with you, each player chooses a creature. Destroy each creature chosen this way.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -301346,6 +304081,78 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spawn_3_3_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "entered_from": "hand"
+              }
+            },
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spawn_3_3_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "the_lost_and_the_damned",
+      "mana_cost": "{1}{U}{R}",
+      "name": "The Lost and the Damned",
+      "oracle_text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -303031,6 +305838,76 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "random": true
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_color": true,
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_cast_trigger": "ruinous_cast",
+              "player": {
+                "binding": "victim"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "owner_of": "subject"
+              }
+            }
+          ],
+          "id": "ruinous_cast",
+          "kind": "reflexive",
+          "text": "When you cast a spell this way, its owner loses life equal to its mana value."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "the_ruinous_powers",
+      "mana_cost": "{2}{B}{R}",
+      "name": "The Ruinous Powers",
+      "oracle_text": "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it. When you cast a spell this way, its owner loses life equal to its mana value.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -318536,6 +321413,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Copy the next instant or sorcery spell you cast this turn when you cast it. You may choose new targets for the copy.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "any_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "binding": "subject",
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sorcerous Elixir — Whenever this creature deals combat damage to a player, copy the next instant or sorcery spell you cast this turn when you cast it. You may choose new targets for the copy.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "tzaangor_shaman",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{R}",
+      "name": "Tzaangor Shaman",
+      "oracle_text": "Flying\nSorcerous Elixir — Whenever this creature deals combat damage to a player, copy the next instant or sorcery spell you cast this turn when you cast it. You may choose new targets for the copy.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Shaman"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -326867,6 +329808,56 @@
       ],
       "toughness": 4,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Devourer of Souls — Whenever another creature dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "venomcrawler",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Venomcrawler",
+      "oracle_text": "Lifelink\nDevourer of Souls — Whenever another creature dies, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

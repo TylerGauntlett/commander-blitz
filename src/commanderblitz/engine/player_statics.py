@@ -225,6 +225,32 @@ def life_gain_addend(state: GameState, pid: int) -> int:
     return addend
 
 
+def life_gain_becomes_loss(state: GameState, pid: int) -> bool:
+    """Would a life gain by ``pid`` become a loss of that much life?  Usually false.
+
+    Plague Drone, Tainted Remedy: "If an opponent would gain life, that player
+    loses that much life instead."  The ``lose_instead`` axis of
+    ``replace_life_gain``, read through `_active_player_statics` like the other
+    two, so a condition is asked and the replacement lifts when its source
+    leaves.
+
+    **616.1 against the other axes.**  The gaining player orders the
+    replacements, and once this one applies the event is a life loss, which no
+    gain replacement touches any more (616.1f: only the replacements that now
+    apply are considered).  So the gaining player, given the choice, applies it
+    first and loses the unmodified amount rather than a doubled or increased
+    one; `primitives.gain_life` cannot ask and makes that pick for them.  A
+    second Drone has nothing left to replace (614.5).  The loss is an ordinary
+    one, so a loss replacement such as Bloodletter of Aclazotz still applies to
+    it.
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, "replace_life_gain")
+        if static.get("lose_instead")
+    )
+
+
 def player_cant_gain_life(state: GameState, pid: int) -> bool:
     """Is ``pid`` forbidden from gaining life right now?  Usually false.
 
@@ -996,6 +1022,17 @@ def player_skips_extra_turn(state: GameState, pid: int) -> bool:
     skip one.
     """
     return _player_static(state, pid, "skip_extra_turn")
+
+
+def player_must_attack_with_one(state: GameState, pid: int) -> bool:
+    """Whether a ``must_attack_with_at_least_one_creature`` static binds ``pid``.
+
+    Seeker of Slaanesh: "Each opponent must attack with at least one creature
+    each combat if able." A requirement on the player's declaration, not on any
+    creature, so it answers for a seat; `combat.attack_with_one_unmet` decides
+    whether the declaration being built obeys it.
+    """
+    return _player_static(state, pid, "must_attack_with_at_least_one_creature")
 
 
 def attack_forbidden(state: GameState, oid: int) -> bool:
@@ -2177,6 +2214,32 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     return False
 
 
+def block_compelled(state: GameState, oid: int) -> bool:
+    """Is this creature under a continuous "blocks each combat if able"?
+
+    The blocking half of Khârn the Betrayer's "attacks or blocks each combat if
+    able" (the attacking half is `attacks_if_able`), and the permanent
+    counterpart of the `must_block_any` op: that op records one turn on the
+    object, and a printed line is true in every combat for as long as it
+    applies, so it is read live off the battlefield like `attack_compelled`.
+
+    It names no attacker, so any block obeys it (509.1c); whether the creature
+    is *able* to block -- an attacker coming at its controller, untapped, no
+    block tax -- is `combat.block_any_required`'s question, not this one.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "blocks_if_able":
+            continue
+        # A block requirement is no layer (613), so its filter reads the
+        # creature as it now is, as `attack_compelled`'s does.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            return True
+    return False
+
+
 def static_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
     """The defending players each "attacks <a player> each combat if able"
     static names for this creature -- one set per static.
@@ -2735,6 +2798,54 @@ def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _active_player_statics(state, "cant_activate_abilities")
     )
+
+
+def static_cascade_instances(state: GameState, item: Any) -> int:
+    """How many instances of cascade `spells_have_cascade` statics give this spell.
+
+    "During your turn, spells you cast from your hand with mana value X or less
+    have cascade, where X is the total amount of life your opponents have lost
+    this turn." -- Abaddon the Despoiler. Asked of a spell on the stack, at the
+    moment its cast triggers are gathered and whenever anything asks again, so
+    the answer is the board's *now* (611.3a): the "as long as" `condition`, the
+    caster being the static's controller, the cast's origin zone (`from_zone` /
+    `not_from_zone` in ``affects_spells``), the printed face and the spell's
+    mana value -- its X included (202.3e) -- against ``max_mana_value``, a
+    static value re-read each time it is asked. A copy was never cast (707.10)
+    and has no origin zone, so a zone key never matches it.
+
+    The ability each instance stands for is the rules' `carddef.CASCADE_TRIGGER`,
+    sourced from the spell, so a cascade that has triggered resolves whatever
+    becomes of the permanent that granted it.
+    """
+    if not getattr(item, "is_spell", False) or item.oid is None:
+        return 0
+    obj = state.objects.get(item.oid)
+    if obj is None:
+        return 0
+    count = 0
+    for source_obj, static in _active_player_statics(state, "spells_have_cascade"):
+        if source_obj.controller != item.controller or obj.cast_step is None:
+            continue
+        filt = static.get("affects_spells") or {}
+        if not cast_zone_matches(filt, obj.cast_from_zone):
+            continue
+        card = state.card_of(obj)
+        printed = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
+        printed = resolve_chosen_colors(resolve_chosen_subtypes(printed, source_obj), source_obj)
+        if printed and not _matches_printed(card, printed):
+            continue
+        if (ceiling := static.get("max_mana_value")) is not None:
+            overrides = obj.live_copy_overrides
+            mana_value = (
+                0
+                if overrides and overrides.get("no_mana_cost")
+                else card.mana_value + item.x * card.mana_cost.x_count
+            )
+            if mana_value > _static_value(state, ceiling, source_obj):
+                continue
+        count += 1
+    return count
 
 
 def player_casts_as_though_flash(

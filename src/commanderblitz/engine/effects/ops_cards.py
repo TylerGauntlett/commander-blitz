@@ -25,6 +25,7 @@ from ..structs import CastRider, GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
+    cast_this_way_link,
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
@@ -51,7 +52,7 @@ from .selectors import (
     resolve_pool,
     select_players,
 )
-from .values import evaluate_value
+from .values import evaluate_value, object_mana_value
 
 DESTINATIONS = {
     "hand": Zone.HAND,
@@ -317,6 +318,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "You may **cast** …" rather than "play": no land drop out of it.
         obj.playable_cast_only = bool(spec.get("playable_cast_only"))
         record_playable_source(ctx.state, oid, ctx.source_oid)
+        # "When you cast a spell this way, …" (The Ruinous Powers).
+        obj.playable_cast_trigger = cast_this_way_link(
+            ctx.state, ctx.source_oid, ctx.controller, spec.get("playable_cast_trigger")
+        )
 
 
 
@@ -764,6 +769,10 @@ def _move_found(
                 # land among them is exiled and stays there, never played.
                 obj.playable_cast_only = bool(spec.get("playable_cast_only"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
+                # "When you cast a spell this way, …" (The Ruinous Powers).
+                obj.playable_cast_trigger = cast_this_way_link(
+                    ctx.state, ctx.source_oid, ctx.controller, spec.get("playable_cast_trigger")
+                )
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What
@@ -2758,14 +2767,16 @@ def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
     ``max_mana_value`` is the ceiling the exiled card must come in under, and it
     defaults to **this spell's own** mana value, which is what every printing
     says. It is read off the source rather than written into the card, because a
-    cascade spell's own cost is the number.
+    cascade spell's own cost is the number -- the X it was cast with included
+    (202.3e), which a granted cascade (`next_spell_gains_cascade`) on an {X}
+    spell reaches.
     """
     pid = ctx.controller
     library = ctx.state.players[pid].library
     limit = spec.get("max_mana_value")
     if limit is None:
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
-        ceiling = ctx.state.card_of(source).mana_value if source is not None else 0
+        ceiling = object_mana_value(ctx.state, source) if source is not None else 0
     else:
         ceiling = evaluate_value(ctx, limit)
 

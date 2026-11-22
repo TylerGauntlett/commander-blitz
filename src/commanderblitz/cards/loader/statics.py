@@ -11,6 +11,7 @@ from typing import Any
 
 from commanderblitz.engine.effects.conditions import STEP_NAMES, validate_condition
 from commanderblitz.engine.effects.selectors import (
+    PLAYER_SPEC_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
     validate_has_counters_key,
@@ -49,6 +50,7 @@ from .vocabulary import (
     STATIC_FILTER_KEYS,
     STATIC_LIFE_GAINED_KEYS,
     STATIC_LIFE_KEYS,
+    STATIC_LIFE_LOST_KEYS,
     STATIC_LIFE_PLAYERS,
     STATIC_MANA_POOL_KEYS,
     STATIC_MONARCH_PLAYERS,
@@ -288,10 +290,11 @@ def _validate_cost_reduction(
                 f"{where}.{COST_REDUCTION_EACH}: an integer of 2 or more (one unit is "
                 f"{{1}} without it), got {each!r}"
             )
-        if key not in ("count", "distinct_mana_values", "greatest_count"):
+        counting = ("count", "creatures_died_this_turn", "distinct_mana_values", "greatest_count")
+        if key not in counting:
             raise DslError(
                 f"{where}.{COST_REDUCTION_EACH}: only beside a head that counts "
-                f"('count', 'distinct_mana_values', 'greatest_count'), not {key!r}"
+                f"({', '.join(repr(k) for k in counting)}), not {key!r}"
             )
     if key == "amount":
         amount = spec["amount"]
@@ -310,6 +313,19 @@ def _validate_cost_reduction(
     elif key == "energy_spent_this_turn":
         # A player spec, not a filter: the ledger is per player.
         validate_energy_spent_this_turn(spec[key], f"{where}.{key}")
+    elif key == "creatures_died_this_turn":
+        # A player spec, not a filter: the turn ledger's death tally, keyed by
+        # who controlled the creature as it died, so "all" is "a creature" and
+        # "you" is "a creature you controlled". A filter here would read like
+        # `count` and would be asked of a battlefield the dead have left.
+        who = spec[key]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.{key}: needs a player spec, e.g. 'all' (any "
+                f"controller's creatures), got {who!r}"
+            )
     else:
         filt = spec[key]
         if not isinstance(filt, Mapping):
@@ -783,6 +799,15 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.commander_casts_this_game: a static can only ask about "
                 f"'you' (your commanders' casts, rule 903.8), got {who!r}"
             )
+    if "exiled_card_power" in value:
+        # "The exiled card" is the one *this* permanent exiled (607.2a); a
+        # static names no other source, so the only spelling is "self".
+        who = value["exiled_card_power"]
+        if who != "self":
+            raise DslError(
+                f"{where}.exiled_card_power: reads the card exiled with this "
+                f"permanent, so the only spec is 'self', got {who!r}"
+            )
     if "extreme_value" in value:
         _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
     if "distinct" in value:
@@ -848,6 +873,7 @@ def _validate_static_value(value: Any, where: str) -> None:
         | STATIC_DEATHS_KEYS
         | STATIC_DRAWS_KEYS
         | STATIC_LIFE_GAINED_KEYS
+        | STATIC_LIFE_LOST_KEYS
     ) & set(value):
         who = value[key]
         if key in STATIC_SPELLS_CAST_KEYS and isinstance(who, Mapping):

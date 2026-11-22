@@ -3982,6 +3982,18 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         source = model.trigger.source
         if model.trigger.event == "self_enters":
             source = "self"
+        if model.trigger.event == "lose_control":
+            # "When you lose control of **this permanent**": the only printed
+            # shape, so the name means it, as `self_enters` does. "You" is the
+            # seat control left, which the engine makes the ability's
+            # controller (603.3a, 603.10a) -- a `controller` clause or a filter
+            # would be a second answer to a question the event already settled.
+            if model.trigger.controller != "you" or model.trigger.filter:
+                raise DslError(
+                    f"{where}: 'lose_control' is \"when you lose control of this "
+                    f"permanent\" and takes no 'controller' or 'filter'"
+                )
+            source = "self"
 
         if model.trigger.level is not None and model.trigger.event != "becomes_level":
             # Same reasoning as `counter` below: only BECAME_LEVEL carries a
@@ -5367,6 +5379,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"one, not {amount!r} -- the shield removes a fixed number, "
                     f"not 'that many'"
                 )
+        if model.effects:
+            # "If damage would be dealt to Khârn the Betrayer, prevent that
+            # damage and an opponent of your choice gains control of it." The
+            # 615.5 rider, run off the stack right after each prevention by
+            # `primitives.damage_permanent`. Only on a total shield over
+            # permanents -- "prevent that damage" is all of it, and the player
+            # half reads no rider -- and never beside `counter` or
+            # `remove_counters`, two riders on one replacement no card prints.
+            if not model.prevent_all or model.affects is None or model.affects_player:
+                raise DslError(
+                    f"{where}: 'prevent_damage' takes 'effects' only with "
+                    f"'prevent_all' over 'affects' (permanents) -- \"prevent that "
+                    f"damage and …\" prevents all of the damage to a permanent"
+                )
+            if model.counter is not None or model.remove_counters is not None:
+                raise DslError(
+                    f"{where}: 'prevent_damage' takes one of 'counter', "
+                    f"'remove_counters' or 'effects', not two"
+                )
+            for i, effect in enumerate(model.effects):
+                _validate_effect(effect, f"{where}.effects[{i}]", {})
     if model.remove_counters is not None and model.effect != "prevent_damage":
         raise DslError(
             f"{where}: 'remove_counters' is read only by the 'prevent_damage' static"
@@ -5388,7 +5421,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "replace_lose_game":
         _validate_lose_game_replacement(model, where)
-    elif model.effects:
+    elif model.effects and model.effect != "prevent_damage":
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
@@ -5632,6 +5665,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'grants_retrace' makes a cast_from_graveyard permission "
             f"retrace; nothing reads it on {model.effect!r}"
+        )
+    if model.max_mana_value is not None and model.effect != "spells_have_cascade":
+        raise DslError(
+            f"{where}: 'max_mana_value' is the ceiling on a spells_have_cascade "
+            f"static; nothing reads it on {model.effect!r}"
         )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
@@ -6046,6 +6084,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_spells: a spell has a printed face and a "
                     f"caster and no board state; unsupported keys {sorted(unknown)}"
                 )
+    elif model.effect == "spells_have_cascade":
+        # Abaddon the Despoiler. The filter is a spell being cast -- its printed
+        # face and the zone it was cast from -- and the seat is always the
+        # static's controller ("spells **you** cast"), so a `controller` would
+        # be read by nothing. Required, because an unfiltered one is every
+        # spell you cast cascading, which no card prints.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: spells_have_cascade filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(f"{where}: spells_have_cascade needs 'affects_spells'")
+        allowed = (SPELL_FILTER_KEYS - {"controller"}) | {"from_zone", "not_from_zone"}
+        unknown = set(model.affects_spells) - allowed
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell you cast has a printed face and "
+                f"an origin zone; unsupported keys {sorted(unknown)}"
+            )
+        _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
+        for key in ("types", "any_types", "not_types"):
+            for t in model.affects_spells.get(key) or ():
+                if t not in KNOWN_TYPES:
+                    raise DslError(f"{where}.affects_spells.{key}: unknown card type {t!r}")
+        if model.max_mana_value is not None:
+            _validate_static_value(model.max_mana_value, f"{where}.max_mana_value")
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: spells_have_cascade takes no 'amount' -- the ceiling is "
+                f"'max_mana_value'"
+            )
     elif model.effect == "spell_cost_increase":
         # Terror of the Peaks. The same filter the reduction takes, read the
         # same way and refused on the same grounds -- a tax that named no spell
@@ -6594,12 +6664,34 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # "twice that much" (`gain_multiplier`) and "that much plus 1"
         # (`gain_addend`, Angel of Vitality). One static carrying both would be
         # a single replacement whose internal order nothing prints.
-        if model.gain_multiplier is not None and model.gain_addend is not None:
-            raise DslError(
-                f"{where}: replace_life_gain takes 'gain_multiplier' (\"twice "
-                f"that much\") or 'gain_addend' (\"that much plus 1\"), not both"
+        #
+        # A third axis, "that player loses that much life instead" (Plague
+        # Drone, Tainted Remedy), turns the gain into a loss and is exclusive
+        # with both: a static that doubled the gain *and* made it a loss would
+        # be two replacements in one, in an order nothing prints.
+        axes = [
+            key
+            for key, value in (
+                ("gain_multiplier", model.gain_multiplier),
+                ("gain_addend", model.gain_addend),
+                ("lose_instead", model.lose_instead),
             )
-        if model.gain_multiplier is not None:
+            if value is not None
+        ]
+        if len(axes) > 1:
+            raise DslError(
+                f"{where}: replace_life_gain takes one of 'gain_multiplier' "
+                f"(\"twice that much\"), 'gain_addend' (\"that much plus 1\") "
+                f"or 'lose_instead' (\"loses that much life instead\"), not both "
+                f"({', '.join(axes)})"
+            )
+        if model.lose_instead is not None:
+            if model.lose_instead is not True:
+                raise DslError(
+                    f"{where}.lose_instead: only true means anything; leave the "
+                    f"key out for a gain that stays a gain"
+                )
+        elif model.gain_multiplier is not None:
             if model.gain_multiplier < 2:
                 raise DslError(
                     f"{where}.gain_multiplier: must be 2 or more; "
@@ -6615,20 +6707,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         else:
             raise DslError(
                 f"{where}: replace_life_gain needs 'gain_multiplier' -- what the "
-                f"life gain is multiplied by -- or 'gain_addend' -- what is "
-                f"added to it"
+                f"life gain is multiplied by -- 'gain_addend' -- what is "
+                f"added to it -- or 'lose_instead' -- the gain becomes a loss"
             )
         if model.affects is not None or model.amount is not None:
             # "If you would gain life" names a player, and the size is
             # `gain_multiplier` / `gain_addend`; nothing reads either key.
             raise DslError(
                 f"{where}: replace_life_gain takes 'affects_player', "
-                f"'gain_multiplier' or 'gain_addend', and an optional "
-                f"'condition', and no 'affects' or 'amount'"
+                f"'gain_multiplier', 'gain_addend' or 'lose_instead', and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
             )
-    elif model.gain_multiplier is not None or model.gain_addend is not None:
+    elif (
+        model.gain_multiplier is not None
+        or model.gain_addend is not None
+        or model.lose_instead is not None
+    ):
         raise DslError(
-            f"{where}: 'gain_multiplier'/'gain_addend' only mean anything on a "
+            f"{where}: 'gain_multiplier'/'gain_addend'/'lose_instead' only mean anything on a "
             f"replace_life_gain static, not on {model.effect!r}"
         )
     if model.effect == "replace_draw":
@@ -6915,6 +7011,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"players; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "must_attack_with_at_least_one_creature" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # "At least one creature" is any one: a filter would read as "at
+            # least one Goblin", which nothing checks, and a count as "at least
+            # two", which the reader does not count to.
+            raise DslError(
+                f"{where}: must_attack_with_at_least_one_creature binds the named "
+                f"players' declarations; it takes 'affects_player' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
         if model.effect == "spend_mana_as_any_color" and (
             model.affects is not None or model.amount is not None
         ):
@@ -7023,6 +7130,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # filter it can carry. Lier prints no filter at all: every spell, every
         # player, which is the card's whole reputation.
         "spells_cant_be_countered",
+        # "Spells you cast from your hand … have cascade" -- spells again, its
+        # required `affects_spells` checked above.
+        "spells_have_cascade",
         # Furnace of Rath names neither end -- "if **a source** would deal
         # damage to **a permanent or player**" -- so both of its filters are
         # optional and `affects`, when written, is the *recipient* rather than
@@ -7827,9 +7937,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     static: dict[str, Any] = {"effect": model.effect}
-    if model.effect == "replace_lose_game":
+    if model.effect == "replace_lose_game" or (
+        model.effect == "prevent_damage" and model.effects
+    ):
         # What happens instead, carried on the mapping because the mapping is
-        # all `player_statics.lose_game_replacement` ever sees.
+        # all `player_statics.lose_game_replacement` ever sees -- and, on a
+        # `prevent_damage` total shield, the 615.5 rider
+        # `characteristics.damage_prevented_with_effects` hands to
+        # `primitives.damage_permanent`.
         static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)
@@ -7837,6 +7952,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects"] = dict(model.affects)
     if model.affects_spells is not None:
         static["affects_spells"] = dict(model.affects_spells)
+    if model.max_mana_value is not None:
+        static["max_mana_value"] = model.max_mana_value
     if model.affects_token is not None:
         static["affects_token"] = dict(model.affects_token)
     if model.create_instead:
@@ -7895,6 +8012,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["gain_multiplier"] = model.gain_multiplier
     if model.gain_addend is not None:
         static["gain_addend"] = model.gain_addend
+    if model.lose_instead:
+        static["lose_instead"] = True
     if model.draw_multiplier is not None:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:

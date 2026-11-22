@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/casting/test_graveyard_additional_cost.py. t_gac_robot is a 2/2 creature castable from its owner's graveyard by discarding any card in addition to its printed {2}{U} -- Dragon Man, Reformed Robot's permission on a vanilla body.",
+  "_comment": "Shapes for tests/unit/casting/test_graveyard_additional_cost.py. t_gac_robot is a 2/2 creature castable from its owner's graveyard by discarding any card in addition to its printed {2}{U} -- Dragon Man, Reformed Robot's permission on a vanilla body. t_gac_brute is Helbrute's Sarcophagus on a vanilla 2/2: castable from the graveyard by exiling another creature card from it.",
   "cards": [
     {
       "id": "t_gac_robot",
@@ -13,6 +13,21 @@
       "colors": ["U"],
       "color_identity": ["U"],
       "graveyard_additional_cost": {"discard": 1}
+    },
+    {
+      "id": "t_gac_brute",
+      "name": "Test Graveyard Brute",
+      "oracle_text": "Sarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs.",
+      "mana_cost": "{2}{B}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "graveyard_additional_cost": {
+        "exile_from_graveyard": {"count": 1, "types": ["Creature"], "exclude_self": true}
+      }
     }
   ]
 }

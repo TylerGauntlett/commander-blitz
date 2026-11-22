@@ -1,0 +1,64 @@
+{
+  "_comment": "Cards for tests/unit/damage/test_prevent_damage_with_effects.py. `t_betrayer` is Khârn the Betrayer's third line alone on a vanilla 5/5 (tough enough to survive the unpreventable hit its test deals): a `prevent_damage` total shield on itself whose 615.5 rider is 'an opponent of your choice gains control of it' (choose_player, then gain_control of the shielded permanent). `t_sigil_betrayer` is the same body with Khârn's Sigil of Corruption beside it, so the two lines are seen to compose. The damage source, the blanket shield and Everlasting Torment come from prevent_damage_into_counters, prevent_all_damage and everlasting_torment.cards.json.",
+  "cards": [
+    {
+      "id": "t_betrayer",
+      "name": "Test Betrayer",
+      "oracle_text": "If damage would be dealt to Test Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If damage would be dealt to Test Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "affects": {"self_only": true},
+          "effects": [
+            {"op": "choose_player", "players": "each_opponent", "as": "betrayed_to",
+             "prompt": "Choose an opponent to gain control of Test Betrayer"},
+            {"op": "gain_control", "objects": {"binding": "shielded"},
+             "player": {"binding": "betrayed_to"}, "duration": "permanent"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sigil_betrayer",
+      "name": "Test Sigil Betrayer",
+      "oracle_text": "When you lose control of Test Sigil Betrayer, draw two cards.\nIf damage would be dealt to Test Sigil Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you lose control of Test Sigil Betrayer, draw two cards.",
+          "trigger": {"event": "lose_control"},
+          "effects": [{"op": "draw", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "static",
+          "text": "If damage would be dealt to Test Sigil Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "affects": {"self_only": true},
+          "effects": [
+            {"op": "choose_player", "players": "each_opponent", "as": "betrayed_to"},
+            {"op": "gain_control", "objects": {"binding": "shielded"},
+             "player": {"binding": "betrayed_to"}, "duration": "permanent"}
+          ]
+        }
+      ]
+    }
+  ]
+}

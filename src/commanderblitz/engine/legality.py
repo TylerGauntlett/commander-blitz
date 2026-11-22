@@ -184,7 +184,14 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
     # alone" is judged on the finished declaration, so a lone attacker under it
     # has to add a second one before the step can end -- the mirror of menace
     # withholding "Done blocking" below.
-    if not combat_mod.unmet_attack_requirements(state) and combat_mod.attacks_valid(state, pid):
+    # "Each opponent must attack with at least one creature" is the player-wide
+    # requirement on the same lever: an empty declaration is withheld while
+    # some creature could attack for free (`attack_with_one_unmet`).
+    if (
+        not combat_mod.unmet_attack_requirements(state)
+        and not combat_mod.attack_with_one_unmet(state, pid)
+        and combat_mod.attacks_valid(state, pid)
+    ):
         out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
     elif not out:
         # Nothing left to add and the declaration is still invalid: the

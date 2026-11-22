@@ -1,0 +1,37 @@
+{
+  "_comment": "Cards that exist only for the gain-becomes-loss test (tests/unit/players/test_life_gain_becomes_loss.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rot_fly` is Plague Drone's Rot Fly line on its own, on an artifact so nothing else about it can matter. `t_self_rot_fly` points the same replacement at its controller, the only way to test `affects_player` from player 0's seat. The doublers are `t_opponent_archive` and `t_opponent_vitality`, the loss doubler `t_always_bloodletter`, the lifelinker `t_lifelink_bear`, Erebos `t_erebos` and the gain spell `t_gain_spell`.",
+  "cards": [
+    {
+      "id": "t_rot_fly",
+      "name": "Test Rot Fly",
+      "oracle_text": "If an opponent would gain life, that player loses that much life instead.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would gain life, that player loses that much life instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "opponent",
+          "lose_instead": true
+        }
+      ]
+    },
+    {
+      "id": "t_self_rot_fly",
+      "name": "Test Self Rot Fly",
+      "oracle_text": "If you would gain life, you lose that much life instead.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would gain life, you lose that much life instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "you",
+          "lose_instead": true
+        }
+      ]
+    }
+  ]
+}

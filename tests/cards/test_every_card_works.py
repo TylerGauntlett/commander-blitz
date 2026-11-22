@@ -22,7 +22,7 @@ from commanderblitz.cards.authoring.verify import (
     dress_own_creature,
     encoded_itself,
     enter_sandbox_combat,
-    graveyard_spell_props,
+    graveyard_target_props,
     sandbox_turn,
     spare_cards_in_hand,
     swap_in_artifact_body,
@@ -143,11 +143,12 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     dress_own_creature(builder, registry, under_test)
     builder.battlefield(1, OPPONENT_BOARD)
     # Surge to Victory and Arcane Heist must target an instant or sorcery card
-    # in your graveyard and an opponent's; these hold none, so the card had no
-    # legal target (601.2c). `verify.graveyard_spell_props` adds one, shared so
+    # in your graveyard and an opponent's, Nurgle's Conscription a creature card
+    # in an opponent's; these hold none, so the card had no legal target
+    # (601.2c). `verify.graveyard_target_props` adds one, shared so
     # the two sandboxes agree, and only for a card that needs it.
-    builder.graveyard(0, [*OWN_GRAVEYARD, *graveyard_spell_props(registry, under_test, 0)])
-    if opponent_yard := graveyard_spell_props(registry, under_test, 1):
+    builder.graveyard(0, [*OWN_GRAVEYARD, *graveyard_target_props(registry, under_test, 0)])
+    if opponent_yard := graveyard_target_props(registry, under_test, 1):
         builder.graveyard(1, opponent_yard)
     # The second card is deliberately not a land -- see `verify.build_sandbox`.
     # Cultivator Colossus puts a land from hand onto the battlefield, draws, and
