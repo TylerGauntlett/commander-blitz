@@ -60098,6 +60098,58 @@
     {
       "abilities": [
         {
+          "activated_by": "you",
+          "affects_abilities": {
+            "any": true
+          },
+          "amount": {
+            "const": 2
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "is_commander": true,
+              "zone": "battlefield"
+            }
+          },
+          "effect": "ability_cost_reduction",
+          "from_graveyard": true,
+          "kind": "static",
+          "mana_floor": 1,
+          "text": "Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Translocation Protocols — {3}, {T}: Mill three cards."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "convergence_of_dominion",
+      "mana_cost": "{3}",
+      "name": "Convergence of Dominion",
+      "oracle_text": "Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.\nTranslocation Protocols — {3}, {T}: Mill three cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

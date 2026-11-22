@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **453** capabilities.
+**534 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -84,7 +84,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
-| [ability-cost-reduction-minimum](#ability-cost-reduction-minimum) | 1 | 11680 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [activated-this-turn](#activated-this-turn) | 1 | 13487 | selector |
@@ -2178,20 +2177,6 @@ Blocks **2** cards.
   - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
 - **Wizened Mentor** (rank 7822) — `wizened_mentor`
   - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
-
-</details>
-
-## ability-cost-reduction-minimum
-
-Blocks **1** card.
-
-- **(static_effect)** an ability_cost_reduction static that reaches activated abilities of cards in a graveyard (affects: {zone: graveyard, owner/controller: you}, any ability class, not only equip/boast) and carries a floor so the discount cannot reduce the ability's total mana cost below one mana (a mana_floor: 1 key applied after the reduction in costs.ability_mana)
-  <br>Why the existing vocabulary won't do: ability_cost_reduction's affects_abilities offers equip, boast and any, where any is accepted only beside targeting or first_each_turn; and its discount is clamped only at zero generic by costs.ability_mana, so nothing expresses 'can't reduce the mana in that ability's activation cost to less than one mana'. Dropping the floor would make {2}-costed graveyard abilities free, which the card forbids
-
-<details><summary>Cards waiting on this</summary>
-
-- **Convergence of Dominion** (rank 11680) — `convergence_of_dominion`
-  - Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.
 
 </details>
 

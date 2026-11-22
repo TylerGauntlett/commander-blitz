@@ -4918,6 +4918,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "convergence_of_dominion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "conversion_apparatus": {
     "battlefield_count": 33,
     "zone": "battlefield"

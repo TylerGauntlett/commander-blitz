@@ -52872,12 +52872,12 @@
     },
     "Convergence of Dominion": {
       "edhrec_rank": 11680,
-      "gate": "template",
+      "gate": null,
       "name": "Convergence of Dominion",
-      "reason": "no template for: Dynastic Command Node — As long as you control your commander, activated abilities of card",
+      "reason": "",
       "scryfall_id": "e03d8676-f693-4155-b75f-dcbe2890ccb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conversion": {
