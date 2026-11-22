@@ -24592,12 +24592,12 @@
     },
     "Bigger on the Inside": {
       "edhrec_rank": 5088,
-      "gate": "template",
+      "gate": null,
       "name": "Bigger on the Inside",
-      "reason": "no template for: Enchant artifact or land",
+      "reason": "",
       "scryfall_id": "8d1178ac-35b9-4086-8ad4-6c629d976ce2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bighorner Rancher": {

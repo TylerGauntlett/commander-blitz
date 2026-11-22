@@ -2319,6 +2319,10 @@
     },
     "zone": "graveyard"
   },
+  "bigger_on_the_inside": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bighorner_rancher": {
     "battlefield_count": 33,
     "life": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**530 cards** blocked by **447** capabilities.
+**529 cards** blocked by **446** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -332,7 +332,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
-| [next-spell-gains-cascade](#next-spell-gains-cascade) | 1 | 5088 | op |
 | [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
@@ -4774,8 +4773,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(static_effect)** an additional cost carried on a battlefield-granted cast_from_graveyard permission, charged to the spell cast through it: here 'exile three other cards from your graveyard' (an exile_from_graveyard cost of 3 cards excluding the spell itself), paid on top of the spell's own mana cost, alongside affects_spells {types: [Creature]}, static_max_per_turn 1 and a your-turn-only condition
-  <br>Why the existing vocabulary won't do: The cast_from_graveyard static (Edgar, Master Machinist shape) carries affects_spells, static_max_per_turn, enters_tapped and grants_flashback but no cost of any kind; graveyard_additional_cost and graveyard_cost are card-level keys priced on the card being cast, not imposed by another permanent's permission; exile_from_graveyard exists only in cost_keys for activated abilities. Writing the permission without the exile would make Kotis a strictly better, free recursion engine than printed.
+- **(static_effect)** a cast_from_graveyard permission (affects_spells Creature, static_max_per_turn 1, condition is_your_turn) that charges an ADDITIONAL cost on top of the spell's normal costs -- here {"exile_from_graveyard": 3} of OTHER cards -- so the spell is cast for its mana cost (or any alternative cost) plus the exile, is not escaped, and resolves normally; the per-card analogue of the card-level graveyard_additional_cost, granted by a permanent to other cards
+  <br>Why the existing vocabulary won't do: The cast_from_graveyard static's only extra-price riders are grants_flashback, grants_retrace, pay_life_instead and escape. escape {exile_from_graveyard: 3} has the right price but is an alternative cost that marks the spell escaped (702.138c), so Kroxa/Uro-style 'unless it escaped' and 'escapes with' cards would misbehave and alternative costs could not be combined; grants_retrace discards a land instead; graveyard_additional_cost is card-level and only prices the card's own graveyard cast. The second sentence is expressible (batched permanent_enters with an any of entered_from graveyard / cast_from_graveyard of subject, as Celes does).
 
 <details><summary>Cards waiting on this</summary>
 
@@ -5708,20 +5707,6 @@ Blocks **1** card.
 
 - **Mutated Cultist** (rank 8432) — `mutated_cultist`
   - When you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way.
-
-</details>
-
-## next-spell-gains-cascade
-
-Blocks **1** card.
-
-- **(op)** an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell
-  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bigger on the Inside** (rank 5088) — `bigger_on_the_inside`
-  - Enchanted permanent has "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
 
 </details>
 
