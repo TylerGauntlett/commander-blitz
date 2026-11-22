@@ -127142,12 +127142,12 @@
     },
     "Hexmark Destroyer": {
       "edhrec_rank": 14267,
-      "gate": "template",
+      "gate": null,
       "name": "Hexmark Destroyer",
-      "reason": "no template for: Multi-threat Eliminator — This creature can't be blocked except by six or more creatures",
+      "reason": "",
       "scryfall_id": "0c9d6f62-3946-48c8-9c51-21c577bff160",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hexplate Golem": {
@@ -293212,12 +293212,12 @@
     },
     "Troll of Khazad-dûm": {
       "edhrec_rank": 2786,
-      "gate": "template",
+      "gate": null,
       "name": "Troll of Khazad-dûm",
-      "reason": "no template for: This creature can't be blocked except by three or more creatures",
+      "reason": "",
       "scryfall_id": "5edb0c1d-be6a-42b1-829c-ffbea3647ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Troll-Horn Cameo": {

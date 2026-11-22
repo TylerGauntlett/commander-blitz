@@ -11689,6 +11689,10 @@
     },
     "zone": "battlefield"
   },
+  "hexmark_destroyer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hexplate_golem": {
     "zone": "battlefield"
   },
@@ -26746,6 +26750,10 @@
     "zone": "battlefield"
   },
   "troll_horn_cameo": {
+    "zone": "battlefield"
+  },
+  "troll_of_khazad_dum": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tromell_seymour_s_butler": {

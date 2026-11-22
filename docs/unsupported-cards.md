@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **457** capabilities.
+**539 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
-| [min-blockers](#min-blockers) | 2 | 2786 | static_effect |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
@@ -1721,24 +1720,6 @@ Blocks **2** cards.
   - Whenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
 - **We Ride at Dawn** (rank 9389) — `we_ride_at_dawn`
   - Whenever your commander attacks, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
-
-</details>
-
-## min-blockers
-
-Blocks **2** cards.
-
-- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 6` with `affects: {self_only: true}`), checked on the complete block declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
-  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap) and `require_all`, but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it. Same need as the existing troll_of_khazad_dum gap (three or more)
-- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 3` with `affects: {self_only: true}`), checked in combat.blocks_valid on the complete declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
-  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap, Challenger Troll) and `require_all` (Tromokratis), but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Troll of Khazad-dûm** (rank 2786) — `troll_of_khazad_dum`
-  - This creature can't be blocked except by three or more creatures.
-- **Hexmark Destroyer** (rank 14267) — `hexmark_destroyer`
-  - Multi-threat Eliminator — This creature can't be blocked except by six or more creatures.
 
 </details>
 
