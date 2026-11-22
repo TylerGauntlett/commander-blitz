@@ -6168,6 +6168,30 @@ Both read the **target list**; they differ on what the chosen ref *is*.
 asks a ref that is an object or a spell who controls it, at the moment the
 effect resolves (608.2 — control of a spell can change while the ability is on
 the stack, and the seat that pays is the one holding it when the bill arrives).
+It takes a target of kind `permanent`, `spell`, `card_in_graveyard`,
+`card_in_exile`, `spell_or_ability` or `ability_on_stack`
+(`vocabulary.CONTROLLED_TARGET_KINDS`); an ability on the stack has a
+controller as a spell does (113.8).
+
+A stack target that has **left the stack** by the time the clause is read still
+answers, with its last known controller (608.2h). The seat is recorded in
+`EffectContext.stack_controllers` as the resolution starts, after the 608.2b
+re-check, and read only once the item is gone, so the sentence can follow the
+counter in printed order:
+
+```jsonc
+// Deny the Witch: "Counter target spell, activated ability, or triggered
+//                  ability. Its controller loses life equal to the number of
+//                  creatures you control."
+"targets": [ { "id": "t1", "kind": "spell_or_ability" } ],
+"spell_effects": [
+  { "op": "counter", "target": "t1" },
+  { "op": "lose_life", "player": { "controller_of_target": "t1" },
+    "amount": { "creatures_you_control": true } } ]
+```
+
+A `snapshot` of an ability target captures nothing (an ability has no object),
+so `{"controller_of": <snapshot>}` is not the spelling for an ability.
 
 Exactly one of the two is right for any given target spec, and **the loader
 refuses the other** — `loader._validate_player_spec`, checked for every effect

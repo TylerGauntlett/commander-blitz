@@ -1945,8 +1945,17 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             billed: list[int] = []
             for ref in ctx.target_refs(tid):
                 if ref.kind == "stack":
+                    # Live first, then last-known (608.2h): "Counter target
+                    # spell, activated ability, or triggered ability. Its
+                    # controller loses life…" (Deny the Witch) is printed after
+                    # the counter, which has already taken the item off the
+                    # stack. See `EffectContext.stack_controllers`.
                     item = state.stack_item(ref.id)
-                    pid = item.controller if item is not None else None
+                    pid = (
+                        item.controller
+                        if item is not None
+                        else ctx.stack_controllers.get(ref.id)
+                    )
                 elif ref.kind == "object":
                     pid = obj.controller if (obj := state.objects.get(ref.id)) else None
                 else:  # a player ref has no controller; the loader refuses it

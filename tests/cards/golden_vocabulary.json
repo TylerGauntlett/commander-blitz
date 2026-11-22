@@ -40,10 +40,12 @@
    "library"
   ],
   "CONTROLLED_TARGET_KINDS": [
+   "ability_on_stack",
    "card_in_exile",
    "card_in_graveyard",
    "permanent",
-   "spell"
+   "spell",
+   "spell_or_ability"
   ],
   "COST_CONDITION_HEADS": [
    "all",

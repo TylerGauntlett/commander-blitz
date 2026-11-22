@@ -81,10 +81,28 @@ class EffectContext:
     #: item's last-known targets and choices (707.10), and a stack lookup by
     #: `sid` would find nothing.
     resolving_spell: Any = None
+    #: Last-known controller of every **stack** target (608.2h), keyed by
+    #: `sid`. "Counter target spell, activated ability, or triggered ability.
+    #: **Its controller** loses life…" (Deny the Witch) asks for the seat after
+    #: the counter has taken the item off the stack, where `stack_item` finds
+    #: nothing -- and an ability leaves no card behind to ask instead. Filled
+    #: as the context is built, which `stack.resolve_top` does after
+    #: `filter_legal`, so only targets still legal on resolution are in it.
+    #: `dataclasses.replace` hands the dict on and `__post_init__` only adds to
+    #: it, so a nested context keeps what its parent saw. Read by the
+    #: ``controller_of_target`` player spec, and only for an item that is gone:
+    #: a live one answers for itself.
+    stack_controllers: dict[int, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.began_at < 0:
             self.began_at = self.state.next_timestamp
+        for refs in self.targets.values():
+            for ref in refs:
+                if ref.kind == "stack" and ref.id not in self.stack_controllers:
+                    item = self.state.stack_item(ref.id)
+                    if item is not None:
+                        self.stack_controllers[ref.id] = item.controller
 
     def target_refs(self, target_id: str) -> tuple[TargetRef, ...]:
         return self.targets.get(target_id, ())

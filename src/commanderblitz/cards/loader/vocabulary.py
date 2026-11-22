@@ -1993,11 +1993,24 @@ PLACED_COUNTER_KIND = {"binding": "counter"}
 PLAYER_TARGET_KINDS = frozenset({"player", "any"})
 
 #: Target kinds whose chosen ref always has a **controller**, so
-#: ``{"controller_of_target": "t1"}`` means something. The complement of
-#: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
-#: so: exactly one of the two keys is right for any given target spec, which is
-#: what makes the pair a checkable choice instead of two ways to be wrong.
-CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard", "card_in_exile"})
+#: ``{"controller_of_target": "t1"}`` means something. Disjoint from
+#: :data:`PLAYER_TARGET_KINDS`, and deliberately so: exactly one of the two keys
+#: is right for any given target spec, which is what makes the pair a checkable
+#: choice instead of two ways to be wrong. An ability on the stack has a
+#: controller as a spell does (113.8), so the two stack kinds that reach one
+#: are here -- "Its controller loses life…" after Deny the Witch counters a
+#: spell *or* an ability. `select_players` reads the seat off the stack item,
+#: or off `EffectContext.stack_controllers` once the counter has removed it.
+CONTROLLED_TARGET_KINDS = frozenset(
+    {
+        "permanent",
+        "spell",
+        "card_in_graveyard",
+        "card_in_exile",
+        "spell_or_ability",
+        "ability_on_stack",
+    }
+)
 
 
 #: The ops that can put the permanent they make into combat.
