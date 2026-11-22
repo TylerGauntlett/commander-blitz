@@ -8691,7 +8691,49 @@ the same result, but in a pod `declare_win` removes *every* other seat, so one
 Assassin hit would eliminate players it never touched. Every seat the spec names
 is eliminated before the game-over check, so "each player loses the game" is a
 draw (104.4a). A `condition` on the op is a load error, for `win_game`'s reason:
-wrap it in an `if`.
+wrap it in an `if`. A seat that can't lose the game (`cant_lose_the_game`) is held
+in, and a `replace_lose_game` static (below) replaces the loss.
+
+### "If you would lose the game, instead exile it and your life total becomes 1"
+
+```jsonc
+// The Golden Throne — "Arcane Life-support — If you would lose the game,
+// instead exile The Golden Throne and your life total becomes 1."
+{ "kind": "static", "effect": "replace_lose_game", "affects_player": "you",
+  "effects": [
+    { "op": "exile", "objects": { "zone": "battlefield", "self_only": true } },
+    { "op": "set_life_total", "amount": 1 } ] }
+```
+
+A replacement of the **loss**, not a prohibition. Whatever would have made the
+static's controller lose — 0 life, ten poison, 21 commander damage, a draw from
+an empty library, a `lose_game` op — the `effects` run instead, as that player
+with the static's permanent as their source, and the player stays in the game.
+`sba.replace_loss` applies it, asked by `sba._player_losses` and by
+`sba.declare_loss`.
+
+- **What the replacement fixes, and what it leaves.** At 0 life the player is now
+  at 1 and the next state-based check finds nothing. Poison and commander damage
+  are still there, so the next check is a new loss: a second Throne replaces it,
+  and otherwise the player loses — the replacement bought nothing against them,
+  which is how the card plays. The replaced empty-library draw is spent
+  (704.5b asks about draws since the last check).
+- **After "can't lose".** A seat a `cant_lose_the_game` static or op holds in
+  does not lose, so nothing is replaced and the Throne stays.
+- **A win is not a loss.** An opponent's `win_game` eliminates the table through
+  `declare_win` and is not replaced; `cant_win_the_game` is the sentence that stops it.
+- **Several.** The first in battlefield order applies; 616.1's choice for the
+  losing player is not asked, since the check cannot stop for a question.
+
+Load-time refusals: `effects` is required; its ops are `REPLACE_LOSE_GAME_OPS`
+(`exile` and `set_life_total`), because the state-based check cannot suspend for
+a decision; every `exile` is of `self_only`, and one must be at the top level,
+because a source left on the battlefield would replace the same ten poison
+counters again at every check; `affects_player` is `"you"`; `affects` and
+`amount` are refused. Exquisite Archangel is the same static with
+`"amount": {"starting_life_of": "you"}`. Near miss: `cant_lose_the_game`, which
+forbids the loss and runs nothing, so the permanent never leaves and the life
+total never moves.
 
 ### "No maximum hand size for the rest of the game"
 
@@ -9818,6 +9860,22 @@ Two things it deliberately does not do. It does not stop the **damage** —
 total holds still, and protection is the sentence that stops damage, which is why
 Teferi's Protection prints both. And it does not make paying life *free*: the
 cost is refused, not zeroed.
+
+## "Your life total becomes N"
+
+```jsonc
+{"op": "set_life_total", "amount": 1}                                 // The Golden Throne
+{"op": "set_life_total", "amount": {"starting_life_of": "you"}}       // Exquisite Archangel
+```
+
+119.5: a life total set to a number moves by gaining or losing the difference, so
+the op is `gain_life` or `lose_life` of it, never a write of the field. A life-gain
+or life-loss trigger hears it, a loss replacement (`replace_life_loss`) applies to
+it, a locked life total does not move, and a player who can't gain life stays below
+the number. `amount` is a required value expression, read per player; `player` is
+the ordinary player spec, defaulting to `"you"`; `objects` and `duration` are
+refused. Near miss: `exchange_life_total`, which trades the number with a creature's
+toughness.
 
 ## Exchanging a life total with a toughness
 

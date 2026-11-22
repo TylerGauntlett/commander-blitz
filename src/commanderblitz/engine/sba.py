@@ -15,7 +15,11 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .player_statics import legend_rule_exempt, outcome_barred_by_static
+from .player_statics import (
+    legend_rule_exempt,
+    lose_game_replacement,
+    outcome_barred_by_static,
+)
 from .primitives import (
     become_monarch,
     clear_until_next_turn,
@@ -173,10 +177,62 @@ def _player_losses(state: GameState) -> bool:
             # says "you can't lose the game", full stop, so an empty library, 21
             # commander damage and ten poison counters are all held off too.
             reason = None
+        if reason is not None and replace_loss(state, player.pid):
+            # The Golden Throne: the loss is replaced, and the player stays in.
+            # Whatever caused it is still true if the replacement did not undo
+            # it -- ten poison counters, 21 commander damage -- so the next
+            # pass of this loop is a new loss (each check is its own event),
+            # and with the source gone that one eliminates.
+            changed = True
+            continue
         if reason is not None:
             _eliminate(state, player.pid, reason)
             changed = True
     return changed
+
+
+def replace_loss(state: GameState, pid: int) -> bool:
+    """Apply a `replace_lose_game` static to ``pid``'s loss -- 614.1, 104.3.
+
+    The Golden Throne: "If you would lose the game, instead exile The Golden
+    Throne and your life total becomes 1." Returns whether a replacement
+    applied; when it did the loss did not happen.
+
+    Asked by both places a player loses -- the state-based check above and
+    `declare_loss`, the `lose_game` op's -- and in both **after**
+    `player_cant_lose`: a loss a "can't lose" forbids is not an event, and nothing
+    replaces it (Platinum Angel beside the Throne keeps the Throne). A *win*
+    is not routed through here: an opponent winning eliminates the table
+    through `declare_win`, which is not "you would lose" (104.2b, and Platinum
+    Angel's other half is what stops that).
+
+    The effects run now, as the static's controller with its source, and
+    cannot ask: the loader holds them to `REPLACE_LOSE_GAME_OPS`. The draw from
+    an empty library is spent with the replacement -- 704.5b asks about draws
+    "since the last time state-based actions were checked", and the one that
+    was replaced is behind us -- while poison and commander damage are states
+    that stay true, which is why they lose at the next check.
+    """
+    found = lose_game_replacement(state, pid)
+    if found is None:
+        return False
+    obj, static = found
+    # Local: `effects` reaches `sba` through the `lose_game` op.
+    from .effects import execute
+    from .effects.context import EffectContext
+
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=obj.oid)
+    gen = execute(ctx, list(static.get("effects") or ()))
+    try:
+        gen.send(None)
+    except StopIteration:
+        pass
+    else:  # pragma: no cover - the loader refuses an op that asks
+        gen.close()
+        raise RuntimeError("a replace_lose_game effect asked a question")
+    state.players[pid].attempted_draw_from_empty = False
+    state.bump_chars()
+    return True
 
 
 def player_cant_lose(state: GameState, pid: int) -> bool:
@@ -425,12 +481,16 @@ def declare_loss(state: GameState, pids: Iterable[int]) -> None:
     Every named seat is eliminated before the game-over check, so "each player
     loses the game" is a draw (104.4a) rather than a win for whichever seat the
     loop reached last. A game already over, or a seat already gone, is a no-op.
-    "Can't lose the game" (Platinum Angel) is not modelled.
+    "Can't lose the game" (Platinum Angel, 104.3b) holds the seat in, as it
+    does against the state-based reasons; failing that, a `replace_lose_game`
+    static (The Golden Throne) replaces the loss and the seat stays.
     """
     if state.game_over:
         return
     for pid in pids:
-        if state.is_alive(pid):
+        if not state.is_alive(pid) or player_cant_lose(state, pid):
+            continue
+        if not replace_loss(state, pid):
             _eliminate(state, pid, LossReason.LOST_BY_EFFECT)
     check_game_over(state)
 

@@ -10,15 +10,15 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 186 |
+| [Effect ops](#effect-ops) | 187 |
 | [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 65 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 104 |
-| [Player-wide statics](#player-wide-statics) | 48 |
+| [Static effects](#static-effects) | 105 |
+| [Player-wide statics](#player-wide-statics) | 49 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
@@ -183,6 +183,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn; `combat_only` narrows it to combat damage, `effects` runs each time it prevents ("prevented this way"). | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration; `combat_only` narrows it to combat damage, `effects` runs each time it prevents ("prevented this way"). | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
 | `redirect_damage` | Life & damage |  | Damage to a player and to permanents matching `permanents` is dealt to `to` instead this turn. | [Damage dealt to the chosen creature instead](card-dsl-cookbook.md#damage-dealt-to-the-chosen-creature-instead) |
+| `set_life_total` | Life & damage |  | A player's life total becomes N, by gaining or losing the difference (119.5). | ["Your life total becomes N"](card-dsl-cookbook.md#your-life-total-becomes-n) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `cant_cast_spells` | Players |  | A player can't cast spells for a duration (the timed form of the static). | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cant_cast_spells_from_zones` | Players |  | A player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
@@ -675,6 +676,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_graveyard` |  | yes | If a matching card would go to a graveyard, it goes elsewhere. | [Static abilities](card-dsl.md#static-abilities) |
 | `replace_life_gain` | yes |  | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
+| `replace_lose_game` | yes |  | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | yes |  | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | yes |  | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | yes |  | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
@@ -741,6 +743,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
+| `replace_lose_game` | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |

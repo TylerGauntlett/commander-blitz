@@ -293,6 +293,27 @@ def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+def lose_game_replacement(
+    state: GameState, pid: int
+) -> tuple[GameObject, Mapping[str, Any]] | None:
+    """The `replace_lose_game` static that would replace ``pid`` losing, if any.
+
+    The Golden Throne: "If you would lose the game, instead exile The Golden
+    Throne and your life total becomes 1." Its source beside it, because the
+    replacement's effects run with that permanent as their source and its
+    controller as "you".
+
+    The first in battlefield order when several apply. 616.1 gives the losing
+    player the choice and this does not ask -- `sba.replace_loss` runs where no
+    question can be put -- and every printed card in the family removes its
+    own source, so a second one is what replaces the next loss.
+    """
+    for obj, static in _active_player_statics(state, "replace_lose_game"):
+        if _reaches_player(obj, static, pid):
+            return obj, static
+    return None
+
+
 def static_life_floor(state: GameState, pid: int) -> int | None:
     """The highest life floor an active `damage_life_floor` static gives ``pid``.
 

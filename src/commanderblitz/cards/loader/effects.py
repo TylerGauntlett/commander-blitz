@@ -5150,6 +5150,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: exchange_life_total takes no {key!r} -- the creature "
                     f"is the ability's source and the exchange is indefinite (701.12)"
                 )
+    if op == "set_life_total":
+        # "Your life total becomes 1." The number is the whole sentence: a
+        # default would be a guess, and a set to 0 by omission would kill.
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: set_life_total needs an 'amount' -- the number the life "
+                f"total becomes (119.5)"
+            )
+        for key in ("objects", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: set_life_total takes 'amount' and an optional "
+                    f"'player', and no {key!r}"
+                )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)

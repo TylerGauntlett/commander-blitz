@@ -135,6 +135,7 @@ H_AS_LONG_AS = '"As long as…"'
 H_STATIC_MAGNITUDE = '"+1/+1 for each charge counter on this artifact"'
 H_RECORDING = 'Recording what an op consumed or produced — "this way", "the token"'
 H_MONARCH = "The monarch"
+H_LOSE_GAME_INSTEAD = '"If you would lose the game, instead exile it and your life total becomes 1"'
 H_GIFT = "Gift — a promise made to one opponent, for nothing"
 H_BATCHED = '"Whenever **one or more** …" — `batched`'
 H_SPREE = 'Spree — "choose **one or more** additional costs"'
@@ -421,6 +422,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                  "Preventing all damage to or by a **permanent**, for a while"),
     "exchange_life_total": ("Life & damage", "Exchange a player's life total with the source creature's toughness (701.12), in full or not at all.",
                             "Exchanging a life total with a toughness"),
+    "set_life_total": ("Life & damage", "A player's life total becomes N, by gaining or losing the difference (119.5).",
+                       '"Your life total becomes N"'),
     "lock_life_total": ("Life & damage", "A player's life total can't change for a duration.",
                         '"Your life total can\'t change"'),
     "damage_life_floor": ("Life & damage", "Damage can't reduce a player's life below N this turn.",
@@ -1118,6 +1121,9 @@ STATICS: dict[str, Entry] = {
                           '"If you would gain life, you gain twice that much life instead"'),
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),
+    "replace_lose_game": ("If the controller would lose the game, `effects` happen instead "
+                          "(exiling this permanent, setting the life total).",
+                          H_LOSE_GAME_INSTEAD),
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
     "replace_surveil": ("Each time the player surveils, they look at more cards; `surveil_optional` makes each static a \"may\".",
                         "Looking at more cards when you surveil"),

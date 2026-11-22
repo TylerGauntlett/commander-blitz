@@ -464,6 +464,32 @@ def op_exchange_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
     set_base_toughness(state, oid, life, source=oid)
 
 
+@register("set_life_total")
+def op_set_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Your life total becomes 1." The Golden Throne, Exquisite Archangel.
+
+    119.5: a life total set to a number moves by **gaining or losing** the
+    difference, so this is `gain_life` or `lose_life` of it and never a write
+    of the field. Everything those two funnels do applies: a life-gain or
+    life-loss trigger hears the change, Bloodletter of Aclazotz doubles a loss,
+    a locked life total (118.5) does not move, and a player who can't gain
+    life (Erebos) stays where they are when the number is above them. The
+    number is read per player, so a value relative to the player is theirs.
+
+    ``amount`` is required and is a value expression; ``player`` is the usual
+    player spec and defaults to ``"you"``. `exchange_life_total` is the near
+    miss: it trades the number with a creature's toughness, and the creature's
+    half is the whole of what makes it a different sentence.
+    """
+    amount = evaluate_value(ctx, spec["amount"])
+    for pid in select_players(ctx, spec.get("player", "you")):
+        delta = amount - ctx.state.players[pid].life
+        if delta > 0:
+            gain_life(ctx.state, pid, delta, source=ctx.source_oid)
+        elif delta < 0:
+            lose_life(ctx.state, pid, -delta, source=ctx.source_oid)
+
+
 @register("damage")
 def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     """Deal damage to objects, players, or both.

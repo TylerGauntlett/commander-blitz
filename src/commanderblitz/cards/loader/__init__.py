@@ -168,6 +168,7 @@ from .vocabulary import (  # noqa: F401
     PLAYER_TARGET_KINDS,
     PLAYER_WIDE_STATIC_EFFECTS,
     PLURAL_PLAYER_SPEC_NAMES,
+    REPLACE_LOSE_GAME_OPS,
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
@@ -5134,6 +5135,64 @@ def _validate_control_static(model: AbilityModel, where: str) -> None:
         )
 
 
+def _validate_lose_game_replacement(model: AbilityModel, where: str) -> None:
+    """The refusals for a `replace_lose_game` static (The Golden Throne).
+
+    "If you would lose the game, instead exile The Golden Throne and your life
+    total becomes 1." Its `effects` are the "instead", and each refusal here is
+    a card that would load and play wrong:
+
+    * **No effects** is a loss replaced by nothing -- `cant_lose_the_game`
+      wearing a replacement's name.
+    * **An op outside `REPLACE_LOSE_GAME_OPS`**, or an `exile` of anything but
+      the source: the replacement runs inside the state-based actions, which
+      cannot stop to ask a question.
+    * **The source not leaving.** Every printed card removes the permanent
+      that carries the line, and that is what ends it: a replacement that left
+      its source on the battlefield would replace ten poison counters again at
+      every check, for ever.
+    * **"you" only.** "Your life total becomes 1" is the static's controller,
+      the player whose loss it replaces; on an opponent the two would differ.
+    """
+    if not model.effects:
+        raise DslError(
+            f"{where}: replace_lose_game needs 'effects' -- what happens instead "
+            f"of the loss (exile this permanent, set the life total)"
+        )
+    for i, effect in enumerate(model.effects):
+        here = f"{where}.effects[{i}]"
+        _validate_effect(effect, here, {})
+        op = effect.get("op")
+        if op not in REPLACE_LOSE_GAME_OPS:
+            raise DslError(
+                f"{here}: a replace_lose_game static runs inside the state-based "
+                f"actions and may not ask a question, so its effects are "
+                f"{sorted(REPLACE_LOSE_GAME_OPS)}, not {op!r}"
+            )
+        objects = effect.get("objects")
+        if op == "exile" and not (isinstance(objects, Mapping) and objects.get("self_only")):
+            raise DslError(
+                f"{here}: a replace_lose_game static exiles only its own source "
+                f"('objects': {{'zone': 'battlefield', 'self_only': true}})"
+            )
+    if not _effects_move_source(model.effects):
+        raise DslError(
+            f"{where}: replace_lose_game's effects must exile this permanent -- "
+            f"a source left on the battlefield would replace the same loss again "
+            f"at every state-based check"
+        )
+    if model.affects_player not in (None, "you"):
+        raise DslError(
+            f"{where}: replace_lose_game replaces its controller's loss; "
+            f"'affects_player' is 'you', not {model.affects_player!r}"
+        )
+    if model.affects is not None or model.amount is not None:
+        raise DslError(
+            f"{where}: replace_lose_game takes 'effects', 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -5267,7 +5326,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: unknown static effect {model.effect!r} (implemented: {sorted(STATIC_EFFECTS)})"
         )
-    if model.effects:
+    if model.effect == "replace_lose_game":
+        _validate_lose_game_replacement(model, where)
+    elif model.effects:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
@@ -7683,6 +7744,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     static: dict[str, Any] = {"effect": model.effect}
+    if model.effect == "replace_lose_game":
+        # What happens instead, carried on the mapping because the mapping is
+        # all `player_statics.lose_game_replacement` ever sees.
+        static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)
     if model.affects is not None:

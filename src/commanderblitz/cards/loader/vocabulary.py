@@ -791,6 +791,16 @@ STATIC_EFFECTS = frozenset(
         # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
         "cant_lose_the_game",
         "cant_win_the_game",
+        # The Golden Throne.  "If you would lose the game, instead exile The
+        # Golden Throne and your life total becomes 1."  A replacement of the
+        # *loss*, every cause of it -- the four state-based reasons and a
+        # `lose_game` op -- where `cant_lose_the_game` is a prohibition that
+        # runs nothing.  `effects` is what happens instead, run as the static's
+        # controller with the static's source, and must move that source off
+        # the battlefield, which is what makes it once per permanent.  Read by
+        # `sba.replace_loss` through `player_statics.lose_game_replacement`,
+        # after the prohibition: an event that cannot happen is not replaced.
+        "replace_lose_game",
         # Worship; Serra the Benevolent's emblem.  "If you control a creature,
         # damage that would reduce your life total to less than 1 reduces it to
         # 1 instead."  The continuous form of the `damage_life_floor` op
@@ -989,6 +999,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "opponents_cant_force_discard_or_sacrifice",
         "cant_lose_the_game",
         "cant_win_the_game",
+        "replace_lose_game",
         "damage_life_floor",
         "player_hexproof",
         "player_protection",
@@ -1403,6 +1414,15 @@ _CHOSEN_QUALITY_KEYS = ("chosen_type_of", "chosen_color_of")
 #: Unearth's `put_onto_battlefield`, and the three other destinations a card
 #: could plausibly be sent to by its own ability.
 SOURCE_MOVING_OPS = frozenset({"put_onto_battlefield", "exile", "return_to_hand", "put_on_top"})
+
+#: The ops a `replace_lose_game` static's `effects` may run.
+#:
+#: The replacement is applied inside the state-based actions and inside the
+#: `lose_game` op's `sba.declare_loss`, and neither can suspend for a decision:
+#: so only ops that never ask one, and `exile` only of the source itself
+#: (`_compile_static` checks that). A card whose replacement does more -- Lich's
+#: Mirror's shuffle and draw -- widens this when it is built.
+REPLACE_LOSE_GAME_OPS = frozenset({"exile", "set_life_total"})
 
 
 #: Which trigger a ``{"was_cast": …}`` clause may hang from.

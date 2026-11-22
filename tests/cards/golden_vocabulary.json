@@ -386,6 +386,7 @@
    "replace_empty_draw",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
@@ -400,6 +401,10 @@
    "each_opponent",
    "each_player",
    "opponent"
+  ],
+  "REPLACE_LOSE_GAME_OPS": [
+   "exile",
+   "set_life_total"
   ],
   "SOURCE_MOVING_OPS": [
    "exile",
@@ -647,6 +652,7 @@
    "replace_graveyard",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
@@ -852,6 +858,7 @@
    "replace_empty_draw",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
@@ -1178,6 +1185,7 @@
   "search_library",
   "search_zones",
   "set_flag",
+  "set_life_total",
   "set_pt",
   "set_turn_flag",
   "shuffle",
