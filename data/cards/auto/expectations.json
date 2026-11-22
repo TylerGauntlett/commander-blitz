@@ -21275,6 +21275,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "sawhorn_nemesis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scabland": {
     "zone": "battlefield"
   },
@@ -26698,6 +26702,10 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "triarch_stalker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tributary_instructor": {

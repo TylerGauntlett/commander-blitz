@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**539 cards** blocked by **456** capabilities.
+**537 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -48,7 +48,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
-| [chosen-player](#chosen-player) | 2 | 6383 | selector |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
@@ -1517,26 +1516,6 @@ Blocks **2** cards.
   - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 - **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
   - As long as you've cast a spell this turn, you may play cards from the top of your library.
-
-</details>
-
-## chosen-player
-
-Blocks **2** cards.
-
-- **(selector)** an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {"chosen_player_of": "self"} and an affects filter controller: {"chosen_player_of": "self"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control
-  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod
-- **(selector)** a player choice made by a triggered ability's choose_player (players: opponents) that is remembered on the source permanent and overwritten by each later choice ("the last chosen player"), readable by a static as a player spec -- e.g. a grant_keyword static {keywords: [menace]} whose affects is {types: [Creature], attacking_player: {chosen_player_of: self}}, matching every attacking creature (any controller) attacking that player, and matching nothing before any choice has been made
-  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types, colors and card types. A static's attacking_player takes only the words you/opponent/any/most_life (ATTACKING_PLAYER_WORDS) and the loader refuses the {binding} form on a static, so 'opponent' would give menace to creatures attacking every opponent -- a different card in a multiplayer pod
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
-  - As this creature enters, choose a player
-  - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
-- **Triarch Stalker** (rank 14529) — `triarch_stalker`
-  - Targeting Relay — At the beginning of combat on your turn, choose an opponent.
-  - Creatures attacking the last chosen player have menace.
 
 </details>
 

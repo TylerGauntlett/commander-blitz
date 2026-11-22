@@ -234422,12 +234422,12 @@
     },
     "Sawhorn Nemesis": {
       "edhrec_rank": 6383,
-      "gate": "template",
+      "gate": null,
       "name": "Sawhorn Nemesis",
-      "reason": "no template for: As this creature enters, choose a player",
+      "reason": "",
       "scryfall_id": "29b33e43-ffd5-4697-8261-9b4f5de36a19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sawtooth Loon": {
@@ -292592,12 +292592,12 @@
     },
     "Triarch Stalker": {
       "edhrec_rank": 14529,
-      "gate": "template",
+      "gate": null,
       "name": "Triarch Stalker",
-      "reason": "no template for: Targeting Relay — At the beginning of combat on your turn, choose an opponent",
+      "reason": "",
       "scryfall_id": "531ea7e2-71ca-4290-8a8b-45a8edf5ab1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triassic Egg": {

@@ -254188,6 +254188,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "choose_player",
+              "players": "each_player",
+              "prompt": "Choose a player",
+              "remember": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this creature enters, choose a player.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": {
+              "chosen_player_of": "self"
+            }
+          },
+          "affects_player": {
+            "chosen_player_of": "self"
+          },
+          "damage_multiplier": 2,
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sawhorn_nemesis",
+      "mana_cost": "{3}{R}",
+      "name": "Sawhorn Nemesis",
+      "oracle_text": "As this creature enters, choose a player.\nIf a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -320657,6 +320710,63 @@
         "Necron"
       ],
       "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent",
+              "remember": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Targeting Relay — At the beginning of combat on your turn, choose an opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "affects": {
+            "attacking_player": {
+              "chosen_player_of": "self"
+            },
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Creatures attacking the last chosen player have menace."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "triarch_stalker",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Triarch Stalker",
+      "oracle_text": "Targeting Relay — At the beginning of combat on your turn, choose an opponent.\nCreatures attacking the last chosen player have menace.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "toughness": 5,
       "types": [
         "Artifact",
         "Creature"
