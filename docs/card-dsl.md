@@ -6843,7 +6843,7 @@ Off by default, and refused anywhere else. See
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `becomes_attached` · `becomes_unattached` · `lose_control` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·

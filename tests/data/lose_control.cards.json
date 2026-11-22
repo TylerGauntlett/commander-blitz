@@ -1,0 +1,25 @@
+{
+  "_comment": "Cards for tests/unit/triggers/test_lose_control.py. `t_sigil_bearer` is Khârn the Betrayer's Sigil of Corruption alone on a vanilla body: 'When you lose control of Test Sigil Bearer, draw two cards.'",
+  "cards": [
+    {
+      "id": "t_sigil_bearer",
+      "name": "Test Sigil Bearer",
+      "oracle_text": "When you lose control of Test Sigil Bearer, draw two cards.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you lose control of Test Sigil Bearer, draw two cards.",
+          "trigger": {"event": "lose_control"},
+          "effects": [{"op": "draw", "amount": {"const": 2}}]
+        }
+      ]
+    }
+  ]
+}

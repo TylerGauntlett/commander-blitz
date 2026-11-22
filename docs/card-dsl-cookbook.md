@@ -15525,6 +15525,25 @@ in response was already dropped on resolution (608.2b), so it arrives here as an
 empty pool, and the other half is not performed alone. Both keys are required,
 and `duration` is refused, because every printed exchange is permanent.
 
+### When you lose control of it
+
+```jsonc
+// Khârn the Betrayer — "When you lose control of Khârn the Betrayer, draw two cards."
+{ "kind": "triggered",
+  "trigger": { "event": "lose_control" },
+  "effects": [ { "op": "draw", "amount": { "const": 2 } } ] }
+```
+
+`lose_control` listens to the `control_changed` event every route above fires
+through `change_control`, a steal, a handback and an exchange alike. It is a
+self trigger: the loader supplies `source: "self"` and refuses a `controller`
+or a `filter`. The ability belongs to the player who **lost** control:
+603.10a makes it a look-back trigger, and 603.3a gives it to whoever controlled
+the source when it triggered, so `triggers._queue` takes the event's `from`
+rather than the permanent's controller now. A thief therefore draws too when
+the permanent goes home. `leaves_battlefield` is the near miss: a control
+change is not a zone change.
+
 ## Exhaust — "Activate each exhaust ability only once"
 
 ```jsonc

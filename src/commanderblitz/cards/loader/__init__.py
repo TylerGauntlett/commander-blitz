@@ -3982,6 +3982,18 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         source = model.trigger.source
         if model.trigger.event == "self_enters":
             source = "self"
+        if model.trigger.event == "lose_control":
+            # "When you lose control of **this permanent**": the only printed
+            # shape, so the name means it, as `self_enters` does. "You" is the
+            # seat control left, which the engine makes the ability's
+            # controller (603.3a, 603.10a) -- a `controller` clause or a filter
+            # would be a second answer to a question the event already settled.
+            if model.trigger.controller != "you" or model.trigger.filter:
+                raise DslError(
+                    f"{where}: 'lose_control' is \"when you lose control of this "
+                    f"permanent\" and takes no 'controller' or 'filter'"
+                )
+            source = "self"
 
         if model.trigger.level is not None and model.trigger.event != "becomes_level":
             # Same reasoning as `counter` below: only BECAME_LEVEL carries a

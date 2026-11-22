@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 66 |
+| [Trigger events](#trigger-events) | 67 |
 | [Trigger filters](#trigger-filters) | 38 |
 | [Static effects](#static-effects) | 109 |
 | [Player-wide statics](#player-wide-statics) | 51 |
@@ -521,6 +521,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
 | `life_lost` | `life_lost` | A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches. | ["Whenever an opponent loses life"](card-dsl-cookbook.md#whenever-an-opponent-loses-life) |
+| `lose_control` | `control_changed` | You lose control of this permanent; the ability is the former controller's (603.10a). | [When you lose control of it](card-dsl-cookbook.md#when-you-lose-control-of-it) |
 | `mutates` | `mutated` | A creature mutates. | ["Whenever this creature mutates…"](card-dsl.md#whenever-this-creature-mutates) |
 | `permanent_enters` | `enters_battlefield` | A permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |
@@ -1263,7 +1264,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `combat_damage_to_planeswalker` | `deals_combat_damage_to_planeswalker` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_player` | `deals_combat_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |
-| `control_changed` |  |  | [Triggers](card-dsl.md#triggers) |
+| `control_changed` | `lose_control` |  | [Triggers](card-dsl.md#triggers) |
 | `counter_placed` | `counter_placed` |  | [Triggers](card-dsl.md#triggers) |
 | `counter_removed` | `last_counter_removed` `counter_removed` |  | [Triggers](card-dsl.md#triggers) |
 | `creature_dealt_combat_damage` | `deals_combat_damage` |  | [Triggers](card-dsl.md#triggers) |

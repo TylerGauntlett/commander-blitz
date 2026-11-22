@@ -490,6 +490,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: event existed; what did not was the untap *step* saying which permanents
     #: it untapped, which is where inspired fires nearly every time.
     "becomes_untapped": EventType.UNTAPPED,
+    #: "When you lose control of this permanent, …" (Khârn the Betrayer's
+    #: Sigil of Corruption). Every control change goes through
+    #: `primitives.change_control`, which fires CONTROL_CHANGED with ``from``
+    #: and ``to``; nothing listened. Self only (the loader supplies
+    #: `source: "self"`), and the ability is controlled by the player who
+    #: **lost** control: 603.10a makes "a player loses control of an object"
+    #: a look-back trigger, so it triggers as the permanent was before the
+    #: event, and 603.3a gives the ability to the player who controlled its
+    #: source then -- ``from``, not the permanent's controller now. See
+    #: `_queue`.
+    "lose_control": EventType.CONTROL_CHANGED,
     #: "Whenever this creature becomes tapped, …" -- the Legolas's Quick Reflexes
     #: grant, City of Brass, the whole Kithkin/rogue lineage. `EventType.TAPPED`
     #: has fired from `primitives.tap_permanent` since tapping existed and simply
@@ -785,6 +796,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # scopes them to the creature that was, or was not, blocked.
         "becomes_blocked",
         "attacks_unblocked",
+        # The permanent that changed hands, so `source: "self"` is "control of
+        # *this* permanent".
+        "lose_control",
         # The permanent that untapped, and the one that tapped.
         "becomes_untapped",
         "becomes_tapped",
@@ -2008,7 +2022,10 @@ def _matches(
         elif _ordinal(state, spec, event, obj) != spec.nth:
             return False
 
-    actor = _actor(state, spec.event, event, subject_oid)
+    # "When **you** lose control of": the actor is the player who lost it, and
+    # that is the ability's controller by `_queue`'s 603.3a, never the
+    # permanent's controller now -- so no `controller` clause is compared.
+    actor = None if spec.event == "lose_control" else _actor(state, spec.event, event, subject_oid)
     if actor is not None:
         if spec.controller == "you" and actor != obj.controller:
             return False
@@ -3367,6 +3384,12 @@ def _queue(
         bindings["moved"] = [bindings["subject"]] if "subject" in bindings else []
 
     card = state.card_of(obj)
+    # 603.3a: the player who controlled the source when it triggered. For a
+    # look-back "when you lose control of" (603.10a) that is the seat control
+    # moved *from*; by now `obj.controller` is the seat it moved to.
+    controller = obj.controller
+    if spec.event == "lose_control" and event.data.get("from") is not None:
+        controller = int(event.data["from"])
     # `ability_index` is read back against whichever list `granted_by` names, so
     # the two are settled together -- see `_granter_of`.
     granted_by, ability_index = _granter_of(state, obj, ability)
@@ -3374,7 +3397,7 @@ def _queue(
         TriggerInstance(
             source_oid=obj.oid,
             ability_index=ability_index,
-            controller=obj.controller,
+            controller=controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
             # Snapshotted now, while the object still exists -- see
@@ -3385,7 +3408,7 @@ def _queue(
     )
     state.emit(
         EventType.ABILITY_TRIGGERED,
-        player=obj.controller,
+        player=controller,
         source=obj.oid,
         # The client names the source from this; without it every trigger in
         # the log and the effects layer read "An ability triggers", which is

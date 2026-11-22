@@ -940,6 +940,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                              "Vanishing — a permanent that counts itself out"),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
+    "lose_control": ("You lose control of this permanent; the ability is the former "
+                     "controller's (603.10a).", "When you lose control of it"),
     "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
                   '"Whenever an opponent loses life"'),
     "investigates": ("A player investigates, once per investigation; `nth` counts that player's investigations this turn.",
