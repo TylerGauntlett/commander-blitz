@@ -26014,6 +26014,48 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "beacon_of_unrest",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Beacon of Unrest",
+      "oracle_text": "Put target artifact or creature card from a graveyard onto the battlefield under your control. Shuffle Beacon of Unrest into its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "any",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "tucks_itself": "shuffle",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -42570,6 +42612,63 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Fabricator Claw Array — Whenever another nontoken artifact creature or Vehicle you control enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact",
+                    "Creature"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Vehicle"
+                  ]
+                }
+              ],
+              "exclude_self": true,
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "canoptek_spyder",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}",
+      "name": "Canoptek Spyder",
+      "oracle_text": "Flying\nFabricator Claw Array — Whenever another nontoken artifact creature or Vehicle you control enters, draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Spider"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

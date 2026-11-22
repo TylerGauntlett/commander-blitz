@@ -1,0 +1,18 @@
+{
+  "card_id": "canoptek_scarab_swarm",
+  "name": "Canoptek Scarab Swarm",
+  "oracle_text": "Flying\nFeeder Mandibles — When this creature enters, exile target player's graveyard. For each artifact or land card exiled this way, create a 1/1 colorless Insect artifact creature token with flying.",
+  "blocked_sentences": [
+    "Feeder Mandibles — When this creature enters, exile target player's graveyard. For each artifact or land card exiled this way, create a 1/1 colorless Insect artifact creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "insect_1_1_c_artifact_flying",
+      "kind": "token",
+      "what": "a 1/1 colorless Insect artifact creature token with flying",
+      "why_existing_wont_do": "token_ids has insect_1_1_b_flying (black, not an artifact) and thopter_1_1_c_flying (colorless artifact flier, but a Thopter, not an Insect); neither matches the printed token. The rest of the line looks expressible: exile with `as` over the target player's graveyard, then create_token with an amount counting the bound exiled cards with any_types Artifact/Land"
+    }
+  ],
+  "closest_existing": ["insect_1_1_b_flying", "thopter_1_1_c_flying"],
+  "confidence": "high"
+}

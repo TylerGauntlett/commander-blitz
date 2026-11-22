@@ -1,0 +1,18 @@
+{
+  "card_id": "caged_sun",
+  "name": "Caged Sun",
+  "oracle_text": "As this artifact enters, choose a color.\nCreatures you control of the chosen color get +1/+1.\nWhenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.",
+  "blocked_sentences": [
+    "Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color."
+  ],
+  "needs": [
+    {
+      "capability": "mana_trigger_chosen_color_produced",
+      "kind": "static_effect",
+      "what": "an add_mana_on_tap static whose tapped_permanent.produced may be {\"chosen_color_of\": \"self\"}: it fires once when a land's mana ability adds at least one mana of the source's chosen color, and adds one more of that color (the add_mana half already accepts {\"chosen_color_of\": \"self\"}, as Utopia Sprawl does). Ideally keyed on a land's mana ability producing it rather than only on tapping, so a land that sacrifices for mana also counts",
+      "why_existing_wont_do": "add_mana_on_tap with tapped_permanent {types: [Land]} matches every land tap, so without a produced filter it would add the chosen color even when a land made a different color (a strictly stronger card). tapped_permanent.produced is read by player_statics._tap_statics through parse_mana_production as a literal mana string, so it cannot name the chosen color; double_land_mana doubles all of a land's mana rather than adding one of a chosen color"
+    }
+  ],
+  "closest_existing": ["add_mana_on_tap", "double_land_mana", "choose_color"],
+  "confidence": "high"
+}

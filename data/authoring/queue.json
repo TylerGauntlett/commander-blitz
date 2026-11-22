@@ -22522,12 +22522,12 @@
     },
     "Beacon of Unrest": {
       "edhrec_rank": 4395,
-      "gate": "template",
+      "gate": null,
       "name": "Beacon of Unrest",
-      "reason": "no template for: Put target artifact or creature card from a graveyard onto the battlefield under your cont",
+      "reason": "",
       "scryfall_id": "12f1428e-39ab-464e-a7b3-585f06fb8051",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beaming Defiance": {
@@ -38852,12 +38852,12 @@
     },
     "Canoptek Spyder": {
       "edhrec_rank": 3232,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Spyder",
-      "reason": "no template for: Fabricator Claw Array — Whenever another nontoken artifact creature or Vehicle you control",
+      "reason": "",
       "scryfall_id": "56ae1e4b-b620-480b-b6fc-66f2137d7d89",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Tomb Sentinel": {
