@@ -5379,10 +5379,27 @@ compositions of X cannot be offered as options before X is known, so the
 `_split_options` fold does not apply), any other ability one option, scaled by
 X.
 
+**Beside an `{X}` in `mana`.** "{X}, {T}, Tap X untapped artifacts you
+control: Target opponent loses X life." — Necron Overlord.
+
+```jsonc
+"cost": { "mana": "{X}", "tap": true, "tap_x": { "types": ["Artifact"] } }
+```
+
+The `{X}` is the same announced X, not a second one: the ability costs X mana
+and X permanents. The two halves are paid together (601.2g–h), and a mana rock
+is both a source and an artifact, so one tapped for the mana is not left to tap
+for the rest. A `tap_x` cost with any mana half is bounded by both at once —
+`costs.cost_x_ceiling` takes the largest X for which some choice of sources
+pays the mana and leaves X of the pool untapped (`costs.tap_x_payable`), and
+`pay` pays the mana from such sources, spending as few of the pool as it can,
+before the payer picks the X. Two Sol Rings and no lands make X at most 1.
+
 Not `tap_permanents` with a `count`, which is a number the card fixes. The
 loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
-beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
-`discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
+beside `tap_permanents`, beside `pay_life_x`, `loyalty_x`, `discard_x`,
+`sacrifice_x`, `x_value` or `x_minimum`, and anywhere but an activated ability's
+cost.
 
 ### `remove_counters_x` — remove X counters, X announced
 

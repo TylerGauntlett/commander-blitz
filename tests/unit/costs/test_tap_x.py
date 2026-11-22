@@ -236,7 +236,8 @@ class TestTheLoaderChecksIt:
             )
 
     @pytest.mark.parametrize(
-        "second", [{"mana": "{X}"}, {"discard_x": True}, {"sacrifice_x": {"is_token": True}}]
+        "second",
+        [{"pay_life_x": True}, {"discard_x": True}, {"sacrifice_x": {"is_token": True}}],
     )
     def test_not_beside_a_second_x(self, second):
         with pytest.raises(DslError, match="second X"):

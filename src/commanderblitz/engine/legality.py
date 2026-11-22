@@ -961,7 +961,9 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            taken_ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+            taken_ceiling = cost_x_ceiling(
+                state, pid, ability.cost, oid, purpose=purpose, ability=ability
+            )
             if ability.cost.loyalty_x or taken_ceiling is not None:
                 # The ceiling of a -X is the loyalty there is to remove (606.4),
                 # and of "Discard X cards", "Sacrifice X Foods" or "Tap X

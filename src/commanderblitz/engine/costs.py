@@ -1403,6 +1403,19 @@ def can_pay(
         # "Tap X untapped tokens" at the announced number; X = 0 is always
         # payable, the `discard_x` floor.
         return False
+    if (
+        cost.tap_x is not None
+        and x > 0
+        and not cost.mana.is_free()
+        and not payable_mana(state, pid, cost.mana).phyrexian_count
+        and not tap_x_payable(
+            state, pid, cost, source_oid, x=x, purpose=purpose, ability=ability, targets=targets
+        )
+    ):
+        # Necron Overlord's "{X}, {T}, Tap X untapped artifacts": the mana and
+        # the X permanents at once, since a rock tapped for the one is gone from
+        # the other.
+        return False
     if cost.remove_counters_x is not None:
         # "Remove X storage counters from this land" at the announced number.
         # X = 0 is payable whenever there is a permanent to take none from --
@@ -1782,6 +1795,88 @@ def tap_x_ceiling(state: GameState, pid: int, cost: Cost, source_oid: int | None
     return len(_tap_x_pool(state, pid, cost, source_oid))
 
 
+def _tap_x_mana_sources(
+    state: GameState,
+    pid: int,
+    cost: Cost,
+    source_oid: int | None,
+    req: Requirement,
+    spendable: Sequence[int],
+    sources: Sequence[ManaSource],
+    x: int,
+) -> list[ManaSource] | None:
+    """The mana sources a ``tap_x`` cost's mana half may tap, leaving X to tap.
+
+    "{X}, {T}, Tap X untapped artifacts you control" -- Necron Overlord. The
+    mana and the X permanents are one payment (601.2g-h), and a mana rock is
+    both an artifact and a source: one tapped for mana is no longer an untapped
+    artifact to tap. So the payment is the sources that pay ``req`` while at
+    least X of the cost's pool stay untapped, and ``None`` when no choice of
+    sources does.
+
+    The fewest pool members are spent on mana -- each size tried in turn, the
+    other sources always available -- so the payer picks the X from the widest
+    pool the payment can leave.
+    """
+    pool = set(_tap_x_pool(state, pid, cost, source_oid))
+    if x > len(pool):
+        return None
+    shared = sorted({s.oid for s in sources if s.oid in pool})
+    spare = len(pool) - x
+    for size in range(min(spare, len(shared)) + 1):
+        for spent in itertools.combinations(shared, size):
+            kept = set(shared) - set(spent)
+            usable = [s for s in sources if s.oid not in kept]
+            if solve_payment(req, spendable, usable) is not None:
+                return usable
+    return None
+
+
+def tap_x_payable(
+    state: GameState,
+    pid: int,
+    cost: Cost,
+    source_oid: int | None,
+    *,
+    x: int,
+    purpose: SpendPurpose | None = None,
+    ability=None,
+    targets=None,
+) -> bool:
+    """Can a ``tap_x`` cost pay its mana and still tap X? See `_tap_x_mana_sources`."""
+    sources = mana_sources(state, pid, purpose=purpose)
+    if cost.tap and source_oid is not None:
+        sources = [s for s in sources if s.oid != source_oid]
+    req = ability_mana(state, pid, cost, x, source_oid, ability=ability, targets=targets)
+    spendable = state.players[pid].mana_pool.spendable(purpose)
+    return _tap_x_mana_sources(state, pid, cost, source_oid, req, spendable, sources, x) is not None
+
+
+def _tap_x_joint_ceiling(
+    state: GameState,
+    pid: int,
+    cost: Cost,
+    source_oid: int | None,
+    *,
+    purpose: SpendPurpose | None,
+    ability,
+    targets,
+) -> int:
+    """`tap_x_ceiling` for a cost that also pays mana: the most X both halves meet.
+
+    An ``{X}`` in the mana half reads the same announced X, so X is bounded by
+    the mana as well as the pool, and the two draw on the same rocks. The
+    largest X `tap_x_payable` accepts, counting down from the pool's size; a
+    larger X needs more of both, so the first payable one is the ceiling.
+    """
+    for x in range(tap_x_ceiling(state, pid, cost, source_oid), 0, -1):
+        if tap_x_payable(
+            state, pid, cost, source_oid, x=x, purpose=purpose, ability=ability, targets=targets
+        ):
+            return x
+    return 0
+
+
 def _remove_counters_x_pool(
     state: GameState, pid: int, cost: Cost, source_oid: int | None
 ) -> list[int]:
@@ -1822,7 +1917,14 @@ def remove_counters_x_ceiling(
 
 
 def cost_x_ceiling(
-    state: GameState, pid: int, cost: Cost | None, source_oid: int | None = None
+    state: GameState,
+    pid: int,
+    cost: Cost | None,
+    source_oid: int | None = None,
+    *,
+    purpose: SpendPurpose | None = None,
+    ability=None,
+    targets=None,
 ) -> int | None:
     """The ceiling of an X a cost announces by **what it takes**, or ``None``.
 
@@ -1831,6 +1933,10 @@ def cost_x_ceiling(
     a mana ``{X}`` is bounded by mana and a ``-X`` by loyalty, each by its own
     reader. The one dispatch `game._activate`, `game._activate_mana` and
     `legality._ability_aims` share.
+
+    A ``tap_x`` cost with a mana half -- Necron Overlord's ``{X}`` -- is bounded
+    by both at once (`_tap_x_joint_ceiling`), priced with the ``purpose``,
+    ``ability`` and ``targets`` `can_pay` would be given.
     """
     if cost is None:
         return None
@@ -1839,6 +1945,10 @@ def cost_x_ceiling(
     if cost.sacrifice_x is not None:
         return sacrifice_x_ceiling(state, pid, cost, source_oid)
     if cost.tap_x is not None:
+        if not cost.mana.is_free():
+            return _tap_x_joint_ceiling(
+                state, pid, cost, source_oid, purpose=purpose, ability=ability, targets=targets
+            )
         return tap_x_ceiling(state, pid, cost, source_oid)
     if cost.remove_counters_x is not None:
         return remove_counters_x_ceiling(state, pid, cost, source_oid)
@@ -2224,6 +2334,25 @@ def pay(
         # and "costs {X} less" never reaches through the generic part into the
         # coloured pips however large X gets.
         req = req.with_generic(req.generic + extra_generic)
+    only: list[ManaSource] | None = None
+    if cost.tap_x is not None and x > 0 and req.total:
+        # Pay the mana from sources that leave X of the pool untapped for the
+        # pick below -- the same choice `can_pay` found (`tap_x_payable`).
+        sources = mana_sources(state, pid, purpose=purpose)
+        if cost.tap and source_oid is not None:
+            sources = [s for s in sources if s.oid != source_oid]
+        only = _tap_x_mana_sources(
+            state,
+            pid,
+            cost,
+            source_oid,
+            req,
+            state.players[pid].mana_pool.spendable(purpose),
+            sources,
+            x,
+        )
+        if only is None:
+            return False
     if req.total and not pay_mana(
         state,
         pid,
@@ -2231,6 +2360,7 @@ def pay(
         exclude_oid=source_oid if cost.tap else None,
         purpose=purpose,
         record_colors_on=record_colors_on,
+        only=only,
     ):
         return False
 
@@ -2673,8 +2803,12 @@ def pay_mana(
     exclude_oid: int | None = None,
     purpose: SpendPurpose | None = None,
     record_colors_on: int | None = None,
+    only: Sequence[ManaSource] | None = None,
 ) -> bool:
     """Tap sources and deduct ``req`` from the pool.
+
+    ``only`` is the sources the payment may tap, when the caller has narrowed
+    them -- a ``tap_x`` cost keeping X of its pool untapped.
 
     ``record_colors_on`` is the object to write the payment's provenance onto:
     the colours actually spent (sunburst and converge) and the permanents whose
@@ -2684,7 +2818,7 @@ def pay_mana(
     it -- so a card that reads them later has to be handed them here.
     """
     player = state.players[pid]
-    sources = mana_sources(state, pid, purpose=purpose)
+    sources = list(only) if only is not None else mana_sources(state, pid, purpose=purpose)
     if exclude_oid is not None:
         sources = [s for s in sources if s.oid != exclude_oid]
     payment = solve_payment(req, player.mana_pool.spendable(purpose), sources)

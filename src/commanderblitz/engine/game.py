@@ -1311,7 +1311,12 @@ class Game:
                 pid,
                 loyalty_cost=True,
             )
-        elif (ceiling := cost_x_ceiling(state, pid, ability.cost, oid)) is not None:
+        elif (
+            ceiling := cost_x_ceiling(
+                state, pid, ability.cost, oid, purpose=purpose, ability=ability,
+                targets=action.targets,
+            )
+        ) is not None:
             # "Discard X cards" (Gix, Yawgmoth Praetor), "Sacrifice X Foods"
             # (Insatiable Frugivore), "Tap X untapped tokens" (Hazel of the
             # Rootbloom): announced now, before the cost is paid (601.2b), and
@@ -2199,7 +2204,9 @@ class Game:
         # tap-only), so the question never lands inside somebody's payment.
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
         x = 0
-        ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+        ceiling = cost_x_ceiling(
+            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid), ability=ability
+        )
         if ceiling is not None:
             x = yield from ask_x(ctx, f"Choose X for {card.name}", ceiling, pid)
 

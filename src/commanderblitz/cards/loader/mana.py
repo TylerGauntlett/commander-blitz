@@ -330,17 +330,28 @@ def _compile_cost(
                 f"{where}.cost: 'tap_x' is the whole tap cost (X permanents); give it "
                 f"or 'tap_permanents', not both"
             )
+        # An `{X}` in `mana` is not a second X: "{X}, {T}, Tap X untapped
+        # artifacts you control" (Necron Overlord) pays X mana and taps X
+        # permanents off the one announcement, bounded by both at once
+        # (`costs.cost_x_ceiling`).
         if (
-            "X" in str(model.mana or "").upper()
-            or model.pay_life_x
+            model.pay_life_x
             or model.loyalty_x
             or model.discard_x
             or model.sacrifice_x is not None
         ):
             raise DslError(
                 f"{where}.cost: 'tap_x' announces this ability's X, so the cost may "
-                f"not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', "
-                f"'discard_x' or 'sacrifice_x'"
+                f"not carry a second X in 'pay_life_x', 'loyalty_x', 'discard_x' or "
+                f"'sacrifice_x'"
+            )
+        if model.x_value is not None or model.x_minimum:
+            # The `{X}` beside `tap_x` is the announced X, so nothing defines
+            # it, and the announcement is bounded by what the cost takes, which
+            # no printed floor is read against.
+            raise DslError(
+                f"{where}.cost: 'tap_x' announces this ability's X, so the cost may "
+                f"not carry 'x_value' or 'x_minimum'"
             )
         for key in ("count", "total_power", "as", "tapped"):
             if key in tap_x:
