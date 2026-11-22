@@ -27,7 +27,7 @@ from commanderblitz.engine.effects.values import (
     validate_players_with_poison,
     validate_value,
 )
-from commanderblitz.engine.enums import SUBTYPE_CLASS
+from commanderblitz.engine.enums import NUMBERED_KEYWORDS, SUBTYPE_CLASS
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
 from commanderblitz.engine.mana import ManaCost, compile_restriction
@@ -3923,8 +3923,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect.get("cant_have") is not True:
             raise DslError(
                 f"{where}: lose_keyword is \"lose X and can't have X\" and needs "
-                f"'cant_have': true; a plain \"loses X until end of turn\" is not "
-                f"implemented"
+                f"'cant_have': true; a plain \"loses X until end of turn\" is "
+                f"the lose_keyword_timestamped op"
             )
         if not effect.get("objects"):
             # An absent selector would choose nothing, and a printed hoser
@@ -3948,6 +3948,47 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown lose_keyword duration {effect['duration']!r} "
                 f"(implemented: 'until_end_of_turn')"
+            )
+    if op == "lose_keyword_timestamped":
+        # "…lose indestructible until end of turn" -- the plain removal a newer
+        # grant overrides (613.7). `lose_keyword`'s requirements for its
+        # reasons, less the clause: this op is the form without "can't have",
+        # so a `cant_have` here would be a card asking for the prohibition and
+        # getting the weaker removal.
+        if "cant_have" in effect:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped is the plain \"loses X\"; "
+                f"\"lose X and can't have X\" is the lose_keyword op"
+            )
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'objects' (the "
+                f"permanents that lose the keywords, chosen as it resolves)"
+            )
+        words = effect.get("keywords")
+        if not isinstance(words, list) or not words:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'keywords', a non-empty "
+                f"list of the keywords it removes"
+            )
+        for k in words:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        numbered = sorted(k for k in words if k in {w.value for w in NUMBERED_KEYWORDS})
+        if numbered:
+            # `annihilator_instances` counts instances with no timestamps, so a
+            # removal it cannot order would leave the count disagreeing with
+            # the keyword -- the static's refusal, for the static's reason.
+            raise DslError(
+                f"{where}: lose_keyword_timestamped cannot remove {numbered!r}: a "
+                f"numbered keyword's instances are not ordered by timestamp"
+            )
+        if str(effect.get("duration", "until_end_of_turn")) != "until_end_of_turn":
+            # The one clock built; any other word would load and quietly wear
+            # off at this turn's cleanup.
+            raise DslError(
+                f"{where}: unknown lose_keyword_timestamped duration "
+                f"{effect['duration']!r} (implemented: 'until_end_of_turn')"
             )
     if op == "grant_flash_permission":
         # Without a duration the permission would have no clock to end on, and a

@@ -26,6 +26,7 @@ from ..primitives import (
     lock_abilities,
     lose_all_abilities_timed,
     pump,
+    remove_keyword_timed,
 )
 from ..structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, TempEffect
 from ..temp_effects import grant_player_hexproof, grant_player_protection
@@ -459,14 +460,39 @@ def op_lose_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Only the "and can't have" form: the loader requires ``cant_have: true``.
     A bare "loses flying until end of turn" is a layer-6 removal a later grant
-    survives (613.7), and reading it as the prohibition would make every such
-    card a stronger one.
+    survives (613.7) -- the `lose_keyword_timestamped` op -- and reading it as
+    the prohibition would make every such card a stronger one.
     """
     keywords = [str(k) for k in spec.get("keywords") or ()]
     oids = yield from choose_objects(ctx, spec.get("objects"), "Loses")
     for oid in oids:
         for keyword in keywords:
             forbid_keyword(ctx.state, oid, keyword, source=ctx.source_oid)
+
+
+@register("lose_keyword_timestamped")
+def op_lose_keyword_timestamped(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Nonland permanents your opponents control **lose indestructible until
+    end of turn**." Exterminatus.
+
+    The one-shot twin of the `lose_keyword_timestamped` static: the plain
+    "loses X", with no "can't have". 613.7 orders it by timestamp among the
+    layer-6 effects that grant keywords, so the printed keyword and every
+    older grant go, and a grant made after it resolves gives the keyword back.
+
+    611.2c, as for `lose_keyword`: ``objects`` is chosen once, as the effect
+    resolves, and each permanent found gets its own entry, so a permanent that
+    arrives afterwards keeps its keyword. Cleanup ends it.
+
+    The near miss is the `lose_keyword` op, the "and can't have X" prohibition
+    that beats every grant whatever its timestamp: written with it, a later
+    grant of the keyword would do nothing, which is a stronger card.
+    """
+    keywords = [str(k) for k in spec.get("keywords") or ()]
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Loses")
+    for oid in oids:
+        for keyword in keywords:
+            remove_keyword_timed(ctx.state, oid, keyword, source=ctx.source_oid)
 
 
 @register("grant_protection")

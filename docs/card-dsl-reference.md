@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 185 |
+| [Effect ops](#effect-ops) | 186 |
 | [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
@@ -161,6 +161,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
 | `lose_all_abilities` | Modify |  | Permanents lose all abilities: for good, or with `duration` until end of turn, your next turn or `while_source_on_battlefield`. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
 | `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
+| `lose_keyword_timestamped` | Modify |  | Permanents found as it resolves lose keywords until end of turn; a grant newer than the removal gives one back (613.7). | [The lose_keyword_timestamped op — "loses indestructible until end of turn"](card-dsl-cookbook.md#the-lose_keyword_timestamped-op--loses-indestructible-until-end-of-turn) |
 | `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |

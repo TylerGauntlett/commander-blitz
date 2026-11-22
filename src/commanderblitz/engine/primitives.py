@@ -2701,6 +2701,42 @@ def forbid_keyword(
     state.bump_chars()
 
 
+def remove_keyword_timed(
+    state: GameState,
+    oid: int,
+    keyword: str,
+    source: int | None = None,
+) -> None:
+    """ "Nonland permanents your opponents control **lose indestructible** until
+    end of turn." Exterminatus.
+
+    A plain layer-6 removal with no "can't have": a
+    ``lose_keyword_timestamped`` `TempEffect` on the permanent, stamped now.
+    `chars` orders it among the keyword grants by timestamp (613.7), the way it
+    orders the `lose_keyword_timestamped` static: the printed keyword goes and
+    so does every grant older than the entry, while a grant made afterwards --
+    a Jump, an anthem that arrives later, a keyword counter put on later --
+    gives the keyword back.
+
+    611.2c: only the permanent found as the effect resolved is affected. The
+    entry rides `until_eot`, so cleanup ends it and a zone change (400.7)
+    drops it with the old object. The prohibition is `forbid_keyword`.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="lose_keyword_timestamped",
+            keyword=keyword,
+            source=source,
+            timestamp=state.alloc_timestamp(),
+        )
+    )
+    # No `_stats_changed`, for `forbid_keyword`'s reason.
+    state.bump_chars()
+
+
 def grant_ability(
     state: GameState,
     oid: int,

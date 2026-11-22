@@ -1238,9 +1238,16 @@ def _timestamped_removals(
     obj: GameObject,
     statics: list[tuple[GameObject, Mapping[str, Any]]],
 ) -> dict[str, int]:
-    """Each keyword a `lose_keyword_timestamped` static takes from ``obj``,
-    with the newest such removal's timestamp."""
+    """Each keyword a `lose_keyword_timestamped` static or op takes from
+    ``obj``, with the newest such removal's timestamp.
+
+    The op's entries ride the object's own `until_eot` (611.2c: the objects
+    found as it resolved), stamped as written; the static's are read off its
+    filter with its source's timestamp."""
     out: dict[str, int] = {}
+    for temp in obj.until_eot:
+        if temp.kind == "lose_keyword_timestamped" and temp.keyword:
+            out[temp.keyword] = max(out.get(temp.keyword, temp.timestamp), temp.timestamp)
     for source_obj, static in statics:
         if static.get("effect") != "lose_keyword_timestamped":
             continue

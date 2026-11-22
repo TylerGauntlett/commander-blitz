@@ -64,7 +64,10 @@ class TempEffect:
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
     read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
     hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
-    keyword step of ``chars``, after every grant), or ``"set_toughness"`` (an
+    keyword step of ``chars``, after every grant), or
+    ``"lose_keyword_timestamped"`` ("target creature **loses flying** until end
+    of turn": ``keyword`` is removed in timestamp order with the grants, so a
+    grant newer than ``timestamp`` gives it back -- 613.7), or ``"set_toughness"`` (an
     indefinite layer-7b "its toughness becomes N", kept on
     `GameObject.animations` and ordered against the indefinite animations there
     by ``timestamp``), or ``"combat_damage_by_toughness"`` ("assigns combat

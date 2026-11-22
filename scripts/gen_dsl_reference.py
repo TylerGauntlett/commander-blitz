@@ -392,6 +392,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",
                      "The `lose_keyword` op — the same prohibition, until end of turn"),
+    "lose_keyword_timestamped": ("Modify", "Permanents found as it resolves lose keywords until end "
+                                 "of turn; a grant newer than the removal gives one back (613.7).",
+                                 "The `lose_keyword_timestamped` op — \"loses indestructible until end of turn\""),
     "rename": ("Modify", "A permanent's name becomes the chosen or given name.",
                "Changing a permanent's name"),
     # ---- Life & damage ---------------------------------------------------

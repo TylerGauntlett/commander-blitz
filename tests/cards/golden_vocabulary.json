@@ -1119,6 +1119,7 @@
   "lose_all_player_counters",
   "lose_game",
   "lose_keyword",
+  "lose_keyword_timestamped",
   "lose_life",
   "manifest",
   "manifest_dread",

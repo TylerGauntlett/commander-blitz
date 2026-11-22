@@ -11524,8 +11524,9 @@ blinks comes back as a new object (400.7) and has it again.
 The loader requires `cant_have: true`, a non-empty list of known `keywords` and
 `objects`, and refuses any `duration` but `until_end_of_turn`. The near miss is
 the plain "target creature loses flying until end of turn" (Radjan Spirit). That
-is a layer-6 removal a later grant survives (613.7). It is not built, and the
-`cant_have` key is what stops it loading as this stronger effect.
+is a layer-6 removal a later grant survives (613.7), the
+`lose_keyword_timestamped` op below, and the `cant_have` key is what keeps the
+two apart.
 `lose_all_abilities` and `lock_abilities` take far more than two keywords.
 
 ### `lose_keyword_timestamped` — "loses flying", with no "can't have"
@@ -11566,6 +11567,39 @@ holder's timestamp rather than the grant's.
 The near miss is the `lose_keyword` static, which is "can't have or gain" and
 beats every grant whatever its timestamp: written with it, the hammer would
 ground its creature through every later Jump.
+
+### The `lose_keyword_timestamped` op — "loses indestructible until end of turn"
+
+Exterminatus: *"Nonland permanents your opponents control **lose
+indestructible until end of turn**. Destroy all nonland permanents."*
+
+```jsonc
+[ { "op": "lose_keyword_timestamped",
+    "keywords": ["indestructible"],
+    "objects": { "zone": "battlefield", "not_types": ["Land"],
+                 "controller": "opponent", "count": "all" } },
+  { "op": "destroy",
+    "objects": { "zone": "battlefield", "not_types": ["Land"],
+                 "controller": "any", "count": "all" } } ]
+```
+
+The static's removal, from a resolved spell or ability. Each permanent
+`objects` finds as it resolves gets a `lose_keyword_timestamped` `TempEffect`
+per keyword, stamped as it is written, and `characteristics._compute` reads it
+with the static's removals (`_timestamped_removals`): the printed keyword and
+every older grant go, and a grant made afterwards — a `grant_keyword`, a
+keyword counter, an anthem that arrives later — gives the keyword back (613.7).
+The set is fixed as it resolves (611.2c): a permanent that arrives afterwards
+keeps its keyword, and one that blinks comes back as a new object (400.7).
+Cleanup ends it.
+
+The loader requires `objects` and a non-empty list of known `keywords`, refuses
+a numbered keyword for the static's reason, refuses any `duration` but
+`until_end_of_turn`, and refuses `cant_have`. The near miss is the
+[`lose_keyword` op](#the-lose_keyword-op--the-same-prohibition-until-end-of-turn),
+"lose X **and can't have X**", which beats every grant whatever its timestamp;
+written with it, a later grant of the keyword would do nothing, a stronger card.
+`lose_all_abilities` takes every ability, not one keyword.
 
 ### `grant_ability` as a static, and where the line now runs
 
