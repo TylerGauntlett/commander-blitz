@@ -13357,6 +13357,15 @@
     },
     "zone": "battlefield"
   },
+  "kill_maim_burn": {
+    "battlefield_count": 31,
+    "life": {
+      "0": 37,
+      "1": 40
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "killer_service": {
     "battlefield_count": 34,
     "tokens": {
@@ -14724,6 +14733,13 @@
   "lucent_liminid": {
     "zone": "battlefield"
   },
+  "lucius_the_eternal": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "luck_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15077,6 +15093,9 @@
   },
   "manalith": {
     "zone": "battlefield"
+  },
+  "mandate_of_abaddon": {
+    "zone": "graveyard"
   },
   "mandroid_squadron": {
     "life": {
@@ -16458,6 +16477,10 @@
   "mutable_explorer": {
     "zone": "battlefield"
   },
+  "mutalith_vortex_beast": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mutant_town": {
     "life": {
       "0": 41
@@ -17035,6 +17058,9 @@
   },
   "nogi_draco_zealot": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "noise_marine": {
     "zone": "battlefield"
   },
   "norn_s_annex": {

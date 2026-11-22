@@ -148682,12 +148682,12 @@
     },
     "Kill! Maim! Burn!": {
       "edhrec_rank": 10871,
-      "gate": "template",
+      "gate": null,
       "name": "Kill! Maim! Burn!",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "3aa75527-99bc-426a-bdae-ca9cd17beeec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kill-Suit Cultist": {
@@ -162512,12 +162512,12 @@
     },
     "Lucius the Eternal": {
       "edhrec_rank": 15827,
-      "gate": "template",
+      "gate": null,
       "name": "Lucius the Eternal",
-      "reason": "no template for: Armour of Shrieking Souls — When dies, exile it and choose target creature an opponent con",
+      "reason": "",
       "scryfall_id": "6b86f229-0cbd-4d32-a1dc-ea4b24f835f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Luck Bobblehead": {
@@ -166552,12 +166552,12 @@
     },
     "Mandate of Abaddon": {
       "edhrec_rank": 4677,
-      "gate": "template",
+      "gate": null,
       "name": "Mandate of Abaddon",
-      "reason": "no template for: Choose target creature you control. Destroy all creatures with power less than that creatu",
+      "reason": "",
       "scryfall_id": "b63fa88b-a177-49b7-a583-a0a041313f77",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mandate of Peace": {
@@ -181382,12 +181382,12 @@
     },
     "Mutalith Vortex Beast": {
       "edhrec_rank": 9638,
-      "gate": "template",
+      "gate": null,
       "name": "Mutalith Vortex Beast",
-      "reason": "no template for: Warp Vortex — When this creature enters, flip a coin for each opponent you have. For each ",
+      "reason": "",
       "scryfall_id": "32c1b854-8dbe-454c-b8c4-16abb93bd39b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mutant Chain Reaction": {
@@ -188462,12 +188462,12 @@
     },
     "Noise Marine": {
       "edhrec_rank": 7821,
-      "gate": "template",
+      "gate": null,
       "name": "Noise Marine",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "08843909-8c24-4067-b747-5f9090caaa1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nomad Decoy": {

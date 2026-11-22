@@ -1,0 +1,18 @@
+{
+  "card_id": "nurgle_s_rot",
+  "name": "Nurgle's Rot",
+  "oracle_text": "Enchant creature an opponent controls\nWhen enchanted creature dies, return this card to its owner's hand and you create a 1/3 black Demon creature token named Plaguebearer of Nurgle.",
+  "blocked_sentences": [
+    "When enchanted creature dies, return this card to its owner's hand and you create a 1/3 black Demon creature token named Plaguebearer of Nurgle."
+  ],
+  "needs": [
+    {
+      "capability": "plaguebearer_of_nurgle_token",
+      "kind": "token",
+      "what": "a 1/3 black Demon creature token named Plaguebearer of Nurgle, with no abilities",
+      "why_existing_wont_do": "token_ids has only flying Demons (cherubael_4_4_b_flying, demon_x_x_b_flying, vampire_demon_4_3_wb_flying) and the only 1/3 is wall_1_3_w_defender; none is a 1/3 black Demon with the printed name"
+    }
+  ],
+  "closest_existing": ["cherubael_4_4_b_flying", "demon_x_x_b_flying"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **455** capabilities.
+**540 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -63,6 +63,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
+| [plaguebearer-of-nurgle-token](#plaguebearer-of-nurgle-token) | 2 | 5157 | token |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
@@ -101,6 +102,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator-grant](#annihilator-grant) | 1 | 3758 | op |
 | [as-becomes-attached-choice](#as-becomes-attached-choice) | 1 | 6322 | replacement |
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
+| [astartes-warrior-2-2-b-menace](#astartes-warrior-2-2-b-menace) | 1 | 11917 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
@@ -119,6 +121,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
+| [blue-horror-token](#blue-horror-token) | 1 | 10210 | token |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -355,7 +358,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
-| [plaguebearer-of-nurgle-token](#plaguebearer-of-nurgle-token) | 1 | 5157 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
@@ -421,6 +423,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
+| [spawn-token](#spawn-token) | 1 | 6143 | token |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
@@ -1794,6 +1797,24 @@ Blocks **2** cards.
 
 </details>
 
+## plaguebearer-of-nurgle-token
+
+Blocks **2** cards.
+
+- **(token)** a 1/3 black Demon creature token named Plaguebearer of Nurgle (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no 1/3 black Demon; the only 1/3 is wall_1_3_w_defender and the Demon tokens (cherubael_4_4_b_flying, demon_x_x_b_flying, vampire_demon_4_3_wb_flying) differ in size, name or keywords. The rest of the line is expressible: end_step trigger, lose_life for each opponent, then for_each_player over opponents with an if comparing life_of that player < life_of you around create_token
+- **(token)** a 1/3 black Demon creature token named Plaguebearer of Nurgle, with no abilities
+  <br>Why the existing vocabulary won't do: token_ids has only flying Demons (cherubael_4_4_b_flying, demon_x_x_b_flying, vampire_demon_4_3_wb_flying) and the only 1/3 is wall_1_3_w_defender; none is a 1/3 black Demon with the printed name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Great Unclean One** (rank 5157) — `great_unclean_one`
+  - Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. Then for each opponent who has less life than you, create a 1/3 black Demon creature token named Plaguebearer of Nurgle.
+- **Nurgle's Rot** (rank 7916) — `nurgle_s_rot`
+  - When enchanted creature dies, return this card to its owner's hand and you create a 1/3 black Demon creature token named Plaguebearer of Nurgle.
+
+</details>
+
 ## plot
 
 Blocks **2** cards.
@@ -2426,6 +2447,20 @@ Blocks **1** card.
 
 </details>
 
+## astartes-warrior-2-2-b-menace
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Astartes Warrior creature token with menace
+  <br>Why the existing vocabulary won't do: token_ids has astartes_warrior_2_2_w_vigilance (white, vigilance) and other black 2/2 menace tokens (pirate_2_2_b_menace, zombie_knight_2_2_b_menace), but none is a black Astartes Warrior with menace; the rest of the line (end_step trigger, may with x, life_lost_this_turn as the X cap) looks expressible once the token exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mortarion, Daemon Primarch** (rank 11917) — `mortarion_daemon_primarch`
+  - Primarch of the Death Guard — At the beginning of your end step, you may pay {X}. If you do, create X 2/2 black Astartes Warrior creature tokens with menace. X can't be greater than the amount of life you lost this turn.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -2679,6 +2714,20 @@ Blocks **1** card.
 
 - **Twins of Discord** (rank 6438) — `twins_of_discord`
   - Each other colorless creature you control has bloodthirst 2
+
+</details>
+
+## blue-horror-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 blue and red Demon Horror creature token named Blue Horror with "Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target." (e.g. id blue_horror_2_2_ur)
+  <br>Why the existing vocabulary won't do: token_ids has no blue-red Demon Horror; the nearest are horror_2_2_b_enchantment (black enchantment Horror, no trigger) and the 2/2 blue or red tokens, none with the spell-cast damage trigger or the Blue Horror name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pink Horror** (rank 10210) — `pink_horror`
+  - Split — When this creature dies, create two 2/2 blue and red Demon Horror creature tokens named Blue Horror with "Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target."
 
 </details>
 
@@ -6050,20 +6099,6 @@ Blocks **1** card.
 
 </details>
 
-## plaguebearer-of-nurgle-token
-
-Blocks **1** card.
-
-- **(token)** a 1/3 black Demon creature token named Plaguebearer of Nurgle (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has no 1/3 black Demon; the only 1/3 is wall_1_3_w_defender and the Demon tokens (cherubael_4_4_b_flying, demon_x_x_b_flying, vampire_demon_4_3_wb_flying) differ in size, name or keywords. The rest of the line is expressible: end_step trigger, lose_life for each opponent, then for_each_player over opponents with an if comparing life_of that player < life_of you around create_token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Great Unclean One** (rank 5157) — `great_unclean_one`
-  - Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. Then for each opponent who has less life than you, create a 1/3 black Demon creature token named Plaguebearer of Nurgle.
-
-</details>
-
 ## play-cost-paid-card
 
 Blocks **1** card.
@@ -6996,6 +7031,20 @@ Blocks **1** card.
   - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
   - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
   - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
+
+</details>
+
+## spawn-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 red Spawn creature token (spawn_3_3_r)
+  <br>Why the existing vocabulary won't do: token_ids has only eldrazi_spawn_0_1_c (a 0/1 colorless Eldrazi Spawn with a mana ability); the nearest 3/3 red tokens (ogre_3_3_r, ape_villain_3_3_r_haste) have the wrong creature type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magnus the Red** (rank 6143) — `magnus_the_red`
+  - Blade of Magnus — Whenever Magnus the Red deals combat damage to a player, create a 3/3 red Spawn creature token.
 
 </details>
 
