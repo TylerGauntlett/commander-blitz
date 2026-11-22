@@ -1,0 +1,19 @@
+{
+  "card_id": "nurgle_s_conscription",
+  "name": "Nurgle's Conscription",
+  "oracle_text": "Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard.",
+  "blocked_sentences": [
+    "Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "sandbox_opponent_graveyard_creature",
+      "kind": "engine",
+      "what": "The verification sandbox must put a quiet creature card in player 1's graveyard for a spell whose mandatory card_in_graveyard target selects a Creature card controlled/owned by an opponent, the way graveyard_spell_props already adds an instant or sorcery card there for Arcane Heist-style targets",
+      "why_existing_wont_do": "The card itself is expressible and passes schema and compile: targets [{id t1, kind card_in_graveyard, count 1, selector {zone graveyard, controller opponent, types [Creature]}}], spell_effects snapshot t1 as 'conscripted', put_onto_battlefield {target t1} controller you tapped true, exile {zone graveyard, player {owner_of conscripted}, count all}. But _graveyard_spell_specs only fires for selectors naming Instant/Sorcery, so the opponent's sandbox graveyard is empty, the instant has no legal target (601.2c), and gate 4 rejects it: verified 'not playable in the sandbox; offered: [Pass, Play Forest]'. Making the target optional would describe a different card. With the prop, the expectation would be zone graveyard, battlefield_count 33",
+      "closest_existing": ["graveyard_spell_props", "puppeteer_clique", "geth_lord_of_the_vault"]
+    }
+  ],
+  "closest_existing": ["geth_lord_of_the_vault", "puppeteer_clique"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **458** capabilities.
+**545 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
+| [next-spell-gains-cascade](#next-spell-gains-cascade) | 2 | 5088 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
@@ -296,6 +297,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
+| [life-gain-becomes-loss](#life-gain-becomes-loss) | 1 | 6470 | replacement |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
@@ -335,13 +337,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
+| [must-attack-with-at-least-one-creature](#must-attack-with-at-least-one-creature) | 1 | 14142 | static_effect |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
-| [next-spell-gains-cascade](#next-spell-gains-cascade) | 1 | 5088 | op |
 | [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
@@ -407,6 +409,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-opponent-graveyard-creature](#sandbox-opponent-graveyard-creature) | 1 | 12753 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -423,6 +426,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
+| [spawn-3-3-r-token](#spawn-3-3-r-token) | 1 | 5576 | token |
 | [spawn-token](#spawn-token) | 1 | 6143 | token |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -1720,6 +1724,24 @@ Blocks **2** cards.
   - {1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.
 - **Time Lord Regeneration** (rank 14672) — `time_lord_regeneration`
   - Until end of turn, target Time Lord you control gains "When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
+
+</details>
+
+## next-spell-gains-cascade
+
+Blocks **2** cards.
+
+- **(op)** an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell
+  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts.
+- **(op)** an effect that gives the next spell matching a filter (here: a creature spell) that a player (here: you) casts this turn the cascade ability itself, so the spell HAS cascade (seen by 'whenever you cast a spell with cascade' triggers), its cascade trigger's source is that spell, the ceiling is that spell's mana value, and the grant is used up by that one spell and expires at end of turn
+  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell, and `next_spell_cost_reduction`/`grant_flash_permission`/`uncounterable_this_turn` are the only next-spell grants and none carries a keyword or ability. The nearest arrangement, a `delayed_trigger` (duration once_this_turn) on `spell_cast` with a Creature filter running the `cascade` op with max_mana_value from the subject, is an approximation: the trigger belongs to the Bilepiper rather than the spell, the spell never has cascade (so The First Doctor-style 'spell with cascade' checks miss it), and op_cascade's default ceiling is the source permanent's mana value. The activation cost ({2}, {T}, sacrifice a creature) is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bigger on the Inside** (rank 5088) — `bigger_on_the_inside`
+  - Enchanted permanent has "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
+- **Sloppity Bilepiper** (rank 14577) — `sloppity_bilepiper`
+  - Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade.
 
 </details>
 
@@ -5212,6 +5234,20 @@ Blocks **1** card.
 
 </details>
 
+## life-gain-becomes-loss
+
+Blocks **1** card.
+
+- **(replacement)** a player-wide replacement static (Tainted Remedy / Rain of Gore shape) that replaces a life gain by an affected player (affects_player: opponent) with a loss of that much life by the same player, read in primitives.gain_life so lifelink and the gain_life op both reach it, e.g. replace_life_gain with a `lose_instead: true` axis
+  <br>Why the existing vocabulary won't do: replace_life_gain only scales the gain (gain_multiplier >= 2 or gain_addend >= 1) and the loader refuses any other shape; cant_gain_life stops the gain but makes no one lose life; a you_gain_life trigger plus lose_life would let the gain happen and then use the stack, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Plague Drone** (rank 6470) — `plague_drone`
+  - Rot Fly — If an opponent would gain life, that player loses that much life instead.
+
+</details>
+
 ## life-lost-this-turn-static-value
 
 Blocks **1** card.
@@ -5771,6 +5807,20 @@ Blocks **1** card.
 
 </details>
 
+## must-attack-with-at-least-one-creature
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (affects_player: "opponent") imposing a per-player attack requirement: during each combat in which an affected player is the active player, their attack declaration must include at least one creature if any creature they control could legally attack (508.1d, maximizing requirements obeyed), without forcing any particular creature to attack
+  <br>Why the existing vocabulary won't do: The attacks_if_able static (and the must_attack op) put the requirement on each creature its affects filter matches, so affects {controller: opponent} would force EVERY opponent creature to attack rather than at least one; goaded and must_attack_player are also per-creature. Nothing in static_effects places an attack requirement on a player rather than on objects
+
+<details><summary>Cards waiting on this</summary>
+
+- **Seeker of Slaanesh** (rank 14142) — `seeker_of_slaanesh`
+  - Allure of Slaanesh — Each opponent must attack with at least one creature each combat if able.
+
+</details>
+
 ## must-be-blocked
 
 Blocks **1** card.
@@ -5853,20 +5903,6 @@ Blocks **1** card.
 
 - **Mutated Cultist** (rank 8432) — `mutated_cultist`
   - When you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way.
-
-</details>
-
-## next-spell-gains-cascade
-
-Blocks **1** card.
-
-- **(op)** an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell
-  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bigger on the Inside** (rank 5088) — `bigger_on_the_inside`
-  - Enchanted permanent has "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
 
 </details>
 
@@ -6802,6 +6838,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-opponent-graveyard-creature
+
+Blocks **1** card.
+
+- **(engine)** The verification sandbox must put a quiet creature card in player 1's graveyard for a spell whose mandatory card_in_graveyard target selects a Creature card controlled/owned by an opponent, the way graveyard_spell_props already adds an instant or sorcery card there for Arcane Heist-style targets
+  <br>Why the existing vocabulary won't do: The card itself is expressible and passes schema and compile: targets [{id t1, kind card_in_graveyard, count 1, selector {zone graveyard, controller opponent, types [Creature]}}], spell_effects snapshot t1 as 'conscripted', put_onto_battlefield {target t1} controller you tapped true, exile {zone graveyard, player {owner_of conscripted}, count all}. But _graveyard_spell_specs only fires for selectors naming Instant/Sorcery, so the opponent's sandbox graveyard is empty, the instant has no legal target (601.2c), and gate 4 rejects it: verified 'not playable in the sandbox; offered: [Pass, Play Forest]'. Making the target optional would describe a different card. With the prop, the expectation would be zone graveyard, battlefield_count 33
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nurgle's Conscription** (rank 12753) — `nurgle_s_conscription`
+  - Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard.
+
+</details>
+
 ## scavenge
 
 Blocks **1** card.
@@ -7031,6 +7081,20 @@ Blocks **1** card.
   - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
   - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
   - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
+
+</details>
+
+## spawn-3-3-r-token
+
+Blocks **1** card.
+
+- **(token)** a 3/3 red Spawn creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no 3/3 red Spawn: eldrazi_spawn_0_1_c is a 0/1 colorless Eldrazi Spawn with a mana ability, and ogre_3_3_r / ape_villain_3_3_r_haste have the wrong creature type (and haste on the Ape). The two triggers themselves look expressible as permanent_enters and spell_cast with from_zones excluding hand.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Lost and the Damned** (rank 5576) — `the_lost_and_the_damned`
+  - Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.
 
 </details>
 

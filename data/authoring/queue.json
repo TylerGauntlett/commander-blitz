@@ -198332,12 +198332,12 @@
     },
     "Past in Flames": {
       "edhrec_rank": 1269,
-      "gate": "template",
+      "gate": null,
       "name": "Past in Flames",
-      "reason": "no template for: Each instant and sorcery card in your graveyard gains flashback until end of turn. The fla",
+      "reason": "",
       "scryfall_id": "90241362-b7e1-4d55-b5aa-af73227da16e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Patagia Golem": {
@@ -205792,12 +205792,12 @@
     },
     "Poxwalkers": {
       "edhrec_rank": 8601,
-      "gate": "template",
+      "gate": null,
       "name": "Poxwalkers",
-      "reason": "no template for: Curse of the Walking Pox — Whenever you cast a spell from anywhere other than your hand, r",
+      "reason": "",
       "scryfall_id": "ca79cd21-daaa-4a1c-bab5-cc4c783994ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Practical Research": {
@@ -222512,12 +222512,12 @@
     },
     "Reverberate": {
       "edhrec_rank": 1387,
-      "gate": "template",
+      "gate": null,
       "name": "Reverberate",
-      "reason": "no template for: Copy target instant or sorcery spell. You may choose new targets for the copy",
+      "reason": "",
       "scryfall_id": "9614c6f7-b514-46a6-8acc-d6ff3dba7edc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reverberating Summons": {
@@ -274512,12 +274512,12 @@
     },
     "Tallyman of Nurgle": {
       "edhrec_rank": 12721,
-      "gate": "template",
+      "gate": null,
       "name": "Tallyman of Nurgle",
-      "reason": "no template for: The Seven-fold Chant — At the beginning of your end step, if a creature died this turn, yo",
+      "reason": "",
       "scryfall_id": "1b842bc9-6fbe-479f-85c9-0fcec8c98379",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Talon Gates of Madara": {
@@ -295622,12 +295622,12 @@
     },
     "Tzaangor Shaman": {
       "edhrec_rank": 15067,
-      "gate": "template",
+      "gate": null,
       "name": "Tzaangor Shaman",
-      "reason": "no template for: Sorcerous Elixir — Whenever this creature deals combat damage to a player, copy the next i",
+      "reason": "",
       "scryfall_id": "0649cc35-80e6-403a-aef3-d8c1ee35f67b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.Agent, John Walker": {
@@ -302742,12 +302742,12 @@
     },
     "Venomcrawler": {
       "edhrec_rank": 9753,
-      "gate": "template",
+      "gate": null,
       "name": "Venomcrawler",
-      "reason": "no template for: Devourer of Souls — Whenever another creature dies, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "7b44099c-0b24-423a-b8c0-5d5e8687fe61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venomized Cat": {

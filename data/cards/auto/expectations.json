@@ -17987,6 +17987,15 @@
     "opponent_battlefield_count": 7,
     "zone": "graveyard"
   },
+  "past_in_flames": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "patchwork_banner": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -18615,6 +18624,10 @@
     "zone": "battlefield"
   },
   "power_pack": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "poxwalkers": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -20108,6 +20121,9 @@
       "1": 40
     },
     "zone": "battlefield"
+  },
+  "reverberate": {
+    "zone": "graveyard"
   },
   "reverse_engineer": {
     "hand_size": {
@@ -24430,6 +24446,13 @@
   "talisman_of_unity": {
     "zone": "battlefield"
   },
+  "tallyman_of_nurgle": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "talon_gates_of_madara": {
     "battlefield_count": 32,
     "hand_size": {
@@ -26657,6 +26680,13 @@
     },
     "zone": "graveyard"
   },
+  "tzaangor_shaman": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ugin_s_insight": {
     "hand_size": {
       "0": 4
@@ -27397,6 +27427,10 @@
     "zone": "graveyard"
   },
   "vengeful_warchief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "venomcrawler": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
