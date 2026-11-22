@@ -14585,6 +14585,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lokhust_heavy_destroyer": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "loki_s_scepter": {
     "zone": "battlefield"
   },
@@ -14891,6 +14902,13 @@
   },
   "luxury_suite": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lychguard": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "lynx": {
@@ -16849,6 +16867,9 @@
     "battlefield_count": 31,
     "opponent_battlefield_count": 3,
     "zone": "exile"
+  },
+  "necron_deathmark": {
+    "zone": "battlefield"
   },
   "necropotence": {
     "battlefield_count": 33,

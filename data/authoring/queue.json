@@ -160642,12 +160642,12 @@
     },
     "Lokhust Heavy Destroyer": {
       "edhrec_rank": 11074,
-      "gate": "template",
+      "gate": null,
       "name": "Lokhust Heavy Destroyer",
-      "reason": "no template for: Enmitic Exterminator — When this creature enters, each player sacrifices a creature of the",
+      "reason": "",
       "scryfall_id": "1ad67201-0613-4d4f-9b1d-898a882b3503",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loki Laufeyson": {
@@ -163492,12 +163492,12 @@
     },
     "Lychguard": {
       "edhrec_rank": 14778,
-      "gate": "template",
+      "gate": null,
       "name": "Lychguard",
-      "reason": "no template for: Guardian Protocols — {3}{B}, Sacrifice this creature: Return all legendary creature cards ",
+      "reason": "",
       "scryfall_id": "6737a276-b5e9-4c55-b995-ada96eca4e6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lydia Frye": {
@@ -184522,12 +184522,12 @@
     },
     "Necron Deathmark": {
       "edhrec_rank": 4770,
-      "gate": "template",
+      "gate": null,
       "name": "Necron Deathmark",
-      "reason": "no template for: Synaptic Disintegrator — When this creature enters, destroy up to one target creature and ",
+      "reason": "",
       "scryfall_id": "4129cb0d-eefe-4971-9db8-1196201ef353",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necron Monolith": {

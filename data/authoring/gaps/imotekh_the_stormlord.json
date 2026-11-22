@@ -1,0 +1,18 @@
+{
+  "card_id": "imotekh_the_stormlord",
+  "name": "Imotekh the Stormlord",
+  "oracle_text": "Phaeron — Whenever one or more artifact cards leave your graveyard, create two 2/2 black Necron Warrior artifact creature tokens.\nGrand Strategist — At the beginning of combat on your turn, another target artifact creature you control gets +2/+2 and gains menace until end of turn.",
+  "blocked_sentences": [
+    "Phaeron — Whenever one or more artifact cards leave your graveyard, create two 2/2 black Necron Warrior artifact creature tokens."
+  ],
+  "needs": [
+    {
+      "capability": "necron_warrior_token",
+      "kind": "token",
+      "what": "a 2/2 black Necron Warrior artifact creature token (e.g. id necron_warrior_2_2_b_artifact)",
+      "why_existing_wont_do": "token_ids has no Necron Warrior and no 2/2 black artifact creature token; the nearest, astartes_warrior_2_2_b_menace and zombie_2_2_b, have the wrong subtypes, are not artifacts, and the Astartes one has menace. The trigger half is expressible as a batched leaves_graveyard trigger filtered to artifact cards you own, and the Grand Strategist line is a begin_combat trigger with pump plus grant_keyword menace."
+    }
+  ],
+  "closest_existing": ["astartes_warrior_2_2_b_menace", "zombie_2_2_b"],
+  "confidence": "high"
+}

@@ -5,14 +5,12 @@
   "blocked_sentences": [
     "You may cast artifact spells and colorless spells from the top of your library."
   ],
-  "needs": [
-    {
-      "capability": "cast_from_library_top_colorless",
-      "kind": "selector",
-      "what": "the `colorless` key (zero colours, 105.2c) admitted in a cast_from_library_top static's `affects_spells` filter, so the colorless half of \"artifact spells and colorless spells\" can be written as a second permission beside the {\"types\": [\"Artifact\"]} one (or `any_of` over the two branches)",
-      "why_existing_wont_do": "cast_from_library_top's affects_spells is checked against LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has no `colorless` and no `any_of`; `colors` is a membership test that cannot say zero colours, and `not_types`/`min_colors` cannot either. characteristics._matches_printed already honours `colorless`, so only the loader whitelist blocks it. Writing only the Artifact half would silently drop every colorless nonartifact spell (Eldrazi, Kozilek's Return-style colorless cards)."
-    }
-  ],
+  "needs": [{
+    "capability": "cast_from_library_top_colorless",
+    "kind": "selector",
+    "what": "a `colorless: true` key in the `affects_spells` filter of a cast_from_library_top static, so \"colorless spells\" can be matched against the top card (zero printed colours, 105.2c); the artifact half is then a second cast_from_library_top static with types [\"Artifact\"], or one filter using any_of over the two",
+    "why_existing_wont_do": "cast_from_library_top's affects_spells accepts only LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has neither `colorless` nor `any_of`; `colors` is a membership test and cannot say zero colours, and `min_colors` only sets a floor. characteristics._matches_printed already reads `colorless` and `any_of`, so the change is admitting the key in the loader's vocabulary. Writing only the artifact half would drop colorless nonartifact spells (Eldrazi, Kozilek's Return-style colorless cards)"
+  }],
   "closest_existing": ["cast_from_library_top", "look_at_library_top"],
   "confidence": "high"
 }
