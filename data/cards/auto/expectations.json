@@ -21193,6 +21193,13 @@
     },
     "zone": "battlefield"
   },
+  "sautekh_immortal": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "savage_beating": {
     "granted": {
       "count": 2,
@@ -21325,6 +21332,10 @@
     "zone": "battlefield"
   },
   "scavenging_ooze": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sceptre_of_eternal_glory": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -22005,6 +22016,19 @@
     "zone": "battlefield"
   },
   "shanodin_dryads": {
+    "zone": "battlefield"
+  },
+  "shard_of_the_nightbringer": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 60,
+      "1": 20
+    },
+    "zone": "battlefield"
+  },
+  "shard_of_the_void_dragon": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "sharding_sphinx": {

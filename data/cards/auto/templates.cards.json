@@ -253217,6 +253217,40 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sautekh_immortal",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Sautekh Immortal",
+      "oracle_text": "Flash\nElite Troops — This creature enters with a +1/+1 counter on it for each creature that died this turn.",
+      "power": 2,
+      "replacements": [
+        {
+          "amount": {
+            "creatures_died_this_turn": "all"
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "cast_only_during": {
         "phase": "combat",
         "turn": "yours"
@@ -254911,6 +254945,112 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "most_sharing_a_name": {
+                "objects": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add three mana of any one color. Activate only if you control three or more lands with the same name"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sceptre_of_eternal_glory",
+      "mana_cost": "{4}",
+      "name": "Sceptre of Eternal Glory",
+      "oracle_text": "{T}: Add one mana of any color.\n{T}: Add three mana of any one color. Activate only if you control three or more lands with the same name.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -262362,6 +262502,167 @@
         "Dryad"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "life_of": {
+                      "target": "t1"
+                    }
+                  },
+                  "round": "up"
+                }
+              },
+              "as": "drained",
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "binding": "drained"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Drain Life — When this creature enters, if you cast it, target opponent loses half their life, rounded up. You gain life equal to the life lost this way.",
+          "trigger": {
+            "condition": {
+              "was_cast": true
+            },
+            "controller": "you",
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "shard_of_the_nightbringer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}{B}",
+      "name": "Shard of the Nightbringer",
+      "oracle_text": "Flying\nDrain Life — When this creature enters, if you cast it, target opponent loses half their life, rounded up. You gain life equal to the life lost this way.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "C'tan"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Spear of the Void Dragon — Whenever this creature attacks, each opponent sacrifices a nonland permanent of their choice",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Matter Absorption — Whenever an artifact is put into a graveyard from the battlefield or is put into exile from the battlefield, put two +1/+1 counters on this creature",
+          "trigger": {
+            "controller": "any",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            },
+            "to_zones": [
+              "graveyard",
+              "exile"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "shard_of_the_void_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}{B}",
+      "name": "Shard of the Void Dragon",
+      "oracle_text": "Flying\nSpear of the Void Dragon — Whenever this creature attacks, each opponent sacrifices a nonland permanent of their choice.\nMatter Absorption — Whenever an artifact is put into a graveyard from the battlefield or is put into exile from the battlefield, put two +1/+1 counters on this creature.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "C'tan"
+      ],
+      "toughness": 7,
       "types": [
         "Creature"
       ]

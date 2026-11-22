@@ -233902,12 +233902,12 @@
     },
     "Sautekh Immortal": {
       "edhrec_rank": 16022,
-      "gate": "template",
+      "gate": null,
       "name": "Sautekh Immortal",
-      "reason": "no template for: Elite Troops — This creature enters with a +1/+1 counter on it for each creature that died",
+      "reason": "",
       "scryfall_id": "b5c6995e-30b9-4bc1-89ec-f179b7de2e14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savaen Elves": {
@@ -235442,12 +235442,12 @@
     },
     "Sceptre of Eternal Glory": {
       "edhrec_rank": 2309,
-      "gate": "template",
+      "gate": null,
       "name": "Sceptre of Eternal Glory",
-      "reason": "no template for: {T}: Add three mana of any one color. Activate only if you control three or more lands wit",
+      "reason": "",
       "scryfall_id": "b04abe51-babe-4c93-a42a-424337de3984",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Schema Thief": {
@@ -242842,22 +242842,22 @@
     },
     "Shard of the Nightbringer": {
       "edhrec_rank": 5407,
-      "gate": "template",
+      "gate": null,
       "name": "Shard of the Nightbringer",
-      "reason": "no template for: Drain Life — When this creature enters, if you cast it, target opponent loses half their l",
+      "reason": "",
       "scryfall_id": "21e4140e-22b3-479f-a259-0f56ed02b8ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shard of the Void Dragon": {
       "edhrec_rank": 9611,
-      "gate": "template",
+      "gate": null,
       "name": "Shard of the Void Dragon",
-      "reason": "no template for: Spear of the Void Dragon — Whenever this creature attacks, each opponent sacrifices a nonl",
+      "reason": "",
       "scryfall_id": "04112aaa-4da1-43cf-99e9-440771ff1b9f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sharding Sphinx": {
