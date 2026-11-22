@@ -5450,12 +5450,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # moments and a static carrying neither is an evasion ability that
         # evades nothing -- which loads clean and shows nothing on the board.
         forms = (
-            (model.blockers is not None) + bool(model.require_all) + (model.max_blockers is not None)
+            (model.blockers is not None)
+            + bool(model.require_all)
+            + (model.max_blockers is not None)
+            + (model.min_blockers is not None)
         )
         if forms != 1:
             raise DslError(
                 f"{where}: block_restriction needs exactly one of 'blockers' "
-                f"(a filter on the would-be blocker), 'require_all' or 'max_blockers'"
+                f"(a filter on the would-be blocker), 'require_all', 'max_blockers' "
+                f"or 'min_blockers'"
             )
         # "More than one" is the printed floor; zero would be "can't be
         # blocked", which is a different static and a different card.
@@ -5466,6 +5470,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: block_restriction 'max_blockers' is a positive integer, "
                 f"got {model.max_blockers!r}"
             )
+        # "Except by two or more creatures" is menace, a keyword other cards
+        # count ("creatures with menace"), so the static would be a near miss
+        # of it; one would restrict nothing.
+        if model.min_blockers is not None and (
+            isinstance(model.min_blockers, bool) or model.min_blockers < 3
+        ):
+            raise DslError(
+                f"{where}: block_restriction 'min_blockers' is an integer of at least 3 "
+                f"(two is the menace keyword), got {model.min_blockers!r}"
+            )
         if model.blockers is not None:
             unknown = set(model.blockers) - STATIC_FILTER_KEYS
             if unknown:
@@ -5474,10 +5488,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
-    elif model.blockers is not None or model.require_all or model.max_blockers is not None:
+    elif (
+        model.blockers is not None
+        or model.require_all
+        or model.max_blockers is not None
+        or model.min_blockers is not None
+    ):
         raise DslError(
-            f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
-            f"block_restriction static, not on {model.effect!r}"
+            f"{where}: 'blockers'/'require_all'/'max_blockers'/'min_blockers' only mean "
+            f"anything on a block_restriction static, not on {model.effect!r}"
         )
     if model.effect == "can_block_only":
         # Without a filter the static says "can block only creatures", which
@@ -8106,6 +8125,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    if model.min_blockers is not None:
+        static["min_blockers"] = model.min_blockers
     if model.attackers is not None:
         static["attackers"] = dict(model.attackers)
     # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,

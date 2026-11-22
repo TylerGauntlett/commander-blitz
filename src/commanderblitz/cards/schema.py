@@ -1242,6 +1242,10 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``block_restriction``: Troll of Khazad-dûm's "can't be blocked except
+    #: by three or more creatures" -- the fewest creatures that may block it,
+    #: menace's two generalised. Judged on the declaration, as the cap is.
+    min_blockers: int | None = None
     #: ``can_block_only``: which attackers the creatures it ``affects`` may
     #: block. A static filter over the *attacker*, read on its derived
     #: characteristics, so Brazen Borrower's "can block only creatures with

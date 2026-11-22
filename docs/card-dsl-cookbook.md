@@ -6577,6 +6577,10 @@ quality it names is a parameter:
 { "kind": "static", "effect": "block_restriction",
   "affects": { "controller": "you", "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
   "max_blockers": 1 }
+
+// Troll of Khazad-dûm: can't be blocked except by three or more creatures
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "min_blockers": 3 }
 ```
 
 The forms are evaluated at different moments and none is another with a
@@ -6629,7 +6633,18 @@ no later choice could make that declaration legal again. Two caps on one
 creature are both obeyed, so the least wins. "Can't be blocked by more than one"
 is not `blockers` refusing everyone, which would be "can't be blocked".
 
-A `block_restriction` carrying none of the three fields, or more than one, is
+`min_blockers` is the other count: the fewest creatures that may block the
+attacker if any do, an integer of at least three — "except by two or more" is
+the `menace` keyword, which other cards count, so two is refused at load time.
+`combat.min_blockers` is the one reader of every minimum, menace included, and
+the greatest wins. It is never refused per pair, because the next blocker is
+what makes the block legal: `blocks_valid` withholds "Done blocking" while a
+blocked attacker is under its floor, and `drop_illegal_blocks` retracts the
+block on finishing once no further blocker can be added. A creature compelled
+to block "if able" is excused from an attacker it could not reach the floor
+on, and the CPU's `blockers_for` counts no blockers below it.
+
+A `block_restriction` carrying none of the four fields, or more than one, is
 refused at load time — an evasion ability that evades nothing would load
 perfectly cleanly.
 

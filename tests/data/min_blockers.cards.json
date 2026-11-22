@@ -1,0 +1,60 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_min_blockers.py. t_minb_troll is Troll of Khazad-dum's evasion: this creature can't be blocked except by three or more creatures. t_minb_menace_troll has menace as well, so the greater minimum must win. t_minb_menace is a plain menace creature.",
+  "cards": [
+    {
+      "id": "t_minb_troll",
+      "name": "Test Khazad Troll",
+      "oracle_text": "This creature can't be blocked except by three or more creatures.",
+      "mana_cost": "{5}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Troll"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 6,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked except by three or more creatures.",
+          "effect": "block_restriction",
+          "affects": {"self_only": true},
+          "min_blockers": 3
+        }
+      ]
+    },
+    {
+      "id": "t_minb_menace_troll",
+      "name": "Test Menacing Khazad Troll",
+      "oracle_text": "Menace\nThis creature can't be blocked except by three or more creatures.",
+      "mana_cost": "{5}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Troll"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 6,
+      "toughness": 5,
+      "keywords": ["menace"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't be blocked except by three or more creatures.",
+          "effect": "block_restriction",
+          "affects": {"self_only": true},
+          "min_blockers": 3
+        }
+      ]
+    },
+    {
+      "id": "t_minb_menace",
+      "name": "Test Menacing Brute",
+      "oracle_text": "Menace",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 3,
+      "keywords": ["menace"]
+    }
+  ]
+}

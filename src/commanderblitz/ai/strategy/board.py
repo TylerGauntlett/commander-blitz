@@ -17,6 +17,7 @@ from commanderblitz.engine.combat import (
     block_prohibited,
     blockers_filter_refuses,
     can_block,
+    min_blockers,
     unblockable,
 )
 from commanderblitz.engine.costs import produced_symbols
@@ -173,8 +174,9 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
     block, "can block only …", unblockable, protection, a `block_restriction`'s
     ``blockers`` filter ("can't be blocked by Humans", "…by creatures with power
     less than this creature's power"), and the evasion keywords. Landwalk and
-    the declaration-counting `max_blockers`/`require_all` are left out; they are
-    rare, and getting them wrong only makes the agent a little more careful.
+    the declaration-counting `max_blockers`/`min_blockers`/`require_all` are
+    left out here (`blockers_for` asks the minimum); they are rare, and getting
+    them wrong only makes the agent a little more careful.
     """
     combat = state.combat
     if combat is not None and attacker in combat.attackers:
@@ -216,10 +218,11 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
 def blockers_for(state: GameState, attacker: int, defender: int) -> list[GameObject]:
     """The defender's creatures that could block this attacker.
 
-    Menace needs two of them, so a lone possible blocker does not count.
+    Menace needs two of them and a `min_blockers` restriction N, so fewer
+    possible blockers than that do not count.
     """
     found = [o for o in creatures(state, defender) if could_block(state, o.oid, attacker, defender)]
-    if Keyword.MENACE.value in chars(state, attacker).keywords and len(found) < 2:
+    if len(found) < min_blockers(state, attacker):
         return []
     return found
 

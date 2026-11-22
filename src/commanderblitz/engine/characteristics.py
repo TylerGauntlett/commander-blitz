@@ -4045,9 +4045,10 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     Returned as ``(source, static)`` pairs rather than answered here, for the
     same reason :func:`protection_from` returns a set: two rules read them at two
     different moments and must ask the same question.  A per-blocker filter is
-    checked in ``combat.can_block``, one pair at a time; ``require_all`` can only
-    be judged once the whole declaration exists, so it is checked in
-    ``combat.blocks_valid`` beside menace, which has exactly that shape.
+    checked in ``combat.can_block``, one pair at a time; ``require_all`` and the
+    ``max_blockers``/``min_blockers`` counts can only be judged once the whole
+    declaration exists, so they are checked in ``combat.blocks_valid`` beside
+    menace, which has exactly that shape.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
