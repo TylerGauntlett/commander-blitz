@@ -287,3 +287,34 @@ class TestLoadTimeGuards:
             compile_card(
                 _model(additional_cost={"exile_from_graveyard": {"types": ["Creature"], "link": 1}})
             )
+
+
+class TestTheResidualGateReadsPastTheAbilityWord:
+    """"Fallen Warrior — As an additional cost..." -- the flavor word is italic
+    text with no rules meaning (207.2c), so the card-level cost claims the line
+    exactly as it claims a bare "As an additional cost...". Without this the
+    printed line stayed residual and the card could not be authored."""
+
+    @staticmethod
+    def _fixture(**changes):
+        import json
+        from pathlib import Path
+
+        path = Path(__file__).parents[2] / "data" / "cast_cost_exile_link.cards.json"
+        card = json.loads(path.read_text(encoding="utf-8"))["cards"][0]
+        card.update(changes)
+        return compile_card(CardModel.model_validate(card))
+
+    def test_the_prefixed_cost_line_is_claimed(self):
+        from commanderblitz.cards.authoring.verify import _covered
+
+        card = self._fixture()
+        line = card.oracle_text.splitlines()[0]
+        assert line.startswith("Fallen Warrior — ")
+        assert _covered(card, line)
+
+    def test_a_card_with_no_additional_cost_still_leaves_it_residual(self):
+        from commanderblitz.cards.authoring.verify import _covered
+
+        card = self._fixture(additional_cost=None, additional_optional=False)
+        assert not _covered(card, card.oracle_text.splitlines()[0])

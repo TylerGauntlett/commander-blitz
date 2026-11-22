@@ -2435,6 +2435,11 @@ def _claims_numbered_line(card: CardDef, stripped: str, word: str, n: int) -> bo
     return True
 
 
+#: A leading ability word or flavor word and its em dash (207.2c), as in
+#: "Fallen Warrior — As an additional cost to cast this spell, ...".
+_ABILITY_WORD_PREFIX = re.compile(r"^[A-Z][^—.:]{0,40}? — ")
+
+
 def _covered(card: CardDef, line: str) -> bool:
     """Whether an ability on the card claims this printed line.
 
@@ -2865,7 +2870,11 @@ def _covered(card: CardDef, line: str) -> bool:
     # treats `spell_effects` as accounting for every line of a spell. A creature
     # with an additional cost -- Demon of Catastrophes -- has no `spell_effects`
     # at all, and its printed cost went unclaimed.
-    if card.additional_cost is not None and stripped.lower().startswith(
+    # An ability word or flavor word before it ("Fallen Warrior — As an
+    # additional cost...", Redemptor Dreadnought) is italic text with no rules
+    # meaning (207.2c), so the cost is read past it.
+    cost_line = _ABILITY_WORD_PREFIX.sub("", stripped)
+    if card.additional_cost is not None and cost_line.lower().startswith(
         "as an additional cost"
     ):
         return True
@@ -2879,8 +2888,8 @@ def _covered(card: CardDef, line: str) -> bool:
     # `reveal_from_hand` branch and nothing else claims it, and printed mana symbols must be
     # some branch's mana, so a card declaring "or pay {1}" cannot claim a
     # printed "or pay {2}". A mismatch leaves the line residual.
-    if card.additional_cost_options and stripped.lower().startswith("as an additional cost"):
-        printed = stripped.split("(")[0]
+    if card.additional_cost_options and cost_line.lower().startswith("as an additional cost"):
+        printed = cost_line.split("(")[0]
         options = card.additional_cost_options
         beholds = any(option.behold is not None for option in options)
         reveals = any(option.reveal_from_hand is not None for option in options)
