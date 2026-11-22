@@ -125964,6 +125964,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "subtypes": [
+                    "Demon"
+                  ],
+                  "target": "t1"
+                }
+              },
+              "else": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Rites of Banishment — When this creature enters, destroy target attacking creature. If that creature is a Demon, exile it instead.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "grey_knight_paragon",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Grey Knight Paragon",
+      "oracle_text": "Flash\nRites of Banishment — When this creature enters, destroy target attacking creature. If that creature is a Demon, exile it instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -161414,6 +161493,71 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Rapid-fire Battle Cannon — When this Vehicle enters, it deals 4 damage to each opponent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 1"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "knight_paladin",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}",
+      "name": "Knight Paladin",
+      "oracle_text": "Trample\nRapid-fire Battle Cannon — When this Vehicle enters, it deals 4 damage to each opponent.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -198946,6 +199090,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                },
+                {
+                  "controller": "you",
+                  "objects": {
+                    "chooser": {
+                      "binding": "event_player"
+                    },
+                    "controller": "you",
+                    "count": 1,
+                    "not_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have that player return the targeted permanent card to their hand?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Rogue Trader — Whenever Neyam Shai Murad deals combat damage to a player, you may have that player return target permanent card from their graveyard to their hand. If you do, that player chooses a permanent card in your graveyard, then you put it onto the battlefield under your control.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "neyam_shai_murad",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Neyam Shai Murad",
+      "oracle_text": "Rogue Trader — Whenever Neyam Shai Murad deals combat damage to a player, you may have that player return target permanent card from their graveyard to their hand. If you do, that player chooses a permanent card in your graveyard, then you put it onto the battlefield under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "no_hand_limit",
           "kind": "static",
@@ -221919,6 +222148,181 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking": true,
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Rosarius — Whenever this creature attacks, it gains indestructible until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "primaris_chaplain",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Primaris Chaplain",
+      "oracle_text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nRosarius — Whenever this creature attacks, it gains indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "destroy"
+                    }
+                  ],
+                  "label": "Executioner Round — Destroy target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "duration": "until_end_of_turn",
+                      "objects": {
+                        "controller": {
+                          "target": "t2"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "pump",
+                      "power": {
+                        "const": -2
+                      },
+                      "toughness": {
+                        "const": -2
+                      }
+                    }
+                  ],
+                  "label": "Hyperfrag Round — Creatures target player controls get -2/-2 until end of turn."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "player",
+              "mode": 1,
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When this creature enters, choose one —\n• Executioner Round — Destroy target creature.\n• Hyperfrag Round — Creatures target player controls get -2/-2 until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "primaris_eliminator",
+      "mana_cost": "{4}{B}",
+      "name": "Primaris Eliminator",
+      "oracle_text": "When this creature enters, choose one —\n• Executioner Round — Destroy target creature.\n• Hyperfrag Round — Creatures target player controls get -2/-2 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -246947,6 +247351,67 @@
               "amount": {
                 "const": 1
               },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Blood Chalice — Whenever another creature you control dies, this creature deals 1 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sanguinary_priest",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Sanguinary Priest",
+      "oracle_text": "Lifelink\nBlood Chalice — Whenever another creature you control dies, this creature deals 1 damage to any target.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Cleric"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "surveil",
               "player": "you"
             }
@@ -264636,6 +265101,124 @@
         {
           "effects": [
             {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "target": "t1"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Medicus Ministorum — When this creature enters, return target creature card from your graveyard to the battlefield. You gain life equal to its mana value",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "sister_hospitaller",
+      "mana_cost": "{4}{W}{B}",
+      "name": "Sister Hospitaller",
+      "oracle_text": "Medicus Ministorum — When this creature enters, return target creature card from your graveyard to the battlefield. You gain life equal to its mana value.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Martyrdom — When this creature dies, you gain 2 life and draw two cards.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "sister_repentia",
+      "mana_cost": "{3}{W}{B}",
+      "miracle": "{W}{B}",
+      "name": "Sister Repentia",
+      "oracle_text": "Martyrdom — When this creature dies, you gain 2 life and draw two cards.\nMiracle {W}{B} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "counters_on": {
                   "counter": "+1/+1",
@@ -271792,6 +272375,84 @@
         "Wizard"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Grav-cannon — When this creature enters, destroy up to one target artifact or enchantment.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{2}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "space_marine_devastator",
+      "mana_cost": "{3}{W}",
+      "name": "Space Marine Devastator",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nGrav-cannon — When this creature enters, destroy up to one target artifact or enchantment.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

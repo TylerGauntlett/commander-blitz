@@ -1,0 +1,21 @@
+{
+  "card_id": "the_flesh_is_weak",
+  "name": "The Flesh Is Weak",
+  "oracle_text": "When this enchantment enters, put a +1/+1 counter on each creature you control.\nCreatures you control with +1/+1 counters on them are artifacts in addition to their other types.\nNonartifact creatures get -1/-1.",
+  "blocked_sentences": [
+    "Nonartifact creatures get -1/-1."
+  ],
+  "needs": [
+    {
+      "capability": "static_filter_derived_types",
+      "kind": "selector",
+      "what": "a layer-7c `buff` static whose `affects` filter (`not_types: [\"Artifact\"]`) reads a creature's card types after layer 4, so a creature made an artifact by another static (here this card's own `add_subtype` with `types: [\"Artifact\"]` and `has_counters: \"+1/+1\"`) is excluded from the -1/-1",
+      "why_existing_wont_do": "The other two lines are expressible (self_enters add_counters over creatures you control; an add_subtype static adding the Artifact card type to creatures you control with has_counters \"+1/+1\"), but `_matches_printed` answers `not_types` from the printed `card.types`, and the `derived` read off `chars` is allowed only for rule-modifying statics (attacks_if_able, block_restriction), not for buff inside the layer pipeline. Written with the existing filter, every printed nonartifact creature -- including the ones this card just made artifacts -- would get -1/-1, which inverts the card's whole point"
+    }
+  ],
+  "closest_existing": [
+    "buff",
+    "add_subtype"
+  ],
+  "confidence": "high"
+}

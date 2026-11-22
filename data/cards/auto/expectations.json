@@ -10648,6 +10648,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "grey_knight_paragon": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "griffin_sentinel": {
     "zone": "battlefield"
   },
@@ -13484,6 +13489,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "knight_paladin": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "knight_s_pledge": {
@@ -16691,6 +16700,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "neyam_shai_murad": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nezahal_primal_tide": {
     "zone": "battlefield"
   },
@@ -18511,6 +18524,18 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "primaris_chaplain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "primaris_eliminator": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
   },
   "primary_research": {
     "battlefield_count": 34,
@@ -20656,6 +20681,10 @@
   "sanguinary_mage": {
     "zone": "battlefield"
   },
+  "sanguinary_priest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sanitation_automaton": {
     "zone": "battlefield"
   },
@@ -22169,6 +22198,20 @@
   "sisay_s_ring": {
     "zone": "battlefield"
   },
+  "sister_hospitaller": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "sister_repentia": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sisterhood_of_karn": {
     "battlefield_count": 33,
     "counters": {
@@ -22759,6 +22802,11 @@
   "sower_of_temptation": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "space_marine_devastator": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "space_marine_scout": {

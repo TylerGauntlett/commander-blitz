@@ -117892,12 +117892,12 @@
     },
     "Grey Knight Paragon": {
       "edhrec_rank": 16844,
-      "gate": "template",
+      "gate": null,
       "name": "Grey Knight Paragon",
-      "reason": "no template for: Rites of Banishment — When this creature enters, destroy target attacking creature. If tha",
+      "reason": "",
       "scryfall_id": "27b29b3f-1f99-4880-8f66-442fa5326150",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greymond, Avacyn's Stalwart": {
@@ -150422,12 +150422,12 @@
     },
     "Knight Paladin": {
       "edhrec_rank": 5742,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Knight Paladin",
-      "reason": "player 1 life is 40, expected 36",
+      "reason": "",
       "scryfall_id": "951cff7b-2b17-4903-be92-b9c066adfc83",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight Rampager": {
@@ -186062,12 +186062,12 @@
     },
     "Neyam Shai Murad": {
       "edhrec_rank": 16498,
-      "gate": "template",
+      "gate": null,
       "name": "Neyam Shai Murad",
-      "reason": "no template for: Rogue Trader — Whenever deals combat damage to a player, you may have that player return t",
+      "reason": "",
       "scryfall_id": "211fdfd5-af23-4a16-a80f-1d9ba5ccd255",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neyith of the Dire Hunt": {
@@ -207132,22 +207132,22 @@
     },
     "Primaris Chaplain": {
       "edhrec_rank": 15151,
-      "gate": "template",
+      "gate": null,
       "name": "Primaris Chaplain",
-      "reason": "no template for: Battle cry",
+      "reason": "",
       "scryfall_id": "5b7cb578-968c-408b-b58a-8f38cfc7696b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primaris Eliminator": {
       "edhrec_rank": 7902,
-      "gate": "template",
+      "gate": null,
       "name": "Primaris Eliminator",
-      "reason": "no template for: When this creature enters, choose one —",
+      "reason": "",
       "scryfall_id": "d31c8091-a66d-4f01-975b-0242888a5942",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primary Research": {
@@ -232862,12 +232862,12 @@
     },
     "Sanguinary Priest": {
       "edhrec_rank": 9592,
-      "gate": "template",
+      "gate": null,
       "name": "Sanguinary Priest",
-      "reason": "no template for: Blood Chalice — Whenever another creature you control dies, this creature deals 1 damage t",
+      "reason": "",
       "scryfall_id": "1e341a97-f056-494b-897a-8a68099dd8ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sanguine Brushstroke": {
@@ -248782,22 +248782,22 @@
     },
     "Sister Hospitaller": {
       "edhrec_rank": 6295,
-      "gate": "template",
+      "gate": null,
       "name": "Sister Hospitaller",
-      "reason": "no template for: Medicus Ministorum — When this creature enters, return target creature card from your grav",
+      "reason": "",
       "scryfall_id": "69ae36ca-683b-4557-9c2a-130db4150152",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sister Repentia": {
       "edhrec_rank": 16072,
-      "gate": "template",
+      "gate": null,
       "name": "Sister Repentia",
-      "reason": "no template for: Martyrdom — When this creature dies, you gain 2 life and draw two cards",
+      "reason": "",
       "scryfall_id": "743c5111-9e94-4f08-9c01-92411e8a2317",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sister of Silence": {
@@ -256762,12 +256762,12 @@
     },
     "Space Marine Devastator": {
       "edhrec_rank": 7976,
-      "gate": "template",
+      "gate": null,
       "name": "Space Marine Devastator",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "4a821438-2b60-421e-9fd2-3ce3ec958eb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Space Marine Scout": {

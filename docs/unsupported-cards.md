@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **455** capabilities.
+**540 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [voting](#voting) | 6 | 6980 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [astartes-warrior-token](#astartes-warrior-token) | 4 | 6855 | token |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
@@ -66,6 +65,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [protection-from-mana-value](#protection-from-mana-value) | 2 | 3009 | static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
@@ -129,6 +129,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
+| [cast-cost-exile-link](#cast-cost-exile-link) | 1 | 16834 | cost |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -375,7 +376,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
@@ -391,6 +391,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
+| [replace-lose-game](#replace-lose-game) | 1 | 4368 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
@@ -398,7 +399,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
-| [robot-4-4-c-artifact-cant-block](#robot-4-4-c-artifact-cant-block) | 1 | 16917 | token |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
@@ -420,12 +420,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
+| [spell-or-ability-target-spell-filter](#spell-or-ability-target-spell-filter) | 1 | 12602 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [static-count-derived-types](#static-count-derived-types) | 1 | 817 | value |
+| [static-filter-derived-types](#static-filter-derived-types) | 1 | 15329 | selector |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -1004,33 +1006,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## astartes-warrior-token
-
-Blocks **4** cards.
-
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_w_vigilance (wrong size, no Astartes), soldier_2_2_w_vigilance, knight_2_2_w_vigilance and samurai_2_2_w_vigilance (right stats, wrong creature types); none is an Astartes Warrior. The cost ({T} + tap_permanents of two artifacts) and the Master of Machines line (tap_x creatures + look_at_top with rest_to_bottom) are expressible once the token exists
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest are knight_2_2_w_vigilance, soldier_2_2_w_vigilance and samurai_2_2_w_vigilance (wrong creature types) and warrior_1_1_w_vigilance (wrong size). Chapters II (sacrifice over each opponent) and III (for_each_player over opponents with an if comparing creature counts, then draw 2) look expressible once the token exists.
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest 2/2 white vigilance tokens (knight_2_2_w_vigilance, soldier_2_2_w_vigilance, samurai_2_2_w_vigilance) have the wrong creature types, and warrior_1_1_w_vigilance is the wrong size. The rest of the card is expressible: create_token with amount {x}, cost {mana, exile_self}, and the activation limit as a condition (count of creatures you control == 0, is_your_turn).
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest 2/2 white vigilance tokens (knight_2_2_w_vigilance, soldier_2_2_w_vigilance, samurai_2_2_w_vigilance) have the wrong creature types, and warrior_1_1_w_vigilance is the wrong size. The rest of the card looks expressible: an attacks trigger with filter attached, create_token with attacking, then grant_keyword menace over attacking creatures; Equip {3} as in Adaptive Omnitool.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inquisitorial Rosette** (rank 6855) — `inquisitorial_rosette`
-  - Inquisition Agents — Whenever equipped creature attacks, create a 2/2 white Astartes Warrior creature token with vigilance that's attacking. Then attacking creatures gain menace until end of turn.
-- **Birth of the Imperium** (rank 7196) — `birth_of_the_imperium`
-  - I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.
-- **Defenders of Humanity** (rank 11133) — `defenders_of_humanity`
-  - When this enchantment enters, create X 2/2 white Astartes Warrior creature tokens with vigilance.
-  - {X}{2}{W}, Exile this enchantment: Create X 2/2 white Astartes Warrior creature tokens with vigilance. Activate only if you control no creatures and only during your turn.
-- **Belisarius Cawl** (rank 12878) — `belisarius_cawl`
-  - Ultima Founding — {T}, Tap two untapped artifacts you control: Create a 2/2 white Astartes Warrior creature token with vigilance.
 
 </details>
 
@@ -1854,6 +1829,24 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
+
+</details>
+
+## protection-from-mana-value
+
+Blocks **2** cards.
+
+- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
+  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
+- **(static_effect)** a quality on the `protection` static that matches sources by mana value against a comparison (here mana value <= 3): it can't be the target of spells or abilities from such sources, can't be blocked by creatures with such mana value, damage from them is prevented, and it can't be enchanted/equipped by them (702.16). Tokens and lands (mana value 0) count as mana value 3 or less.
+  <br>Why the existing vocabulary won't do: The `protection` static takes only from_types, from_subtypes, from_colors, from_colorless and from_colors_outside_commander_identity (schema.py StaticAbility, loader protection checks); there is no quality keyed on a numeric characteristic like mana value, and approximating with any of those would protect from the wrong things
+
+<details><summary>Cards waiting on this</summary>
+
+- **Reaver Titan** (rank 3009) — `reaver_titan`
+  - Void Shields — Protection from mana value 3 or less
+- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
+  - Lifelink, protection from mana value 3 or greater
 
 </details>
 
@@ -2832,6 +2825,21 @@ Blocks **1** card.
 
 - **Baron Helmut Zemo** (rank 13784) — `baron_helmut_zemo`
   - Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)
+
+</details>
+
+## cast-cost-exile-link
+
+Blocks **1** card.
+
+- **(cost)** an `exile_from_graveyard` paid as a spell's (optional) additional cost that links the exiled card to the permanent the spell becomes (607.2a), so the permanent's later abilities can read it with `{"zone": "exile", "exiled_with": "self"}` -- here for an attack trigger whose condition is `exists` over that selector and whose `pump` amount is `power_of` the linked card
+  <br>Why the existing vocabulary won't do: `additional_cost` + `additional_optional` can charge `exile_from_graveyard: {types: [Creature]}`, but `costs.pay` exiles via `zones.exile(cause="cost")` without calling `link_exiled`, so `exiled_by` is never set and `exiled_with: self` matches nothing; the cost's `as` binding lives only on the stack item, not on the resolved permanent, and `additional_paid` says only whether the cost was paid, not which card (or its power) was exiled
+
+<details><summary>Cards waiting on this</summary>
+
+- **Redemptor Dreadnought** (rank 16834) — `redemptor_dreadnought`
+  - Fallen Warrior — As an additional cost to cast this spell, you may exile a creature card from your graveyard.
+  - Plasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.
 
 </details>
 
@@ -6346,20 +6354,6 @@ Blocks **1** card.
 
 </details>
 
-## protection-from-mana-value
-
-Blocks **1** card.
-
-- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
-  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
-  - Lifelink, protection from mana value 3 or greater
-
-</details>
-
 ## protection-from-multicolored
 
 Blocks **1** card.
@@ -6574,6 +6568,20 @@ Blocks **1** card.
 
 </details>
 
+## replace-lose-game
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement on a permanent for its controller losing the game (any cause: 0 life, poison, commander damage, empty-library draw, lose_game op) that instead performs effects (exile this permanent, set your life total to 1) and the player stays in the game; one-shot because the source is exiled
+  <br>Why the existing vocabulary won't do: The cant_lose_the_game static/op only forbids losing (Platinum Angel) and runs no replacement effects, so the source never exiles itself and the life total never becomes 1; no replace_* static covers the lose-the-game event and there is no op that sets a life total to a number
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Golden Throne** (rank 4368) — `the_golden_throne`
+  - Arcane Life-support — If you would lose the game, instead exile The Golden Throne and your life total becomes 1.
+
+</details>
+
 ## replicate
 
 Blocks **1** card.
@@ -6671,20 +6679,6 @@ Blocks **1** card.
 
 - **Gandalf, Westward Voyager** (rank 12729) — `gandalf_westward_voyager`
   - Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card
-
-</details>
-
-## robot-4-4-c-artifact-cant-block
-
-Blocks **1** card.
-
-- **(token)** a 4/4 colorless Robot artifact creature token with "This token can't block."
-  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (wrong size) and construct_4_4_c_artifact (wrong subtype, no can't-block clause); no 4/4 Robot artifact token that can't block exists. The rest of the card is expressible: Protection from Robots is the protection static with from_subtypes [Robot], and the ability is cost {U}+tap with two distinct player targets, draw and create_token with player {target: t2}.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cybernetica Datasmith** (rank 16917) — `cybernetica_datasmith`
-  - Field Reprogramming — {U}, {T}: Target player draws a card. Another target player creates a 4/4 colorless Robot artifact creature token with "This token can't block."
 
 </details>
 
@@ -6992,6 +6986,20 @@ Blocks **1** card.
 
 </details>
 
+## spell-or-ability-target-spell-filter
+
+Blocks **1** card.
+
+- **(selector)** a `spell_or_ability` target whose SPELL half can be narrowed by printed characteristics (here `any_types: ["Instant", "Sorcery"]`) while its ability half still admits every activated or triggered ability on the stack -- e.g. a `spell_selector` sub-filter read by `targeting._spell_matches` for spells only, with the existing `controller`/`that_targets` clauses still shared by both halves
+  <br>Why the existing vocabulary won't do: `loader.targets._compile_target` refuses any `spell_or_ability` selector key other than `controller` and `that_targets`, precisely because a type clause would narrow only the spell half; Disallow's plain `spell_or_ability` would also counter creature, artifact, enchantment and planeswalker spells, which this card cannot. A `spell` target (any_types Instant/Sorcery) drops the abilities, `ability_on_stack` drops the spells, and a `choose_mode` splitting the one target into two modes restructures the printed single target into an unprinted modal choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sister of Silence** (rank 12602) — `sister_of_silence`
+  - Psychic Abomination — When this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.
+
+</details>
+
 ## spells-cast-per-player
 
 Blocks **1** card.
@@ -7075,6 +7083,20 @@ Blocks **1** card.
 - **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
   - Ashaya's power and toughness are each equal to the number of lands you control.
   - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
+
+</details>
+
+## static-filter-derived-types
+
+Blocks **1** card.
+
+- **(selector)** a layer-7c `buff` static whose `affects` filter (`not_types: ["Artifact"]`) reads a creature's card types after layer 4, so a creature made an artifact by another static (here this card's own `add_subtype` with `types: ["Artifact"]` and `has_counters: "+1/+1"`) is excluded from the -1/-1
+  <br>Why the existing vocabulary won't do: The other two lines are expressible (self_enters add_counters over creatures you control; an add_subtype static adding the Artifact card type to creatures you control with has_counters "+1/+1"), but `_matches_printed` answers `not_types` from the printed `card.types`, and the `derived` read off `chars` is allowed only for rule-modifying statics (attacks_if_able, block_restriction), not for buff inside the layer pipeline. Written with the existing filter, every printed nonartifact creature -- including the ones this card just made artifacts -- would get -1/-1, which inverts the card's whole point
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Flesh Is Weak** (rank 15329) — `the_flesh_is_weak`
+  - Nonartifact creatures get -1/-1.
 
 </details>
 

@@ -1,0 +1,18 @@
+{
+  "card_id": "reaver_titan",
+  "name": "Reaver Titan",
+  "oracle_text": "Void Shields — Protection from mana value 3 or less\nGatling Blaster — Whenever this Vehicle attacks, it deals 5 damage to each opponent.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "blocked_sentences": [
+    "Void Shields — Protection from mana value 3 or less"
+  ],
+  "needs": [
+    {
+      "capability": "protection_from_mana_value",
+      "kind": "static_effect",
+      "what": "a quality on the `protection` static that matches sources by mana value against a comparison (here mana value <= 3): it can't be the target of spells or abilities from such sources, can't be blocked by creatures with such mana value, damage from them is prevented, and it can't be enchanted/equipped by them (702.16). Tokens and lands (mana value 0) count as mana value 3 or less.",
+      "why_existing_wont_do": "The `protection` static takes only from_types, from_subtypes, from_colors, from_colorless and from_colors_outside_commander_identity (schema.py StaticAbility, loader protection checks); there is no quality keyed on a numeric characteristic like mana value, and approximating with any of those would protect from the wrong things"
+    }
+  ],
+  "closest_existing": ["protection"],
+  "confidence": "high"
+}
