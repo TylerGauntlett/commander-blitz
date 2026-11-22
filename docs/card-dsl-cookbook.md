@@ -6942,6 +6942,23 @@ load, look implemented, and protect from nothing.
 colours (105.2c: colorless is not a colour, so it is never a `from_colors`
 letter). See [Granting protection](#granting-protection).
 
+**Protection from everything.** Vexilus Praetor — "Commanders you control have
+protection from everything" (702.16i) — takes the flag `grant_protection`
+already has:
+
+```jsonc
+{ "kind": "static", "effect": "protection",
+  "affects": { "controller": "you", "is_commander": true },
+  "from_everything": true }
+```
+
+It is the `PROTECTION_EVERYTHING` sentinel the op installs, answered before the
+source's characteristics are read, so a colourless artifact with no subtypes is
+stopped too. Unlike the op's grant it lasts exactly as long as the static's
+source is on the battlefield. Every other quality is refused beside it, because
+everything already contains them. The near miss is listing every type, colour
+and `from_colorless`, which still misses sources none of them name.
+
 **Protection from a mana value.** Reaver Titan — "Protection from mana value 3
 or less" — and Mistmeadow Skulk — "…protection from mana value 3 or greater" —
 compare the source's mana value against a literal number:
@@ -7030,7 +7047,7 @@ Ward) spares more than its source and is not this key.
 **A player with protection.** "**You** and creatures you control have protection
 from the chosen card type" is two statics: the `protection` above for the
 creatures, and a player-wide `player_protection` for the seat, which spells its
-qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`, `from_mana_value`,
+qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`, `from_mana_value`, `from_everything`,
 `from_colorless`, `from_colors_outside_commander_identity`, the chosen leaf
 included):
 

@@ -3725,6 +3725,11 @@ def _static_protection_qualities(
     out.update(resolve_chosen_color_list(static.get("from_colors"), source_obj))
     if static.get("from_colorless"):
         out.add(PROTECTION_COLORLESS)
+    if static.get("from_everything"):
+        # The sentinel `grant_protection` installs, so a lasting "commanders
+        # you control have protection from everything" (Vexilus Praetor) and
+        # Teferi's Protection mean the same thing to every rule.
+        out.add(PROTECTION_EVERYTHING)
     if (mana_value := static.get("from_mana_value")) is not None:
         out.add(mana_value_quality(mana_value["op"], mana_value["value"]))
     if static.get("from_colors_outside_commander_identity"):

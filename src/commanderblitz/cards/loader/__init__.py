@@ -7543,6 +7543,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         qualities.append("colorless")
     if model.from_mana_value is not None:
         qualities.append("mana value")
+    if model.from_everything:
+        qualities.append("everything")
     if model.effect in ("protection", "player_protection"):
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
@@ -7551,7 +7553,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if not qualities:
             raise DslError(
                 f"{where}: {model.effect} needs from_types/from_subtypes/from_colors/"
-                f"from_colorless/from_mana_value/from_colors_outside_commander_identity"
+                f"from_colorless/from_mana_value/from_everything/"
+                f"from_colors_outside_commander_identity"
+            )
+        if model.from_everything and len(qualities) > 1:
+            # Everything already contains every other quality; writing one
+            # beside it is a second sentence no card prints, and dead weight.
+            raise DslError(
+                f"{where}: 'from_everything' already covers every other quality -- "
+                f"write it alone"
             )
         if model.effect == "player_protection" and model.affects is not None:
             # "You have protection" names a seat. An `affects` beside it would
@@ -7607,7 +7617,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif qualities:
         raise DslError(
             f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
-            f"from_mana_value/from_colors_outside_commander_identity need effect "
+            f"from_mana_value/from_everything/from_colors_outside_commander_identity "
+            f"need effect "
             f"'protection' "
             f"or 'player_protection'"
         )
@@ -7801,6 +7812,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["from_colorless"] = True
     if model.from_mana_value is not None:
         static["from_mana_value"] = dict(model.from_mana_value)
+    if model.from_everything:
+        static["from_everything"] = True
     if model.spares is not None:
         static["spares"] = model.spares
     if model.blockers is not None:
