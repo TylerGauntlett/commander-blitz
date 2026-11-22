@@ -1,0 +1,22 @@
+{
+  "card_id": "birth_of_the_imperium",
+  "name": "Birth of the Imperium",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.\nII — Each opponent sacrifices a creature of their choice.\nIII — Draw two cards for each opponent who controls fewer creatures than you.",
+  "blocked_sentences": [
+    "I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have."
+  ],
+  "needs": [
+    {
+      "capability": "astartes_warrior_token",
+      "kind": "token",
+      "what": "a 2/2 white Astartes Warrior creature token with vigilance (e.g. astartes_warrior_2_2_w_vigilance)",
+      "why_existing_wont_do": "token_ids has no Astartes Warrior; the nearest are knight_2_2_w_vigilance, soldier_2_2_w_vigilance and samurai_2_2_w_vigilance (wrong creature types) and warrior_1_1_w_vigilance (wrong size). Chapters II (sacrifice over each opponent) and III (for_each_player over opponents with an if comparing creature counts, then draw 2) look expressible once the token exists."
+    }
+  ],
+  "closest_existing": [
+    "knight_2_2_w_vigilance",
+    "soldier_2_2_w_vigilance",
+    "warrior_1_1_w_vigilance"
+  ],
+  "confidence": "high"
+}

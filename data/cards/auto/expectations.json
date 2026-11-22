@@ -791,6 +791,13 @@
   "ancient_ziggurat": {
     "zone": "battlefield"
   },
+  "and_they_shall_know_no_fear": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "angel_of_destiny": {
     "life": {
       "0": 40,
@@ -1256,6 +1263,10 @@
   "archweaver": {
     "zone": "battlefield"
   },
+  "arco_flagellant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arctic_flats": {
     "zone": "battlefield"
   },
@@ -1486,6 +1497,14 @@
     "zone": "battlefield"
   },
   "assault_griffin": {
+    "zone": "battlefield"
+  },
+  "assault_intercessor": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "assault_suit": {
@@ -3815,6 +3834,10 @@
   "celestial_prism": {
     "zone": "battlefield"
   },
+  "celestine_the_living_saint": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cemetery_reaper": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4539,6 +4562,13 @@
     "zone": "graveyard"
   },
   "commercial_district": {
+    "zone": "battlefield"
+  },
+  "commissar_severina_raine": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "commit_memory": {

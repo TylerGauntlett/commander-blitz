@@ -8422,12 +8422,12 @@
     },
     "And They Shall Know No Fear": {
       "edhrec_rank": 3606,
-      "gate": "template",
+      "gate": null,
       "name": "And They Shall Know No Fear",
-      "reason": "no template for: Choose a creature type. Creatures you control of the chosen type get +1/+0 and gain indest",
+      "reason": "",
       "scryfall_id": "3881c9af-e5a5-4159-bdfe-fb523a82a515",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Andradite Leech": {
@@ -12432,12 +12432,12 @@
     },
     "Arco-Flagellant": {
       "edhrec_rank": 14413,
-      "gate": "template",
+      "gate": null,
       "name": "Arco-Flagellant",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "0894d21c-d44c-4c7c-8693-f32dde67b336",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arctic Aven": {
@@ -15212,12 +15212,12 @@
     },
     "Assault Intercessor": {
       "edhrec_rank": 9267,
-      "gate": "template",
+      "gate": null,
       "name": "Assault Intercessor",
-      "reason": "no template for: Chainsword — Whenever a creature an opponent controls dies, that player loses 2 life",
+      "reason": "",
       "scryfall_id": "019b1f71-2d99-47da-8df3-237ef25a4916",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assault Strobe": {
@@ -42202,12 +42202,12 @@
     },
     "Celestine, the Living Saint": {
       "edhrec_rank": 2845,
-      "gate": "template",
+      "gate": null,
       "name": "Celestine, the Living Saint",
-      "reason": "no template for: Healing Tears — At the beginning of your end step, return target creature card with mana v",
+      "reason": "",
       "scryfall_id": "6a5bd8cd-8f5c-4a92-bdfc-9798c1731c2d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Celestus Sanctifier": {
@@ -50862,12 +50862,12 @@
     },
     "Commissar Severina Raine": {
       "edhrec_rank": 3466,
-      "gate": "template",
+      "gate": null,
       "name": "Commissar Severina Raine",
-      "reason": "no template for: Leading from the Front — Whenever attacks, each opponent loses X life, where X is the numb",
+      "reason": "",
       "scryfall_id": "94ba8b76-8de7-46da-b641-2503903f0f8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commit // Memory": {

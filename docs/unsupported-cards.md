@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **449** capabilities.
+**534 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,6 +44,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
+| [astartes-warrior-token](#astartes-warrior-token) | 2 | 7196 | token |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -1437,6 +1438,24 @@ Blocks **2** cards.
   - {X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each nonland creature with an everything counter on it is every creature type.
+
+</details>
+
+## astartes-warrior-token
+
+Blocks **2** cards.
+
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_w_vigilance (wrong size, no Astartes), soldier_2_2_w_vigilance, knight_2_2_w_vigilance and samurai_2_2_w_vigilance (right stats, wrong creature types); none is an Astartes Warrior. The cost ({T} + tap_permanents of two artifacts) and the Master of Machines line (tap_x creatures + look_at_top with rest_to_bottom) are expressible once the token exists
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest are knight_2_2_w_vigilance, soldier_2_2_w_vigilance and samurai_2_2_w_vigilance (wrong creature types) and warrior_1_1_w_vigilance (wrong size). Chapters II (sacrifice over each opponent) and III (for_each_player over opponents with an if comparing creature counts, then draw 2) look expressible once the token exists.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Birth of the Imperium** (rank 7196) — `birth_of_the_imperium`
+  - I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.
+- **Belisarius Cawl** (rank 12878) — `belisarius_cawl`
+  - Ultima Founding — {T}, Tap two untapped artifacts you control: Create a 2/2 white Astartes Warrior creature token with vigilance.
 
 </details>
 
