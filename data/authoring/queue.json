@@ -28312,12 +28312,12 @@
     },
     "Blood for the Blood God!": {
       "edhrec_rank": 3328,
-      "gate": "template",
+      "gate": null,
       "name": "Blood for the Blood God!",
-      "reason": "no template for: This spell costs {1} less to cast for each creature that died this turn",
+      "reason": "",
       "scryfall_id": "3bdcc637-8f96-40a5-b815-f90bcc38d908",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blood of the Martyr": {
@@ -72802,12 +72802,12 @@
     },
     "Drach'Nyen": {
       "edhrec_rank": 12866,
-      "gate": "template",
+      "gate": null,
       "name": "Drach'Nyen",
-      "reason": "no template for: Echo of the First Murder — When enters, exile up to one target creature",
+      "reason": "",
       "scryfall_id": "41de390d-5c16-4e83-9c09-4e55fcb8c8e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Draco": {
@@ -203432,12 +203432,12 @@
     },
     "Plague Drone": {
       "edhrec_rank": 6470,
-      "gate": "template",
+      "gate": null,
       "name": "Plague Drone",
-      "reason": "no template for: Rot Fly — If an opponent would gain life, that player loses that much life instead",
+      "reason": "",
       "scryfall_id": "50f27998-1f28-4392-bef5-c7e8555158e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plague Engineer": {

@@ -2602,6 +2602,21 @@
       "0": 4
     }
   },
+  "blood_for_the_blood_god": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 8
+    },
+    "library_size": {
+      "0": 32
+    },
+    "life": {
+      "1": 32
+    },
+    "zone": "exile"
+  },
   "blood_glutton": {
     "zone": "battlefield"
   },
@@ -6635,6 +6650,9 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "drach_nyen": {
     "zone": "battlefield"
   },
   "dracogenesis": {
@@ -18478,6 +18496,10 @@
     "zone": "battlefield"
   },
   "plague_belcher": {
+    "zone": "battlefield"
+  },
+  "plague_drone": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "plague_myr": {

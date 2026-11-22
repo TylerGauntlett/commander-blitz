@@ -31514,6 +31514,49 @@
     },
     {
       "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "cost_reduction": {
+        "creatures_died_this_turn": "all"
+      },
+      "exiles_itself": true,
+      "id": "blood_for_the_blood_god",
+      "mana_cost": "{8}{B}{B}{R}",
+      "name": "Blood for the Blood God!",
+      "oracle_text": "This spell costs {1} less to cast for each creature that died this turn.\nDiscard your hand, then draw eight cards. Blood for the Blood God! deals 8 damage to each opponent. Exile Blood for the Blood God!",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "whole_hand": true
+        },
+        {
+          "amount": {
+            "const": 8
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 8
+          },
+          "op": "damage",
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -80111,6 +80154,119 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Echo of the First Murder — When Drach'Nyen enters, exile up to one target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "exiled_card_power": "self"
+          },
+          "text": "Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "drach_nyen",
+      "mana_cost": "{4}{B}{R}",
+      "name": "Drach'Nyen",
+      "oracle_text": "Echo of the First Murder — When Drach'Nyen enters, exile up to one target creature.\nDaemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -221333,6 +221489,39 @@
         "Beast"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "effect": "replace_life_gain",
+          "kind": "static",
+          "lose_instead": true,
+          "text": "Rot Fly — If an opponent would gain life, that player loses that much life instead."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "plague_drone",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Plague Drone",
+      "oracle_text": "Flying\nRot Fly — If an opponent would gain life, that player loses that much life instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

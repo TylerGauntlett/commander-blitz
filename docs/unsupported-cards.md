@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **455** capabilities.
+**533 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -167,7 +167,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
-| [cost-reduction-creatures-died-this-turn](#cost-reduction-creatures-died-this-turn) | 1 | 3328 | value |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
@@ -292,11 +291,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [last-known-controller](#last-known-controller) | 1 | 5109 | value |
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
-| [life-gain-becomes-loss](#life-gain-becomes-loss) | 1 | 6470 | replacement |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
-| [linked-exiled-card-power](#linked-exiled-card-power) | 1 | 12866 | value |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
@@ -3367,20 +3364,6 @@ Blocks **1** card.
 
 </details>
 
-## cost-reduction-creatures-died-this-turn
-
-Blocks **1** card.
-
-- **(value)** a cost_reduction head that reduces the spell's generic cost by {1} per creature that died this turn (any controller), read from the turn ledger's death tally the way the value creatures_died_this_turn already reads it -- e.g. {"cost_reduction": {"creatures_died_this_turn": "all"}}
-  <br>Why the existing vocabulary won't do: cost_reduction_keys are amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power; count takes a battlefield filter (dead creatures are no longer on the battlefield), a flat amount is a fixed number gated by a condition, and energy_spent_this_turn is the only turn-ledger head. creatures_died_this_turn exists in value_keys/static_value_keys but _validate_cost_reduction refuses any key outside COST_REDUCTION_KEYS
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blood for the Blood God!** (rank 3328) — `blood_for_the_blood_god`
-  - This spell costs {1} less to cast for each creature that died this turn.
-
-</details>
-
 ## cost-reduction-per-attacker-this-turn
 
 Blocks **1** card.
@@ -5149,20 +5132,6 @@ Blocks **1** card.
 
 </details>
 
-## life-gain-becomes-loss
-
-Blocks **1** card.
-
-- **(replacement)** a player-wide replacement static (Tainted Remedy / Rain of Gore shape) that replaces a life gain by an affected player (affects_player: opponent) with a loss of that much life by the same player, read in primitives.gain_life so lifelink and the gain_life op both reach it, e.g. replace_life_gain with a `lose_instead: true` axis
-  <br>Why the existing vocabulary won't do: replace_life_gain only scales the gain (gain_multiplier >= 2 or gain_addend >= 1) and the loader refuses any other shape; cant_gain_life stops the gain but makes no one lose life; a you_gain_life trigger plus lose_life would let the gain happen and then use the stack, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plague Drone** (rank 6470) — `plague_drone`
-  - Rot Fly — If an opponent would gain life, that player loses that much life instead.
-
-</details>
-
 ## life-lost-this-turn-static-value
 
 Blocks **1** card.
@@ -5204,20 +5173,6 @@ Blocks **1** card.
 - **Rite of the Raging Storm** (rank 3304) — `rite_of_the_raging_storm`
   - At the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and "At the beginning of the end step, sacrifice this token."
   - Creatures named Lightning Rager can't attack you or planeswalkers you control.
-
-</details>
-
-## linked-exiled-card-power
-
-Blocks **1** card.
-
-- **(value)** a static magnitude reading the printed power of the card(s) exiled with this source by its linked enters trigger (607 linked abilities): a static_value_keys leaf such as {"power_of_exiled": {"exiled_with": "self"}} (or extreme_value with pick over power) so a buff on equipped creature is +X/+0 with X the exiled card's power, 0 if nothing was exiled
-  <br>Why the existing vocabulary won't do: static_value_keys has no power_of (that is an effect-side value_keys leaf, evaluated once, so a pump would wear off and miss re-equips); extreme_value reads only mana value, and static_value_count_filter_keys has no exiled_with, so count/extreme_value cannot select the linked exiled card. The exile op's `link: true` exists but no static value reads the linked card's power
-
-<details><summary>Cards waiting on this</summary>
-
-- **Drach'Nyen** (rank 12866) — `drach_nyen`
-  - Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.
 
 </details>
 
