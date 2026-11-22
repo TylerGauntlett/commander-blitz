@@ -2068,7 +2068,7 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes`, `supertypes`, `attached` and `produced`. The first three are matched
+`subtypes`, `supertypes`, `attached`, `produced` and `any_mana_ability`. The first three are matched
 against the tapped permanent's **current** characteristics, so a land Urborg made
 a Swamp counts. `produced` describes the tap rather than the permanent: Forsaken
 Monument's "whenever you tap a permanent **for {C}**" is `{"produced": "{C}"}`,
@@ -2076,7 +2076,11 @@ one mana symbol the tap must have made at least one of. It is asked per mana
 option, so a Battlefield Forge tapped for {C} gets the extra and the same Forge
 tapped for {R} does not, and it fires once per tap however much of that mana
 there was — a Sol Ring makes {C}{C}{C}. It combines with the other keys:
-Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`. An empty
+Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`.
+`produced` also takes `{"chosen_color_of": "self"}`, Caged Sun's "mana **of the
+chosen color**", read off the static's source and met by nothing while no colour
+has been chosen; written without it, Caged Sun would add the chosen colour to an
+Island's {U}. An empty
 `tapped_permanent` is refused; written that way, the Monument would pay out for
 every Forest. `attached` is the odd one out and the only one that names *a* permanent
 rather than a class: it is Wild Growth's "enchanted land", checked against the
@@ -2088,7 +2092,15 @@ mana added. `affects_player` names whose taps count: `"you"` for "whenever you
 tap", `"any"` for Vernal Bloom's "whenever a Forest is tapped for mana, its
 controller adds". The mana always goes to the player who tapped. Each static
 adds its mana separately, tagged with its own source. Only abilities with {T}
-in their cost count (106.12). The loader requires both keys and refuses
+in their cost count (106.12), unless `tapped_permanent` says
+`"any_mana_ability": true`: Caged Sun's "whenever **a land's ability causes you
+to add** mana" also answers a mana ability that does not tap, such as Molten
+Slagheap's remove-counters ability, which is activated by hand. The flag is
+`true` or absent, and refused beside `{"any_color": 1}`, whose colour is asked
+only on a tap. Caged Sun's line is `{"types": ["Land"], "produced":
+{"chosen_color_of": "self"}, "any_mana_ability": true}` with `add_mana`
+`{"chosen_color_of": "self"}`; Gauntlet of Power's "whenever a basic land is
+tapped for mana of the chosen color" drops the flag. The loader requires both keys and refuses
 `affects` and `amount`. "Enchanted land" (Wild Growth, Utopia Sprawl) is
 `{"attached": true}`. `add_mana` also takes `{"chosen_color_of": "self"}` for
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`

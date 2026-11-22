@@ -799,7 +799,7 @@ def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tup
 
 
 def mana_added_total(
-    state: GameState, pid: int, oid: int, produced: Sequence[int]
+    state: GameState, pid: int, oid: int, produced: Sequence[int], *, tapping: bool = True
 ) -> tuple[int, ...] | None:
     """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for
     ``produced``, summed.
@@ -810,7 +810,7 @@ def mana_added_total(
     much a Swamp makes. Per option, because Forsaken Monument's "tap a permanent
     for {C}" adds to a painland's {C} and not to its {R}.
     """
-    added = mana_added_on_tap(state, pid, oid, produced)
+    added = mana_added_on_tap(state, pid, oid, produced, tapping=tapping)
     if not added:
         return None
     total = [0] * len(added[0][1])
@@ -3015,9 +3015,11 @@ def activate_mana_ability(
     # "Whenever you tap a Swamp for mana, add an additional {B}." Read before
     # the tap for the reason the variable amount above is, and only when the
     # ability really taps: 106.12 makes "tap for mana" a mana ability with {T}
-    # in its cost, and nothing else.
+    # in its cost, and nothing else -- except the static that says
+    # `any_mana_ability` (Caged Sun's "a land's ability causes you to add"),
+    # which `mana_added_on_tap` also answers for an ability that does not tap.
     tapping = ability.cost is not None and ability.cost.tap
-    added_on_tap = mana_added_on_tap(state, pid, oid, produced) if tapping else []
+    added_on_tap = mana_added_on_tap(state, pid, oid, produced, tapping=tapping)
     if tapping:
         for source, color in zip(
             any_color_added_on_tap(state, pid, oid, produced), extra_colors, strict=False

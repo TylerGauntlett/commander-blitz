@@ -165,8 +165,16 @@ def normalize_keyword(word: str) -> str:
 #: *tap*, not the permanent. Forsaken Monument's "whenever you tap a permanent
 #: **for {C}**" is ``{"produced": "{C}"}`` -- one mana symbol the tap must have
 #: made at least one of, so a painland tapped for {R} does not count and one
-#: tapped for {C} does.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached", "produced"})
+#: tapped for {C} does. It may instead be ``{"chosen_color_of": "self"}``,
+#: Caged Sun's "mana **of the chosen color**", read off the source.
+#:
+#: `any_mana_ability` widens "tapped for mana" to every mana ability of the
+#: permanent, tapping or not: Caged Sun's "whenever **a land's ability causes you
+#: to add** mana" counts Molten Slagheap's remove-counters ability. ``true`` or
+#: absent, like `attached`.
+TAPPED_PERMANENT_KEYS = frozenset(
+    {"types", "subtypes", "supertypes", "attached", "produced", "any_mana_ability"}
+)
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(

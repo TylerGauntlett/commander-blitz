@@ -646,7 +646,7 @@ def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
 
 
 def mana_added_on_tap(
-    state: GameState, pid: int, oid: int, produced: Sequence[int]
+    state: GameState, pid: int, oid: int, produced: Sequence[int], *, tapping: bool = True
 ) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 
@@ -679,11 +679,21 @@ def mana_added_on_tap(
     *tap* rather than the permanent: Forsaken Monument's "whenever you tap a
     permanent **for {C}**" is ``{"produced": "{C}"}``, met when the tap made at
     least one of that mana. Once per tap however much of it there was: a Sol
-    Ring's {C}{C} is one tap for {C}, so one more {C}.
+    Ring's {C}{C} is one tap for {C}, so one more {C}. It may also be
+    ``{"chosen_color_of": "self"}`` -- Caged Sun's "mana **of the chosen
+    color**" -- read off the source as the mana is made, and met by nothing
+    while the source has chosen no colour.
+
+    ``tapping`` is whether the mana ability being activated has {T} in its cost
+    (106.12). A static only answers an ability that does not tap when its
+    ``tapped_permanent`` says ``"any_mana_ability": true``: Caged Sun's
+    "whenever **a land's ability causes you to add**" mana counts Molten
+    Slagheap's remove-counters ability, which Crypt Ghast's "whenever you tap
+    a Swamp for mana" does not.
     """
     return [
         (source.oid, _mana_added(source, static.get("add_mana", "")))
-        for source, static in _tap_statics(state, pid, oid, produced)
+        for source, static in _tap_statics(state, pid, oid, produced, tapping=tapping)
         if not _adds_any_color(static)
     ]
 
@@ -715,7 +725,7 @@ def _adds_any_color(static: Mapping[str, Any]) -> bool:
 
 
 def _tap_statics(
-    state: GameState, pid: int, oid: int, produced: Sequence[int]
+    state: GameState, pid: int, oid: int, produced: Sequence[int], *, tapping: bool = True
 ) -> list[tuple[Any, Mapping[str, Any]]]:
     """Every ``add_mana_on_tap`` static that applies to this tap, with its
     source: the matching half of `mana_added_on_tap`, shared with
@@ -726,6 +736,8 @@ def _tap_statics(
         if not _reaches_player(source, static, pid):
             continue
         wanted = static.get("tapped_permanent") or {}
+        if not tapping and not wanted.get("any_mana_ability"):
+            continue
         if wanted.get("attached") and source.attached_to != oid:
             continue
         if tapped is None:
@@ -737,12 +749,27 @@ def _tap_statics(
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
             continue
-        if (tapped_for := wanted.get("produced")) is not None and not all(
-            produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n
+        if (tapped_for := wanted.get("produced")) is not None and not _made(
+            source, tapped_for, produced
         ):
             continue
         out.append((source, static))
     return out
+
+
+def _made(source: Any, tapped_for: Any, produced: Sequence[int]) -> bool:
+    """Did the mana ability make at least one of ``tapped_for``?
+
+    A literal symbol (Forsaken Monument's ``"{C}"``) or the source's chosen
+    colour (Caged Sun's ``{"chosen_color_of": "self"}``). A source that has
+    chosen nothing is met by no mana at all, rather than by every colour.
+    """
+    if isinstance(tapped_for, Mapping):
+        colors = resolve_chosen_color_list([tapped_for], source)
+        if not colors:
+            return False
+        tapped_for = "".join(f"{{{c}}}" for c in colors)
+    return all(produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n)
 
 
 def _mana_added(source: Any, add_mana: Any) -> tuple[int, ...]:

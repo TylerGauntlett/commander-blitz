@@ -1,0 +1,39 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_add_mana_on_tap_chosen_color.py. t_cs_caged_sun is Caged Sun's third line alone ('whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color') -- tapped_permanent {'types': ['Land'], 'produced': {'chosen_color_of': 'self'}, 'any_mana_ability': true}. t_cs_tap_only is the same sentence without any_mana_ability ('whenever you tap a land for mana of the chosen color'), so the two are shown to differ on a mana ability that does not tap.",
+  "cards": [
+    {
+      "id": "t_cs_caged_sun",
+      "name": "Test Chosen Color Caged Sun",
+      "oracle_text": "Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.",
+      "mana_cost": "{6}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"types": ["Land"], "produced": {"chosen_color_of": "self"}, "any_mana_ability": true},
+          "add_mana": {"chosen_color_of": "self"}
+        }
+      ]
+    },
+    {
+      "id": "t_cs_tap_only",
+      "name": "Test Chosen Color Tap Only",
+      "oracle_text": "Whenever you tap a land for mana of the chosen color, add an additional one mana of that color.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a land for mana of the chosen color, add an additional one mana of that color.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"types": ["Land"], "produced": {"chosen_color_of": "self"}},
+          "add_mana": {"chosen_color_of": "self"}
+        }
+      ]
+    }
+  ]
+}

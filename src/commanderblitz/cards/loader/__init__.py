@@ -5081,12 +5081,32 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     # One, because "for {C}{C}" is not a printed condition and would read as
     # "made two" to nobody; a number ("{2}") is refused because a mana ability
     # makes {C}, never generic.
+    # Or Caged Sun's "mana of the chosen color", the spelling `add_mana` uses.
     if "produced" in tapped:
         tapped_for = tapped["produced"]
-        if tapped_for not in ("{W}", "{U}", "{B}", "{R}", "{G}", "{C}"):
+        if tapped_for != {"chosen_color_of": "self"} and tapped_for not in (
+            "{W}", "{U}", "{B}", "{R}", "{G}", "{C}"
+        ):
             raise DslError(
                 f"{where}.tapped_permanent.produced: one mana symbol the tap made, "
-                f"such as '{{C}}' or '{{G}}', got {tapped_for!r}"
+                f"such as '{{C}}' or '{{G}}', or {{'chosen_color_of': 'self'}}, "
+                f"got {tapped_for!r}"
+            )
+    # "Whenever a land's ability causes you to add mana" (Caged Sun): every mana
+    # ability of the permanent, not only one with {T} in its cost. A flag, so
+    # `true` or absent, as `attached` is. Refused beside "one mana of any color":
+    # that colour is asked for only when the ability taps (`Game._activate_mana`),
+    # and an extra nobody picks would be a quietly smaller card.
+    if "any_mana_ability" in tapped:
+        if tapped["any_mana_ability"] is not True:
+            raise DslError(
+                f"{where}.tapped_permanent.any_mana_ability: must be true if present "
+                f"(omit the key to mean only tapping for mana)"
+            )
+        if model.add_mana == {"any_color": 1}:
+            raise DslError(
+                f"{where}.tapped_permanent.any_mana_ability: not with "
+                f"add_mana {{'any_color': 1}}, which is picked only on a tap"
             )
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
