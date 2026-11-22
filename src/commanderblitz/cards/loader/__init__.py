@@ -5633,6 +5633,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'grants_retrace' makes a cast_from_graveyard permission "
             f"retrace; nothing reads it on {model.effect!r}"
         )
+    if model.max_mana_value is not None and model.effect != "spells_have_cascade":
+        raise DslError(
+            f"{where}: 'max_mana_value' is the ceiling on a spells_have_cascade "
+            f"static; nothing reads it on {model.effect!r}"
+        )
     if model.cast_gains_keywords and model.effect != "cast_from_library_top":
         raise DslError(
             f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
@@ -6046,6 +6051,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_spells: a spell has a printed face and a "
                     f"caster and no board state; unsupported keys {sorted(unknown)}"
                 )
+    elif model.effect == "spells_have_cascade":
+        # Abaddon the Despoiler. The filter is a spell being cast -- its printed
+        # face and the zone it was cast from -- and the seat is always the
+        # static's controller ("spells **you** cast"), so a `controller` would
+        # be read by nothing. Required, because an unfiltered one is every
+        # spell you cast cascading, which no card prints.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: spells_have_cascade filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(f"{where}: spells_have_cascade needs 'affects_spells'")
+        allowed = (SPELL_FILTER_KEYS - {"controller"}) | {"from_zone", "not_from_zone"}
+        unknown = set(model.affects_spells) - allowed
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell you cast has a printed face and "
+                f"an origin zone; unsupported keys {sorted(unknown)}"
+            )
+        _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
+        for key in ("types", "any_types", "not_types"):
+            for t in model.affects_spells.get(key) or ():
+                if t not in KNOWN_TYPES:
+                    raise DslError(f"{where}.affects_spells.{key}: unknown card type {t!r}")
+        if model.max_mana_value is not None:
+            _validate_static_value(model.max_mana_value, f"{where}.max_mana_value")
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: spells_have_cascade takes no 'amount' -- the ceiling is "
+                f"'max_mana_value'"
+            )
     elif model.effect == "spell_cost_increase":
         # Terror of the Peaks. The same filter the reduction takes, read the
         # same way and refused on the same grounds -- a tax that named no spell
@@ -7023,6 +7060,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # filter it can carry. Lier prints no filter at all: every spell, every
         # player, which is the card's whole reputation.
         "spells_cant_be_countered",
+        # "Spells you cast from your hand … have cascade" -- spells again, its
+        # required `affects_spells` checked above.
+        "spells_have_cascade",
         # Furnace of Rath names neither end -- "if **a source** would deal
         # damage to **a permanent or player**" -- so both of its filters are
         # optional and `affects`, when written, is the *recipient* rather than
@@ -7837,6 +7877,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects"] = dict(model.affects)
     if model.affects_spells is not None:
         static["affects_spells"] = dict(model.affects_spells)
+    if model.max_mana_value is not None:
+        static["max_mana_value"] = model.max_mana_value
     if model.affects_token is not None:
         static["affects_token"] = dict(model.affects_token)
     if model.create_instead:

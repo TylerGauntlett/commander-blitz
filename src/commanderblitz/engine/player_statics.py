@@ -2737,6 +2737,54 @@ def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
     )
 
 
+def static_cascade_instances(state: GameState, item: Any) -> int:
+    """How many instances of cascade `spells_have_cascade` statics give this spell.
+
+    "During your turn, spells you cast from your hand with mana value X or less
+    have cascade, where X is the total amount of life your opponents have lost
+    this turn." -- Abaddon the Despoiler. Asked of a spell on the stack, at the
+    moment its cast triggers are gathered and whenever anything asks again, so
+    the answer is the board's *now* (611.3a): the "as long as" `condition`, the
+    caster being the static's controller, the cast's origin zone (`from_zone` /
+    `not_from_zone` in ``affects_spells``), the printed face and the spell's
+    mana value -- its X included (202.3e) -- against ``max_mana_value``, a
+    static value re-read each time it is asked. A copy was never cast (707.10)
+    and has no origin zone, so a zone key never matches it.
+
+    The ability each instance stands for is the rules' `carddef.CASCADE_TRIGGER`,
+    sourced from the spell, so a cascade that has triggered resolves whatever
+    becomes of the permanent that granted it.
+    """
+    if not getattr(item, "is_spell", False) or item.oid is None:
+        return 0
+    obj = state.objects.get(item.oid)
+    if obj is None:
+        return 0
+    count = 0
+    for source_obj, static in _active_player_statics(state, "spells_have_cascade"):
+        if source_obj.controller != item.controller or obj.cast_step is None:
+            continue
+        filt = static.get("affects_spells") or {}
+        if not cast_zone_matches(filt, obj.cast_from_zone):
+            continue
+        card = state.card_of(obj)
+        printed = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
+        printed = resolve_chosen_colors(resolve_chosen_subtypes(printed, source_obj), source_obj)
+        if printed and not _matches_printed(card, printed):
+            continue
+        if (ceiling := static.get("max_mana_value")) is not None:
+            overrides = obj.live_copy_overrides
+            mana_value = (
+                0
+                if overrides and overrides.get("no_mana_cost")
+                else card.mana_value + item.x * card.mana_cost.x_count
+            )
+            if mana_value > _static_value(state, ceiling, source_obj):
+                continue
+        count += 1
+    return count
+
+
 def player_casts_as_though_flash(
     state: GameState, pid: int, card: CardDef | None = None
 ) -> bool:

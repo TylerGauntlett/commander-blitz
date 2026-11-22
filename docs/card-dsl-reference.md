@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 106 |
+| [Static effects](#static-effects) | 107 |
 | [Player-wide statics](#player-wide-statics) | 50 |
-| [Grantable statics](#grantable-statics) | 48 |
+| [Grantable statics](#grantable-statics) | 49 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 36 |
 | [Static conditions](#static-conditions) | 15 |
-| [Static values](#static-values) | 24 |
+| [Static values](#static-values) | 25 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -695,6 +695,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `spell_cost_increase` |  | yes | Matching spells cost more (mana or life) to cast. | [Making other spells cost more, in life](card-dsl-cookbook.md#making-other-spells-cost-more-in-life) |
 | `spell_cost_reduction` |  | yes | Matching spells cost less to cast. | [Making other spells cheaper](card-dsl-cookbook.md#making-other-spells-cheaper) |
 | `spells_cant_be_countered` |  | yes | Matching spells can't be countered. | ["This spell can't be countered"](card-dsl-cookbook.md#this-spell-cant-be-countered) |
+| `spells_have_cascade` |  | yes | Matching spells you cast (`affects_spells`, with its origin zone) with mana value `max_mana_value` or less have cascade. | [Spells a static gives cascade — spells_have_cascade](card-dsl-cookbook.md#spells-a-static-gives-cascade--spells_have_cascade) |
 | `spend_mana_as_any_color` | yes |  | The player may spend mana as though it were any color. | [spend_mana_as_any_color — Chromatic Orrery's colour waiver](card-dsl-cookbook.md#spend_mana_as_any_color--chromatic-orrerys-colour-waiver) |
 | `untap_during_each_untap_step` |  | yes | Matching permanents untap during each other player's untap step too. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `untap_limit` | yes |  | The player untaps at most N permanents during their untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |
@@ -809,6 +810,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `spell_cost_increase` | Matching spells cost more (mana or life) to cast. | [Making other spells cost more, in life](card-dsl-cookbook.md#making-other-spells-cost-more-in-life) |
 | `spell_cost_reduction` | Matching spells cost less to cast. | [Making other spells cheaper](card-dsl-cookbook.md#making-other-spells-cheaper) |
 | `spells_cant_be_countered` | Matching spells can't be countered. | ["This spell can't be countered"](card-dsl-cookbook.md#this-spell-cant-be-countered) |
+| `spells_have_cascade` | Matching spells you cast (`affects_spells`, with its origin zone) with mana value `max_mana_value` or less have cascade. | [Spells a static gives cascade — spells_have_cascade](card-dsl-cookbook.md#spells-a-static-gives-cascade--spells_have_cascade) |
 | `untap_during_each_untap_step` | Matching permanents untap during each other player's untap step too. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `ward` | Matching permanents have ward with a cost. | [Ward with a cost](card-dsl.md#ward-with-a-cost) |
 
@@ -1100,6 +1102,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `extreme_value` | The greatest/least printed mana value among a counting filter's pool, or a `union` of them. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `life_gained_this_turn` | Life a player spec's players have gained this turn, re-read as each gain happens; the bare player spec only. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `life_lost_this_turn` | Life a player spec's players have lost this turn, summed and re-read as each loss happens; the bare player spec only. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `mana_symbols` | Pips of a color, or of any of a list of colors, among a pool's mana costs (chroma, devotion). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_life_of` | The highest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

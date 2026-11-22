@@ -1167,6 +1167,9 @@ class GameState:
                 # did not happen spends no ordinal.
                 ledger.life_losses[pid] = ledger.life_losses.get(pid, 0) + 1
                 data["nth"] = ledger.life_losses[pid]
+                # The amount is a static's input (`life_lost_this_turn`, Abaddon
+                # the Despoiler's ceiling), and `chars` caches per `char_version`.
+                self.bump_chars()
         elif event.type == EventType.LIFE_GAINED:
             # Witch of the Moors. Off the event rather than in `gain_life`, for
             # the reason every other tally here is: lifelink and the op both

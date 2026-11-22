@@ -55,7 +55,12 @@ from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .mana import origin_matches
 from .objects import GameObject
-from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
+from .player_statics import (
+    commander_subtypes,
+    goaders,
+    players_doubling_land_triggers,
+    static_cascade_instances,
+)
 from .state import MAX_TRIGGERS_PER_STEP
 from .structs import DelayedTrigger, TriggerInstance
 from .temp_effects import granted_cascade_instances
@@ -1631,7 +1636,9 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # A spell that was *given* cascade (702.85a) -- "the next creature
         # spell you cast this turn has cascade" -- has the rules' trigger once
         # per instance (702.85c), with the spell itself as the source.
-        for _ in range(granted_cascade_instances(state, item)):
+        # The same for a static that gives matching spells cascade (Abaddon
+        # the Despoiler), read as the cast is.
+        for _ in range(granted_cascade_instances(state, item) + static_cascade_instances(state, item)):
             yield obj, CASCADE_TRIGGER
 
     for p in state.players:

@@ -846,6 +846,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                               "card is drawn; the bare player spec only.", None),
     "life_gained_this_turn": ("Life a player spec's players have gained this turn, re-read as each "
                               "gain happens; the bare player spec only.", None),
+    "life_lost_this_turn": ("Life a player spec's players have lost this turn, summed and re-read as "
+                            "each loss happens; the bare player spec only.", None),
     "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
                                   "(903.8's tally); `\"you\"` only.",
                                   "An anthem for each commander cast"),
@@ -1157,6 +1159,8 @@ STATICS: dict[str, Entry] = {
                             "Making *other* spells cost more, in life"),
     "spell_cost_reduction": ("Matching spells cost less to cast.", "Making *other* spells cheaper"),
     "spells_cant_be_countered": ("Matching spells can't be countered.", H_CANT_COUNTER),
+    "spells_have_cascade": ("Matching spells you cast (`affects_spells`, with its origin zone) with mana value `max_mana_value` or less have cascade.",
+                            "Spells a static gives cascade — `spells_have_cascade`"),
     "spend_mana_as_any_color": ("The player may spend mana as though it were any color.",
                                 "`spend_mana_as_any_color` — Chromatic Orrery's colour waiver"),
     "untap_during_each_untap_step": ("Matching permanents untap during each other player's untap step too.",

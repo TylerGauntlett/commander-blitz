@@ -1084,6 +1084,12 @@ class AbilityModel(BaseModel):
     #: until end of turn, staged on the spell the way a `mana_grant`'s are.
     #: Refused on every other static.
     cast_gains_keywords: list[str] = Field(default_factory=list)
+    #: ``spells_have_cascade``: "spells you cast from your hand **with mana
+    #: value X or less** have cascade, where X is the total amount of life your
+    #: opponents have lost this turn" (Abaddon the Despoiler). A static value,
+    #: re-read whenever the question is asked, compared with the spell's mana
+    #: value (its X included). Refused on every other static.
+    max_mana_value: Any = None
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)

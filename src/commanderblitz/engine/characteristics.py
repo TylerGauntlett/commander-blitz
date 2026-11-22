@@ -2470,6 +2470,14 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # step empties it.
         pids = _static_players(state, source, expr["life_gained_this_turn"])
         return sum(state.turn_ledger.life_gained.get(p, 0) for p in pids)
+    if "life_lost_this_turn" in expr:
+        # Abaddon the Despoiler: "…mana value X or less …, where X is the total
+        # amount of life your opponents have lost this turn." The effect side's
+        # loss tally in its bare player-spec form, summed. A pipeline input on
+        # `life_gained_this_turn`'s terms: `_tally` writes it off LIFE_LOST and
+        # bumps `char_version`, and the cleanup step empties it.
+        pids = _static_players(state, source, expr["life_lost_this_turn"])
+        return sum(state.turn_ledger.life_lost.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

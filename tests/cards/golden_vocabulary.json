@@ -203,6 +203,7 @@
    "spell_cost_increase",
    "spell_cost_reduction",
    "spells_cant_be_countered",
+   "spells_have_cascade",
    "untap_during_each_untap_step",
    "ward"
   ],
@@ -680,6 +681,7 @@
    "spell_cost_increase",
    "spell_cost_reduction",
    "spells_cant_be_countered",
+   "spells_have_cascade",
    "spend_mana_as_any_color",
    "untap_during_each_untap_step",
    "untap_limit",
@@ -776,6 +778,7 @@
    "extreme_value",
    "greatest_commander_mana_value",
    "life_gained_this_turn",
+   "life_lost_this_turn",
    "mana_symbols",
    "max_count_of",
    "max_life_of",

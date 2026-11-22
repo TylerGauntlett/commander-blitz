@@ -492,6 +492,12 @@ STATIC_EFFECTS = frozenset(
         # player casts, which the card-level `uncounterable` flag cannot make:
         # that one is a card saying it about itself.
         "spells_cant_be_countered",
+        # "Spells you cast from your hand with mana value X or less have
+        # cascade" -- Abaddon the Despoiler. Read by `triggers.collect` off a
+        # spell on the stack, through `player_statics.static_cascade_instances`,
+        # rather than by the characteristics pipeline: what it grants is the
+        # rules' cascade trigger, and a spell is not a permanent.
+        "spells_have_cascade",
         # Vorinclex's two halves.  Both are read at the mana choke point rather
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.
@@ -1843,6 +1849,14 @@ STATIC_DRAWS_KEYS = frozenset({"cards_drawn_this_turn"})
 #: `creatures_died_this_turn`'s terms, and takes the same bare player specs.
 STATIC_LIFE_GAINED_KEYS = frozenset({"life_gained_this_turn"})
 
+#: The per-turn life-loss leaf -- Abaddon the Despoiler's "mana value X or less
+#: …, where X is the total amount of life your opponents have lost this turn".
+#: `TurnLedger.life_lost` is written only by `GameState._tally` folding
+#: LIFE_LOST and emptied only by the cleanup step, never by a layer, and both
+#: funnels bump `char_version`. So it is a pipeline input on
+#: `life_gained_this_turn`'s terms, and takes the same bare player specs.
+STATIC_LIFE_LOST_KEYS = frozenset({"life_lost_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1906,6 +1920,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_DEATHS_KEYS
     | STATIC_DRAWS_KEYS
     | STATIC_LIFE_GAINED_KEYS
+    | STATIC_LIFE_LOST_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

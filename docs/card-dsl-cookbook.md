@@ -17540,6 +17540,33 @@ The near miss is a `delayed_trigger` on `spell_cast` running `cascade` with
 belongs to the granting permanent, not the spell, and walks its controller's
 library rather than the caster's.
 
+## Spells a static gives cascade — `spells_have_cascade`
+
+```jsonc
+// Abaddon the Despoiler: "During your turn, spells you cast from your hand
+// with mana value X or less have cascade, where X is the total amount of life
+// your opponents have lost this turn."
+{ "kind": "static", "effect": "spells_have_cascade",
+  "affects_spells": { "from_zone": "hand" },
+  "max_mana_value": { "life_lost_this_turn": "opponent" },
+  "condition": { "is_your_turn": true } }
+```
+
+`next_spell_gains_cascade`'s grant as a static: each spell it matches has the
+rules' `carddef.CASCADE_TRIGGER`, sourced from the spell, once per static
+(`player_statics.static_cascade_instances`, read by
+`triggers._candidate_abilities` as the cast's triggers are gathered). The
+caster is always the static's controller and the spell must have been cast.
+`affects_spells` is required: the printed face (`SPELL_FILTER_KEYS` without
+`controller`) plus `from_zone` / `not_from_zone`, the zone it was cast from.
+`max_mana_value` is a static value compared with the spell's mana value, its X
+included, re-read whenever the question is asked; the loader refuses it on any
+other static. `condition` is the ordinary "as long as".
+
+The near miss is a `spell_cast` trigger on the permanent running `cascade` with
+the subject's mana value as its ceiling: that ability is the permanent's, and
+it leaves with it.
+
 ## Discover — cascade's walk, N or less, cast or hand
 
 ```jsonc
