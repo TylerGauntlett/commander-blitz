@@ -293,6 +293,27 @@ def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+def lose_game_replacement(
+    state: GameState, pid: int
+) -> tuple[GameObject, Mapping[str, Any]] | None:
+    """The `replace_lose_game` static that would replace ``pid`` losing, if any.
+
+    The Golden Throne: "If you would lose the game, instead exile The Golden
+    Throne and your life total becomes 1." Its source beside it, because the
+    replacement's effects run with that permanent as their source and its
+    controller as "you".
+
+    The first in battlefield order when several apply. 616.1 gives the losing
+    player the choice and this does not ask -- `sba.replace_loss` runs where no
+    question can be put -- and every printed card in the family removes its
+    own source, so a second one is what replaces the next loss.
+    """
+    for obj, static in _active_player_statics(state, "replace_lose_game"):
+        if _reaches_player(obj, static, pid):
+            return obj, static
+    return None
+
+
 def static_life_floor(state: GameState, pid: int) -> int | None:
     """The highest life floor an active `damage_life_floor` static gives ``pid``.
 
@@ -3202,6 +3223,33 @@ def granted_miracle_cost(state: GameState, pid: int, card: CardDef) -> str | Non
         if _matches_printed(card, resolved):
             return str(price)
     return None
+
+
+def first_draw_reveals(state: GameState, pid: int) -> tuple[tuple[int, ...], bool]:
+    """The `reveal_first_draw` statics reaching ``pid``, and whether one is a "must".
+
+    "You may reveal the first card you draw each turn as you draw it"
+    (Inquisitor Eisenhorn, `reveal_optional`); "Reveal the first card you draw
+    each turn" (Primitive Etchings). Read by `replacements._reveal_first_draw`
+    with the card just drawn, so a static must be active *as* the card is drawn
+    -- the printed "as you draw it", and the moment `granted_miracle_cost` is
+    read too.
+
+    Returns the oids of every such static's source, which the reveal carries as
+    `granted_by` so each "whenever you reveal a card this way" hears it, and
+    ``True`` when any of them is mandatory: one card revealed is revealed for
+    every ability that asked, so a "must" beside a "may" leaves nothing to ask.
+    """
+    sources: list[int] = []
+    mandatory = False
+    for source_obj, static in _active_player_statics(state, "reveal_first_draw"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        if source_obj.oid not in sources:
+            sources.append(source_obj.oid)
+        if not static.get("reveal_optional"):
+            mandatory = True
+    return tuple(sources), mandatory
 
 
 def granted_alternative_cost(

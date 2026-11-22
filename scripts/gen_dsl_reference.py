@@ -135,6 +135,7 @@ H_AS_LONG_AS = '"As long as…"'
 H_STATIC_MAGNITUDE = '"+1/+1 for each charge counter on this artifact"'
 H_RECORDING = 'Recording what an op consumed or produced — "this way", "the token"'
 H_MONARCH = "The monarch"
+H_LOSE_GAME_INSTEAD = '"If you would lose the game, instead exile it and your life total becomes 1"'
 H_GIFT = "Gift — a promise made to one opponent, for nothing"
 H_BATCHED = '"Whenever **one or more** …" — `batched`'
 H_SPREE = 'Spree — "choose **one or more** additional costs"'
@@ -194,7 +195,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                   '"Put a card exiled with it into its owner\'s graveyard" — `put_exiled_into_graveyard`'),
     "link_exiled": ("Cards", "Link cards in exile to the permanent bound under `to`, so its own `exiled_with: \"self\"` finds them (607.2a).",
                     '"Return the exiled card" from a token — `link_exiled`'),
-    "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth.",
+    "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth; `any_order` lets the owner arrange them, `random_order` shuffles only them.",
                    None),
     "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),
     "explore": ("Cards", "Explore: reveal the top card, land to hand or a +1/+1 counter.",
@@ -392,6 +393,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
                      "them until end of turn.",
                      "The `lose_keyword` op — the same prohibition, until end of turn"),
+    "lose_keyword_timestamped": ("Modify", "Permanents found as it resolves lose keywords until end "
+                                 "of turn; a grant newer than the removal gives one back (613.7).",
+                                 "The `lose_keyword_timestamped` op — \"loses indestructible until end of turn\""),
     "rename": ("Modify", "A permanent's name becomes the chosen or given name.",
                "Changing a permanent's name"),
     # ---- Life & damage ---------------------------------------------------
@@ -418,6 +422,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                  "Preventing all damage to or by a **permanent**, for a while"),
     "exchange_life_total": ("Life & damage", "Exchange a player's life total with the source creature's toughness (701.12), in full or not at all.",
                             "Exchanging a life total with a toughness"),
+    "set_life_total": ("Life & damage", "A player's life total becomes N, by gaining or losing the difference (119.5).",
+                       '"Your life total becomes N"'),
     "lock_life_total": ("Life & damage", "A player's life total can't change for a duration.",
                         '"Your life total can\'t change"'),
     "damage_life_floor": ("Life & damage", "Damage can't reduce a player's life below N this turn.",
@@ -641,6 +647,9 @@ STATIC_FILTER_EXTRAS: dict[str, Entry] = {
                "static value's `count` only.",
                "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
+    "derived_types": ("`true`, on a `buff`: its type clauses read the types layer 4 left, not the "
+                      "printed face.",
+                      "`derived_types` — an anthem reads the types layer 4 left"),
     "modified": ("Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only).",
                  "Selectors — \"which objects\""),
     "paired": ("Is paired (soulbond).", "Soulbond — a relationship that is not attachment"),
@@ -928,6 +937,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                   '"Whenever an opponent loses life"'),
     "investigates": ("A player investigates, once per investigation; `nth` counts that player's investigations this turn.",
                      "Investigate — the `investigate` op and the `investigates` trigger"),
+    "reveals_first_draw": ("The player reveals the first card they draw this turn under this permanent's `reveal_first_draw` static (\"this way\"); the subject is the revealed card.",
+                           "`reveal_first_draw` — the first card of the turn, revealed as it is drawn"),
     "surveils": ("A player surveils, once per surveil after its cards are placed (never for surveil 0); `nth` counts that player's surveils this turn.",
                  "Surveil — the `surveil` op and the `surveils` trigger"),
     "mutates": ("A creature mutates.", '"Whenever this creature mutates…"'),
@@ -1115,6 +1126,9 @@ STATICS: dict[str, Entry] = {
                           '"If you would gain life, you gain twice that much life instead"'),
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),
+    "replace_lose_game": ("If the controller would lose the game, `effects` happen instead "
+                          "(exiling this permanent, setting the life total).",
+                          H_LOSE_GAME_INSTEAD),
     "replace_mill": ("If the player would mill, they mill more instead.", "Doubling a mill"),
     "replace_surveil": ("Each time the player surveils, they look at more cards; `surveil_optional` makes each static a \"may\".",
                         "Looking at more cards when you surveil"),
@@ -1124,6 +1138,8 @@ STATICS: dict[str, Entry] = {
                         "Exploring twice"),
     "replace_token_creation": ("If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn.",
                                '"If you would create a … token, instead …"'),
+    "reveal_first_draw": ("The player reveals the first card they draw each turn as they draw it; `reveal_optional` makes it a \"may\".",
+                          "`reveal_first_draw` — the first card of the turn, revealed as it is drawn"),
     "reveal_library_top": ("The player plays with the top card of their library revealed.", None),
     "set_colors": ("Matching permanents are the given colors.", "`set_colors`"),
     "set_creature_types": ("Matching permanents' creature types are exactly the given ones; other subtypes and types stay.",
@@ -1193,7 +1209,7 @@ ABILITY_COSTS: dict[str, Entry] = {
     "discard_x": ("Discard X cards, X announced and bounded by the hand.",
                   "`discard_x` — discard X cards, X announced"),
     "exert": ("Exert the source.", "`exert` — the keyword as a cost"),
-    "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects.",
+    "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects, `link` exiles them with the permanent.",
                              "Coin of Fate — an exile-from-graveyard cost that names what it exiled"),
     "exile_from_hand": ("Exile a matching card from your hand (a pitch cost).",
                         "`exile_from_hand` — the pitch cost, and why it is not a discard"),

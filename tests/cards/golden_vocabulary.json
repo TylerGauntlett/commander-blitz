@@ -40,10 +40,12 @@
    "library"
   ],
   "CONTROLLED_TARGET_KINDS": [
+   "ability_on_stack",
    "card_in_exile",
    "card_in_graveyard",
    "permanent",
-   "spell"
+   "spell",
+   "spell_or_ability"
   ],
   "COST_CONDITION_HEADS": [
    "all",
@@ -111,6 +113,15 @@
    "event",
    "recipient",
    "subject"
+  ],
+  "DERIVED_TYPE_CLAUSES": [
+   "any_types",
+   "not_subtypes",
+   "not_supertypes",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_abilities",
@@ -384,9 +395,11 @@
    "replace_empty_draw",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
+   "reveal_first_draw",
    "reveal_library_top",
    "skip_draw_step",
    "skip_extra_turn",
@@ -398,6 +411,10 @@
    "each_opponent",
    "each_player",
    "opponent"
+  ],
+  "REPLACE_LOSE_GAME_OPS": [
+   "exile",
+   "set_life_total"
   ],
   "SOURCE_MOVING_OPS": [
    "exile",
@@ -453,6 +470,7 @@
    "colorless",
    "colors",
    "controller",
+   "derived_types",
    "enchanted_by",
    "entered_this_turn",
    "exclude_self",
@@ -645,10 +663,12 @@
    "replace_graveyard",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
    "replace_token_creation",
+   "reveal_first_draw",
    "reveal_library_top",
    "set_colors",
    "set_creature_types",
@@ -850,10 +870,12 @@
    "replace_empty_draw",
    "replace_life_gain",
    "replace_life_loss",
+   "replace_lose_game",
    "replace_mill",
    "replace_proliferate",
    "replace_surveil",
    "replace_token_creation",
+   "reveal_first_draw",
    "reveal_library_top",
    "skip_draw_step",
    "skip_extra_turn",
@@ -1119,6 +1141,7 @@
   "lose_all_player_counters",
   "lose_game",
   "lose_keyword",
+  "lose_keyword_timestamped",
   "lose_life",
   "manifest",
   "manifest_dread",
@@ -1175,6 +1198,7 @@
   "search_library",
   "search_zones",
   "set_flag",
+  "set_life_total",
   "set_pt",
   "set_turn_flag",
   "shuffle",

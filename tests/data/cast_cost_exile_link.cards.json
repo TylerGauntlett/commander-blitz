@@ -1,0 +1,39 @@
+{
+  "_comment": "A spell's additional exile-from-graveyard cost that links the exiled card to the permanent the spell becomes -- Redemptor Dreadnought, standing in for it at one mana. Test-only.",
+  "cards": [
+    {
+      "id": "t_dreadnought",
+      "name": "Test Dreadnought",
+      "oracle_text": "Fallen Warrior — As an additional cost to cast this spell, you may exile a creature card from your graveyard.\nTrample\nPlasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.",
+      "mana_cost": "{G}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Astartes", "Dreadnought"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["trample"],
+      "additional_cost": {"exile_from_graveyard": {"types": ["Creature"], "link": true}},
+      "additional_optional": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Plasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "condition": {"exists": {"zone": "exile", "exiled_with": "self"}}
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {"self_only": true},
+              "power": {"power_of": {"objects": {"zone": "exile", "exiled_with": "self"}}},
+              "toughness": {"power_of": {"objects": {"zone": "exile", "exiled_with": "self"}}}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

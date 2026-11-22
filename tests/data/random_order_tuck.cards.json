@@ -1,0 +1,43 @@
+{
+  "_comment": "Cards put into a library in a random order: Triumph of Saint Katherine's face-down pile back on top, and Endurance's graveyard to the bottom.",
+  "cards": [
+    {
+      "id": "t_pile_back_on_top",
+      "name": "Test Pile Back On Top",
+      "oracle_text": "When this creature is put into your graveyard from the battlefield, exile it and the top six cards of your library in a face-down pile. If you do, shuffle that pile and put it back on top of your library.",
+      "mana_cost": "{4}{W}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 3,
+      "toughness": 5,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "dies", "source": "self"},
+          "text": "When this creature is put into your graveyard from the battlefield, exile it and the top six cards of your library in a face-down pile. If you do, shuffle that pile and put it back on top of your library.",
+          "effects": [
+            {"op": "look_at_top", "amount": 6, "destination": "exile", "face_down": true,
+             "objects": {"count": "all"}, "as": "pile"},
+            {"op": "exile", "objects": {"self_only": true, "zone": "graveyard"}, "as": "pile"},
+            {"op": "put_on_top", "random_order": true, "objects": {"binding": "pile"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_graveyard_to_bottom_random",
+      "name": "Test Graveyard To Bottom At Random",
+      "oracle_text": "Put all the cards from your graveyard on the bottom of your library in a random order.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {"op": "put_on_top", "bottom": true, "random_order": true,
+         "objects": {"zone": "graveyard", "player": "you", "count": "all"}}
+      ]
+    }
+  ]
+}

@@ -10,15 +10,15 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 185 |
+| [Effect ops](#effect-ops) | 187 |
 | [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 65 |
+| [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 104 |
-| [Player-wide statics](#player-wide-statics) | 48 |
+| [Static effects](#static-effects) | 106 |
+| [Player-wide statics](#player-wide-statics) | 50 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 35 |
+| [Static filter keys](#static-filter-keys) | 36 |
 | [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 24 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 24 |
-| [Engine events](#engine-events) | 87 |
+| [Engine events](#engine-events) | 88 |
 
 ## Effect ops
 
@@ -65,7 +65,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_exiled_into_graveyard` | Cards | yes | Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived. | ["Put a card exiled with it into its owner's graveyard" — put_exiled_into_graveyard](card-dsl-cookbook.md#put-a-card-exiled-with-it-into-its-owners-graveyard--put_exiled_into_graveyard) |
-| `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth; `any_order` lets the owner arrange them, `random_order` shuffles only them. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_from_graveyard` | Cards | yes | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `"choose"`) returns it face down as a 2/2. | [Returned face down — face_down on return_from_graveyard](card-dsl-cookbook.md#returned-face-down--face_down-on-return_from_graveyard) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
@@ -161,6 +161,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
 | `lose_all_abilities` | Modify |  | Permanents lose all abilities: for good, or with `duration` until end of turn, your next turn or `while_source_on_battlefield`. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
 | `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
+| `lose_keyword_timestamped` | Modify |  | Permanents found as it resolves lose keywords until end of turn; a grant newer than the removal gives one back (613.7). | [The lose_keyword_timestamped op — "loses indestructible until end of turn"](card-dsl-cookbook.md#the-lose_keyword_timestamped-op--loses-indestructible-until-end-of-turn) |
 | `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |
@@ -182,6 +183,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn; `combat_only` narrows it to combat damage, `effects` runs each time it prevents ("prevented this way"). | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration; `combat_only` narrows it to combat damage, `effects` runs each time it prevents ("prevented this way"). | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
 | `redirect_damage` | Life & damage |  | Damage to a player and to permanents matching `permanents` is dealt to `to` instead this turn. | [Damage dealt to the chosen creature instead](card-dsl-cookbook.md#damage-dealt-to-the-chosen-creature-instead) |
+| `set_life_total` | Life & damage |  | A player's life total becomes N, by gaining or losing the difference (119.5). | ["Your life total becomes N"](card-dsl-cookbook.md#your-life-total-becomes-n) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `cant_cast_spells` | Players |  | A player can't cast spells for a duration (the timed form of the static). | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cant_cast_spells_from_zones` | Players |  | A player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
@@ -523,6 +525,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` | At the beginning of the precombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `put_into_graveyard` | `put_into_graveyard` | A card is put into a graveyard from another zone; `from_zones` narrows where from, `batched` fires once per simultaneous move with `moved` its matching cards, and `nth` counts those moves this turn. | ["…put into your graveyard from anywhere" — put_into_graveyard](card-dsl-cookbook.md#put-into-your-graveyard-from-anywhere--put_into_graveyard) |
+| `reveals_first_draw` | `revealed_first_draw` | The player reveals the first card they draw this turn under this permanent's `reveal_first_draw` static ("this way"); the subject is the revealed card. | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `sacrificed` | `sacrificed` | A permanent is sacrificed. | [Triggers](card-dsl.md#triggers) |
 | `searches_library` | `library_searched` | A player searches a library. | [Triggers](card-dsl.md#triggers) |
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
@@ -674,10 +677,12 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_graveyard` |  | yes | If a matching card would go to a graveyard, it goes elsewhere. | [Static abilities](card-dsl.md#static-abilities) |
 | `replace_life_gain` | yes |  | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
+| `replace_lose_game` | yes |  | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | yes |  | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | yes |  | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | yes |  | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
 | `replace_token_creation` |  |  | If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
+| `reveal_first_draw` | yes |  | The player reveals the first card they draw each turn as they draw it; `reveal_optional` makes it a "may". | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `reveal_library_top` | yes |  | The player plays with the top card of their library revealed. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_colors` |  | yes | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
 | `set_creature_types` |  | yes | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |
@@ -740,9 +745,11 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
+| `replace_lose_game` | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
+| `reveal_first_draw` | The player reveals the first card they draw each turn as they draw it; `reveal_optional` makes it a "may". | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `reveal_library_top` | The player plays with the top card of their library revealed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_draw_step` | The player skips their draw step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_extra_turn` | The player skips extra turns. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -833,7 +840,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |
 | `discard_x` | Discard X cards, X announced and bounded by the hand. | [discard_x — discard X cards, X announced](card-dsl.md#discard_x--discard-x-cards-x-announced) |
 | `exert` | Exert the source. | [exert — the keyword as a cost](card-dsl.md#exert--the-keyword-as-a-cost) |
-| `exile_from_graveyard` | Exile matching cards from your graveyard; `as` names them for the effects. | [Coin of Fate — an exile-from-graveyard cost that names what it exiled](card-dsl.md#coin-of-fate--an-exile-from-graveyard-cost-that-names-what-it-exiled) |
+| `exile_from_graveyard` | Exile matching cards from your graveyard; `as` names them for the effects, `link` exiles them with the permanent. | [Coin of Fate — an exile-from-graveyard cost that names what it exiled](card-dsl.md#coin-of-fate--an-exile-from-graveyard-cost-that-names-what-it-exiled) |
 | `exile_from_hand` | Exile a matching card from your hand (a pitch cost). | [exile_from_hand — the pitch cost, and why it is not a discard](card-dsl.md#exile_from_hand--the-pitch-cost-and-why-it-is-not-a-discard) |
 | `exile_self` | Exile the source. | [Costs](card-dsl.md#costs) |
 | `exile_self_from_hand` | Exile this card from your hand. | [Costs](card-dsl.md#costs) |
@@ -1028,6 +1035,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
+| `derived_types` | `true`, on a `buff`: its type clauses read the types layer 4 left, not the printed face. | [derived_types — an anthem reads the types layer 4 left](card-dsl.md#derived_types--an-anthem-reads-the-types-layer-4-left) |
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Static abilities](card-dsl.md#static-abilities) |
@@ -1287,6 +1295,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `postcombat_main` | `postcombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `put_into_graveyard` | `put_into_graveyard` |  | [Triggers](card-dsl.md#triggers) |
+| `revealed_first_draw` | `reveals_first_draw` |  | [Triggers](card-dsl.md#triggers) |
 | `sacrificed` | `sacrificed` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` |  | [Triggers](card-dsl.md#triggers) |

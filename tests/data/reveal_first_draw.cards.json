@@ -1,0 +1,61 @@
+{
+  "_comment": "Cards that exist only for the reveal-as-drawn test (tests/unit/replacement/test_reveal_first_draw.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rfd_inquisitor` is Inquisitor Eisenhorn's first paragraph on a free body; `t_rfd_etchings` is Primitive Etchings' mandatory reveal, free.",
+  "cards": [
+    {
+      "id": "t_rfd_inquisitor",
+      "name": "Test Reveal Inquisitor",
+      "oracle_text": "You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may reveal the first card you draw each turn as you draw it.",
+          "effect": "reveal_first_draw",
+          "affects_player": "you",
+          "reveal_optional": true
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.",
+          "trigger": {
+            "event": "reveals_first_draw",
+            "filter": {"any_types": ["Instant", "Sorcery"]}
+          },
+          "effects": [{"op": "create_token", "token": "cherubael_4_4_b_flying"}]
+        }
+      ]
+    },
+    {
+      "id": "t_rfd_etchings",
+      "name": "Test Reveal Etchings",
+      "oracle_text": "Reveal the first card you draw each turn. Whenever you reveal a creature card this way, draw a card.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Reveal the first card you draw each turn.",
+          "effect": "reveal_first_draw",
+          "affects_player": "you"
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you reveal a creature card this way, draw a card.",
+          "trigger": {
+            "event": "reveals_first_draw",
+            "filter": {"types": ["Creature"]}
+          },
+          "effects": [{"op": "draw", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

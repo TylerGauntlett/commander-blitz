@@ -84,6 +84,16 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A drawn card revealed as it was drawn. Longer than a draw's beat,
+     * because its line is the only place the card is shown -- it goes
+     * straight into a hand -- and a "whenever you reveal … this way"
+     * trigger usually follows it.
+     */
+    case "revealed_first_draw":
+      push({ hold: 260 });
+      return true;
+
+    /*
      * A surveil finishing. Short, like an investigation's: a card it binned
      * has its own beat, and a surveil that kept every card on top shows
      * nothing on the board, so this is what a "whenever you surveil" trigger

@@ -1,0 +1,37 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_controller_of_stack_target.py. t_deny_the_witch is Deny the Witch in printed order: the counter first, then 'its controller' billed through controller_of_target on the spell_or_ability target, read after the item has left the stack. t_ability_tax is the ability_on_stack sibling: 'Counter target activated or triggered ability. Its controller loses 2 life.'",
+  "cards": [
+    {
+      "id": "t_deny_the_witch",
+      "name": "Test Deny the Witch",
+      "oracle_text": "Counter target spell, activated ability, or triggered ability. Its controller loses life equal to the number of creatures you control.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [{"id": "t1", "kind": "spell_or_ability", "count": 1}],
+      "spell_effects": [
+        {"op": "counter", "target": "t1"},
+        {
+          "op": "lose_life",
+          "player": {"controller_of_target": "t1"},
+          "amount": {"creatures_you_control": true}
+        }
+      ]
+    },
+    {
+      "id": "t_ability_tax",
+      "name": "Test Ability Tax",
+      "oracle_text": "Counter target activated or triggered ability. Its controller loses 2 life.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [{"id": "t1", "kind": "ability_on_stack", "count": 1}],
+      "spell_effects": [
+        {"op": "counter", "target": "t1"},
+        {"op": "lose_life", "player": {"controller_of_target": "t1"}, "amount": {"const": 2}}
+      ]
+    }
+  ]
+}

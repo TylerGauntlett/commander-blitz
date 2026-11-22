@@ -350,6 +350,10 @@ def move_object(
     mana_spent_origins = obj.mana_spent_origins
     cast_rider = obj.cast_rider
     cast_enters_with = obj.cast_enters_with
+    # The cards a `link` exile cost took while this was being cast, owed to the
+    # permanent the spell becomes and to nothing else (607.2a). See
+    # `costs._link_cost_exiles`.
+    cast_exile_links = obj.cast_exile_links if from_zone is Zone.STACK else []
 
     if was_on_battlefield:
         _remember_leaving_dies_replacer(state, obj)
@@ -420,6 +424,14 @@ def move_object(
         obj.cast_enters_with = cast_enters_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
+    if to_zone is Zone.BATTLEFIELD:
+        # After the move, which emptied the source's `exiled_cards`, and before
+        # any enters trigger is checked. A card that left exile in the meantime
+        # is a new object (400.7) and was not exiled with this permanent.
+        for linked in cast_exile_links:
+            card_obj = state.objects.get(linked)
+            if card_obj is not None and card_obj.zone is Zone.EXILE:
+                link_exiled(state, linked, oid)
 
     # The cards that were underneath follow, each to its own owner's copy of the
     # zone. They were in no zone list while merged, so this is the first move

@@ -435,6 +435,48 @@ grants are one price — the first wins, for `grant_warp`'s reason.
 drawn first is cast for `{0}`, a second draw, a land, a missing granter and an
 opponent's draw are offered nothing.
 
+### `reveal_first_draw` — the first card of the turn, revealed as it is drawn
+
+```jsonc
+{ "kind": "static", "effect": "reveal_first_draw", "affects_player": "you",
+  "reveal_optional": true },
+{ "kind": "triggered",
+  "trigger": { "event": "reveals_first_draw",
+               "filter": { "any_types": ["Instant", "Sorcery"] } },
+  "effects": [{ "op": "create_token", "token": "cherubael_4_4_b_flying" }] }
+```
+
+Inquisitor Eisenhorn: *"You may reveal the first card you draw each turn as you
+draw it. Whenever you reveal an instant or sorcery card this way, create
+Cherubael…"* Two abilities, written as the two they are. The static lets its
+controller reveal; `reveal_optional` is the printed "may", and without it the
+reveal is Primitive Etchings' unconditional "Reveal the first card you draw each
+turn." `affects_player` is `"you"` and nothing else, and the static takes no
+filter or size.
+
+The reveal is made at miracle's seam, `replacements._draw_one`, right after the
+draw and before miracle is offered, so it is *as* the card is drawn and only of
+the turn's first card, however it was drawn. A "may" is asked as a yes/no; a
+`reveal_first_draw` that is not optional beside one that is leaves nothing to
+ask. A reveal fires `revealed_first_draw` once, with `granted_by` naming every
+granter it was made under.
+
+The `reveals_first_draw` trigger's subject is the revealed card, in its owner's
+hand, so `filter` asks its printed face. **"This way" is not a key**: the
+trigger hears only a reveal its own permanent granted, so the loader refuses one
+on a card that prints no `reveal_first_draw`, and refuses `source` and any
+`controller` but `"you"`, which could never match. Miracle's own reveal is not
+"this way", and declining Eisenhorn's reveal still leaves miracle's offer.
+
+**Not `draw` with `nth: 1`.** That fires on every first draw, revealed or not,
+and a `reveal` op in its effects shows the card on resolution, from a hand it
+has already joined. **Not `reveal_library_top`**, which makes a card public
+before it is drawn.
+
+`tests/unit/replacement/test_reveal_first_draw.py` pins the "may", the first-draw
+and controller scope, the filter, "this way" against miracle, two granters
+sharing one reveal, the mandatory form, and the draw step making Cherubael.
+
 ### Restricted mana
 
 ```jsonc
@@ -6942,6 +6984,44 @@ load, look implemented, and protect from nothing.
 colours (105.2c: colorless is not a colour, so it is never a `from_colors`
 letter). See [Granting protection](#granting-protection).
 
+**Protection from everything.** Vexilus Praetor — "Commanders you control have
+protection from everything" (702.16i) — takes the flag `grant_protection`
+already has:
+
+```jsonc
+{ "kind": "static", "effect": "protection",
+  "affects": { "controller": "you", "is_commander": true },
+  "from_everything": true }
+```
+
+It is the `PROTECTION_EVERYTHING` sentinel the op installs, answered before the
+source's characteristics are read, so a colourless artifact with no subtypes is
+stopped too. Unlike the op's grant it lasts exactly as long as the static's
+source is on the battlefield. Every other quality is refused beside it, because
+everything already contains them. The near miss is listing every type, colour
+and `from_colorless`, which still misses sources none of them name.
+
+**Protection from a mana value.** Reaver Titan — "Protection from mana value 3
+or less" — and Mistmeadow Skulk — "…protection from mana value 3 or greater" —
+compare the source's mana value against a literal number:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "self_only": true },
+  "from_mana_value": { "op": "<=", "value": 3 } }
+```
+
+`op` is `"<="` ("N or less") or `">="` ("N or greater"), inclusive at N, and
+`value` is a non-negative integer; anything else is refused at load time, and so
+is the quality's printed form ("mana value 3 or less") written as a
+`from_subtypes` entry. The quality joins the same flat set the other qualities
+live in (`structs.mana_value_quality`), so all four rules see it and a target
+refusal reads "Protection from mana value 3 or less". The source's mana value is
+`values.object_mana_value`'s: a token or a land is 0 and so is "3 or less", a
+face-down permanent is 0 (708.2), and a spell on the stack counts its X (202.3e),
+so a Fireball cast for X = 3 is mana value 4. The near miss is a
+`cant_cast_spells` filter with `mana_value`, which stops the spell being cast at
+all rather than protecting one permanent from it.
+
 **Protection from the colours outside your commander's identity.** Commander's
 Plate — "Equipped creature gets +3/+3 and has protection from each color that's
 not in your commander's color identity" — names a colour set no printed list can,
@@ -7009,7 +7089,7 @@ Ward) spares more than its source and is not this key.
 **A player with protection.** "**You** and creatures you control have protection
 from the chosen card type" is two statics: the `protection` above for the
 creatures, and a player-wide `player_protection` for the seat, which spells its
-qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`,
+qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`, `from_mana_value`, `from_everything`,
 `from_colorless`, `from_colors_outside_commander_identity`, the chosen leaf
 included):
 
@@ -8653,7 +8733,49 @@ the same result, but in a pod `declare_win` removes *every* other seat, so one
 Assassin hit would eliminate players it never touched. Every seat the spec names
 is eliminated before the game-over check, so "each player loses the game" is a
 draw (104.4a). A `condition` on the op is a load error, for `win_game`'s reason:
-wrap it in an `if`.
+wrap it in an `if`. A seat that can't lose the game (`cant_lose_the_game`) is held
+in, and a `replace_lose_game` static (below) replaces the loss.
+
+### "If you would lose the game, instead exile it and your life total becomes 1"
+
+```jsonc
+// The Golden Throne — "Arcane Life-support — If you would lose the game,
+// instead exile The Golden Throne and your life total becomes 1."
+{ "kind": "static", "effect": "replace_lose_game", "affects_player": "you",
+  "effects": [
+    { "op": "exile", "objects": { "zone": "battlefield", "self_only": true } },
+    { "op": "set_life_total", "amount": 1 } ] }
+```
+
+A replacement of the **loss**, not a prohibition. Whatever would have made the
+static's controller lose — 0 life, ten poison, 21 commander damage, a draw from
+an empty library, a `lose_game` op — the `effects` run instead, as that player
+with the static's permanent as their source, and the player stays in the game.
+`sba.replace_loss` applies it, asked by `sba._player_losses` and by
+`sba.declare_loss`.
+
+- **What the replacement fixes, and what it leaves.** At 0 life the player is now
+  at 1 and the next state-based check finds nothing. Poison and commander damage
+  are still there, so the next check is a new loss: a second Throne replaces it,
+  and otherwise the player loses — the replacement bought nothing against them,
+  which is how the card plays. The replaced empty-library draw is spent
+  (704.5b asks about draws since the last check).
+- **After "can't lose".** A seat a `cant_lose_the_game` static or op holds in
+  does not lose, so nothing is replaced and the Throne stays.
+- **A win is not a loss.** An opponent's `win_game` eliminates the table through
+  `declare_win` and is not replaced; `cant_win_the_game` is the sentence that stops it.
+- **Several.** The first in battlefield order applies; 616.1's choice for the
+  losing player is not asked, since the check cannot stop for a question.
+
+Load-time refusals: `effects` is required; its ops are `REPLACE_LOSE_GAME_OPS`
+(`exile` and `set_life_total`), because the state-based check cannot suspend for
+a decision; every `exile` is of `self_only`, and one must be at the top level,
+because a source left on the battlefield would replace the same ten poison
+counters again at every check; `affects_player` is `"you"`; `affects` and
+`amount` are refused. Exquisite Archangel is the same static with
+`"amount": {"starting_life_of": "you"}`. Near miss: `cant_lose_the_game`, which
+forbids the loss and runs nothing, so the permanent never leaves and the life
+total never moves.
 
 ### "No maximum hand size for the rest of the game"
 
@@ -9780,6 +9902,22 @@ Two things it deliberately does not do. It does not stop the **damage** —
 total holds still, and protection is the sentence that stops damage, which is why
 Teferi's Protection prints both. And it does not make paying life *free*: the
 cost is refused, not zeroed.
+
+## "Your life total becomes N"
+
+```jsonc
+{"op": "set_life_total", "amount": 1}                                 // The Golden Throne
+{"op": "set_life_total", "amount": {"starting_life_of": "you"}}       // Exquisite Archangel
+```
+
+119.5: a life total set to a number moves by gaining or losing the difference, so
+the op is `gain_life` or `lose_life` of it, never a write of the field. A life-gain
+or life-loss trigger hears it, a loss replacement (`replace_life_loss`) applies to
+it, a locked life total does not move, and a player who can't gain life stays below
+the number. `amount` is a required value expression, read per player; `player` is
+the ordinary player spec, defaulting to `"you"`; `objects` and `duration` are
+refused. Near miss: `exchange_life_total`, which trades the number with a creature's
+toughness.
 
 ## Exchanging a life total with a toughness
 
@@ -11524,8 +11662,9 @@ blinks comes back as a new object (400.7) and has it again.
 The loader requires `cant_have: true`, a non-empty list of known `keywords` and
 `objects`, and refuses any `duration` but `until_end_of_turn`. The near miss is
 the plain "target creature loses flying until end of turn" (Radjan Spirit). That
-is a layer-6 removal a later grant survives (613.7). It is not built, and the
-`cant_have` key is what stops it loading as this stronger effect.
+is a layer-6 removal a later grant survives (613.7), the
+`lose_keyword_timestamped` op below, and the `cant_have` key is what keeps the
+two apart.
 `lose_all_abilities` and `lock_abilities` take far more than two keywords.
 
 ### `lose_keyword_timestamped` — "loses flying", with no "can't have"
@@ -11566,6 +11705,39 @@ holder's timestamp rather than the grant's.
 The near miss is the `lose_keyword` static, which is "can't have or gain" and
 beats every grant whatever its timestamp: written with it, the hammer would
 ground its creature through every later Jump.
+
+### The `lose_keyword_timestamped` op — "loses indestructible until end of turn"
+
+Exterminatus: *"Nonland permanents your opponents control **lose
+indestructible until end of turn**. Destroy all nonland permanents."*
+
+```jsonc
+[ { "op": "lose_keyword_timestamped",
+    "keywords": ["indestructible"],
+    "objects": { "zone": "battlefield", "not_types": ["Land"],
+                 "controller": "opponent", "count": "all" } },
+  { "op": "destroy",
+    "objects": { "zone": "battlefield", "not_types": ["Land"],
+                 "controller": "any", "count": "all" } } ]
+```
+
+The static's removal, from a resolved spell or ability. Each permanent
+`objects` finds as it resolves gets a `lose_keyword_timestamped` `TempEffect`
+per keyword, stamped as it is written, and `characteristics._compute` reads it
+with the static's removals (`_timestamped_removals`): the printed keyword and
+every older grant go, and a grant made afterwards — a `grant_keyword`, a
+keyword counter, an anthem that arrives later — gives the keyword back (613.7).
+The set is fixed as it resolves (611.2c): a permanent that arrives afterwards
+keeps its keyword, and one that blinks comes back as a new object (400.7).
+Cleanup ends it.
+
+The loader requires `objects` and a non-empty list of known `keywords`, refuses
+a numbered keyword for the static's reason, refuses any `duration` but
+`until_end_of_turn`, and refuses `cant_have`. The near miss is the
+[`lose_keyword` op](#the-lose_keyword-op--the-same-prohibition-until-end-of-turn),
+"lose X **and can't have X**", which beats every grant whatever its timestamp;
+written with it, a later grant of the keyword would do nothing, a stronger card.
+`lose_all_abilities` takes every ability, not one keyword.
 
 ### `grant_ability` as a static, and where the line now runs
 

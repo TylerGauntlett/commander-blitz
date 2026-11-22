@@ -27,7 +27,7 @@ from commanderblitz.engine.effects.values import (
     validate_players_with_poison,
     validate_value,
 )
-from commanderblitz.engine.enums import SUBTYPE_CLASS
+from commanderblitz.engine.enums import NUMBERED_KEYWORDS, SUBTYPE_CLASS
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
 from commanderblitz.engine.mana import ManaCost, compile_restriction
@@ -50,10 +50,12 @@ from commanderblitz.engine.structs import (
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
+    PROTECTION_MANA_VALUE_OPS,
     PROTECTION_SENTINELS,
     TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
     UNCOUNTERABLE_GRANT_DURATIONS,
+    parse_mana_value_quality,
 )
 from commanderblitz.engine.temp_effects import COMBAT_RULE_GRANTS
 from commanderblitz.engine.triggers import (
@@ -672,6 +674,38 @@ def _refuse_protection_sentinels(subtypes: Any, where: str) -> None:
                 f"{where}.from_subtypes[{i}]: {entry!r} is not a subtype -- "
                 f"write 'from_{entry}': true"
             )
+        if isinstance(entry, str) and parse_mana_value_quality(entry) is not None:
+            raise DslError(
+                f"{where}.from_subtypes[{i}]: {entry!r} is not a subtype -- "
+                f"write 'from_mana_value' as a comparison"
+            )
+
+
+def _check_protection_mana_value(spec: Any, where: str) -> None:
+    """Check a ``from_mana_value`` quality: ``{"op": "<=", "value": 3}``.
+
+    Every malformed spelling is silent otherwise. A bare integer would be a
+    protection no card prints ("mana value 3"), a missing or unknown ``op``
+    would raise only when a rule first asked, and a value expression has no
+    context to be evaluated in at the moment damage, a block or a target asks.
+    """
+    if not isinstance(spec, Mapping) or set(spec) != {"op", "value"}:
+        raise DslError(
+            f'{where}: from_mana_value is {{"op": "<=" or ">=", "value": N}}, '
+            f"not {spec!r}"
+        )
+    if spec["op"] not in PROTECTION_MANA_VALUE_OPS:
+        raise DslError(
+            f"{where}: from_mana_value op {spec['op']!r} is not one of "
+            f"{sorted(PROTECTION_MANA_VALUE_OPS)} -- 'N or less' is '<=', "
+            f"'N or greater' is '>='"
+        )
+    value = spec["value"]
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise DslError(
+            f"{where}: from_mana_value value is a literal non-negative integer, "
+            f"not {value!r}"
+        )
 
 
 def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
@@ -1610,6 +1644,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # card and one question per card; a run arranged together has to
             # go to one end, so the two sentences cannot share an effect.
             raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
+    if "random_order" in effect:
+        # "…in a random order" (Endurance) and "shuffle that pile and put it
+        # back on top" (Triumph of Saint Katherine). Only `put_on_top` reads
+        # it; elsewhere it would load and leave the pile in pool order, which
+        # its owner can predict.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'random_order' randomises cards put into a library, and "
+                f"only put_on_top reads it, not {op!r}"
+            )
+        if not isinstance(effect["random_order"], bool):
+            raise DslError(f"{where}: 'random_order' is true or false")
+        if effect["random_order"]:
+            for other in ("any_order", "from_top", "owner_chooses"):
+                # `any_order` is the owner's arrangement, the opposite sentence;
+                # an ordinal is one position, not a run; a per-card choice of
+                # end splits the pile the randomness is over.
+                if effect.get(other):
+                    raise DslError(
+                        f"{where}: 'random_order' cannot be combined with {other!r}"
+                    )
     if "cast_free" in effect and op not in ("look_at_top", "exile_until"):
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)
@@ -3923,8 +3978,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect.get("cant_have") is not True:
             raise DslError(
                 f"{where}: lose_keyword is \"lose X and can't have X\" and needs "
-                f"'cant_have': true; a plain \"loses X until end of turn\" is not "
-                f"implemented"
+                f"'cant_have': true; a plain \"loses X until end of turn\" is "
+                f"the lose_keyword_timestamped op"
             )
         if not effect.get("objects"):
             # An absent selector would choose nothing, and a printed hoser
@@ -3948,6 +4003,47 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown lose_keyword duration {effect['duration']!r} "
                 f"(implemented: 'until_end_of_turn')"
+            )
+    if op == "lose_keyword_timestamped":
+        # "…lose indestructible until end of turn" -- the plain removal a newer
+        # grant overrides (613.7). `lose_keyword`'s requirements for its
+        # reasons, less the clause: this op is the form without "can't have",
+        # so a `cant_have` here would be a card asking for the prohibition and
+        # getting the weaker removal.
+        if "cant_have" in effect:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped is the plain \"loses X\"; "
+                f"\"lose X and can't have X\" is the lose_keyword op"
+            )
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'objects' (the "
+                f"permanents that lose the keywords, chosen as it resolves)"
+            )
+        words = effect.get("keywords")
+        if not isinstance(words, list) or not words:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'keywords', a non-empty "
+                f"list of the keywords it removes"
+            )
+        for k in words:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        numbered = sorted(k for k in words if k in {w.value for w in NUMBERED_KEYWORDS})
+        if numbered:
+            # `annihilator_instances` counts instances with no timestamps, so a
+            # removal it cannot order would leave the count disagreeing with
+            # the keyword -- the static's refusal, for the static's reason.
+            raise DslError(
+                f"{where}: lose_keyword_timestamped cannot remove {numbered!r}: a "
+                f"numbered keyword's instances are not ordered by timestamp"
+            )
+        if str(effect.get("duration", "until_end_of_turn")) != "until_end_of_turn":
+            # The one clock built; any other word would load and quietly wear
+            # off at this turn's cleanup.
+            raise DslError(
+                f"{where}: unknown lose_keyword_timestamped duration "
+                f"{effect['duration']!r} (implemented: 'until_end_of_turn')"
             )
     if op == "grant_flash_permission":
         # Without a duration the permission would have no clock to end on, and a
@@ -5053,6 +5149,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}: exchange_life_total takes no {key!r} -- the creature "
                     f"is the ability's source and the exchange is indefinite (701.12)"
+                )
+    if op == "set_life_total":
+        # "Your life total becomes 1." The number is the whole sentence: a
+        # default would be a guess, and a set to 0 by omission would kill.
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: set_life_total needs an 'amount' -- the number the life "
+                f"total becomes (119.5)"
+            )
+        for key in ("objects", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: set_life_total takes 'amount' and an optional "
+                    f"'player', and no {key!r}"
                 )
     if op == "lock_life_total":
         if effect.get("player") is not None:

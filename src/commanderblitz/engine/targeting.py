@@ -319,14 +319,20 @@ def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> boo
     because `matches` reads derived only for permanents (`obj.on_battlefield`)
     -- which is what a spell on the stack should get anyway: no static is
     applying to it.
+
+    Read through `TargetSpec.spell_half`, so a ``"spell_or_ability"`` spec's
+    `spell_selector` ("instant spell, sorcery spell, activated ability, or
+    triggered ability" -- Sister of Silence) narrows its spells here and
+    never reaches `_ability_matches`.
     """
-    if not spec.selector:
+    half = spec.spell_half
+    if not half:
         return True
     if item.oid is None:
         return False
     # `that_targets` is about the spell's targets, not its face, so it is asked
     # of the stack item and lifted off before `matches` reads the rest.
-    selector = dict(spec.selector)
+    selector = dict(half)
     if not _targets_clause_met(ctx, item, selector.pop("that_targets", None)):
         return False
     return not selector or matches(ctx, item.oid, selector, default_zone="stack")

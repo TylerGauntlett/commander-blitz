@@ -55,6 +55,13 @@ same goes for the rule-modifying statics the static filter language describes
 but no layer applies -- an attack requirement and a block restriction -- which
 match with ``derived=True`` (see :func:`_matches`).
 
+One reader inside the pipeline may see another static's output, and only
+types: the anthem step, for an `affects` carrying ``derived_types`` ("nonartifact
+creatures get -1/-1" beside a line that makes creatures artifacts). Layer 7c
+runs after layer 4 (613.1), so the read is ordered rather than a dependency,
+and it is answered from :func:`_compute`'s own working type sets, never from
+:func:`chars` -- see :class:`Layer4Types` and ADR 0031.
+
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
 :func:`_battlefield_statics` -- *before* layer -1, so before any layer has
@@ -96,7 +103,14 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaCost, ManaOrigin, printed_cost_is
 from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
-from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics, TempEffect
+from .structs import (
+    PROTECTION_COLORLESS,
+    PROTECTION_EVERYTHING,
+    Characteristics,
+    TempEffect,
+    mana_value_quality,
+    parse_mana_value_quality,
+)
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
 
@@ -979,10 +993,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 toughness = _static_value(state, static.get("toughness"), source_obj)
 
         # 4. P/T modification (anthems)
+        #    Layer 7c, so every type change above is applied (613.1): an
+        #    `affects` carrying `derived_types` reads these working sets, not
+        #    the printed face ("Nonartifact creatures get -1/-1" spares what
+        #    The Flesh Is Weak made artifacts). Read here, not through
+        #    `chars`, so the answer is this object's own layer 4 and no
+        #    recursion is possible (ADR 0031).
+        layer4 = Layer4Types(frozenset(types), frozenset(subtypes), frozenset(supertypes))
         for source_obj, static in statics:
             if static.get("effect") != "buff":
                 continue
-            if _matches(state, obj, source_obj, static.get("affects")):
+            if _matches(state, obj, source_obj, static.get("affects"), layer4=layer4):
                 power += _static_value(state, static.get("power"), source_obj)
                 toughness += _static_value(state, static.get("toughness"), source_obj)
 
@@ -1238,9 +1259,16 @@ def _timestamped_removals(
     obj: GameObject,
     statics: list[tuple[GameObject, Mapping[str, Any]]],
 ) -> dict[str, int]:
-    """Each keyword a `lose_keyword_timestamped` static takes from ``obj``,
-    with the newest such removal's timestamp."""
+    """Each keyword a `lose_keyword_timestamped` static or op takes from
+    ``obj``, with the newest such removal's timestamp.
+
+    The op's entries ride the object's own `until_eot` (611.2c: the objects
+    found as it resolved), stamped as written; the static's are read off its
+    filter with its source's timestamp."""
     out: dict[str, int] = {}
+    for temp in obj.until_eot:
+        if temp.kind == "lose_keyword_timestamped" and temp.keyword:
+            out[temp.keyword] = max(out.get(temp.keyword, temp.timestamp), temp.timestamp)
     for source_obj, static in statics:
         if static.get("effect") != "lose_keyword_timestamped":
             continue
@@ -3134,6 +3162,19 @@ def enchanted_by_answer(seats: Any, spec: Any, controller: int) -> bool:
     return found if spec is not False else not found
 
 
+class Layer4Types(NamedTuple):
+    """An object's card types, subtypes and supertypes as layer 4 left them.
+
+    Handed by `_compute` to `_matches` at the anthem step, for an `affects`
+    carrying `derived_types` (ADR 0031). Built from `_compute`'s own working
+    sets, so reading it never asks `chars` anything.
+    """
+
+    types: frozenset[str]
+    subtypes: frozenset[str]
+    supertypes: frozenset[str]
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -3141,6 +3182,7 @@ def _matches(
     selector: Mapping[str, Any] | None,
     *,
     derived: bool = False,
+    layer4: Layer4Types | None = None,
 ) -> bool:
     """Match ``obj`` against a static ability's filter, using printed characteristics.
 
@@ -3157,12 +3199,18 @@ def _matches(
     able" (Graaz, Unstoppable Juggernaut) has to see the creatures Graaz's own
     third line makes Juggernauts, and rule 613 has nothing to order there --
     neither effect is a layer, so reading layer 4's output is no loop.
+
+    ``layer4`` is the object's types after layer 4, passed by the one reader
+    that runs later in the pipeline and holds them: the anthem step of
+    `_compute`. A selector with ``derived_types`` reads its type clauses off it
+    (ADR 0031); asked without it, the match raises rather than fall back to the
+    printed face.
     """
     if selector is None:
         return False
     if not obj.on_battlefield:
         return False
-    return _matches_wherever(state, obj, source, selector, derived=derived)
+    return _matches_wherever(state, obj, source, selector, derived=derived, layer4=layer4)
 
 
 def _matches_wherever(
@@ -3172,6 +3220,7 @@ def _matches_wherever(
     selector: Mapping[str, Any],
     *,
     derived: bool = False,
+    layer4: Layer4Types | None = None,
 ) -> bool:
     """`_matches` without the battlefield gate -- for an object that is *arriving*.
 
@@ -3201,7 +3250,9 @@ def _matches_wherever(
     if (branches := selector.get("any_of")) is not None:
         outer = {k: v for k, v in selector.items() if k != "any_of"}
         return any(
-            _matches_wherever(state, obj, source, {**outer, **branch}, derived=derived)
+            _matches_wherever(
+                state, obj, source, {**outer, **branch}, derived=derived, layer4=layer4
+            )
             for branch in branches
         )
 
@@ -3350,7 +3401,25 @@ def _matches_wherever(
             # `recorded_subtypes` is, and the colour half of the black Zombie a
             # Zombie lord already sees -- Bad Moon pumps it too.
             card = dataclasses.replace(card, colors=card.colors | set(added_colors))
-        if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
+        if selector.get("derived_types"):
+            # "**Nonartifact** creatures get -1/-1" (The Flesh Is Weak): the type
+            # clauses read layer 4's result, which already holds the text
+            # changes, the recorded subtypes, bestow and every type grant, so
+            # none of them is passed again. Only the anthem step holds it.
+            if layer4 is None:
+                raise DslError(
+                    "static filter 'derived_types' asked outside the anthem step"
+                )
+            card = dataclasses.replace(
+                card,
+                types=layer4.types,
+                subtypes=layer4.subtypes,
+                supertypes=layer4.supertypes,
+            )
+            matched = _matches_printed(card, selector)
+        else:
+            matched = _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes)
+        if not matched:
             return False
         size = None
 
@@ -3711,6 +3780,13 @@ def _static_protection_qualities(
     out.update(resolve_chosen_color_list(static.get("from_colors"), source_obj))
     if static.get("from_colorless"):
         out.add(PROTECTION_COLORLESS)
+    if static.get("from_everything"):
+        # The sentinel `grant_protection` installs, so a lasting "commanders
+        # you control have protection from everything" (Vexilus Praetor) and
+        # Teferi's Protection mean the same thing to every rule.
+        out.add(PROTECTION_EVERYTHING)
+    if (mana_value := static.get("from_mana_value")) is not None:
+        out.add(mana_value_quality(mana_value["op"], mana_value["value"]))
     if static.get("from_colors_outside_commander_identity"):
         # "Your commander" is the static's controller's -- the Plate's, not
         # the equipped creature's, and it follows the Equipment when it
@@ -3983,7 +4059,24 @@ def _matches_protection(
     # has made colourless is matched and one given a colour is not.
     if PROTECTION_COLORLESS in qualities and not colors:
         return True
-    return bool(have & qualities)
+    if have & qualities:
+        return True
+    # "Protection from mana value 3 or less" (Reaver Titan). Mana value is a
+    # number, not a name, so it is the one quality compared rather than
+    # intersected: a token or a land is mana value 0 and is matched by "or
+    # less", a face-down permanent is 0 too (708.2), and a spell on the stack
+    # counts its X (202.3e) -- `values.object_mana_value`'s reading.
+    comparisons = [
+        parsed for q in qualities if (parsed := parse_mana_value_quality(q)) is not None
+    ]
+    if not comparisons:
+        return False
+    from .effects.values import object_mana_value
+
+    mv = 0 if source.face_down else object_mana_value(state, source)
+    return any(
+        mv <= value if op == "<=" else mv >= value for op, value in comparisons
+    )
 
 
 def player_protection_from(state: GameState, pid: int) -> frozenset[str]:

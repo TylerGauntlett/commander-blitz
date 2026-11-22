@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **449** capabilities.
+**530 cards** blocked by **447** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -373,12 +373,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
-| [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -6299,20 +6297,6 @@ Blocks **1** card.
 
 </details>
 
-## protection-from-mana-value
-
-Blocks **1** card.
-
-- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
-  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
-  - Lifelink, protection from mana value 3 or greater
-
-</details>
-
 ## protection-from-multicolored
 
 Blocks **1** card.
@@ -6366,20 +6350,6 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
-
-</details>
-
-## random-order-bottom
-
-Blocks **1** card.
-
-- **(op)** a `random_order` option on `put_on_top` (with `bottom: true`) that places the moved cards on the bottom of the library in a random order, for 'puts all the cards from their graveyard on the bottom of their library in a random order' (Endurance, also Tormod's Crypt-style tucks, cascade/discover leftovers).
-  <br>Why the existing vocabulary won't do: `put_on_top` (ops_cards.py) offers `bottom` and `any_order` (owner chooses order) or pool order; neither is random, and a `shuffle` op afterwards would randomise the whole library, not just the bottom segment.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Endurance** (rank 1343) — `endurance`
-  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
 
 </details>
 

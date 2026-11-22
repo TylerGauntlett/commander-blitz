@@ -539,6 +539,14 @@ export function describeEvent(
     case "investigated":
       return `${who} ${v("investigate", "investigates")}`;
     /*
+     * The first card of a turn revealed as it was drawn, under a "you may
+     * reveal the first card you draw each turn" permanent (Inquisitor
+     * Eisenhorn). The draw's own line never names a card, so this one does,
+     * and it is the moment "whenever you reveal … this way" triggers off.
+     */
+    case "revealed_first_draw":
+      return `${who} ${v("reveal", "reveals")} ${card ?? "a card"} as ${isViewer ? "you draw" : "they draw"} it`;
+    /*
      * A player surveilled (701.25). Any card it binned has its own
      * `zone_change` line; this one says a surveil happened, which is what
      * "whenever you surveil" triggers off -- even one that kept every card

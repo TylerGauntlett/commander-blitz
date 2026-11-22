@@ -444,6 +444,17 @@ STATIC_EFFECTS = frozenset(
         # no permission and moves no card, it makes one card public. Read by
         # `serialize`, and by nothing else.
         "reveal_library_top",
+        # "You may reveal the first card you draw each turn as you draw it."
+        # Inquisitor Eisenhorn; Primitive Etchings without the "may". Player-
+        # wide, and nothing but a reveal: the draw is unchanged. It exists for
+        # the `reveals_first_draw` trigger printed beside it ("whenever you
+        # reveal an instant or sorcery card **this way**"), which is why the
+        # loader refuses one without the other. `reveal_optional` is the
+        # printed "may", asked as the card is drawn. Read by
+        # `player_statics.first_draw_reveals` from
+        # `replacements._reveal_first_draw`, miracle's seam -- not
+        # `reveal_library_top`, which makes a card public before it is drawn.
+        "reveal_first_draw",
         # "You may look at the top card of your library any time." The private
         # counterpart of the line above, and the difference is the whole of it:
         # revealed is public and goes to every seat, looked-at goes to the one
@@ -791,6 +802,16 @@ STATIC_EFFECTS = frozenset(
         # `condition`. Read by `sba.player_cant_lose` / `player_cant_win`.
         "cant_lose_the_game",
         "cant_win_the_game",
+        # The Golden Throne.  "If you would lose the game, instead exile The
+        # Golden Throne and your life total becomes 1."  A replacement of the
+        # *loss*, every cause of it -- the four state-based reasons and a
+        # `lose_game` op -- where `cant_lose_the_game` is a prohibition that
+        # runs nothing.  `effects` is what happens instead, run as the static's
+        # controller with the static's source, and must move that source off
+        # the battlefield, which is what makes it once per permanent.  Read by
+        # `sba.replace_loss` through `player_statics.lose_game_replacement`,
+        # after the prohibition: an event that cannot happen is not replaced.
+        "replace_lose_game",
         # Worship; Serra the Benevolent's emblem.  "If you control a creature,
         # damage that would reduce your life total to less than 1 reduces it to
         # 1 instead."  The continuous form of the `damage_life_floor` op
@@ -960,6 +981,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "mana_becomes_colorless",
         "play_lands_from_library_top",
         "reveal_library_top",
+        "reveal_first_draw",
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
@@ -989,6 +1011,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "opponents_cant_force_discard_or_sacrifice",
         "cant_lose_the_game",
         "cant_win_the_game",
+        "replace_lose_game",
         "damage_life_floor",
         "player_hexproof",
         "player_protection",
@@ -1384,12 +1407,26 @@ STATIC_FILTER_KEYS = frozenset(
 #: reason. Not its ``or_planeswalkers`` widening, which asks the walker's
 #: derived types and so would read the pipeline's own output; and not the
 #: ``{"binding": name}`` form, since a static binds nothing.
+#:
+#: ``derived_types`` is affects-only and `buff`-only: "**Nonartifact**
+#: creatures get -1/-1" (The Flesh Is Weak). `true` makes the filter's type
+#: clauses read the types layer 4 left rather than the printed face -- an
+#: ordered read across layers, never a 613.8 dependency, handed to the anthem
+#: step from `characteristics._compute`'s own working sets (ADR 0031). No
+#: other static's reader holds those sets, so the loader refuses it elsewhere.
 STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {
     "any_of",
     "modified",
     "mana_value",
     "attacking_player",
+    "derived_types",
 }
+
+#: The clauses `derived_types` changes the reading of: a filter carrying the
+#: key and none of these would be a flag nothing reads.
+DERIVED_TYPE_CLAUSES = frozenset(
+    {"types", "any_types", "not_types", "subtypes", "not_subtypes", "supertypes", "not_supertypes"}
+)
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")
@@ -1403,6 +1440,15 @@ _CHOSEN_QUALITY_KEYS = ("chosen_type_of", "chosen_color_of")
 #: Unearth's `put_onto_battlefield`, and the three other destinations a card
 #: could plausibly be sent to by its own ability.
 SOURCE_MOVING_OPS = frozenset({"put_onto_battlefield", "exile", "return_to_hand", "put_on_top"})
+
+#: The ops a `replace_lose_game` static's `effects` may run.
+#:
+#: The replacement is applied inside the state-based actions and inside the
+#: `lose_game` op's `sba.declare_loss`, and neither can suspend for a decision:
+#: so only ops that never ask one, and `exile` only of the source itself
+#: (`_compile_static` checks that). A card whose replacement does more -- Lich's
+#: Mirror's shuffle and draw -- widens this when it is built.
+REPLACE_LOSE_GAME_OPS = frozenset({"exile", "set_life_total"})
 
 
 #: Which trigger a ``{"was_cast": …}`` clause may hang from.
@@ -1993,11 +2039,24 @@ PLACED_COUNTER_KIND = {"binding": "counter"}
 PLAYER_TARGET_KINDS = frozenset({"player", "any"})
 
 #: Target kinds whose chosen ref always has a **controller**, so
-#: ``{"controller_of_target": "t1"}`` means something. The complement of
-#: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
-#: so: exactly one of the two keys is right for any given target spec, which is
-#: what makes the pair a checkable choice instead of two ways to be wrong.
-CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard", "card_in_exile"})
+#: ``{"controller_of_target": "t1"}`` means something. Disjoint from
+#: :data:`PLAYER_TARGET_KINDS`, and deliberately so: exactly one of the two keys
+#: is right for any given target spec, which is what makes the pair a checkable
+#: choice instead of two ways to be wrong. An ability on the stack has a
+#: controller as a spell does (113.8), so the two stack kinds that reach one
+#: are here -- "Its controller loses life…" after Deny the Witch counters a
+#: spell *or* an ability. `select_players` reads the seat off the stack item,
+#: or off `EffectContext.stack_controllers` once the counter has removed it.
+CONTROLLED_TARGET_KINDS = frozenset(
+    {
+        "permanent",
+        "spell",
+        "card_in_graveyard",
+        "card_in_exile",
+        "spell_or_ability",
+        "ability_on_stack",
+    }
+)
 
 
 #: The ops that can put the permanent they make into combat.

@@ -165,6 +165,25 @@ describe("describeEvent", () => {
     );
   });
 
+  it("names the card revealed as it was drawn", () => {
+    // The draw's own line never names the card; this one does, and it is
+    // what Inquisitor Eisenhorn's "whenever you reveal … this way" waits for.
+    expect(
+      describeEvent(
+        event({ type: "revealed_first_draw", player: 0, data: { card: "lightning_bolt" } }),
+        names,
+        0,
+      ),
+    ).toBe("You reveal Lightning Bolt as you draw it");
+    expect(
+      describeEvent(
+        event({ type: "revealed_first_draw", player: 1, data: { card: "lightning_bolt" } }),
+        names,
+        0,
+      ),
+    ).toBe("AI 1 reveals Lightning Bolt as they draw it");
+  });
+
   it("says who surveilled", () => {
     // A surveil that binned nothing has no zone change to show; this line is
     // what "whenever you surveil" waits for.

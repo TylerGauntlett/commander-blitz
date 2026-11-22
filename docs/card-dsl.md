@@ -456,6 +456,24 @@ the top card. One card asks nothing. Each owner orders only their own cards.
 Refused beside `from_top` (an ordinal is one position, not a run) and beside
 `owner_chooses` (a per-card choice of end), and on any other op.
 
+`random_order: true` is "…on the bottom of their library **in a random order**"
+(Endurance) and "shuffle that pile and put it back on top of your library"
+(Triumph of Saint Katherine): the moved cards go to the stated end in an order
+drawn from the game's RNG, and nothing else in the library moves. A `shuffle`
+op afterwards is the near miss — it reorders the whole library. Triumph's pile
+is two exiles into one binding (`look_at_top` assigns its `as`, `exile`
+extends it) and a return of exactly that binding, so "if you do" needs no
+condition: only what was exiled goes back.
+
+```jsonc
+{ "op": "look_at_top", "amount": 6, "destination": "exile", "face_down": true,
+  "objects": { "count": "all" }, "as": "pile" },
+{ "op": "exile", "objects": { "self_only": true, "zone": "graveyard" }, "as": "pile" },
+{ "op": "put_on_top", "random_order": true, "objects": { "binding": "pile" } }
+```
+
+Refused beside `any_order`, `from_top` and `owner_chooses`, and on any other op.
+
 `as` on `put_on_top` binds **the cards that arrived in a library** -- the rest of
 the Box's sentence, "then draws **that many** cards":
 
@@ -1489,10 +1507,30 @@ effect never happens (701.6b). "Target spell or ability" (Deflecting Swat) is
 the same pool.
 
 The `selector` reads only `controller`, as `"you"` or `"opponent"` ("spell or
-ability an opponent controls"): it is the one clause a spell and an ability
-both answer. Every other clause, `ability_kind`, a Mapping `controller`,
-`total_mana_value` and `total_power` are refused at load time, since each would
-narrow one half or be read off the ability's source. `still_legal` re-checks a
+ability an opponent controls"), and `that_targets`: the clauses a spell and an
+ability both answer, so both halves are narrowed by them. Every other clause,
+`ability_kind`, a Mapping `controller`, `total_mana_value` and `total_power`
+are refused at load time, since each would narrow one half or be read off the
+ability's source.
+
+When the printed words narrow only the spells, `spell_selector` holds them,
+merged over `selector` for the spell half alone (`TargetSpec.spell_half`):
+
+```jsonc
+// Sister of Silence: "When this creature enters, counter target instant
+//                     spell, sorcery spell, activated ability, or triggered
+//                     ability."
+{ "id": "t1", "kind": "spell_or_ability", "count": 1,
+  "spell_selector": { "any_types": ["Instant", "Sorcery"] } }
+```
+
+Any instant or sorcery spell is legal, and every activated or triggered ability;
+a creature spell is not. It takes the printed-characteristics clauses a
+`"spell"` selector takes, and is refused on every other kind, empty, with
+`controller` or `that_targets` (they narrow both halves and belong in
+`selector`), with a `zone`, and with a clause naming a sibling target or `{X}`.
+The near miss is plain Disallow, which also counters creature, artifact,
+enchantment and planeswalker spells. `still_legal` re-checks a
 spell ref through `_spell_matches` and an ability ref through `_ability_matches`,
 the matchers `candidates` offered them through. The near miss is two specs, one
 `"spell"` and one `"ability_on_stack"`: a card that targets twice and is cast
@@ -2898,6 +2936,40 @@ Off the battlefield the key is refused at load time with the rest of the board
 state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
 what a card outside the battlefield actually has.
+
+#### `derived_types` — an anthem reads the types layer 4 left
+
+```jsonc
+// The Flesh Is Weak: "Creatures you control with +1/+1 counters on them are
+//  artifacts in addition to their other types. Nonartifact creatures get -1/-1."
+{ "kind": "static", "effect": "add_subtype", "types": ["Artifact"],
+  "affects": { "controller": "you", "types": ["Creature"], "has_counters": "+1/+1" } },
+{ "kind": "static", "effect": "buff", "power": -1, "toughness": -1,
+  "affects": { "controller": "any", "types": ["Creature"], "not_types": ["Artifact"],
+               "derived_types": true } }
+```
+
+`derived_types: true` on a `buff`'s `affects` makes its type clauses — `types`,
+`any_types`, `not_types`, `subtypes`, `not_subtypes`, `supertypes` and
+`not_supertypes` — read the object's types as layer 4 left them: every
+`add_subtype`, `set_types`, `set_creature_types` and `animate`, the recorded
+subtypes and the text changes. Every other clause keeps its reading. Rule 613.1
+applies the layers in order, so a layer-7c anthem's set of creatures is decided
+after the type changes; that is an ordered read across layers, not a 613.8
+dependency, and the anthem step of `characteristics._compute` answers it from
+the object's own working type sets without calling `chars`
+([ADR 0031](adr/0031-an-anthem-may-read-the-types-layer-4-left.md)).
+
+The loader refuses the key as anything but `true`, on any static but `buff`
+(no other reader holds the sets, and `_matches` raises when asked without
+them), inside an `any_of` branch (write it on the outer filter, where it covers
+every branch), and on a filter that names no type clause.
+
+The near miss is the same filter without the key. It loads, and it reads the
+printed face, so "nonartifact creatures get -1/-1" shrinks the creatures the
+line above it made artifacts. Without the key, a type granted by a static stays
+invisible to an anthem: a Xenograft naming Goblin does not put Bears under a
+Goblin lord.
 
 #### `face_down` — board state the static filters refuse
 
@@ -5096,6 +5168,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "exile_from_graveyard": { "types": ["Creature"] },
   "exile_from_graveyard": { "types": ["Creature"], "count": 2,
                             "as": "exiled" },    // Coin of Fate: names *the* exiled cards
+  "exile_from_graveyard": { "types": ["Creature"],
+                            "link": true },      // Redemptor Dreadnought: exiled *with* it
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
@@ -5899,9 +5973,55 @@ refuses an empty name, and `as` anywhere but an activated ability's cost, for
 `sacrifice`'s reason.
 
 Not `{"zone": "exile"}` alone, which is every exiled card in the game, and not
-`exiled_with: "self"`, which reads a link this cost does not write. Not the
+`exiled_with: "self"`, which reads a link this cost writes only with `link`
+(below) -- and Coin of Fate's source is sacrificed in the same payment. Not the
 `exile` op with `as` in the effects: that exiles on resolution, so the ability
 could be activated with an empty graveyard.
+
+### Redemptor Dreadnought — an exile cost that links the card to the permanent
+
+"Fallen Warrior — As an additional cost to cast this spell, you may exile a
+creature card from your graveyard. … Plasma Incinerator — Whenever this creature
+attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is
+the power of the exiled card."
+
+```jsonc
+{ "additional_cost": { "exile_from_graveyard": { "types": ["Creature"], "link": true } },
+  "additional_optional": true,
+  "keywords": ["trample"],
+  "abilities": [
+    { "kind": "triggered",
+      "text": "Plasma Incinerator — Whenever this creature attacks, …",
+      "trigger": { "event": "attacks", "source": "self",
+                   "condition": { "exists": { "zone": "exile", "exiled_with": "self" } } },
+      "effects": [
+        { "op": "pump", "objects": { "self_only": true },
+          "power":     { "power_of": { "objects": { "zone": "exile", "exiled_with": "self" } } },
+          "toughness": { "power_of": { "objects": { "zone": "exile", "exiled_with": "self" } } } } ] } ] }
+```
+
+`link: true` on an `exile_from_graveyard` cost records every card the cost
+exiled as exiled with a permanent (607.2a, `zones.link_exiled`), so a later
+`{"zone": "exile", "exiled_with": "self"}` finds it -- the record the `exile`
+op's `link` writes. Whose permanent depends on the payer:
+
+- **A permanent spell's `additional_cost`**: the permanent the spell becomes.
+  Nothing is linked while the spell is on the stack; the cards wait on the
+  spell's object (`GameObject.cast_exile_links`) and are linked as it enters the
+  battlefield from the stack, before its enters triggers are checked. A spell
+  that is countered or bounced becomes no permanent and links nothing, and a card
+  that left exile meanwhile is a new object (400.7) and is not linked.
+- **An activated ability's cost**: its source, at once.
+
+Only cards that arrived in exile are linked. `link` combines with `as` and
+`count`. The loader refuses anything but `true`, and `link` on any other cost --
+an instant's or sorcery's additional cost, a flashback, a tax -- because nothing
+there is or becomes a permanent to read the link.
+
+Not `as`, which names the cards to an activated ability's own effects and is
+gone once it resolves; Redemptor's trigger fires turns later from the
+permanent. Not `additional_paid`, which says the cost was paid but not which
+card, and so cannot give "the power of the exiled card".
 
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 
@@ -6168,6 +6288,30 @@ Both read the **target list**; they differ on what the chosen ref *is*.
 asks a ref that is an object or a spell who controls it, at the moment the
 effect resolves (608.2 — control of a spell can change while the ability is on
 the stack, and the seat that pays is the one holding it when the bill arrives).
+It takes a target of kind `permanent`, `spell`, `card_in_graveyard`,
+`card_in_exile`, `spell_or_ability` or `ability_on_stack`
+(`vocabulary.CONTROLLED_TARGET_KINDS`); an ability on the stack has a
+controller as a spell does (113.8).
+
+A stack target that has **left the stack** by the time the clause is read still
+answers, with its last known controller (608.2h). The seat is recorded in
+`EffectContext.stack_controllers` as the resolution starts, after the 608.2b
+re-check, and read only once the item is gone, so the sentence can follow the
+counter in printed order:
+
+```jsonc
+// Deny the Witch: "Counter target spell, activated ability, or triggered
+//                  ability. Its controller loses life equal to the number of
+//                  creatures you control."
+"targets": [ { "id": "t1", "kind": "spell_or_ability" } ],
+"spell_effects": [
+  { "op": "counter", "target": "t1" },
+  { "op": "lose_life", "player": { "controller_of_target": "t1" },
+    "amount": { "creatures_you_control": true } } ]
+```
+
+A `snapshot` of an ability target captures nothing (an ability has no object),
+so `{"controller_of": <snapshot>}` is not the spelling for an ability.
 
 Exactly one of the two is right for any given target spec, and **the loader
 refuses the other** — `loader._validate_player_spec`, checked for every effect

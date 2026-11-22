@@ -64,7 +64,10 @@ class TempEffect:
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
     read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
     hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
-    keyword step of ``chars``, after every grant), or ``"set_toughness"`` (an
+    keyword step of ``chars``, after every grant), or
+    ``"lose_keyword_timestamped"`` ("target creature **loses flying** until end
+    of turn": ``keyword`` is removed in timestamp order with the grants, so a
+    grant newer than ``timestamp`` gives it back -- 613.7), or ``"set_toughness"`` (an
     indefinite layer-7b "its toughness becomes N", kept on
     `GameObject.animations` and ordered against the indefinite animations there
     by ``timestamp``), or ``"combat_damage_by_toughness"`` ("assigns combat
@@ -976,6 +979,39 @@ PROTECTION_COLORLESS = "colorless"
 #: refuses them as a written ``from_subtypes`` entry, where they would otherwise
 #: sneak in as the sentinel without the flag that means it.
 PROTECTION_SENTINELS = frozenset({PROTECTION_EVERYTHING, PROTECTION_COLORLESS})
+
+#: "Protection from mana value 3 or less" (Reaver Titan) and "…3 or greater"
+#: (Mistmeadow Skulk): the comparison operators a ``from_mana_value`` quality
+#: takes, and the words each is printed with.  Only the two any printed card
+#: says; a strict ``<`` or ``>`` is the same quality one number over.
+PROTECTION_MANA_VALUE_OPS = {"<=": "or less", ">=": "or greater"}
+_MANA_VALUE_PREFIX = "mana value "
+
+
+def mana_value_quality(op: str, value: int) -> str:
+    """The protection quality for a mana-value comparison, as the card prints it.
+
+    A string in the same flat set every other quality lives in, for
+    :data:`PROTECTION_EVERYTHING`'s reason: the four rules that read protection
+    ask one question of one set, and a second field beside it is the one some
+    rule forgets.  Spelled as the printed words, so the targeting reason reads
+    "Protection from mana value 3 or less" with no translation.  No card type,
+    subtype or colour begins "mana value ".
+    """
+    return f"{_MANA_VALUE_PREFIX}{int(value)} {PROTECTION_MANA_VALUE_OPS[op]}"
+
+
+def parse_mana_value_quality(quality: str) -> tuple[str, int] | None:
+    """``(op, value)`` for a :func:`mana_value_quality` string, else None."""
+    if not quality.startswith(_MANA_VALUE_PREFIX):
+        return None
+    number, _, words = quality[len(_MANA_VALUE_PREFIX):].partition(" ")
+    if not number.isdigit():
+        return None
+    for op, printed in PROTECTION_MANA_VALUE_OPS.items():
+        if words == printed:
+            return op, int(number)
+    return None
 
 #: The durations a :class:`PlayerProtection` can carry.  Both printed sentences
 #: say "until your next turn"; ``this_turn`` is here because the cleanup step

@@ -91,6 +91,7 @@ from commanderblitz.engine.triggers import (
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
+    _check_protection_mana_value,
     _reads_announced_x,
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
@@ -150,6 +151,7 @@ from .vocabulary import (  # noqa: F401
     DEFENDING_TRIGGERS,
     DEFENDING_WORDS,
     DELAYED_TRIGGER_KEYS,
+    DERIVED_TYPE_CLAUSES,
     FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
@@ -167,6 +169,7 @@ from .vocabulary import (  # noqa: F401
     PLAYER_TARGET_KINDS,
     PLAYER_WIDE_STATIC_EFFECTS,
     PLURAL_PLAYER_SPEC_NAMES,
+    REPLACE_LOSE_GAME_OPS,
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
@@ -1733,6 +1736,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     final_chapter = _final_chapter(model, abilities, where)
     _check_class_levels(model, abilities, where)
     _check_case(model, abilities, where)
+    _check_reveal_first_draw(abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
@@ -2167,7 +2171,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"additional cost's mana is folded into the spell's price. Put the "
             f"reduction on the card's 'cost_reduction' instead"
         )
-    additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    additional_cost = (
+        _compile_cost(
+            model.additional_cost,
+            where,
+            # A permanent spell becomes the permanent its cost's exiled cards
+            # are linked to; an instant or sorcery becomes nothing.
+            may_link=bool(set(model.types) & PERMANENT_TYPES),
+        )
+        if model.additional_cost
+        else None
+    )
     additional_cost_options: tuple = ()
     if model.additional_cost_options:
         if model.additional_cost is not None:
@@ -3365,6 +3379,33 @@ def _compile_solved_ability(
     return dataclasses.replace(ability, solved=True)
 
 
+def _check_reveal_first_draw(abilities: tuple[Ability, ...], where: str) -> None:
+    """"Whenever you reveal an instant or sorcery card **this way**" needs a way.
+
+    A `reveals_first_draw` trigger hears only the reveals its own permanent's
+    `reveal_first_draw` static let its controller make (`triggers._matches`
+    reads `granted_by`), so one printed without the static loads clean and
+    never fires. Its subject is the revealed card in a hand and its revealer is
+    the static's controller, so `source: "self"` and any `controller` but
+    "you" are a trigger that could never match.
+    """
+    hears = [a for a in abilities if a.trigger is not None and a.trigger.event == "reveals_first_draw"]
+    if not hears:
+        return
+    if not any(a.static is not None and a.static.get("effect") == "reveal_first_draw" for a in abilities):
+        raise DslError(
+            f"{where}: a reveals_first_draw trigger hears the card's own "
+            f"reveal_first_draw static (\"this way\"), and the card prints none"
+        )
+    for ability in hears:
+        spec = ability.trigger
+        if spec.source is not None or spec.controller != "you":
+            raise DslError(
+                f"{where}: a reveals_first_draw trigger is about the card its "
+                f"controller revealed; it takes no 'source' and 'controller' \"you\""
+            )
+
+
 def _check_case(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
     """The card-level half of 719: a Case solves one way, and only a Case does.
 
@@ -3711,7 +3752,12 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         )
 
     cost = (
-        _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)
+        _compile_cost(
+            model.cost,
+            where,
+            defines_x=kind is AbilityKind.ACTIVATED,
+            may_link=kind is AbilityKind.ACTIVATED,
+        )
         if model.cost
         else None
     )
@@ -4776,6 +4822,11 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
             f"whom the creature attacks, a player and never a planeswalker or "
             f"battle; use 'attacking' for true/false"
         )
+    if not top and "derived_types" in filt:
+        raise DslError(
+            f"{path}.derived_types: write it on the outer filter, where it "
+            f"applies to every branch"
+        )
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
@@ -4804,6 +4855,32 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
                 f"branch's value would replace the outer one rather than narrow it"
             )
         _check_static_affects(branch, where, here)
+
+
+def _check_derived_types(filt: Mapping[str, Any], effect: str, path: str) -> None:
+    """``derived_types``: a `buff`'s type clauses read after layer 4 (ADR 0031).
+
+    `true` only, on a `buff` only -- the anthem step of `_compute` is the one
+    reader that holds the types layer 4 left, and any other static asking it
+    would raise mid-game -- and beside at least one type clause, on the outer
+    filter or a branch, since the key changes nothing else.
+    """
+    if "derived_types" not in filt:
+        return
+    if filt["derived_types"] is not True:
+        raise DslError(f"{path}.derived_types: true only")
+    if effect != "buff":
+        raise DslError(
+            f"{path}.derived_types: read only by a 'buff' static, whose layer "
+            f"(7c) runs after the type changes; not {effect!r}"
+        )
+    branches = [b for b in filt.get("any_of") or () if isinstance(b, Mapping)]
+    clauses = set(filt).union(*(set(b) for b in branches))
+    if not clauses & DERIVED_TYPE_CLAUSES:
+        raise DslError(
+            f"{path}.derived_types: changes how {sorted(DERIVED_TYPE_CLAUSES)} "
+            f"read, and the filter names none of them"
+        )
 
 
 def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
@@ -5118,6 +5195,64 @@ def _validate_control_static(model: AbilityModel, where: str) -> None:
         )
 
 
+def _validate_lose_game_replacement(model: AbilityModel, where: str) -> None:
+    """The refusals for a `replace_lose_game` static (The Golden Throne).
+
+    "If you would lose the game, instead exile The Golden Throne and your life
+    total becomes 1." Its `effects` are the "instead", and each refusal here is
+    a card that would load and play wrong:
+
+    * **No effects** is a loss replaced by nothing -- `cant_lose_the_game`
+      wearing a replacement's name.
+    * **An op outside `REPLACE_LOSE_GAME_OPS`**, or an `exile` of anything but
+      the source: the replacement runs inside the state-based actions, which
+      cannot stop to ask a question.
+    * **The source not leaving.** Every printed card removes the permanent
+      that carries the line, and that is what ends it: a replacement that left
+      its source on the battlefield would replace ten poison counters again at
+      every check, for ever.
+    * **"you" only.** "Your life total becomes 1" is the static's controller,
+      the player whose loss it replaces; on an opponent the two would differ.
+    """
+    if not model.effects:
+        raise DslError(
+            f"{where}: replace_lose_game needs 'effects' -- what happens instead "
+            f"of the loss (exile this permanent, set the life total)"
+        )
+    for i, effect in enumerate(model.effects):
+        here = f"{where}.effects[{i}]"
+        _validate_effect(effect, here, {})
+        op = effect.get("op")
+        if op not in REPLACE_LOSE_GAME_OPS:
+            raise DslError(
+                f"{here}: a replace_lose_game static runs inside the state-based "
+                f"actions and may not ask a question, so its effects are "
+                f"{sorted(REPLACE_LOSE_GAME_OPS)}, not {op!r}"
+            )
+        objects = effect.get("objects")
+        if op == "exile" and not (isinstance(objects, Mapping) and objects.get("self_only")):
+            raise DslError(
+                f"{here}: a replace_lose_game static exiles only its own source "
+                f"('objects': {{'zone': 'battlefield', 'self_only': true}})"
+            )
+    if not _effects_move_source(model.effects):
+        raise DslError(
+            f"{where}: replace_lose_game's effects must exile this permanent -- "
+            f"a source left on the battlefield would replace the same loss again "
+            f"at every state-based check"
+        )
+    if model.affects_player not in (None, "you"):
+        raise DslError(
+            f"{where}: replace_lose_game replaces its controller's loss; "
+            f"'affects_player' is 'you', not {model.affects_player!r}"
+        )
+    if model.affects is not None or model.amount is not None:
+        raise DslError(
+            f"{where}: replace_lose_game takes 'effects', 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -5251,7 +5386,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: unknown static effect {model.effect!r} (implemented: {sorted(STATIC_EFFECTS)})"
         )
-    if model.effects:
+    if model.effect == "replace_lose_game":
+        _validate_lose_game_replacement(model, where)
+    elif model.effects:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
@@ -5274,6 +5411,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         _check_attached_to_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
+        _check_derived_types(model.affects, model.effect, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
@@ -6578,6 +6716,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'surveil_addend'/'surveil_optional' only mean anything "
             f"on a replace_surveil static, not on {model.effect!r}"
         )
+    if model.effect == "reveal_first_draw":
+        # "**You** may reveal the first card **you** draw": the reveal is the
+        # controller's, and the `reveals_first_draw` trigger beside it reads
+        # the revealer as "you". A reveal granted to an opponent would be heard
+        # by no trigger this card prints. Nothing reads a filter or a size.
+        if model.affects_player not in (None, "you"):
+            raise DslError(
+                f"{where}: reveal_first_draw reveals its controller's draw; "
+                f"'affects_player' must be \"you\", not {model.affects_player!r}"
+            )
+        if model.affects is not None or model.affects_spells is not None or model.amount is not None:
+            raise DslError(
+                f"{where}: reveal_first_draw takes 'affects_player', "
+                f"'reveal_optional' and an optional 'condition', and no "
+                f"'affects', 'affects_spells' or 'amount' -- what the revealed "
+                f"card must be is the `reveals_first_draw` trigger's filter"
+            )
+    elif model.reveal_optional:
+        raise DslError(
+            f"{where}: 'reveal_optional' only means anything on a "
+            f"reveal_first_draw static, not on {model.effect!r}"
+        )
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
     ):
@@ -7540,6 +7700,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         qualities.append("outside commander identity")
     if model.from_colorless:
         qualities.append("colorless")
+    if model.from_mana_value is not None:
+        qualities.append("mana value")
+    if model.from_everything:
+        qualities.append("everything")
     if model.effect in ("protection", "player_protection"):
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
@@ -7548,7 +7712,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if not qualities:
             raise DslError(
                 f"{where}: {model.effect} needs from_types/from_subtypes/from_colors/"
-                f"from_colorless/from_colors_outside_commander_identity"
+                f"from_colorless/from_mana_value/from_everything/"
+                f"from_colors_outside_commander_identity"
+            )
+        if model.from_everything and len(qualities) > 1:
+            # Everything already contains every other quality; writing one
+            # beside it is a second sentence no card prints, and dead weight.
+            raise DslError(
+                f"{where}: 'from_everything' already covers every other quality -- "
+                f"write it alone"
             )
         if model.effect == "player_protection" and model.affects is not None:
             # "You have protection" names a seat. An `affects` beside it would
@@ -7559,6 +7731,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"protection for permanents is a separate 'protection' static"
             )
         _refuse_protection_sentinels(model.from_subtypes, where)
+        if model.from_mana_value is not None:
+            _check_protection_mana_value(model.from_mana_value, where)
         if model.from_colors_outside_commander_identity and model.from_colors:
             # The computed set already covers every colour the commander lacks,
             # and a printed colour *inside* the identity is a second sentence no
@@ -7602,7 +7776,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif qualities:
         raise DslError(
             f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
-            f"from_colors_outside_commander_identity need effect 'protection' "
+            f"from_mana_value/from_everything/from_colors_outside_commander_identity "
+            f"need effect "
+            f"'protection' "
             f"or 'player_protection'"
         )
     if model.spares is not None:
@@ -7651,6 +7827,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     static: dict[str, Any] = {"effect": model.effect}
+    if model.effect == "replace_lose_game":
+        # What happens instead, carried on the mapping because the mapping is
+        # all `player_statics.lose_game_replacement` ever sees.
+        static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)
     if model.affects is not None:
@@ -7725,6 +7905,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["surveil_addend"] = model.surveil_addend
     if model.surveil_optional:
         static["surveil_optional"] = True
+    if model.reveal_optional:
+        static["reveal_optional"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:
@@ -7793,6 +7975,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["from_colors_outside_commander_identity"] = True
     if model.from_colorless:
         static["from_colorless"] = True
+    if model.from_mana_value is not None:
+        static["from_mana_value"] = dict(model.from_mana_value)
+    if model.from_everything:
+        static["from_everything"] = True
     if model.spares is not None:
         static["spares"] = model.spares
     if model.blockers is not None:

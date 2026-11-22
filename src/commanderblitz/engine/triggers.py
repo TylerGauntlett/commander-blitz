@@ -374,6 +374,21 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: `put_into_graveyard` is the near miss: it fires per card binned, on
     #: every mill, and not at all for a surveil that keeps every card on top.
     "surveils": EventType.SURVEILLED,
+    #: "Whenever you reveal an instant or sorcery card **this way**, create
+    #: Cherubael" -- Inquisitor Eisenhorn; "whenever you reveal a creature card
+    #: this way, draw a card" -- Primitive Etchings. Once per reveal made under
+    #: a `reveal_first_draw` static, fired by `replacements._reveal_first_draw`
+    #: as the first card of the turn is drawn.
+    #:
+    #: The subject is the revealed card, in its owner's hand (see
+    #: `OBJECT_SUBJECT_TRIGGERS`), so a `filter` asks its printed face and
+    #: `{"binding": "subject"}` is "it"; `_actor` reads `event.player`, the
+    #: revealer. "This way" is not a key: `_matches` hears only a reveal whose
+    #: `granted_by` names the permanent carrying the trigger, so another
+    #: permanent's reveal of the same card -- or a miracle's -- is not one.
+    #: `draw` with `nth: 1` is the near miss and fires on the draw whether or
+    #: not anything was revealed.
+    "reveals_first_draw": EventType.REVEALED_FIRST_DRAW,
     #: "Whenever you win a clash, draw a card." -- Marvo, Deep Operative. Once
     #: per clash won (701.23b), whatever made the clash: `ops_cards.op_clash`
     #: fires one `CLASHED` per clashing player carrying that player's own
@@ -790,6 +805,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "explores",
         "explores_land",
         "explores_nonland",
+        # The revealed card, in its owner's hand, so a filter asks "an
+        # **instant or sorcery** card" of its printed face. Never the
+        # permanent whose static let it be revealed: that is `granted_by`, and
+        # `_matches` reads it for "this way".
+        "reveals_first_draw",
         # The Saga itself. Listed so `source: "self"` -- which the loader always
         # supplies for a chapter -- scopes the ability to *this* Saga rather than
         # to every Saga on the table, and so `_actor` reads the Saga's controller
@@ -1774,6 +1794,13 @@ def _matches(
     ):
         return False
 
+    # "Whenever you reveal a card **this way**": only the reveal this
+    # permanent's own `reveal_first_draw` static let its controller make. Two
+    # granters on one board reveal the card once and both hear it, and a
+    # permanent that prints the trigger without the static hears nothing.
+    if spec.event == "reveals_first_draw" and obj.oid not in event.data.get("granted_by", ()):
+        return False
+
     if spec.event in ("deals_damage_to_player", "deals_damage") and subject_oid is None:
         # "Whenever **enchanted creature** deals damage" is a claim about a
         # permanent, and the subject is the only thing that names it. Damage can
@@ -2649,7 +2676,7 @@ def _actor(
     # `put_into_graveyard` is listed for `discard`'s reason: the clause asks
     # whose **graveyard**, which is the owner's (400.3) and is on the event,
     # while the subject's controller is whatever `reset_permanent_state` left.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils", "wins_clash"):
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip", "gives_gift", "put_into_graveyard", "investigates", "surveils", "wins_clash", "reveals_first_draw"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

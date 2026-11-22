@@ -404,6 +404,16 @@ class TargetModel(BaseModel):
     #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
+    #: The printed-characteristics clauses the **spell half** of a
+    #: ``"spell_or_ability"`` target adds to `selector` -- "counter target
+    #: **instant spell, sorcery spell**, activated ability, or triggered
+    #: ability" (Sister of Silence), where "instant, sorcery" narrows only the
+    #: spells and every activated or triggered ability stays legal. Merged over
+    #: `selector`, whose ``controller`` and ``that_targets`` still narrow both
+    #: halves. Refused on every other kind, with ``controller``,
+    #: ``that_targets`` or ``zone`` in it, and with a clause naming a sibling
+    #: target or ``{X}``.
+    spell_selector: dict[str, Any] | None = None
     #: The player spec the **player half** of a ``"any"`` target reads instead
     #: of `selector`'s ``controller`` -- "target **opponent** or planeswalker"
     #: (Theater of Horrors, Collective Defiance), where "opponent" narrows only
@@ -1192,6 +1202,15 @@ class AbilityModel(BaseModel):
     #: ``from_colors`` letter because colorless is not a colour; matched against
     #: any source with no colours at all.
     from_colorless: bool = False
+    #: "Protection from mana value 3 or less" (702.16, 202.3). A comparison,
+    #: ``{"op": "<=", "value": 3}``, against the source's mana value -- the
+    #: selector language's spelling, with ``op`` one of ``<=`` and ``>=`` and a
+    #: literal integer ``value``.
+    from_mana_value: dict[str, Any] | None = None
+    #: "Protection from everything" (702.16i) -- `grant_protection`'s flag, on
+    #: the lasting static (Vexilus Praetor). Every other quality is refused
+    #: beside it: everything already contains them.
+    from_everything: bool = False
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not
@@ -1415,6 +1434,10 @@ class AbilityModel(BaseModel):
     #: per static and before any card is looked at, whether to take the extra
     #: cards. Without it the addend always applies.
     surveil_optional: bool = False
+    #: ``reveal_first_draw``: "you **may** reveal the first card you draw each
+    #: turn" -- the revealer is asked as the card is drawn. Without it the
+    #: reveal is Primitive Etchings' "reveal", and nobody is asked.
+    reveal_optional: bool = False
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.

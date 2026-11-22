@@ -998,6 +998,19 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     it would hide is a bug in the first.
     """
     condition = getattr(ability, "activation_condition", None)
+    # Defenders of Humanity: "Activate only if you control no creatures and
+    # only during your turn." An ``all`` is satisfied clause by clause; the
+    # sandbox already stands in your own main phase, so ``is_your_turn`` needs
+    # nothing, and a ``not exists`` is satisfied by clearing what it names.
+    if isinstance(condition, dict) and "all" in condition:
+        for clause in condition["all"]:
+            if not isinstance(clause, dict):
+                continue
+            if "exists" in clause:
+                _satisfy_an_exists(game, registry, clause["exists"])
+            elif isinstance(clause.get("not"), dict) and "exists" in clause["not"]:
+                _clear_an_exists(game, clause["not"]["exists"])
+        return
     if isinstance(condition, dict) and "exists" in condition:
         _satisfy_an_exists(game, registry, condition["exists"])
         return
@@ -1193,6 +1206,34 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+
+
+def _clear_an_exists(game: Game, selector: dict) -> None:
+    """"Activate only if you control no creatures" -- Defenders of Humanity.
+
+    The mirror of `_satisfy_an_exists`: the sandbox's own creatures are what the
+    condition forbids, so the ones it names leave the battlefield for the
+    graveyard. Only "you control it on the battlefield" and a ``types`` list
+    are read, against `chars`, so a card that names the wrong type still fails;
+    any other shape is left alone and the ability reports as unusable.
+    """
+    if selector.get("controller", "you") != "you":
+        return
+    if selector.get("zone", "battlefield") != "battlefield":
+        return
+    if set(selector) - {"controller", "zone", "types"}:
+        return
+    wanted = set(selector.get("types") or ())
+    for other in list(game.state.battlefield):
+        obj = game.state.objects[other]
+        if obj.controller != 0:
+            continue
+        if wanted and not wanted & set(chars(game.state, other).types):
+            continue
+        game.state.battlefield.remove(other)
+        obj.zone = Zone.GRAVEYARD
+        game.state.players[0].zone_list(Zone.GRAVEYARD).append(other)
+    game.state.bump_chars()
 
 
 def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:

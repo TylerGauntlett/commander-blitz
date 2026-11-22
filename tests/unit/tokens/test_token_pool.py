@@ -33,6 +33,7 @@ from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import (
     find_action,
     keywords,
+    oids_of,
     only_oid,
     pass_until,
     pt,
@@ -3596,6 +3597,61 @@ class TestReignOfThePitsDemonIsAnXXBlackFlier:
         assert not pool.get("aetherborn_x_x_b").keywords
 
 
+class TestEisenhornsCherubaelIsALegendaryDemon:
+    """Inquisitor Eisenhorn: *"create **Cherubael, a legendary 4/4 black
+    Demon** creature token with flying."*
+
+    Two near misses, both Demons with flying: `demon_x_x_b_flying` is the same
+    colour sized by its maker and has no name or supertype, and
+    `vampire_demon_4_3_wb_flying` is a white-black 4/3 that is also a Vampire.
+    The name and the supertype are what put Cherubael under the legend rule
+    (704.5j), so a second one made while the first is out replaces it rather
+    than joining it.
+    """
+
+    TOKEN = "cherubael_4_4_b_flying"
+
+    def test_it_is_a_legendary_black_four_four_demon_with_flying(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Cherubael"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.variable_pt
+        assert list(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Demon"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert not pool.get("demon_x_x_b_flying").supertypes
+        assert pool.get("demon_x_x_b_flying").variable_pt
+        assert "Vampire" in pool.get("vampire_demon_4_3_wb_flying").subtypes
+
+    def test_a_second_cherubael_puts_the_first_into_the_graveyard(self, builder):
+        from commanderblitz.engine.primitives import create_token
+        from commanderblitz.engine.sba import run as run_sba
+
+        game = two_seat_board(builder)
+        create_token(game.state, self.TOKEN, 0)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1
+        create_token(game.state, self.TOKEN, 0)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1, "704.5j keeps one"
+
+    def test_each_player_may_keep_their_own(self, builder):
+        from commanderblitz.engine.primitives import create_token
+        from commanderblitz.engine.sba import run as run_sba
+
+        game = two_seat_board(builder)
+        create_token(game.state, self.TOKEN, 0)
+        create_token(game.state, self.TOKEN, 1)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1
+        assert len(oids_of(game, self.TOKEN, 1)) == 1
+
+
 class TestMajasHumanWarriorIsBothTypes:
     """Maja, Bretagard Protector: *"Landfall — Whenever a land you control
     enters, create a **1/1 white Human Warrior** creature token."*
@@ -3617,3 +3673,51 @@ class TestMajasHumanWarriorIsBothTypes:
     def test_the_near_misses_are_still_separate_tokens(self, pool):
         assert "Warrior" not in pool.get("human_1_1_w").subtypes
         assert "Human" not in pool.get("warrior_1_1_w").subtypes
+
+
+class TestTheAstartesWarriorHasVigilance:
+    """Birth of the Imperium, Marneus Calgar, Defenders of Humanity and the rest
+    of Forces of the Imperium: *"create a **2/2 white Astartes Warrior**
+    creature token **with vigilance**."*
+
+    The near miss is `knight_2_2_w_vigilance`: same body, same keyword, wrong
+    creature types -- and the deck counts Astartes and Warriors. Rule 111.4:
+    a token is exactly what its creating effect says.
+    """
+
+    def test_it_is_a_white_astartes_warrior_with_vigilance(self, pool):
+        token = pool.get("astartes_warrior_2_2_w_vigilance")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["W"]
+        assert sorted(token.subtypes) == ["Astartes", "Warrior"]
+        assert list(token.keywords) == ["vigilance"]
+        assert not token.abilities
+
+    def test_the_knight_is_still_a_separate_token(self, pool):
+        knight = pool.get("knight_2_2_w_vigilance")
+        assert "Astartes" not in knight.subtypes
+
+
+class TestTheDatasmithsRobotCantBlock:
+    """Cybernetica Datasmith: *"create a **4/4 colorless Robot artifact**
+    creature token with **"This token can't block."**"*
+
+    The near misses are the 3/3 Robot gap other cards file and the red Pirate
+    that also can't block; neither is a colourless 4/4 artifact.
+    """
+
+    def test_it_is_a_colorless_four_four_artifact_robot(self, pool):
+        token = pool.get("robot_4_4_c_cant_block")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.colors
+        assert "Artifact" in token.types
+        assert list(token.subtypes) == ["Robot"]
+
+    def test_it_cant_block(self, pool):
+        token = pool.get("robot_4_4_c_cant_block")
+        assert [a.static.get("effect") for a in token.abilities] == ["cant_block"]
+
+    def test_the_pirate_is_still_a_separate_token(self, pool):
+        assert sorted(pool.get("pirate_4_2_r_cant_block").colors) == ["R"]

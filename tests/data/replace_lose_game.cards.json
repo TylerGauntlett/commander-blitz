@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards that exist only for tests/unit/players/test_replace_lose_game.py. `t_golden_throne` is The Golden Throne's Arcane Life-support line as printed, without the mana ability the test does not need and not legendary, so two of them can show the second replacing the next loss; `t_platinum_holder` is a plain 'you can't lose the game' static, so the test can show the prohibition is asked before the replacement.",
+  "cards": [
+    {
+      "id": "t_golden_throne",
+      "name": "Test Golden Throne",
+      "oracle_text": "If you would lose the game, instead exile Test Golden Throne and your life total becomes 1.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would lose the game, instead exile Test Golden Throne and your life total becomes 1.",
+          "effect": "replace_lose_game",
+          "affects_player": "you",
+          "effects": [
+            {"op": "exile", "objects": {"zone": "battlefield", "self_only": true}},
+            {"op": "set_life_total", "amount": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_platinum_holder",
+      "name": "Test Platinum Holder",
+      "oracle_text": "You can't lose the game.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You can't lose the game.",
+          "effect": "cant_lose_the_game",
+          "affects_player": "you"
+        }
+      ]
+    }
+  ]
+}

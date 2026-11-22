@@ -247,7 +247,7 @@ class TestTheLoaderRefuses:
         compile_card(_lighthouse_card())
 
     def test_a_plain_loss_without_cant_have(self):
-        """"Loses flying until end of turn" is the weaker, unbuilt removal."""
+        """"Loses flying until end of turn" is the weaker removal, another op."""
         with pytest.raises(DslError, match="cant_have"):
             compile_card(_lighthouse_card(cant_have=None))
 
