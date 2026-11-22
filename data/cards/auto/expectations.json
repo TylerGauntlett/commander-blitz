@@ -8100,6 +8100,11 @@
     },
     "zone": "graveyard"
   },
+  "exterminatus": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
+  },
   "extract_brain": {
     "hand_size": {
       "0": 1

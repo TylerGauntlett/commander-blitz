@@ -88862,12 +88862,12 @@
     },
     "Exterminatus": {
       "edhrec_rank": 10691,
-      "gate": "template",
+      "gate": null,
       "name": "Exterminatus",
-      "reason": "no template for: Nonland permanents your opponents control lose indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "196703b0-78bf-4f85-ae81-7335fe486982",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extinction": {

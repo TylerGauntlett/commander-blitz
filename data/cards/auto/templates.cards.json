@@ -96349,6 +96349,51 @@
     {
       "color_identity": [
         "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "exterminatus",
+      "mana_cost": "{5}{W}{B}",
+      "name": "Exterminatus",
+      "oracle_text": "Nonland permanents your opponents control lose indestructible until end of turn.\nDestroy all nonland permanents.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "lose_keyword_timestamped"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
         "U"
       ],
       "colors": [

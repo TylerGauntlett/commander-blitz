@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **459** capabilities.
+**541 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -441,7 +441,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
-| [timed-keyword-loss](#timed-keyword-loss) | 1 | 10691 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
@@ -7283,20 +7282,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## timed-keyword-loss
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect op for a bare "<objects> lose <keyword> until end of turn": a layer-6 keyword removal (613.7, timestamped) written as an until-end-of-turn entry on each object found as it resolves (611.2c), which a later grant of the same keyword overrides -- the effect-side twin of the `lose_keyword_timestamped` static
-  <br>Why the existing vocabulary won't do: The `lose_keyword` op implements only the "lose X and can't have X" prohibition (the loader requires cant_have: true, and its docstring says reading a bare loss as the prohibition makes the card stronger); `lose_keyword_timestamped` is a static only, lasting while a source permanent stays, so a sorcery cannot carry it; `lose_all_abilities` strips every ability, not one keyword. The second sentence (destroy with objects {zone: battlefield, not_types: [Land], controller: any}) is expressible once the first is.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exterminatus** (rank 10691) — `exterminatus`
-  - Nonland permanents your opponents control lose indestructible until end of turn.
 
 </details>
 
