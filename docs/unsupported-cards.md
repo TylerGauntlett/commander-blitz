@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**537 cards** blocked by **455** capabilities.
+**536 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -136,7 +136,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-graveyard-nonpermanent](#cast-from-graveyard-nonpermanent) | 1 | 8554 | static_effect |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
-| [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
 | [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
 | [cast-only-if](#cast-only-if) | 1 | 12277 | engine |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
@@ -2917,20 +2916,6 @@ Blocks **1** card.
 
 - **Into the Pit** (rank 5828) — `into_the_pit`
   - You may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs.
-
-</details>
-
-## cast-from-library-top-colorless
-
-Blocks **1** card.
-
-- **(selector)** a `colorless: true` key in the `affects_spells` filter of a cast_from_library_top static, so "colorless spells" can be matched against the top card (zero printed colours, 105.2c); the artifact half is then a second cast_from_library_top static with types ["Artifact"], or one filter using any_of over the two
-  <br>Why the existing vocabulary won't do: cast_from_library_top's affects_spells accepts only LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has neither `colorless` nor `any_of`; `colors` is a membership test and cannot say zero colours, and `min_colors` only sets a floor. characteristics._matches_printed already reads `colorless` and `any_of`, so the change is admitting the key in the loader's vocabulary. Writing only the artifact half would drop colorless nonartifact spells (Eldrazi, Kozilek's Return-style colorless cards)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mystic Forge** (rank 414) — `mystic_forge`
-  - You may cast artifact spells and colorless spells from the top of your library.
 
 </details>
 

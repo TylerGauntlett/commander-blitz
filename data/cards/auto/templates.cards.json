@@ -199106,6 +199106,65 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "text": "You may look at the top card of your library any time."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "colorless": true
+              }
+            ]
+          },
+          "effect": "cast_from_library_top",
+          "kind": "static",
+          "text": "You may cast artifact spells and colorless spells from the top of your library."
+        },
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Exile the top card of your library."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mystic_forge",
+      "mana_cost": "{4}",
+      "name": "Mystic Forge",
+      "oracle_text": "You may look at the top card of your library any time.\nYou may cast artifact spells and colorless spells from the top of your library.\n{T}, Pay 1 life: Exile the top card of your library.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

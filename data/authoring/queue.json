@@ -182272,12 +182272,12 @@
     },
     "Mystic Forge": {
       "edhrec_rank": 414,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Forge",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "375e6985-e212-4bd0-b06c-0ca7dc1f68e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mystic Gate": {
