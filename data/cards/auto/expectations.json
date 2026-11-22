@@ -18633,6 +18633,16 @@
     },
     "zone": "graveyard"
   },
+  "plasmancer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "plateau": {
     "zone": "battlefield"
   },
@@ -19155,6 +19165,10 @@
     "zone": "battlefield"
   },
   "prowling_caracal": {
+    "zone": "battlefield"
+  },
+  "psychomancer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "psychosis_crawler": {
@@ -20214,6 +20228,10 @@
     "life": {
       "0": 46
     }
+  },
+  "resurrection_orb": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "retether": {
     "battlefield_count": 32,

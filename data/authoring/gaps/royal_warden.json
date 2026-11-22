@@ -1,0 +1,18 @@
+{
+  "card_id": "royal_warden",
+  "name": "Royal Warden",
+  "oracle_text": "Phalanx Commander — When this creature enters, create two tapped 2/2 black Necron Warrior artifact creature tokens.\nUnearth {3}{B} ({3}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+  "blocked_sentences": [
+    "Phalanx Commander — When this creature enters, create two tapped 2/2 black Necron Warrior artifact creature tokens."
+  ],
+  "needs": [
+    {
+      "capability": "necron_warrior_token",
+      "kind": "token",
+      "what": "a 2/2 black Necron Warrior artifact creature token with no abilities (e.g. id necron_warrior_2_2_b_artifact)",
+      "why_existing_wont_do": "token_ids has no Necron Warrior and no 2/2 black artifact creature token; the nearest 2/2 black tokens (rogue_2_2_b, zombie_2_2_b, astartes_warrior_2_2_b_menace) are not artifacts and have the wrong creature types or extra keywords. The rest of the card is expressible: create_token takes tapped and amount, and Unearth follows the cityscape_leveler example."
+    }
+  ],
+  "closest_existing": ["rogue_2_2_b", "astartes_warrior_2_2_b_menace"],
+  "confidence": "high"
+}

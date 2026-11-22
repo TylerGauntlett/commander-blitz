@@ -1,0 +1,14 @@
+{
+  "card_id": "necron_overlord",
+  "name": "Necron Overlord",
+  "oracle_text": "Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.",
+  "blocked_sentences": ["Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life."],
+  "needs": [{
+    "capability": "tap_x_with_mana_x",
+    "kind": "cost",
+    "what": "an activated-ability cost that pays {X} generic mana AND taps X untapped permanents matching a selector (here artifacts you control), both read from the single announced X, with the ceiling bounded by both the tap_x pool and affordable mana",
+    "why_existing_wont_do": "tap_x announces X and the loader (cards/loader/mana.py) refuses a second X in 'mana' beside it; tap_x alone drops the {X} mana payment, and mana {X} with tap_permanents needs a fixed count, so neither says the printed cost exactly"
+  }],
+  "closest_existing": ["tap_x", "tap_permanents"],
+  "confidence": "high"
+}

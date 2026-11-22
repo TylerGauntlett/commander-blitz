@@ -184542,12 +184542,12 @@
     },
     "Necron Overlord": {
       "edhrec_rank": 12408,
-      "gate": "template",
+      "gate": "compile",
       "name": "Necron Overlord",
-      "reason": "no template for: Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X",
+      "reason": "necron_overlord.abilities[0].cost: 'tap_x' announces this ability's X, so the cost may not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', 'discard_x' or 'sacrifice_x'",
       "scryfall_id": "18cdd4b0-d969-43f3-a1a1-c9ad3fedce10",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Necropanther": {
@@ -204072,12 +204072,12 @@
     },
     "Plasmancer": {
       "edhrec_rank": 13731,
-      "gate": "template",
+      "gate": null,
       "name": "Plasmancer",
-      "reason": "no template for: Dynastic Advisor — When this creature enters, search your library for a basic Swamp card, ",
+      "reason": "",
       "scryfall_id": "8deb5d3a-0762-4c4f-afef-fd86728914b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plate Armor": {
@@ -209492,12 +209492,12 @@
     },
     "Psychomancer": {
       "edhrec_rank": 8799,
-      "gate": "template",
+      "gate": null,
       "name": "Psychomancer",
-      "reason": "no template for: Harbinger of Despair — Whenever this creature or another nontoken artifact you control is ",
+      "reason": "",
       "scryfall_id": "32c7cab2-4fc9-4d53-ba67-902f72799d20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Psychosis Crawler": {
@@ -221842,12 +221842,12 @@
     },
     "Resurrection Orb": {
       "edhrec_rank": 4194,
-      "gate": "template",
+      "gate": null,
       "name": "Resurrection Orb",
-      "reason": "no template for: Whenever equipped creature dies, return that card to the battlefield under its owner's con",
+      "reason": "",
       "scryfall_id": "2d6209c8-9fa1-4f0a-ab65-ac2fedfcd09b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Resuscitate": {
