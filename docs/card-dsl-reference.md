@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 187 |
+| [Effect ops](#effect-ops) | 188 |
 | [Selectors](#selectors) | 81 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
@@ -204,6 +204,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
+| `next_spell_gains_cascade` | Stack |  | The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself. | [A spell given cascade — next_spell_gains_cascade](card-dsl-cookbook.md#a-spell-given-cascade--next_spell_gains_cascade) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
 | `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |

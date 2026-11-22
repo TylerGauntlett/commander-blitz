@@ -20,7 +20,11 @@ from ..stack import StackItem, ability_of, announce_targets, spell_target_specs
 from ..state import new_object
 from ..structs import CONVOKED_BINDING, UNCOUNTERABLE_GRANT_DURATIONS, TriggerInstance
 from ..targeting import describe_ref, enumerate_target_tuples, filter_legal
-from ..temp_effects import grant_uncounterable, uncounterable_grant_covers
+from ..temp_effects import (
+    grant_next_spell_cascade,
+    grant_uncounterable,
+    uncounterable_grant_covers,
+)
 from ..triggers import fire
 from ..zones import move_object
 from .context import EffectContext, ask_mode
@@ -455,6 +459,38 @@ def op_uncounterable_this_turn(ctx: EffectContext, spec: Mapping[str, Any]):
         duration=duration,
         source=ctx.source_oid,
     )
+
+
+@register("next_spell_gains_cascade")
+def op_next_spell_gains_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"The next creature spell you cast this turn has cascade." -- Sloppity
+    Bilepiper. Rules 702.85a, 611.2a.
+
+    The spell itself **has** cascade: the first matching cast binds a
+    `structs.CascadeGrant` to that spell's stack item, and
+    `triggers._candidate_abilities` yields the rules-supplied
+    `carddef.CASCADE_TRIGGER` off the spell as its cast triggers are gathered.
+    So the trigger's source is the spell, the ceiling is the spell's own mana
+    value and the walk is down its caster's library -- none of which a
+    `delayed_trigger` running the `cascade` op from the granting permanent
+    gets right.
+
+    ``affects_spells`` is the printed-face filter ("creature spell",
+    "noncreature spell" -- Dark Apostle); absent, the next spell of any kind.
+    A chosen type or colour in it is substituted **now**, from the source as it
+    resolves. ``player`` is whose next spell (default ``"you"``): "The next
+    spell **they** cast this turn has cascade" (Bigger on the Inside) names the
+    target player. An unspent grant ends at cleanup.
+    """
+
+    filt = spec.get("affects_spells")
+    if filt:
+        source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        filt = resolve_chosen_colors(resolve_chosen_subtypes(filt, source), source)
+    for pid in select_players(ctx, spec.get("player", "you")):
+        grant_next_spell_cascade(
+            ctx.state, pid, affects_spells=filt or None, source=ctx.source_oid
+        )
 
 
 @register("grant_rebound")

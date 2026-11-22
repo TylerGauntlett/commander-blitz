@@ -2672,3 +2672,28 @@ DECAYED_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(DECAYED_TRIGGER)
+
+
+#: Cascade's trigger (702.85a) for a spell that was **given** cascade rather
+#: than printed with it: "When you cast this spell, exile cards from the top of
+#: your library until you exile a nonland card with lesser mana value. You may
+#: cast it without paying its mana cost. Put the exiled cards on the bottom of
+#: your library in a random order."
+#:
+#: Rules-supplied for exalted's reason: "the next creature spell you cast this
+#: turn has cascade" (Sloppity Bilepiper) hands the keyword to a card that
+#: prints no trigger to fire. `triggers._candidate_abilities` yields it off a
+#: spell on the stack once per granted instance (702.85c), with the **spell**
+#: as the source -- so the `cascade` op's default ceiling is that spell's mana
+#: value and its controller's library is walked, and the trigger resolves
+#: whatever became of the permanent that granted it. A printed cascade is still
+#: the card's own `spell_cast` trigger, which is the same ability written out.
+CASCADE_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Cascade",
+    trigger=TriggerSpec(event="spell_cast", controller="you", source="self"),
+    effects=({"op": "cascade"},),
+    active_zones=(Zone.STACK,),
+)
+_RULES_ABILITIES.append(CASCADE_TRIGGER)

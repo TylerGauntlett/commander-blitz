@@ -458,6 +458,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 H_COUNTER_TO_EXILE),
     "uncounterable_this_turn": ("Stack", "Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source.",
                                 '"Creature spells you cast this turn can\'t be countered"'),
+    "next_spell_gains_cascade": ("Stack", "The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself.",
+                                 "A spell given cascade — `next_spell_gains_cascade`"),
     "copy_spell": ("Stack", "Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed.",
                    '"You may choose new targets for the copy"'),
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),

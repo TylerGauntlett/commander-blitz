@@ -1157,6 +1157,7 @@
   "must_block",
   "must_block_any",
   "next_spell_cost_reduction",
+  "next_spell_gains_cascade",
   "no_maximum_hand_size",
   "noop",
   "pair",

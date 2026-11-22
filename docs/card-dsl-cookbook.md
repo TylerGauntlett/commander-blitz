@@ -17509,6 +17509,37 @@ and a `destination_if` beside it — `destination_if` matches the card's printed
 face and never asks. Wrapping the search in `if` + `may` is the near miss: it
 asks battlefield-or-hand before the card is found.
 
+## A spell given cascade — `next_spell_gains_cascade`
+
+```jsonc
+// Sloppity Bilepiper: "{2}, {T}, Sacrifice a creature: The next creature
+// spell you cast this turn has cascade."
+{ "op": "next_spell_gains_cascade", "affects_spells": { "types": ["Creature"] } }
+// Bigger on the Inside: "The next spell they cast this turn has cascade."
+{ "op": "next_spell_gains_cascade", "player": { "target": "t1" } }
+```
+
+The spell itself **has** cascade (702.85a). The op writes a
+`structs.CascadeGrant` for each `player` (default `"you"`); the first cast
+matching `affects_spells` binds it to that spell's stack item in
+`GameState._tally`, before the cast's triggers are gathered, and
+`triggers._candidate_abilities` then yields the rules-supplied
+`carddef.CASCADE_TRIGGER` off the spell, once per grant (702.85c). So the
+trigger's source and controller are the spell's, its walk is down the caster's
+library, its ceiling is the spell's mana value with its X (202.3e), and it
+resolves whatever became of the permanent that granted it. An unspent grant
+ends at cleanup.
+
+`affects_spells` reads the printed face (`SPELL_FILTER_KEYS` without
+`controller`; absent, any spell). The loader refuses a `duration`,
+`max_mana_value`, `types` or `affects` beside it, since each would be read by
+nothing.
+
+The near miss is a `delayed_trigger` on `spell_cast` running `cascade` with
+`max_mana_value: {"mana_value_of": {"binding": "subject"}}`: that ability
+belongs to the granting permanent, not the spell, and walks its controller's
+library rather than the caster's.
+
 ## Discover — cascade's walk, N or less, cast or hand
 
 ```jsonc

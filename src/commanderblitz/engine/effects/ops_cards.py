@@ -51,7 +51,7 @@ from .selectors import (
     resolve_pool,
     select_players,
 )
-from .values import evaluate_value
+from .values import evaluate_value, object_mana_value
 
 DESTINATIONS = {
     "hand": Zone.HAND,
@@ -2758,14 +2758,16 @@ def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
     ``max_mana_value`` is the ceiling the exiled card must come in under, and it
     defaults to **this spell's own** mana value, which is what every printing
     says. It is read off the source rather than written into the card, because a
-    cascade spell's own cost is the number.
+    cascade spell's own cost is the number -- the X it was cast with included
+    (202.3e), which a granted cascade (`next_spell_gains_cascade`) on an {X}
+    spell reaches.
     """
     pid = ctx.controller
     library = ctx.state.players[pid].library
     limit = spec.get("max_mana_value")
     if limit is None:
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
-        ceiling = ctx.state.card_of(source).mana_value if source is not None else 0
+        ceiling = object_mana_value(ctx.state, source) if source is not None else 0
     else:
         ceiling = evaluate_value(ctx, limit)
 

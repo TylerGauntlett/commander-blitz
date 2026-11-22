@@ -15,6 +15,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import (
+    CASCADE_TRIGGER,
     CLOAK_WARD,
     DECAYED_TRIGGER,
     DETHRONE_TRIGGER,
@@ -57,6 +58,7 @@ from .objects import GameObject
 from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
 from .structs import DelayedTrigger, TriggerInstance
+from .temp_effects import granted_cascade_instances
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -1626,6 +1628,11 @@ def _candidate_abilities(state: GameState, event: GameEvent):
             continue
         seen.add(item.oid)
         yield from emit_from(obj, Zone.STACK)
+        # A spell that was *given* cascade (702.85a) -- "the next creature
+        # spell you cast this turn has cascade" -- has the rules' trigger once
+        # per instance (702.85c), with the spell itself as the source.
+        for _ in range(granted_cascade_instances(state, item)):
+            yield obj, CASCADE_TRIGGER
 
     for p in state.players:
         for zone in (Zone.COMMAND, Zone.GRAVEYARD, Zone.HAND, Zone.EXILE):

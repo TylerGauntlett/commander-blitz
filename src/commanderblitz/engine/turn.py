@@ -43,6 +43,7 @@ from .temp_effects import (
     clear_attack_restrictions,
     clear_attack_taxes,
     clear_block_prohibitions,
+    clear_cascade_grants,
     clear_cast_locks,
     clear_combat_fogs,
     clear_damage_redirects,
@@ -905,6 +906,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # "Creature spells you cast this turn can't be countered" (Domri, Anarch of
     # Bolas). Owned by no permanent: the walker may be long gone.
     clear_uncounterable_grants(state, "this_turn")
+    # "The next creature spell you cast this turn has cascade" (Sloppity
+    # Bilepiper), swept for the same reason.
+    clear_cascade_grants(state)
     clear_life_floors(state, "this_turn")
     # Lazotep Plating's "you … gain hexproof until end of turn". Owned by no
     # permanent: the instant that granted it is already in the graveyard.

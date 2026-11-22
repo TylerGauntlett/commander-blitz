@@ -1352,6 +1352,34 @@ class UncounterableGrant:
     source: int | None = None
 
 
+@dataclass(frozen=True)
+class CascadeGrant:
+    """"The next creature spell you cast this turn has cascade." -- Sloppity
+    Bilepiper. Rules 702.85a, 611.2a.
+
+    `UncounterableGrant`'s ``next_spell`` shape with an ability instead of a
+    shield: owned by the player (the Bilepiper may be gone before the spell is
+    cast), bound by the first matching cast to that spell's stack item
+    (``sid``), and swept at cleanup. What it gives is **the spell's own
+    cascade**: `triggers._candidate_abilities` yields the rules-supplied
+    `carddef.CASCADE_TRIGGER` off the bound spell, so the trigger's source is
+    the spell, its ceiling is that spell's mana value, and it resolves whatever
+    became of the permanent that granted it.
+
+    ``affects_spells`` is the printed-face filter ("creature", "noncreature");
+    ``None`` is the next spell of any kind (Bigger on the Inside).
+    """
+
+    #: Whose next spell gains cascade.
+    player: int
+    #: The printed-face filter; ``None`` matches every spell.
+    affects_spells: Mapping[str, Any] | None = None
+    #: The stack item it was bound to by the cast that spent it.
+    sid: int | None = None
+    #: The object whose ability installed it, for the log.
+    source: int | None = None
+
+
 LIFE_LOCK_DURATIONS =("this_turn", "until_your_next_turn")
 
 

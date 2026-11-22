@@ -4152,6 +4152,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: uncounterable_this_turn takes no {key!r} -- it covers "
                     f"the resolving controller's spells against every counter"
                 )
+    if op == "next_spell_gains_cascade":
+        # A misspelt type would narrow the grant to no spell -- an activation
+        # doing nothing -- and a seat or board key would be read by nothing.
+        filt = effect.get("affects_spells")
+        if filt is not None:
+            if not isinstance(filt, Mapping) or not filt:
+                raise DslError(
+                    f"{where}.affects_spells: a non-empty spell filter, or omit it "
+                    f"for the player's next spell of any kind"
+                )
+            unknown = set(filt) - (SPELL_FILTER_KEYS - {"controller"})
+            if unknown:
+                raise DslError(
+                    f"{where}.affects_spells: a spell's printed face only -- the "
+                    f"seat is 'player'; unsupported keys {sorted(unknown)}"
+                )
+            for key in ("types", "any_types", "not_types"):
+                for t in filt.get(key) or ():
+                    if t not in KNOWN_TYPES:
+                        raise DslError(f"{where}.affects_spells.{key}: unknown card type {t!r}")
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        for key in ("duration", "max_mana_value", "types", "affects"):
+            # "This turn" is the only clock printed, the ceiling is the spell's
+            # own mana value as every cascade's is, and the spell is named by
+            # `affects_spells` -- each of these would be read by nothing.
+            if key in effect:
+                raise DslError(
+                    f"{where}: next_spell_gains_cascade takes no {key!r} -- it "
+                    f"names the spell with 'affects_spells' and the seat with 'player'"
+                )
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "lose_all_player_counters":
