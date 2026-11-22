@@ -155,7 +155,7 @@ def reduction_amount(
       `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
       **this way**".
 
-    Eight shapes of arithmetic, exactly one per spec, and an optional ``each``
+    Nine shapes of arithmetic, exactly one per spec, and an optional ``each``
     multiplier beside the ones that count:
 
     - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
@@ -170,6 +170,9 @@ def reduction_amount(
     - ``{"energy_spent_this_turn": <player spec>}`` -- Blaster Hulk, "{1}
       less for each {E} you've paid or lost this turn". The one head that
       reads the turn ledger rather than the board, so it takes a player spec.
+    - ``{"creatures_died_this_turn": <player spec>}`` -- Blood for the Blood
+      God!, "{1} less for each creature that died this turn" (``"all"``). The
+      other ledger head, the value leaf of the same name.
     - ``{"greatest_count": {filter}}`` -- Cavern-Hoard Dragon, "where X is the
       greatest number of artifacts **an opponent** controls".  The same
       relation `greatest_mana_value` has to `total_mana_value`, one axis over:
@@ -229,14 +232,15 @@ def reduction_amount(
                 for oid in _reduction_matches(state, pid, spec["distinct_mana_values"], source_oid)
             }
         )
-    if "energy_spent_this_turn" in spec:
-        # "…{1} less for each {E} you've paid or lost this turn" (Blaster
-        # Hulk). The value leaf of the same name, read through a context with
-        # nothing on the stack: a player spec needs only the controller.
-        ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
-        return max(
-            0, evaluate_value(ctx, {"energy_spent_this_turn": spec["energy_spent_this_turn"]})
-        )
+    for ledger_key in ("energy_spent_this_turn", "creatures_died_this_turn"):
+        if ledger_key in spec:
+            # "…{1} less for each {E} you've paid or lost this turn" (Blaster
+            # Hulk), "…for each creature that died this turn" (Blood for the
+            # Blood God!). The value leaf of the same name, read through a
+            # context with nothing on the stack: a player spec needs only the
+            # controller.
+            ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+            return max(0, evaluate_value(ctx, {ledger_key: spec[ledger_key]}))
     if "greatest_count" in spec:
         # "…where X is the greatest number of artifacts **an opponent**
         # controls" -- Cavern-Hoard Dragon. One pool, tallied per controller

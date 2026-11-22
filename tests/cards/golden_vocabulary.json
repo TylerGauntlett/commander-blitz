@@ -71,6 +71,7 @@
   "COST_REDUCTION_KEYS": [
    "amount",
    "count",
+   "creatures_died_this_turn",
    "distinct_mana_values",
    "energy_spent_this_turn",
    "greatest_count",

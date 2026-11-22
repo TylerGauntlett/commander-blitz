@@ -11,6 +11,7 @@ from typing import Any
 
 from commanderblitz.engine.effects.conditions import STEP_NAMES, validate_condition
 from commanderblitz.engine.effects.selectors import (
+    PLAYER_SPEC_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
     validate_has_counters_key,
@@ -289,10 +290,11 @@ def _validate_cost_reduction(
                 f"{where}.{COST_REDUCTION_EACH}: an integer of 2 or more (one unit is "
                 f"{{1}} without it), got {each!r}"
             )
-        if key not in ("count", "distinct_mana_values", "greatest_count"):
+        counting = ("count", "creatures_died_this_turn", "distinct_mana_values", "greatest_count")
+        if key not in counting:
             raise DslError(
                 f"{where}.{COST_REDUCTION_EACH}: only beside a head that counts "
-                f"('count', 'distinct_mana_values', 'greatest_count'), not {key!r}"
+                f"({', '.join(repr(k) for k in counting)}), not {key!r}"
             )
     if key == "amount":
         amount = spec["amount"]
@@ -311,6 +313,19 @@ def _validate_cost_reduction(
     elif key == "energy_spent_this_turn":
         # A player spec, not a filter: the ledger is per player.
         validate_energy_spent_this_turn(spec[key], f"{where}.{key}")
+    elif key == "creatures_died_this_turn":
+        # A player spec, not a filter: the turn ledger's death tally, keyed by
+        # who controlled the creature as it died, so "all" is "a creature" and
+        # "you" is "a creature you controlled". A filter here would read like
+        # `count` and would be asked of a battlefield the dead have left.
+        who = spec[key]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.{key}: needs a player spec, e.g. 'all' (any "
+                f"controller's creatures), got {who!r}"
+            )
     else:
         filt = spec[key]
         if not isinstance(filt, Mapping):

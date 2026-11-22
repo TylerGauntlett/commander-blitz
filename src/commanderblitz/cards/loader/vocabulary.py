@@ -1494,6 +1494,11 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: value leaf of the same name reads, taking a player spec rather than a
 #: filter. A ledger is answerable at pricing time -- it is written only by
 #: `GameState._tally`, never by anything on the stack.
+#: ``creatures_died_this_turn`` is Blood for the Blood God!'s "{1} less for
+#: each creature that died this turn": the same per-turn ledger the value leaf
+#: of the same name reads (keyed by the creature's controller as it died), so
+#: it takes a player spec -- ``"all"`` for any controller. `count` is the near
+#: miss and cannot say it: a dead creature is no longer on the battlefield.
 #: ``distinct_mana_values`` is Eris, Roar of the Storm's "for each **different**
 #: mana value among instant and sorcery cards in your graveyard": a count of
 #: printed mana values rather than of cards, so two instants of mana value 2
@@ -1501,6 +1506,7 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 COST_REDUCTION_KEYS = frozenset(
     {
         "count",
+        "creatures_died_this_turn",
         "distinct_mana_values",
         "energy_spent_this_turn",
         "greatest_count",

@@ -3617,6 +3617,21 @@ happened this turn. A filter
 key is refused, as is anything that is not a player spec. `count` is the near
 miss: no filter over a board can say how much energy left a player this turn.
 
+### A reduction that reads the turn's dead
+
+```jsonc
+// Blood for the Blood God! — "This spell costs {1} less to cast for each
+//  creature that died this turn."
+"cost_reduction": { "creatures_died_this_turn": "all" }
+```
+
+The other ledger head: `{1}` less per creature in the `creatures_died_this_turn`
+value leaf, keyed by who controlled the creature as it died, so `"all"` is "each
+creature" (tokens included) and `"you"` is "each creature you controlled". It
+takes a player spec, not a filter, and anything else is refused. Generic only,
+like every reduction. `count` is the near miss: its filter walks a battlefield
+the dead have left.
+
 ### A target pool that only exists once X is known
 
 ```jsonc

@@ -20,7 +20,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static effects](#static-effects) | 107 |
 | [Player-wide statics](#player-wide-statics) | 50 |
 | [Grantable statics](#grantable-statics) | 49 |
-| [Cost reduction](#cost-reduction) | 8 |
+| [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
 | [Keywords](#keywords) | 47 |
@@ -822,6 +822,7 @@ The arithmetic heads a card-level `cost_reduction`, a `spell_cost_reduction` sta
 |---|---|---|
 | `amount` | Costs N less (usually gated on a `condition`). | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `count` | Costs {1} less for each object a filter finds. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
+| `creatures_died_this_turn` | Costs {1} less for each creature that died this turn under the named players. | [A reduction that reads the turn's dead](card-dsl.md#a-reduction-that-reads-the-turns-dead) |
 | `distinct_mana_values` | …for each different printed mana value among a filter's objects. | [A reduction that counts mana values](card-dsl.md#a-reduction-that-counts-mana-values) |
 | `energy_spent_this_turn` | Costs {1} less for each {E} a player paid or lost this turn. | [A reduction that reads energy paid or lost](card-dsl.md#a-reduction-that-reads-energy-paid-or-lost) |
 | `greatest_count` | …for the greatest number any one player has. | [A reduction that maximises a per-player tally](card-dsl.md#a-reduction-that-maximises-a-per-player-tally) |

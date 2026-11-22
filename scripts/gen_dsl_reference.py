@@ -1172,6 +1172,9 @@ STATICS: dict[str, Entry] = {
 COST_REDUCTION: dict[str, Entry] = {
     "amount": ("Costs N less (usually gated on a `condition`).", H_CHEAPER),
     "count": ("Costs {1} less for each object a filter finds.", H_CHEAPER),
+    "creatures_died_this_turn": ("Costs {1} less for each creature that died this turn "
+                                 "under the named players.",
+                                 "A reduction that reads the turn's dead"),
     "distinct_mana_values": ("…for each different printed mana value among a filter's objects.",
                              "A reduction that counts mana values"),
     "energy_spent_this_turn": ("Costs {1} less for each {E} a player paid or lost this turn.",
