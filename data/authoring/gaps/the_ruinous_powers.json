@@ -1,0 +1,18 @@
+{
+  "card_id": "the_ruinous_powers",
+  "name": "The Ruinous Powers",
+  "oracle_text": "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it. When you cast a spell this way, its owner loses life equal to its mana value.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it. When you cast a spell this way, its owner loses life equal to its mana value."
+  ],
+  "needs": [
+    {
+      "capability": "cast_this_way_trigger",
+      "kind": "trigger_event",
+      "what": "a triggered ability (or a key on the exile/grant_playable permission, like playable_pay_life_instead) that fires when the effect controller casts a spell using the play permission this effect granted, binding the cast spell as subject so its effects can make that spell's owner lose life equal to its mana value (lose_life with player = owner of subject, amount = mana_value_of subject)",
+      "why_existing_wont_do": "Everything else is expressible: upkeep trigger, choose_player with random over opponents, exile of that player's top card with playable_this_turn and any_color. But the spell_cast trigger filter keys have nothing that identifies a spell cast through this source's permission (no exiled_with / cast_via key in trigger_filter_keys), a delayed_trigger's subject would bind the exiled card object rather than the spell it becomes, and the cast_from_exile condition would also catch spells cast from exile through other effects. mana_spent_trigger is only for mana abilities. No permission key on exile/grant_playable attaches a cast trigger."
+    }
+  ],
+  "closest_existing": ["exile", "grant_playable", "delayed_trigger", "mana_spent_trigger", "choose_player"],
+  "confidence": "high"
+}

@@ -3721,3 +3721,100 @@ class TestTheDatasmithsRobotCantBlock:
 
     def test_the_pirate_is_still_a_separate_token(self, pool):
         assert sorted(pool.get("pirate_4_2_r_cant_block").colors) == ["R"]
+
+
+class TestThePlaguebearerIsANamedOneThreeDemon:
+    """Great Unclean One and Nurgle's Rot: *"create a **1/3 black Demon**
+    creature token **named Plaguebearer of Nurgle**."*
+
+    The near misses are the other black Demons, every one of which flies
+    (`demon_x_x_b_flying`, Cherubael), and the 1/3 Walls, which are white.
+    Rule 111.4: a token is exactly what its creating effect says, name
+    included.
+    """
+
+    def test_it_is_a_black_one_three_demon_named_plaguebearer(self, pool):
+        token = pool.get("plaguebearer_of_nurgle_1_3_b")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Plaguebearer of Nurgle"
+        assert (token.power, token.toughness) == (1, 3)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Demon"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_flying_demon_is_still_a_separate_token(self, pool):
+        assert "flying" in pool.get("demon_x_x_b_flying").keywords
+
+
+class TestTheBlackAstartesWarriorHasMenace:
+    """Mortarion, Daemon Primarch: *"create X **2/2 black Astartes Warrior**
+    creature tokens **with menace**."*
+
+    The near miss is Forces of the Imperium's `astartes_warrior_2_2_w_vigilance`:
+    the same body and creature types, the other colour and keyword.
+    """
+
+    def test_it_is_a_black_astartes_warrior_with_menace(self, pool):
+        token = pool.get("astartes_warrior_2_2_b_menace")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert sorted(token.subtypes) == ["Astartes", "Warrior"]
+        assert list(token.keywords) == ["menace"]
+        assert not token.abilities
+
+    def test_the_white_one_is_still_a_separate_token(self, pool):
+        white = pool.get("astartes_warrior_2_2_w_vigilance")
+        assert sorted(white.colors) == ["W"]
+        assert list(white.keywords) == ["vigilance"]
+
+
+class TestTheSpawnIsAThreeThreeRed:
+    """Magnus the Red and The Lost and the Damned: *"create a **3/3 red
+    Spawn** creature token."*
+
+    The near miss is the 0/1 colourless `eldrazi_spawn_0_1_c`, which shares
+    the Spawn subtype and nothing else.
+    """
+
+    def test_it_is_a_red_three_three_spawn(self, pool):
+        token = pool.get("spawn_3_3_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Spawn"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_eldrazi_spawn_is_still_a_separate_token(self, pool):
+        assert "Eldrazi" in pool.get("eldrazi_spawn_0_1_c").subtypes
+        assert "Eldrazi" not in pool.get("spawn_3_3_r").subtypes
+
+
+class TestTheBlueHorrorPingsOnInstantsAndSorceries:
+    """Pink Horror: *"create two **2/2 blue and red Demon Horror** creature
+    tokens **named Blue Horror** with "Whenever you cast an instant or sorcery
+    spell, this token deals 1 damage to any target.""*
+
+    The near miss is the 2/2 black `horror_2_2_b_enchantment`: a Horror of the
+    same size, one colour, no Demon and no ability.
+    """
+
+    def test_it_is_a_blue_and_red_demon_horror_named_blue_horror(self, pool):
+        token = pool.get("blue_horror_2_2_ur_spell_ping")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Blue Horror"
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["R", "U"]
+        assert sorted(token.subtypes) == ["Demon", "Horror"]
+
+    def test_it_pings_any_target_on_your_instant_or_sorcery(self, pool):
+        (ability,) = pool.get("blue_horror_2_2_ur_spell_ping").abilities
+        assert ability.trigger.event == "spell_cast"
+        assert ability.trigger.controller == "you"
+        assert sorted(ability.trigger.filter["any_types"]) == ["Instant", "Sorcery"]
+        assert [e["op"] for e in ability.effects] == ["damage"]
+
+    def test_the_black_horror_is_still_a_separate_token(self, pool):
+        assert sorted(pool.get("horror_2_2_b_enchantment").colors) == ["B"]

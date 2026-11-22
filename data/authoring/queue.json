@@ -117232,12 +117232,12 @@
     },
     "Great Unclean One": {
       "edhrec_rank": 5157,
-      "gate": "template",
+      "gate": null,
       "name": "Great Unclean One",
-      "reason": "no template for: Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. The",
+      "reason": "",
       "scryfall_id": "757e79f2-23dc-44de-8531-6eb3e2f015f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Great Wall": {
@@ -165042,12 +165042,12 @@
     },
     "Magnus the Red": {
       "edhrec_rank": 6143,
-      "gate": "template",
+      "gate": null,
       "name": "Magnus the Red",
-      "reason": "no template for: Unearthly Power — Instant and sorcery spells you cast cost {1} less to cast for each creat",
+      "reason": "",
       "scryfall_id": "367cc265-ccfb-4236-9053-1b63ffe767a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magosi, the Waterveil": {
@@ -179602,12 +179602,12 @@
     },
     "Mortarion, Daemon Primarch": {
       "edhrec_rank": 11917,
-      "gate": "template",
+      "gate": null,
       "name": "Mortarion, Daemon Primarch",
-      "reason": "no template for: Primarch of the Death Guard — At the beginning of your end step, you may pay {X}. If you d",
+      "reason": "",
       "scryfall_id": "3b6b1bcf-10a4-4643-9db0-b2a4fee340a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortarpod": {
@@ -189482,12 +189482,12 @@
     },
     "Nurgle's Rot": {
       "edhrec_rank": 7916,
-      "gate": "template",
+      "gate": null,
       "name": "Nurgle's Rot",
-      "reason": "no template for: When enchanted creature dies, return this card to its owner's hand and you create a 1/3 bl",
+      "reason": "",
       "scryfall_id": "3dc5e53f-20fe-43c3-a173-d54aa5397de8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nurturer Initiate": {
@@ -202732,12 +202732,12 @@
     },
     "Pink Horror": {
       "edhrec_rank": 10210,
-      "gate": "template",
+      "gate": null,
       "name": "Pink Horror",
-      "reason": "no template for: Coruscating Flames — Whenever you cast an instant or sorcery spell, this creature deals 2 ",
+      "reason": "",
       "scryfall_id": "6831de3d-b8d8-4c44-84e2-dbde719d733d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pinkie Pie": {
@@ -281122,12 +281122,12 @@
     },
     "The Horus Heresy": {
       "edhrec_rank": 8990,
-      "gate": "template",
+      "gate": null,
       "name": "The Horus Heresy",
-      "reason": "no template for: I — For each opponent, gain control of up to one target nonlegendary creature that player ",
+      "reason": "",
       "scryfall_id": "c9551a51-2bbd-425b-a634-185921a96865",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Howling Abomination": {

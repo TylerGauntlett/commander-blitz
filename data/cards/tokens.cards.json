@@ -6355,6 +6355,132 @@
       "keywords": [
         "flying"
       ]
+    },
+    {
+      "id": "plaguebearer_of_nurgle_1_3_b",
+      "name": "Plaguebearer of Nurgle",
+      "oracle_text": "1/3 black Demon creature token named Plaguebearer of Nurgle.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Demon"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "astartes_warrior_2_2_b_menace",
+      "name": "Astartes Warrior Token",
+      "oracle_text": "2/2 black Astartes Warrior creature token with menace.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "menace"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "spawn_3_3_r",
+      "name": "Spawn Token",
+      "oracle_text": "3/3 red Spawn creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spawn"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "blue_horror_2_2_ur_spell_ping",
+      "name": "Blue Horror",
+      "oracle_text": "2/2 blue and red Demon Horror creature token named Blue Horror with \"Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Demon",
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, this token deals 1 damage to any target.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "count": 1,
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "target": "t1"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

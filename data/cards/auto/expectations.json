@@ -10700,6 +10700,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "great_unclean_one": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "greataxe": {
     "zone": "battlefield"
   },
@@ -14935,6 +14939,10 @@
   "magnigoth_sentry": {
     "zone": "battlefield"
   },
+  "magnus_the_red": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "magus_of_the_candelabra": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16256,6 +16264,10 @@
     },
     "zone": "graveyard"
   },
+  "mortarion_daemon_primarch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mortify": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -17149,6 +17161,14 @@
   },
   "nullmage_shepherd": {
     "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "nurgle_s_rot": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
@@ -18395,6 +18415,10 @@
     "zone": "battlefield"
   },
   "pine_barrens": {
+    "zone": "battlefield"
+  },
+  "pink_horror": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "pinnacle_monk_mystic_peak": {
@@ -25189,6 +25213,13 @@
   },
   "the_grim_captain_s_locker": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_horus_heresy": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
     "zone": "battlefield"
   },
   "the_indomitable": {
