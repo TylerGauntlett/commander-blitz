@@ -307833,6 +307833,102 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "astartes_warrior_2_2_w_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Vehicle enters, create two 2/2 white Astartes Warrior creature tokens with vigilance.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "attacking": true,
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, attacking creatures you control gain flying until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 6
+              },
+              "toughness": {
+                "const": 6
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "thunderhawk_gunship",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}",
+      "name": "Thunderhawk Gunship",
+      "oracle_text": "Flying\nWhen this Vehicle enters, create two 2/2 white Astartes Warrior creature tokens with vigilance.\nWhenever this Vehicle attacks, attacking creatures you control gain flying until end of turn.\nCrew 2",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "additional_cost_options": [
         {
           "reveal_from_hand": {

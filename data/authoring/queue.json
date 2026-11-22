@@ -286142,12 +286142,12 @@
     },
     "Thunderhawk Gunship": {
       "edhrec_rank": 3534,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Thunderhawk Gunship",
-      "reason": "astartes_warrior_2_2_w_vigilance tokens is 0, expected 2; your battlefield is 33, expected 35",
+      "reason": "",
       "scryfall_id": "6790720a-e1f3-4533-acd8-b002c8e91929",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderhead Gunner": {

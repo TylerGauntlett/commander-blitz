@@ -25559,6 +25559,10 @@
     },
     "zone": "battlefield"
   },
+  "thunderhawk_gunship": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thunderherd_migration": {
     "battlefield_count": 33,
     "hand_size": {
