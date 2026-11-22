@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **452** capabilities.
+**531 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -137,7 +137,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
 | [cast-only-if](#cast-only-if) | 1 | 12277 | engine |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
-| [cast-this-way-trigger](#cast-this-way-trigger) | 1 | 7870 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
 | [casualty](#casualty) | 1 | 12943 | static_effect |
@@ -329,7 +328,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
-| [must-attack-with-at-least-one-creature](#must-attack-with-at-least-one-creature) | 1 | 14142 | static_effect |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
@@ -2931,20 +2929,6 @@ Blocks **1** card.
 - **Rakdos, Lord of Riots** (rank 2559) — `rakdos_lord_of_riots`
   - You can't cast Rakdos unless an opponent lost life this turn.
   - Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.
-
-</details>
-
-## cast-this-way-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a triggered ability (or a key on the exile/grant_playable permission, like playable_pay_life_instead) that fires when the effect controller casts a spell using the play permission this effect granted, binding the cast spell as subject so its effects can make that spell's owner lose life equal to its mana value (lose_life with player = owner of subject, amount = mana_value_of subject)
-  <br>Why the existing vocabulary won't do: Everything else is expressible: upkeep trigger, choose_player with random over opponents, exile of that player's top card with playable_this_turn and any_color. But the spell_cast trigger filter keys have nothing that identifies a spell cast through this source's permission (no exiled_with / cast_via key in trigger_filter_keys), a delayed_trigger's subject would bind the exiled card object rather than the spell it becomes, and the cast_from_exile condition would also catch spells cast from exile through other effects. mana_spent_trigger is only for mana abilities. No permission key on exile/grant_playable attaches a cast trigger.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Ruinous Powers** (rank 7870) — `the_ruinous_powers`
-  - At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it. When you cast a spell this way, its owner loses life equal to its mana value.
 
 </details>
 
@@ -5674,20 +5658,6 @@ Blocks **1** card.
 
 - **Filigree Vector** (rank 4747) — `filigree_vector`
   - When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts.
-
-</details>
-
-## must-attack-with-at-least-one-creature
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "opponent") imposing a per-player attack requirement: during each combat in which an affected player is the active player, their attack declaration must include at least one creature if any creature they control could legally attack (508.1d, maximizing requirements obeyed), without forcing any particular creature to attack
-  <br>Why the existing vocabulary won't do: The attacks_if_able static (and the must_attack op) put the requirement on each creature its affects filter matches, so affects {controller: opponent} would force EVERY opponent creature to attack rather than at least one; goaded and must_attack_player are also per-creature. Nothing in static_effects places an attack requirement on a player rather than on objects
-
-<details><summary>Cards waiting on this</summary>
-
-- **Seeker of Slaanesh** (rank 14142) — `seeker_of_slaanesh`
-  - Allure of Slaanesh — Each opponent must attack with at least one creature each combat if able.
 
 </details>
 

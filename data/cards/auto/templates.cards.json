@@ -256653,6 +256653,38 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "must_attack_with_at_least_one_creature",
+          "kind": "static",
+          "text": "Allure of Slaanesh — Each opponent must attack with at least one creature each combat if able."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "seeker_of_slaanesh",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Seeker of Slaanesh",
+      "oracle_text": "Haste\nAllure of Slaanesh — Each opponent must attack with at least one creature each combat if able.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -305642,6 +305674,76 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "random": true
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_color": true,
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_cast_trigger": "ruinous_cast",
+              "player": {
+                "binding": "victim"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "owner_of": "subject"
+              }
+            }
+          ],
+          "id": "ruinous_cast",
+          "kind": "reflexive",
+          "text": "When you cast a spell this way, its owner loses life equal to its mana value."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "the_ruinous_powers",
+      "mana_cost": "{2}{B}{R}",
+      "name": "The Ruinous Powers",
+      "oracle_text": "At the beginning of your upkeep, choose an opponent at random. Exile the top card of that player's library. Until end of turn, you may play that card and you may spend mana as though it were mana of any color to cast it. When you cast a spell this way, its owner loses life equal to its mana value.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

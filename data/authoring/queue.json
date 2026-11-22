@@ -238972,12 +238972,12 @@
     },
     "Seeker of Slaanesh": {
       "edhrec_rank": 14142,
-      "gate": "template",
+      "gate": null,
       "name": "Seeker of Slaanesh",
-      "reason": "no template for: Allure of Slaanesh — Each opponent must attack with at least one creature each combat if a",
+      "reason": "",
       "scryfall_id": "0c32f29e-6e9a-464c-846a-3f60338c166b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seeker of Sunlight": {
@@ -282162,12 +282162,12 @@
     },
     "The Ruinous Powers": {
       "edhrec_rank": 7870,
-      "gate": "template",
+      "gate": null,
       "name": "The Ruinous Powers",
-      "reason": "no template for: At the beginning of your upkeep, choose an opponent at random. Exile the top card of that ",
+      "reason": "",
       "scryfall_id": "b30dde6c-9bc6-45bf-97e4-9c08be79d506",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Ruinous Wrecking Crew": {

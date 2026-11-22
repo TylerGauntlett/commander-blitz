@@ -21479,6 +21479,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "seeker_of_slaanesh": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seer_s_sundial": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25386,6 +25390,10 @@
     "zone": "battlefield"
   },
   "the_reaver_cleaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_ruinous_powers": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
