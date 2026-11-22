@@ -44392,12 +44392,12 @@
     },
     "Chaos Mutation": {
       "edhrec_rank": 8821,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Mutation",
-      "reason": "no template for: Exile any number of target creatures controlled by different players. For each creature ex",
+      "reason": "",
       "scryfall_id": "59a06bf6-20c9-4b48-893c-7d0edbea8f97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaos Orb": {
@@ -147442,12 +147442,12 @@
     },
     "Keeper of Secrets": {
       "edhrec_rank": 3203,
-      "gate": "template",
+      "gate": null,
       "name": "Keeper of Secrets",
-      "reason": "no template for: Symphony of Pain — Whenever you cast a spell from anywhere other than your hand, this crea",
+      "reason": "",
       "scryfall_id": "4fe408aa-14d9-4afd-abfe-b5156c5341b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keeper of Tresserhorn": {
@@ -150432,12 +150432,12 @@
     },
     "Knight Rampager": {
       "edhrec_rank": 16946,
-      "gate": "template",
+      "gate": null,
       "name": "Knight Rampager",
-      "reason": "no template for: Frenzied Rampage — At the beginning of combat on your turn, choose an opponent at random. ",
+      "reason": "",
       "scryfall_id": "2914deed-da95-4f34-9227-0dbaaadd7cba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Knight Watch": {
@@ -156842,12 +156842,12 @@
     },
     "Let the Galaxy Burn": {
       "edhrec_rank": 9537,
-      "gate": "template",
+      "gate": null,
       "name": "Let the Galaxy Burn",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "1120636b-d28b-4226-a1ba-cb42654c5a90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Let's Play a Game": {
@@ -161292,12 +161292,12 @@
     },
     "Lord of Change": {
       "edhrec_rank": 5882,
-      "gate": "template",
+      "gate": null,
       "name": "Lord of Change",
-      "reason": "no template for: Flying, ward {3}",
+      "reason": "",
       "scryfall_id": "f9099d82-c13a-480d-b4bc-ecf8b810427c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lord of Extinction": {

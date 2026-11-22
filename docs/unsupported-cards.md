@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **451** capabilities.
+**536 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -108,6 +108,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [attacks-or-blocks-if-able](#attacks-or-blocks-if-able) | 1 | 4530 | static_effect |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -265,6 +266,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
+| [graveyard-additional-cost-exile](#graveyard-additional-cost-exile) | 1 | 19686 | engine |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -298,6 +300,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
+| [lose-control-trigger](#lose-control-trigger) | 1 | 4530 | trigger_event |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [madness](#madness) | 1 | 3016 | replacement |
 | [mana-ability-cost-lki](#mana-ability-cost-lki) | 1 | 2247 | value |
@@ -370,6 +373,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
 | [pregame-commander-color-choice](#pregame-commander-color-choice) | 1 | 12969 | engine |
 | [prevent-damage-from-source-to-permanent](#prevent-damage-from-source-to-permanent) | 1 | 29255 | static_effect |
+| [prevent-damage-replacement-with-effect](#prevent-damage-replacement-with-effect) | 1 | 4530 | replacement |
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
@@ -2517,6 +2521,22 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## attacks-or-blocks-if-able
+
+Blocks **1** card.
+
+- **(static_effect)** a static requirement 'attacks or blocks each combat if able': on its controller's turn it must attack if able, on an opponent's turn it must block if able
+  <br>Why the existing vocabulary won't do: attacks_if_able covers only the attack half; there is no blocks-if-able static in static_effects (must_block is a one-shot op)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Khârn the Betrayer** (rank 4530) — `kharn_the_betrayer`
+  - Berzerker — Khârn the Betrayer attacks or blocks each combat if able.
+  - Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.
+  - The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.
 
 </details>
 
@@ -4760,6 +4780,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-additional-cost-exile
+
+Blocks **1** card.
+
+- **(engine)** the residual gate claiming a card-level graveyard_additional_cost whose cost is exile_from_graveyard {count: 1, types: [Creature], exclude_self: true}, for the printed line "[ability word —] You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs."
+  <br>Why the existing vocabulary won't do: graveyard_additional_cost already loads and charges exile_from_graveyard (the retrace slot, with the card being cast as the cost's source so exclude_self is 'another'), but verify.py's claim for that field, _GRAVEYARD_ADDITIONAL_LINE, matches only 'by discarding a(n) [type] card' and requires retrace_cost to be a discard, so the exile spelling stays residual and --collect rejects it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Helbrute** (rank 19686) — `helbrute`
+  - Sarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs.
+
+</details>
+
 ## graveyard-cast-dynamic-mana-value-cap
 
 Blocks **1** card.
@@ -5227,6 +5261,22 @@ Blocks **1** card.
 
 - **Arthur, Marigold Knight** (rank 7846) — `arthur_marigold_knight`
   - Whenever Arthur and at least one other creature attack, look at the top six cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order. Return that creature to its owner's hand at end of combat
+
+</details>
+
+## lose-control-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a self trigger 'when you lose control of this permanent' that fires for the former controller when the permanent's controller changes (the engine already logs a control_changed event), with the ability controlled by the player who lost it so 'draw two cards' draws for them
+  <br>Why the existing vocabulary won't do: trigger_events has leaves_battlefield and dies but nothing keyed on control_changed; a control change is not a zone change, so no listed event observes it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Khârn the Betrayer** (rank 4530) — `kharn_the_betrayer`
+  - Berzerker — Khârn the Betrayer attacks or blocks each combat if able.
+  - Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.
+  - The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.
 
 </details>
 
@@ -6253,6 +6303,22 @@ Blocks **1** card.
 
 - **Desert Nomads** (rank 29255) — `desert_nomads`
   - Prevent all damage that would be dealt to this creature by Deserts.
+
+</details>
+
+## prevent-damage-replacement-with-effect
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement on the permanent itself: if damage would be dealt to it, prevent that damage and then run effects (here gain_control by an opponent chosen by the current controller, duration permanent), applied each time damage would be dealt
+  <br>Why the existing vocabulary won't do: the prevent_damage static and prevent_damage_permanent op exist, but no listed static carries follow-up effects on prevention; a damage_prevented trigger would use the stack rather than happening as part of the replacement, and the chooser ('an opponent of your choice') must be the controller at that time
+
+<details><summary>Cards waiting on this</summary>
+
+- **Khârn the Betrayer** (rank 4530) — `kharn_the_betrayer`
+  - Berzerker — Khârn the Betrayer attacks or blocks each combat if able.
+  - Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.
+  - The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.
 
 </details>
 

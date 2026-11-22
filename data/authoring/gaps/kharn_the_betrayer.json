@@ -1,0 +1,37 @@
+{
+  "card_id": "kharn_the_betrayer",
+  "name": "Khârn the Betrayer",
+  "oracle_text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able.\nSigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.\nThe Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+  "blocked_sentences": [
+    "Berzerker — Khârn the Betrayer attacks or blocks each combat if able.",
+    "Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.",
+    "The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it."
+  ],
+  "needs": [
+    {
+      "capability": "lose_control_trigger",
+      "kind": "trigger_event",
+      "what": "a self trigger 'when you lose control of this permanent' that fires for the former controller when the permanent's controller changes (the engine already logs a control_changed event), with the ability controlled by the player who lost it so 'draw two cards' draws for them",
+      "why_existing_wont_do": "trigger_events has leaves_battlefield and dies but nothing keyed on control_changed; a control change is not a zone change, so no listed event observes it"
+    },
+    {
+      "capability": "prevent_damage_replacement_with_effect",
+      "kind": "replacement",
+      "what": "a static replacement on the permanent itself: if damage would be dealt to it, prevent that damage and then run effects (here gain_control by an opponent chosen by the current controller, duration permanent), applied each time damage would be dealt",
+      "why_existing_wont_do": "the prevent_damage static and prevent_damage_permanent op exist, but no listed static carries follow-up effects on prevention; a damage_prevented trigger would use the stack rather than happening as part of the replacement, and the chooser ('an opponent of your choice') must be the controller at that time"
+    },
+    {
+      "capability": "attacks_or_blocks_if_able",
+      "kind": "static_effect",
+      "what": "a static requirement 'attacks or blocks each combat if able': on its controller's turn it must attack if able, on an opponent's turn it must block if able",
+      "why_existing_wont_do": "attacks_if_able covers only the attack half; there is no blocks-if-able static in static_effects (must_block is a one-shot op)"
+    }
+  ],
+  "closest_existing": [
+    "attacks_if_able",
+    "prevent_damage",
+    "gain_control",
+    "damage_prevented"
+  ],
+  "confidence": "high"
+}

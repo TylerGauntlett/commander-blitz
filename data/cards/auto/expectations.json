@@ -4032,6 +4032,14 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "chaos_mutation": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 40
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "chaos_terminator_lord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13228,6 +13236,15 @@
     },
     "zone": "graveyard"
   },
+  "keeper_of_secrets": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "keeper_of_the_accord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13624,6 +13641,10 @@
     "zone": "battlefield"
   },
   "knight_paladin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "knight_rampager": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14090,6 +14111,9 @@
       "graveyard"
     ]
   },
+  "let_the_galaxy_burn": {
+    "zone": "graveyard"
+  },
   "lethal_scheme": {
     "zone": "graveyard"
   },
@@ -14505,6 +14529,16 @@
   },
   "lord_jyscal_guado": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lord_of_change": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "lord_of_extinction": {

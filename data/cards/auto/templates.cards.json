@@ -49368,6 +49368,84 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "chaos_mutation",
+      "mana_cost": "{3}{U}{R}",
+      "name": "Chaos Mutation",
+      "oracle_text": "Exile any number of target creatures controlled by different players. For each creature exiled this way, its controller reveals cards from the top of their library until they reveal a creature card, puts that card onto the battlefield, then puts the rest on the bottom of their library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "objects": {
+                "binding": "each"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "each"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "reveal_until",
+                  "player": {
+                    "controller_of": "victim"
+                  },
+                  "rest_to_bottom": true
+                }
+              ],
+              "objects": {
+                "binding": "each",
+                "zone": "exile"
+              },
+              "op": "for_each"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -158184,6 +158262,68 @@
           "effects": [
             {
               "amount": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Symphony of Pain — Whenever you cast a spell from anywhere other than your hand, this creature deals damage equal to that spell's mana value to target opponent",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "keeper_of_secrets",
+      "keywords": [
+        "first_strike",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Keeper of Secrets",
+      "oracle_text": "First strike, haste\nSymphony of Pain — Whenever you cast a spell from anywhere other than your hand, this creature deals damage equal to that spell's mana value to target opponent.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "create_token",
@@ -163034,6 +163174,87 @@
       "toughness": 6,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "foe",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "random": true
+            },
+            {
+              "defender": {
+                "binding": "foe"
+              },
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "must_attack_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Frenzied Rampage — At the beginning of combat on your turn, choose an opponent at random. This creature attacks that player this combat if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent",
+                "random": true
+              }
+            }
+          ],
+          "text": "When this creature dies, it deals 4 damage to target opponent chosen at random.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "knight_rampager",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Knight Rampager",
+      "oracle_text": "Trample\nFrenzied Rampage — At the beginning of combat on your turn, choose an opponent at random. This creature attacks that player this combat if able.\nWhen this creature dies, it deals 4 damage to target opponent chosen at random.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Knight"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -168590,6 +168811,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "let_the_galaxy_burn",
+      "mana_cost": "{X}{5}{R}",
+      "name": "Let the Galaxy Burn",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nLet the Galaxy Burn deals X plus 2 damage to each creature that didn't enter this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "x": true
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "entered_this_turn": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -173942,6 +174222,60 @@
         "Legendary"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{3}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {3}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Architect of Deception — When this creature enters, draw three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lord_of_change",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{U}",
+      "name": "Lord of Change",
+      "oracle_text": "Flying, ward {3}\nArchitect of Deception — When this creature enters, draw three cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
