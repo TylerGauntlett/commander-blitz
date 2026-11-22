@@ -1,0 +1,767 @@
+{
+  "id": "40k_the_ruinous_powers",
+  "name": "The Ruinous Powers",
+  "commanders": [
+    "abaddon_the_despoiler"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "40K",
+    "set_name": "Warhammer 40,000 Commander",
+    "date": "2022-10-07"
+  },
+  "notes": "Warhammer 40,000 Commander precon, card for card (https://mtgjson.com/api/v5/decks/TheRuinousPowers_40K.json).",
+  "tags": [
+    "Cascade",
+    "Demons",
+    "Life Drain",
+    "Chaos"
+  ],
+  "strategy": "Abaddon the Despoiler gives every spell cast from hand on its controller's turn cascade, as long as its mana value is no more than the life the opponents have lost this turn, so the deck's first job each turn is to make the table bleed. Great Unclean One, Mortarion, Plague Drone, Keeper of Secrets, Noise Marine, Warstorm Surge and The Ruinous Powers drain and burn the opponents while Heralds of Tzeentch, Deny Reality, Let the Galaxy Burn, Sloppity Bilepiper and Dark Apostle add cascades of their own. Be'lakor and Herald of Slaanesh make the Demons cheaper and faster, Past in Flames, Poxwalkers and Helbrute replay what has already been spent, and Blasphemous Act, Mandate of Abaddon, Chaos Warp, Chaos Mutation, Kill! Maim! Burn! and Bile Blight clear the way.",
+  "archetype": "punisher",
+  "printings": {
+    "abaddon_the_despoiler": {
+      "scryfall_id": "a78ab8fe-4499-4860-87d3-f8707398c00c",
+      "artist": "Johan Grenier",
+      "set_code": "40k",
+      "collector_number": "171"
+    },
+    "aspiring_champion": {
+      "scryfall_id": "77a2d9f6-0750-403d-879f-e3a98c36c3bb",
+      "artist": "Miguel Sacristan",
+      "set_code": "40k",
+      "collector_number": "71"
+    },
+    "assault_suit": {
+      "scryfall_id": "d7fbad75-725f-44fc-919a-6b07f2d54698",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "230"
+    },
+    "barren_moor": {
+      "scryfall_id": "22a7ef45-0fa0-4924-955c-27da5f6d0098",
+      "artist": "Rafater",
+      "set_code": "40k",
+      "collector_number": "266"
+    },
+    "be_lakor_the_dark_master": {
+      "scryfall_id": "7a55dc69-defe-4e6a-925e-31aaee89a8a0",
+      "artist": "Daarken",
+      "set_code": "40k",
+      "collector_number": "172"
+    },
+    "bile_blight": {
+      "scryfall_id": "4c271a22-b659-4b22-9de6-738a5229d092",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "195"
+    },
+    "bituminous_blast": {
+      "scryfall_id": "65badf7f-7e69-4e2a-91c5-041e3c8bd32e",
+      "artist": "JB Casacop",
+      "set_code": "40k",
+      "collector_number": "221"
+    },
+    "blasphemous_act": {
+      "scryfall_id": "23ed787e-8034-45c7-b4cf-1a05d300beea",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "204"
+    },
+    "blight_grenade": {
+      "scryfall_id": "88cdcf69-e04d-46ab-9cce-76f1fac5bc40",
+      "artist": "Alexey Kruglov",
+      "set_code": "40k",
+      "collector_number": "31"
+    },
+    "blood_for_the_blood_god": {
+      "scryfall_id": "f41d59f6-7fbe-4e67-8098-190b01281fe0",
+      "artist": "Artur Nakhodkin",
+      "set_code": "40k",
+      "collector_number": "108"
+    },
+    "bloodcrusher_of_khorne": {
+      "scryfall_id": "f7cf91a9-ec68-43b1-ae88-a907d49bf8aa",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "72"
+    },
+    "bloodthirster": {
+      "scryfall_id": "ccbb3a6d-7e75-46c7-a91f-db4cf8d003af",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "73"
+    },
+    "brainstorm": {
+      "scryfall_id": "b5ef365f-9472-4476-8538-fcfa6e55871d",
+      "artist": "Alex Konstad",
+      "set_code": "40k",
+      "collector_number": "192"
+    },
+    "chaos_defiler": {
+      "scryfall_id": "1c0f2873-5849-4cab-855a-2fbbc41dbb6c",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "110"
+    },
+    "chaos_mutation": {
+      "scryfall_id": "ccaa5e8d-7113-4b9a-af63-ea61b93a8e5e",
+      "artist": "Lie Setiawan",
+      "set_code": "40k",
+      "collector_number": "111"
+    },
+    "chaos_terminator_lord": {
+      "scryfall_id": "9d44c3fb-0968-4eb6-899d-6c11ef111574",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "74"
+    },
+    "chaos_warp": {
+      "scryfall_id": "f2c12ae4-7050-4ec3-9d9d-85a5a1265f24",
+      "artist": "Heonhwa",
+      "set_code": "40k",
+      "collector_number": "205"
+    },
+    "chromatic_lantern": {
+      "scryfall_id": "e068501e-59d6-4c64-99f4-f3c2aacd5d4d",
+      "artist": "Anton Solovianchyk",
+      "set_code": "40k",
+      "collector_number": "232"
+    },
+    "command_tower": {
+      "scryfall_id": "203f04a1-9adc-42eb-95ee-0f4f394f91cf",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "271"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "7b7fae6e-f83e-480f-b5fd-57b503b4afe4",
+      "artist": "Roman Tishenin",
+      "set_code": "40k",
+      "collector_number": "235"
+    },
+    "crumbling_necropolis": {
+      "scryfall_id": "068bd519-20cd-4849-b25b-5097fdbb945b",
+      "artist": "David Álvarez",
+      "set_code": "40k",
+      "collector_number": "273"
+    },
+    "dark_apostle": {
+      "scryfall_id": "6e346481-c01c-4a93-876e-1130c5edd970",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "75"
+    },
+    "dark_ritual": {
+      "scryfall_id": "a5dc69ff-b3d4-420e-858c-4880d852c415",
+      "artist": "Wonchun Choi",
+      "set_code": "40k",
+      "collector_number": "196"
+    },
+    "decree_of_pain": {
+      "scryfall_id": "458b4f09-7c59-4e72-b37f-f1a69ec0fb05",
+      "artist": "Evan Shipard",
+      "set_code": "40k",
+      "collector_number": "198"
+    },
+    "deny_reality": {
+      "scryfall_id": "63976cce-67ee-40c5-8cfa-0a576bb70e76",
+      "artist": "Artur Nakhodkin",
+      "set_code": "40k",
+      "collector_number": "223"
+    },
+    "dismal_backwater": {
+      "scryfall_id": "8c8099d6-44c1-48c7-ae87-985160eee63c",
+      "artist": "Henry Peters",
+      "set_code": "40k",
+      "collector_number": "276"
+    },
+    "drach_nyen": {
+      "scryfall_id": "41de390d-5c16-4e83-9c09-4e55fcb8c8e8",
+      "artist": "Artur Nakhodkin",
+      "set_code": "40k",
+      "collector_number": "117"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "184e5367-e901-4a0b-a2f5-06db42e6cf31",
+      "artist": "Rafater",
+      "set_code": "40k",
+      "collector_number": "277"
+    },
+    "exalted_flamer_of_tzeentch": {
+      "scryfall_id": "47ebc3bc-113f-437c-b60a-9597939d91ea",
+      "artist": "Alexey Kruglov",
+      "set_code": "40k",
+      "collector_number": "119"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "ec9c7011-694b-4705-b85c-bf4edf26e437",
+      "artist": "Filipe Pagliuso",
+      "set_code": "40k",
+      "collector_number": "278"
+    },
+    "foreboding_ruins": {
+      "scryfall_id": "31e1c45c-eb7b-4ae6-9dd2-e65d9ef00686",
+      "artist": "Josu Solano",
+      "set_code": "40k",
+      "collector_number": "279"
+    },
+    "forgotten_cave": {
+      "scryfall_id": "02c07a1b-1669-42f3-930a-8a4957e6a97b",
+      "artist": "Andrey Nyarl",
+      "set_code": "40k",
+      "collector_number": "280"
+    },
+    "great_unclean_one": {
+      "scryfall_id": "757e79f2-23dc-44de-8531-6eb3e2f015f3",
+      "artist": "Helge C. Balzer",
+      "set_code": "40k",
+      "collector_number": "35"
+    },
+    "helbrute": {
+      "scryfall_id": "27cc91c9-39dc-455c-aed0-6334bb6e1270",
+      "artist": "Anton Solovianchyk",
+      "set_code": "40k",
+      "collector_number": "125"
+    },
+    "herald_of_slaanesh": {
+      "scryfall_id": "04a1852a-9b23-4834-852e-b018df88f497",
+      "artist": "Alexander Mokhov",
+      "set_code": "40k",
+      "collector_number": "77"
+    },
+    "heralds_of_tzeentch": {
+      "scryfall_id": "0aeba983-c525-42d0-997d-1b678ea30d82",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "23"
+    },
+    "island": {
+      "scryfall_id": "407d609b-ac1f-4644-ba8d-259938745007",
+      "artist": "Calder Moore",
+      "set_code": "40k",
+      "collector_number": "308"
+    },
+    "keeper_of_secrets": {
+      "scryfall_id": "4fe408aa-14d9-4afd-abfe-b5156c5341b7",
+      "artist": "Miguel Sacristan",
+      "set_code": "40k",
+      "collector_number": "78"
+    },
+    "kharn_the_betrayer": {
+      "scryfall_id": "c29e6c69-7830-4898-9d1e-97dfc2e868d9",
+      "artist": "Kekai Kotaki",
+      "set_code": "40k",
+      "collector_number": "79"
+    },
+    "kill_maim_burn": {
+      "scryfall_id": "7c48e10d-2b70-4f87-b5ce-6fb0d56452eb",
+      "artist": "Anthony Devine",
+      "set_code": "40k",
+      "collector_number": "128"
+    },
+    "knight_rampager": {
+      "scryfall_id": "6105271d-76ae-4df0-bc95-fcccc229fc21",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "80"
+    },
+    "let_the_galaxy_burn": {
+      "scryfall_id": "1120636b-d28b-4226-a1ba-cb42654c5a90",
+      "artist": "Evan Shipard",
+      "set_code": "40k",
+      "collector_number": "81"
+    },
+    "lord_of_change": {
+      "scryfall_id": "f9099d82-c13a-480d-b4bc-ecf8b810427c",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "24"
+    },
+    "lucius_the_eternal": {
+      "scryfall_id": "6b86f229-0cbd-4d32-a1dc-ea4b24f835f2",
+      "artist": "Evan Shipard",
+      "set_code": "40k",
+      "collector_number": "130"
+    },
+    "magnus_the_red": {
+      "scryfall_id": "63050aa0-a7ea-4fe7-8746-7a11407ea0e4",
+      "artist": "Wonchun Choi",
+      "set_code": "40k",
+      "collector_number": "131"
+    },
+    "mandate_of_abaddon": {
+      "scryfall_id": "b63fa88b-a177-49b7-a583-a0a041313f77",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "40"
+    },
+    "molten_slagheap": {
+      "scryfall_id": "d07f3542-4b61-45e1-b21d-7496b2ccc085",
+      "artist": "Anthony Devine",
+      "set_code": "40k",
+      "collector_number": "284"
+    },
+    "mortarion_daemon_primarch": {
+      "scryfall_id": "3b6b1bcf-10a4-4643-9db0-b2a4fee340a2",
+      "artist": "Helge C. Balzer",
+      "set_code": "40k",
+      "collector_number": "41"
+    },
+    "mountain": {
+      "scryfall_id": "63993fbb-df88-49db-a3e9-655c87dd68cc",
+      "artist": "Evan Shipard",
+      "set_code": "40k",
+      "collector_number": "316"
+    },
+    "mutalith_vortex_beast": {
+      "scryfall_id": "4a1b6cfe-8927-4d9d-ba32-82453f7157ca",
+      "artist": "Kekai Kotaki",
+      "set_code": "40k",
+      "collector_number": "134"
+    },
+    "noise_marine": {
+      "scryfall_id": "08843909-8c24-4067-b747-5f9090caaa1c",
+      "artist": "Johan Grenier",
+      "set_code": "40k",
+      "collector_number": "82"
+    },
+    "nurgle_s_conscription": {
+      "scryfall_id": "9e663ce3-1871-4cde-82ba-4f009d582b77",
+      "artist": "Ørjan Ruttenborg Svendsen",
+      "set_code": "40k",
+      "collector_number": "44"
+    },
+    "nurgle_s_rot": {
+      "scryfall_id": "9116138a-679d-4169-a4a9-c76460bbb3fd",
+      "artist": "Roman Tishenin",
+      "set_code": "40k",
+      "collector_number": "45"
+    },
+    "past_in_flames": {
+      "scryfall_id": "aae078f4-2310-4112-975e-677d5255988a",
+      "artist": "Johannes Mücke",
+      "set_code": "40k",
+      "collector_number": "206"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "5410dbe8-006d-4267-92f1-b9bd7b1069e3",
+      "artist": "Anthony Devine",
+      "set_code": "40k",
+      "collector_number": "287"
+    },
+    "pink_horror": {
+      "scryfall_id": "6831de3d-b8d8-4c44-84e2-dbde719d733d",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "136"
+    },
+    "plague_drone": {
+      "scryfall_id": "95df49ae-e75f-4d97-8323-ebb62ff1df33",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "47"
+    },
+    "poxwalkers": {
+      "scryfall_id": "ca79cd21-daaa-4a1c-bab5-cc4c783994ae",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "49"
+    },
+    "reverberate": {
+      "scryfall_id": "997d4adb-d1bc-4d8f-9ed1-20fc8d7e4780",
+      "artist": "David Astruga",
+      "set_code": "40k",
+      "collector_number": "207"
+    },
+    "seeker_of_slaanesh": {
+      "scryfall_id": "9f07e21c-a775-43bb-90a2-545a5e1b909b",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "85"
+    },
+    "sloppity_bilepiper": {
+      "scryfall_id": "7eadbe1b-12a2-4791-b51d-e5eebf652af6",
+      "artist": "Ørjan Ruttenborg Svendsen",
+      "set_code": "40k",
+      "collector_number": "59"
+    },
+    "sol_ring": {
+      "scryfall_id": "508b2c62-a344-4897-a3a4-4f0555627fc1",
+      "artist": "Kekai Kotaki",
+      "set_code": "40k",
+      "collector_number": "250"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "8b195fba-e0e0-4f89-b667-8d54286dd6fe",
+      "artist": "Calder Moore",
+      "set_code": "40k",
+      "collector_number": "295"
+    },
+    "swamp": {
+      "scryfall_id": "3cea8d65-34ba-472e-b50e-da8bdbf54c7a",
+      "artist": "Johan Grenier",
+      "set_code": "40k",
+      "collector_number": "311"
+    },
+    "swiftwater_cliffs": {
+      "scryfall_id": "44989399-e87c-48bd-84d0-b6c891baee52",
+      "artist": "David Álvarez",
+      "set_code": "40k",
+      "collector_number": "296"
+    },
+    "talisman_of_creativity": {
+      "scryfall_id": "33ae73bc-fac3-4c15-9863-117caa30e4aa",
+      "artist": "Hector Ortiz",
+      "set_code": "40k",
+      "collector_number": "253"
+    },
+    "talisman_of_dominance": {
+      "scryfall_id": "3f7370c5-24e8-481b-959d-c6a92e9bbe73",
+      "artist": "Miguel Sacristan",
+      "set_code": "40k",
+      "collector_number": "255"
+    },
+    "talisman_of_indulgence": {
+      "scryfall_id": "2844e7be-32d2-41dd-9a03-eab9fd09bf14",
+      "artist": "Nikola Matkovic",
+      "set_code": "40k",
+      "collector_number": "257"
+    },
+    "tallyman_of_nurgle": {
+      "scryfall_id": "72ce155e-af65-47f9-8967-6608bd69ee55",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "60"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "f824b459-7720-4277-8a70-b1f5f4c8324c",
+      "artist": "Josu Solano",
+      "set_code": "40k",
+      "collector_number": "300"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "67161521-aae6-4017-abf8-46f3a41b59bc",
+      "artist": "Kekai Kotaki",
+      "set_code": "40k",
+      "collector_number": "301"
+    },
+    "the_horus_heresy": {
+      "scryfall_id": "c9551a51-2bbd-425b-a634-185921a96865",
+      "artist": "Roman Tishenin",
+      "set_code": "40k",
+      "collector_number": "126"
+    },
+    "the_lost_and_the_damned": {
+      "scryfall_id": "9a53cf96-b47f-48f0-b9cc-3330ae546a87",
+      "artist": "Henry Peters",
+      "set_code": "40k",
+      "collector_number": "129"
+    },
+    "the_ruinous_powers": {
+      "scryfall_id": "b8656aab-e22d-4f97-a8e6-a69f1dbffd09",
+      "artist": "Lie Setiawan",
+      "set_code": "40k",
+      "collector_number": "139"
+    },
+    "tzaangor_shaman": {
+      "scryfall_id": "b7b8c9d1-34a2-4754-904a-c7d061a6ce0a",
+      "artist": "Wisnu Tan",
+      "set_code": "40k",
+      "collector_number": "146"
+    },
+    "venomcrawler": {
+      "scryfall_id": "7b44099c-0b24-423a-b8c0-5d5e8687fe61",
+      "artist": "Ivan Dedov",
+      "set_code": "40k",
+      "collector_number": "68"
+    },
+    "warstorm_surge": {
+      "scryfall_id": "1706ca09-1fdb-47d5-b31b-b4637a0ef5da",
+      "artist": "Josu Solano",
+      "set_code": "40k",
+      "collector_number": "209"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "57ead261-d358-419e-b832-086439c5e793",
+      "artist": "Helge C. Balzer",
+      "set_code": "40k",
+      "collector_number": "261"
+    },
+    "worn_powerstone": {
+      "scryfall_id": "b8b205ab-63da-43ae-bca1-c691e8ff4799",
+      "artist": "David Sondered",
+      "set_code": "40k",
+      "collector_number": "263"
+    }
+  },
+  "cards": [
+    {
+      "id": "aspiring_champion"
+    },
+    {
+      "id": "assault_suit"
+    },
+    {
+      "id": "barren_moor"
+    },
+    {
+      "id": "be_lakor_the_dark_master"
+    },
+    {
+      "id": "bile_blight"
+    },
+    {
+      "id": "bituminous_blast"
+    },
+    {
+      "id": "blasphemous_act"
+    },
+    {
+      "id": "blight_grenade"
+    },
+    {
+      "id": "blood_for_the_blood_god"
+    },
+    {
+      "id": "bloodcrusher_of_khorne"
+    },
+    {
+      "id": "bloodthirster"
+    },
+    {
+      "id": "brainstorm"
+    },
+    {
+      "id": "chaos_defiler"
+    },
+    {
+      "id": "chaos_mutation"
+    },
+    {
+      "id": "chaos_terminator_lord"
+    },
+    {
+      "id": "chaos_warp"
+    },
+    {
+      "id": "chromatic_lantern"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "crumbling_necropolis"
+    },
+    {
+      "id": "dark_apostle"
+    },
+    {
+      "id": "dark_ritual"
+    },
+    {
+      "id": "decree_of_pain"
+    },
+    {
+      "id": "deny_reality"
+    },
+    {
+      "id": "dismal_backwater"
+    },
+    {
+      "id": "drach_nyen"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exalted_flamer_of_tzeentch"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "foreboding_ruins"
+    },
+    {
+      "id": "forgotten_cave"
+    },
+    {
+      "id": "great_unclean_one"
+    },
+    {
+      "id": "helbrute"
+    },
+    {
+      "id": "herald_of_slaanesh"
+    },
+    {
+      "id": "heralds_of_tzeentch"
+    },
+    {
+      "id": "island",
+      "qty": 8
+    },
+    {
+      "id": "keeper_of_secrets"
+    },
+    {
+      "id": "kharn_the_betrayer"
+    },
+    {
+      "id": "kill_maim_burn"
+    },
+    {
+      "id": "knight_rampager"
+    },
+    {
+      "id": "let_the_galaxy_burn"
+    },
+    {
+      "id": "lord_of_change"
+    },
+    {
+      "id": "lucius_the_eternal"
+    },
+    {
+      "id": "magnus_the_red"
+    },
+    {
+      "id": "mandate_of_abaddon"
+    },
+    {
+      "id": "molten_slagheap"
+    },
+    {
+      "id": "mortarion_daemon_primarch"
+    },
+    {
+      "id": "mountain",
+      "qty": 8
+    },
+    {
+      "id": "mutalith_vortex_beast"
+    },
+    {
+      "id": "noise_marine"
+    },
+    {
+      "id": "nurgle_s_conscription"
+    },
+    {
+      "id": "nurgle_s_rot"
+    },
+    {
+      "id": "past_in_flames"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "pink_horror"
+    },
+    {
+      "id": "plague_drone"
+    },
+    {
+      "id": "poxwalkers"
+    },
+    {
+      "id": "reverberate"
+    },
+    {
+      "id": "seeker_of_slaanesh"
+    },
+    {
+      "id": "sloppity_bilepiper"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 8
+    },
+    {
+      "id": "swiftwater_cliffs"
+    },
+    {
+      "id": "talisman_of_creativity"
+    },
+    {
+      "id": "talisman_of_dominance"
+    },
+    {
+      "id": "talisman_of_indulgence"
+    },
+    {
+      "id": "tallyman_of_nurgle"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "the_horus_heresy"
+    },
+    {
+      "id": "the_lost_and_the_damned"
+    },
+    {
+      "id": "the_ruinous_powers"
+    },
+    {
+      "id": "tzaangor_shaman"
+    },
+    {
+      "id": "venomcrawler"
+    },
+    {
+      "id": "warstorm_surge"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "worn_powerstone"
+    }
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "abaddon_the_despoiler",
+      "why": "On your turn, every spell from hand cascades if its mana value is at most the life your opponents have lost this turn."
+    },
+    {
+      "card_id": "great_unclean_one",
+      "why": "Each opponent loses 2 at your end step, and every one who ends up below you hands you a 1/3 Plaguebearer."
+    },
+    {
+      "card_id": "the_ruinous_powers",
+      "why": "Each upkeep it steals the top card of a random opponent's library to play, and makes its owner pay life for it."
+    },
+    {
+      "card_id": "be_lakor_the_dark_master",
+      "why": "On arrival it draws a card and costs a life for each Demon you control, and each Demon after it deals its power to any target."
+    }
+  ]
+}
