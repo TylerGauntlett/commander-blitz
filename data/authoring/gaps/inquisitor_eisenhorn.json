@@ -1,0 +1,24 @@
+{
+  "card_id": "inquisitor_eisenhorn",
+  "name": "Inquisitor Eisenhorn",
+  "oracle_text": "You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.\nWhenever Inquisitor Eisenhorn deals combat damage to a player, investigate that many times. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+  "blocked_sentences": [
+    "You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "reveal_as_drawn",
+      "kind": "trigger_event",
+      "what": "an optional reveal of the first card a player draws each turn made at the moment it is drawn (the miracle-style reveal, granted by a permanent rather than printed on the drawn card), plus a 'card revealed this way' event carrying the revealed card so a trigger can filter it by type (instant or sorcery)",
+      "why_existing_wont_do": "The `draw` trigger with `max_per_turn`/`nth` and a type filter fires on the draw itself and its `reveal` op would happen only on resolution, so the reveal is no longer 'as you draw it' and the trigger is keyed on drawing rather than on choosing to reveal; the `miracle` rider is a card's own reveal and cannot be granted to the first draw of any card"
+    },
+    {
+      "capability": "token_cherubael",
+      "kind": "token",
+      "what": "Cherubael, a legendary 4/4 black Demon creature token with flying",
+      "why_existing_wont_do": "token_ids has only demon_x_x_b_flying (a nonlegendary X/X Demon) and vampire_demon_4_3_wb_flying (a white-black 4/3 Vampire Demon); neither is a named legendary 4/4 black Demon"
+    }
+  ],
+  "closest_existing": ["miracle", "draw", "reveal", "demon_x_x_b_flying"],
+  "confidence": "high"
+}

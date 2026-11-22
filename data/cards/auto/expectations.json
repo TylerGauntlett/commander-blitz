@@ -4590,6 +4590,14 @@
     },
     "zone": "battlefield"
   },
+  "company_commander": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "soldier_1_1_w"
+    },
+    "zone": "battlefield"
+  },
   "compleated_huntmaster": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6045,6 +6053,14 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "deploy_to_the_front": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 4,
+      "id": "soldier_1_1_w"
     },
     "zone": "graveyard"
   },
@@ -7598,6 +7614,10 @@
       "graveyard"
     ]
   },
+  "epistolary_librarian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "era_of_innovation": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9000,6 +9020,16 @@
   },
   "foot_soldiers": {
     "zone": "battlefield"
+  },
+  "for_the_emperor": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "vigilance",
+        "lifelink"
+      ]
+    },
+    "zone": "graveyard"
   },
   "forbidden_alchemy": {
     "graveyard_size": {
@@ -12163,6 +12193,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "inquisitor_greyfax": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "inquisitor_s_flail": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13752,6 +13792,13 @@
     "tokens": {
       "count": 1,
       "id": "thopter_1_1_c_flying"
+    },
+    "zone": "graveyard"
+  },
+  "launch_the_fleet": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
     },
     "zone": "graveyard"
   },

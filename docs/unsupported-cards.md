@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **450** capabilities.
+**540 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,6 +25,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [voting](#voting) | 6 | 6980 | decision, op |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [astartes-warrior-token](#astartes-warrior-token) | 4 | 6855 | token |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
@@ -44,7 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
-| [astartes-warrior-token](#astartes-warrior-token) | 2 | 7196 | token |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -161,6 +161,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
+| [controller-of-stack-ability-target](#controller-of-stack-ability-target) | 1 | 9488 | selector |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -393,9 +394,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
+| [reveal-as-drawn](#reveal-as-drawn) | 1 | 13095 | trigger_event |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
+| [robot-4-4-c-artifact-cant-block](#robot-4-4-c-artifact-cant-block) | 1 | 16917 | token |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
@@ -434,9 +437,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [timed-keyword-loss](#timed-keyword-loss) | 1 | 10691 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
+| [token-cherubael](#token-cherubael) | 1 | 13095 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
@@ -1002,6 +1007,33 @@ Blocks **5** cards.
 
 </details>
 
+## astartes-warrior-token
+
+Blocks **4** cards.
+
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_w_vigilance (wrong size, no Astartes), soldier_2_2_w_vigilance, knight_2_2_w_vigilance and samurai_2_2_w_vigilance (right stats, wrong creature types); none is an Astartes Warrior. The cost ({T} + tap_permanents of two artifacts) and the Master of Machines line (tap_x creatures + look_at_top with rest_to_bottom) are expressible once the token exists
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest are knight_2_2_w_vigilance, soldier_2_2_w_vigilance and samurai_2_2_w_vigilance (wrong creature types) and warrior_1_1_w_vigilance (wrong size). Chapters II (sacrifice over each opponent) and III (for_each_player over opponents with an if comparing creature counts, then draw 2) look expressible once the token exists.
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest 2/2 white vigilance tokens (knight_2_2_w_vigilance, soldier_2_2_w_vigilance, samurai_2_2_w_vigilance) have the wrong creature types, and warrior_1_1_w_vigilance is the wrong size. The rest of the card is expressible: create_token with amount {x}, cost {mana, exile_self}, and the activation limit as a condition (count of creatures you control == 0, is_your_turn).
+- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
+  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest 2/2 white vigilance tokens (knight_2_2_w_vigilance, soldier_2_2_w_vigilance, samurai_2_2_w_vigilance) have the wrong creature types, and warrior_1_1_w_vigilance is the wrong size. The rest of the card looks expressible: an attacks trigger with filter attached, create_token with attacking, then grant_keyword menace over attacking creatures; Equip {3} as in Adaptive Omnitool.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inquisitorial Rosette** (rank 6855) — `inquisitorial_rosette`
+  - Inquisition Agents — Whenever equipped creature attacks, create a 2/2 white Astartes Warrior creature token with vigilance that's attacking. Then attacking creatures gain menace until end of turn.
+- **Birth of the Imperium** (rank 7196) — `birth_of_the_imperium`
+  - I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.
+- **Defenders of Humanity** (rank 11133) — `defenders_of_humanity`
+  - When this enchantment enters, create X 2/2 white Astartes Warrior creature tokens with vigilance.
+  - {X}{2}{W}, Exile this enchantment: Create X 2/2 white Astartes Warrior creature tokens with vigilance. Activate only if you control no creatures and only during your turn.
+- **Belisarius Cawl** (rank 12878) — `belisarius_cawl`
+  - Ultima Founding — {T}, Tap two untapped artifacts you control: Create a 2/2 white Astartes Warrior creature token with vigilance.
+
+</details>
+
 ## divided-damage-on-trigger
 
 Blocks **4** cards.
@@ -1438,24 +1470,6 @@ Blocks **2** cards.
   - {X}: Until end of turn, creatures you control have base power and toughness X/X and gain all creature types.
 - **Omo, Queen of Vesuva** (rank 4942) — `omo_queen_of_vesuva`
   - Each nonland creature with an everything counter on it is every creature type.
-
-</details>
-
-## astartes-warrior-token
-
-Blocks **2** cards.
-
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. id astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has warrior_1_1_w_vigilance (wrong size, no Astartes), soldier_2_2_w_vigilance, knight_2_2_w_vigilance and samurai_2_2_w_vigilance (right stats, wrong creature types); none is an Astartes Warrior. The cost ({T} + tap_permanents of two artifacts) and the Master of Machines line (tap_x creatures + look_at_top with rest_to_bottom) are expressible once the token exists
-- **(token)** a 2/2 white Astartes Warrior creature token with vigilance (e.g. astartes_warrior_2_2_w_vigilance)
-  <br>Why the existing vocabulary won't do: token_ids has no Astartes Warrior; the nearest are knight_2_2_w_vigilance, soldier_2_2_w_vigilance and samurai_2_2_w_vigilance (wrong creature types) and warrior_1_1_w_vigilance (wrong size). Chapters II (sacrifice over each opponent) and III (for_each_player over opponents with an if comparing creature counts, then draw 2) look expressible once the token exists.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Birth of the Imperium** (rank 7196) — `birth_of_the_imperium`
-  - I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.
-- **Belisarius Cawl** (rank 12878) — `belisarius_cawl`
-  - Ultima Founding — {T}, Tap two untapped artifacts you control: Create a 2/2 white Astartes Warrior creature token with vigilance.
 
 </details>
 
@@ -3277,6 +3291,20 @@ Blocks **1** card.
 
 - **Shield Broker** (rank 10319) — `shield_broker`
   - You gain control of that creature for as long as it has a shield counter on it.
+
+</details>
+
+## controller-of-stack-ability-target
+
+Blocks **1** card.
+
+- **(selector)** a player spec naming the controller of a `spell_or_ability` (or `ability_on_stack`) target, so `lose_life` can bill whoever controls the countered spell OR ability: allow {"controller_of_target": "t1"} when t1 is a spell_or_ability / ability_on_stack target
+  <br>Why the existing vocabulary won't do: `controller_of_target` is refused by loader.effects._validate_player_spec unless the target kind is in vocabulary.CONTROLLED_TARGET_KINDS (permanent, spell, card_in_graveyard, card_in_exile), which excludes spell_or_ability even though selectors' runtime branch reads StackItem.controller for any stack ref; `snapshot` captures nothing for an ability target, so `controller_of` on a snapshot binding finds no one; `{"target": "t1"}` returns only player refs. The counter half alone is Disallow (counter + spell_or_ability target), and the amount is {"creatures_you_control": true}; the life loss must be ordered before the counter (as An Offer You Can't Refuse does) or read from the stack item before it is removed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deny the Witch** (rank 9488) — `deny_the_witch`
+  - Its controller loses life equal to the number of creatures you control.
 
 </details>
 
@@ -6589,6 +6617,20 @@ Blocks **1** card.
 
 </details>
 
+## reveal-as-drawn
+
+Blocks **1** card.
+
+- **(trigger_event)** an optional reveal of the first card a player draws each turn made at the moment it is drawn (the miracle-style reveal, granted by a permanent rather than printed on the drawn card), plus a 'card revealed this way' event carrying the revealed card so a trigger can filter it by type (instant or sorcery)
+  <br>Why the existing vocabulary won't do: The `draw` trigger with `max_per_turn`/`nth` and a type filter fires on the draw itself and its `reveal` op would happen only on resolution, so the reveal is no longer 'as you draw it' and the trigger is keyed on drawing rather than on choosing to reveal; the `miracle` rider is a card's own reveal and cannot be granted to the first draw of any card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inquisitor Eisenhorn** (rank 13095) — `inquisitor_eisenhorn`
+  - You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.
+
+</details>
+
 ## reveal-from-hand
 
 Blocks **1** card.
@@ -6629,6 +6671,20 @@ Blocks **1** card.
 
 - **Gandalf, Westward Voyager** (rank 12729) — `gandalf_westward_voyager`
   - Whenever you cast a spell with mana value 5 or greater, each opponent reveals the top card of their library. If any of those cards shares a card type with that spell, copy that spell, you may choose new targets for the copy, and each opponent draws a card. Otherwise, you draw a card
+
+</details>
+
+## robot-4-4-c-artifact-cant-block
+
+Blocks **1** card.
+
+- **(token)** a 4/4 colorless Robot artifact creature token with "This token can't block."
+  <br>Why the existing vocabulary won't do: token_ids has robot_villain_2_2_c (wrong size) and construct_4_4_c_artifact (wrong subtype, no can't-block clause); no 4/4 Robot artifact token that can't block exists. The rest of the card is expressible: Protection from Robots is the protection static with from_subtypes [Robot], and the ability is cost {U}+tap with two distinct player targets, draw and create_token with player {target: t2}.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cybernetica Datasmith** (rank 16917) — `cybernetica_datasmith`
+  - Field Reprogramming — {U}, {T}: Target player draws a card. Another target player creates a 4/4 colorless Robot artifact creature token with "This token can't block."
 
 </details>
 
@@ -7178,6 +7234,20 @@ Blocks **1** card.
 
 </details>
 
+## timed-keyword-loss
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect op for a bare "<objects> lose <keyword> until end of turn": a layer-6 keyword removal (613.7, timestamped) written as an until-end-of-turn entry on each object found as it resolves (611.2c), which a later grant of the same keyword overrides -- the effect-side twin of the `lose_keyword_timestamped` static
+  <br>Why the existing vocabulary won't do: The `lose_keyword` op implements only the "lose X and can't have X" prohibition (the loader requires cant_have: true, and its docstring says reading a bare loss as the prohibition makes the card stronger); `lose_keyword_timestamped` is a static only, lasting while a source permanent stays, so a sorcery cannot carry it; `lose_all_abilities` strips every ability, not one keyword. The second sentence (destroy with objects {zone: battlefield, not_types: [Land], controller: any}) is expressible once the first is.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exterminatus** (rank 10691) — `exterminatus`
+  - Nonland permanents your opponents control lose indestructible until end of turn.
+
+</details>
+
 ## timed-spell-type-cast-lock
 
 Blocks **1** card.
@@ -7217,6 +7287,20 @@ Blocks **1** card.
 
 - **Gwaihir, Greatest of the Eagles** (rank 5992) — `gwaihir_greatest_of_the_eagles`
   - At the beginning of each end step, if you gained 3 or more life this turn, create a 3/3 white Bird creature token with flying and "Whenever this token attacks, target attacking creature gains flying until end of turn."
+
+</details>
+
+## token-cherubael
+
+Blocks **1** card.
+
+- **(token)** Cherubael, a legendary 4/4 black Demon creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has only demon_x_x_b_flying (a nonlegendary X/X Demon) and vampire_demon_4_3_wb_flying (a white-black 4/3 Vampire Demon); neither is a named legendary 4/4 black Demon
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inquisitor Eisenhorn** (rank 13095) — `inquisitor_eisenhorn`
+  - You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.
 
 </details>
 

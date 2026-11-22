@@ -1,0 +1,18 @@
+{
+  "card_id": "exterminatus",
+  "name": "Exterminatus",
+  "oracle_text": "Nonland permanents your opponents control lose indestructible until end of turn.\nDestroy all nonland permanents.",
+  "blocked_sentences": [
+    "Nonland permanents your opponents control lose indestructible until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "timed_keyword_loss",
+      "kind": "op",
+      "what": "a one-shot effect op for a bare \"<objects> lose <keyword> until end of turn\": a layer-6 keyword removal (613.7, timestamped) written as an until-end-of-turn entry on each object found as it resolves (611.2c), which a later grant of the same keyword overrides -- the effect-side twin of the `lose_keyword_timestamped` static",
+      "why_existing_wont_do": "The `lose_keyword` op implements only the \"lose X and can't have X\" prohibition (the loader requires cant_have: true, and its docstring says reading a bare loss as the prohibition makes the card stronger); `lose_keyword_timestamped` is a static only, lasting while a source permanent stays, so a sorcery cannot carry it; `lose_all_abilities` strips every ability, not one keyword. The second sentence (destroy with objects {zone: battlefield, not_types: [Land], controller: any}) is expressible once the first is."
+    }
+  ],
+  "closest_existing": ["lose_keyword", "lose_keyword_timestamped"],
+  "confidence": "high"
+}
