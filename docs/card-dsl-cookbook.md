@@ -256,6 +256,8 @@ empty filter is a load error rather than an Orrery.
 { "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
   "affects_spells": { "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
   "cast_gains_keywords": ["haste"] }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "affects_spells": { "any_of": [{ "types": ["Artifact"] }, { "colorless": true }] } }
 ```
 
 Bolas's Citadel: *"You may … cast spells from the top of your library. If you
@@ -285,6 +287,19 @@ its own characteristic-defining abilities applied
 creatures is a number in a library too. A noncreature has no power and never
 passes the clause.
 
+**`colorless` and `any_of` are Mystic Forge's** *"You may cast artifact spells
+and colorless spells from the top of your library."* `colorless: true` is zero
+colours (105.2c), which `colors` (a membership test) and `min_colors` (a floor)
+cannot say. The sentence is a union, and every other key is ANDed, so the two
+shapes in one filter would be "colorless artifact"; `any_of` takes two or more
+branches and the card passes if any does. A branch is matched against the
+printed face alone (`LIBRARY_TOP_CAST_BRANCH_KEYS`): `power` and `toughness`,
+which the reader measures on the object at the top level only, and a chosen
+colour or type, which it resolves at the top level only, are load errors inside
+one. The near miss is two `cast_from_library_top` statics, one per shape: the
+lines offered are the same, but the card prints one ability and the DSL writes
+one static per printed ability.
+
 **`cast_gains_keywords` is the rider**, "it gains haste until end of turn". It is
 staged on the spell after `push_spell` in `GameObject.mana_granted_keywords` —
 Arena of Glory's field, carried across the reset onto the battlefield and
@@ -295,7 +310,8 @@ offers both prices (601.2b). Refused on every other static.
 
 `tests/unit/casting/test_cast_from_library_top.py` pins the Citadel;
 `test_cast_from_library_top_filter.py` pins the filter, the CDA, the printed
-price, the rider and its wearing off, and the two lanes side by side.
+price, the rider and its wearing off, and the two lanes side by side;
+`test_cast_from_library_top_colorless.py` pins the union and its branch refusals.
 
 ### `free_cast_permission` — Dracogenesis' standing free cast
 

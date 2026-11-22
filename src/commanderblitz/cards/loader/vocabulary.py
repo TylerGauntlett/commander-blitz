@@ -1243,7 +1243,26 @@ WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
 #: `player_statics.library_top_cast_permissions` measures the top card where it
 #: sits, its characteristic-defining abilities applied (604.3), and a `*/*`
 #: answered off the printed face would be a 0 in every zone.
-LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", "toughness"}
+#:
+#: ``colorless`` and ``any_of`` are Mystic Forge's: "You may cast **artifact
+#: spells and colorless spells** from the top of your library" is a union of
+#: two printed shapes, and "colorless" is zero colours (105.2c), which neither
+#: `colors` (a membership test) nor `min_colors` (a floor) can say. Both are
+#: read by `characteristics._matches_printed`, which the reader asks first.
+#: A branch of ``any_of`` takes `LIBRARY_TOP_CAST_BRANCH_KEYS`.
+LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {
+    "power",
+    "toughness",
+    "colorless",
+    "any_of",
+}
+
+#: What one branch of a ``cast_from_library_top`` filter's ``any_of`` may use:
+#: the printed keys only. `player_statics.library_top_cast_permissions` measures
+#: ``power`` and ``toughness`` on the object at the top level and hands the
+#: branches to `_matches_printed`, which does not read them -- so a size in a
+#: branch would load and be ignored, a silently wider permission.
+LIBRARY_TOP_CAST_BRANCH_KEYS = LIBRARY_TOP_CAST_FILTER_KEYS - {"power", "toughness"}
 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics

@@ -293,8 +293,25 @@
    "Planeswalker",
    "Sorcery"
   ],
-  "LIBRARY_TOP_CAST_FILTER_KEYS": [
+  "LIBRARY_TOP_CAST_BRANCH_KEYS": [
+   "any_of",
    "any_types",
+   "colorless",
+   "colors",
+   "keywords",
+   "mana_cost",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
+  ],
+  "LIBRARY_TOP_CAST_FILTER_KEYS": [
+   "any_of",
+   "any_types",
+   "colorless",
    "colors",
    "keywords",
    "mana_cost",

@@ -161,6 +161,7 @@ from .vocabulary import (  # noqa: F401
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
+    LIBRARY_TOP_CAST_BRANCH_KEYS,
     LIBRARY_TOP_CAST_FILTER_KEYS,
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
@@ -4940,6 +4941,49 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
         _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
 
 
+def _check_library_top_cast_branches(filt: Mapping[str, Any], where: str) -> None:
+    """``any_of`` in a `cast_from_library_top` filter: printed shapes, two or more.
+
+    "You may cast artifact spells and colorless spells from the top of your
+    library" -- Mystic Forge. Every other key is ANDed, so the two shapes in
+    one filter would be "colorless artifact" and drop Kozilek's Return.
+
+    A branch takes `LIBRARY_TOP_CAST_BRANCH_KEYS`: the reader measures a size
+    only at the top level and gives the branches to `_matches_printed`, which
+    ignores one. A chosen quality is refused in a branch too, because the
+    reader resolves "the chosen color" on the top-level filter alone and a
+    branch would be matched against the unresolved marker.
+    """
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{where}.any_of: takes at least two filters -- a disjunction of one "
+            f"is the filter itself, written the long way"
+        )
+    for i, branch in enumerate(branches):
+        at = f"{where}.any_of[{i}]"
+        if not isinstance(branch, Mapping) or not branch:
+            raise DslError(f"{at}: must be a non-empty filter object")
+        unknown = set(branch) - LIBRARY_TOP_CAST_BRANCH_KEYS
+        if unknown:
+            raise DslError(
+                f"{at}: a branch is matched against the printed face, so it "
+                f"cannot measure power or toughness or name the caster; "
+                f"unsupported keys {sorted(unknown)}"
+            )
+        for key in ("colors", "subtypes"):
+            if any(isinstance(v, Mapping) for v in branch.get(key) or ()):
+                raise DslError(
+                    f"{at}.{key}: a chosen quality is resolved on the top-level "
+                    f"filter only; write it outside any_of"
+                )
+        _check_mana_cost_key(branch, at)
+        validate_colorless_key(branch, at)
+        _check_library_top_cast_branches(branch, at)
+
+
 def _validate_state_trigger(model: AbilityModel, where: str) -> None:
     """A state trigger (603.8) names its condition in ``state`` and nothing else.
 
@@ -6195,6 +6239,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"face and no board state, and `affects_player` already names the "
                 f"caster; unsupported keys {sorted(unknown)}"
             )
+        _check_library_top_cast_branches(model.affects_spells, f"{where}.affects_spells")
         if model.affects is not None:
             raise DslError(
                 f"{where}: cast_from_library_top filters spells with "
