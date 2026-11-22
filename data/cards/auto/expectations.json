@@ -11368,6 +11368,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "helbrute": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "helga_skittish_seer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17163,6 +17170,14 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "nurgle_s_conscription": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3,
+      "1": 0
+    },
+    "zone": "graveyard"
   },
   "nurgle_s_rot": {
     "battlefield_count": 33,

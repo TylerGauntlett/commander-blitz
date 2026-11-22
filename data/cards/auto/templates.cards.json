@@ -134489,6 +134489,43 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "graveyard_additional_cost": {
+        "exile_from_graveyard": {
+          "count": 1,
+          "exclude_self": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "helbrute",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Helbrute",
+      "oracle_text": "Haste\nSarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Dreadnought"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -205007,6 +205044,61 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nurgle_s_conscription",
+      "mana_cost": "{4}{B}",
+      "name": "Nurgle's Conscription",
+      "oracle_text": "Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "conscripted",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield",
+          "tapped": true
+        },
+        {
+          "objects": {
+            "controller": {
+              "owner_of": "conscripted"
+            },
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

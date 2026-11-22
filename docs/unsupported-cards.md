@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **458** capabilities.
+**538 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -268,7 +268,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
-| [graveyard-additional-cost-exile](#graveyard-additional-cost-exile) | 1 | 19686 | engine |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -407,7 +406,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
-| [sandbox-opponent-graveyard-creature](#sandbox-opponent-graveyard-creature) | 1 | 12753 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -4815,20 +4813,6 @@ Blocks **1** card.
 
 </details>
 
-## graveyard-additional-cost-exile
-
-Blocks **1** card.
-
-- **(engine)** the residual gate claiming a card-level graveyard_additional_cost whose cost is exile_from_graveyard {count: 1, types: [Creature], exclude_self: true}, for the printed line "[ability word —] You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs."
-  <br>Why the existing vocabulary won't do: graveyard_additional_cost already loads and charges exile_from_graveyard (the retrace slot, with the card being cast as the cost's source so exclude_self is 'another'), but verify.py's claim for that field, _GRAVEYARD_ADDITIONAL_LINE, matches only 'by discarding a(n) [type] card' and requires retrace_cost to be a discard, so the exile spelling stays residual and --collect rejects it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Helbrute** (rank 19686) — `helbrute`
-  - Sarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs.
-
-</details>
-
 ## graveyard-cast-dynamic-mana-value-cap
 
 Blocks **1** card.
@@ -6799,20 +6783,6 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
-
-</details>
-
-## sandbox-opponent-graveyard-creature
-
-Blocks **1** card.
-
-- **(engine)** The verification sandbox must put a quiet creature card in player 1's graveyard for a spell whose mandatory card_in_graveyard target selects a Creature card controlled/owned by an opponent, the way graveyard_spell_props already adds an instant or sorcery card there for Arcane Heist-style targets
-  <br>Why the existing vocabulary won't do: The card itself is expressible and passes schema and compile: targets [{id t1, kind card_in_graveyard, count 1, selector {zone graveyard, controller opponent, types [Creature]}}], spell_effects snapshot t1 as 'conscripted', put_onto_battlefield {target t1} controller you tapped true, exile {zone graveyard, player {owner_of conscripted}, count all}. But _graveyard_spell_specs only fires for selectors naming Instant/Sorcery, so the opponent's sandbox graveyard is empty, the instant has no legal target (601.2c), and gate 4 rejects it: verified 'not playable in the sandbox; offered: [Pass, Play Forest]'. Making the target optional would describe a different card. With the prop, the expectation would be zone graveyard, battlefield_count 33
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nurgle's Conscription** (rank 12753) — `nurgle_s_conscription`
-  - Put target creature card from an opponent's graveyard onto the battlefield tapped under your control, then exile that player's graveyard.
 
 </details>
 

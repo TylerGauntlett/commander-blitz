@@ -125432,12 +125432,12 @@
     },
     "Helbrute": {
       "edhrec_rank": 19686,
-      "gate": "residual",
+      "gate": null,
       "name": "Helbrute",
-      "reason": "printed text not represented: Sarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs",
+      "reason": "",
       "scryfall_id": "27cc91c9-39dc-455c-aed0-6334bb6e1270",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helga, Skittish Seer": {
@@ -189472,12 +189472,12 @@
     },
     "Nurgle's Conscription": {
       "edhrec_rank": 12753,
-      "gate": "template",
+      "gate": null,
       "name": "Nurgle's Conscription",
-      "reason": "no template for: Put target creature card from an opponent's graveyard onto the battlefield tapped under yo",
+      "reason": "",
       "scryfall_id": "076213d7-49d9-40a8-93d5-bf1429a8862a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nurgle's Rot": {
