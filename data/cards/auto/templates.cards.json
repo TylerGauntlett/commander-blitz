@@ -42785,6 +42785,98 @@
           "affects": {
             "self_only": true
           },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Wraith Form — This creature can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "chosen",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a land you control"
+                },
+                {
+                  "as": "chosen_land",
+                  "objects": {
+                    "binding": "chosen"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "count": {
+                    "const": 2
+                  },
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "shares_a_name_with": "chosen_land",
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}",
+                "sacrifice": {
+                  "self_only": true
+                }
+              },
+              "player": "you",
+              "prompt": "Pay {3} and sacrifice Canoptek Wraith to fetch two basic lands?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Transdimensional Scout — When this creature deals combat damage to a player, you may pay {3} and sacrifice it. If you do, choose a land you control. Then search your library for up to two basic land cards which have the same name as the chosen land, put them onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "canoptek_wraith",
+      "mana_cost": "{3}",
+      "name": "Canoptek Wraith",
+      "oracle_text": "Wraith Form — This creature can't be blocked.\nTransdimensional Scout — When this creature deals combat damage to a player, you may pay {3} and sacrifice it. If you do, choose a land you control. Then search your library for up to two basic land cards which have the same name as the chosen land, put them onto the battlefield tapped, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Wraith"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
           "cost": {
             "mana": "{2}"
           },
@@ -82597,6 +82689,56 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "flashback": {
+        "sacrifice": {
+          "controller": "you",
+          "count": 3,
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "dread_return",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Dread Return",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.\nFlashback—Sacrifice three creatures. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -106493,6 +106635,50 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Flesh Flayer — When this creature enters, mill three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "flayed_one",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Flayed One",
+      "oracle_text": "Lifelink\nFlesh Flayer — When this creature enters, mill three cards.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

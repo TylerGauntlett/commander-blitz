@@ -3571,6 +3571,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "canoptek_wraith": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "canopy_gargantuan": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6832,6 +6836,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dread_return": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "dread_statuary": {
     "zone": "battlefield"
   },
@@ -9019,6 +9030,16 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "flayed_one": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
   },
   "flayer_of_the_hatebound": {
     "battlefield_count": 33,

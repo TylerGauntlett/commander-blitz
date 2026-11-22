@@ -1,0 +1,24 @@
+{
+  "card_id": "ghost_ark",
+  "name": "Ghost Ark",
+  "oracle_text": "Flying\nRepair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "blocked_sentences": [
+    "Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "becomes_crewed",
+      "kind": "trigger_event",
+      "what": "a trigger event fired when a Vehicle becomes crewed (702.122d), i.e. when a crew ability of that Vehicle resolves, whatever source activated or caused it, filterable to self",
+      "why_existing_wont_do": "trigger_events has ability_activated, becomes_tapped and state but no crewed event; folding the effect into the Crew 2 ability's own effects would turn a separate triggered ability into part of the crew ability's resolution and would miss crewing by other means"
+    },
+    {
+      "capability": "unearth",
+      "kind": "op",
+      "what": "an op granting unearth {N} until end of turn to cards in a graveyard matching a selector (here artifact creature cards in your graveyard): a sorcery-speed activated ability from the graveyard that returns the card to the battlefield, gives it haste, exiles it at the beginning of the next end step, and exiles it instead if it would leave the battlefield; the unearth keyword itself is also absent from card_level_cost_keys and keywords",
+      "why_existing_wont_do": "grant_graveyard_cast only grants casting (flashback/escape) and grant_playable grants play permissions, neither an activated return-to-battlefield ability with the haste, end-step exile and leave-the-battlefield replacement riders; grant_ability works on permanents on the battlefield only"
+    }
+  ],
+  "closest_existing": ["grant_graveyard_cast", "grant_playable", "ability_activated"],
+  "confidence": "high"
+}

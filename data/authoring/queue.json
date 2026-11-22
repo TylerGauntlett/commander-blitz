@@ -38872,12 +38872,12 @@
     },
     "Canoptek Wraith": {
       "edhrec_rank": 6674,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Wraith",
-      "reason": "no template for: Wraith Form — This creature can't be blocked",
+      "reason": "",
       "scryfall_id": "02e11c4e-15b3-41b5-8bf7-2eb8ebf1bef3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canopy Baloth": {
@@ -74392,12 +74392,12 @@
     },
     "Dread Return": {
       "edhrec_rank": 530,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Return",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "0e2181c0-e0ff-4e5e-b59c-0e389642d45c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Rider": {
@@ -97612,12 +97612,12 @@
     },
     "Flayed One": {
       "edhrec_rank": 12017,
-      "gate": "template",
+      "gate": null,
       "name": "Flayed One",
-      "reason": "no template for: Flesh Flayer — When this creature enters, mill three cards",
+      "reason": "",
       "scryfall_id": "6296e73f-52ca-4ebd-b9eb-66ea393679fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flayer Drone": {
