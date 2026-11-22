@@ -96,7 +96,14 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaCost, ManaOrigin, printed_cost_is
 from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
-from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics, TempEffect
+from .structs import (
+    PROTECTION_COLORLESS,
+    PROTECTION_EVERYTHING,
+    Characteristics,
+    TempEffect,
+    mana_value_quality,
+    parse_mana_value_quality,
+)
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
 
@@ -3718,6 +3725,8 @@ def _static_protection_qualities(
     out.update(resolve_chosen_color_list(static.get("from_colors"), source_obj))
     if static.get("from_colorless"):
         out.add(PROTECTION_COLORLESS)
+    if (mana_value := static.get("from_mana_value")) is not None:
+        out.add(mana_value_quality(mana_value["op"], mana_value["value"]))
     if static.get("from_colors_outside_commander_identity"):
         # "Your commander" is the static's controller's -- the Plate's, not
         # the equipped creature's, and it follows the Equipment when it
@@ -3990,7 +3999,24 @@ def _matches_protection(
     # has made colourless is matched and one given a colour is not.
     if PROTECTION_COLORLESS in qualities and not colors:
         return True
-    return bool(have & qualities)
+    if have & qualities:
+        return True
+    # "Protection from mana value 3 or less" (Reaver Titan). Mana value is a
+    # number, not a name, so it is the one quality compared rather than
+    # intersected: a token or a land is mana value 0 and is matched by "or
+    # less", a face-down permanent is 0 too (708.2), and a spell on the stack
+    # counts its X (202.3e) -- `values.object_mana_value`'s reading.
+    comparisons = [
+        parsed for q in qualities if (parsed := parse_mana_value_quality(q)) is not None
+    ]
+    if not comparisons:
+        return False
+    from .effects.values import object_mana_value
+
+    mv = 0 if source.face_down else object_mana_value(state, source)
+    return any(
+        mv <= value if op == "<=" else mv >= value for op, value in comparisons
+    )
 
 
 def player_protection_from(state: GameState, pid: int) -> frozenset[str]:

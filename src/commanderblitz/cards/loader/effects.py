@@ -50,10 +50,12 @@ from commanderblitz.engine.structs import (
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
+    PROTECTION_MANA_VALUE_OPS,
     PROTECTION_SENTINELS,
     TOKEN_MULTIPLIER_DURATIONS,
     UNBLOCKABLE_DURATIONS,
     UNCOUNTERABLE_GRANT_DURATIONS,
+    parse_mana_value_quality,
 )
 from commanderblitz.engine.temp_effects import COMBAT_RULE_GRANTS
 from commanderblitz.engine.triggers import (
@@ -672,6 +674,38 @@ def _refuse_protection_sentinels(subtypes: Any, where: str) -> None:
                 f"{where}.from_subtypes[{i}]: {entry!r} is not a subtype -- "
                 f"write 'from_{entry}': true"
             )
+        if isinstance(entry, str) and parse_mana_value_quality(entry) is not None:
+            raise DslError(
+                f"{where}.from_subtypes[{i}]: {entry!r} is not a subtype -- "
+                f"write 'from_mana_value' as a comparison"
+            )
+
+
+def _check_protection_mana_value(spec: Any, where: str) -> None:
+    """Check a ``from_mana_value`` quality: ``{"op": "<=", "value": 3}``.
+
+    Every malformed spelling is silent otherwise. A bare integer would be a
+    protection no card prints ("mana value 3"), a missing or unknown ``op``
+    would raise only when a rule first asked, and a value expression has no
+    context to be evaluated in at the moment damage, a block or a target asks.
+    """
+    if not isinstance(spec, Mapping) or set(spec) != {"op", "value"}:
+        raise DslError(
+            f'{where}: from_mana_value is {{"op": "<=" or ">=", "value": N}}, '
+            f"not {spec!r}"
+        )
+    if spec["op"] not in PROTECTION_MANA_VALUE_OPS:
+        raise DslError(
+            f"{where}: from_mana_value op {spec['op']!r} is not one of "
+            f"{sorted(PROTECTION_MANA_VALUE_OPS)} -- 'N or less' is '<=', "
+            f"'N or greater' is '>='"
+        )
+    value = spec["value"]
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise DslError(
+            f"{where}: from_mana_value value is a literal non-negative integer, "
+            f"not {value!r}"
+        )
 
 
 def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:

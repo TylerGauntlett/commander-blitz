@@ -1192,6 +1192,11 @@ class AbilityModel(BaseModel):
     #: ``from_colors`` letter because colorless is not a colour; matched against
     #: any source with no colours at all.
     from_colorless: bool = False
+    #: "Protection from mana value 3 or less" (702.16, 202.3). A comparison,
+    #: ``{"op": "<=", "value": 3}``, against the source's mana value -- the
+    #: selector language's spelling, with ``op`` one of ``<=`` and ``>=`` and a
+    #: literal integer ``value``.
+    from_mana_value: dict[str, Any] | None = None
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not

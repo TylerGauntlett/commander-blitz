@@ -6942,6 +6942,27 @@ load, look implemented, and protect from nothing.
 colours (105.2c: colorless is not a colour, so it is never a `from_colors`
 letter). See [Granting protection](#granting-protection).
 
+**Protection from a mana value.** Reaver Titan — "Protection from mana value 3
+or less" — and Mistmeadow Skulk — "…protection from mana value 3 or greater" —
+compare the source's mana value against a literal number:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "self_only": true },
+  "from_mana_value": { "op": "<=", "value": 3 } }
+```
+
+`op` is `"<="` ("N or less") or `">="` ("N or greater"), inclusive at N, and
+`value` is a non-negative integer; anything else is refused at load time, and so
+is the quality's printed form ("mana value 3 or less") written as a
+`from_subtypes` entry. The quality joins the same flat set the other qualities
+live in (`structs.mana_value_quality`), so all four rules see it and a target
+refusal reads "Protection from mana value 3 or less". The source's mana value is
+`values.object_mana_value`'s: a token or a land is 0 and so is "3 or less", a
+face-down permanent is 0 (708.2), and a spell on the stack counts its X (202.3e),
+so a Fireball cast for X = 3 is mana value 4. The near miss is a
+`cant_cast_spells` filter with `mana_value`, which stops the spell being cast at
+all rather than protecting one permanent from it.
+
 **Protection from the colours outside your commander's identity.** Commander's
 Plate — "Equipped creature gets +3/+3 and has protection from each color that's
 not in your commander's color identity" — names a colour set no printed list can,
@@ -7009,7 +7030,7 @@ Ward) spares more than its source and is not this key.
 **A player with protection.** "**You** and creatures you control have protection
 from the chosen card type" is two statics: the `protection` above for the
 creatures, and a player-wide `player_protection` for the seat, which spells its
-qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`,
+qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`, `from_mana_value`,
 `from_colorless`, `from_colors_outside_commander_identity`, the chosen leaf
 included):
 

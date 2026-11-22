@@ -91,6 +91,7 @@ from commanderblitz.engine.triggers import (
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
+    _check_protection_mana_value,
     _reads_announced_x,
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
@@ -7540,6 +7541,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         qualities.append("outside commander identity")
     if model.from_colorless:
         qualities.append("colorless")
+    if model.from_mana_value is not None:
+        qualities.append("mana value")
     if model.effect in ("protection", "player_protection"):
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
@@ -7548,7 +7551,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if not qualities:
             raise DslError(
                 f"{where}: {model.effect} needs from_types/from_subtypes/from_colors/"
-                f"from_colorless/from_colors_outside_commander_identity"
+                f"from_colorless/from_mana_value/from_colors_outside_commander_identity"
             )
         if model.effect == "player_protection" and model.affects is not None:
             # "You have protection" names a seat. An `affects` beside it would
@@ -7559,6 +7562,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"protection for permanents is a separate 'protection' static"
             )
         _refuse_protection_sentinels(model.from_subtypes, where)
+        if model.from_mana_value is not None:
+            _check_protection_mana_value(model.from_mana_value, where)
         if model.from_colors_outside_commander_identity and model.from_colors:
             # The computed set already covers every colour the commander lacks,
             # and a printed colour *inside* the identity is a second sentence no
@@ -7602,7 +7607,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif qualities:
         raise DslError(
             f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
-            f"from_colors_outside_commander_identity need effect 'protection' "
+            f"from_mana_value/from_colors_outside_commander_identity need effect "
+            f"'protection' "
             f"or 'player_protection'"
         )
     if model.spares is not None:
@@ -7793,6 +7799,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["from_colors_outside_commander_identity"] = True
     if model.from_colorless:
         static["from_colorless"] = True
+    if model.from_mana_value is not None:
+        static["from_mana_value"] = dict(model.from_mana_value)
     if model.spares is not None:
         static["spares"] = model.spares
     if model.blockers is not None:
