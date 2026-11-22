@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **456** capabilities.
+**536 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -374,8 +374,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
-| [protection-from-everything](#protection-from-everything) | 1 | 4197 | static_effect |
-| [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
@@ -6318,34 +6316,6 @@ Blocks **1** card.
 
 - **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
   - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
-
-</details>
-
-## protection-from-everything
-
-Blocks **1** card.
-
-- **(static_effect)** a 'from_everything' quality (702.16i, PROTECTION_EVERYTHING) on the continuous 'protection' static, so {"kind": "static", "effect": "protection", "affects": {"controller": "you", "is_commander": true}, "from_everything": true} loads and protected_from returns the everything sentinel for matching permanents
-  <br>Why the existing vocabulary won't do: The 'protection' static accepts only from_types/from_subtypes/from_colors/from_colorless/from_colors_outside_commander_identity (loader _validate static check and schema have no from_everything); from_everything exists only on the one-shot grant_protection op, which is until end of turn for objects and cannot be a lasting static. Listing every type, colour and colorless would be an approximation, not protection from everything
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vexilus Praetor** (rank 4197) — `vexilus_praetor`
-  - Aegis of the Emperor — Commanders you control have protection from everything.
-
-</details>
-
-## protection-from-mana-value
-
-Blocks **1** card.
-
-- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
-  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
-  - Lifelink, protection from mana value 3 or greater
 
 </details>
 

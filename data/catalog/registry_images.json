@@ -5087,6 +5087,10 @@
     "artist": "Bruno Biazotto",
     "scryfall_id": "d32d3d8a-7450-4a29-abc7-f472426f0c28"
   },
+  "deny_the_witch": {
+    "artist": "Games Workshop",
+    "scryfall_id": "d3e5b091-2aa7-4aca-9855-bb802d3d563e"
+  },
   "departed_deckhand": {
     "artist": "Zoltan Boros",
     "scryfall_id": "985cfee6-97b7-4f42-8bfe-5e1e44bb54d6"
@@ -6815,6 +6819,10 @@
   "exterminate": {
     "artist": "Ivan Dedov",
     "scryfall_id": "da54bbfd-48d8-4b1f-9336-e45be7e0b0e5"
+  },
+  "exterminatus": {
+    "artist": "Games Workshop",
+    "scryfall_id": "196703b0-78bf-4f85-ae81-7335fe486982"
   },
   "extract_brain": {
     "artist": "A. M. Sartor",
@@ -13330,6 +13338,10 @@
     "artist": "Zezhou Chen",
     "scryfall_id": "69e1ad95-4587-49b0-ac26-ba788b55a847"
   },
+  "mistmeadow_skulk": {
+    "artist": "Omar Rayyan",
+    "scryfall_id": "a0941776-ee63-4769-b78a-a8febfb33112"
+  },
   "mistmeadow_vanisher": {
     "artist": "Iris Compiet",
     "scryfall_id": "13e9382c-f3c8-4b30-99cb-87f69f5828c8"
@@ -16465,6 +16477,10 @@
     "artist": "Austin Hsu",
     "scryfall_id": "28e84b1b-1c05-4e1b-93b8-9cc2ca73509d"
   },
+  "reaver_titan": {
+    "artist": "Philip Helliwell",
+    "scryfall_id": "494556e9-06e7-40fd-b967-cd2631b5b91a"
+  },
   "rebel_2_2_r": {
     "artist": "Anthony Devine",
     "scryfall_id": "6afbbdad-aeed-428a-b840-c33f59a18d0b"
@@ -18824,6 +18840,10 @@
   "sister_hospitaller": {
     "artist": "Games Workshop",
     "scryfall_id": "69ae36ca-683b-4557-9c2a-130db4150152"
+  },
+  "sister_of_silence": {
+    "artist": "Games Workshop",
+    "scryfall_id": "05054314-b8d9-4bd9-b21d-5484e1633e89"
   },
   "sister_repentia": {
     "artist": "Seseon Yoon",
@@ -23063,6 +23083,10 @@
   "veteran_s_sidearm": {
     "artist": "Aaron Miller",
     "scryfall_id": "9c1b3e7d-0fd8-4324-be7b-382e75ae9c17"
+  },
+  "vexilus_praetor": {
+    "artist": "Zezhou Chen",
+    "scryfall_id": "58713dfe-c04c-4038-9c8d-37d5ba9fc24d"
   },
   "vexing_gull": {
     "artist": "Volkan Ba\u01f5a",

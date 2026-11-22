@@ -176372,12 +176372,12 @@
     },
     "Mistmeadow Skulk": {
       "edhrec_rank": 16276,
-      "gate": "template",
+      "gate": null,
       "name": "Mistmeadow Skulk",
-      "reason": "no template for: Lifelink, protection from mana value 3 or greater",
+      "reason": "",
       "scryfall_id": "a0941776-ee63-4769-b78a-a8febfb33112",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mistmeadow Vanisher": {
@@ -303742,12 +303742,12 @@
     },
     "Vexilus Praetor": {
       "edhrec_rank": 4197,
-      "gate": "template",
+      "gate": null,
       "name": "Vexilus Praetor",
-      "reason": "no template for: Aegis of the Emperor — Commanders you control have protection from everything",
+      "reason": "",
       "scryfall_id": "58713dfe-c04c-4038-9c8d-37d5ba9fc24d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vexing Arcanix": {

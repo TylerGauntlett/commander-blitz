@@ -15848,6 +15848,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mistmeadow_skulk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mistmeadow_vanisher": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -27305,6 +27309,13 @@
     "zone": "battlefield"
   },
   "veteran_s_sidearm": {
+    "zone": "battlefield"
+  },
+  "vexilus_praetor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "vexing_gull": {
