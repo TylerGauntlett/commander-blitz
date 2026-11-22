@@ -249802,22 +249802,22 @@
     },
     "Skorpekh Destroyer": {
       "edhrec_rank": 16695,
-      "gate": "template",
+      "gate": null,
       "name": "Skorpekh Destroyer",
-      "reason": "no template for: Hyperphase Threshers — Whenever an artifact you control enters, this creature gains first ",
+      "reason": "",
       "scryfall_id": "49e9b104-413b-4d07-9eb8-b335510747ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skorpekh Lord": {
       "edhrec_rank": 7589,
-      "gate": "template",
+      "gate": null,
       "name": "Skorpekh Lord",
-      "reason": "no template for: Command Protocols — Other artifact creatures you control get +1/+0 and have menace",
+      "reason": "",
       "scryfall_id": "ab2f2c6b-335f-4c95-9ef2-02f7b3efc7b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skred": {
@@ -273352,12 +273352,12 @@
     },
     "Szarekh, the Silent King": {
       "edhrec_rank": 9936,
-      "gate": "template",
+      "gate": null,
       "name": "Szarekh, the Silent King",
-      "reason": "no template for: My Will Be Done — Whenever Szarekh attacks, mill three cards. You may put an artifact crea",
+      "reason": "",
       "scryfall_id": "12a3400d-7a8b-4bae-9a4f-c9a1bc741e68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Szarel, Genesis Shepherd": {
@@ -282852,12 +282852,12 @@
     },
     "The War in Heaven": {
       "edhrec_rank": 10720,
-      "gate": "template",
+      "gate": null,
       "name": "The War in Heaven",
-      "reason": "no template for: I — You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "6d4070ea-9674-4a5d-ad73-60d942447918",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Warring Triad": {
@@ -283042,12 +283042,12 @@
     },
     "Their Name Is Death": {
       "edhrec_rank": 3858,
-      "gate": "template",
+      "gate": null,
       "name": "Their Name Is Death",
-      "reason": "no template for: Destroy all nonartifact creatures",
+      "reason": "",
       "scryfall_id": "9ea57442-b2ff-4799-b147-d683c0583236",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Their Number Is Legion": {
@@ -288842,12 +288842,12 @@
     },
     "Tomb Fortress": {
       "edhrec_rank": 4966,
-      "gate": "template",
+      "gate": null,
       "name": "Tomb Fortress",
-      "reason": "no template for: {2}{B}{B}{B}, {T}, Exile this land: Mill four cards, then return a creature card from your",
+      "reason": "",
       "scryfall_id": "5ffd1a43-5613-4058-9e51-fd3cc1585651",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tomb Hex": {
@@ -292582,12 +292582,12 @@
     },
     "Triarch Praetorian": {
       "edhrec_rank": 9124,
-      "gate": "template",
+      "gate": null,
       "name": "Triarch Praetorian",
-      "reason": "no template for: Dynastic Codes — When this creature enters from a graveyard, you draw two cards and you lo",
+      "reason": "",
       "scryfall_id": "5ad67a79-cb13-44b8-adac-36cfd211f2d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triarch Stalker": {

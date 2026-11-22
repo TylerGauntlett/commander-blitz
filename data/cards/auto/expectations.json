@@ -22724,6 +22724,30 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "skorpekh_destroyer": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "deathtouch",
+        "first_strike"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "skorpekh_lord": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "menace"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "skrelv_s_hive": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24575,6 +24599,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "szarekh_the_silent_king": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "szarel_genesis_shepherd": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25634,6 +25662,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_war_in_heaven": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
   "the_warring_triad": {
     "battlefield_count": 33,
     "granted": {
@@ -25672,6 +25712,13 @@
   "theater_of_horrors": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "their_name_is_death": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "zone": "graveyard"
   },
   "thelonite_hermit": {
     "battlefield_count": 33,
@@ -26294,6 +26341,10 @@
   "tolarian_scholar": {
     "zone": "battlefield"
   },
+  "tomb_fortress": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tomb_of_the_spirit_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26626,6 +26677,16 @@
   },
   "tri_sentinel_act_of_vengeance": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "triarch_praetorian": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "tributary_instructor": {

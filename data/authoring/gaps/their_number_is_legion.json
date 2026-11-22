@@ -1,0 +1,14 @@
+{
+  "card_id": "their_number_is_legion",
+  "name": "Their Number Is Legion",
+  "oracle_text": "Create X tapped 2/2 black Necron Warrior artifact creature tokens, then you gain life equal to the number of artifacts you control. Exile Their Number Is Legion.\nYou may cast this card from your graveyard.",
+  "blocked_sentences": ["You may cast this card from your graveyard."],
+  "needs": [{
+    "capability": "cast_from_graveyard_nonpermanent",
+    "kind": "static_effect",
+    "what": "the card's own unconditional permission to cast an instant or sorcery from its owner's graveyard at its printed mana cost (X included, announced as usual), with no alternative cost involved; the spell then goes wherever it normally would, which here is exile via exiles_itself",
+    "why_existing_wont_do": "The `cast_from_graveyard` static with active_zones [\"graveyard\"] is exactly this permission, but the loader refuses it on any card without a permanent type ('supported on permanent cards only -- the nonpermanent form has no witness'). `graveyard_cast` + `graveyard_cost` is an alternative cost (escape-style), not a cast at the printed price, so writing graveyard_cost {X}{B}{B}{B}{B} would change how it interacts with other alternative costs and free-cast effects; `flashback`/`retrace` add exile or a discard that is not printed; `grant_graveyard_cast` is a permission granted to other spells. The rest of the card is expressible: create_token necron_warrior_2_2_b_artifact with amount {x}, tapped: true; gain_life amount {count: artifacts you control}; exiles_itself: true"
+  }],
+  "closest_existing": ["cast_from_graveyard", "graveyard_cost", "flashback"],
+  "confidence": "high"
+}
