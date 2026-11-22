@@ -25082,12 +25082,12 @@
     },
     "Biotransference": {
       "edhrec_rank": 4207,
-      "gate": "template",
+      "gate": null,
       "name": "Biotransference",
-      "reason": "no template for: Creatures you control are artifacts in addition to their other types. The same is true for",
+      "reason": "",
       "scryfall_id": "1789c4ad-c258-469a-b875-f2d48976401d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Biovisionary": {
@@ -38842,12 +38842,12 @@
     },
     "Canoptek Scarab Swarm": {
       "edhrec_rank": 3945,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Scarab Swarm",
-      "reason": "no template for: Feeder Mandibles — When this creature enters, exile target player's graveyard. For each ar",
+      "reason": "",
       "scryfall_id": "3ce2021c-1422-4901-a554-2d4fab72c8e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Spyder": {
@@ -134442,12 +134442,12 @@
     },
     "Imotekh the Stormlord": {
       "edhrec_rank": 4869,
-      "gate": "template",
+      "gate": null,
       "name": "Imotekh the Stormlord",
-      "reason": "no template for: Phaeron — Whenever one or more artifact cards leave your graveyard, create two 2/2 black N",
+      "reason": "",
       "scryfall_id": "1287e69f-5e92-48f4-80de-d43cb5be21ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imoti, Celebrant of Bounty": {
@@ -184532,12 +184532,12 @@
     },
     "Necron Monolith": {
       "edhrec_rank": 10815,
-      "gate": "template",
+      "gate": null,
       "name": "Necron Monolith",
-      "reason": "no template for: Eternity Gate — Whenever this Vehicle attacks, mill three cards. For each creature card mi",
+      "reason": "",
       "scryfall_id": "9b1ecad3-8cec-4a18-9401-6eebc7feeacc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necron Overlord": {
@@ -186502,12 +186502,12 @@
     },
     "Night Scythe": {
       "edhrec_rank": 13330,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Night Scythe",
-      "reason": "no template for: Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact crea",
+      "reason": "necron_warrior_2_2_b_artifact tokens is 0, expected 1; your battlefield is 33, expected 34",
       "scryfall_id": "9a71531f-d4b6-4cc7-8193-b2f5bce33b21",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Night Soil": {
@@ -228382,12 +228382,12 @@
     },
     "Royal Warden": {
       "edhrec_rank": 10179,
-      "gate": "template",
+      "gate": null,
       "name": "Royal Warden",
-      "reason": "no template for: Unearth {3}{B}",
+      "reason": "",
       "scryfall_id": "0a968eac-2840-41ba-b7de-3182964d4913",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rubble Reading": {

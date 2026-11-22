@@ -1,0 +1,46 @@
+{
+  "card": {
+    "id": "night_scythe",
+    "name": "Night Scythe",
+    "oracle_text": "Flying\nInvasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "subtypes": ["Vehicle"],
+    "power": 3,
+    "toughness": 1,
+    "colors": [],
+    "color_identity": [],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "create_token", "token": "necron_warrior_2_2_b_artifact", "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Crew 2",
+        "cost": {
+          "tap_permanents": {"controller": "you", "total_power": 2, "types": ["Creature"]}
+        },
+        "effects": [
+          {
+            "op": "animate",
+            "objects": {"self_only": true, "zone": "battlefield"},
+            "power": {"const": 3},
+            "toughness": {"const": 1},
+            "types": ["Creature"]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34,
+    "tokens": {"id": "necron_warrior_2_2_b_artifact", "count": 1}
+  }
+}

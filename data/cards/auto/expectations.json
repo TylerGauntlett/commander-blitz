@@ -2379,6 +2379,13 @@
     },
     "zone": "graveyard"
   },
+  "biotransference": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "bird_maiden": {
     "zone": "battlefield"
   },
@@ -3557,6 +3564,11 @@
   },
   "cankerbloom": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "canoptek_scarab_swarm": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "canoptek_spyder": {
@@ -12200,6 +12212,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "imotekh_the_stormlord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "impassioned_orator": {
     "battlefield_count": 33,
     "life": {
@@ -16871,6 +16887,10 @@
   "necron_deathmark": {
     "zone": "battlefield"
   },
+  "necron_monolith": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "necropotence": {
     "battlefield_count": 33,
     "hand_size": {
@@ -20793,6 +20813,14 @@
     "counters": {
       "amount": 20,
       "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
+  "royal_warden": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "necron_warrior_2_2_b_artifact"
     },
     "zone": "battlefield"
   },
