@@ -3674,7 +3674,10 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
         # Unbreathing Horde's shield is answered by `damage_removes_counters`,
         # later in `damage_permanent`: it prevents the same damage but also
         # costs a counter, so it is the last total shield applied, not this one.
+        # Khârn's is answered by `damage_prevented_with_effects` for the same
+        # reason: it prevents the same damage and then gives Khârn away.
         and not static.get("remove_counters")
+        and not static.get("effects")
         and (is_combat or not static.get("combat_only"))
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
@@ -3739,6 +3742,35 @@ def damage_removes_counters(
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, str(spec["counter"]), int(spec.get("amount", 1))
+    return None
+
+
+def damage_prevented_with_effects(
+    state: GameState, oid: int, *, is_combat: bool = False
+) -> tuple[GameObject, Mapping[str, Any]] | None:
+    """The total shield with a 615.5 rider on this permanent, if any.
+
+    "If damage would be dealt to Khârn the Betrayer, prevent that damage and
+    an opponent of your choice gains control of it." A `prevent_damage` static
+    with ``prevent_all`` and ``effects``: one prevention (615) whose additional
+    effect "takes place immediately afterward" (615.5), so the effects are run
+    by `primitives.damage_permanent` off the stack, as the `prevent_damage`
+    ops' "prevented this way" riders are, and never as a trigger.
+
+    Returns the first such static's source and the static, or ``None``. First
+    and not every one, for `damage_into_counters`' reason: once one shield has
+    prevented the damage there is none left for a second to replace (616.1).
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage" or not static.get("effects"):
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return source_obj, static
     return None
 
 

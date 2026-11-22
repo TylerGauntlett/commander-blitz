@@ -5379,6 +5379,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"one, not {amount!r} -- the shield removes a fixed number, "
                     f"not 'that many'"
                 )
+        if model.effects:
+            # "If damage would be dealt to Khârn the Betrayer, prevent that
+            # damage and an opponent of your choice gains control of it." The
+            # 615.5 rider, run off the stack right after each prevention by
+            # `primitives.damage_permanent`. Only on a total shield over
+            # permanents -- "prevent that damage" is all of it, and the player
+            # half reads no rider -- and never beside `counter` or
+            # `remove_counters`, two riders on one replacement no card prints.
+            if not model.prevent_all or model.affects is None or model.affects_player:
+                raise DslError(
+                    f"{where}: 'prevent_damage' takes 'effects' only with "
+                    f"'prevent_all' over 'affects' (permanents) -- \"prevent that "
+                    f"damage and …\" prevents all of the damage to a permanent"
+                )
+            if model.counter is not None or model.remove_counters is not None:
+                raise DslError(
+                    f"{where}: 'prevent_damage' takes one of 'counter', "
+                    f"'remove_counters' or 'effects', not two"
+                )
+            for i, effect in enumerate(model.effects):
+                _validate_effect(effect, f"{where}.effects[{i}]", {})
     if model.remove_counters is not None and model.effect != "prevent_damage":
         raise DslError(
             f"{where}: 'remove_counters' is read only by the 'prevent_damage' static"
@@ -5400,7 +5421,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "replace_lose_game":
         _validate_lose_game_replacement(model, where)
-    elif model.effects:
+    elif model.effects and model.effect != "prevent_damage":
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
 
@@ -7916,9 +7937,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     static: dict[str, Any] = {"effect": model.effect}
-    if model.effect == "replace_lose_game":
+    if model.effect == "replace_lose_game" or (
+        model.effect == "prevent_damage" and model.effects
+    ):
         # What happens instead, carried on the mapping because the mapping is
-        # all `player_statics.lose_game_replacement` ever sees.
+        # all `player_statics.lose_game_replacement` ever sees -- and, on a
+        # `prevent_damage` total shield, the 615.5 rider
+        # `characteristics.damage_prevented_with_effects` hands to
+        # `primitives.damage_permanent`.
         static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)

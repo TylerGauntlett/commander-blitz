@@ -16,6 +16,7 @@ from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
     damage_into_counters,
+    damage_prevented_with_effects,
     damage_removes_counters,
     player_protected_from,
     prevented_damage,
@@ -48,7 +49,7 @@ from .player_statics import (
     untap_held,
 )
 from .state import new_object
-from .structs import CONTROL_DURATIONS, DamageRedirect, TempEffect
+from .structs import CONTROL_DURATIONS, DamageRedirect, DelayedTrigger, TempEffect
 from .temp_effects import (
     combat_fogged,
     damage_redirect,
@@ -955,6 +956,58 @@ def damage_permanent(
             reason="shield_counter",
         )
         return 0
+    # "If damage would be dealt to Khârn the Betrayer, prevent that damage and
+    # an opponent of your choice gains control of it." A total shield whose
+    # additional effect "takes place immediately afterward" (615.5): the
+    # prevention happens here, and the effects -- which may ask, and this
+    # primitive cannot -- are armed to run off the stack at the next moment
+    # the engine can suspend, as the `prevent_damage` ops' riders are. Run as
+    # the static's controller *now* (the "you" of "of your choice"), with the
+    # shielded permanent bound as `shielded` and the damage as `amount`.
+    #
+    # After every free shield, beside the Horde's and for its reason (616.1):
+    # the effects cost the controller something, so every shield that costs
+    # nothing applies first. Once per combat damage event (510.2), as the
+    # Horde's counter is: two blockers are one event and one control change.
+    # Under "damage can't be prevented" the additional effect still happens
+    # (615.12) and the damage carries on below.
+    if (rider := damage_prevented_with_effects(state, oid, is_combat=is_combat)) is not None:
+        shield_source, static = rider
+        armed = is_combat and batch is not None and _prevention_marked(
+            state, oid, batch, PREVENT_WITH_EFFECTS
+        )
+        mark = {"batch": batch} if is_combat and batch is not None else {}
+        if preventable:
+            fire(
+                state,
+                EventType.DAMAGE_PREVENTED,
+                player=obj.controller,
+                source=source_oid,
+                oid=oid,
+                amount=amount,
+                to="permanent",
+                reason=PREVENT_WITH_EFFECTS,
+                **mark,
+            )
+        else:
+            state.emit(
+                PREVENT_WITH_EFFECTS, player=obj.controller, source=source_oid,
+                oid=oid, reason=PREVENT_WITH_EFFECTS, **mark,
+            )
+        if not armed:
+            state.armed_delays.append(
+                DelayedTrigger(
+                    step="",
+                    controller=shield_source.controller,
+                    effects=tuple(static["effects"]),
+                    bindings={"shielded": oid, "amount": amount},
+                    source_oid=shield_source.oid,
+                    description=str(static.get("text") or state.card_of(shield_source).name),
+                    turn=state.turn,
+                )
+            )
+        if preventable:
+            return 0
     # "If this creature would be dealt damage, prevent that damage and remove
     # a +1/+1 counter from it" (Unbreathing Horde). One prevention (615), as
     # Panther Habit's is, with the counters going the other way and a fixed
@@ -977,7 +1030,9 @@ def damage_permanent(
     # the damage carries on below.
     if (horde := damage_removes_counters(state, oid, is_combat=is_combat)) is not None:
         shield_source, kind, removed = horde
-        paid = is_combat and batch is not None and _horde_paid(state, oid, batch)
+        paid = is_combat and batch is not None and _prevention_marked(
+            state, oid, batch, PREVENT_REMOVE_COUNTERS
+        )
         mark = {"batch": batch} if is_combat and batch is not None else {}
         if preventable:
             fire(
@@ -1526,18 +1581,20 @@ def remove_counters(
 
 
 PREVENT_REMOVE_COUNTERS = "prevent_remove_counters"
+#: The `reason` of a Khârn-shaped total shield with a 615.5 rider.
+PREVENT_WITH_EFFECTS = "prevent_with_effects"
 
 
-def _horde_paid(state: GameState, oid: int, batch: int) -> bool:
-    """Has this combat damage event already cost ``oid`` its counters?
+def _prevention_marked(state: GameState, oid: int, batch: int, reason: str) -> bool:
+    """Has this combat damage event already applied ``reason``'s shield to ``oid``?
 
-    Unbreathing Horde's shield removes its counter once per damage **event**,
-    and combat damage is one (510.2) however many creatures deal it, while
-    `damage_permanent` hears it one assignment at a time. So the second
-    assignment looks back for the first one's mark -- the `DAMAGE_PREVENTED`
-    (or, under "damage can't be prevented", the log line) carrying this
-    permanent and this `batch` -- and stops at the first event of an earlier
-    batch, since batches only count up.
+    Unbreathing Horde's shield removes its counter, and Khârn's gives Khârn
+    away, once per damage **event**, and combat damage is one (510.2) however
+    many creatures deal it, while `damage_permanent` hears it one assignment
+    at a time. So the second assignment looks back for the first one's mark --
+    the `DAMAGE_PREVENTED` (or, under "damage can't be prevented", the log
+    line) carrying this permanent, this `batch` and this reason -- and stops
+    at the first event of an earlier batch, since batches only count up.
     """
     for event in reversed(state.events):
         data = event.data
@@ -1547,7 +1604,7 @@ def _horde_paid(state: GameState, oid: int, batch: int) -> bool:
         if (
             seen == batch
             and data.get("oid") == oid
-            and data.get("reason") == PREVENT_REMOVE_COUNTERS
+            and data.get("reason") == reason
         ):
             return True
     return False

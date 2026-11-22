@@ -10322,6 +10322,40 @@ above is the wrong one for a kind whose loss helps. The near misses are
 `counter`, which puts "that many" on, and a `damage_prevented` trigger with
 `remove_counters`, a second ability on the stack.
 
+## Damage prevented, and then something else
+
+```jsonc
+// Khârn the Betrayer: If damage would be dealt to Khârn the Betrayer, prevent
+//                     that damage and an opponent of your choice gains control of it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "affects": { "self_only": true },
+  "effects": [
+    { "op": "choose_player", "players": "each_opponent", "as": "betrayed_to" },
+    { "op": "gain_control", "objects": { "binding": "shielded" },
+      "player": { "binding": "betrayed_to" }, "duration": "permanent" } ] }
+```
+
+The total shield with a 615.5 rider: `effects` is what "takes place immediately
+afterward". The prevention happens inside `primitives.damage_permanent`, as the
+two shields above do, with `reason: "prevent_with_effects"`; the effects, which
+may ask, are armed on `state.armed_delays` and run off the stack at the engine's
+next suspension point, after state-based actions, as the `prevent_damage` ops'
+"prevented this way" riders run. They run as the static's controller at that
+moment, with the shielded permanent as `{"binding": "shielded"}` and the
+prevented damage as `{"binding": "amount"}`. Answered by
+`characteristics.damage_prevented_with_effects` and kept out of
+`prevents_all_damage`.
+
+It sits beside the Horde's shield, after every shield that costs nothing
+(616.1), once per combat damage event (510.2), and under "damage can't be
+prevented" the damage lands and the effects still run (615.12).
+
+The loader accepts `effects` on `prevent_damage` only beside `prevent_all` over
+`affects`, never beside `counter` or `remove_counters`, and validates each
+effect as it would an ability's. The near misses are a `damage_prevented`
+trigger, a second ability on the stack, and `gain_control` with `player:
+"opponent"`, which names every opponent where the card names one of your choice.
+
 ## Preventing all damage to or by a **permanent**, for a while
 
 ```jsonc
