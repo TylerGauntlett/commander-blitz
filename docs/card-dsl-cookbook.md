@@ -6294,6 +6294,21 @@ the named attacker by `legal_blocks`, which obeys both at once. The loader
 refuses `must_block_any` without `objects` or with an `attacker`; "blocks this
 creature this turn" is a near miss neither op says.
 
+The continuous form is the `blocks_if_able` static, `must_block_any`'s
+requirement held for as long as the static applies and read live by
+`player_statics.block_compelled` at the same `block_any_required`, so it binds
+every combat and nothing spends it. Khârn the Betrayer's "attacks or blocks each
+combat if able" is it beside `attacks_if_able`: a creature attacks only on its
+controller's turn and blocks only on someone else's, so the two never bind the
+same combat and together are exactly the printed line.
+
+```jsonc
+{ "kind": "static", "effect": "attacks_if_able", "affects": { "self_only": true } },
+{ "kind": "static", "effect": "blocks_if_able",  "affects": { "self_only": true } }
+```
+
+Its `affects` reads derived characteristics, as `attacks_if_able`'s does.
+
 ## Goad
 
     Taunt from the Rampart — "Goad all creatures your opponents control. Until

@@ -590,6 +590,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Khârn the Betrayer's "attacks or blocks each combat if able", the
+        # blocking half (the attacking half is `attacks_if_able` beside it):
+        # the continuous twin of the `must_block_any` op, read live by
+        # `player_statics.block_compelled` at the op's enforcement point,
+        # `combat.block_any_required`. A static rather than the op because the
+        # printed line binds every combat for as long as it applies, where the
+        # op records one turn.
+        "blocks_if_able",
         # Coercive Impetus and the Impetus cycle: "Enchanted creature … is
         # goaded." Goad held as a continuous effect (701.38), read by
         # `player_statics.goaders` beside the `goad` op's mark. Neither

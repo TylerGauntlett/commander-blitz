@@ -34,6 +34,7 @@ from .player_statics import (
     attack_tax,
     attacked_player_forbidden,
     block_alone_forbidden,
+    block_compelled,
     block_forbidden,
     block_only_refused,
     block_tax,
@@ -385,7 +386,9 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
     requirement that names no attacker, so blocking any of them obeys it
     (509.1c), and one that lasts the turn, so it binds every combat in it --
     `discharge_block_requirements` leaves it alone and the turn number on the
-    creature is what ends it.
+    creature is what ends it. The `blocks_if_able` static (Khârn the
+    Betrayer's "…or blocks each combat if able") is the same requirement held
+    continuously, read live by `player_statics.block_compelled`.
 
     "…if able" is asked per attacker, as the named requirement asks it:
     `can_block` with ``ignore_existing``, and no block tax owed (509.1c).
@@ -396,7 +399,11 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
     block it beside this one.
     """
     obj = state.objects.get(oid)
-    if obj is None or obj.must_block_any_turn != state.turn or obj.controller != defender:
+    if obj is None or obj.controller != defender:
+        return False
+    # Two sources, one requirement: the op's turn-long mark, and the
+    # continuous `blocks_if_able` static (Khârn the Betrayer), read live.
+    if obj.must_block_any_turn != state.turn and not block_compelled(state, oid):
         return False
     combat = state.combat
     if combat is None or block_taxed(state, oid):

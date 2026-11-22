@@ -996,6 +996,8 @@ STATICS: dict[str, Entry] = {
                         "(`defending`: only a named player obeys it).", "The continuous form"),
     "black_mana_as_phyrexian": ("The player may pay life for each {B} in a cost.",
                                 '`black_mana_as_phyrexian` — K\'rrik\'s "For each {B} in a cost"'),
+    "blocks_if_able": ("Matching creatures block each combat if able (any attacker obeys it).",
+                       "Block requirements"),
     "block_restriction": ("Matching creatures can't block, or can only block under a rule.",
                           "Block restrictions"),
     "block_tax": ("Matching creatures can't block unless their controller pays.",

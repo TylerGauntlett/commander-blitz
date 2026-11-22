@@ -2214,6 +2214,32 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     return False
 
 
+def block_compelled(state: GameState, oid: int) -> bool:
+    """Is this creature under a continuous "blocks each combat if able"?
+
+    The blocking half of Khârn the Betrayer's "attacks or blocks each combat if
+    able" (the attacking half is `attacks_if_able`), and the permanent
+    counterpart of the `must_block_any` op: that op records one turn on the
+    object, and a printed line is true in every combat for as long as it
+    applies, so it is read live off the battlefield like `attack_compelled`.
+
+    It names no attacker, so any block obeys it (509.1c); whether the creature
+    is *able* to block -- an attacker coming at its controller, untapped, no
+    block tax -- is `combat.block_any_required`'s question, not this one.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "blocks_if_able":
+            continue
+        # A block requirement is no layer (613), so its filter reads the
+        # creature as it now is, as `attack_compelled`'s does.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            return True
+    return False
+
+
 def static_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
     """The defending players each "attacks <a player> each combat if able"
     static names for this creature -- one set per static.

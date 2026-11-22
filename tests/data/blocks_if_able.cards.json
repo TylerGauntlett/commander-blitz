@@ -1,0 +1,48 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_blocks_if_able.py. `t_berzerker` is Khârn the Betrayer's Berzerker line alone on a vanilla body: 'attacks or blocks each combat if able', spelled as the `attacks_if_able` and `blocks_if_able` statics side by side. `t_blocking_banner` is the blocking half aimed at other creatures, 'Creatures your opponents control block each combat if able', so the static's `affects` is shown reaching a creature its controller does not control.",
+  "cards": [
+    {
+      "id": "t_berzerker",
+      "name": "Test Berzerker",
+      "oracle_text": "Test Berzerker attacks or blocks each combat if able.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Berserker"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Berzerker attacks or blocks each combat if able.",
+          "effect": "attacks_if_able",
+          "affects": {"self_only": true}
+        },
+        {
+          "kind": "static",
+          "text": "Test Berzerker attacks or blocks each combat if able.",
+          "effect": "blocks_if_able",
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_blocking_banner",
+      "name": "Test Blocking Banner",
+      "oracle_text": "Creatures your opponents control block each combat if able.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control block each combat if able.",
+          "effect": "blocks_if_able",
+          "affects": {"controller": "opponent", "types": ["Creature"]}
+        }
+      ]
+    }
+  ]
+}

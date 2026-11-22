@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 108 |
+| [Static effects](#static-effects) | 109 |
 | [Player-wide statics](#player-wide-statics) | 51 |
-| [Grantable statics](#grantable-statics) | 49 |
+| [Grantable statics](#grantable-statics) | 50 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -606,6 +606,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
+| `blocks_if_able` |  | yes | Matching creatures block each combat if able (any attacker obeys it). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `buff` |  | yes | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `can_block_only` |  | yes | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
@@ -776,6 +777,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
+| `blocks_if_able` | Matching creatures block each combat if able (any attacker obeys it). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `can_block_only` | Matching creatures can block only attackers matching `attackers`. | [Can block only creatures with …](card-dsl-cookbook.md#can-block-only-creatures-with-) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
