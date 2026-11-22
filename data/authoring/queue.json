@@ -252,12 +252,12 @@
     },
     "Abaddon the Despoiler": {
       "edhrec_rank": 8628,
-      "gate": "template",
+      "gate": null,
       "name": "Abaddon the Despoiler",
-      "reason": "no template for: Mark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value",
+      "reason": "",
       "scryfall_id": "2dbe9f43-a95c-4493-9b95-bff69497cd66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abandon Attachments": {
@@ -252432,12 +252432,12 @@
     },
     "Sloppity Bilepiper": {
       "edhrec_rank": 14577,
-      "gate": "template",
+      "gate": null,
       "name": "Sloppity Bilepiper",
-      "reason": "no template for: Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this tur",
+      "reason": "",
       "scryfall_id": "7eadbe1b-12a2-4791-b51d-e5eebf652af6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slow Motion": {

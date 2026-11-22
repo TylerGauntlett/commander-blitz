@@ -19,6 +19,9 @@
   "aardvark_sloth": {
     "zone": "battlefield"
   },
+  "abaddon_the_despoiler": {
+    "zone": "battlefield"
+  },
   "abandoned_air_temple": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22724,6 +22727,10 @@
     "zone": "battlefield"
   },
   "slobad_goblin_tinkerer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sloppity_bilepiper": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

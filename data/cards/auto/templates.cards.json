@@ -261,6 +261,54 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "from_zone": "hand"
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "spells_have_cascade",
+          "kind": "static",
+          "max_mana_value": {
+            "life_lost_this_turn": "opponent"
+          },
+          "text": "Mark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "abaddon_the_despoiler",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{U}{B}{R}",
+      "name": "Abaddon the Despoiler",
+      "oracle_text": "Trample\nMark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -68249,32 +68297,12 @@
           },
           "effects": [
             {
-              "duration": "once_this_turn",
-              "effects": [
-                {
-                  "max_mana_value": {
-                    "mana_value_of": {
-                      "binding": "subject"
-                    }
-                  },
-                  "op": "cascade"
-                }
-              ],
-              "op": "delayed_trigger",
-              "text": "The next noncreature spell you cast this turn has cascade.",
-              "trigger": {
-                "condition": {
-                  "exists": {
-                    "binding": "subject",
-                    "not_types": [
-                      "Creature"
-                    ],
-                    "zone": "stack"
-                  }
-                },
-                "controller": "you",
-                "event": "spell_cast"
-              }
+              "affects_spells": {
+                "not_types": [
+                  "Creature"
+                ]
+              },
+              "op": "next_spell_gains_cascade"
             }
           ],
           "kind": "activated",
@@ -271034,6 +271062,55 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "affects_spells": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "next_spell_gains_cascade"
+            }
+          ],
+          "kind": "activated",
+          "text": "Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade. (When you next cast a creature spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sloppity_bilepiper",
+      "mana_cost": "{3}{B}",
+      "name": "Sloppity Bilepiper",
+      "oracle_text": "Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade. (When you next cast a creature spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

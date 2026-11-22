@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **456** capabilities.
+**536 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
-| [next-spell-gains-cascade](#next-spell-gains-cascade) | 2 | 5088 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
@@ -129,7 +128,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
-| [cascade](#cascade) | 1 | 8628 | static_effect |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
@@ -341,6 +339,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
+| [next-spell-gains-cascade](#next-spell-gains-cascade) | 1 | 5088 | op |
 | [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
@@ -1721,24 +1720,6 @@ Blocks **2** cards.
 
 </details>
 
-## next-spell-gains-cascade
-
-Blocks **2** cards.
-
-- **(op)** an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell
-  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts.
-- **(op)** an effect that gives the next spell matching a filter (here: a creature spell) that a player (here: you) casts this turn the cascade ability itself, so the spell HAS cascade (seen by 'whenever you cast a spell with cascade' triggers), its cascade trigger's source is that spell, the ceiling is that spell's mana value, and the grant is used up by that one spell and expires at end of turn
-  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell, and `next_spell_cost_reduction`/`grant_flash_permission`/`uncounterable_this_turn` are the only next-spell grants and none carries a keyword or ability. The nearest arrangement, a `delayed_trigger` (duration once_this_turn) on `spell_cast` with a Creature filter running the `cascade` op with max_mana_value from the subject, is an approximation: the trigger belongs to the Bilepiper rather than the spell, the spell never has cascade (so The First Doctor-style 'spell with cascade' checks miss it), and op_cascade's default ceiling is the source permanent's mana value. The activation cost ({2}, {T}, sacrifice a creature) is expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bigger on the Inside** (rank 5088) — `bigger_on_the_inside`
-  - Enchanted permanent has "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
-- **Sloppity Bilepiper** (rank 14577) — `sloppity_bilepiper`
-  - Jolly Gutpipes — {2}, {T}, Sacrifice a creature: The next creature spell you cast this turn has cascade.
-
-</details>
-
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -2826,20 +2807,6 @@ Blocks **1** card.
 
 - **Welcome the Dead** (rank 7412) — `welcome_the_dead`
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
-
-</details>
-
-## cascade
-
-Blocks **1** card.
-
-- **(static_effect)** a static that grants the cascade keyword to spells its controller casts from hand (during your turn, via condition is_your_turn), filtered by an affects_spells mana_value ceiling whose bound is a dynamic static value -- here life_lost_this_turn summed over opponents -- so each matching spell gets its own cascade trigger (702.85) that survives the source leaving
-  <br>Why the existing vocabulary won't do: cascade exists only as an op (cascade with max_mana_value), not in keywords, so neither the grant_keyword static nor cast_gains_keywords (which the loader restricts to cast_from_library_top) can give it to a spell; a spell_cast trigger on Abaddon running the cascade op is a different ability (it belongs to Abaddon, not the spell, and dies with it), and static_value_keys has no life_lost_this_turn to set the mana value ceiling
-
-<details><summary>Cards waiting on this</summary>
-
-- **Abaddon the Despoiler** (rank 8628) — `abaddon_the_despoiler`
-  - Mark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn.
 
 </details>
 
@@ -5851,6 +5818,20 @@ Blocks **1** card.
 
 - **Mutated Cultist** (rank 8432) — `mutated_cultist`
   - When you cast this spell, remove all counters from up to one target permanent or opponent. The next spell you cast this turn costs {1} less to cast for each counter removed this way.
+
+</details>
+
+## next-spell-gains-cascade
+
+Blocks **1** card.
+
+- **(op)** an effect that gives the next spell a given player (here a target player, not necessarily the controller) casts this turn cascade: when that player casts it, they exile from the top of THEIR library until a nonland card with lesser mana value than THAT spell, may cast it free, and bottom the rest; the grant is used up by that one spell
+  <br>Why the existing vocabulary won't do: `cascade` is not in `keywords`, so `grant_keyword`/`cast_gains_keywords` cannot hand it to a spell. The closest arrangement, `delayed_trigger` (duration once_this_turn) on `spell_cast` running the `cascade` op, falls short twice: op_delayed_trigger fixes the delayed ability's controller to the activator and its trigger `controller` is only a you/opponent/any string, so it cannot watch 'the next spell the target player casts'; and op_cascade always exiles from ctx.controller's library (the activator's, not the caster's) with the ceiling defaulting to the source permanent's mana value. `next_spell_cost_reduction` is the only next-spell op and only discounts.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bigger on the Inside** (rank 5088) — `bigger_on_the_inside`
+  - Enchanted permanent has "{T}: Target player adds two mana of any one color. The next spell they cast this turn has cascade."
 
 </details>
 
