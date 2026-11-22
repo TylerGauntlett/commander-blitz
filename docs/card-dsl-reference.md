@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 105 |
-| [Player-wide statics](#player-wide-statics) | 49 |
+| [Static effects](#static-effects) | 106 |
+| [Player-wide statics](#player-wide-statics) | 50 |
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
