@@ -16905,6 +16905,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "necron_overlord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "necropotence": {
     "battlefield_count": 33,
     "hand_size": {

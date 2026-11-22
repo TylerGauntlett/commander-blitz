@@ -201393,6 +201393,65 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{X}",
+            "tap": true,
+            "tap_x": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "necron_overlord",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Necron Overlord",
+      "oracle_text": "Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Necron",
+        "Noble"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "skip_draw_step",
           "kind": "static",

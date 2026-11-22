@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **454** capabilities.
+**535 cards** blocked by **453** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -428,7 +428,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
-| [tap-x-with-mana-x](#tap-x-with-mana-x) | 1 | 12408 | cost |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
@@ -7090,20 +7089,6 @@ Blocks **1** card.
 
 - **Rory Williams** (rank 14357) — `rory_williams`
   - The Last Centurion — When you cast this spell from anywhere other than exile, exile it with three time counters on it. It gains suspend. Then investigate. (Create a Clue token. It's an artifact with "{2}, Sacrifice this token: Draw a card.")
-
-</details>
-
-## tap-x-with-mana-x
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that pays {X} generic mana AND taps X untapped permanents matching a selector (here artifacts you control), both read from the single announced X, with the ceiling bounded by both the tap_x pool and affordable mana
-  <br>Why the existing vocabulary won't do: tap_x announces X and the loader (cards/loader/mana.py) refuses a second X in 'mana' beside it; tap_x alone drops the {X} mana payment, and mana {X} with tap_permanents needs a fixed count, so neither says the printed cost exactly
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necron Overlord** (rank 12408) — `necron_overlord`
-  - Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.
 
 </details>
 

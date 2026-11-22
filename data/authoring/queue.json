@@ -184542,12 +184542,12 @@
     },
     "Necron Overlord": {
       "edhrec_rank": 12408,
-      "gate": "compile",
+      "gate": null,
       "name": "Necron Overlord",
-      "reason": "necron_overlord.abilities[0].cost: 'tap_x' announces this ability's X, so the cost may not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', 'discard_x' or 'sacrifice_x'",
+      "reason": "",
       "scryfall_id": "18cdd4b0-d969-43f3-a1a1-c9ad3fedce10",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necropanther": {
