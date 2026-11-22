@@ -6978,6 +6978,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"players; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "must_attack_with_at_least_one_creature" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # "At least one creature" is any one: a filter would read as "at
+            # least one Goblin", which nothing checks, and a count as "at least
+            # two", which the reader does not count to.
+            raise DslError(
+                f"{where}: must_attack_with_at_least_one_creature binds the named "
+                f"players' declarations; it takes 'affects_player' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
         if model.effect == "spend_mana_as_any_color" and (
             model.affects is not None or model.amount is not None
         ):

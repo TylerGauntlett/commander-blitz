@@ -1098,6 +1098,8 @@ STATICS: dict[str, Entry] = {
                        "Player-wide statics"),
     "mana_becomes_colorless": ("Unspent mana the player would lose becomes colorless instead.",
                                "Player-wide statics"),
+    "must_attack_with_at_least_one_creature": ("The player must attack with at least one creature each combat if able.",
+                                               '"…must attack with at least one creature" — a requirement on a player'),
     "no_hand_limit": ("The player has no maximum hand size.", None),
     "maximum_hand_size": ("The player's maximum hand size is N; the newest hand-size effect wins.",
                           "Player-wide statics"),

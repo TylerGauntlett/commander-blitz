@@ -1,0 +1,22 @@
+{
+  "_comment": "Cards that exist only for tests/unit/combat/test_must_attack_with_one.py. Never part of a deck list. `t_allure` is Seeker of Slaanesh's Allure of Slaanesh line on its own, on an enchantment so its controller's creatures are not part of the count.",
+  "cards": [
+    {
+      "id": "t_allure",
+      "name": "Test Allure",
+      "oracle_text": "Each opponent must attack with at least one creature each combat if able.",
+      "mana_cost": "{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each opponent must attack with at least one creature each combat if able.",
+          "effect": "must_attack_with_at_least_one_creature",
+          "affects_player": "opponent"
+        }
+      ]
+    }
+  ]
+}

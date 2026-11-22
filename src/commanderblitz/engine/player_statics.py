@@ -1024,6 +1024,17 @@ def player_skips_extra_turn(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "skip_extra_turn")
 
 
+def player_must_attack_with_one(state: GameState, pid: int) -> bool:
+    """Whether a ``must_attack_with_at_least_one_creature`` static binds ``pid``.
+
+    Seeker of Slaanesh: "Each opponent must attack with at least one creature
+    each combat if able." A requirement on the player's declaration, not on any
+    creature, so it answers for a seat; `combat.attack_with_one_unmet` decides
+    whether the declaration being built obeys it.
+    """
+    return _player_static(state, pid, "must_attack_with_at_least_one_creature")
+
+
 def attack_forbidden(state: GameState, oid: int) -> bool:
     """Is this creature under a global "can't attack" static?
 

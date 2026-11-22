@@ -38,6 +38,7 @@ from .player_statics import (
     block_only_refused,
     block_tax,
     defender_waived,
+    player_must_attack_with_one,
     static_attack_defenders,
 )
 from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
@@ -268,6 +269,48 @@ def unmet_attack_requirements(state: GameState) -> list[int]:
         and state.objects[oid].controller == state.active_player
         and attack_required(state, oid)
     ]
+
+
+def _attacks_for_free(state: GameState, oid: int) -> bool:
+    """Can this creature attack something without paying a tax?
+
+    508.1d: a player "is not required to pay that cost, even if attacking with
+    that creature would increase the number of requirements being obeyed". So a
+    creature whose every legal attack is taxed obeys no requirement it could
+    only meet by paying.
+    """
+    if not can_attack(state, oid):
+        return False
+    if any(attack_tax_cost(state, oid, seat) is None for seat in legal_defenders(state, oid)):
+        return True
+    return any(
+        attack_tax_cost(state, oid, state.objects[walker].controller, planeswalker=True) is None
+        for walker in legal_permanent_defenders(state, oid)
+    )
+
+
+def attack_with_one_unmet(state: GameState, pid: int) -> bool:
+    """Is ``pid`` owed an attacker it has not declared yet?
+
+    Seeker of Slaanesh's "each opponent must attack with at least one creature
+    each combat if able" is a requirement on the declaration as a whole: any one
+    creature meets it and no particular creature owes it, which is why it is not
+    `attack_required` on every creature. "If able" (508.1d) is read as "some
+    legal declaration with an attacker in it costs nothing": a free attacker
+    that may attack alone, or two free attackers, since two together break no
+    can't-attack-alone restriction. When none exists the empty declaration
+    obeys as many requirements as possible and stays legal.
+    """
+    if not player_must_attack_with_one(state, pid):
+        return False
+    if _declared_attackers(state, pid):
+        return False
+    free = [
+        oid
+        for oid in state.battlefield
+        if state.objects[oid].controller == pid and _attacks_for_free(state, oid)
+    ]
+    return len(free) > 1 or any(not attack_alone_forbidden(state, oid) for oid in free)
 
 
 def discharge_attack_requirements(state: GameState) -> None:

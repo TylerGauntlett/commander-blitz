@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 107 |
-| [Player-wide statics](#player-wide-statics) | 50 |
+| [Static effects](#static-effects) | 108 |
+| [Player-wide statics](#player-wide-statics) | 51 |
 | [Grantable statics](#grantable-statics) | 49 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
@@ -659,6 +659,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `must_attack_with_at_least_one_creature` | yes |  | The player must attack with at least one creature each combat if able. | ["…must attack with at least one creature" — a requirement on a player](card-dsl-cookbook.md#must-attack-with-at-least-one-creature--a-requirement-on-a-player) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`, or those surveilled this turn with `surveilled_this_turn`. | [Static abilities](card-dsl.md#static-abilities) |
@@ -736,6 +737,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `mana_becomes_colorless` | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `maximum_hand_size` | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `must_attack_with_at_least_one_creature` | The player must attack with at least one creature each combat if able. | ["…must attack with at least one creature" — a requirement on a player](card-dsl-cookbook.md#must-attack-with-at-least-one-creature--a-requirement-on-a-player) |
 | `no_hand_limit` | The player has no maximum hand size. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `opponents_cant_force_discard_or_sacrifice` | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`, or those surveilled this turn with `surveilled_this_turn`. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

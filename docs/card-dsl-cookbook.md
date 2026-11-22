@@ -6013,6 +6013,27 @@ creature.
 but deliberately not in `affects`. "Unless you control a creature named X" is a
 question about the board; "each creature named X gets +1/+1" is not a card.
 
+### "…must attack with at least one creature" — a requirement on a player
+
+    Seeker of Slaanesh — "Allure of Slaanesh — Each opponent must attack with
+    at least one creature each combat if able."
+
+```jsonc
+{ "kind": "static", "effect": "must_attack_with_at_least_one_creature",
+  "affects_player": "opponent" }
+```
+
+A player-wide static: it binds the named players' declarations, and no
+creature owes it. `attacks_if_able` with `affects: {"controller": "opponent"}`
+is the near miss and a much stronger card — that compels every creature.
+`combat.attack_with_one_unmet` withholds **Done attacking** from an affected
+player's empty declaration while a legal declaration with an attacker in it
+costs nothing: a creature that can attack without a tax (508.1d: no cost is
+owed to obey a requirement) and may attack alone, or two such creatures, which
+together break no can't-attack-alone restriction. Any one attacker meets it.
+Read live at every declaration, so each extra combat is bound too. The loader
+refuses `affects` and `amount` on it; `condition` is the only other key.
+
 ## "That player can't attack you"
 
     Call for Aid — "…You can't attack that player this turn."

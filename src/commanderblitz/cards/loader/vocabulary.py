@@ -334,6 +334,13 @@ STATIC_EFFECTS = frozenset(
         # never at scheduling time, so a turn queued before the permanent arrived
         # is still skipped. Only extra turns -- the ordinary order has no reader.
         "skip_extra_turn",
+        # "Each opponent must attack with at least one creature each combat if
+        # able." Seeker of Slaanesh. A requirement on a *player's* declaration
+        # rather than on any creature (508.1d), so it is not `attacks_if_able`
+        # with an `affects`: that compels every creature it matches. Read by
+        # `combat.attack_with_one_unmet`, which withholds "Done attacking" from
+        # an empty declaration while some creature could attack for free.
+        "must_attack_with_at_least_one_creature",
         # "You may play lands from your graveyard." Crucible of Worlds; with an
         # optional `affects_spells` on the printed face, "You may play
         # **Desert** lands from your graveyard" (Hazezon, Shaper of Sand). Read
@@ -973,6 +980,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "maximum_hand_size",
         "skip_draw_step",
         "skip_extra_turn",
+        "must_attack_with_at_least_one_creature",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
