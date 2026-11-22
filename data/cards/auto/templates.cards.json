@@ -265835,6 +265835,60 @@
         {
           "effects": [
             {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell_or_ability",
+              "spell_selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ]
+              }
+            }
+          ],
+          "text": "Psychic Abomination — When this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sister_of_silence",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Sister of Silence",
+      "oracle_text": "Flash\nPsychic Abomination — When this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },

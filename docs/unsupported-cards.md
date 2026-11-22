@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**539 cards** blocked by **457** capabilities.
+**538 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -421,7 +421,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
-| [spell-or-ability-target-spell-filter](#spell-or-ability-target-spell-filter) | 1 | 12602 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
@@ -6993,20 +6992,6 @@ Blocks **1** card.
 
 - **The First Doctor** (rank 12447) — `the_first_doctor`
   - Whenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature.
-
-</details>
-
-## spell-or-ability-target-spell-filter
-
-Blocks **1** card.
-
-- **(selector)** a `spell_or_ability` target whose SPELL half can be narrowed by printed characteristics (here `any_types: ["Instant", "Sorcery"]`) while its ability half still admits every activated or triggered ability on the stack -- e.g. a `spell_selector` sub-filter read by `targeting._spell_matches` for spells only, with the existing `controller`/`that_targets` clauses still shared by both halves
-  <br>Why the existing vocabulary won't do: `loader.targets._compile_target` refuses any `spell_or_ability` selector key other than `controller` and `that_targets`, precisely because a type clause would narrow only the spell half; Disallow's plain `spell_or_ability` would also counter creature, artifact, enchantment and planeswalker spells, which this card cannot. A `spell` target (any_types Instant/Sorcery) drops the abilities, `ability_on_stack` drops the spells, and a `choose_mode` splitting the one target into two modes restructures the printed single target into an unprinted modal choice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sister of Silence** (rank 12602) — `sister_of_silence`
-  - Psychic Abomination — When this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.
 
 </details>
 

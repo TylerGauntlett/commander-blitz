@@ -22267,6 +22267,10 @@
     },
     "zone": "battlefield"
   },
+  "sister_of_silence": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sister_repentia": {
     "battlefield_count": 33,
     "hand_size": {

@@ -248802,12 +248802,12 @@
     },
     "Sister of Silence": {
       "edhrec_rank": 12602,
-      "gate": "template",
+      "gate": null,
       "name": "Sister of Silence",
-      "reason": "no template for: Psychic Abomination — When this creature enters, counter target instant spell, sorcery spe",
+      "reason": "",
       "scryfall_id": "05054314-b8d9-4bd9-b21d-5484e1633e89",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sisterhood of Karn": {
