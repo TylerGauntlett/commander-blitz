@@ -903,7 +903,11 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
         elif card.retrace and obj.zone is Zone.GRAVEYARD and action.escape is None:
-            ok = yield from pay(state, pid, card.retrace_cost, None)
+            # The card being cast is the cost's source, as it is where legality
+            # priced the line: Helbrute's "exiling *another* creature card"
+            # (`exclude_self`) must not offer the card itself, still in the
+            # graveyard while its costs are paid.
+            ok = yield from pay(state, pid, card.retrace_cost, oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 

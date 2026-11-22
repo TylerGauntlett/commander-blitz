@@ -2404,13 +2404,64 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
-#: "You may cast this card from your graveyard by discarding a [land] card in
-#: addition to paying its other costs." The noun, when printed, is the card
-#: type the discard is narrowed to.
+#: "You may cast this card from your graveyard by <paying> in addition to
+#: paying its other costs." The group is the printed payment, which
+#: `_printed_graveyard_additional_cost` reads into the one `Cost` it means.
 _GRAVEYARD_ADDITIONAL_LINE = re.compile(
-    r"you may cast (?:~|this card) from your graveyard by discarding an? "
-    r"(?:(\w+) )?card in addition to paying its other costs"
+    r"you may cast (?:~|this card) from your graveyard by (.+?) "
+    r"in addition to paying its other costs"
 )
+#: "discarding a [land] card": the noun, when printed, is the card type the
+#: discard is narrowed to.
+_GRAVEYARD_ADDITIONAL_DISCARD = re.compile(r"discarding an? (?:(\w+) )?card")
+#: "exiling another [creature] card from your graveyard" (Helbrute), or "a(n)"
+#: for "another": "another" is `exclude_self`, the noun the card type the
+#: exile is narrowed to.
+_GRAVEYARD_ADDITIONAL_EXILE = re.compile(
+    r"exiling (?:(another) |an? )(?:(\w+) )?card from your graveyard"
+)
+
+
+def _printed_graveyard_additional_cost(payment: str) -> Cost | None:
+    """The one `Cost` a printed graveyard-cast payment means, or None.
+
+    Only spellings with exactly one reading: the discard of a (typed) card, or
+    the exile of one (typed, "another") card from your own graveyard. Anything
+    else is not a payment this claim can read, and the line stays residual.
+    """
+    if match := _GRAVEYARD_ADDITIONAL_DISCARD.fullmatch(payment):
+        noun = match.group(1)
+        if noun is None:
+            return Cost(discard=1)
+        return Cost(discard=1, discard_selector={"types": [noun.capitalize()]})
+    if match := _GRAVEYARD_ADDITIONAL_EXILE.fullmatch(payment):
+        another, noun = match.groups()
+        spec: dict[str, Any] = {"count": 1}
+        if noun is not None:
+            spec["types"] = [noun.capitalize()]
+        if another:
+            spec["exclude_self"] = True
+        return Cost(exile_from_graveyard=spec)
+    return None
+
+
+def _canonical_graveyard_exile(cost: Cost) -> Cost:
+    """``cost`` with its graveyard-exile spec written out the way it is read.
+
+    `costs._graveyard_pool` defaults ``count`` to 1 and ``controller`` to you,
+    and ``as``/``link`` name the exiled cards without narrowing them, so an
+    author's ``{"types": ["Creature"]}`` and the printed reading's
+    ``{"count": 1, "types": ["Creature"]}`` are the same payment.
+    """
+    if not cost.exile_from_graveyard:
+        return cost
+    spec = {k: v for k, v in cost.exile_from_graveyard.items() if k not in ("as", "link")}
+    spec["count"] = int(spec.get("count", 1) or 1)
+    if spec.get("controller") == "you":
+        del spec["controller"]
+    if not spec.get("exclude_self"):
+        spec.pop("exclude_self", None)
+    return replace(cost, exile_from_graveyard=spec)
 
 def _claims_numbered_line(card: CardDef, stripped: str, word: str, n: int) -> bool:
     """Whether a printed keyword line holding "<word> N" is exactly this card's.
@@ -2579,19 +2630,21 @@ def _covered(card: CardDef, line: str) -> bool:
         return match is not None and _declares_printed_cost(match.group(1), card.strive)
 
     # "You may cast this card from your graveyard by discarding a card in
-    # addition to paying its other costs." (Dragon Man, Reformed Robot) is
-    # `graveyard_additional_cost` -- retrace's card-level permission, which no
-    # ability could honestly carry. Strict on the cost: the printed discard
-    # has to be the one charged, so a card discarding "a land card" cannot
-    # claim "discarding a card", and any other printed cost stays residual.
-    if card.retrace:
-        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(folded_line.lower())
+    # addition to paying its other costs." (Dragon Man, Reformed Robot), and
+    # "Sarcophagus — ... by exiling another creature card from your graveyard
+    # ..." (Helbrute), are `graveyard_additional_cost` -- retrace's card-level
+    # permission, which no ability could honestly carry. Strict on the cost:
+    # the printed payment is read into the one `Cost` it means, and that has
+    # to be the one charged, so a card discarding "a land card" cannot claim
+    # "discarding a card", nor an exile of any card "another creature card".
+    # A payment with no single reading stays residual. An ability word before
+    # the sentence is italic text with no rules meaning (207.2c), read past.
+    if card.retrace and card.retrace_cost is not None:
+        sentence = fold_self_reference(_ABILITY_WORD_PREFIX.sub("", stripped), card.name)
+        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(sentence.lower())
         if match is not None:
-            noun = match.group(1)
-            wanted = Cost(discard=1) if noun is None else Cost(
-                discard=1, discard_selector={"types": [noun.capitalize()]}
-            )
-            return card.retrace_cost == wanted
+            wanted = _printed_graveyard_additional_cost(match.group(1))
+            return wanted is not None and _canonical_graveyard_exile(card.retrace_cost) == wanted
 
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack

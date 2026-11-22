@@ -7488,6 +7488,13 @@ them where it is sitting:
 // Dragon Man, Reformed Robot: "You may cast this card from your graveyard by
 // discarding a card in addition to paying its other costs."
 "graveyard_additional_cost": { "discard": 1 }
+
+// Helbrute: "Sarcophagus — You may cast this card from your graveyard by
+// exiling another creature card from your graveyard in addition to paying its
+// other costs."
+"graveyard_additional_cost": {
+  "exile_from_graveyard": { "count": 1, "types": ["Creature"], "exclude_self": true }
+}
 ```
 
 Retrace's permission with the card's own additional cost. Both compile to one
@@ -7503,9 +7510,14 @@ a land discard) or a `graveyard_cost`, a cost that charges nothing or has an X,
 and `tap`, `untap`, `mana_reduction` or `x_value` in it. The near misses each
 price something else: `graveyard_cost` is an *alternative* cost that replaces
 the mana cost, and a `cast_from_graveyard` static with `active_zones:
-["graveyard"]` (Gravecrawler) grants the printed price with nothing added. A
-permanent's printed line is claimed by the residual gate only when the discard
-it names is the one charged.
+["graveyard"]` (Gravecrawler) grants the printed price with nothing added. The cost is
+paid with the card being cast as its source, the source legality priced it
+with, so `exclude_self` is the printed "another": the card, still in the
+graveyard as its costs are paid, is never offered to exile itself. A
+permanent's printed line, past any ability word, is claimed by the residual
+gate only when the payment it names ("discarding a [type] card", "exiling
+another [type] card from your graveyard") reads as the very cost charged; any
+other payment stays residual.
 
 #### Convoke, improvise and delve
 

@@ -12,6 +12,15 @@ itself refuses a nonland discard the card allows, and `graveyard_cost` is an
 *alternative* cost that replaces the mana -- a different cast, which no other
 alternative cost could join. Retrace stays exact: its default cost is still a
 land card (`test_retrace.py`).
+
+    Helbrute -- "Sarcophagus — You may cast this card from your graveyard by
+    exiling another creature card from your graveyard in addition to paying
+    its other costs."
+
+The same slot with an `exile_from_graveyard` cost. The residual gate reads the
+printed payment into the one `Cost` it means and claims the line only when that
+is the cost charged: a claim that matched the wording alone would let a card
+exiling any card wear a line that demands a creature card.
 """
 
 from __future__ import annotations
@@ -146,3 +155,103 @@ class TestTheResidualGate:
             )
         )
         assert self.LINE not in claimed_lines(card, self.LINE)
+
+
+BRUTE = "t_gac_brute"  # {2}{B} 2/2; from the graveyard by exiling another creature card
+SARCOPHAGUS = (
+    "Sarcophagus — You may cast this card from your graveyard by exiling another "
+    "creature card from your graveyard in addition to paying its other costs."
+)
+
+
+def brute_board(builder, graveyard: list[str]):
+    return (
+        builder(players=2)
+        .battlefield(0, ["swamp"] * 3)
+        .graveyard(0, [BRUTE, *graveyard])
+        .library(0, ["swamp"] * 20)
+        .build()
+    )
+
+
+def brute_line(game):
+    return next(
+        (
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == BRUTE
+        ),
+        None,
+    )
+
+
+class TestTheExileCost:
+    def test_another_creature_card_offers_it(self, builder):
+        assert brute_line(brute_board(builder, ["grizzly_bears"])) is not None
+
+    def test_the_card_itself_does_not_count(self, builder):
+        assert brute_line(brute_board(builder, [])) is None
+
+    def test_a_noncreature_card_does_not(self, builder):
+        assert brute_line(brute_board(builder, ["island"])) is None
+
+    def test_it_exiles_the_other_card_and_enters(self, builder):
+        game = brute_board(builder, ["grizzly_bears"])
+        brute = brute_line(game).source
+        game.apply(brute_line(game))
+        settle(game)
+
+        assert game.state.objects[brute].zone is Zone.BATTLEFIELD
+        exiled = [o.def_id for o in game.state.objects.values() if o.zone is Zone.EXILE]
+        assert exiled == ["grizzly_bears"]
+
+    def test_the_payment_never_offers_the_card_itself(self, builder):
+        # Legality priced "another" with the card as the cost's source; the
+        # payment has to as well, or the card could exile itself and resolve.
+        game = brute_board(builder, ["grizzly_bears", "grizzly_bears"])
+        brute = brute_line(game).source
+        game.apply(brute_line(game))
+        decision = game.pending()
+        assert decision.kind is DecisionKind.CHOOSE_OBJECTS
+        offered = {ref.id for a in game.legal_actions() for ref in a.targets}
+        assert offered and brute not in offered
+
+
+def _probe(cost: dict):
+    return compile_card(
+        CardModel.model_validate(
+            {
+                "id": "t_gac_exile_probe",
+                "name": "Exile Probe",
+                "mana_cost": "{1}",
+                "types": ["Artifact"],
+                "graveyard_additional_cost": cost,
+            }
+        )
+    )
+
+
+class TestTheExileClaim:
+    def test_the_printed_exile_is_claimed(self, registry):
+        assert SARCOPHAGUS in claimed_lines(registry.get(BRUTE), SARCOPHAGUS)
+
+    def test_the_defaults_are_the_same_payment(self):
+        card = _probe({"exile_from_graveyard": {"types": ["Creature"], "exclude_self": True}})
+        assert SARCOPHAGUS in claimed_lines(card, SARCOPHAGUS)
+
+    def test_an_exile_of_any_card_cannot_claim_a_creature_card(self):
+        card = _probe({"exile_from_graveyard": {"count": 1, "exclude_self": True}})
+        assert SARCOPHAGUS not in claimed_lines(card, SARCOPHAGUS)
+
+    def test_two_cards_cannot_claim_one(self):
+        card = _probe(
+            {"exile_from_graveyard": {"count": 2, "types": ["Creature"], "exclude_self": True}}
+        )
+        assert SARCOPHAGUS not in claimed_lines(card, SARCOPHAGUS)
+
+    def test_a_discard_cannot_claim_the_exile(self):
+        assert SARCOPHAGUS not in claimed_lines(_probe({"discard": 1}), SARCOPHAGUS)
+
+    def test_the_exile_cannot_claim_a_discard(self, registry):
+        line = TestTheResidualGate.LINE
+        assert line not in claimed_lines(registry.get(BRUTE), line)
