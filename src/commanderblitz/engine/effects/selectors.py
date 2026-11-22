@@ -1517,8 +1517,11 @@ def attacking_player_matches(
     named player controls -- "attacking you or a planeswalker you control"
     (Soul Snare). Still never a battle. It needs ``state`` to read the walker.
 
-    Shared by `matches` and `triggers.matches_card_filter`, so the effect and
-    trigger halves of the filter language cannot disagree about it.
+    Shared by `matches`, `triggers.matches_card_filter` and a static's
+    `affects` (`characteristics._matches_wherever`), so the effect, trigger and
+    static halves of the filter language cannot disagree about it. The static
+    reader never passes ``or_planeswalkers``: that widening asks `chars` about
+    the walker, which inside the layer pipeline would read its own output.
     """
     if not _attacks_player_itself(combat, oid, state, or_planeswalkers):
         return False

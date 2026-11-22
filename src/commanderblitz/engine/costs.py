@@ -1727,6 +1727,30 @@ def sacrifice_x_ceiling(
     return len(_sacrificeable(state, pid, cost.sacrifice_x or {}, source_oid))
 
 
+def cost_sacrifice_count(cost: Cost | None, x: int = 0) -> int:
+    """How many permanents paying ``cost`` with this X sacrifices.
+
+    "…if one or more permanents were **sacrificed to activate it**" (Ashnod the
+    Uncaring). Read off the cost itself rather than counted as `pay` moves
+    things, because the count is fixed the moment X is announced: `pay` takes
+    exactly ``sacrifice``'s count, every part's count and X for
+    ``sacrifice_x``, or the activation does not happen at all. Permanents a
+    mana ability sacrificed to make mana for the cost (a Treasure) are not in
+    it, which is the reminder text's "doesn't count" -- they paid a different
+    ability's cost.
+    """
+    if cost is None:
+        return 0
+    total = 0
+    if cost.sacrifice is not None:
+        total += int(cost.sacrifice.get("count", 1) or 1)
+    for part in cost.sacrifice_parts or ():
+        total += int(part.get("count", 1) or 1)
+    if cost.sacrifice_x is not None:
+        total += max(x, 0)
+    return total
+
+
 def _tap_x_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """The untapped permanents a ``tap_x`` cost may tap.
 

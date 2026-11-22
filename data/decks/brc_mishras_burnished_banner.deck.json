@@ -1,0 +1,866 @@
+{
+  "id": "brc_mishras_burnished_banner",
+  "name": "Mishra's Burnished Banner",
+  "commanders": [
+    "mishra_eminent_one"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "U"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "BRC",
+    "set_name": "The Brothers' War Commander",
+    "date": "2022-11-18"
+  },
+  "notes": "The Brothers' War Commander precon, card for card (https://mtgjson.com/api/v5/decks/MishraSBurnishedBanner_BRC.json).",
+  "tags": [
+    "Artifacts",
+    "Sacrifice",
+    "Copies",
+    "Tokens"
+  ],
+  "strategy": "Mishra, Eminent One makes a hasty 4/4 token copy of a noncreature artifact at the start of each combat, and the deck is built to feed and sacrifice artifacts. Servo Schematic, Mycosynth Wellspring, Ichor Wellspring, Farid, Enterprising Salvager and Oni-Cult Anvil turn every artifact that leaves into a token, a card or damage; Ashnod the Uncaring copies each ability paid for with a sacrifice, and Smelting Vat, Audacious Reshapers and Slobad, Goblin Tinkerer turn spare artifacts into bigger ones or keep the best ones alive. Mirrorworks, Lithoform Engine, Strionic Resonator and Machine God's Effigy copy what is already working, Metalwork Colossus and Blast-Furnace Hellkite close the game, and Executioner's Capsule, Chaos Warp, Bedevil, Blasphemous Act and Terisiare's Devastation answer what the artifacts cannot.",
+  "archetype": "aristocrats",
+  "printings": {
+    "abrade": {
+      "scryfall_id": "cccbc616-5592-4051-a066-a325209f349e",
+      "artist": "Jonas De Ro",
+      "set_code": "brc",
+      "collector_number": "111"
+    },
+    "arcane_signet": {
+      "scryfall_id": "d5a30a51-3afb-45e9-aab6-40fec44ec55a",
+      "artist": "Dan Murayama Scott",
+      "set_code": "brc",
+      "collector_number": "132"
+    },
+    "ash_barrens": {
+      "scryfall_id": "e688045d-e26a-4063-bae4-89723d70c129",
+      "artist": "Jonas De Ro",
+      "set_code": "brc",
+      "collector_number": "174"
+    },
+    "ashnod_the_uncaring": {
+      "scryfall_id": "a76e8ab8-33bf-4a5a-b6a2-7046301b6c31",
+      "artist": "Kieran Yanner",
+      "set_code": "brc",
+      "collector_number": "4"
+    },
+    "audacious_reshapers": {
+      "scryfall_id": "8100d73c-3ee4-4f26-96ec-97872dcad9eb",
+      "artist": "Justyna Dura",
+      "set_code": "brc",
+      "collector_number": "112"
+    },
+    "bedevil": {
+      "scryfall_id": "3291c839-d26a-47f8-a134-43f8758f082c",
+      "artist": "Seb McKinnon",
+      "set_code": "brc",
+      "collector_number": "121"
+    },
+    "blasphemous_act": {
+      "scryfall_id": "310abe1d-153e-44c7-974c-441a2fbc19bf",
+      "artist": "Daarken",
+      "set_code": "brc",
+      "collector_number": "113"
+    },
+    "blast_furnace_hellkite": {
+      "scryfall_id": "04c349f2-69b1-48dd-a547-f2b55f542700",
+      "artist": "Aldo Domínguez",
+      "set_code": "brc",
+      "collector_number": "12"
+    },
+    "brudiclad_telchor_engineer": {
+      "scryfall_id": "b2068926-0a67-4cdf-8c80-103ec32564e9",
+      "artist": "Daarken",
+      "set_code": "brc",
+      "collector_number": "122"
+    },
+    "buried_ruin": {
+      "scryfall_id": "34e53bc3-f8af-4547-a694-d01c18bf56c1",
+      "artist": "Franz Vohwinkel",
+      "set_code": "brc",
+      "collector_number": "177"
+    },
+    "chaos_warp": {
+      "scryfall_id": "84b7ef85-5751-4dd1-9cde-1cbb8097bbba",
+      "artist": "Trevor Claxton",
+      "set_code": "brc",
+      "collector_number": "114"
+    },
+    "command_tower": {
+      "scryfall_id": "84b79453-bb88-4c23-8cdb-82ba57ea3bc5",
+      "artist": "Ryan Yee",
+      "set_code": "brc",
+      "collector_number": "178"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "83191924-6c47-4f05-b774-84f84ccdc50d",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "brc",
+      "collector_number": "135"
+    },
+    "crumbling_necropolis": {
+      "scryfall_id": "8eb526c9-706c-4845-b92a-880e6293f1ef",
+      "artist": "Volkan Baǵa",
+      "set_code": "brc",
+      "collector_number": "179"
+    },
+    "cursed_mirror": {
+      "scryfall_id": "a29473ee-1a11-42b8-8d14-34051208f35b",
+      "artist": "David Gaillet",
+      "set_code": "brc",
+      "collector_number": "115"
+    },
+    "darkwater_catacombs": {
+      "scryfall_id": "f42ef8fb-53ce-49bd-a464-b09a94801edd",
+      "artist": "Monte Michael Moore",
+      "set_code": "brc",
+      "collector_number": "181"
+    },
+    "dimir_aqueduct": {
+      "scryfall_id": "012b9371-45e0-4e06-ad7a-4c52d1d38262",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "182"
+    },
+    "dimir_signet": {
+      "scryfall_id": "1f03430e-2c3d-4317-b4bd-06c2059b7e34",
+      "artist": "Raoul Vitale",
+      "set_code": "brc",
+      "collector_number": "138"
+    },
+    "dreamstone_hedron": {
+      "scryfall_id": "27d2b870-eed5-46c1-a1a4-70169ddb2fb8",
+      "artist": "Eric Deschamps",
+      "set_code": "brc",
+      "collector_number": "139"
+    },
+    "drossforge_bridge": {
+      "scryfall_id": "707bc538-cdc1-49ca-9c36-3d6d5245d962",
+      "artist": "Raoul Vitale",
+      "set_code": "brc",
+      "collector_number": "183"
+    },
+    "emry_lurker_of_the_loch": {
+      "scryfall_id": "aa6592b0-c809-4711-bb39-4c9a9e55657e",
+      "artist": "Livia Prima",
+      "set_code": "brc",
+      "collector_number": "81"
+    },
+    "executioner_s_capsule": {
+      "scryfall_id": "73a54823-a5fd-4055-a435-a6bdbd6bedff",
+      "artist": "Warren Mahy",
+      "set_code": "brc",
+      "collector_number": "104"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "95d63eac-469f-454f-a575-7f19abb554cf",
+      "artist": "Steven Belledin",
+      "set_code": "brc",
+      "collector_number": "185"
+    },
+    "expressive_iteration": {
+      "scryfall_id": "c836e9ff-7e55-44b5-8e81-1e97b5de46cd",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "brc",
+      "collector_number": "125"
+    },
+    "fact_or_fiction": {
+      "scryfall_id": "9cad13ca-5d81-456e-9294-e2d510b79392",
+      "artist": "Matt Cavotta",
+      "set_code": "brc",
+      "collector_number": "84"
+    },
+    "fain_the_broker": {
+      "scryfall_id": "41775788-2432-495a-8abd-6c8beaad3d27",
+      "artist": "Lius Lasahido",
+      "set_code": "brc",
+      "collector_number": "105"
+    },
+    "faithless_looting": {
+      "scryfall_id": "b78f314a-a7c2-4441-9d46-67521ad570ba",
+      "artist": "Karl Kopinski",
+      "set_code": "brc",
+      "collector_number": "116"
+    },
+    "farid_enterprising_salvager": {
+      "scryfall_id": "003367c7-6cb8-4451-8349-76ce5d21e367",
+      "artist": "Bruno Biazotto",
+      "set_code": "brc",
+      "collector_number": "13"
+    },
+    "feed_the_swarm": {
+      "scryfall_id": "7d95a0e0-d609-451b-b045-85990eede219",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "brc",
+      "collector_number": "106"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "111e4a04-931f-45a1-ab3f-bf5cb22a98fc",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "141"
+    },
+    "geth_lord_of_the_vault": {
+      "scryfall_id": "82f6a6c6-2755-4a6b-a9f9-06cae30be4e0",
+      "artist": "Whit Brachna",
+      "set_code": "brc",
+      "collector_number": "107"
+    },
+    "glint_raker": {
+      "scryfall_id": "7520ee10-3ed1-40eb-86a0-3e463a5fba76",
+      "artist": "Lars Grant-West",
+      "set_code": "brc",
+      "collector_number": "7"
+    },
+    "great_furnace": {
+      "scryfall_id": "3fde36b4-95e0-4592-b67c-05548bbb1679",
+      "artist": "Raymond Bonilla",
+      "set_code": "brc",
+      "collector_number": "187"
+    },
+    "hedron_archive": {
+      "scryfall_id": "677bf9ff-4e4b-495d-b56a-ed0f26c469ca",
+      "artist": "Craig J Spearing",
+      "set_code": "brc",
+      "collector_number": "142"
+    },
+    "hellkite_igniter": {
+      "scryfall_id": "4bcb4383-8c72-4491-8f55-213ce8a2abbb",
+      "artist": "Jason Chan",
+      "set_code": "brc",
+      "collector_number": "117"
+    },
+    "herald_of_anguish": {
+      "scryfall_id": "fec860f2-6ef0-4b74-9672-72b4de2b55ca",
+      "artist": "David Astruga",
+      "set_code": "brc",
+      "collector_number": "108"
+    },
+    "ichor_wellspring": {
+      "scryfall_id": "1a5313e8-b7d1-49c7-81de-4da99ba9733f",
+      "artist": "Steven Belledin",
+      "set_code": "brc",
+      "collector_number": "143"
+    },
+    "idol_of_oblivion": {
+      "scryfall_id": "465f803f-0e4a-41b4-9160-10f76c05188e",
+      "artist": "Piotr Dura",
+      "set_code": "brc",
+      "collector_number": "144"
+    },
+    "island": {
+      "scryfall_id": "fc8c4d2d-416c-4b8b-b46d-0e11f0e8245d",
+      "artist": "Eddie Mendoza",
+      "set_code": "brc",
+      "collector_number": "31"
+    },
+    "izzet_boilerworks": {
+      "scryfall_id": "83b58eef-869d-487d-a765-bfb1891d7317",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "188"
+    },
+    "jhoira_weatherlight_captain": {
+      "scryfall_id": "dd968f54-03d3-4005-87cb-0bdc3318d71a",
+      "artist": "Brad Rigney",
+      "set_code": "brc",
+      "collector_number": "126"
+    },
+    "lithoform_engine": {
+      "scryfall_id": "c579956f-900a-4574-a68b-3c1d92ea67b6",
+      "artist": "Colin Boyer",
+      "set_code": "brc",
+      "collector_number": "146"
+    },
+    "machine_god_s_effigy": {
+      "scryfall_id": "637f69c2-ba24-42d1-9345-8ebdb04b6904",
+      "artist": "Martin de Diego Sádaba",
+      "set_code": "brc",
+      "collector_number": "16"
+    },
+    "master_transmuter": {
+      "scryfall_id": "3437cd27-2bd4-4b4a-ad8b-7586d22f6c78",
+      "artist": "Chippy",
+      "set_code": "brc",
+      "collector_number": "87"
+    },
+    "metalwork_colossus": {
+      "scryfall_id": "df3e046e-ff1b-4bee-8611-229d0088f5a1",
+      "artist": "Jaime Jones",
+      "set_code": "brc",
+      "collector_number": "147"
+    },
+    "mind_stone": {
+      "scryfall_id": "6ff5cc3e-0179-442e-a0b0-48063dd59fb3",
+      "artist": "Adam Rex",
+      "set_code": "brc",
+      "collector_number": "148"
+    },
+    "mirrorworks": {
+      "scryfall_id": "a762e84d-db04-4ede-bc0b-ddcfff9549af",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "149"
+    },
+    "mishra_eminent_one": {
+      "scryfall_id": "7f5b1daa-ec45-48de-9496-6ca5b491a0dc",
+      "artist": "Randy Vargas",
+      "set_code": "brc",
+      "collector_number": "1"
+    },
+    "mistvault_bridge": {
+      "scryfall_id": "7ad684fb-cfb0-48b2-802f-bda96afafdc3",
+      "artist": "Mathias Kollros",
+      "set_code": "brc",
+      "collector_number": "189"
+    },
+    "mnemonic_sphere": {
+      "scryfall_id": "6dd6a9d8-6ac3-49be-a87e-4d91fa8d96a3",
+      "artist": "Robin Olausson",
+      "set_code": "brc",
+      "collector_number": "88"
+    },
+    "mountain": {
+      "scryfall_id": "7ba2d0d9-9b48-4edf-b1bb-e7f385ae97c8",
+      "artist": "Bruce Brenneise",
+      "set_code": "brc",
+      "collector_number": "35"
+    },
+    "muzzio_visionary_architect": {
+      "scryfall_id": "f6726c12-d484-4ab7-9d5d-2a1561602d3b",
+      "artist": "Volkan Baǵa",
+      "set_code": "brc",
+      "collector_number": "89"
+    },
+    "mycosynth_wellspring": {
+      "scryfall_id": "e11c8aa0-ea14-43a4-a341-29f01affe64a",
+      "artist": "David Rapoza",
+      "set_code": "brc",
+      "collector_number": "150"
+    },
+    "myriad_landscape": {
+      "scryfall_id": "09ae899f-e5ac-4b67-abf2-d55ad9ae58f3",
+      "artist": "Richard Wright",
+      "set_code": "brc",
+      "collector_number": "190"
+    },
+    "nihil_spellbomb": {
+      "scryfall_id": "4b148de1-6a85-4add-8b62-8b1172d2fe31",
+      "artist": "Franz Vohwinkel",
+      "set_code": "brc",
+      "collector_number": "152"
+    },
+    "oblivion_stone": {
+      "scryfall_id": "e8b06a3d-897e-423e-bae6-9bf21beb2aa5",
+      "artist": "Gabor Szikszai",
+      "set_code": "brc",
+      "collector_number": "153"
+    },
+    "oni_cult_anvil": {
+      "scryfall_id": "c275470f-83d2-4341-9757-a570ec19a181",
+      "artist": "Yeong-Hao Han",
+      "set_code": "brc",
+      "collector_number": "127"
+    },
+    "padeem_consul_of_innovation": {
+      "scryfall_id": "0cb2569f-d4ea-47f8-b9ba-5436400c7e2e",
+      "artist": "Matt Stewart",
+      "set_code": "brc",
+      "collector_number": "91"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "95c1557e-68dd-46be-9b1e-0a65e04fe739",
+      "artist": "Alayna Danner",
+      "set_code": "brc",
+      "collector_number": "192"
+    },
+    "prophetic_prism": {
+      "scryfall_id": "90419b9e-f3f0-4d41-b8a3-e8264609780d",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "155"
+    },
+    "rakdos_carnarium": {
+      "scryfall_id": "7af7868a-3bdd-42d6-a7db-fef5f9ff317c",
+      "artist": "John Avon",
+      "set_code": "brc",
+      "collector_number": "194"
+    },
+    "rakdos_signet": {
+      "scryfall_id": "929fc40a-6d21-4907-8ab9-d68dcc1a0bc2",
+      "artist": "Martina Pilcerova",
+      "set_code": "brc",
+      "collector_number": "156"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "fcc31eb5-d0aa-4b4d-8908-cad1bba7348a",
+      "artist": "Jesper Ejsing",
+      "set_code": "brc",
+      "collector_number": "196"
+    },
+    "scavenged_brawler": {
+      "scryfall_id": "afd0ba67-cbb7-49fe-83a0-02e85a37d9d6",
+      "artist": "Craig J Spearing",
+      "set_code": "brc",
+      "collector_number": "17"
+    },
+    "seat_of_the_synod": {
+      "scryfall_id": "4277ebca-1c8d-4066-969a-28adf6445b3e",
+      "artist": "Donato Giancola",
+      "set_code": "brc",
+      "collector_number": "198"
+    },
+    "servo_schematic": {
+      "scryfall_id": "723b5b4d-120c-4396-8e7c-ed62302f463d",
+      "artist": "Titus Lunter",
+      "set_code": "brc",
+      "collector_number": "158"
+    },
+    "shadowblood_ridge": {
+      "scryfall_id": "9b4a6fb2-f6f4-437d-8ac4-797425cc294c",
+      "artist": "Sam White",
+      "set_code": "brc",
+      "collector_number": "199"
+    },
+    "silas_renn_seeker_adept": {
+      "scryfall_id": "79b50fc8-9658-4837-ade8-2f34d12d3cc7",
+      "artist": "Joseph Meehan",
+      "set_code": "brc",
+      "collector_number": "129"
+    },
+    "silverbluff_bridge": {
+      "scryfall_id": "75942d08-29f5-4e07-ae26-c94e0af57220",
+      "artist": "Joseph Meehan",
+      "set_code": "brc",
+      "collector_number": "200"
+    },
+    "slobad_goblin_tinkerer": {
+      "scryfall_id": "0dce1a0c-66e9-469b-9d74-7b58fdde8ded",
+      "artist": "Kev Walker",
+      "set_code": "brc",
+      "collector_number": "118"
+    },
+    "smelting_vat": {
+      "scryfall_id": "e5b82177-3795-470a-abff-a4a936b27430",
+      "artist": "Robin Olausson",
+      "set_code": "brc",
+      "collector_number": "18"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "d6882120-e807-4695-af88-ddfec92f6127",
+      "artist": "Adam Paquette",
+      "set_code": "brc",
+      "collector_number": "202"
+    },
+    "sol_ring": {
+      "scryfall_id": "772edef7-2f17-4244-b1bb-4e7a53c253e1",
+      "artist": "Mike Bierek",
+      "set_code": "brc",
+      "collector_number": "160"
+    },
+    "spine_of_ish_sah": {
+      "scryfall_id": "9ac31f11-17ec-4d6f-9425-38c511566590",
+      "artist": "Daniel Ljunggren",
+      "set_code": "brc",
+      "collector_number": "162"
+    },
+    "strionic_resonator": {
+      "scryfall_id": "56d770bf-a8ad-4817-8342-b0dde94c538a",
+      "artist": "Sam White",
+      "set_code": "brc",
+      "collector_number": "165"
+    },
+    "swamp": {
+      "scryfall_id": "5205f782-e6af-4152-a15f-080935017e4b",
+      "artist": "Sam Burley",
+      "set_code": "brc",
+      "collector_number": "33"
+    },
+    "temple_of_deceit": {
+      "scryfall_id": "1f604a40-dbe4-464f-98da-69c8125614f0",
+      "artist": "Jonas De Ro",
+      "set_code": "brc",
+      "collector_number": "205"
+    },
+    "temple_of_epiphany": {
+      "scryfall_id": "bb3bed3f-2efc-44b5-81d4-10c3c9c39276",
+      "artist": "Adam Paquette",
+      "set_code": "brc",
+      "collector_number": "207"
+    },
+    "temple_of_malice": {
+      "scryfall_id": "7306c101-399b-4306-89b5-6c43cb582597",
+      "artist": "Jonas De Ro",
+      "set_code": "brc",
+      "collector_number": "208"
+    },
+    "terisiare_s_devastation": {
+      "scryfall_id": "494a9b67-cfd8-44cd-adbb-8e8a9eeca0d4",
+      "artist": "Bram Sels",
+      "set_code": "brc",
+      "collector_number": "9"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "6c156c30-d681-4b3b-bcf9-3a1e85a8c7a1",
+      "artist": "Dan Murayama Scott",
+      "set_code": "brc",
+      "collector_number": "210"
+    },
+    "thirst_for_knowledge": {
+      "scryfall_id": "61e9ce52-b065-462d-a8b0-db79dfb4a1c8",
+      "artist": "Anna Pavleeva",
+      "set_code": "brc",
+      "collector_number": "96"
+    },
+    "thoughtcast": {
+      "scryfall_id": "e0aa9869-a05e-4a8b-8aa9-0224863a5fc5",
+      "artist": "Greg Hildebrandt",
+      "set_code": "brc",
+      "collector_number": "99"
+    },
+    "thran_dynamo": {
+      "scryfall_id": "91437edc-21bb-4900-a7c2-4e9f303b0053",
+      "artist": "Ron Spears",
+      "set_code": "brc",
+      "collector_number": "168"
+    },
+    "trading_post": {
+      "scryfall_id": "f01fae0b-1042-4cd6-bccb-37e30dae9a28",
+      "artist": "Adam Paquette",
+      "set_code": "brc",
+      "collector_number": "169"
+    },
+    "traxos_scourge_of_kroog": {
+      "scryfall_id": "513fd010-db79-4aa4-8186-776fc3e27750",
+      "artist": "Aldo Domínguez",
+      "set_code": "brc",
+      "collector_number": "170"
+    },
+    "vault_of_whispers": {
+      "scryfall_id": "f482fe5c-1ff5-46f8-befa-b84deaa29f45",
+      "artist": "Alexander Forssberg",
+      "set_code": "brc",
+      "collector_number": "211"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "f3af7c4d-5a2f-4cc6-907e-4b8104ad4aa1",
+      "artist": "Darrell Riche",
+      "set_code": "brc",
+      "collector_number": "171"
+    },
+    "wondrous_crucible": {
+      "scryfall_id": "f4cb4a2b-c48f-4d30-8e0d-f76579be1747",
+      "artist": "Evan Shipard",
+      "set_code": "brc",
+      "collector_number": "20"
+    },
+    "workshop_elders": {
+      "scryfall_id": "6912e6bd-6dc8-4e34-b2ab-edbc8f9c9943",
+      "artist": "Iain McCaig",
+      "set_code": "brc",
+      "collector_number": "102"
+    }
+  },
+  "cards": [
+    {
+      "id": "abrade"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "ashnod_the_uncaring"
+    },
+    {
+      "id": "audacious_reshapers"
+    },
+    {
+      "id": "bedevil"
+    },
+    {
+      "id": "blasphemous_act"
+    },
+    {
+      "id": "blast_furnace_hellkite"
+    },
+    {
+      "id": "brudiclad_telchor_engineer"
+    },
+    {
+      "id": "buried_ruin"
+    },
+    {
+      "id": "chaos_warp"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "crumbling_necropolis"
+    },
+    {
+      "id": "cursed_mirror"
+    },
+    {
+      "id": "darkwater_catacombs"
+    },
+    {
+      "id": "dimir_aqueduct"
+    },
+    {
+      "id": "dimir_signet"
+    },
+    {
+      "id": "dreamstone_hedron"
+    },
+    {
+      "id": "drossforge_bridge"
+    },
+    {
+      "id": "emry_lurker_of_the_loch"
+    },
+    {
+      "id": "executioner_s_capsule"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "expressive_iteration"
+    },
+    {
+      "id": "fact_or_fiction"
+    },
+    {
+      "id": "fain_the_broker"
+    },
+    {
+      "id": "faithless_looting"
+    },
+    {
+      "id": "farid_enterprising_salvager"
+    },
+    {
+      "id": "feed_the_swarm"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "geth_lord_of_the_vault"
+    },
+    {
+      "id": "glint_raker"
+    },
+    {
+      "id": "great_furnace"
+    },
+    {
+      "id": "hedron_archive"
+    },
+    {
+      "id": "hellkite_igniter"
+    },
+    {
+      "id": "herald_of_anguish"
+    },
+    {
+      "id": "ichor_wellspring"
+    },
+    {
+      "id": "idol_of_oblivion"
+    },
+    {
+      "id": "island",
+      "qty": 5
+    },
+    {
+      "id": "izzet_boilerworks"
+    },
+    {
+      "id": "jhoira_weatherlight_captain"
+    },
+    {
+      "id": "lithoform_engine"
+    },
+    {
+      "id": "machine_god_s_effigy"
+    },
+    {
+      "id": "master_transmuter"
+    },
+    {
+      "id": "metalwork_colossus"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "mirrorworks"
+    },
+    {
+      "id": "mistvault_bridge"
+    },
+    {
+      "id": "mnemonic_sphere"
+    },
+    {
+      "id": "mountain",
+      "qty": 4
+    },
+    {
+      "id": "muzzio_visionary_architect"
+    },
+    {
+      "id": "mycosynth_wellspring"
+    },
+    {
+      "id": "myriad_landscape"
+    },
+    {
+      "id": "nihil_spellbomb"
+    },
+    {
+      "id": "oblivion_stone"
+    },
+    {
+      "id": "oni_cult_anvil"
+    },
+    {
+      "id": "padeem_consul_of_innovation"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "prophetic_prism"
+    },
+    {
+      "id": "rakdos_carnarium"
+    },
+    {
+      "id": "rakdos_signet"
+    },
+    {
+      "id": "reliquary_tower"
+    },
+    {
+      "id": "scavenged_brawler"
+    },
+    {
+      "id": "seat_of_the_synod"
+    },
+    {
+      "id": "servo_schematic"
+    },
+    {
+      "id": "shadowblood_ridge"
+    },
+    {
+      "id": "silas_renn_seeker_adept"
+    },
+    {
+      "id": "silverbluff_bridge"
+    },
+    {
+      "id": "slobad_goblin_tinkerer"
+    },
+    {
+      "id": "smelting_vat"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "spine_of_ish_sah"
+    },
+    {
+      "id": "strionic_resonator"
+    },
+    {
+      "id": "swamp",
+      "qty": 4
+    },
+    {
+      "id": "temple_of_deceit"
+    },
+    {
+      "id": "temple_of_epiphany"
+    },
+    {
+      "id": "temple_of_malice"
+    },
+    {
+      "id": "terisiare_s_devastation"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "thirst_for_knowledge"
+    },
+    {
+      "id": "thoughtcast"
+    },
+    {
+      "id": "thran_dynamo"
+    },
+    {
+      "id": "trading_post"
+    },
+    {
+      "id": "traxos_scourge_of_kroog"
+    },
+    {
+      "id": "vault_of_whispers"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "wondrous_crucible"
+    },
+    {
+      "id": "workshop_elders"
+    }
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 4,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "mishra_eminent_one",
+      "why": "At the beginning of combat on your turn, make a hasty token copy of a noncreature artifact you control that is a 4/4 Construct, then sacrifice it at end of turn."
+    },
+    {
+      "card_id": "ashnod_the_uncaring",
+      "why": "Every activated ability paid for by sacrificing a permanent can be copied, so each sacrifice outlet does its work twice."
+    },
+    {
+      "card_id": "blast_furnace_hellkite",
+      "why": "Artifact offering lets it come down at instant speed for a fraction of its cost, and creatures attacking your opponents have double strike."
+    },
+    {
+      "card_id": "smelting_vat",
+      "why": "Sacrifice an artifact to put noncreature artifacts with total mana value up to its own from the top eight onto the battlefield."
+    }
+  ]
+}

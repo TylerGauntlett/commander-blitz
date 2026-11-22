@@ -592,6 +592,12 @@ class TriggerModel(BaseModel):
     #: indistinguishable to a listener; without this clause Harsh Mentor is a
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
+    #: For ``ability_activated`` with ``mana_ability: false``: "…if one or more
+    #: permanents were sacrificed to activate it" (Ashnod the Uncaring).
+    #: ``true`` keeps activations whose own cost sacrificed a permanent,
+    #: ``false`` those whose cost sacrificed none. Permanents sacrificed by mana
+    #: abilities that paid the cost never count.
+    sacrificed_to_activate: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
     #: only (activated and triggered alike), ``"activated_ability"`` on
@@ -1491,7 +1497,12 @@ class ReplacementModel(BaseModel):
     #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
     #: condition}`` judged against the copy as it enters (Spark Double's "an
     #: additional +1/+1 counter on it if it's a creature"); ``add_subtypes``,
-    #: ``colors`` and ``no_mana_cost``, `copy_permanent`'s spellings; and
+    #: ``colors`` and ``no_mana_cost``, `copy_permanent`'s spellings;
+    #: ``set_types``, the card types the copy has *instead of* the copied
+    #: ones (Machine God's Effigy's "…except it's an artifact");
+    #: ``add_abilities``, positions in the card's ``grantable_abilities`` the
+    #: copy has as copiable values (the Effigy's "…and it has "{T}: Add
+    #: {U}.""); and
     #: ``condition``, which makes the whole exception conditional (Vizier of
     #: Many Faces' "except if this creature was embalmed"). The loader holds
     #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.
@@ -2029,11 +2040,13 @@ class CardModel(BaseModel):
     pay_generic_with: (
         Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
     ) = None
-    #: **Offering**: the creature type the emerge sacrifice must be —
-    #: "sacrifice a Goblin". Offering is emerge with the fodder narrowed and
-    #: the timing widened, so it is a qualifier on that field rather than a
-    #: field of its own.
-    emerge_subtype: str | None = None
+    #: **Offering** (702.48): the selector the sacrificed permanent must
+    #: match -- ``{"types": ["Artifact"]}`` for "Artifact offering",
+    #: ``{"subtypes": ["Goblin"]}`` for "Goblin offering". Adds one cast line
+    #: per matching permanent you control, castable any time you could cast
+    #: an instant, at the printed cost reduced by that permanent's mana cost,
+    #: coloured symbols included.
+    offering: dict[str, Any] | None = None
     #: "This spell costs {X} less to cast, where X is the total power of
     #: creatures you control."  Reduces the *generic* part of the cost only,
     #: never below zero and never the coloured pips -- which is what the rules

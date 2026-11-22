@@ -10092,12 +10092,12 @@
     },
     "Ao, the Dawn Sky": {
       "edhrec_rank": 4244,
-      "gate": "template",
+      "gate": null,
       "name": "Ao, the Dawn Sky",
-      "reason": "no template for: When Ao dies, choose one —",
+      "reason": "",
       "scryfall_id": "e002d351-3795-4cd9-b389-9ed81077845e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Apathy": {
@@ -14832,12 +14832,12 @@
     },
     "Ashnod the Uncaring": {
       "edhrec_rank": 13248,
-      "gate": "template",
+      "gate": null,
       "name": "Ashnod the Uncaring",
-      "reason": "no template for: Whenever you activate an ability of an artifact or creature that isn't a mana ability, if ",
+      "reason": "",
       "scryfall_id": "8f3d67c1-3142-44b4-8f83-0ca6177cf9ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashnod's Altar": {
@@ -16042,12 +16042,12 @@
     },
     "Audacious Reshapers": {
       "edhrec_rank": 8548,
-      "gate": "template",
+      "gate": null,
       "name": "Audacious Reshapers",
-      "reason": "no template for: {T}, Sacrifice an artifact: Reveal cards from the top of your library until you reveal an ",
+      "reason": "",
       "scryfall_id": "8100d73c-3ee4-4f26-96ec-97872dcad9eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Audacious Swap": {
@@ -26362,12 +26362,12 @@
     },
     "Blast-Furnace Hellkite": {
       "edhrec_rank": 4093,
-      "gate": "template",
+      "gate": null,
       "name": "Blast-Furnace Hellkite",
-      "reason": "no template for: Artifact offering",
+      "reason": "",
       "scryfall_id": "04c349f2-69b1-48dd-a547-f2b55f542700",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blasted Landscape": {
@@ -87902,12 +87902,12 @@
     },
     "Executioner's Capsule": {
       "edhrec_rank": 7101,
-      "gate": "template",
+      "gate": null,
       "name": "Executioner's Capsule",
-      "reason": "no template for: {1}{B}, {T}, Sacrifice this artifact: Destroy target nonblack creature",
+      "reason": "",
       "scryfall_id": "73a54823-a5fd-4055-a435-a6bdbd6bedff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Executioner's Hood": {
@@ -91492,12 +91492,12 @@
     },
     "Farid, Enterprising Salvager": {
       "edhrec_rank": 10737,
-      "gate": "template",
+      "gate": null,
       "name": "Farid, Enterprising Salvager",
-      "reason": "no template for: Whenever a nontoken artifact you control is put into a graveyard from the battlefield, cre",
+      "reason": "",
       "scryfall_id": "003367c7-6cb8-4451-8349-76ce5d21e367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Farideh's Fireball": {
@@ -107292,12 +107292,12 @@
     },
     "Geth, Lord of the Vault": {
       "edhrec_rank": 8113,
-      "gate": "template",
+      "gate": null,
       "name": "Geth, Lord of the Vault",
-      "reason": "no template for: {X}{B}: Put target artifact or creature card with mana value X from an opponent's graveyar",
+      "reason": "",
       "scryfall_id": "82f6a6c6-2755-4a6b-a9f9-06cae30be4e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geth, Thane of Contracts": {
@@ -110942,12 +110942,12 @@
     },
     "Glint Raker": {
       "edhrec_rank": 19757,
-      "gate": "template",
+      "gate": null,
       "name": "Glint Raker",
-      "reason": "no template for: This creature gets +X/+0, where X is the greatest mana value among artifacts you control",
+      "reason": "",
       "scryfall_id": "7520ee10-3ed1-40eb-86a0-3e463a5fba76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glint Weaver": {
@@ -126162,12 +126162,12 @@
     },
     "Herald of Anguish": {
       "edhrec_rank": 11057,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Anguish",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "fec860f2-6ef0-4b74-9672-72b4de2b55ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Dromoka": {
@@ -159482,12 +159482,12 @@
     },
     "Lithoform Engine": {
       "edhrec_rank": 1718,
-      "gate": "template",
+      "gate": null,
       "name": "Lithoform Engine",
-      "reason": "no template for: {2}, {T}: Copy target activated or triggered ability you control. You may choose new targe",
+      "reason": "",
       "scryfall_id": "c579956f-900a-4574-a68b-3c1d92ea67b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lithomancer's Focus": {
@@ -163872,12 +163872,12 @@
     },
     "Machine God's Effigy": {
       "edhrec_rank": 2862,
-      "gate": "template",
+      "gate": null,
       "name": "Machine God's Effigy",
-      "reason": "no template for: You may have this artifact enter as a copy of any creature on the battlefield, except it's",
+      "reason": "",
       "scryfall_id": "637f69c2-ba24-42d1-9345-8ebdb04b6904",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Machine Man, Model X-51": {
@@ -175512,12 +175512,12 @@
     },
     "Mirrorworks": {
       "edhrec_rank": 3023,
-      "gate": "template",
+      "gate": null,
       "name": "Mirrorworks",
-      "reason": "no template for: Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create ",
+      "reason": "",
       "scryfall_id": "a762e84d-db04-4ede-bc0b-ddcfff9549af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miscalculation": {
@@ -175862,12 +175862,12 @@
     },
     "Mishra, Eminent One": {
       "edhrec_rank": 9876,
-      "gate": "template",
+      "gate": null,
       "name": "Mishra, Eminent One",
-      "reason": "no template for: At the beginning of combat on your turn, create a token that's a copy of target noncreatur",
+      "reason": "",
       "scryfall_id": "58b16e2d-76f8-4097-86f9-f78974df0633",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mishra, Excavation Prodigy": {
@@ -176762,12 +176762,12 @@
     },
     "Mnemonic Sphere": {
       "edhrec_rank": 11564,
-      "gate": "template",
+      "gate": null,
       "name": "Mnemonic Sphere",
-      "reason": "no template for: {1}{U}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "6dd6a9d8-6ac3-49be-a87e-4d91fa8d96a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mnemonic Wall": {
@@ -181532,12 +181532,12 @@
     },
     "Muzzio, Visionary Architect": {
       "edhrec_rank": 13196,
-      "gate": "template",
+      "gate": null,
       "name": "Muzzio, Visionary Architect",
-      "reason": "no template for: {3}{U}, {T}: Look at the top X cards of your library, where X is the greatest mana value a",
+      "reason": "",
       "scryfall_id": "f6726c12-d484-4ab7-9d5d-2a1561602d3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Muzzle": {
@@ -181662,12 +181662,12 @@
     },
     "Mycosynth Wellspring": {
       "edhrec_rank": 2394,
-      "gate": "template",
+      "gate": null,
       "name": "Mycosynth Wellspring",
-      "reason": "no template for: When this artifact enters or is put into a graveyard from the battlefield, you may search ",
+      "reason": "",
       "scryfall_id": "5d951e0f-3f20-4c1c-ba5a-8cd17dfe5f0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myojin of Blooming Dawn": {
@@ -193002,12 +193002,12 @@
     },
     "Oni-Cult Anvil": {
       "edhrec_rank": 6085,
-      "gate": "template",
+      "gate": null,
       "name": "Oni-Cult Anvil",
-      "reason": "no template for: Whenever one or more artifacts you control leave the battlefield during your turn, create ",
+      "reason": "",
       "scryfall_id": "c275470f-83d2-4341-9757-a570ec19a181",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Onslaught": {
@@ -196382,12 +196382,12 @@
     },
     "Oviya, Automech Artisan": {
       "edhrec_rank": 3350,
-      "gate": "template",
+      "gate": null,
       "name": "Oviya, Automech Artisan",
-      "reason": "no template for: Each creature that's attacking one of your opponents has trample",
+      "reason": "",
       "scryfall_id": "6d6eae8b-73de-4d79-bbe5-2921db1987b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Owen Grady, Raptor Trainer": {
@@ -235212,12 +235212,12 @@
     },
     "Scavenged Brawler": {
       "edhrec_rank": 3904,
-      "gate": "template",
+      "gate": null,
       "name": "Scavenged Brawler",
-      "reason": "no template for: {5}, Exile this card from your graveyard: Choose target creature. Put four +1/+1 counters,",
+      "reason": "",
       "scryfall_id": "3e85dbfe-135d-48a8-be11-399f221073ac",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scavenged Weaponry": {
@@ -241292,12 +241292,12 @@
     },
     "Servo Schematic": {
       "edhrec_rank": 5298,
-      "gate": "template",
+      "gate": null,
       "name": "Servo Schematic",
-      "reason": "no template for: When this artifact enters or is put into a graveyard from the battlefield, create a 1/1 co",
+      "reason": "",
       "scryfall_id": "723b5b4d-120c-4396-8e7c-ed62302f463d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seshiro the Anointed": {
@@ -246982,12 +246982,12 @@
     },
     "Silas Renn, Seeker Adept": {
       "edhrec_rank": 11891,
-      "gate": "template",
+      "gate": null,
       "name": "Silas Renn, Seeker Adept",
-      "reason": "no template for: Whenever Silas Renn deals combat damage to a player, choose target artifact card in your g",
+      "reason": "",
       "scryfall_id": "79b50fc8-9658-4837-ade8-2f34d12d3cc7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silburlind Snapper": {
@@ -252402,12 +252402,12 @@
     },
     "Slobad, Goblin Tinkerer": {
       "edhrec_rank": 7510,
-      "gate": "template",
+      "gate": null,
       "name": "Slobad, Goblin Tinkerer",
-      "reason": "no template for: Sacrifice an artifact: Target artifact gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "675d81e9-ff17-485b-ac23-aef4bd64f4d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slobad, Iron Goblin": {
@@ -252802,12 +252802,12 @@
     },
     "Smelting Vat": {
       "edhrec_rank": 13767,
-      "gate": "template",
+      "gate": null,
       "name": "Smelting Vat",
-      "reason": "no template for: {1}, {T}, Sacrifice another artifact: Reveal the top eight cards of your library. Put up t",
+      "reason": "",
       "scryfall_id": "9f1ea23c-69ef-4051-b747-3af3aa5c38f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smile at Death": {
@@ -278182,12 +278182,12 @@
     },
     "Terisiare's Devastation": {
       "edhrec_rank": 8121,
-      "gate": "template",
+      "gate": null,
       "name": "Terisiare's Devastation",
-      "reason": "no template for: You lose X life and create X tapped Powerstone tokens. Then all creatures get -1/-1 until ",
+      "reason": "",
       "scryfall_id": "494a9b67-cfd8-44cd-adbb-8e8a9eeca0d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Termagant Swarm": {
@@ -291732,12 +291732,12 @@
     },
     "Traxos, Scourge of Kroog": {
       "edhrec_rank": 3926,
-      "gate": "template",
+      "gate": null,
       "name": "Traxos, Scourge of Kroog",
-      "reason": "no template for: Whenever you cast a historic spell, untap Traxos",
+      "reason": "",
       "scryfall_id": "3f0cbff1-4b4e-4d60-b114-20bd3e977b25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trazyn the Infinite": {
@@ -318282,12 +318282,12 @@
     },
     "Wondrous Crucible": {
       "edhrec_rank": 4701,
-      "gate": "template",
+      "gate": null,
       "name": "Wondrous Crucible",
-      "reason": "no template for: Permanents you control have ward {2}",
+      "reason": "",
       "scryfall_id": "68c12fc0-f4fe-45cc-a225-3d80bcbbeb93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wondrous Revival": {

@@ -351,7 +351,15 @@ def push_activated_ability(
     modes: tuple[int, ...] = (),
     modes_answered: bool = False,
     bindings: dict[str, Any] | None = None,
+    sid: int | None = None,
 ) -> StackItem:
+    """Put an activated ability on the stack.
+
+    ``sid`` is one `Game._activate` allocated before the cost was paid, so the
+    ABILITY_ACTIVATED event it fired then could already name the item this
+    becomes -- "copy **that ability**" (Ashnod the Uncaring). Omitted, a fresh
+    one is allocated here.
+    """
     card = state.card(source_oid)
     # The **derived** list, which is the one legality offered from and
     # `game._activate` paid off. The printed list is shorter than it whenever the
@@ -374,7 +382,7 @@ def push_activated_ability(
     # `TriggerInstance.granted_ability`.
     borrowed = ability if borrowed_ability(state, source_oid, ability_index) else None
     item = StackItem(
-        sid=state.alloc_sid(),
+        sid=sid if sid is not None else state.alloc_sid(),
         kind="ability",
         controller=controller,
         def_id=card.id,

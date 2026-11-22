@@ -1892,6 +1892,15 @@ def _matches(
     ) is not spec.mana_ability:
         return False
 
+    # "…if one or more permanents were **sacrificed to activate it**" (Ashnod
+    # the Uncaring). The count is the activation's own cost's, put on the event
+    # by `Game._activate`; the loader allows this only beside `mana_ability:
+    # false`, so the event read here always carries it.
+    if spec.sacrificed_to_activate is not None and (
+        int(event.data.get("sacrificed", 0) or 0) > 0
+    ) is not spec.sacrificed_to_activate:
+        return False
+
     # "…becomes the target of **a spell**" -- Goldspan Dragon, as against ward's
     # "a spell or ability", which is this clause omitted. `announce_targets` has
     # tagged every BECAME_TARGET with `is_spell` since the event existed and

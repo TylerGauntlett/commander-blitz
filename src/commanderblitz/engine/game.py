@@ -57,6 +57,7 @@ from .costs import (
     can_pay,
     can_pay_mana,
     commander_cost,
+    cost_sacrifice_count,
     cost_x_ceiling,
     defined_x,
     mana_amount,
@@ -590,6 +591,14 @@ class Game:
             # into `extra` alongside the commander tax rather than paid
             # separately -- `pay` clamps the generic part at zero.
             extra -= state.card(action.emerge_oid).mana_value
+        elif action.emerge_oid is not None and card.offering is not None:
+            # Offering (702.48a): the printed cost reduced by the sacrifice's
+            # mana cost, coloured symbols included, read as `_cast_variant`
+            # read it -- the permanent is still on the battlefield here.
+            cost, offering_less = card.mana_cost.reduced_by_mana_cost(
+                state.card(action.emerge_oid).mana_cost
+            )
+            extra -= offering_less
         elif action.escape is not None:
             # A granted escape's mana half, read off the action for `warp`'s
             # reason: Underworld Breach may be gone by the time this is paid.
@@ -1360,6 +1369,19 @@ class Game:
         # `mana_ability` is what separates this from `_activate_mana`'s
         # identical event type; without it a listener cannot tell a fetchland's
         # sacrifice ability from the same land's tap.
+        #
+        # `sacrificed` is how many permanents this activation's own cost
+        # sacrifices -- Ashnod the Uncaring's "if one or more permanents were
+        # sacrificed to activate it". Known now although the cost is paid
+        # below: X has been announced, and `pay` takes exactly that many or the
+        # activation does not happen (`costs.cost_sacrifice_count`).
+        #
+        # `sid` is the stack item this activation becomes, allocated now so a
+        # trigger can name it -- "copy **that ability**" (Ashnod the Uncaring)
+        # reads it as `{"binding": "sid"}`. The item itself is pushed below,
+        # under this same sid, and is on the stack before any trigger this
+        # wakes is (603.3).
+        sid = state.alloc_sid()
         triggers.fire(
             state,
             EventType.ABILITY_ACTIVATED,
@@ -1368,6 +1390,8 @@ class Game:
             ability=action.ability_index,
             card=card.id,
             mana_ability=False,
+            sacrificed=cost_sacrifice_count(ability.cost, x),
+            sid=sid,
         )
 
         # What the cost named -- Station's "the tapped creature", Gisa's "the
@@ -1432,6 +1456,7 @@ class Game:
             modes=modes,
             modes_answered=ability.cast_time_modes is not None,
             bindings=bindings,
+            sid=sid,
         )
         if ability.is_cycling:
             # Fired *after* the cycling ability is on the stack, and the order

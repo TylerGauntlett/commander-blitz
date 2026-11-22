@@ -317,7 +317,7 @@ This is the long tail, and where the build order comes from.
 | Mutate | shipped | an alternative cost with `MUTATE_TARGET`, and a **synthesised `CardDef`** written onto the host at `card_of` — the top card carrying the abilities of everything under it | `mutate` |
 | Nightbound † | shipped | the other half of daybound, and the reason the switching code keeps no record: the two are printed one per face, so `chars` already says which way round a permanent is | `nightbound` |
 | Ninjutsu | shipped | a `blocked` selector key on the bounce cost, read once blockers are declared; the cost's `as`, and `attacking: {"same_as": …}` on `put_onto_battlefield` | — |
-| Offering | free | `emerge` plus `emerge_subtype`, and the `flash` keyword for "any time you could cast an instant" | `emerge_subtype` |
+| Offering | shipped | the `offering` card field: a permanent selector, one cast line per matching permanent at the printed cost less its mana cost, colour included, offered at instant timing | `offering` |
 | Overload | shipped | card-level field: a third cast line with **no targets**, and an `{"overloaded": true}` branch | `overload` |
 | Partner † | shipped | an **inert** `Keyword` — deck construction only, and the engine is handed a finished deck | `partner` |
 | Persist | free | `dies` trigger with a `counters_had` condition, then `return_from_graveyard` with `counters`; granted, the same trigger under `grantable_abilities` and the `grant_ability` op | — |

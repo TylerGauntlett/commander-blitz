@@ -123,6 +123,9 @@ CARD_LEVEL_COST_KEYS = (
     "morph",
     "multikicker",
     "mutate",
+    #: "Artifact offering": a permanent selector, ``{"types": ["Artifact"]}``
+    #: or ``{"subtypes": ["Goblin"]}``. Gives the card no flash of its own.
+    "offering",
     "overload",
     "plot",  # str; the price of plotting it from hand
     "pay_generic_with",  # str; convoke and its relatives

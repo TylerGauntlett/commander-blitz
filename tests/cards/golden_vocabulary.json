@@ -113,6 +113,7 @@
    "subject"
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
+   "add_abilities",
    "add_keywords",
    "add_subtypes",
    "add_types",
@@ -121,7 +122,8 @@
    "enters_with",
    "name",
    "no_mana_cost",
-   "remove_supertypes"
+   "remove_supertypes",
+   "set_types"
   ],
   "FIRST_ACTIVATION_TARGETING_KEYS": [
    "controller",
@@ -446,6 +448,7 @@
    "attached_to",
    "attached_to_host",
    "attacking",
+   "attacking_player",
    "blocking",
    "colorless",
    "colors",

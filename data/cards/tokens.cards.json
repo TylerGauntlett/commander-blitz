@@ -921,6 +921,23 @@
       ]
     },
     {
+      "id": "construct_1_1_c_artifact",
+      "name": "Construct Token",
+      "oracle_text": "1/1 colorless Construct artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "construct_4_4_c_artifact_flying_haste",
       "name": "Construct Token",
       "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
@@ -6105,6 +6122,17 @@
           ]
         }
       ]
+    },
+    {
+      "id": "scrap_token",
+      "name": "Scrap",
+      "oracle_text": "",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
     },
     {
       "id": "thopter_1_1_u_flying",

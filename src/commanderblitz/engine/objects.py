@@ -223,6 +223,13 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: The card types the copy has *instead of* the copied ones (707.9b) --
+    #: Machine God's Effigy's "…except it's an artifact", with no "in addition
+    #: to its other types". `GameState.card_of` replaces the copied face's
+    #: types with these and drops every subtype of a type it no longer has
+    #: (205.1b), so the copy of a Bear is a bare Artifact. Written, read and
+    #: cleared beside `copying_add_types`, for its reasons.
+    copying_set_types: frozenset[str] | None = None
     #: Creature and other subtypes the copy carries *in addition to* the copied
     #: ones (707.9b) -- Vizier of Many Faces' "…it's a Zombie in addition to
     #: its other types", Deceptive Frostkite's Dragon. Written, read and
@@ -251,6 +258,16 @@ class GameObject:
     #: them after the copied face's abilities so the copied indices never move,
     #: and cleared beside `copying_keywords`, for its reasons.
     copying_own_abilities: tuple[int, ...] | None = None
+    #: Positions in this permanent's ``grantable_abilities`` that the copy has
+    #: as part of its copiable values (707.9b) -- Machine God's Effigy's
+    #: "…except it's an artifact **and it has "{T}: Add {U}."**". The quoted
+    #: ability is not one the copied card prints and not a layer-6 grant: it
+    #: is on the copied face itself, so no ability-removing effect sees it as
+    #: granted. Written by `_enter_battlefield` from a `self_enters_as_copy`
+    #: replacement's ``except_.add_abilities``, read by `GameState.card_of`,
+    #: which appends the abilities after the copied face's (and any kept own
+    #: ones), and cleared beside `copying_own_abilities`, for its reasons.
+    copying_add_abilities: tuple[int, ...] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -1256,9 +1273,10 @@ class GameObject:
     #:
     #: A copy is a token whose ``def_id`` is the original's, so the "except"
     #: clause has nowhere to live on the card -- it is a property of this one
-    #: object. The copiable values 707.9b lets an exception rewrite: replacement
-    #: colours, card types and base power/toughness; added card types,
-    #: subtypes and supertypes; and whether the mana cost is gone. Anything
+    #: object. The copiable values 707.9b lets an exception rewrite: the name
+    #: (read by `GameState.card_of`), replacement colours, card types and base
+    #: power/toughness; added card types, subtypes and supertypes; and whether
+    #: the mana cost is gone. Anything
     #: richer belongs in a real copiable-values layer, which this engine does
     #: not have.
     #:
@@ -1533,11 +1551,13 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_set_types = None
         self.copying_add_subtypes = None
         self.copying_colors = None
         self.copying_no_mana_cost = False
         self.copying_add_supertypes = None
         self.copying_own_abilities = None
+        self.copying_add_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False

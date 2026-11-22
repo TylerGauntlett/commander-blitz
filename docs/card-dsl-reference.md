@@ -22,12 +22,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 48 |
 | [Cost reduction](#cost-reduction) | 8 |
 | [Ability costs](#ability-costs) | 38 |
-| [Card-level costs](#card-level-costs) | 35 |
+| [Card-level costs](#card-level-costs) | 36 |
 | [Keywords](#keywords) | 47 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 34 |
+| [Static filter keys](#static-filter-keys) | 35 |
 | [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 24 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -61,7 +61,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `hideaway` | Cards |  | Hideaway: look at the top N, exile one face down, the rest to the bottom. | [Hideaway — "that one, from there"](card-dsl-cookbook.md#hideaway--that-one-from-there) |
 | `link_exiled` | Cards |  | Link cards in exile to the permanent bound under `to`, so its own `exiled_with: "self"` finds them (607.2a). | ["Return the exiled card" from a token — link_exiled](card-dsl-cookbook.md#return-the-exiled-card-from-a-token--link_exiled) |
 | `look_at_hand` | Cards |  | Look at a player's hand (private: only you see it). | [Effect ops](card-dsl.md#effect-ops) |
-| `look_at_top` | Cards | yes | Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost. | [Effect ops](card-dsl.md#effect-ops) |
+| `look_at_top` | Cards | yes | Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost; `total_mana_value` caps the picks' summed mana value. | [Effect ops](card-dsl.md#effect-ops) |
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_exiled_into_graveyard` | Cards | yes | Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived. | ["Put a card exiled with it into its owner's graveyard" — put_exiled_into_graveyard](card-dsl-cookbook.md#put-a-card-exiled-with-it-into-its-owners-graveyard--put_exiled_into_graveyard) |
@@ -71,7 +71,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
 | `reveal` | Cards | yes | Reveal cards to the table; `as` records them. | [Effect ops](card-dsl.md#effect-ops) |
-| `reveal_until` | Cards | yes | Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named), or offer one onto the battlefield with `destination` as the fallback (`may_destination`); bottom or shuffle the rest. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
+| `reveal_until` | Cards | yes | Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named), or offer one onto the battlefield with `destination` as the fallback (`may_destination`); bottom or shuffle the rest; `revealed_as` binds every card revealed. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `ripple` | Cards |  | Ripple N: reveal the top N, cast any with the same name free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `scry` | Cards |  | Scry N; `chooser` separate from `player` is fateseal. | [Effect ops](card-dsl.md#effect-ops) |
 | `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield. | [Effect ops](card-dsl.md#effect-ops) |
@@ -196,7 +196,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_mana_per` | Mana |  | Add one mana of a color for each object a selector finds. | ["Add {G} for each …"](card-dsl-cookbook.md#add-g-for-each-) |
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_new_targets` | Stack |  | Choose new targets for a spell or ability already on the stack (115.7). | ["You may choose new targets for target spell" — retargeting the original](card-dsl-cookbook.md#you-may-choose-new-targets-for-target-spell--retargeting-the-original) |
-| `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
+| `copy_ability` | Stack |  | Copy an activated or triggered ability, by `target` or by `sid` ("copy that ability"); `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
@@ -896,6 +896,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
+| `offering` | Offering: a selector for the sacrificed permanent; the printed cost less its mana cost, colour included, at instant timing. | [Offering](card-dsl-cookbook.md#offering) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
 | `plot` | Plot cost: pay it to exile this from hand, then cast it free on a later turn. | [Plot](card-dsl.md#plot) |
 | `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
@@ -1022,6 +1023,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
+| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |

@@ -1,0 +1,54 @@
+{
+  "_comment": "Cards for tests/unit/copies/test_copy_triggering_ability.py. Never part of a deck list. `t_cta_copier` is Ashnod the Uncaring's trigger without the deathtouch body: a noncreature artifact, so no creature-sacrifice cost can take it. `t_cta_striker` is a sacrifice ability with a target, so the copy's new targets are visible on a life total. The other abilities are shared: t_gisa_outlet (sacrifice, the sacrificed creature bound for the effect) and t_mutator (no sacrifice).",
+  "cards": [
+    {
+      "id": "t_cta_copier",
+      "name": "Test Activation Copier",
+      "oracle_text": "Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you activate an ability of an artifact or creature that isn't a mana ability, if one or more permanents were sacrificed to activate it, you may copy that ability. You may choose new targets for the copy.",
+          "trigger": {
+            "event": "ability_activated",
+            "controller": "you",
+            "filter": {"any_types": ["Artifact", "Creature"]},
+            "mana_ability": false,
+            "sacrificed_to_activate": true
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Copy that ability?",
+              "effects": [
+                {"op": "copy_ability", "sid": {"binding": "sid"}, "new_targets": true}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cta_striker",
+      "name": "Test Sacrifice Striker",
+      "oracle_text": "Sacrifice a creature: Target player loses 2 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: Target player loses 2 life.",
+          "cost": {"sacrifice": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": 1}},
+          "targets": [{"id": "p1", "kind": "player", "count": 1}],
+          "effects": [{"op": "lose_life", "player": {"target": "p1"}, "amount": {"const": 2}}]
+        }
+      ]
+    }
+  ]
+}

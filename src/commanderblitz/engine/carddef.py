@@ -917,6 +917,15 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
+    #: ``ability_activated`` only, beside ``mana_ability: False``: "…if one or
+    #: more permanents were **sacrificed to activate it**" (Ashnod the
+    #: Uncaring).  ``True`` fires only when the activation's own cost
+    #: sacrificed at least one permanent, ``False`` only when it sacrificed
+    #: none, ``None`` either way.  Read off the event's ``sacrificed`` count,
+    #: which `costs.cost_sacrifice_count` takes from the ability's ``sacrifice``,
+    #: list-form ``sacrifice`` and ``sacrifice_x`` costs -- so a Treasure
+    #: sacrificed for mana to pay the cost is not counted.
+    sacrificed_to_activate: bool | None = None
     #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
     #: Dragon), as against ward's "a spell or ability", which is the unclaused
     #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities
@@ -1930,9 +1939,13 @@ class CardDef:
     #: Convoke, improvise and delve: `"tap_creatures"`, `"tap_artifacts"` or
     #: `"exile_from_graveyard"`.
     pay_generic_with: str | None = None
-    #: Offering: the creature type the sacrifice must be. ``None`` is emerge
-    #: proper, which takes any creature.
-    emerge_subtype: str | None = None
+    #: Offering (702.48): "Artifact offering", "Goblin offering". The selector
+    #: the sacrificed permanent must match. The offering line is the printed
+    #: cost reduced by that permanent's mana cost symbol by symbol, coloured
+    #: symbols included (`ManaCost.reduced_by_mana_cost`), and is castable
+    #: any time its caster could cast an instant; the printed line keeps the
+    #: card's own timing.
+    offering: dict[str, Any] | None = None
     #: "This spell costs {X} less to cast."  See `cost_reduction.cost_reduction`, and
     #: `costs.reduction_amount` for the shapes -- it is **variant-blind** by
     #: design: Ghalta costs less however it is cast, so `_cast_variant` applies

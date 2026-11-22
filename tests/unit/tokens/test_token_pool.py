@@ -1639,6 +1639,33 @@ class TestRetrofitterFoundrysConstructIsAPlainFourFour:
         assert sorted(other.keywords) == ["flying", "haste"]
 
 
+class TestOniCultAnvilsConstructIsAPlainOneOne:
+    """Oni-Cult Anvil: *"create a 1/1 colorless Construct artifact creature
+    token."*
+
+    `servo_1_1_c` is the same colorless 1/1 artifact body with the wrong
+    creature type, and `construct_0_0_c_artifact_buff` is a Construct that
+    grows with every artifact; neither is the vanilla 1/1 (111.4).
+    """
+
+    def test_it_is_a_one_one_colorless_construct_artifact_with_nothing_else(self, pool):
+        token = pool.get("construct_1_1_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Construct"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_servo_and_the_growing_construct_are_still_separate_tokens(self, pool):
+        servo = pool.get("servo_1_1_c")
+        assert list(servo.subtypes) == ["Servo"]
+        construct = pool.get("construct_0_0_c_artifact_buff")
+        assert (construct.power, construct.toughness) == (0, 0)
+        assert construct.abilities
+
+
 class TestGolemFoundrysGolemIsAPlainThreeThree:
     """Golem Foundry: *"Create a 3/3 colorless Golem artifact creature token."*
 
@@ -3298,6 +3325,30 @@ class TestTheReplicatedRingIsASnowManaRock:
         assert not token.colors
         (ability,) = token.abilities
         assert ability.is_mana_ability and ability.cost.sacrifice is None
+
+
+class TestFaridsScrapIsABlankArtifact:
+    """Farid, Enterprising Salvager: *"create a colorless artifact token named
+    Scrap."* The token prints nothing else: no subtype, no ability, no keyword.
+    `treasure_token` and `clue_token` are the near misses -- colorless
+    noncreature artifacts, but each carries a subtype and a sacrifice ability,
+    so a Farid handed one would be a card that makes mana or draws (111.4)."""
+
+    def test_it_is_a_colorless_artifact_with_nothing_else(self, pool):
+        token = pool.get("scrap_token")
+        assert token is not None and token.is_token
+        assert token.name == "Scrap"
+        assert list(token.types) == ["Artifact"]
+        assert not token.supertypes and not token.subtypes
+        assert not token.colors
+        assert (token.power, token.toughness) == (None, None)
+        assert not token.keywords and not token.abilities
+
+    def test_the_treasure_and_clue_are_still_separate_tokens(self, pool):
+        for token_id, subtype in (("treasure_token", "Treasure"), ("clue_token", "Clue")):
+            token = pool.get(token_id)
+            assert list(token.subtypes) == [subtype]
+            assert token.abilities[0].cost.sacrifice
 
 
 class TestEverquillsFeatherReturnsAPhoenix:

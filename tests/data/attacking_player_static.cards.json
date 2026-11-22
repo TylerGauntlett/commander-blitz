@@ -1,0 +1,37 @@
+{
+  "_comment": "Cards that exist only for the static attacking-player test (tests/unit/statics/test_static_attacking_player.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_furnace_lord` is Blast-Furnace Hellkite's third line on an enchantment, so the grant is read with no flying double striker in the way.",
+  "cards": [
+    {
+      "id": "t_furnace_lord",
+      "name": "Test Furnace Lord",
+      "oracle_text": "Creatures attacking your opponents have double strike.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures attacking your opponents have double strike.",
+          "effect": "grant_keyword",
+          "affects": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "any",
+            "attacking_player": "opponent"
+          },
+          "keywords": [
+            "double_strike"
+          ]
+        }
+      ]
+    }
+  ]
+}

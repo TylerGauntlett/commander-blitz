@@ -7376,7 +7376,7 @@ them where it is sitting:
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
 "alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
-"emerge_subtype": "Goblin"                  // offering: only that type may be eaten
+"offering": { "types": ["Artifact"] }      // eat a matching permanent at instant speed, pay the difference
 "pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_additional_cost": { "discard": 1 } // …or paying any other cost on top (Dragon Man)
@@ -8215,6 +8215,39 @@ it.
 The flag is written onto the object *before* `spell_effects` run, for
 `cast_from_graveyard`'s reason: written after, every overloaded spell resolves
 as the targeted half, with no targets, which is nothing at all.
+
+#### Offering
+
+```jsonc
+"mana_cost": "{7}{R}{R}",
+"offering": { "types": ["Artifact"] }       // "Artifact offering"; Goblin offering is { "subtypes": ["Goblin"] }
+```
+
+"You may cast this card any time you could cast an instant by sacrificing a
+[quality] permanent and paying the difference in mana costs" (702.48a). The
+value is a permanent selector naming the quality; `controller: you` and the
+battlefield are implied, and the match reads derived characteristics, so a
+permanent granted the type is fodder.
+
+- **One cast line per matching permanent** (capped, biggest first), the
+  emerge shape, labelled "(offering, sacrificing …)". The sacrifice is paid after
+  the mana (601.2g), so an artifact that taps for mana can help pay for the
+  spell that eats it.
+- **The price is the printed cost less the sacrifice's mana cost, colour
+  included** (`ManaCost.reduced_by_mana_cost`). A coloured symbol takes a pip of
+  its colour off, and where the spell demands none of that colour it takes one
+  generic instead: `{7}{R}{R}` less `{1}{R}` is `{6}{R}`, less `{2}{G}{G}` is
+  `{3}{R}{R}`. The generic remainder nets with every other discount, the
+  commander tax included, and clamps at zero.
+- **Instant timing is the offering line's alone.** The card gets no flash: at
+  sorcery timing the printed line is offered beside the offering lines, at
+  instant timing only the offering lines are (`casting.offering_timing_owed`).
+  Do not add the `flash` keyword for the reminder text — that is a strictly
+  better card.
+
+Not `emerge`: emerge is a separate alternative cost, eats only creatures and
+reduces by mana value, generic only. The loader refuses a card with both, and an
+empty selector.
 
 #### Rebound
 
@@ -13467,6 +13500,41 @@ A cap of zero is refused — a spec that can only ever choose nothing, printed a
 though it chose something — as is one on a `player` or `spell` target, neither
 of which has a mana value for it to add up.
 
+## "…cards with total mana value 4 or less from among them" — a cap on a look's picks
+
+Ao, the Dawn Sky and Smelting Vat:
+
+```jsonc
+// Ao — "Look at the top seven cards of your library. Put any number of nonland
+// permanent cards with total mana value 4 or less from among them onto the battlefield."
+{ "op": "look_at_top", "amount": 7, "total_mana_value": 4,
+  "objects": { "any_types": ["Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"],
+               "not_types": ["Land"], "count": "any" },
+  "destination": "battlefield", "rest_to_bottom": true }
+
+// Smelting Vat — "…up to two noncreature artifact cards with total mana value less
+// than or equal to the sacrificed artifact's mana value…"
+{ "op": "look_at_top", "amount": 8,
+  "total_mana_value": { "mana_value_of": { "binding": "sacrificed" } },
+  "objects": { "types": ["Artifact"], "not_types": ["Creature"], "count": 2, "optional": true },
+  "destination": "battlefield", "rest_to_bottom": true }
+```
+
+`total_mana_value` on `look_at_top` is a value expression, read once as the op
+resolves, capping the **sum** of the printed mana values of the cards taken
+(202.3b: an X is 0 off the stack). Cards in a looked-at window are not targets,
+so the target key of the same name does not reach them. The pick is asked one
+card at a time (`ops_cards._pick_within_total_mana_value`), each question
+offering only what still fits under what is left; the chooser may stop at any
+point, and the selector's `count` bounds how many. Mana values are never
+negative, so every legal set is reachable that way.
+
+The loader requires `count: "any"` or an `optional` integer count ("up to
+two") — `"all"` or a mandatory number would demand picks the cap can forbid —
+and refuses the key beside `destinations`, whose steps it would not cap. The
+near miss is a per-card `mana_value` ceiling in the selector, which lets Ao put
+three 4-drops onto the battlefield.
+
 ## "…with total power 10 or less" — the same cap, summing power
 
 Reunion of the House:
@@ -14313,6 +14381,25 @@ control attacking **that player** get +2/+0" is the `defender` of its own
 `"opponent"` is the near miss and pumps creatures sent at every opponent in a
 pod. Only a binding is taken, and a trigger filter refuses it: nothing is bound
 when a trigger filter is asked, so it would match nothing.
+
+A static's `affects` takes the word forms too. "Creatures attacking your
+opponents have double strike" (Blast-Furnace Hellkite) is a `grant_keyword`
+over every controller's creatures, because the sentence names whom they attack
+and not whose they are:
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["double_strike"],
+  "affects": { "types": ["Creature"], "controller": "any", "attacking_player": "opponent" } }
+```
+
+"You" and "opponent" are relative to the static's controller, so at a pod one
+opponent's creature attacking another opponent has it and a creature attacking
+you does not. Leaving `controller` off defaults it to `"you"`, which is the
+narrower "creatures you control attacking your opponents". `attacking: true` is
+the near miss and is wider twice over: it reaches the creature attacking you and
+the one attacking a planeswalker. The loader refuses the binding form (a static
+binds nothing) and `or_planeswalkers` there, because that widening asks the
+walker's derived types, which a static's `affects` is evaluated inside.
 
 ## An additional combat phase
 
@@ -15240,6 +15327,7 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 
 | key | meaning |
 |---|---|
+| `name` | replaces the name — "except its name is Mishra's Warform" (Mishra, Eminent One); a non-empty string, read by `GameState.card_of`, so the token enters under it and the legend rule, `selector.name` and a copy of the token all see it. The near miss is `rename` on the `as` binding afterwards: not a copiable value, and applied after the token has entered under the copied name |
 | `colors` | replaces the printed colours outright |
 | `add_subtypes` | *adds* to the printed subtypes — an embalm token is a Zombie **Angel** |
 | `subtypes` | *replaces* the subtypes — "except it's a 4/4 black Zombie" (The Scarab God, Benthic Anomaly) is a Zombie *instead of* its creature types (205.1b); never beside `add_subtypes` |
@@ -17163,6 +17251,28 @@ Jhoira loads and hands the opponent their own historic card for free.
 `mana_value_of`'s `objects` form; the bare `{"binding": …}` form reads a single
 oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
 empty list, so the loss is zero.
+
+### "The number of cards revealed this way" — `revealed_as`
+
+```jsonc
+// Audacious Reshapers -- "{T}, Sacrifice an artifact: Reveal cards from the top
+// of your library until you reveal an artifact card. Put that card onto the
+// battlefield and the rest on the bottom of your library in a random order. This
+// creature deals damage to you equal to the number of cards revealed this way."
+{ "op": "reveal_until", "objects": { "types": ["Artifact"] },
+  "destination": "battlefield", "revealed_as": "revealed" },
+{ "op": "damage", "player": "you",
+  "amount": { "count": { "binding": "revealed" } } }
+```
+
+`revealed_as` binds every card the walk revealed — the matches and every card
+walked past — as a list, extended across every seat walked. A scan that ran the
+library out with no match still revealed every card it passed, and all of them
+count; an `amount` of zero reveals nothing and counts zero. The loader refuses a
+non-string name and the key on any op but `reveal_until`.
+
+`as` is the near miss: it records only the matches that moved, so a count of it
+is the number *found* — one or zero here — not the number revealed.
 
 ### "You may put that card onto the battlefield. If you don't …" — `may_destination`
 

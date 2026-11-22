@@ -503,6 +503,24 @@ captured, the announced `x` and its ability kind, and goes on top of the stack.
 `new_targets` is offered from the **ability's** own target specs, not the
 card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
+`sid` names the ability by value instead of by target — "whenever you activate
+an ability …, you may copy **that ability**" (Ashnod the Uncaring). An
+`ability_activated` trigger carries the stack item the activation became as
+`{"binding": "sid"}`:
+
+```jsonc
+{ "op": "may", "prompt": "Copy that ability?",
+  "effects": [ { "op": "copy_ability", "sid": { "binding": "sid" },
+                 "new_targets": true } ] }
+```
+
+"That ability" does not target, so nothing is announced and the trigger cannot
+fizzle; an `ability_on_stack` target is the near miss and is Lithoform Engine,
+which copies whichever ability its controller picks. An ability that has left
+the stack by the time the copy resolves — countered, or resolved — is not
+copied, the answer `copy_spell` gives a `spell_cast` trigger's `sid`. The loader
+refuses `sid` beside `target` and a malformed `sid` expression.
+
 ### `that_targets` — a spell or ability by what it targets
 
 "Sacrifice this creature: Counter target spell or ability **that targets you or a
@@ -3647,7 +3665,9 @@ The other keys, each a copiable value the copy carries until it ends:
 | key | meaning |
 |---|---|
 | `add_keywords` | keywords added to the copied face |
+| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
+| `set_types` | the card types the copy has *instead of* the copied ones, on `copying_set_types`; every subtype of a type it no longer has goes with it (205.1b), so Machine God's Effigy's "…except it's an artifact" (`["Artifact"]`) makes the copy of a Bear a bare Artifact. The near miss is `add_types`, which is right only when the card prints "in addition to its other types"; the two are refused together |
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
 | `colors` | `copy_permanent`'s key of the same name: the copy's colours instead of the copied ones, on `copying_colors` |
 | `no_mana_cost` | `copy_permanent`'s key of the same name: the copy has no mana cost (202.1b), on `copying_no_mana_cost`; its mana value is 0 |
@@ -3671,8 +3691,10 @@ that face. The printed card's other replacements stay the ones read.
 
 The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
 key, an empty exception (a `condition` alone is one), an empty list, an unknown
-keyword, colour, supertype or counter, a malformed condition, an empty name and a
-`no_mana_cost` that is not `true`.
+keyword, colour, card type, supertype or counter, a malformed condition, an empty
+name, a `no_mana_cost` that is not `true`, `set_types` beside `add_types`, and
+an `add_abilities` that is not a list of distinct positions the card's
+`grantable_abilities` has.
 
 A copy applied as a permanent enters overwrites every copiable value the object
 had (613.2a, 707.2), so a token's own creating exception (`copy_overrides`) does
@@ -6296,6 +6318,7 @@ and the filter keys are
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
+    "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
@@ -7252,7 +7275,8 @@ never punishes an equip, a cracked fetchland or a Signet. `becomes_target` is th
 other, and it sees nothing at all when an ability has no targets.
 
 Its subject is the **permanent whose ability it was**, so `filter` reads that
-permanent; its `controller` clause is the **player who activated it**, which is
+permanent; its `sid` binding is the activated ability on the stack, which
+`copy_ability` reads as "copy that ability". Its `controller` clause is the **player who activated it**, which is
 not the same question — an opponent equipping a creature *you* control is their
 activation of their ability on your permanent, and the printed line says that
 triggers.
@@ -7281,6 +7305,28 @@ abilities the *payment solver* taps for itself (`{T}: Add {G}` on a land, tapped
 automatically to cast a spell) never reach an activation path at all and emit
 nothing, so `mana_ability: true` sees only mana abilities a player activated by
 hand. `mana_ability: false` — the printed clause — is unaffected.
+
+`sacrificed_to_activate` is "if one or more permanents were **sacrificed to
+activate it**" (Ashnod the Uncaring). `true` fires only when the activation's own
+cost sacrificed at least one permanent; `false` only when it sacrificed none;
+omitted is either. The count is `costs.cost_sacrifice_count` over the ability's
+`sacrifice` (its `count`), list-form `sacrifice` (every part's `count`) and
+`sacrifice_x` (the announced X, so X = 0 counts nothing), carried on the event
+as `sacrificed`. It is known although the event fires before the cost is paid,
+because `pay` takes exactly that many or the activation does not happen. A
+Treasure sacrificed for mana to pay the cost is not counted — that sacrifice
+paid the Treasure's own mana ability, which is the reminder text's "doesn't
+count". The loader refuses the key on any other event and without
+`mana_ability: false`: a mana ability announces its X after the event fires, and
+the solver's own taps fire nothing, so the count would be missing there.
+`condition` is the near miss and cannot reach it — no condition key reads what a
+cost paid.
+
+```jsonc
+{ "event": "ability_activated", "controller": "you", "mana_ability": false,
+  "sacrificed_to_activate": true,
+  "filter": { "any_types": ["Artifact", "Creature"] } }
+```
 
 `zone` and `any_types` in a **trigger filter** are honoured. Harsh Mentor needs
 both, and needs them in the narrowing direction: `types` is a conjunction, so "an

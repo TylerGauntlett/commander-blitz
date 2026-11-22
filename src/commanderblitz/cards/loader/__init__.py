@@ -44,6 +44,7 @@ from commanderblitz.engine.characteristics import (
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
 from commanderblitz.engine.effects.selectors import (
+    ATTACKING_PLAYER_WORDS,
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
@@ -262,6 +263,13 @@ def _check_grant_targets(
         if ability.is_static and static.get("effect") == "grant_ability":
             check(static.get("ability", 0), "grant_ability static")
 
+    for replacement in model.replacements:
+        # "…and it has "{T}: Add {U}."" (Machine God's Effigy): `card_of`
+        # skips a position out of range, which is a copy without the ability.
+        if replacement.event == "self_enters_as_copy":
+            for index in (replacement.except_ or {}).get("add_abilities") or ():
+                check(index, "self_enters_as_copy except_.add_abilities")
+
     trees: list[Any] = [model.spell_effects]
     trees.extend(a.effects for a in abilities)
     trees.extend(a.effects for a in grantable)
@@ -456,10 +464,19 @@ def load_deck_file(path: Path) -> DeckModel:
 #: Many Faces' "…the token has no mana cost, it's white, and it's a Zombie in
 #: addition to its other types". ``condition`` makes the whole exception
 #: conditional -- Vizier's "except **if this creature was embalmed**".
+#: ``set_types`` is the replacement beside ``add_types``' addition: Machine
+#: God's Effigy's "…except it's an artifact" with no "in addition", so the copy
+#: of a creature is an Artifact and nothing else, and its creature types go
+#: with the Creature it no longer is (205.1b). ``add_abilities`` is "…and it
+#: has "{T}: Add {U}."" (Machine God's Effigy): positions in the card's
+#: ``grantable_abilities``, each quoted ability written there once and put on
+#: the copied face, range-checked by `_check_grant_targets`.
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
+        "add_abilities",
         "add_types",
+        "set_types",
         "add_subtypes",
         "colors",
         "no_mana_cost",
@@ -530,6 +547,24 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
         for t in added:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}.add_types: unknown card type {t!r}")
+    if "set_types" in spec:
+        # "…except it's an artifact" (Machine God's Effigy): the copy's card
+        # types *instead of* the copied ones. Dropped, a copy of a creature is
+        # an artifact creature that attacks, blocks and dies to a wrath -- a
+        # different card from the printed one.
+        retyped = spec["set_types"]
+        if not isinstance(retyped, list) or not retyped:
+            raise DslError(f"{where}.set_types: must be a non-empty list")
+        for t in retyped:
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}.set_types: unknown card type {t!r}")
+        if "add_types" in spec:
+            # One printed clause says either "in addition to its other types"
+            # or not; both keys at once is a type line nobody prints.
+            raise DslError(
+                f"{where}: 'set_types' replaces the card types and 'add_types' adds to "
+                f"them -- write the whole type line in 'set_types'"
+            )
     if "remove_supertypes" in spec:
         # "…and it isn't legendary" (Spark Double). Dropped, the copy of a
         # legendary permanent is binned by the legend rule beside its original.
@@ -539,6 +574,22 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
         for s in removed:
             if s not in KNOWN_SUPERTYPES:
                 raise DslError(f"{where}.remove_supertypes: unknown supertype {s!r}")
+    if "add_abilities" in spec:
+        # "…and it has "{T}: Add {U}."" (Machine God's Effigy). Positions in
+        # this card's `grantable_abilities`; the range is checked against the
+        # card by `_check_grant_targets`, since this sees the exception alone.
+        positions = spec["add_abilities"]
+        if (
+            not isinstance(positions, list)
+            or not positions
+            or not all(isinstance(i, int) and not isinstance(i, bool) for i in positions)
+        ):
+            raise DslError(
+                f"{where}.add_abilities: needs a non-empty list of positions in "
+                f"the card's 'grantable_abilities'"
+            )
+        if len(set(positions)) != len(positions):
+            raise DslError(f"{where}.add_abilities: names one ability twice")
     if "name" in spec:
         # "…except his name is Chameleon, Master of Disguise."
         name = spec["name"]
@@ -2507,10 +2558,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # to pay and the rider never fires, so the card reads "buyback" and
         # goes to the graveyard like anything else.
         raise DslError(f"{where}: 'buyback' needs a 'kicker' cost to attach to")
-    if model.emerge_subtype is not None and model.emerge is None:
-        # A narrowing with nothing to narrow. The card would look like an
-        # offering card and have no alternative cast line at all.
-        raise DslError(f"{where}: 'emerge_subtype' needs an 'emerge' cost to narrow")
+    if model.offering is not None:
+        # "<Quality> offering": the selector names the quality, so an empty
+        # one is "sacrifice any permanent", which no card prints.
+        if not model.offering:
+            raise DslError(f"{where}: 'offering' needs a selector naming what is sacrificed")
+        validate_selector(model.offering, f"{where}.offering")
+        if model.emerge is not None:
+            # Both are one cast line per sacrificed permanent, told apart by
+            # nothing on the action, and no card prints both.
+            raise DslError(f"{where}: a card may not have both 'emerge' and 'offering'")
     alternative_cost = None
     alternative_condition = None
     if model.alternative_cost is not None:
@@ -2941,7 +2998,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         evoke_label=model.evoke_label,
         warp=warp,
         pay_generic_with=model.pay_generic_with,
-        emerge_subtype=model.emerge_subtype,
+        offering=dict(model.offering) if model.offering is not None else None,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
         graveyard_cast_exiles=model.graveyard_cast == "exile" and model.mayhem is None,
@@ -3962,6 +4019,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
+        if model.trigger.sacrificed_to_activate is not None and (
+            model.trigger.event != "ability_activated" or model.trigger.mana_ability is not False
+        ):
+            # Only the non-mana activation path counts what its cost
+            # sacrificed: a mana ability's X is announced after the event fires,
+            # and the mana abilities the payment solver taps emit no event at
+            # all. Accepting it anywhere else would be a restriction that never
+            # applies, or one that silently misses every mana activation.
+            raise DslError(
+                f"{where}: 'sacrificed_to_activate' needs an ability_activated "
+                "trigger with 'mana_ability': false"
+            )
+
         if model.trigger.targeted_by is not None and model.trigger.event != "becomes_target":
             # Same reasoning as `mana_ability` above: only BECAME_TARGET is
             # tagged with what did the targeting, so anywhere else this would
@@ -4216,6 +4286,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             put_by=model.trigger.put_by,
             removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
+            sacrificed_to_activate=model.trigger.sacrificed_to_activate,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
@@ -4694,6 +4765,16 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         raise DslError(
             f"{path}.modified: true only -- a counter, an Equipment, or an Aura "
             f"you control on the permanent"
+        )
+    # "Creatures attacking **your opponents**": a word naming whom, relative to
+    # the static's controller. `true` is the tempting spelling -- it is how
+    # `attacking` is written -- and would name nobody; the effect selector's
+    # `{"binding": name}` form names a seat a static never binds.
+    if "attacking_player" in filt and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS:
+        raise DslError(
+            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} -- "
+            f"whom the creature attacks, a player and never a planeswalker or "
+            f"battle; use 'attacking' for true/false"
         )
     if not top:
         # The top level is checked by the caller's loop over every filter key.

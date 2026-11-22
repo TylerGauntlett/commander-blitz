@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **450** capabilities.
+**532 cards** blocked by **449** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -438,7 +438,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
-| [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -7227,20 +7226,6 @@ Blocks **1** card.
 
 - **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
   - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
-
-</details>
-
-## total-mana-value-selection
-
-Blocks **1** card.
-
-- **(op)** a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom
-  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
-  - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
 
 </details>
 

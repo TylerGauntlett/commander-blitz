@@ -2654,6 +2654,16 @@ def _covered(card: CardDef, line: str) -> bool:
     # the "it's sacrificed when it enters" trigger it really does have.
     if card.emerge is not None and stripped.lower().startswith("emerge "):
         return True
+    # "Artifact offering (…)", "Goblin offering (…)": the card-level `offering`,
+    # emerge's slot for emerge's reason. Strict on the quality: the selector
+    # must be exactly the one printed word, as a card type or a subtype, so
+    # `{"types": ["Creature"]}` cannot claim a printed "Artifact offering".
+    if card.offering is not None and (
+        printed := re.match(r"^([A-Za-z][A-Za-z'-]*) offering\b", stripped)
+    ):
+        quality = printed.group(1)
+        if dict(card.offering) in ({"types": [quality]}, {"subtypes": [quality]}):
+            return True
     # The em dash is the non-mana spelling: "Evoke—Exile a green card from
     # your hand." (Endurance), whose price is not a mana string.
     if card.evoke is not None and stripped.lower().startswith(("evoke ", "evoke—", "evoke-")):
@@ -2949,7 +2959,15 @@ def _covered(card: CardDef, line: str) -> bool:
             == folded_line
             for ability in card.abilities
         )
-    for ability in card.abilities:
+    # "…enter as a copy of any creature on the battlefield, except it's an
+    # artifact and it has "{T}: Add {U}."" (Machine God's Effigy) is the
+    # replacement's sentence, claimed by the replacement below or not at all:
+    # the card's own printed "{T}: Add {U}." is a substring of the quote, and
+    # would otherwise claim the sentence for a copy that has no such ability.
+    copy_sentence = "enter as a copy" in lowered and any(
+        r.get("event") == "self_enters_as_copy" for r in card.replacements
+    )
+    for ability in () if copy_sentence else card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:
             continue
@@ -3028,6 +3046,27 @@ def _covered(card: CardDef, line: str) -> bool:
             if "in addition to its other types" in lowered and not (
                 exception.get("add_types") or exception.get("add_subtypes")
             ):
+                continue
+            # "…except it's an artifact" with no "in addition" (Machine God's
+            # Effigy) replaces the type line: ``set_types``, and an
+            # ``add_types`` would claim it as an artifact creature. The other
+            # way round, ``set_types`` cannot claim an "in addition" sentence.
+            replaces_types = (
+                "in addition to its other types" not in lowered
+                and re.search(
+                    r"except it's an? (?:artifact|enchantment|land|creature|planeswalker)\b",
+                    lowered,
+                )
+                is not None
+            ) or "loses all other card types" in lowered
+            if replaces_types != bool(exception.get("set_types")):
+                continue
+            # "…and it has "{T}: Add {U}."" (Machine God's Effigy): each quoted
+            # ability the copy has is one ``add_abilities`` position, so a copy
+            # that drops the mana ability cannot claim the sentence, and one
+            # that adds an ability nobody quoted cannot either.
+            quoted = len(re.findall(r"\bhas [\"\u201c]", lowered))
+            if quoted != len(exception.get("add_abilities") or ()):
                 continue
             # "…with a number of additional +1/+1 counters on it" (The
             # Mimeoplasm) is the same half without the words "enters with".

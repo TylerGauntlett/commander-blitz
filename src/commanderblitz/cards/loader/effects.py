@@ -98,10 +98,12 @@ from .walk import (
 #: ``add_subtypes`` and ``add_supertypes``. Removals: ``remove_supertypes``,
 #: the only subtraction any printing asks for ("except the token isn't
 #: legendary"). ``add_keywords``, "…and has haste" (Saheeli, Radiant Creator).
-#: And ``no_mana_cost``.
+#: ``no_mana_cost``. And ``name``, "…except its name is Mishra's Warform"
+#: (Mishra, Eminent One).
 COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
+        "name",
         "colors",
         "types",
         "power",
@@ -1967,6 +1969,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # failure this whole pass exists to stop. `cast_free` is refused with it
         # for the same reason the three keys above are: it replaces the branch
         # that would honour it.
+        # "…with total mana value 4 or less" (Ao, the Dawn Sky; Smelting Vat).
+        # Read only by the single pick, so beside `destinations` it would load
+        # and cap nothing. The cap bounds how much; the count bounds how many
+        # and must let the chooser stop short -- "all" would take every card
+        # whatever the sum, and a mandatory number is a demand the cap can make
+        # impossible to meet.
+        if "total_mana_value" in effect:
+            validate_value(effect["total_mana_value"], f"{where}.total_mana_value")
+            if effect.get("destinations"):
+                raise DslError(
+                    f"{where}: 'total_mana_value' caps look_at_top's single pick, "
+                    f"not its 'destinations' steps"
+                )
+            objects = effect.get("objects") or effect.get("selector")
+            count = objects.get("count") if isinstance(objects, Mapping) else None
+            if not (
+                count == "any"
+                or (count not in (None, "all") and isinstance(objects, Mapping)
+                    and objects.get("optional") is True)
+            ):
+                raise DslError(
+                    f"{where}: 'total_mana_value' needs 'objects' with count: \"any\" "
+                    f"or an optional count (\"up to N\")"
+                )
         # "Put one into your hand, one on the bottom and exile one" (Expressive
         # Iteration); "a creature card and/or a land card" (Kiora, Master of the
         # Depths). A step's `to` is a zone the op can reach, its `selector` a
@@ -2140,6 +2166,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: reveal_until 'controller' is \"you\" and needs "
                 f"destination or may_destination 'battlefield'"
             )
+        # "Equal to the number of cards revealed this way": every card the
+        # walk revealed, not only the matches `as` records. A non-string would
+        # be stringified into a name nothing reads back, and the count would be 0.
+        if "revealed_as" in effect and not (
+            isinstance(effect["revealed_as"], str) and effect["revealed_as"]
+        ):
+            raise DslError(
+                f"{where}: reveal_until 'revealed_as' must be a non-empty binding "
+                f"name, got {effect['revealed_as']!r}"
+            )
+    if "revealed_as" in effect and op != "reveal_until":
+        # Only reveal_until's walk reads the key; elsewhere it would load and
+        # every count of it would be 0.
+        raise DslError(
+            f"{where}: 'revealed_as' records the cards a reveal_until walk "
+            f"revealed and only reveal_until reads it, not {op!r}"
+        )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
     # ability that later plays it would still work, so nothing downstream would
@@ -3212,6 +3255,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "name" in overrides:
+            # "…except its name is Mishra's Warform." A copiable value
+            # (707.9b), so a blank one would be a token with no name, which
+            # no printing makes and which the legend rule would pair with
+            # every other nameless permanent.
+            renamed = overrides["name"]
+            if not isinstance(renamed, str) or not renamed.strip():
+                raise DslError(f"{where}.except_.name: must be a non-empty string")
         if "add_keywords" in overrides:
             # "…except it's a 5/5 artifact creature … and has haste." Checked
             # here because the token reads it only as it is created: a
@@ -4240,6 +4291,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: counter takes 'sid' or 'target', not both -- one names "
                 f"the spell that targeted this permanent, the other lets its "
                 f"controller pick a different spell"
+            )
+    if op == "copy_ability" and "sid" in effect:
+        # "Copy **that ability**" (Ashnod the Uncaring): the ability is named by
+        # value, not chosen. A malformed expression evaluates to 0, matches no
+        # stack item and copies nothing; beside a `target` one of the two
+        # would be ignored.
+        validate_value(effect["sid"], f"{where}.sid")
+        if "target" in effect:
+            raise DslError(
+                f"{where}: copy_ability takes 'sid' or 'target', not both -- one "
+                f"names the ability that fired this trigger, the other lets its "
+                f"controller pick one"
             )
     if "all_if" in effect:
         # Entwine. Only `choose_mode` has modes to take all of, so anywhere else

@@ -974,6 +974,10 @@
   "anvilwrought_raptor": {
     "zone": "battlefield"
   },
+  "ao_the_dawn_sky": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "apex_altisaur": {
     "zone": [
       "battlefield",
@@ -1461,6 +1465,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ashnod_the_uncaring": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aspect_of_gorgon": {
     "zone": [
       "battlefield",
@@ -1572,6 +1580,10 @@
     "zone": "graveyard"
   },
   "atzocan_seer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "audacious_reshapers": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2438,6 +2450,17 @@
     "battlefield_count": 30,
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "blast_furnace_hellkite": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "double_strike"
+      ]
+    },
+    "zone": "battlefield"
   },
   "blast_zone": {
     "battlefield_count": 33,
@@ -7819,6 +7842,10 @@
     },
     "zone": "graveyard"
   },
+  "executioner_s_capsule": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "executioner_s_hood": {
     "zone": "battlefield"
   },
@@ -8196,6 +8223,10 @@
     },
     "opponent_battlefield_count": 2,
     "zone": "graveyard"
+  },
+  "farid_enterprising_salvager": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "farseek": {
     "battlefield_count": 33,
@@ -9592,6 +9623,10 @@
     },
     "zone": "graveyard"
   },
+  "geth_lord_of_the_vault": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "geth_s_summons": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -9969,6 +10004,13 @@
     "battlefield_count": 33,
     "life": {
       "0": 41
+    },
+    "zone": "battlefield"
+  },
+  "glint_raker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -11230,6 +11272,13 @@
     "battlefield_count": 33,
     "library_size": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "herald_of_anguish": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -14076,6 +14125,13 @@
   "lita_little_orphan_amphibian": {
     "zone": "battlefield"
   },
+  "lithoform_engine": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "living_death": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -14507,6 +14563,10 @@
     "zone": "battlefield"
   },
   "macetail_hystrodon": {
+    "zone": "battlefield"
+  },
+  "machine_god_s_effigy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "madame_hydra": {
@@ -15574,6 +15634,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "mirrorworks": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mischievous_mystic": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15590,6 +15654,10 @@
       "count": 1,
       "id": "rogue_2_2_b"
     },
+    "zone": "battlefield"
+  },
+  "mishra_eminent_one": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
@@ -15665,6 +15733,13 @@
       "0": 2
     },
     "zone": "exile"
+  },
+  "mnemonic_sphere": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "moan_of_the_unhallowed": {
     "battlefield_count": 34,
@@ -16141,6 +16216,13 @@
   "mutilate": {
     "zone": "graveyard"
   },
+  "muzzio_visionary_architect": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mycoloth": {
     "battlefield_count": 31,
     "counters": {
@@ -16154,6 +16236,16 @@
   },
   "mycosynth_fiend": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mycosynth_wellspring": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "myr_battlesphere": {
@@ -17157,6 +17249,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "oni_cult_anvil": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "oona_queen_of_the_fae": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17452,6 +17548,13 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "oviya_automech_artisan": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "ox_drover": {
     "battlefield_count": 33,
@@ -20677,6 +20780,10 @@
   "scattered_groves": {
     "zone": "battlefield"
   },
+  "scavenged_brawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scavenger_grounds": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21212,6 +21319,14 @@
   },
   "servant_of_the_conduit": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "servo_schematic": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "servo_1_1_c"
+    },
     "zone": "battlefield"
   },
   "setessan_champion": {
@@ -21773,6 +21888,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "silas_renn_seeker_adept": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "silent_artisan": {
     "zone": "battlefield"
   },
@@ -22207,6 +22326,10 @@
   "sliver_construct": {
     "zone": "battlefield"
   },
+  "slobad_goblin_tinkerer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "slumbering_trudge": {
     "zone": "battlefield"
   },
@@ -22231,6 +22354,10 @@
       "count": 1,
       "id": "treasure_token"
     },
+    "zone": "battlefield"
+  },
+  "smelting_vat": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "smirking_spelljacker": {
@@ -24427,6 +24554,18 @@
   "teremko_griffin": {
     "zone": "battlefield"
   },
+  "terisiare_s_devastation": {
+    "battlefield_count": 50,
+    "life": {
+      "0": 20
+    },
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 20,
+      "id": "powerstone_token"
+    },
+    "zone": "graveyard"
+  },
   "terminus": {
     "battlefield_count": 30,
     "library_size": {
@@ -25766,6 +25905,13 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "traxos_scourge_of_kroog": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "treachery": {
     "zone": "battlefield"
@@ -28320,6 +28466,10 @@
     "zone": "battlefield"
   },
   "wonder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "wondrous_crucible": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

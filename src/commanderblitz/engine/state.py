@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 from .actions import PendingDecision
 from .carddef import CardDef
-from .characteristics import chars
+from .characteristics import chars, subtype_survives
 from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
 from .mana import ManaCost
@@ -672,6 +672,22 @@ class GameState:
                 copied = replace(
                     copied, supertypes=copied.supertypes | obj.copying_add_supertypes
                 )
+            if obj.copying_set_types:
+                # "…except it's an artifact" (Machine God's Effigy): the
+                # copy's card types *instead of* the copied ones, so a copy of
+                # a creature is no creature. The subtypes of a type it no
+                # longer has go with it (205.1b), exactly as under a
+                # `set_types` static: the copy of a Bear is no Bear, and no
+                # Bear lord or creature-type count sees it.
+                copied = replace(
+                    copied,
+                    types=obj.copying_set_types,
+                    subtypes=frozenset(
+                        sub
+                        for sub in copied.subtypes
+                        if subtype_survives(sub, obj.copying_set_types)
+                    ),
+                )
             if obj.copying_add_types:
                 # "…except it's an artifact in addition to its other types"
                 # (Phyrexian Metamorph): on the copied face, so the copy is an
@@ -707,10 +723,38 @@ class GameState:
                         replace(ability, index=base + k) for k, ability in enumerate(kept)
                     ),
                 )
+            if obj.copying_add_abilities:
+                # "…except it's an artifact and it has "{T}: Add {U}."" (Machine
+                # God's Effigy): a quoted ability from this permanent's own
+                # `grantable_abilities`, on the copied face rather than granted
+                # on top of it (707.9b). Appended last and renumbered, for the
+                # reason the kept abilities above are.
+                pool = self.registry.get(obj.def_id).grantable_abilities
+                quoted = [pool[i] for i in obj.copying_add_abilities if 0 <= i < len(pool)]
+                base = len(copied.abilities)
+                copied = replace(
+                    copied,
+                    abilities=copied.abilities
+                    + tuple(
+                        replace(ability, index=base + k)
+                        for k, ability in enumerate(quoted)
+                    ),
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied
         card = self.registry.get(obj.def_id)
+        # "…create a token that's a copy of target noncreature artifact you
+        # control, **except its name is Mishra's Warform**" (Mishra, Eminent
+        # One). A token copy's exception is a copiable value (707.9b), so the
+        # name is on the face itself, from the moment the token exists: its
+        # enters triggers, `selector.name`, the legend rule and the serializer
+        # all read it here, and a copy of the token carries it through
+        # `copy_overrides`. Read through `live_copy_overrides`, so a later copy
+        # effect on the token overwrites it (613.2a) -- that branch returned
+        # above.
+        if (overrides := obj.live_copy_overrides) and (named := overrides.get("name")):
+            card = replace(card, name=named)
         # "…become a legendary Equipment artifact **named Everflame, Heroes'
         # Legacy**" (The Irencrag). Here, for the reason the copy above is here:
         # this method is the single funnel every reader of a permanent's face

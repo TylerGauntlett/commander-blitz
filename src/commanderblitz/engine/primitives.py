@@ -2893,11 +2893,13 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying_keywords = None
             obj.copying_remove_supertypes = None
             obj.copying_add_types = None
+            obj.copying_set_types = None
             obj.copying_add_subtypes = None
             obj.copying_colors = None
             obj.copying_no_mana_cost = False
             obj.copying_add_supertypes = None
             obj.copying_own_abilities = None
+            obj.copying_add_abilities = None
             obj.copying_until_eot = False
         handbacks.extend(
             (oid, temp)

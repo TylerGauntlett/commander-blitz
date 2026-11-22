@@ -2064,6 +2064,10 @@ def _enter_battlefield(
                 # (Phyrexian Metamorph).
                 types_added = exception.get("add_types")
                 obj.copying_add_types = frozenset(types_added) if types_added else None
+                # "…except it's an artifact" (Machine God's Effigy): the type
+                # line replaced rather than added to.
+                retyped = exception.get("set_types")
+                obj.copying_set_types = frozenset(retyped) if retyped else None
                 # "…it's a Zombie in addition to its other types", "…it's
                 # white", "…the token has no mana cost" (Vizier of Many Faces;
                 # Deceptive Frostkite's Dragon) -- `copy_permanent`'s keys of
@@ -2080,6 +2084,11 @@ def _enter_battlefield(
                 obj.copying_no_mana_cost = bool(exception.get("no_mana_cost"))
                 obj.copying_add_supertypes = None
                 obj.copying_own_abilities = None
+                # "…and it has "{T}: Add {U}."" (Machine God's Effigy): a
+                # quoted ability, written once under the card's
+                # `grantable_abilities`, on the copied face (707.9b).
+                quoted = tuple(int(i) for i in exception.get("add_abilities") or ())
+                obj.copying_add_abilities = quoted or None
                 obj.copying_name = exception.get("name")
                 state.bump_chars()
                 # 614.12: the copied face's own "enters with" -- above all a
