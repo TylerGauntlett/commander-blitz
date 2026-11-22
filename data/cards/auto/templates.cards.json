@@ -73459,6 +73459,47 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "deny_the_witch",
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Deny the Witch",
+      "oracle_text": "Counter target spell, activated ability, or triggered ability. Its controller loses life equal to the number of creatures you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "creatures_you_control": true
+          },
+          "op": "lose_life",
+          "player": {
+            "controller_of_target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_ability"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -233611,6 +233652,86 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_mana_value": {
+            "op": "<=",
+            "value": 3
+          },
+          "kind": "static",
+          "text": "Void Shields — Protection from mana value 3 or less"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Gatling Blaster — Whenever this Vehicle attacks, it deals 5 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 10
+              },
+              "toughness": {
+                "const": 10
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "reaver_titan",
+      "mana_cost": "{7}",
+      "name": "Reaver Titan",
+      "oracle_text": "Void Shields — Protection from mana value 3 or less\nGatling Blaster — Whenever this Vehicle attacks, it deals 5 damage to each opponent.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 10,
+      "types": [
+        "Artifact"
       ]
     },
     {

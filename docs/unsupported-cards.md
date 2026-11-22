@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **458** capabilities.
+**539 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -65,7 +65,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [protection-from-mana-value](#protection-from-mana-value) | 2 | 3009 | static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
@@ -162,7 +161,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
-| [controller-of-stack-ability-target](#controller-of-stack-ability-target) | 1 | 9488 | selector |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -377,6 +375,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [protection-from-everything](#protection-from-everything) | 1 | 4197 | static_effect |
+| [protection-from-mana-value](#protection-from-mana-value) | 1 | 16276 | static_effect |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
@@ -1833,24 +1832,6 @@ Blocks **2** cards.
 
 </details>
 
-## protection-from-mana-value
-
-Blocks **2** cards.
-
-- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
-  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
-- **(static_effect)** a quality on the `protection` static that matches sources by mana value against a comparison (here mana value <= 3): it can't be the target of spells or abilities from such sources, can't be blocked by creatures with such mana value, damage from them is prevented, and it can't be enchanted/equipped by them (702.16). Tokens and lands (mana value 0) count as mana value 3 or less.
-  <br>Why the existing vocabulary won't do: The `protection` static takes only from_types, from_subtypes, from_colors, from_colorless and from_colors_outside_commander_identity (schema.py StaticAbility, loader protection checks); there is no quality keyed on a numeric characteristic like mana value, and approximating with any of those would protect from the wrong things
-
-<details><summary>Cards waiting on this</summary>
-
-- **Reaver Titan** (rank 3009) — `reaver_titan`
-  - Void Shields — Protection from mana value 3 or less
-- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
-  - Lifelink, protection from mana value 3 or greater
-
-</details>
-
 ## reveal-until-rest-to-graveyard
 
 Blocks **2** cards.
@@ -3300,20 +3281,6 @@ Blocks **1** card.
 
 - **Shield Broker** (rank 10319) — `shield_broker`
   - You gain control of that creature for as long as it has a shield counter on it.
-
-</details>
-
-## controller-of-stack-ability-target
-
-Blocks **1** card.
-
-- **(selector)** a player spec naming the controller of a `spell_or_ability` (or `ability_on_stack`) target, so `lose_life` can bill whoever controls the countered spell OR ability: allow {"controller_of_target": "t1"} when t1 is a spell_or_ability / ability_on_stack target
-  <br>Why the existing vocabulary won't do: `controller_of_target` is refused by loader.effects._validate_player_spec unless the target kind is in vocabulary.CONTROLLED_TARGET_KINDS (permanent, spell, card_in_graveyard, card_in_exile), which excludes spell_or_ability even though selectors' runtime branch reads StackItem.controller for any stack ref; `snapshot` captures nothing for an ability target, so `controller_of` on a snapshot binding finds no one; `{"target": "t1"}` returns only player refs. The counter half alone is Disallow (counter + spell_or_ability target), and the amount is {"creatures_you_control": true}; the life loss must be ordered before the counter (as An Offer You Can't Refuse does) or read from the stack item before it is removed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Deny the Witch** (rank 9488) — `deny_the_witch`
-  - Its controller loses life equal to the number of creatures you control.
 
 </details>
 
@@ -6366,6 +6333,20 @@ Blocks **1** card.
 
 - **Vexilus Praetor** (rank 4197) — `vexilus_praetor`
   - Aegis of the Emperor — Commanders you control have protection from everything.
+
+</details>
+
+## protection-from-mana-value
+
+Blocks **1** card.
+
+- **(static_effect)** a protection quality keyed on mana value: the `protection` static (and `grant_protection` op) taking a mana-value comparison such as `from_mana_value: {"op": ">=", "value": 3}`, so that damage from, blocking by, targeting by, and enchanting/equipping by any source or spell with mana value 3 or greater is stopped (702.16)
+  <br>Why the existing vocabulary won't do: The `protection` static's qualities are only `from_colors`, `from_colorless`, `from_subtypes` and `from_types` (plus `from_everything` on `grant_protection`); none reads a source's mana value. Lifelink alone is a keyword, but writing it without the protection clause would be a partial card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mistmeadow Skulk** (rank 16276) — `mistmeadow_skulk`
+  - Lifelink, protection from mana value 3 or greater
 
 </details>
 

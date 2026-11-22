@@ -6073,6 +6073,13 @@
     },
     "zone": "battlefield"
   },
+  "deny_the_witch": {
+    "life": {
+      "0": 40,
+      "1": 38
+    },
+    "zone": "graveyard"
+  },
   "departed_deckhand": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19474,6 +19481,14 @@
   },
   "reassembling_skeleton": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "reaver_titan": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "reckless_fireweaver": {

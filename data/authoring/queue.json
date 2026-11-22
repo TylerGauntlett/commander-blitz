@@ -66562,12 +66562,12 @@
     },
     "Deny the Witch": {
       "edhrec_rank": 9488,
-      "gate": "template",
+      "gate": null,
       "name": "Deny the Witch",
-      "reason": "no template for: Counter target spell, activated ability, or triggered ability. Its controller loses life e",
+      "reason": "",
       "scryfall_id": "d3e5b091-2aa7-4aca-9855-bb802d3d563e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Denying Wind": {
@@ -217522,12 +217522,12 @@
     },
     "Reaver Titan": {
       "edhrec_rank": 3009,
-      "gate": "template",
+      "gate": null,
       "name": "Reaver Titan",
-      "reason": "no template for: Void Shields — Protection from mana value 3 or less",
+      "reason": "",
       "scryfall_id": "494556e9-06e7-40fd-b967-cd2631b5b91a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rebbec, Architect of Ascension": {
