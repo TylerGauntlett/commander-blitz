@@ -1486,6 +1486,10 @@
       "graveyard"
     ]
   },
+  "aspiring_champion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "assassin_s_trophy": {
     "graveyard_size": {
       "0": 3
@@ -2113,6 +2117,19 @@
   "bayou_dragonfly": {
     "zone": "battlefield"
   },
+  "be_lakor_the_dark_master": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "beanstalk_giant_fertile_footsteps": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2313,6 +2330,9 @@
     },
     "zone": "battlefield"
   },
+  "bile_blight": {
+    "zone": "graveyard"
+  },
   "bilious_skulldweller": {
     "battlefield_count": 33,
     "granted": {
@@ -2508,6 +2528,9 @@
   "blasted_landscape": {
     "zone": "battlefield"
   },
+  "blight_grenade": {
+    "zone": "graveyard"
+  },
   "blight_herder": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2612,6 +2635,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bloodcrusher_of_khorne": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "bloodfire_expert": {
     "zone": "battlefield"
   },
@@ -2678,6 +2711,17 @@
     "zone": "battlefield"
   },
   "bloodstone_cameo": {
+    "zone": "battlefield"
+  },
+  "bloodthirster": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "trample"
+      ]
+    },
     "zone": "battlefield"
   },
   "bloodthirsty_adversary": {
@@ -3982,6 +4026,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "chaos_terminator_lord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "chaos_wand": {
     "battlefield_count": 33,

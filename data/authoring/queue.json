@@ -15072,12 +15072,12 @@
     },
     "Aspiring Champion": {
       "edhrec_rank": 9755,
-      "gate": "template",
+      "gate": null,
       "name": "Aspiring Champion",
-      "reason": "no template for: Ruinous Ascension — When this creature deals combat damage to a player, sacrifice it. If y",
+      "reason": "",
       "scryfall_id": "384818f8-bf89-4cf0-8343-c2fef316c409",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ass Whuppin'": {
@@ -22432,12 +22432,12 @@
     },
     "Be'lakor, the Dark Master": {
       "edhrec_rank": 7407,
-      "gate": "template",
+      "gate": null,
       "name": "Be'lakor, the Dark Master",
-      "reason": "no template for: Prince of Chaos — When Be'lakor enters, you draw X cards and you lose X life, where X is t",
+      "reason": "",
       "scryfall_id": "62b6ecb2-ac7e-4528-b53c-2cb4f1e38349",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beacon Behemoth": {
@@ -24722,12 +24722,12 @@
     },
     "Bile Blight": {
       "edhrec_rank": 12553,
-      "gate": "template",
+      "gate": null,
       "name": "Bile Blight",
-      "reason": "no template for: Target creature and all other creatures with the same name as that creature get -3/-3 unti",
+      "reason": "",
       "scryfall_id": "4c271a22-b659-4b22-9de6-738a5229d092",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bile Urchin": {
@@ -26942,12 +26942,12 @@
     },
     "Blight Grenade": {
       "edhrec_rank": 12013,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Grenade",
-      "reason": "no template for: Destroy target creature",
+      "reason": "",
       "scryfall_id": "88cdcf69-e04d-46ab-9cce-76f1fac5bc40",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Herder": {
@@ -28532,12 +28532,12 @@
     },
     "Bloodcrusher of Khorne": {
       "edhrec_rank": 7300,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodcrusher of Khorne",
-      "reason": "no template for: Devastating Charge — Other creatures you control have trample",
+      "reason": "",
       "scryfall_id": "763d1bbf-c5bc-4ca7-a4cd-0d2952eb65d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodcurdler": {
@@ -29122,12 +29122,12 @@
     },
     "Bloodthirster": {
       "edhrec_rank": 2545,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodthirster",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, untap it. After this phase, there ",
+      "reason": "",
       "scryfall_id": "adf71a83-bd87-4d5d-a5d1-b794d1fd4c4b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodthirsty Adversary": {
@@ -44432,12 +44432,12 @@
     },
     "Chaos Terminator Lord": {
       "edhrec_rank": 11092,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Terminator Lord",
-      "reason": "no template for: Lord of Chaos — At the beginning of combat on your turn, another target creature you contr",
+      "reason": "",
       "scryfall_id": "38b1cb12-cd1c-45f5-a589-cdd4be14e185",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaos Wand": {

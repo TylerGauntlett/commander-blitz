@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**530 cards** blocked by **447** capabilities.
+**532 cards** blocked by **449** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -127,6 +127,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-put-into-graveyard-from-library](#cards-put-into-graveyard-from-library) | 1 | 6299 | trigger_event |
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
+| [cascade](#cascade) | 1 | 8628 | static_effect |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
@@ -165,6 +166,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
+| [cost-reduction-creatures-died-this-turn](#cost-reduction-creatures-died-this-turn) | 1 | 3328 | value |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
@@ -2786,6 +2788,20 @@ Blocks **1** card.
 
 </details>
 
+## cascade
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants the cascade keyword to spells its controller casts from hand (during your turn, via condition is_your_turn), filtered by an affects_spells mana_value ceiling whose bound is a dynamic static value -- here life_lost_this_turn summed over opponents -- so each matching spell gets its own cascade trigger (702.85) that survives the source leaving
+  <br>Why the existing vocabulary won't do: cascade exists only as an op (cascade with max_mana_value), not in keywords, so neither the grant_keyword static nor cast_gains_keywords (which the loader restricts to cast_from_library_top) can give it to a spell; a spell_cast trigger on Abaddon running the cascade op is a different ability (it belongs to Abaddon, not the spell, and dies with it), and static_value_keys has no life_lost_this_turn to set the mana value ceiling
+
+<details><summary>Cards waiting on this</summary>
+
+- **Abaddon the Despoiler** (rank 8628) — `abaddon_the_despoiler`
+  - Mark of Chaos Ascendant — During your turn, spells you cast from your hand with mana value X or less have cascade, where X is the total amount of life your opponents have lost this turn.
+
+</details>
+
 ## cast-copy-limit
 
 Blocks **1** card.
@@ -3326,6 +3342,20 @@ Blocks **1** card.
 
 - **Sentry Bot** (rank 9998) — `sentry_bot`
   - This spell costs {1} less to cast for each creature attacking you.
+
+</details>
+
+## cost-reduction-creatures-died-this-turn
+
+Blocks **1** card.
+
+- **(value)** a cost_reduction head that reduces the spell's generic cost by {1} per creature that died this turn (any controller), read from the turn ledger's death tally the way the value creatures_died_this_turn already reads it -- e.g. {"cost_reduction": {"creatures_died_this_turn": "all"}}
+  <br>Why the existing vocabulary won't do: cost_reduction_keys are amount, count, distinct_mana_values, energy_spent_this_turn, greatest_count, greatest_mana_value, total_mana_value, total_power; count takes a battlefield filter (dead creatures are no longer on the battlefield), a flat amount is a fixed number gated by a condition, and energy_spent_this_turn is the only turn-ledger head. creatures_died_this_turn exists in value_keys/static_value_keys but _validate_cost_reduction refuses any key outside COST_REDUCTION_KEYS
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blood for the Blood God!** (rank 3328) — `blood_for_the_blood_god`
+  - This spell costs {1} less to cast for each creature that died this turn.
 
 </details>
 
