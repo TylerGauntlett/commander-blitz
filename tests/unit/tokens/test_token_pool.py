@@ -33,6 +33,7 @@ from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.conftest import (
     find_action,
     keywords,
+    oids_of,
     only_oid,
     pass_until,
     pt,
@@ -3594,6 +3595,61 @@ class TestReignOfThePitsDemonIsAnXXBlackFlier:
     def test_the_near_misses_are_still_separate_tokens(self, pool):
         assert sorted(pool.get("vampire_demon_4_3_wb_flying").colors) == ["B", "W"]
         assert not pool.get("aetherborn_x_x_b").keywords
+
+
+class TestEisenhornsCherubaelIsALegendaryDemon:
+    """Inquisitor Eisenhorn: *"create **Cherubael, a legendary 4/4 black
+    Demon** creature token with flying."*
+
+    Two near misses, both Demons with flying: `demon_x_x_b_flying` is the same
+    colour sized by its maker and has no name or supertype, and
+    `vampire_demon_4_3_wb_flying` is a white-black 4/3 that is also a Vampire.
+    The name and the supertype are what put Cherubael under the legend rule
+    (704.5j), so a second one made while the first is out replaces it rather
+    than joining it.
+    """
+
+    TOKEN = "cherubael_4_4_b_flying"
+
+    def test_it_is_a_legendary_black_four_four_demon_with_flying(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Cherubael"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.variable_pt
+        assert list(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Demon"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert not pool.get("demon_x_x_b_flying").supertypes
+        assert pool.get("demon_x_x_b_flying").variable_pt
+        assert "Vampire" in pool.get("vampire_demon_4_3_wb_flying").subtypes
+
+    def test_a_second_cherubael_puts_the_first_into_the_graveyard(self, builder):
+        from commanderblitz.engine.primitives import create_token
+        from commanderblitz.engine.sba import run as run_sba
+
+        game = two_seat_board(builder)
+        create_token(game.state, self.TOKEN, 0)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1
+        create_token(game.state, self.TOKEN, 0)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1, "704.5j keeps one"
+
+    def test_each_player_may_keep_their_own(self, builder):
+        from commanderblitz.engine.primitives import create_token
+        from commanderblitz.engine.sba import run as run_sba
+
+        game = two_seat_board(builder)
+        create_token(game.state, self.TOKEN, 0)
+        create_token(game.state, self.TOKEN, 1)
+        run_sba(game.state)
+        assert len(oids_of(game, self.TOKEN, 0)) == 1
+        assert len(oids_of(game, self.TOKEN, 1)) == 1
 
 
 class TestMajasHumanWarriorIsBothTypes:

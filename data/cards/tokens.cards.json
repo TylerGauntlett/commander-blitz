@@ -6287,6 +6287,32 @@
       ]
     },
     {
+      "id": "cherubael_4_4_b_flying",
+      "name": "Cherubael",
+      "oracle_text": "Cherubael, a legendary 4/4 black Demon creature token with flying.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Demon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "ogre_3_3_r",
       "name": "Ogre Token",
       "oracle_text": "3/3 red Ogre creature token.",
