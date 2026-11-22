@@ -1967,6 +1967,10 @@
     "artist": "Pauline Voss",
     "scryfall_id": "f5db8199-22d8-4721-b62b-245ec5e2907a"
   },
+  "bigger_on_the_inside": {
+    "artist": "Tatiana Veryayskaya",
+    "scryfall_id": "8d1178ac-35b9-4086-8ad4-6c629d976ce2"
+  },
   "bighorner_rancher": {
     "artist": "Brian Valeza",
     "scryfall_id": "861361bc-b357-4ff8-931b-a48d08817191"
@@ -11293,6 +11297,10 @@
     "artist": "Jason Chan",
     "scryfall_id": "159c309c-568d-4780-9db5-b50a997e7bb2"
   },
+  "kharn_the_betrayer": {
+    "artist": "Kekai Kotaki",
+    "scryfall_id": "1e05c133-ff44-446f-95f7-44aa9fbf4923"
+  },
   "kher_keep": {
     "artist": "Paolo Parente",
     "scryfall_id": "15ca0b68-33a1-4d25-b622-d3f5ba05b0a5"
@@ -18165,6 +18173,10 @@
     "artist": "Adam Rex",
     "scryfall_id": "5a8412d9-8ee2-48ac-ad41-8957d535bcce"
   },
+  "seeker_of_slaanesh": {
+    "artist": "Games Workshop",
+    "scryfall_id": "0c32f29e-6e9a-464c-846a-3f60338c166b"
+  },
   "seer_s_sundial": {
     "artist": "Franz Vohwinkel",
     "scryfall_id": "bde9a59a-ff01-4e0f-b438-1d1fe49ec660"
@@ -21527,6 +21539,10 @@
   "the_reaver_cleaver": {
     "artist": "Jack Teagle",
     "scryfall_id": "be11af2c-ced6-4da7-a56c-60cef97b7fbb"
+  },
+  "the_ruinous_powers": {
+    "artist": "Lie Setiawan",
+    "scryfall_id": "b30dde6c-9bc6-45bf-97e4-9c08be79d506"
   },
   "the_scarab_god": {
     "artist": "Lius Lasahido",
