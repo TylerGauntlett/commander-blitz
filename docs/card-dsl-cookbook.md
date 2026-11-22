@@ -435,6 +435,48 @@ grants are one price — the first wins, for `grant_warp`'s reason.
 drawn first is cast for `{0}`, a second draw, a land, a missing granter and an
 opponent's draw are offered nothing.
 
+### `reveal_first_draw` — the first card of the turn, revealed as it is drawn
+
+```jsonc
+{ "kind": "static", "effect": "reveal_first_draw", "affects_player": "you",
+  "reveal_optional": true },
+{ "kind": "triggered",
+  "trigger": { "event": "reveals_first_draw",
+               "filter": { "any_types": ["Instant", "Sorcery"] } },
+  "effects": [{ "op": "create_token", "token": "cherubael_4_4_b_flying" }] }
+```
+
+Inquisitor Eisenhorn: *"You may reveal the first card you draw each turn as you
+draw it. Whenever you reveal an instant or sorcery card this way, create
+Cherubael…"* Two abilities, written as the two they are. The static lets its
+controller reveal; `reveal_optional` is the printed "may", and without it the
+reveal is Primitive Etchings' unconditional "Reveal the first card you draw each
+turn." `affects_player` is `"you"` and nothing else, and the static takes no
+filter or size.
+
+The reveal is made at miracle's seam, `replacements._draw_one`, right after the
+draw and before miracle is offered, so it is *as* the card is drawn and only of
+the turn's first card, however it was drawn. A "may" is asked as a yes/no; a
+`reveal_first_draw` that is not optional beside one that is leaves nothing to
+ask. A reveal fires `revealed_first_draw` once, with `granted_by` naming every
+granter it was made under.
+
+The `reveals_first_draw` trigger's subject is the revealed card, in its owner's
+hand, so `filter` asks its printed face. **"This way" is not a key**: the
+trigger hears only a reveal its own permanent granted, so the loader refuses one
+on a card that prints no `reveal_first_draw`, and refuses `source` and any
+`controller` but `"you"`, which could never match. Miracle's own reveal is not
+"this way", and declining Eisenhorn's reveal still leaves miracle's offer.
+
+**Not `draw` with `nth: 1`.** That fires on every first draw, revealed or not,
+and a `reveal` op in its effects shows the card on resolution, from a hand it
+has already joined. **Not `reveal_library_top`**, which makes a card public
+before it is drawn.
+
+`tests/unit/replacement/test_reveal_first_draw.py` pins the "may", the first-draw
+and controller scope, the filter, "this way" against miracle, two granters
+sharing one reveal, the mandatory form, and the draw step making Cherubael.
+
 ### Restricted mana
 
 ```jsonc

@@ -44,6 +44,7 @@ from .mana import ManaCost
 from .player_statics import (
     draw_cap,
     draw_replacements,
+    first_draw_reveals,
     granted_miracle_cost,
     player_cant_cast_while_resolving,
     wins_on_empty_draw,
@@ -134,6 +135,7 @@ def _draw_one(
     was_first = state.cards_drawn_this_turn.get(pid, 0) == 0
     got = draw_cards(state, pid, 1)
     if got and was_first:
+        yield from _reveal_first_draw(state, pid, got[0])
         yield from _miracle(state, pid, got[0])
     return got
 
@@ -206,6 +208,47 @@ def _dredge(state: GameState, pid: int) -> Generator[Any, list[int], bool]:
     move_object(state, oid, Zone.HAND, to_player=pid, cause="dredge")
     state.emit("dredge", player=pid, source=oid, card=card.id, milled=card.dredge)
     return True
+
+
+def _reveal_first_draw(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
+    """"You may reveal the first card you draw each turn as you draw it."
+
+    Inquisitor Eisenhorn, and Primitive Etchings without the "may". Not a
+    replacement -- the draw happens unchanged -- but it shares miracle's seam
+    and its one fact, that the card is the first one drawn this turn, which is
+    true only here: the tally moves on with the next draw, and a trigger that
+    revealed the card on resolution would reveal it from a hand it had been
+    sitting in, not as it was drawn.
+
+    Asked before miracle, and independently of it: a miracle card revealed for
+    Eisenhorn is still offered its miracle cost, and declining Eisenhorn's
+    reveal does not stop miracle from revealing it for its own reason.
+    """
+    granters, mandatory = first_draw_reveals(state, pid)
+    if not granters:
+        return
+    obj = state.objects.get(oid)
+    if obj is None or obj.zone is not Zone.HAND:
+        return
+    card = state.card_of(obj)
+    if not mandatory:
+        ctx = EffectContext(
+            state=state,
+            controller=pid,
+            source_oid=granters[0],
+            source_name=state.card_of(state.objects[granters[0]]).name,
+        )
+        if not (yield from ask_yes_no(ctx, f"Reveal {card.name} as you draw it?", pid)):
+            return
+    triggers.fire(
+        state,
+        EventType.REVEALED_FIRST_DRAW,
+        player=pid,
+        source=oid,
+        oid=oid,
+        card=card.id,
+        granted_by=list(granters),
+    )
 
 
 def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:

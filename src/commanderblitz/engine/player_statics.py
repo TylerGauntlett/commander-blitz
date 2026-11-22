@@ -3225,6 +3225,33 @@ def granted_miracle_cost(state: GameState, pid: int, card: CardDef) -> str | Non
     return None
 
 
+def first_draw_reveals(state: GameState, pid: int) -> tuple[tuple[int, ...], bool]:
+    """The `reveal_first_draw` statics reaching ``pid``, and whether one is a "must".
+
+    "You may reveal the first card you draw each turn as you draw it"
+    (Inquisitor Eisenhorn, `reveal_optional`); "Reveal the first card you draw
+    each turn" (Primitive Etchings). Read by `replacements._reveal_first_draw`
+    with the card just drawn, so a static must be active *as* the card is drawn
+    -- the printed "as you draw it", and the moment `granted_miracle_cost` is
+    read too.
+
+    Returns the oids of every such static's source, which the reveal carries as
+    `granted_by` so each "whenever you reveal a card this way" hears it, and
+    ``True`` when any of them is mandatory: one card revealed is revealed for
+    every ability that asked, so a "must" beside a "may" leaves nothing to ask.
+    """
+    sources: list[int] = []
+    mandatory = False
+    for source_obj, static in _active_player_statics(state, "reveal_first_draw"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        if source_obj.oid not in sources:
+            sources.append(source_obj.oid)
+        if not static.get("reveal_optional"):
+            mandatory = True
+    return tuple(sources), mandatory
+
+
 def granted_alternative_cost(
     state: GameState, pid: int, card: CardDef
 ) -> Mapping[str, Any] | None:

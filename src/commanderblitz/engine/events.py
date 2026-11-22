@@ -197,6 +197,23 @@ class EventType:
     #: a permanent spell that never enters, and the gift's own effect (a draw,
     #: a token) is indistinguishable from any other draw or token.
     GIFT_GIVEN = "gift_given"
+    #: A player revealed the first card they drew this turn *as* they drew it,
+    #: under a `reveal_first_draw` static -- "You may reveal the first card you
+    #: draw each turn as you draw it" (Inquisitor Eisenhorn), "Reveal the first
+    #: card you draw each turn" (Primitive Etchings). ``player`` is the
+    #: revealer, ``data["oid"]`` the drawn card (in their hand), ``card`` its
+    #: id, and ``data["granted_by"]`` the oids of every static the reveal was
+    #: made under, which is what "whenever you reveal a card **this way**"
+    #: checks its own source against.
+    #:
+    #: One event per reveal, fired by `replacements._reveal_first_draw` right
+    #: after the draw and before miracle is offered. A "may" declined fires
+    #: nothing. Its own type because the near misses each miss the point:
+    #: `draw` fires whether or not anything was revealed, and the log's plain
+    #: `reveal` line is written by every reveal in the game and is not on the
+    #: trigger bus, so a listener on it could not tell this reveal from a
+    #: miracle's or a tutor's.
+    REVEALED_FIRST_DRAW = "revealed_first_draw"
     #: A player got the city's blessing. Once per player per game.
     CITY_S_BLESSING = "city_s_blessing"
     MILL = "mill"

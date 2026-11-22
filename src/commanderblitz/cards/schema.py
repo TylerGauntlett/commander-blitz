@@ -1434,6 +1434,10 @@ class AbilityModel(BaseModel):
     #: per static and before any card is looked at, whether to take the extra
     #: cards. Without it the addend always applies.
     surveil_optional: bool = False
+    #: ``reveal_first_draw``: "you **may** reveal the first card you draw each
+    #: turn" -- the revealer is asked as the card is drawn. Without it the
+    #: reveal is Primitive Etchings' "reveal", and nobody is asked.
+    reveal_optional: bool = False
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.

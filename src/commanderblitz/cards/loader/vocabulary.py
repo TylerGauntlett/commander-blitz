@@ -444,6 +444,17 @@ STATIC_EFFECTS = frozenset(
         # no permission and moves no card, it makes one card public. Read by
         # `serialize`, and by nothing else.
         "reveal_library_top",
+        # "You may reveal the first card you draw each turn as you draw it."
+        # Inquisitor Eisenhorn; Primitive Etchings without the "may". Player-
+        # wide, and nothing but a reveal: the draw is unchanged. It exists for
+        # the `reveals_first_draw` trigger printed beside it ("whenever you
+        # reveal an instant or sorcery card **this way**"), which is why the
+        # loader refuses one without the other. `reveal_optional` is the
+        # printed "may", asked as the card is drawn. Read by
+        # `player_statics.first_draw_reveals` from
+        # `replacements._reveal_first_draw`, miracle's seam -- not
+        # `reveal_library_top`, which makes a card public before it is drawn.
+        "reveal_first_draw",
         # "You may look at the top card of your library any time." The private
         # counterpart of the line above, and the difference is the whole of it:
         # revealed is public and goes to every seat, looked-at goes to the one
@@ -970,6 +981,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "mana_becomes_colorless",
         "play_lands_from_library_top",
         "reveal_library_top",
+        "reveal_first_draw",
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",

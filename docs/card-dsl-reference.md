@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 65 |
+| [Trigger events](#trigger-events) | 66 |
 | [Trigger filters](#trigger-filters) | 38 |
 | [Static effects](#static-effects) | 105 |
 | [Player-wide statics](#player-wide-statics) | 49 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 24 |
-| [Engine events](#engine-events) | 87 |
+| [Engine events](#engine-events) | 88 |
 
 ## Effect ops
 
@@ -525,6 +525,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` | At the beginning of the precombat main phase. | [Triggers](card-dsl.md#triggers) |
 | `put_into_graveyard` | `put_into_graveyard` | A card is put into a graveyard from another zone; `from_zones` narrows where from, `batched` fires once per simultaneous move with `moved` its matching cards, and `nth` counts those moves this turn. | ["…put into your graveyard from anywhere" — put_into_graveyard](card-dsl-cookbook.md#put-into-your-graveyard-from-anywhere--put_into_graveyard) |
+| `reveals_first_draw` | `revealed_first_draw` | The player reveals the first card they draw this turn under this permanent's `reveal_first_draw` static ("this way"); the subject is the revealed card. | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `sacrificed` | `sacrificed` | A permanent is sacrificed. | [Triggers](card-dsl.md#triggers) |
 | `searches_library` | `library_searched` | A player searches a library. | [Triggers](card-dsl.md#triggers) |
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
@@ -681,6 +682,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_proliferate` | yes |  | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | yes |  | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
 | `replace_token_creation` |  |  | If the player would create tokens, create more, different or additional ones instead; `copy_instead` asks whether to make that many copies of a chosen creature instead, `first_during_your_turn` only on the first creation of your turn. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
+| `reveal_first_draw` | yes |  | The player reveals the first card they draw each turn as they draw it; `reveal_optional` makes it a "may". | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `reveal_library_top` | yes |  | The player plays with the top card of their library revealed. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_colors` |  | yes | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
 | `set_creature_types` |  | yes | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |
@@ -747,6 +749,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `replace_mill` | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
 | `replace_proliferate` | If the player would proliferate, they proliferate again. | [Proliferating twice](card-dsl-cookbook.md#proliferating-twice) |
 | `replace_surveil` | Each time the player surveils, they look at more cards; `surveil_optional` makes each static a "may". | [Looking at more cards when you surveil](card-dsl-cookbook.md#looking-at-more-cards-when-you-surveil) |
+| `reveal_first_draw` | The player reveals the first card they draw each turn as they draw it; `reveal_optional` makes it a "may". | [reveal_first_draw — the first card of the turn, revealed as it is drawn](card-dsl-cookbook.md#reveal_first_draw--the-first-card-of-the-turn-revealed-as-it-is-drawn) |
 | `reveal_library_top` | The player plays with the top card of their library revealed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_draw_step` | The player skips their draw step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `skip_extra_turn` | The player skips extra turns. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -1292,6 +1295,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `postcombat_main` | `postcombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `precombat_main` | `precombat_main` |  | [Triggers](card-dsl.md#triggers) |
 | `put_into_graveyard` | `put_into_graveyard` |  | [Triggers](card-dsl.md#triggers) |
+| `revealed_first_draw` | `reveals_first_draw` |  | [Triggers](card-dsl.md#triggers) |
 | `sacrificed` | `sacrificed` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` |  | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` |  | [Triggers](card-dsl.md#triggers) |

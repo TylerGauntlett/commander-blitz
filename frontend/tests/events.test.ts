@@ -211,6 +211,19 @@ describe("beatsFor", () => {
     expect(beat.text).toBe("Edgar AI investigates");
   });
 
+  it("gives a card revealed as it is drawn its own beat and line", () => {
+    // The card goes straight into a hand; this beat is the only place it is
+    // shown before the trigger that usually follows.
+    const [beat] = beatsFor(
+      [event("revealed_first_draw", { card: "lightning_bolt" }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 260 });
+    expect(beat.text).toBe("Edgar AI reveals Lightning Bolt as they draw it");
+  });
+
   it("gives a surveil its own beat and line", () => {
     // A surveil that keeps every card on top moves nothing; without this
     // beat a Dimir Spybug trigger would arrive with nothing before it.

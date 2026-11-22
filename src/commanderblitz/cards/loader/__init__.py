@@ -1736,6 +1736,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     final_chapter = _final_chapter(model, abilities, where)
     _check_class_levels(model, abilities, where)
     _check_case(model, abilities, where)
+    _check_reveal_first_draw(abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
@@ -3376,6 +3377,33 @@ def _compile_solved_ability(
         )
     ability = _compile_ability(model.model_copy(update={"solved": False}), index, card_where)
     return dataclasses.replace(ability, solved=True)
+
+
+def _check_reveal_first_draw(abilities: tuple[Ability, ...], where: str) -> None:
+    """"Whenever you reveal an instant or sorcery card **this way**" needs a way.
+
+    A `reveals_first_draw` trigger hears only the reveals its own permanent's
+    `reveal_first_draw` static let its controller make (`triggers._matches`
+    reads `granted_by`), so one printed without the static loads clean and
+    never fires. Its subject is the revealed card in a hand and its revealer is
+    the static's controller, so `source: "self"` and any `controller` but
+    "you" are a trigger that could never match.
+    """
+    hears = [a for a in abilities if a.trigger is not None and a.trigger.event == "reveals_first_draw"]
+    if not hears:
+        return
+    if not any(a.static is not None and a.static.get("effect") == "reveal_first_draw" for a in abilities):
+        raise DslError(
+            f"{where}: a reveals_first_draw trigger hears the card's own "
+            f"reveal_first_draw static (\"this way\"), and the card prints none"
+        )
+    for ability in hears:
+        spec = ability.trigger
+        if spec.source is not None or spec.controller != "you":
+            raise DslError(
+                f"{where}: a reveals_first_draw trigger is about the card its "
+                f"controller revealed; it takes no 'source' and 'controller' \"you\""
+            )
 
 
 def _check_case(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
@@ -6688,6 +6716,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'surveil_addend'/'surveil_optional' only mean anything "
             f"on a replace_surveil static, not on {model.effect!r}"
         )
+    if model.effect == "reveal_first_draw":
+        # "**You** may reveal the first card **you** draw": the reveal is the
+        # controller's, and the `reveals_first_draw` trigger beside it reads
+        # the revealer as "you". A reveal granted to an opponent would be heard
+        # by no trigger this card prints. Nothing reads a filter or a size.
+        if model.affects_player not in (None, "you"):
+            raise DslError(
+                f"{where}: reveal_first_draw reveals its controller's draw; "
+                f"'affects_player' must be \"you\", not {model.affects_player!r}"
+            )
+        if model.affects is not None or model.affects_spells is not None or model.amount is not None:
+            raise DslError(
+                f"{where}: reveal_first_draw takes 'affects_player', "
+                f"'reveal_optional' and an optional 'condition', and no "
+                f"'affects', 'affects_spells' or 'amount' -- what the revealed "
+                f"card must be is the `reveals_first_draw` trigger's filter"
+            )
+    elif model.reveal_optional:
+        raise DslError(
+            f"{where}: 'reveal_optional' only means anything on a "
+            f"reveal_first_draw static, not on {model.effect!r}"
+        )
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
     ):
@@ -7855,6 +7905,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["surveil_addend"] = model.surveil_addend
     if model.surveil_optional:
         static["surveil_optional"] = True
+    if model.reveal_optional:
+        static["reveal_optional"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:
