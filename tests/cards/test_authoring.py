@@ -270,13 +270,15 @@ class TestTheSandboxGraveyardFeedsAnExileCost:
 
 
 class TestTheGraveyardSpellProp:
-    """An instant or sorcery card in a graveyard for a spell that must target one.
+    """An instant, sorcery or creature card in a graveyard for a spell that must target one.
 
     Player 0's graveyard holds creature cards and player 1's holds nothing, so
     Surge to Victory's "exile target instant or sorcery card from your
-    graveyard" and Arcane Heist's "... from an opponent's graveyard" had no
-    legal choice (601.2c) and gate 4 rejected correct cards as "not playable in
-    the sandbox". The prop is added, and only for a card that needs it.
+    graveyard", Arcane Heist's "... from an opponent's graveyard" and Nurgle's
+    Conscription's "put target creature card from an opponent's graveyard onto
+    the battlefield" had no legal choice (601.2c) and gate 4 rejected correct
+    cards as "not playable in the sandbox". The prop is added, and only for a
+    card that needs it.
     """
 
     OWN = {
@@ -308,6 +310,23 @@ class TestTheGraveyardSpellProp:
                 **OWN["targets"][0],
                 "selector": {**OWN["targets"][0]["selector"], "controller": "opponent"},
             }
+        ],
+    }
+    CONSCRIPTION = {
+        **DIVINATION,
+        "id": "auto_test_conscription",
+        "name": "Auto Test Conscription",
+        "oracle_text": "Put target creature card from an opponent's graveyard onto the battlefield under your control.",
+        "targets": [
+            {
+                "id": "t1",
+                "kind": "card_in_graveyard",
+                "count": 1,
+                "selector": {"types": ["Creature"], "controller": "opponent", "zone": "graveyard"},
+            }
+        ],
+        "spell_effects": [
+            {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
         ],
     }
 
@@ -350,14 +369,44 @@ class TestTheGraveyardSpellProp:
         }
         assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
 
-    def test_a_creature_card_target_needs_no_prop(self, hand_written):
-        target = self.OPPONENTS["targets"][0]
+    def test_a_creature_card_in_your_graveyard_needs_no_prop(self, hand_written):
+        """Your graveyard already holds two creature cards to choose from."""
+        target = self.OWN["targets"][0]
         payload = {
-            **self.OPPONENTS,
-            "id": "auto_test_creature_heist",
-            "targets": [{**target, "selector": {"types": ["Creature"], "controller": "opponent", "zone": "graveyard"}}],
+            **self.OWN,
+            "id": "auto_test_creature_exiler",
+            "targets": [{**target, "selector": {"types": ["Creature"], "controller": "you", "zone": "graveyard"}}],
         }
         assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_the_opponents_graveyard_gets_a_creature_for_a_creature_target(self, hand_written):
+        own, theirs = self._graveyards(hand_written, self.CONSCRIPTION)
+        assert len(own) == 2 and len(theirs) == 1
+        prop = hand_written.get(theirs[0])
+        assert prop.is_creature and not prop.abilities and "Legendary" not in prop.supertypes
+
+    def test_an_optional_creature_target_needs_no_prop(self, hand_written):
+        payload = {
+            **self.CONSCRIPTION,
+            "id": "auto_test_optional_conscription",
+            "targets": [{**self.CONSCRIPTION["targets"][0], "optional": True}],
+        }
+        assert self._graveyards(hand_written, payload) == self._graveyards(hand_written, DIVINATION)
+
+    def test_the_creature_prop_is_quiet_in_both_pools(self, pool, hand_written):
+        """It enters the battlefield, so nothing on it may trigger, apply or be legendary."""
+        for registry in (pool, hand_written):
+            pick = registry.get(V.quiet_graveyard_creature(registry, {"types": ["Creature"]}))
+            assert pick.is_creature and not pick.is_token and not pick.abilities
+            assert "Legendary" not in pick.supertypes
+
+    def test_a_reanimation_of_theirs_clears_every_gate(self, hand_written):
+        verdict = V.verify(
+            self.CONSCRIPTION,
+            {"zone": "graveyard", "battlefield_count": 33, "graveyard_size": {"0": 3}},
+            hand_written,
+        )
+        assert verdict.ok, str(verdict)
 
     def test_every_other_card_keeps_its_graveyards(self, hand_written):
         own, theirs = self._graveyards(hand_written, DIVINATION)

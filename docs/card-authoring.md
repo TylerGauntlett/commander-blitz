@@ -337,9 +337,12 @@ other card's position moves. The conditional props are the helpers beside
 `swap_in_legendary_body`, `swap_in_artifact_body` and
 `swap_in_colorless_sources` swap a slot;
 `spare_cards_in_hand` and `spare_graveyard_roles` add fodder for an additional
-cost; `graveyard_spell_props` puts a targetless instant or sorcery card in your
+cost; `graveyard_target_props` puts a targetless instant or sorcery card in your
 graveyard or the opponent's (which is otherwise empty) for a spell whose
-required `card_in_graveyard` target selects Instant or Sorcery there.
+required `card_in_graveyard` target selects Instant or Sorcery there, and the
+quietest creature card (`quiet_graveyard_creature`: no abilities, not
+legendary) in the opponent's for one whose required target selects Creature
+there.
 `swap_in_artifact_body` serves two shapes: a non-artifact card whose toughness
 counts your artifacts, and a card whose required target is a plain artifact (or
 artifact creature) you control, "Enchant artifact you control"
