@@ -299960,6 +299960,84 @@
               "amount": {
                 "const": 1
               },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, put a +1/+1 counter on each creature you control.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "has_counters": "+1/+1",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "text": "Creatures you control with +1/+1 counters on them are artifacts in addition to their other types.",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "derived_types": true,
+            "not_types": [
+              "Artifact"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": -1,
+          "text": "Nonartifact creatures get -1/-1.",
+          "toughness": -1
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "the_flesh_is_weak",
+      "mana_cost": "{2}{W}{U}{B}",
+      "name": "The Flesh Is Weak",
+      "oracle_text": "When this enchantment enters, put a +1/+1 counter on each creature you control.\nCreatures you control with +1/+1 counters on them are artifacts in addition to their other types.\nNonartifact creatures get -1/-1.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "counter": "flood",
               "objects": {
                 "target": "t1"

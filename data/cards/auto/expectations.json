@@ -24969,6 +24969,10 @@
     },
     "zone": "graveyard"
   },
+  "the_flesh_is_weak": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_flood_of_mars": {
     "battlefield_count": 33,
     "zone": "battlefield"

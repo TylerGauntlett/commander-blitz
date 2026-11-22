@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **450** capabilities.
+**531 cards** blocked by **449** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -421,7 +421,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [static-count-derived-types](#static-count-derived-types) | 1 | 817 | value |
-| [static-filter-derived-types](#static-filter-derived-types) | 1 | 15329 | selector |
 | [static-name-filter](#static-name-filter) | 1 | 3304 | selector |
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -6987,20 +6986,6 @@ Blocks **1** card.
 - **Ashaya, Soul of the Wild** (rank 817) — `ashaya_soul_of_the_wild`
   - Ashaya's power and toughness are each equal to the number of lands you control.
   - Nontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)
-
-</details>
-
-## static-filter-derived-types
-
-Blocks **1** card.
-
-- **(selector)** a layer-7c `buff` static whose `affects` filter (`not_types: ["Artifact"]`) reads a creature's card types after layer 4, so a creature made an artifact by another static (here this card's own `add_subtype` with `types: ["Artifact"]` and `has_counters: "+1/+1"`) is excluded from the -1/-1
-  <br>Why the existing vocabulary won't do: The other two lines are expressible (self_enters add_counters over creatures you control; an add_subtype static adding the Artifact card type to creatures you control with has_counters "+1/+1"), but `_matches_printed` answers `not_types` from the printed `card.types`, and the `derived` read off `chars` is allowed only for rule-modifying statics (attacks_if_able, block_restriction), not for buff inside the layer pipeline. Written with the existing filter, every printed nonartifact creature -- including the ones this card just made artifacts -- would get -1/-1, which inverts the card's whole point
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Flesh Is Weak** (rank 15329) — `the_flesh_is_weak`
-  - Nonartifact creatures get -1/-1.
 
 </details>
 

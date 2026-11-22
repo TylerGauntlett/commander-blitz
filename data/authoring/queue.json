@@ -280872,12 +280872,12 @@
     },
     "The Flesh Is Weak": {
       "edhrec_rank": 15329,
-      "gate": "template",
+      "gate": null,
       "name": "The Flesh Is Weak",
-      "reason": "no template for: When this enchantment enters, put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "4161834d-54ca-4e84-a7c7-bb9c42047e90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Flood of Mars": {
