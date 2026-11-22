@@ -234611,6 +234611,77 @@
         {
           "effects": [
             {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "objects": {
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  }
+                }
+              },
+              "toughness": {
+                "power_of": {
+                  "objects": {
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Plasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "exiled_with": "self",
+                "zone": "exile"
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "exile_from_graveyard": {
+          "link": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [],
+      "colors": [],
+      "id": "redemptor_dreadnought",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}",
+      "name": "Redemptor Dreadnought",
+      "oracle_text": "Fallen Warrior — As an additional cost to cast this spell, you may exile a creature card from your graveyard.\nTrample\nPlasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Dreadnought"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "as": "stormsinger_copies",
               "attacking": true,
               "controller": "you",

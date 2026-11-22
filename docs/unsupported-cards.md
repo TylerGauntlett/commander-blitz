@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **452** capabilities.
+**532 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -128,7 +128,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
-| [cast-cost-exile-link](#cast-cost-exile-link) | 1 | 16834 | cost |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -388,7 +387,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
-| [replace-lose-game](#replace-lose-game) | 1 | 4368 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
@@ -2802,21 +2800,6 @@ Blocks **1** card.
 
 - **Baron Helmut Zemo** (rank 13784) — `baron_helmut_zemo`
   - Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)
-
-</details>
-
-## cast-cost-exile-link
-
-Blocks **1** card.
-
-- **(cost)** an `exile_from_graveyard` paid as a spell's (optional) additional cost that links the exiled card to the permanent the spell becomes (607.2a), so the permanent's later abilities can read it with `{"zone": "exile", "exiled_with": "self"}` -- here for an attack trigger whose condition is `exists` over that selector and whose `pump` amount is `power_of` the linked card
-  <br>Why the existing vocabulary won't do: `additional_cost` + `additional_optional` can charge `exile_from_graveyard: {types: [Creature]}`, but `costs.pay` exiles via `zones.exile(cause="cost")` without calling `link_exiled`, so `exiled_by` is never set and `exiled_with: self` matches nothing; the cost's `as` binding lives only on the stack item, not on the resolved permanent, and `additional_paid` says only whether the cost was paid, not which card (or its power) was exiled
-
-<details><summary>Cards waiting on this</summary>
-
-- **Redemptor Dreadnought** (rank 16834) — `redemptor_dreadnought`
-  - Fallen Warrior — As an additional cost to cast this spell, you may exile a creature card from your graveyard.
-  - Plasma Incinerator — Whenever this creature attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is the power of the exiled card.
 
 </details>
 
@@ -6514,20 +6497,6 @@ Blocks **1** card.
 
 - **Dauthi Voidwalker** (rank 386) — `dauthi_voidwalker`
   - If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.
-
-</details>
-
-## replace-lose-game
-
-Blocks **1** card.
-
-- **(replacement)** a static replacement on a permanent for its controller losing the game (any cause: 0 life, poison, commander damage, empty-library draw, lose_game op) that instead performs effects (exile this permanent, set your life total to 1) and the player stays in the game; one-shot because the source is exiled
-  <br>Why the existing vocabulary won't do: The cant_lose_the_game static/op only forbids losing (Platinum Angel) and runs no replacement effects, so the source never exiles itself and the life total never becomes 1; no replace_* static covers the lose-the-game event and there is no op that sets a life total to a number
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Golden Throne** (rank 4368) — `the_golden_throne`
-  - Arcane Life-support — If you would lose the game, instead exile The Golden Throne and your life total becomes 1.
 
 </details>
 

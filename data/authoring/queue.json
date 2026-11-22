@@ -218652,12 +218652,12 @@
     },
     "Redemptor Dreadnought": {
       "edhrec_rank": 16834,
-      "gate": "template",
+      "gate": null,
       "name": "Redemptor Dreadnought",
-      "reason": "no template for: Fallen Warrior — As an additional cost to cast this spell, you may exile a creature card f",
+      "reason": "",
       "scryfall_id": "73b09833-c60b-4818-baa6-0bee7558c6f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redirect": {

@@ -19582,6 +19582,13 @@
     },
     "zone": "battlefield"
   },
+  "redemptor_dreadnought": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "redoubled_stormsinger": {
     "battlefield_count": 33,
     "zone": "battlefield"
