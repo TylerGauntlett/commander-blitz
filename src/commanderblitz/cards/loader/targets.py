@@ -1124,6 +1124,10 @@ def _check_reflexive_wiring(model: CardModel, abilities: tuple[Ability, ...], wh
                 continue
             if effect.get("op") == "reflexive_trigger":
                 named.add(str(effect.get("ability", "")))
+            if effect.get("playable_cast_trigger"):
+                # "When you cast a spell this way" -- fired by the cast made
+                # under the permission rather than by an op.
+                named.add(str(effect["playable_cast_trigger"]))
             for value in effect.values():
                 if isinstance(value, Sequence) and not isinstance(value, str):
                     walk(value)

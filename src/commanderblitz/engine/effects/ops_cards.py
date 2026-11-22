@@ -25,6 +25,7 @@ from ..structs import CastRider, GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
+    cast_this_way_link,
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
@@ -317,6 +318,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "You may **cast** …" rather than "play": no land drop out of it.
         obj.playable_cast_only = bool(spec.get("playable_cast_only"))
         record_playable_source(ctx.state, oid, ctx.source_oid)
+        # "When you cast a spell this way, …" (The Ruinous Powers).
+        obj.playable_cast_trigger = cast_this_way_link(
+            ctx.state, ctx.source_oid, ctx.controller, spec.get("playable_cast_trigger")
+        )
 
 
 
@@ -764,6 +769,10 @@ def _move_found(
                 # land among them is exiled and stays there, never played.
                 obj.playable_cast_only = bool(spec.get("playable_cast_only"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)
+                # "When you cast a spell this way, …" (The Ruinous Powers).
+                obj.playable_cast_trigger = cast_this_way_link(
+                    ctx.state, ctx.source_oid, ctx.controller, spec.get("playable_cast_trigger")
+                )
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What

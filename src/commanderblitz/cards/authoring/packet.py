@@ -858,6 +858,10 @@ def reference() -> dict:
             " after \"you may cast it\" is `playable_exiles: true` on the same"
             " `exile` or `grant_playable` permission (it holds when the spell is"
             " countered or fizzles too);"
+            " \"when you cast a spell this way, …\" is `playable_cast_trigger:"
+            " \"<id>\"` on the same `exile`, `look_at_top` or `grant_playable`"
+            " permission, naming a `kind: \"reflexive\"` ability with that `id`"
+            " on the card, whose effects read the spell as `subject`;"
             " \"you may play one of those cards\" is `grant_playable` with"
             " `limit: 1` over the exiled cards' `as` binding.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"

@@ -31,7 +31,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
-from .structs import CONVOKED_BINDING
+from .structs import CONVOKED_BINDING, CastThisWayLink
 from .temp_effects import end_redirects_to, end_source_bound
 from .triggers import delayed_watches_departure, fire
 
@@ -2594,6 +2594,7 @@ def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -
         obj.playable_free = False
         obj.playable_cast_only = False
         obj.playable_exiles = False
+        obj.playable_cast_trigger = None
         obj.playable_alt_cost = None
         obj.playable_cost_reduction = 0
         obj.playable_pay_life = False
@@ -2614,6 +2615,33 @@ def record_playable_source(state: GameState, oid: int, source_oid: int | None) -
     source = state.objects.get(source_oid)
     if source is not None and oid not in source.playable_grants:
         source.playable_grants.append(oid)
+
+
+def cast_this_way_link(
+    state: GameState, source_oid: int | None, controller: int, reflex_id: Any
+) -> CastThisWayLink | None:
+    """The `CastThisWayLink` a permission's ``playable_cast_trigger`` names.
+
+    ``None`` for a permission that prints no "when you cast a spell this way",
+    and for a source with no reflexive ability of that id (the loader refuses
+    the second).
+    """
+    if not reflex_id or source_oid is None:
+        return None
+    source = state.objects.get(source_oid)
+    if source is None:
+        return None
+    ability = next(
+        (a for a in state.card_of(source).abilities if a.reflex_id == str(reflex_id)), None
+    )
+    if ability is None:  # pragma: no cover -- the loader refuses this
+        return None
+    return CastThisWayLink(
+        source=source_oid,
+        def_id=source.def_id,
+        ability_index=ability.index,
+        controller=controller,
+    )
 
 
 def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:

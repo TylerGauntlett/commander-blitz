@@ -89,6 +89,7 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_any_type = False
         obj.playable_any_color = False
         obj.playable_exiles = False
+        obj.playable_cast_trigger = None
         obj.playable_as_adventure = False
         obj.playable_cast_only = False
         # The airbend price rides on the permission, so it goes when the

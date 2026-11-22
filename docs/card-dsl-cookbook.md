@@ -1359,6 +1359,36 @@ spell goes. The near misses are `cast_from_hand`'s and `cast_card`'s `exiles`,
 the same rider on a cast made during the effect's resolution rather than a
 permission to cast later at the printed price.
 
+### "When you cast a spell this way, …"
+
+```jsonc
+// The Ruinous Powers, inside its upkeep trigger after choosing "victim"
+{ "op": "look_at_top", "player": { "binding": "victim" }, "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "playable": "this_turn",
+  "any_color": true, "playable_cast_trigger": "ruin" }
+// ...and, among the card's abilities
+{ "kind": "reflexive", "id": "ruin",
+  "text": "When you cast a spell this way, its owner loses life equal to its mana value.",
+  "effects": [ { "op": "lose_life", "player": { "owner_of": "subject" },
+                 "amount": { "mana_value_of": { "binding": "subject" } } } ] }
+```
+
+`playable_cast_trigger` names a `kind: "reflexive"` ability on the same card
+that the permission fires when the effect's controller casts a spell under it
+(603.12's shape: a trigger linked to what the effect allowed). It rides on
+`exile` or `look_at_top` beside a `playable` duration, or on `grant_playable`.
+The grant writes a `CastThisWayLink` onto the card; `Game._cast` reads it while
+the permission is live and the caster holds it, and
+`triggers.queue_cast_this_way` queues the ability with the spell bound as
+`subject`, so it goes on the stack above the spell. A land played under the
+permission is not cast and fires nothing. The ability is found through the
+snapshotted card id after its source has left.
+
+The loader refuses it without a permission, with an id naming no reflexive
+ability on the card, and beside `playable_by: "owner"` ("when **you** cast").
+The near miss is a `spell_cast` trigger filtered to spells cast from exile,
+which also fires for a card cast from exile under any other permission.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's

@@ -62,7 +62,7 @@ from .player_statics import (
     static_cascade_instances,
 )
 from .state import MAX_TRIGGERS_PER_STEP
-from .structs import DelayedTrigger, TriggerInstance
+from .structs import CastThisWayLink, DelayedTrigger, TriggerInstance
 from .temp_effects import granted_cascade_instances
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -3663,3 +3663,42 @@ def drain_to_stack(state: GameState):
     for trig in order:
         yield from push_triggered_ability(state, trig)
         state.pending_triggers = [t for t in state.pending_triggers if t is not trig]
+
+
+def queue_cast_this_way(state: GameState, link: CastThisWayLink, spell_oid: int, pid: int) -> None:
+    """Fire a permission's "when you cast a spell this way, …" for ``spell_oid``.
+
+    The Ruinous Powers. The ability is a ``kind: "reflexive"`` one on the
+    granting card, fired by the cast itself rather than by a `reflexive_trigger`
+    op: the instruction it reflects on is "you may play that card", carried out
+    when ``pid`` casts under it. The spell is bound as ``subject``, the shape a
+    `spell_cast` trigger binds it in, so "its owner" and "its mana value" read
+    the spell. ``def_id`` is the snapshot `stack.ability_of` falls back on once
+    the source has left.
+    """
+    card = state.registry.get(link.def_id) if link.def_id in state.registry else None
+    ability = (
+        card.abilities[link.ability_index]
+        if card is not None and link.ability_index < len(card.abilities)
+        else None
+    )
+    name = card.name if card is not None else "?"
+    text = ability.text if ability is not None and ability.text else "cast this way"
+    state.pending_triggers.append(
+        TriggerInstance(
+            source_oid=link.source,
+            ability_index=link.ability_index,
+            controller=link.controller,
+            bindings={"self": link.source, "subject": spell_oid, "event_player": pid},
+            description=f"{name}: {text}",
+            def_id=link.def_id,
+        )
+    )
+    state.emit(
+        EventType.ABILITY_TRIGGERED,
+        player=link.controller,
+        source=link.source,
+        card=link.def_id,
+        ability=link.ability_index,
+        trigger="cast_this_way",
+    )
