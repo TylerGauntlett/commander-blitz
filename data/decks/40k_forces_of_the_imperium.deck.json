@@ -1,0 +1,803 @@
+{
+  "id": "40k_forces_of_the_imperium",
+  "name": "Forces of the Imperium",
+  "commanders": [
+    "inquisitor_greyfax"
+  ],
+  "color_identity": [
+    "B",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "40K",
+    "set_name": "Warhammer 40,000 Commander",
+    "date": "2022-10-07"
+  },
+  "notes": "Warhammer 40,000 Commander precon, card for card (https://mtgjson.com/api/v5/decks/ForcesOfTheImperium_40K.json).",
+  "tags": [
+    "Tokens",
+    "Go Wide",
+    "Squad",
+    "Anthems"
+  ],
+  "strategy": "Inquisitor Greyfax gives every other creature +1/+0 and vigilance, and the deck is built to put as many bodies behind that as it can. Squad creatures -- Arco-Flagellant, Space Marine Devastator, Vanguard Suppressor, Ultramarines Honour Guard and Zephyrim -- come with token copies of themselves for each extra payment, while Birth of the Imperium, Defenders of Humanity, Deploy to the Front, Launch the Fleet and Martial Coup make armies outright. Marneus Calgar draws a card whenever tokens enter and Skullclamp turns the small ones into more cards; Vexilus Praetor, Bastion Protector and The Golden Throne keep the commander and the player alive, and Swords to Plowshares, Mortify, Utter End, Fell the Mighty, Hour of Reckoning and Exterminatus clear the way.",
+  "archetype": "go_wide",
+  "printings": {
+    "and_they_shall_know_no_fear": {
+      "scryfall_id": "84d1bcef-907c-4c3a-8b52-6e633fa19667",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "9"
+    },
+    "arcane_sanctum": {
+      "scryfall_id": "fa675944-8400-4468-bacc-a0d63c767e01",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "264"
+    },
+    "arcane_signet": {
+      "scryfall_id": "8191befc-dcf7-4cb8-89ca-3461d55e4682",
+      "artist": "Kim Sokol",
+      "set_code": "40k",
+      "collector_number": "229"
+    },
+    "arco_flagellant": {
+      "scryfall_id": "0894d21c-d44c-4c7c-8693-f32dde67b336",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "29"
+    },
+    "ash_barrens": {
+      "scryfall_id": "2816a820-bde0-404a-ba2c-86fbe461e01b",
+      "artist": "Sergei Leoluch Panin",
+      "set_code": "40k",
+      "collector_number": "265"
+    },
+    "assault_intercessor": {
+      "scryfall_id": "019b1f71-2d99-47da-8df3-237ef25a4916",
+      "artist": "Steve Argyle",
+      "set_code": "40k",
+      "collector_number": "104"
+    },
+    "bastion_protector": {
+      "scryfall_id": "ba272fed-6e1f-47a6-96f5-2ccefbccfa01",
+      "artist": "Steve Argyle",
+      "set_code": "40k",
+      "collector_number": "182"
+    },
+    "belisarius_cawl": {
+      "scryfall_id": "102746f5-ba25-45f2-943e-55f9a4458fa7",
+      "artist": "Lie Setiawan",
+      "set_code": "40k",
+      "collector_number": "106"
+    },
+    "birth_of_the_imperium": {
+      "scryfall_id": "26386d35-7768-4b06-afe4-823028d99a48",
+      "artist": "Zezhou Chen",
+      "set_code": "40k",
+      "collector_number": "107"
+    },
+    "callidus_assassin": {
+      "scryfall_id": "18a5e38a-6c8c-427f-9143-59212e711f1c",
+      "artist": "Bryan Sola",
+      "set_code": "40k",
+      "collector_number": "109"
+    },
+    "celestine_the_living_saint": {
+      "scryfall_id": "a099cbd2-e92a-433a-bc51-0aa2f8fc6857",
+      "artist": "Irina Nordsol",
+      "set_code": "40k",
+      "collector_number": "10"
+    },
+    "choked_estuary": {
+      "scryfall_id": "313bef3c-fe65-4959-8170-477ea9cd5e48",
+      "artist": "Lixin Yin",
+      "set_code": "40k",
+      "collector_number": "268"
+    },
+    "collective_effort": {
+      "scryfall_id": "75958e64-6d12-4c80-b321-9bc0cceb17fd",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "183"
+    },
+    "command_tower": {
+      "scryfall_id": "c1bda37b-7702-462e-8851-af6917b78ee1",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "272"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "790882a8-a1b7-421a-b840-045bd12a0a55",
+      "artist": "Jake Murray",
+      "set_code": "40k",
+      "collector_number": "233"
+    },
+    "commissar_severina_raine": {
+      "scryfall_id": "94ba8b76-8de7-46da-b641-2503903f0f8a",
+      "artist": "Jake Murray",
+      "set_code": "40k",
+      "collector_number": "112"
+    },
+    "company_commander": {
+      "scryfall_id": "91c7296e-ec77-4d46-8c53-b042332876a5",
+      "artist": "Ørjan Ruttenborg Svendsen",
+      "set_code": "40k",
+      "collector_number": "113"
+    },
+    "cybernetica_datasmith": {
+      "scryfall_id": "28624370-ba28-4879-bd43-0a00761e780d",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "40k",
+      "collector_number": "114"
+    },
+    "darkwater_catacombs": {
+      "scryfall_id": "a05ba40c-d2d9-47e0-824c-e1b1c8e27dd9",
+      "artist": "Eliz Roxs",
+      "set_code": "40k",
+      "collector_number": "274"
+    },
+    "defenders_of_humanity": {
+      "scryfall_id": "495c6b21-3e2b-417c-9387-6747993cbffe",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "11"
+    },
+    "deny_the_witch": {
+      "scryfall_id": "d3e5b091-2aa7-4aca-9855-bb802d3d563e",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "116"
+    },
+    "deploy_to_the_front": {
+      "scryfall_id": "aa5f9580-4ee8-49bc-9524-44072d6b3a8b",
+      "artist": "Aaron J. Riley",
+      "set_code": "40k",
+      "collector_number": "184"
+    },
+    "dismal_backwater": {
+      "scryfall_id": "8c8099d6-44c1-48c7-ae87-985160eee63c",
+      "artist": "Henry Peters",
+      "set_code": "40k",
+      "collector_number": "276"
+    },
+    "entrapment_maneuver": {
+      "scryfall_id": "7643bb9a-49b3-4163-9b24-0fefffc69b56",
+      "artist": "Nikola Matkovic",
+      "set_code": "40k",
+      "collector_number": "185"
+    },
+    "epistolary_librarian": {
+      "scryfall_id": "c109ab72-2293-4c7e-bc68-62da268d2562",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "118"
+    },
+    "everflowing_chalice": {
+      "scryfall_id": "65412ea8-d9c4-481f-ad9e-5fd589bdb2f7",
+      "artist": "Álvaro Calvo Escudero",
+      "set_code": "40k",
+      "collector_number": "238"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "184e5367-e901-4a0b-a2f5-06db42e6cf31",
+      "artist": "Rafater",
+      "set_code": "40k",
+      "collector_number": "277"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "ec9c7011-694b-4705-b85c-bf4edf26e437",
+      "artist": "Filipe Pagliuso",
+      "set_code": "40k",
+      "collector_number": "278"
+    },
+    "exterminatus": {
+      "scryfall_id": "196703b0-78bf-4f85-ae81-7335fe486982",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "120"
+    },
+    "fell_the_mighty": {
+      "scryfall_id": "7b28bdec-927a-4737-9b55-d5565c5c69f2",
+      "artist": "Steve Argyle",
+      "set_code": "40k",
+      "collector_number": "186"
+    },
+    "for_the_emperor": {
+      "scryfall_id": "3c3e9950-b0b9-425c-8b14-f6450882bd57",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "12"
+    },
+    "grey_knight_paragon": {
+      "scryfall_id": "27b29b3f-1f99-4880-8f66-442fa5326150",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "13"
+    },
+    "hour_of_reckoning": {
+      "scryfall_id": "8d787021-6a02-4394-875d-ef529fa3d38e",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "187"
+    },
+    "inquisitor_eisenhorn": {
+      "scryfall_id": "bdf1ccf7-e95f-4d08-be51-83fba78c4c2d",
+      "artist": "Jake Murray",
+      "set_code": "40k",
+      "collector_number": "127"
+    },
+    "inquisitor_greyfax": {
+      "scryfall_id": "1956cebe-bb71-45cc-b4ff-72ee3bb95c81",
+      "artist": "Lie Setiawan",
+      "set_code": "40k",
+      "collector_number": "173"
+    },
+    "inquisitorial_rosette": {
+      "scryfall_id": "d44935ea-e8f4-45b1-8bce-e8665317d801",
+      "artist": "Álvaro Calvo Escudero",
+      "set_code": "40k",
+      "collector_number": "159"
+    },
+    "island": {
+      "scryfall_id": "bcddeb71-3109-4a08-852f-b437c0a0c4ab",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "40k",
+      "collector_number": "307"
+    },
+    "knight_paladin": {
+      "scryfall_id": "951cff7b-2b17-4903-be92-b9c066adfc83",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "160"
+    },
+    "launch_the_fleet": {
+      "scryfall_id": "8f16c536-2c32-4758-899a-37c81aaea165",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "188"
+    },
+    "marneus_calgar": {
+      "scryfall_id": "eda1fe2f-8a95-4690-ade7-13a5b7f58233",
+      "artist": "Slawomir Maniak",
+      "set_code": "40k",
+      "collector_number": "175"
+    },
+    "martial_coup": {
+      "scryfall_id": "4d7296ef-afe3-4d1d-9cbc-7ee7ad78f297",
+      "artist": "Diego Gisbert",
+      "set_code": "40k",
+      "collector_number": "189"
+    },
+    "memorial_to_glory": {
+      "scryfall_id": "409560cb-ecf1-4df2-91b2-75464dc1fe7d",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "283"
+    },
+    "mind_stone": {
+      "scryfall_id": "c729606e-5b13-4699-b7c8-feca69c91f62",
+      "artist": "Steve Argyle",
+      "set_code": "40k",
+      "collector_number": "244"
+    },
+    "mortify": {
+      "scryfall_id": "02040930-4446-4c95-947b-9685c068ce4f",
+      "artist": "Billy Christian",
+      "set_code": "40k",
+      "collector_number": "225"
+    },
+    "neyam_shai_murad": {
+      "scryfall_id": "211fdfd5-af23-4a16-a80f-1d9ba5ccd255",
+      "artist": "Fajareka Setiawan",
+      "set_code": "40k",
+      "collector_number": "135"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "5410dbe8-006d-4267-92f1-b9bd7b1069e3",
+      "artist": "Anthony Devine",
+      "set_code": "40k",
+      "collector_number": "287"
+    },
+    "plains": {
+      "scryfall_id": "3cf6c0d0-5de8-4909-aaaa-be46466fb370",
+      "artist": "Zhillustrator",
+      "set_code": "40k",
+      "collector_number": "306"
+    },
+    "port_town": {
+      "scryfall_id": "b4ab193e-fc0a-4f02-90a2-ea6b3de757d2",
+      "artist": "Eliz Roxs",
+      "set_code": "40k",
+      "collector_number": "289"
+    },
+    "prairie_stream": {
+      "scryfall_id": "59dd0b5a-db67-4d77-8450-382212009cf4",
+      "artist": "Henry Peters",
+      "set_code": "40k",
+      "collector_number": "290"
+    },
+    "primaris_chaplain": {
+      "scryfall_id": "5b7cb578-968c-408b-b58a-8f38cfc7696b",
+      "artist": "Diego Gisbert",
+      "set_code": "40k",
+      "collector_number": "137"
+    },
+    "primaris_eliminator": {
+      "scryfall_id": "db7ab081-d6cd-4323-98bf-536e4df95115",
+      "artist": "Logan Feliciano",
+      "set_code": "40k",
+      "collector_number": "50"
+    },
+    "reaver_titan": {
+      "scryfall_id": "dacc5e02-c21e-4a41-a704-5b87151a28c6",
+      "artist": "Philip Helliwell",
+      "set_code": "40k",
+      "collector_number": "163"
+    },
+    "reconnaissance_mission": {
+      "scryfall_id": "009f7603-a6a3-461b-bc73-810db1ab2898",
+      "artist": "Billy Christian",
+      "set_code": "40k",
+      "collector_number": "193"
+    },
+    "redemptor_dreadnought": {
+      "scryfall_id": "73b09833-c60b-4818-baa6-0bee7558c6f8",
+      "artist": "Philip Helliwell",
+      "set_code": "40k",
+      "collector_number": "164"
+    },
+    "sanguinary_priest": {
+      "scryfall_id": "f221eccc-3bd2-4629-aacc-7abf8c11449f",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "53"
+    },
+    "scoured_barrens": {
+      "scryfall_id": "2b7d85b4-3abc-49a8-8ff2-715ad8cbf4ab",
+      "artist": "Thea Dumitriu",
+      "set_code": "40k",
+      "collector_number": "293"
+    },
+    "sicarian_infiltrator": {
+      "scryfall_id": "cc0aa0eb-dc26-49d8-bbff-74fb3d597a72",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "25"
+    },
+    "sister_hospitaller": {
+      "scryfall_id": "fb086307-b089-45ba-81d3-789ed35dc5b8",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "141"
+    },
+    "sister_of_silence": {
+      "scryfall_id": "15d56042-db45-40dc-a197-e2b7a3e6ab06",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "26"
+    },
+    "sister_repentia": {
+      "scryfall_id": "743c5111-9e94-4f08-9c01-92411e8a2317",
+      "artist": "Seseon Yoon",
+      "set_code": "40k",
+      "collector_number": "142"
+    },
+    "skullclamp": {
+      "scryfall_id": "04733881-38a3-404c-837f-fad3fc5a5647",
+      "artist": "Helge C. Balzer",
+      "set_code": "40k",
+      "collector_number": "248"
+    },
+    "skycloud_expanse": {
+      "scryfall_id": "2f829053-b1db-4e64-b243-5be6c93f8af7",
+      "artist": "Kamila Szutenberg",
+      "set_code": "40k",
+      "collector_number": "294"
+    },
+    "sol_ring": {
+      "scryfall_id": "ebfcda26-1f28-4d60-bc7b-8c0bafc6b132",
+      "artist": "Oleg Shekhovtsov",
+      "set_code": "40k",
+      "collector_number": "251"
+    },
+    "space_marine_devastator": {
+      "scryfall_id": "4a821438-2b60-421e-9fd2-3ce3ec958eb7",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "14"
+    },
+    "space_marine_scout": {
+      "scryfall_id": "1d7c6801-2c75-435c-a16b-a30b8c3a6be2",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "15"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "8b195fba-e0e0-4f89-b667-8d54286dd6fe",
+      "artist": "Calder Moore",
+      "set_code": "40k",
+      "collector_number": "295"
+    },
+    "swamp": {
+      "scryfall_id": "575fadbe-75a6-4183-be46-53de6af74790",
+      "artist": "Kamila Szutenberg",
+      "set_code": "40k",
+      "collector_number": "314"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "99263917-25ca-4d54-b1f9-d6d316747088",
+      "artist": "Diego Gisbert",
+      "set_code": "40k",
+      "collector_number": "190"
+    },
+    "talisman_of_dominance": {
+      "scryfall_id": "fea79e31-97f9-4131-8101-99f7265758dd",
+      "artist": "Philip Helliwell",
+      "set_code": "40k",
+      "collector_number": "254"
+    },
+    "talisman_of_hierarchy": {
+      "scryfall_id": "f1be61f4-84e6-4d7b-8755-2651edfe7c92",
+      "artist": "Philip Helliwell",
+      "set_code": "40k",
+      "collector_number": "256"
+    },
+    "talisman_of_progress": {
+      "scryfall_id": "2c42da3b-8ff6-46b9-81c9-d18adf6dfd40",
+      "artist": "Philip Helliwell",
+      "set_code": "40k",
+      "collector_number": "258"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "67161521-aae6-4017-abf8-46f3a41b59bc",
+      "artist": "Kekai Kotaki",
+      "set_code": "40k",
+      "collector_number": "301"
+    },
+    "the_flesh_is_weak": {
+      "scryfall_id": "c382d8ee-6640-4db2-b618-73d315e43526",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "122"
+    },
+    "the_golden_throne": {
+      "scryfall_id": "fa515b78-f54d-4c65-a197-c860eaf2c780",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "157"
+    },
+    "thunderhawk_gunship": {
+      "scryfall_id": "6790720a-e1f3-4533-acd8-b002c8e91929",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "167"
+    },
+    "thunderwolf_cavalry": {
+      "scryfall_id": "3ec9bc4f-d8b8-4c68-bc4a-923b03a971cf",
+      "artist": "Oleg Shekhovtsov",
+      "set_code": "40k",
+      "collector_number": "16"
+    },
+    "tranquil_cove": {
+      "scryfall_id": "c3fb0661-5df4-4935-8f44-a0f83a22a81c",
+      "artist": "Eliz Roxs",
+      "set_code": "40k",
+      "collector_number": "303"
+    },
+    "triumph_of_saint_katherine": {
+      "scryfall_id": "cc5338e1-26a6-466e-9393-788f69370e15",
+      "artist": "David Astruga",
+      "set_code": "40k",
+      "collector_number": "17"
+    },
+    "ultramarines_honour_guard": {
+      "scryfall_id": "8e1915c3-6dda-49fd-be5e-9d4713f00cfd",
+      "artist": "Games Workshop",
+      "set_code": "40k",
+      "collector_number": "18"
+    },
+    "utter_end": {
+      "scryfall_id": "70504cce-2525-472b-b189-2cca86157ab3",
+      "artist": "David Astruga",
+      "set_code": "40k",
+      "collector_number": "226"
+    },
+    "vanguard_suppressor": {
+      "scryfall_id": "3331d7dd-95c8-4813-a1eb-3966a2c08502",
+      "artist": "Fajareka Setiawan",
+      "set_code": "40k",
+      "collector_number": "27"
+    },
+    "vexilus_praetor": {
+      "scryfall_id": "6584cc58-c88e-4cf6-9983-5e08fd8609c3",
+      "artist": "Zezhou Chen",
+      "set_code": "40k",
+      "collector_number": "19"
+    },
+    "zephyrim": {
+      "scryfall_id": "f78f5b9a-bd80-41e9-873e-826628dc44a7",
+      "artist": "Anna Steinbauer",
+      "set_code": "40k",
+      "collector_number": "20"
+    }
+  },
+  "cards": [
+    {
+      "id": "and_they_shall_know_no_fear"
+    },
+    {
+      "id": "arcane_sanctum"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "arco_flagellant"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "assault_intercessor"
+    },
+    {
+      "id": "bastion_protector"
+    },
+    {
+      "id": "belisarius_cawl"
+    },
+    {
+      "id": "birth_of_the_imperium"
+    },
+    {
+      "id": "callidus_assassin"
+    },
+    {
+      "id": "celestine_the_living_saint"
+    },
+    {
+      "id": "choked_estuary"
+    },
+    {
+      "id": "collective_effort"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "commissar_severina_raine"
+    },
+    {
+      "id": "company_commander"
+    },
+    {
+      "id": "cybernetica_datasmith"
+    },
+    {
+      "id": "darkwater_catacombs"
+    },
+    {
+      "id": "defenders_of_humanity"
+    },
+    {
+      "id": "deny_the_witch"
+    },
+    {
+      "id": "deploy_to_the_front"
+    },
+    {
+      "id": "dismal_backwater"
+    },
+    {
+      "id": "entrapment_maneuver"
+    },
+    {
+      "id": "epistolary_librarian"
+    },
+    {
+      "id": "everflowing_chalice"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "exterminatus"
+    },
+    {
+      "id": "fell_the_mighty"
+    },
+    {
+      "id": "for_the_emperor"
+    },
+    {
+      "id": "grey_knight_paragon"
+    },
+    {
+      "id": "hour_of_reckoning"
+    },
+    {
+      "id": "inquisitor_eisenhorn"
+    },
+    {
+      "id": "inquisitorial_rosette"
+    },
+    {
+      "id": "island",
+      "qty": 5
+    },
+    {
+      "id": "knight_paladin"
+    },
+    {
+      "id": "launch_the_fleet"
+    },
+    {
+      "id": "marneus_calgar"
+    },
+    {
+      "id": "martial_coup"
+    },
+    {
+      "id": "memorial_to_glory"
+    },
+    {
+      "id": "mind_stone"
+    },
+    {
+      "id": "mortify"
+    },
+    {
+      "id": "neyam_shai_murad"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "plains",
+      "qty": 8
+    },
+    {
+      "id": "port_town"
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "primaris_chaplain"
+    },
+    {
+      "id": "primaris_eliminator"
+    },
+    {
+      "id": "reaver_titan"
+    },
+    {
+      "id": "reconnaissance_mission"
+    },
+    {
+      "id": "redemptor_dreadnought"
+    },
+    {
+      "id": "sanguinary_priest"
+    },
+    {
+      "id": "scoured_barrens"
+    },
+    {
+      "id": "sicarian_infiltrator"
+    },
+    {
+      "id": "sister_hospitaller"
+    },
+    {
+      "id": "sister_of_silence"
+    },
+    {
+      "id": "sister_repentia"
+    },
+    {
+      "id": "skullclamp"
+    },
+    {
+      "id": "skycloud_expanse"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "space_marine_devastator"
+    },
+    {
+      "id": "space_marine_scout"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "swamp",
+      "qty": 7
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "talisman_of_dominance"
+    },
+    {
+      "id": "talisman_of_hierarchy"
+    },
+    {
+      "id": "talisman_of_progress"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "the_flesh_is_weak"
+    },
+    {
+      "id": "the_golden_throne"
+    },
+    {
+      "id": "thunderhawk_gunship"
+    },
+    {
+      "id": "thunderwolf_cavalry"
+    },
+    {
+      "id": "tranquil_cove"
+    },
+    {
+      "id": "triumph_of_saint_katherine"
+    },
+    {
+      "id": "ultramarines_honour_guard"
+    },
+    {
+      "id": "utter_end"
+    },
+    {
+      "id": "vanguard_suppressor"
+    },
+    {
+      "id": "vexilus_praetor"
+    },
+    {
+      "id": "zephyrim"
+    }
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "inquisitor_greyfax",
+      "why": "Other creatures you control get +1/+0 and have vigilance, and for {1} it taps a blocker and investigates."
+    },
+    {
+      "card_id": "marneus_calgar",
+      "why": "Double strike, a card whenever one or more tokens enter, and two Astartes Warriors for {6} whenever the mana is spare."
+    },
+    {
+      "card_id": "ultramarines_honour_guard",
+      "why": "Squad turns one anthem into several: each copy gives the other creatures +1/+1 too."
+    },
+    {
+      "card_id": "birth_of_the_imperium",
+      "why": "A Saga that makes an Astartes Warrior for each opponent, has each opponent sacrifice a creature, then draws two cards for each opponent with fewer creatures than you."
+    }
+  ]
+}
