@@ -68,6 +68,7 @@ separately:
 - [adr/0028-a-short-handheld-lays-out-at-the-decks-height.md](adr/0028-a-short-handheld-lays-out-at-the-decks-height.md) — a handheld-band screen shorter than the Deck is laid out at the Deck's height and scaled by the viewport tag, not given lower floors
 - [adr/0029-an-auras-enchant-clause-is-a-standing-restriction.md](adr/0029-an-auras-enchant-clause-is-a-standing-restriction.md) — an Aura's enchant clause is re-tested as a state-based action against its host for as long as it is on the battlefield, not only as it arrives
 - [adr/0030-static-control-at-state-checks.md](adr/0030-static-control-at-state-checks.md) — a static control effect writes `GameObject.controller` and is kept true by a pass inside the state-based-action check, not computed by `chars`
+- [adr/0031-an-anthem-may-read-the-types-layer-4-left.md](adr/0031-an-anthem-may-read-the-types-layer-4-left.md) — a `buff` static's `affects` with `derived_types` reads the types layer 4 left, an ordered read across layers and no 613.8 dependency
 
 ## If you are here to...
 
