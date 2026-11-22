@@ -1410,6 +1410,12 @@ class AbilityModel(BaseModel):
     #: uses exactly one of ``gain_multiplier`` and ``gain_addend``, and the
     #: addend is refused below 1 because 0 replaces a gain with itself.
     gain_addend: int | None = None
+    #: ``replace_life_gain``: the gain becomes a loss of that much life by the
+    #: same player. Plague Drone's and Tainted Remedy's "If an opponent would
+    #: gain life, that player loses that much life instead" is ``true``. The
+    #: third axis of the same static, exclusive with ``gain_multiplier`` and
+    #: ``gain_addend``; only ``true`` is accepted.
+    lose_instead: bool | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1

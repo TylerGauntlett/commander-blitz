@@ -33,6 +33,7 @@ from .player_statics import (
     damage_cant_be_prevented,
     damage_cap,
     life_gain_addend,
+    life_gain_becomes_loss,
     life_gain_multiplier,
     life_loss_multiplier,
     mill_multiplier,
@@ -372,6 +373,15 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
     # anyway. Asked before the multiplier, so an Archive cannot double a
     # forbidden gain into a permitted one -- "can't" wins (101.2).
     if player_cant_gain_life(state, pid):
+        return 0
+    # "That player loses that much life instead" (Plague Drone). Asked after
+    # "can't": a gain that cannot happen is no event to replace (101.2). Asked
+    # before the addend and multiplier: once applied the event is a loss, which
+    # no gain replacement reaches, and the gaining player orders them that way
+    # (616.1, see `life_gain_becomes_loss`). No `LIFE_GAINED`; the loss fires
+    # `LIFE_LOST` through `lose_life`, its own replacements included.
+    if life_gain_becomes_loss(state, pid):
+        lose_life(state, pid, amount, source)
         return 0
     # "You gain twice that much life instead" (614.1a). After the lock for the
     # reason `lose_life` reads its multiplier after it: twice nothing is nothing.

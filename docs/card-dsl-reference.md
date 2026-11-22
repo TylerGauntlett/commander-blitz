@@ -676,7 +676,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_empty_draw` | yes |  | If the player would draw from an empty library, something else happens. | [Static abilities](card-dsl.md#static-abilities) |
 | `replace_explore` |  | yes | If a matching permanent would explore, it explores, then explores again. | [Exploring twice](card-dsl-cookbook.md#exploring-twice) |
 | `replace_graveyard` |  | yes | If a matching card would go to a graveyard, it goes elsewhere. | [Static abilities](card-dsl.md#static-abilities) |
-| `replace_life_gain` | yes |  | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
+| `replace_life_gain` | yes |  | If the player would gain life, they gain more, or lose that much, instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | yes |  | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
 | `replace_lose_game` | yes |  | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | yes |  | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |
@@ -745,7 +745,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `plot_cost_reduction` | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `replace_draw` | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | If the player would draw from an empty library, something else happens. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
-| `replace_life_gain` | If the player would gain life, they gain more instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
+| `replace_life_gain` | If the player would gain life, they gain more, or lose that much, instead. | ["If you would gain life, you gain twice that much life instead"](card-dsl-cookbook.md#if-you-would-gain-life-you-gain-twice-that-much-life-instead) |
 | `replace_life_loss` | If the player would lose life, they lose more instead. | ["If a player would lose life, they lose twice that much instead"](card-dsl-cookbook.md#if-a-player-would-lose-life-they-lose-twice-that-much-instead) |
 | `replace_lose_game` | If the controller would lose the game, `effects` happen instead (exiling this permanent, setting the life total). | ["If you would lose the game, instead exile it and your life total becomes 1"](card-dsl-cookbook.md#if-you-would-lose-the-game-instead-exile-it-and-your-life-total-becomes-1) |
 | `replace_mill` | If the player would mill, they mill more instead. | [Doubling a mill](card-dsl-cookbook.md#doubling-a-mill) |

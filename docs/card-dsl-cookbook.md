@@ -1896,6 +1896,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_addend": 1 }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "opponent", "lose_instead": true }
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "draw_limit", "affects_player": "opponent", "amount": { "const": 1 } }
 { "kind": "static", "effect": "cant_search_library", "affects_player": "opponent" }
@@ -9579,6 +9580,30 @@ the life: under an Angel and an Archive a gain of 3 is (3+1)×2 = 8 or 3×2+1 = 
 applies every addend before every multiplier, the larger gain and the order the
 gaining player picks, whichever permanent arrived first. A player who wanted the
 smaller gain cannot have it; that divergence is in `docs/rules-coverage.md`.
+
+### "If an opponent would gain life, that player loses that much life instead"
+
+```jsonc
+// Plague Drone, Tainted Remedy
+{ "kind": "static",
+  "text": "If an opponent would gain life, that player loses that much life instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "opponent",
+  "lose_instead": true }
+```
+
+The third axis of the same static, exclusive with `gain_multiplier` and
+`gain_addend` (two is a load error); only `true` is accepted. The gain never
+happens — no `LIFE_GAINED`, so no "whenever you gain life" payoff — and the
+player loses that much life through `lose_life`, one `LIFE_LOST`, so a loss
+replacement such as Bloodletter of Aclazotz applies to it. Lifelink reaches it.
+Against a gain doubler or addend the gaining player orders the replacements
+(616.1) and, once this one applies, the event is a loss no gain replacement
+touches: `gain_life` applies it first, so the loss is the unmodified amount.
+A second one finds nothing left to replace (614.5). `cant_gain_life` and a
+locked life total win: a gain that cannot happen is no event, and nobody loses
+life. Not `cant_gain_life` (nobody loses life) and not a `you_gain_life`
+trigger with `lose_life` (the gain happens, then the stack).
 
 ## "Your opponents can't gain life"
 

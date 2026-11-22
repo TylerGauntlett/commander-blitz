@@ -225,6 +225,32 @@ def life_gain_addend(state: GameState, pid: int) -> int:
     return addend
 
 
+def life_gain_becomes_loss(state: GameState, pid: int) -> bool:
+    """Would a life gain by ``pid`` become a loss of that much life?  Usually false.
+
+    Plague Drone, Tainted Remedy: "If an opponent would gain life, that player
+    loses that much life instead."  The ``lose_instead`` axis of
+    ``replace_life_gain``, read through `_active_player_statics` like the other
+    two, so a condition is asked and the replacement lifts when its source
+    leaves.
+
+    **616.1 against the other axes.**  The gaining player orders the
+    replacements, and once this one applies the event is a life loss, which no
+    gain replacement touches any more (616.1f: only the replacements that now
+    apply are considered).  So the gaining player, given the choice, applies it
+    first and loses the unmodified amount rather than a doubled or increased
+    one; `primitives.gain_life` cannot ask and makes that pick for them.  A
+    second Drone has nothing left to replace (614.5).  The loss is an ordinary
+    one, so a loss replacement such as Bloodletter of Aclazotz still applies to
+    it.
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, "replace_life_gain")
+        if static.get("lose_instead")
+    )
+
+
 def player_cant_gain_life(state: GameState, pid: int) -> bool:
     """Is ``pid`` forbidden from gaining life right now?  Usually false.
 

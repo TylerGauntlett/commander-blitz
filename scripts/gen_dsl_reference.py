@@ -1126,7 +1126,7 @@ STATICS: dict[str, Entry] = {
     "replace_empty_draw": ("If the player would draw from an empty library, something else happens.",
                            None),
     "replace_graveyard": ("If a matching card would go to a graveyard, it goes elsewhere.", None),
-    "replace_life_gain": ("If the player would gain life, they gain more instead.",
+    "replace_life_gain": ("If the player would gain life, they gain more, or lose that much, instead.",
                           '"If you would gain life, you gain twice that much life instead"'),
     "replace_life_loss": ("If the player would lose life, they lose more instead.",
                           '"If a player would lose life, they lose twice that much instead"'),

@@ -3965,8 +3965,8 @@ card's own owner's copy of that zone.
 
 **Two axes, one per static.** `damage_multiplier` is "double that damage" (2 or
 more) and `damage_addend` is "that much damage plus N" (1 or more); the loader
-requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`
-and `gain_addend`. Several statics multiply and add independently, each applied
+requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`,
+`gain_addend` and `lose_instead`. Several statics multiply and add independently, each applied
 once to the event (614.5), so two Thors add 2. The near miss for the addend is a
 "whenever a source you control deals damage" trigger dealing 1 more: that is a
 second damage event on the stack, not a bigger one.

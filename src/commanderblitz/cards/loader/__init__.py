@@ -6631,12 +6631,34 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # "twice that much" (`gain_multiplier`) and "that much plus 1"
         # (`gain_addend`, Angel of Vitality). One static carrying both would be
         # a single replacement whose internal order nothing prints.
-        if model.gain_multiplier is not None and model.gain_addend is not None:
-            raise DslError(
-                f"{where}: replace_life_gain takes 'gain_multiplier' (\"twice "
-                f"that much\") or 'gain_addend' (\"that much plus 1\"), not both"
+        #
+        # A third axis, "that player loses that much life instead" (Plague
+        # Drone, Tainted Remedy), turns the gain into a loss and is exclusive
+        # with both: a static that doubled the gain *and* made it a loss would
+        # be two replacements in one, in an order nothing prints.
+        axes = [
+            key
+            for key, value in (
+                ("gain_multiplier", model.gain_multiplier),
+                ("gain_addend", model.gain_addend),
+                ("lose_instead", model.lose_instead),
             )
-        if model.gain_multiplier is not None:
+            if value is not None
+        ]
+        if len(axes) > 1:
+            raise DslError(
+                f"{where}: replace_life_gain takes one of 'gain_multiplier' "
+                f"(\"twice that much\"), 'gain_addend' (\"that much plus 1\") "
+                f"or 'lose_instead' (\"loses that much life instead\"), not both "
+                f"({', '.join(axes)})"
+            )
+        if model.lose_instead is not None:
+            if model.lose_instead is not True:
+                raise DslError(
+                    f"{where}.lose_instead: only true means anything; leave the "
+                    f"key out for a gain that stays a gain"
+                )
+        elif model.gain_multiplier is not None:
             if model.gain_multiplier < 2:
                 raise DslError(
                     f"{where}.gain_multiplier: must be 2 or more; "
@@ -6652,20 +6674,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         else:
             raise DslError(
                 f"{where}: replace_life_gain needs 'gain_multiplier' -- what the "
-                f"life gain is multiplied by -- or 'gain_addend' -- what is "
-                f"added to it"
+                f"life gain is multiplied by -- 'gain_addend' -- what is "
+                f"added to it -- or 'lose_instead' -- the gain becomes a loss"
             )
         if model.affects is not None or model.amount is not None:
             # "If you would gain life" names a player, and the size is
             # `gain_multiplier` / `gain_addend`; nothing reads either key.
             raise DslError(
                 f"{where}: replace_life_gain takes 'affects_player', "
-                f"'gain_multiplier' or 'gain_addend', and an optional "
-                f"'condition', and no 'affects' or 'amount'"
+                f"'gain_multiplier', 'gain_addend' or 'lose_instead', and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
             )
-    elif model.gain_multiplier is not None or model.gain_addend is not None:
+    elif (
+        model.gain_multiplier is not None
+        or model.gain_addend is not None
+        or model.lose_instead is not None
+    ):
         raise DslError(
-            f"{where}: 'gain_multiplier'/'gain_addend' only mean anything on a "
+            f"{where}: 'gain_multiplier'/'gain_addend'/'lose_instead' only mean anything on a "
             f"replace_life_gain static, not on {model.effect!r}"
         )
     if model.effect == "replace_draw":
@@ -7937,6 +7963,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["gain_multiplier"] = model.gain_multiplier
     if model.gain_addend is not None:
         static["gain_addend"] = model.gain_addend
+    if model.lose_instead:
+        static["lose_instead"] = True
     if model.draw_multiplier is not None:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:

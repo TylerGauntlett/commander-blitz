@@ -884,7 +884,11 @@ def reference() -> dict:
             " it is NOT a `you_gain_life` trigger that gains again. \"You gain"
             " that much life plus 1 instead\" is the same static with"
             " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
-            " never both).",
+            " never both). \"If an opponent would gain life, that player loses"
+            " that much life instead\" is the same static with"
+            " `affects_player: \"opponent\"` and `lose_instead: true` (no"
+            " `LIFE_GAINED`; NOT `cant_gain_life`, NOT a `you_gain_life`"
+            " trigger with `lose_life`).",
             "\"It deals that much damage plus 1 instead\" is the static"
             " `replace_damage` with `damage_addend: 1` in place of"
             " `damage_multiplier` (one or the other, never both), filtered as"
