@@ -456,6 +456,24 @@ the top card. One card asks nothing. Each owner orders only their own cards.
 Refused beside `from_top` (an ordinal is one position, not a run) and beside
 `owner_chooses` (a per-card choice of end), and on any other op.
 
+`random_order: true` is "…on the bottom of their library **in a random order**"
+(Endurance) and "shuffle that pile and put it back on top of your library"
+(Triumph of Saint Katherine): the moved cards go to the stated end in an order
+drawn from the game's RNG, and nothing else in the library moves. A `shuffle`
+op afterwards is the near miss — it reorders the whole library. Triumph's pile
+is two exiles into one binding (`look_at_top` assigns its `as`, `exile`
+extends it) and a return of exactly that binding, so "if you do" needs no
+condition: only what was exiled goes back.
+
+```jsonc
+{ "op": "look_at_top", "amount": 6, "destination": "exile", "face_down": true,
+  "objects": { "count": "all" }, "as": "pile" },
+{ "op": "exile", "objects": { "self_only": true, "zone": "graveyard" }, "as": "pile" },
+{ "op": "put_on_top", "random_order": true, "objects": { "binding": "pile" } }
+```
+
+Refused beside `any_order`, `from_top` and `owner_chooses`, and on any other op.
+
 `as` on `put_on_top` binds **the cards that arrived in a library** -- the rest of
 the Box's sentence, "then draws **that many** cards":
 

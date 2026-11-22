@@ -1644,6 +1644,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # card and one question per card; a run arranged together has to
             # go to one end, so the two sentences cannot share an effect.
             raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
+    if "random_order" in effect:
+        # "…in a random order" (Endurance) and "shuffle that pile and put it
+        # back on top" (Triumph of Saint Katherine). Only `put_on_top` reads
+        # it; elsewhere it would load and leave the pile in pool order, which
+        # its owner can predict.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'random_order' randomises cards put into a library, and "
+                f"only put_on_top reads it, not {op!r}"
+            )
+        if not isinstance(effect["random_order"], bool):
+            raise DslError(f"{where}: 'random_order' is true or false")
+        if effect["random_order"]:
+            for other in ("any_order", "from_top", "owner_chooses"):
+                # `any_order` is the owner's arrangement, the opposite sentence;
+                # an ordinal is one position, not a run; a per-card choice of
+                # end splits the pile the randomness is over.
+                if effect.get(other):
+                    raise DslError(
+                        f"{where}: 'random_order' cannot be combined with {other!r}"
+                    )
     if "cast_free" in effect and op not in ("look_at_top", "exile_until"):
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)

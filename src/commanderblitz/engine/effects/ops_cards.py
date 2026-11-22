@@ -3323,6 +3323,10 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     cards went in pool order, which for a hand is whatever order it was held in
     and nobody chose. See :func:`_in_owners_order`.
 
+    ``random_order`` is "…in a random order" and "shuffle that pile and put it
+    back": the moved cards go to the chosen end in an order nobody picked, the
+    library under or over them untouched.
+
     ``as`` records **the cards that actually went into a library**, read back
     as ``{"count": {"binding": …}}`` -- the Box's "then draws **that many**
     cards". Nothing else can say that number: `cards_in_hand` read after the
@@ -3341,6 +3345,13 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
     if spec.get("any_order"):
         oids = yield from _in_owners_order(ctx, oids, bottom)
+    elif spec.get("random_order"):
+        # "…shuffle that pile and put it back on top of your library"
+        # (Triumph of Saint Katherine); "…on the bottom of their library in a
+        # random order" (Endurance). Only these cards are randomised: a
+        # `shuffle` afterwards would reorder the whole library, and pool order
+        # would tell the owner exactly where each card sits.
+        oids = ctx.state.rng.shuffled(list(oids))
     moved: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
