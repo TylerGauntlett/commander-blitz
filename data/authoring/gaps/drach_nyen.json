@@ -1,0 +1,16 @@
+{
+  "card_id": "drach_nyen",
+  "name": "Drach'Nyen",
+  "oracle_text": "Echo of the First Murder — When Drach'Nyen enters, exile up to one target creature.\nDaemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+  "blocked_sentences": [
+    "Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power."
+  ],
+  "needs": [{
+    "capability": "linked_exiled_card_power",
+    "kind": "value",
+    "what": "a static magnitude reading the printed power of the card(s) exiled with this source by its linked enters trigger (607 linked abilities): a static_value_keys leaf such as {\"power_of_exiled\": {\"exiled_with\": \"self\"}} (or extreme_value with pick over power) so a buff on equipped creature is +X/+0 with X the exiled card's power, 0 if nothing was exiled",
+    "why_existing_wont_do": "static_value_keys has no power_of (that is an effect-side value_keys leaf, evaluated once, so a pump would wear off and miss re-equips); extreme_value reads only mana value, and static_value_count_filter_keys has no exiled_with, so count/extreme_value cannot select the linked exiled card. The exile op's `link: true` exists but no static value reads the linked card's power"
+  }],
+  "closest_existing": ["extreme_value", "power_of", "exile link"],
+  "confidence": "high"
+}

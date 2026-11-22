@@ -4027,6 +4027,11 @@
       "graveyard"
     ]
   },
+  "chaos_defiler": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "chaos_terminator_lord": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5582,6 +5587,10 @@
   "daring_thunder_thief": {
     "zone": "battlefield"
   },
+  "dark_apostle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dark_deal": {
     "graveyard_size": {
       "0": 4
@@ -6120,6 +6129,9 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "deny_reality": {
+    "zone": "graveyard"
   },
   "deny_the_witch": {
     "life": {
@@ -11460,6 +11472,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "herald_of_slaanesh": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "herald_of_the_dreadhorde": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11477,6 +11493,10 @@
     "zone": "battlefield"
   },
   "heraldic_banner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "heralds_of_tzeentch": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

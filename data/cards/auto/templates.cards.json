@@ -49264,6 +49264,114 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "as": "cannon_chosen",
+                  "objects": {
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a nonland permanent that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "cannon_chosen",
+                "count": 1,
+                "random": true
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "cannon_chosen",
+                  "objects": {
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a nonland permanent that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "cannon_chosen",
+                "count": 1,
+                "random": true
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "chaos_defiler",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Chaos Defiler",
+      "oracle_text": "Trample\nBattle Cannon — When this creature enters or dies, for each opponent, choose a nonland permanent that player controls. Destroy one of them chosen at random.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Construct"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "keywords": [
                 "double_strike"
               ],
@@ -68055,6 +68163,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "max_mana_value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "op": "cascade"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "The next noncreature spell you cast this turn has cascade.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "not_types": [
+                      "Creature"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade. (When you cast that spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dark_apostle",
+      "mana_cost": "{3}{R}",
+      "name": "Dark Apostle",
+      "oracle_text": "Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade. (When you cast that spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Warlock"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -73938,6 +74108,61 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "deny_reality",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Deny Reality",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nReturn target permanent to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -135656,6 +135881,58 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Demon"
+            ]
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Locus of Slaanesh — Demon spells you cast cost {2} less to cast."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Demon"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Demons you control have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "herald_of_slaanesh",
+      "mana_cost": "{2}{R}",
+      "name": "Herald of Slaanesh",
+      "oracle_text": "Locus of Slaanesh — Demon spells you cast cost {2} less to cast.\nOther Demons you control have haste.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -135980,6 +136257,49 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "heralds_of_tzeentch",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Heralds of Tzeentch",
+      "oracle_text": "Flying\nCascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

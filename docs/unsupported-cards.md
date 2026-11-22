@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **449** capabilities.
+**534 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -294,6 +294,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
+| [linked-exiled-card-power](#linked-exiled-card-power) | 1 | 12866 | value |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
@@ -351,6 +352,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
+| [plaguebearer-of-nurgle-token](#plaguebearer-of-nurgle-token) | 1 | 5157 | token |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
 | [playable-condition-attacked-with-token](#playable-condition-attacked-with-token) | 1 | 3339 | value |
@@ -5171,6 +5173,20 @@ Blocks **1** card.
 
 </details>
 
+## linked-exiled-card-power
+
+Blocks **1** card.
+
+- **(value)** a static magnitude reading the printed power of the card(s) exiled with this source by its linked enters trigger (607 linked abilities): a static_value_keys leaf such as {"power_of_exiled": {"exiled_with": "self"}} (or extreme_value with pick over power) so a buff on equipped creature is +X/+0 with X the exiled card's power, 0 if nothing was exiled
+  <br>Why the existing vocabulary won't do: static_value_keys has no power_of (that is an effect-side value_keys leaf, evaluated once, so a pump would wear off and miss re-equips); extreme_value reads only mana value, and static_value_count_filter_keys has no exiled_with, so count/extreme_value cannot select the linked exiled card. The exile op's `link: true` exists but no static value reads the linked card's power
+
+<details><summary>Cards waiting on this</summary>
+
+- **Drach'Nyen** (rank 12866) — `drach_nyen`
+  - Daemon Sword — Equipped creature has menace and gets +X/+0, where X is the exiled card's power.
+
+</details>
+
 ## living-metal
 
 Blocks **1** card.
@@ -5981,6 +5997,20 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
+
+</details>
+
+## plaguebearer-of-nurgle-token
+
+Blocks **1** card.
+
+- **(token)** a 1/3 black Demon creature token named Plaguebearer of Nurgle (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has no 1/3 black Demon; the only 1/3 is wall_1_3_w_defender and the Demon tokens (cherubael_4_4_b_flying, demon_x_x_b_flying, vampire_demon_4_3_wb_flying) differ in size, name or keywords. The rest of the line is expressible: end_step trigger, lose_life for each opponent, then for_each_player over opponents with an if comparing life_of that player < life_of you around create_token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Great Unclean One** (rank 5157) — `great_unclean_one`
+  - Reverberating Summons — At the beginning of your end step, each opponent loses 2 life. Then for each opponent who has less life than you, create a 1/3 black Demon creature token named Plaguebearer of Nurgle.
 
 </details>
 

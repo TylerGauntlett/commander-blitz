@@ -44322,12 +44322,12 @@
     },
     "Chaos Defiler": {
       "edhrec_rank": 6221,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Defiler",
-      "reason": "no template for: Battle Cannon — When this creature enters or dies, for each opponent, choose a nonland per",
+      "reason": "",
       "scryfall_id": "1c0f2873-5849-4cab-855a-2fbbc41dbb6c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaos Dragon": {
@@ -60882,12 +60882,12 @@
     },
     "Dark Apostle": {
       "edhrec_rank": 11755,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Apostle",
-      "reason": "no template for: Gift of Chaos — {3}, {T}: The next noncreature spell you cast this turn has cascade",
+      "reason": "",
       "scryfall_id": "6e346481-c01c-4a93-876e-1130c5edd970",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Banishing": {
@@ -66542,12 +66542,12 @@
     },
     "Deny Reality": {
       "edhrec_rank": 13091,
-      "gate": "template",
+      "gate": null,
       "name": "Deny Reality",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "63976cce-67ee-40c5-8cfa-0a576bb70e76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deny the Divine": {
@@ -125432,12 +125432,12 @@
     },
     "Helbrute": {
       "edhrec_rank": 19686,
-      "gate": "template",
+      "gate": "residual",
       "name": "Helbrute",
-      "reason": "no template for: Sarcophagus — You may cast this card from your graveyard by exiling another creature card ",
+      "reason": "printed text not represented: Sarcophagus — You may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs",
       "scryfall_id": "27cc91c9-39dc-455c-aed0-6334bb6e1270",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Helga, Skittish Seer": {
@@ -126272,12 +126272,12 @@
     },
     "Herald of Slaanesh": {
       "edhrec_rank": 5740,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Slaanesh",
-      "reason": "no template for: Locus of Slaanesh — Demon spells you cast cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "04a1852a-9b23-4834-852e-b018df88f497",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Torment": {
@@ -126382,12 +126382,12 @@
     },
     "Heralds of Tzeentch": {
       "edhrec_rank": 9099,
-      "gate": "template",
+      "gate": null,
       "name": "Heralds of Tzeentch",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "0aeba983-c525-42d0-997d-1b678ea30d82",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herbal Poultice": {
