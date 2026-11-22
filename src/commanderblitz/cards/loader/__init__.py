@@ -6284,11 +6284,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
-        if model.affects_abilities.get("any") and model.targeting is None and not model.first_each_turn:
+        if model.from_graveyard:
+            # "Activated abilities of cards in your graveyard": the source is a
+            # card, not a permanent, so the permanent-describing keys have
+            # nothing to read -- `affects` is matched on the battlefield only,
+            # and the first-activation snapshots describe permanents.
+            if model.affects is not None or model.first_each_turn or model.first_during_your_turn:
+                raise DslError(
+                    f"{where}: from_graveyard discounts abilities of cards in your "
+                    f"graveyard; 'affects', 'first_each_turn' and "
+                    f"'first_during_your_turn' describe permanents"
+                )
+            if who != "you":
+                raise DslError(
+                    f"{where}: from_graveyard is 'your graveyard', which only you "
+                    f"activate from; 'activated_by' must be 'you', got {who!r}"
+                )
+        if model.affects_abilities.get("any") and model.targeting is None and not (
+            model.first_each_turn or model.from_graveyard
+        ):
             # A mana ability is priced by the payment solver, which never
             # reaches this static, so "every activated ability" with nothing
             # else said would quietly skip them. A `targeting` clause makes the
-            # gap moot: a mana ability has no targets (605.1a).
+            # gap moot: a mana ability has no targets (605.1a). So does
+            # `from_graveyard`: the solver taps only permanents, and an ability
+            # of a graveyard card is activated by hand and priced through here.
             raise DslError(
                 f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
                 f"mana abilities are priced where this static is not read"
@@ -6404,6 +6424,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
             f"ability_cost_reduction or ability_cost_increase static, not on "
             f"{model.effect!r}"
+        )
+    if (model.from_graveyard or model.mana_floor is not None) and (
+        model.effect != "ability_cost_reduction"
+    ):
+        raise DslError(
+            f"{where}: 'from_graveyard' and 'mana_floor' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+    if model.mana_floor is not None and model.mana_floor < 1:
+        raise DslError(
+            f"{where}.mana_floor: the fewest mana the discount may leave, at least 1 "
+            f"(every reduction already stops at zero), got {model.mana_floor!r}"
         )
     if model.first_each_turn and model.effect != "ability_cost_reduction":
         raise DslError(
@@ -8078,6 +8110,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["first_during_your_turn"] = True
     if model.first_each_turn:
         static["first_each_turn"] = True
+    if model.from_graveyard:
+        static["from_graveyard"] = True
+    if model.mana_floor is not None:
+        static["mana_floor"] = model.mana_floor
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_addend is not None:

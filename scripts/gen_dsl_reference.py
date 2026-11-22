@@ -979,7 +979,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
 STATICS: dict[str, Entry] = {
     "ability_cost_increase": ("Activated abilities of a class (`equip`, or `any` beside `targeting`) cost more generic mana (`cost.mana`); `activated_by` names the activator, `targeting` is read against the chosen targets.",
                               "…and on activated abilities"),
-    "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting` or `first_each_turn`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included.",
+    "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting`, `first_each_turn` or `from_graveyard`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn; `first_each_turn` to your first activation each turn of an ability whose source matches `affects`, mana abilities included; `from_graveyard` to abilities of cards in your graveyard; `mana_floor` stops its cut where the cost keeps that many mana.",
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),

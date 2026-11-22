@@ -2025,13 +2025,56 @@ def ability_cost_reduction(
     turn, of an ability whose source matches ``affects``, mana abilities
     included; see `_first_activation_each_turn`.
 
+    ``from_graveyard`` is "activated abilities **of cards in your
+    graveyard**" (Convergence of Dominion): the ability's source must be a card
+    in the graveyard of the static's controller, and is never a permanent.
+
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
-    reduced price is also charged at it.
+    reduced price is also charged at it. A static with a ``mana_floor`` is not
+    in it; `ability_cost_floored_reductions` answers for those.
     """
+    return sum(
+        amount
+        for static, amount in _ability_cost_reductions(state, pid, ability, source_oid, targets)
+        if static.get("mana_floor") is None
+    )
+
+
+def ability_cost_floored_reductions(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None = None,
+) -> list[tuple[int, int]]:
+    """The discounts that may not take an ability's mana below a floor.
+
+    "This effect can't reduce the mana in that ability's activation cost to
+    less than one mana" -- Convergence of Dominion. ``(floor, amount)`` per
+    matching `ability_cost_reduction` with a ``mana_floor``, highest floor
+    first: `costs.ability_mana` applies them after every unfloored discount, and
+    in that order, because 601.2f lets the payer order reductions and that
+    order leaves the cheapest total.
+    """
+    found = [
+        (int(static["mana_floor"]), amount)
+        for static, amount in _ability_cost_reductions(state, pid, ability, source_oid, targets)
+        if static.get("mana_floor") is not None
+    ]
+    return sorted(found, key=lambda pair: -pair[0])
+
+
+def _ability_cost_reductions(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None,
+) -> Iterator[tuple[Mapping[str, Any], int]]:
+    """Each `ability_cost_reduction` that reaches this activation, with its amount."""
     if ability is None:
-        return 0
-    total = 0
+        return
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "ability_cost_reduction":
             continue
@@ -2052,7 +2095,13 @@ def ability_cost_reduction(
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
-        if static.get("first_each_turn"):
+        if static.get("from_graveyard"):
+            # "Cards in **your** graveyard": the card's owner is the static's
+            # controller, since a card goes to its owner's graveyard (400.3).
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or obj.zone is not Zone.GRAVEYARD or obj.owner != source_obj.controller:
+                continue
+        elif static.get("first_each_turn"):
             # Asks `affects` of a snapshot, this activation's and every earlier
             # one's alike, so both are judged on the same characteristics.
             if not _first_activation_each_turn(state, pid, source_oid, source_obj, static):
@@ -2076,8 +2125,7 @@ def ability_cost_reduction(
             state, pid, source_obj, static
         ):
             continue
-        total += _static_value(state, static.get("amount"), source_obj)
-    return total
+        yield static, _static_value(state, static.get("amount"), source_obj)
 
 
 def _first_matching_activation(

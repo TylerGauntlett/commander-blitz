@@ -52,6 +52,7 @@ from .mana import (
 )
 from .objects import MINUS_ONE
 from .player_statics import (
+    ability_cost_floored_reductions,
     ability_cost_reduction,
     ability_mana_tax,
     any_color_added_on_tap,
@@ -1092,6 +1093,16 @@ def ability_mana(
     less -= ability_mana_tax(state, pid, ability, source_oid, targets)
     if less:
         req = req.with_generic(req.generic - less)
+    # "This effect can't reduce the mana in that ability's activation cost to
+    # less than one mana" -- Convergence of Dominion. After every unfloored
+    # discount and the tax, so the floor bounds that one static's own cut and
+    # nothing else's: each may take generic only down to where the cost still
+    # holds ``floor`` mana, its coloured pips counted.
+    for floor, amount in ability_cost_floored_reductions(state, pid, ability, source_oid, targets):
+        pips = req.total - req.generic
+        cut = min(amount, req.generic, max(0, req.generic + pips - floor))
+        if cut > 0:
+            req = req.with_generic(req.generic - cut)
     # Chromatic Orrery, **after** the discount: "you may spend mana as though it
     # were mana of any color" is a rule about which mana pays a pip, not about
     # how many pips there are, and the clamp above has to have run first or

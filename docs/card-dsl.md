@@ -3293,6 +3293,36 @@ since an artifact you activate need not be yours.
 The near miss is `first_during_your_turn`, which counts only the activator's own
 turn and picks activations out by their targets.
 
+### "Activated abilities of cards in your graveyard cost {2} less … not to less than one mana"
+
+```jsonc
+// Convergence of Dominion
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "from_graveyard": true,
+  "mana_floor": 1,
+  "condition": { "exists": { "controller": "you", "is_commander": true,
+                             "zone": "battlefield" } },
+  "amount": { "const": 2 } }
+```
+
+`from_graveyard` limits the discount to abilities whose source is a card in the
+graveyard of the static's controller: an unearth, a Reassembling Skeleton. The
+same ability on a permanent is not discounted. The loader accepts
+`affects_abilities: {"any": true}` beside it without `targeting`, because the
+payment solver taps only permanents, so a graveyard card's ability is always
+priced through `costs.ability_mana`. It refuses `affects`, `first_each_turn`,
+`first_during_your_turn` and any `activated_by` but `you` beside it.
+
+`mana_floor` is "this effect can't reduce the mana in that ability's activation
+cost to less than N mana". It bounds only this static's cut: generic comes off
+until the cost holds `mana_floor` mana, coloured pips counted, so {2} becomes
+{1}, {1}{B} becomes {B} and {B} stays {B}. `costs.ability_mana` applies floored
+discounts after every unfloored one and the tax, highest floor first, so an
+unfloored discount beside it still reaches zero. It must be at least 1, since
+every reduction already stops at zero generic.
+
 ### A delayed trigger scoped to one chosen object
 
 ```jsonc
