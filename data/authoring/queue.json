@@ -37712,12 +37712,12 @@
     },
     "Caged Sun": {
       "edhrec_rank": 899,
-      "gate": "template",
+      "gate": null,
       "name": "Caged Sun",
-      "reason": "no template for: As this artifact enters, choose a color",
+      "reason": "",
       "scryfall_id": "d9e97c13-c3a3-4d7a-9598-a7f5e4e076a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caged Zombie": {
@@ -105932,12 +105932,12 @@
     },
     "Gauntlet of Power": {
       "edhrec_rank": 2522,
-      "gate": "template",
+      "gate": null,
       "name": "Gauntlet of Power",
-      "reason": "no template for: As this artifact enters, choose a color",
+      "reason": "",
       "scryfall_id": "1b98e9c2-8843-4b59-828c-af54e1628e98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gauntlets of Chaos": {

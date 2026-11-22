@@ -41720,6 +41720,74 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              {
+                "chosen_color_of": "self"
+              }
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control of the chosen color get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "add_mana": {
+            "chosen_color_of": "self"
+          },
+          "affects_player": "you",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "any_mana_ability": true,
+            "produced": {
+              "chosen_color_of": "self"
+            },
+            "types": [
+              "Land"
+            ]
+          },
+          "text": "Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "caged_sun",
+      "mana_cost": "{6}",
+      "name": "Caged Sun",
+      "oracle_text": "As this artifact enters, choose a color.\nCreatures you control of the chosen color get +1/+1.\nWhenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -114767,6 +114835,76 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              {
+                "chosen_color_of": "self"
+              }
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures of the chosen color get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "add_mana": {
+            "chosen_color_of": "self"
+          },
+          "affects_player": "any",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "produced": {
+              "chosen_color_of": "self"
+            },
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "text": "Whenever a basic land is tapped for mana of the chosen color, its controller adds an additional one mana of that color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gauntlet_of_power",
+      "mana_cost": "{5}",
+      "name": "Gauntlet of Power",
+      "oracle_text": "As this artifact enters, choose a color.\nCreatures of the chosen color get +1/+1.\nWhenever a basic land is tapped for mana of the chosen color, its controller adds an additional one mana of that color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -3465,6 +3465,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "caged_sun": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cait_cage_brawler": {
     "granted": {
       "count": 1,
@@ -9752,6 +9756,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "gauntlet_of_power": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gavel_of_the_righteous": {

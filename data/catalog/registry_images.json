@@ -2943,6 +2943,10 @@
     "artist": "Alexander Gering",
     "scryfall_id": "246a7176-98bc-4f54-aa61-38747420f178"
   },
+  "caged_sun": {
+    "artist": "Gaboleps",
+    "scryfall_id": "d9e97c13-c3a3-4d7a-9598-a7f5e4e076a4"
+  },
   "cait_cage_brawler": {
     "artist": "Joseph Meehan",
     "scryfall_id": "499a55e3-d231-4c2b-9035-d7835a62e649"
@@ -8123,6 +8127,10 @@
   "gau_feral_youth": {
     "artist": "Egl\u0117 Mosakait\u0117",
     "scryfall_id": "89175ce1-0746-4ba1-970e-617d134b0527"
+  },
+  "gauntlet_of_power": {
+    "artist": "Ron Spears",
+    "scryfall_id": "1b98e9c2-8843-4b59-828c-af54e1628e98"
   },
   "gavel_of_the_righteous": {
     "artist": "David Palumbo",

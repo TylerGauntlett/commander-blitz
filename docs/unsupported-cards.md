@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **452** capabilities.
+**533 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -311,7 +311,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
-| [mana-trigger-chosen-color-produced](#mana-trigger-chosen-color-produced) | 1 | 899 | static_effect |
 | [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [mark-of-the-rani-token](#mark-of-the-rani-token) | 1 | 13009 | token |
@@ -5412,20 +5411,6 @@ Blocks **1** card.
 
 - **Barbflare Gremlin** (rank 7929) — `barbflare_gremlin`
   - Whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced. Then that land deals 1 damage to that player.
-
-</details>
-
-## mana-trigger-chosen-color-produced
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap static whose tapped_permanent.produced may be {"chosen_color_of": "self"}: it fires once when a land's mana ability adds at least one mana of the source's chosen color, and adds one more of that color (the add_mana half already accepts {"chosen_color_of": "self"}, as Utopia Sprawl does). Ideally keyed on a land's mana ability producing it rather than only on tapping, so a land that sacrifices for mana also counts
-  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {types: [Land]} matches every land tap, so without a produced filter it would add the chosen color even when a land made a different color (a strictly stronger card). tapped_permanent.produced is read by player_statics._tap_statics through parse_mana_production as a literal mana string, so it cannot name the chosen color; double_land_mana doubles all of a land's mana rather than adding one of a chosen color
-
-<details><summary>Cards waiting on this</summary>
-
-- **Caged Sun** (rank 899) — `caged_sun`
-  - Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.
 
 </details>
 
