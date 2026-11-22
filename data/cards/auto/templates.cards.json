@@ -28548,6 +28548,113 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "astartes_warrior_2_2_w_vigilance"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Each opponent sacrifices a creature of their choice."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "player_count": {
+                      "cmp": "<",
+                      "objects": {
+                        "types": [
+                          "Creature"
+                        ]
+                      },
+                      "player": "each_opponent",
+                      "than": {
+                        "count": {
+                          "controller": "you",
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Draw two cards for each opponent who controls fewer creatures than you."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "birth_of_the_imperium",
+      "mana_cost": "{2}{W}{U}{B}",
+      "name": "Birth of the Imperium",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent you have.\nII — Each opponent sacrifices a creature of their choice.\nIII — Draw two cards for each opponent who controls fewer creatures than you.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -72054,6 +72161,78 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "astartes_warrior_2_2_w_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create X 2/2 white Astartes Warrior creature tokens with vigilance.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "condition": {
+            "all": [
+              {
+                "is_your_turn": true
+              },
+              {
+                "not": {
+                  "exists": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              }
+            ]
+          },
+          "cost": {
+            "exile_self": true,
+            "mana": "{X}{2}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "astartes_warrior_2_2_w_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{2}{W}, Exile this enchantment: Create X 2/2 white Astartes Warrior creature tokens with vigilance. Activate only if you control no creatures and only during your turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "defenders_of_humanity",
+      "mana_cost": "{X}{2}{W}",
+      "name": "Defenders of Humanity",
+      "oracle_text": "When this enchantment enters, create X 2/2 white Astartes Warrior creature tokens with vigilance.\n{X}{2}{W}, Exile this enchantment: Create X 2/2 white Astartes Warrior creature tokens with vigilance. Activate only if you control no creatures and only during your turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

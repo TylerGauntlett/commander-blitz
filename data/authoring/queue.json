@@ -25182,12 +25182,12 @@
     },
     "Birth of the Imperium": {
       "edhrec_rank": 7196,
-      "gate": "template",
+      "gate": null,
       "name": "Birth of the Imperium",
-      "reason": "no template for: I — Create a 2/2 white Astartes Warrior creature token with vigilance for each opponent yo",
+      "reason": "",
       "scryfall_id": "26386d35-7768-4b06-afe4-823028d99a48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Birthday Escape": {
@@ -65162,12 +65162,12 @@
     },
     "Defenders of Humanity": {
       "edhrec_rank": 11133,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Defenders of Humanity",
-      "reason": "astartes_warrior_2_2_w_vigilance tokens is 20, expected 27; your battlefield is 53, expected 60",
+      "reason": "",
       "scryfall_id": "495c6b21-3e2b-417c-9387-6747993cbffe",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defenestrate": {

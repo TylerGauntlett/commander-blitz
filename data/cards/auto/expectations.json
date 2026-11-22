@@ -2354,6 +2354,18 @@
       "0": 41
     }
   },
+  "birth_of_the_imperium": {
+    "battlefield_count": 34,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 1,
+      "id": "astartes_warrior_2_2_w_vigilance"
+    },
+    "zone": "battlefield"
+  },
   "bishop_of_wings": {
     "battlefield_count": 33,
     "life": {
@@ -5936,6 +5948,14 @@
   },
   "defend_the_hearth": {
     "zone": "graveyard"
+  },
+  "defenders_of_humanity": {
+    "battlefield_count": 53,
+    "tokens": {
+      "count": 20,
+      "id": "astartes_warrior_2_2_w_vigilance"
+    },
+    "zone": "battlefield"
   },
   "defense_force_aggressor": {
     "zone": "battlefield"
