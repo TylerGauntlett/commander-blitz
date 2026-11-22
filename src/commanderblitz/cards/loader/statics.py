@@ -799,6 +799,15 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.commander_casts_this_game: a static can only ask about "
                 f"'you' (your commanders' casts, rule 903.8), got {who!r}"
             )
+    if "exiled_card_power" in value:
+        # "The exiled card" is the one *this* permanent exiled (607.2a); a
+        # static names no other source, so the only spelling is "self".
+        who = value["exiled_card_power"]
+        if who != "self":
+            raise DslError(
+                f"{where}.exiled_card_power: reads the card exiled with this "
+                f"permanent, so the only spec is 'self', got {who!r}"
+            )
     if "extreme_value" in value:
         _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
     if "distinct" in value:

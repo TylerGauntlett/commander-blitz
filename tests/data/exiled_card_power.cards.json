@@ -1,0 +1,62 @@
+{
+  "_comment": "Cards that exist only for the exiled-card-power test (tests/unit/statics/test_exiled_card_power.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_daemon_sword` is the Drach'Nyen shape: its enters trigger exiles up to one target creature with a link, and its static gives the equipped creature menace and +X/+0 where X is the linked card's power. The */* card is `t_star_beast` from imprint_characteristics.cards.json.",
+  "cards": [
+    {
+      "id": "t_daemon_sword",
+      "name": "Test Daemon Sword",
+      "oracle_text": "When this Equipment enters, exile up to one target creature.\nEquipped creature has menace and gets +X/+0, where X is the exiled card's power.\nEquip {2}",
+      "mana_cost": "{4}{B}{R}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this Equipment enters, exile up to one target creature.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "optional": true,
+              "selector": {"zone": "battlefield", "controller": "any", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "exile", "objects": {"target": "t1"}, "link": true}]
+        },
+        {
+          "kind": "static",
+          "text": "Equipped creature has menace and gets +X/+0, where X is the exiled card's power.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"exiled_card_power": "self"},
+          "toughness": {"const": 0}
+        },
+        {
+          "kind": "static",
+          "text": "Equipped creature has menace and gets +X/+0, where X is the exiled card's power.",
+          "effect": "grant_keyword",
+          "affects": {"attached": true},
+          "keywords": ["menace"]
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {2}",
+          "cost": {"mana": "{2}"},
+          "is_equip": true,
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    }
+  ]
+}

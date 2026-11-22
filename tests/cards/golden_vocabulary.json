@@ -776,6 +776,7 @@
    "counters_on",
    "creatures_died_this_turn",
    "distinct",
+   "exiled_card_power",
    "extreme_value",
    "greatest_commander_mana_value",
    "life_gained_this_turn",

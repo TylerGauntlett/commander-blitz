@@ -855,6 +855,9 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                       None),
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
+    "exiled_card_power": ("The power of the card this permanent exiled, while it stays in exile; "
+                          "`\"self\"` only, 0 with none.",
+                          "A size read off the card this permanent exiled"),
     "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; or `{player, filter}` "
                               "for spells of a type, matched on printed faces.",
                               '"As long as an opponent has cast a spell this turn"'),

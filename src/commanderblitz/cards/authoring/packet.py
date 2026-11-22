@@ -877,6 +877,11 @@ def reference() -> dict:
             " `reflexive_trigger` whose ability reads `{\"binding\": \"paid\"}`."
             " The player picks 1..what they can pay in that colour. NOT `x`"
             " with `{X}` (any colour would pay), NOT `pay.times`, NOT `repeat`.",
+            "\"Equipped creature gets +X/+0, where X is the exiled card's"
+            " power\" beside \"When this enters, exile up to one target"
+            " creature\" is a `buff` static with `power: {\"exiled_card_power\":"
+            " \"self\"}`, the trigger's `exile` carrying `link: true`. NOT"
+            " `power_of` (read once) and NOT `extreme_value`.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"

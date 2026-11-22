@@ -317,6 +317,21 @@ def last_exiled_creature_card(state: GameState, source: GameObject) -> GameObjec
     return None
 
 
+def last_exiled_card(state: GameState, source: GameObject) -> GameObject | None:
+    """The last card exiled with ``source`` that is still there, of any type.
+
+    "The exiled card" of a linked ability pair (607.2a) -- Drach'Nyen's "X is
+    the exiled card's power". `last_exiled_creature_card`'s walk without its
+    creature test: a card exiled as a creature is asked about as the card it is
+    in exile, whatever that is.
+    """
+    for oid in reversed(source.exiled_cards):
+        card = state.objects.get(oid)
+        if card is not None and card.zone is Zone.EXILE and card.exiled_by == source.oid:
+            return card
+    return None
+
+
 def printed_creature_types(card: CardDef) -> frozenset[str]:
     """The creature types a card **face** has wherever it is -- 205.3m and 604.3.
 
@@ -2330,6 +2345,17 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             state.card_of(obj).mana_cost.symbols_of_any(colors)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
         )
+    if "exiled_card_power" in expr:
+        # Drach'Nyen: "Equipped creature ... gets +X/+0, where X is the exiled
+        # card's power." The card linked to this source by its own exile
+        # (`exiled_cards`, so a previous incarnation's card is not found,
+        # 400.7), read off the card in exile with its CDAs (604.3); 0 once it
+        # has left exile or ceased to exist (a token), and 0 when nothing was
+        # exiled.
+        card = last_exiled_card(state, source)
+        if card is None:
+            return 0
+        return card_in_exile_characteristics(state, card)[0]
     if "greatest_commander_mana_value" in expr:
         # Tangleweave Armor: "+X/+X, where X is the greatest mana value among
         # your commanders." Read off the commander's printed card wherever it is

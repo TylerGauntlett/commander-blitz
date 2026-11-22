@@ -1901,6 +1901,12 @@ STATIC_LIFE_LOST_KEYS = frozenset({"life_lost_this_turn"})
 #: graveyard": the effect side's leaf held to ``of: "card_type"`` over a counting
 #: filter off the battlefield, where a card's types are its printed face's and no
 #: layer can change them.
+#: `exiled_card_power` is Drach'Nyen's "+X/+0, where X is the exiled card's
+#: power": the power of the last card linked to this source by its own exile
+#: (607.2a, `exiled_cards`) that is still in exile, read off the card there
+#: with its characteristic-defining abilities (604.3) as Duplicant's size is.
+#: ``"self"`` only. A pipeline input: the link is written by `link_exiled` and
+#: the card's characteristics in exile are its printed ones.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1916,6 +1922,7 @@ STATIC_VALUE_KEYS = (
             "commander_casts_this_game",
             "extreme_value",
             "distinct",
+            "exiled_card_power",
         }
     )
     | STATIC_LIFE_KEYS

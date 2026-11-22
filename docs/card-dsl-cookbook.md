@@ -11913,6 +11913,30 @@ answer), and a non-literal kept subtype.
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
 
+### A size read off the card this permanent exiled
+
+Drach'Nyen: "When Drach'Nyen enters, exile up to one target creature. ...
+Equipped creature has menace and gets +X/+0, where X is the exiled card's power."
+
+```jsonc
+// beside an enters trigger whose `exile` carries `link: true`
+{ "kind": "static", "effect": "buff", "affects": { "attached": true },
+  "power": { "exiled_card_power": "self" }, "toughness": { "const": 0 } }
+```
+
+The static value `exiled_card_power` is the power of the newest card in the
+source's `exiled_cards` still in exile with its `exiled_by` intact
+(`characteristics.last_exiled_card`) — the card its own linked ability exiled
+(607.2a) — read there with its characteristic-defining abilities
+(604.3, `characteristics.card_in_exile_characteristics`), so a `*/*` card is
+its number in exile, counted for its owner. It is 0 when nothing was exiled,
+once the card has left exile or was exiled again by something else, when a
+token ceased to exist there, and for a flickered source, which is a new object
+with nothing exiled with it (400.7). A static, so it follows every re-equip.
+`"self"` is the only spec. The near misses are the effect-side `power_of`,
+evaluated once, and `extreme_value`, which reads only mana value; neither can
+name the linked card.
+
 ### `grant_exiled_abilities` — abilities lent by the cards exiled with a permanent
 
 Hazel's Brewmaster: "Foods you control have all activated abilities of all
