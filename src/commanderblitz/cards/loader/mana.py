@@ -42,7 +42,9 @@ from .vocabulary import (
 )
 
 
-def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
+def _compile_cost(
+    model, where: str, *, defines_x: bool = False, may_link: bool = False
+) -> Cost:
     if model.x_value is not None:
         # "X is the mana value of that card." Two guards, because both failures
         # are silent: `x_value` is read by `costs.ability_mana`, which prices an
@@ -158,6 +160,27 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             raise DslError(
                 f"{where}.cost.exile_from_graveyard.as: only an activated ability's "
                 f"effects can read what its cost exiled; this cost names it for nothing"
+            )
+    if graveyard_selector is not None and "link" in graveyard_selector:
+        # "…if a card is exiled with it" (Redemptor Dreadnought): the cost
+        # records the cards it exiled as exiled with the permanent that paid it,
+        # or with the permanent the spell becomes (607.2a), for a later
+        # `exiled_with: "self"` to read. Lifted out with `as`, for its reason.
+        link = graveyard_selector.pop("link")
+        if link is not True:
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.link: true or absent, got {link!r}"
+            )
+        if not may_link:
+            # Only two payers are, or become, a permanent that can hold the
+            # link: an activated ability's source and a permanent spell. An
+            # instant's additional cost, a flashback or an attack tax would
+            # link the cards to nothing that could ever read them.
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.link: only an activated "
+                f"ability's cost or a permanent spell's 'additional_cost' links "
+                f"what it exiled -- nothing here becomes the permanent the "
+                f"cards are exiled with"
             )
     validate_selector(graveyard_selector, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")

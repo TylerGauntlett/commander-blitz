@@ -80,7 +80,7 @@ from .temp_effects import sacrifice_forbidden
 from .triggers import fire
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
-from .zones import move_object
+from .zones import link_exiled, move_object
 from .zones import sacrifice as sacrifice_object
 from .zones import snapshot as capture_snapshot
 
@@ -2106,6 +2106,9 @@ def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     # `as` names what was exiled for the ability's effects; like
     # `tap_permanents`' it says nothing about which cards qualify.
     spec.pop("as", None)
+    # `link` says where the cards are recorded once exiled, and nothing about
+    # which cards qualify either.
+    spec.pop("link", None)
     spec.setdefault("controller", "you")
     spec["zone"] = "graveyard"
     count = int(spec.pop("count", 1) or 1)
@@ -2593,12 +2596,15 @@ def pay(
         spec = dict(cost.exile_from_graveyard)
         count = int(spec.pop("count", 1) or 1)
         name = spec.pop("as", None)
+        link = bool(spec.pop("link", False))
         pool = _graveyard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(
             ctx, "Exile from your graveyard", pool, count, count, pid, "exile_cost"
         )
         for oid in picked:
             exile_object(state, oid, cause="cost")
+        if link and source_oid is not None:
+            _link_cost_exiles(state, source_oid, picked)
         if name and bindings is not None:
             # Coin of Fate: "An opponent chooses one of **the exiled cards**."
             # The set, not one card and not a snapshot: every card this cost
@@ -2616,6 +2622,35 @@ def pay(
             ]
 
     return True
+
+
+def _link_cost_exiles(state: GameState, source_oid: int, picked) -> None:
+    """Record the cards a ``link`` exile cost took as exiled with its source.
+
+    607.2a: "…the card exiled with it" names the cards the cost exiled, and
+    `exiled_with: "self"` reads that record back. Only cards that arrived in
+    exile are linked -- one a replacement sent elsewhere was not exiled.
+
+    A permanent paying an activated ability's cost is linked at once. A spell
+    being cast is not a permanent yet, and the link belongs to the permanent it
+    becomes (Redemptor Dreadnought's "if a card is exiled with it"), so the
+    cards wait on the spell's object, and `move_object` links them as it enters
+    the battlefield from the stack. A countered spell, or one bounced off the
+    stack, never becomes that permanent and links nothing.
+    """
+    source = state.objects.get(source_oid)
+    if source is None:
+        return
+    exiled = [
+        oid
+        for oid in picked
+        if (obj := state.objects.get(oid)) is not None and obj.zone is Zone.EXILE
+    ]
+    if source.zone is Zone.BATTLEFIELD:
+        for oid in exiled:
+            link_exiled(state, oid, source_oid)
+    else:
+        source.cast_exile_links.extend(exiled)
 
 
 def _discard(state: GameState, pid: int, oids):

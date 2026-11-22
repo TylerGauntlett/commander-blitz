@@ -432,6 +432,17 @@ class GameObject:
     #: stack (`granted_plot`'s slot), read by `_place_after_resolution`, and
     #: turned into the `exiled_by` link after the move.
     exile_on_resolution_by: int | None = None
+    #: "As an additional cost to cast this spell, you may exile a creature card
+    #: from your graveyard" -- Redemptor Dreadnought, whose attack trigger reads
+    #: "if a card is exiled with it". The cards a spell's `exile_from_graveyard`
+    #: cost with ``link`` exiled, waiting for the permanent the spell becomes:
+    #: the link is to that permanent (607.2a), so nothing is linked while the
+    #: spell is on the stack, and a spell that is countered links nothing.
+    #: Written by `costs.pay` while the card is still being cast, carried across
+    #: the stack-to-battlefield move by `move_object` (`cast_enters_with`'s
+    #: route) and turned into the `exiled_by` link there; emptied by
+    #: `reset_permanent_state` on every other move.
+    cast_exile_links: list[int] = field(default_factory=list)
     #: "As this land enters, you may pay 3 life." Whether the controller took
     #: that offer, answered just before the move and read by the enters
     #: replacements a moment later. Deliberately survives
@@ -1598,6 +1609,7 @@ class GameObject:
         self.granted_rebound = False
         self.granted_plot = False
         self.exile_on_resolution_by = None
+        self.cast_exile_links = []
         self.playable_by = None
         self.playable_turn = -1
         self.playable_duration = "this_turn"

@@ -5134,6 +5134,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "exile_from_graveyard": { "types": ["Creature"] },
   "exile_from_graveyard": { "types": ["Creature"], "count": 2,
                             "as": "exiled" },    // Coin of Fate: names *the* exiled cards
+  "exile_from_graveyard": { "types": ["Creature"],
+                            "link": true },      // Redemptor Dreadnought: exiled *with* it
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
@@ -5937,9 +5939,55 @@ refuses an empty name, and `as` anywhere but an activated ability's cost, for
 `sacrifice`'s reason.
 
 Not `{"zone": "exile"}` alone, which is every exiled card in the game, and not
-`exiled_with: "self"`, which reads a link this cost does not write. Not the
+`exiled_with: "self"`, which reads a link this cost writes only with `link`
+(below) -- and Coin of Fate's source is sacrificed in the same payment. Not the
 `exile` op with `as` in the effects: that exiles on resolution, so the ability
 could be activated with an empty graveyard.
+
+### Redemptor Dreadnought — an exile cost that links the card to the permanent
+
+"Fallen Warrior — As an additional cost to cast this spell, you may exile a
+creature card from your graveyard. … Plasma Incinerator — Whenever this creature
+attacks, if a card is exiled with it, it gets +X/+X until end of turn, where X is
+the power of the exiled card."
+
+```jsonc
+{ "additional_cost": { "exile_from_graveyard": { "types": ["Creature"], "link": true } },
+  "additional_optional": true,
+  "keywords": ["trample"],
+  "abilities": [
+    { "kind": "triggered",
+      "text": "Plasma Incinerator — Whenever this creature attacks, …",
+      "trigger": { "event": "attacks", "source": "self",
+                   "condition": { "exists": { "zone": "exile", "exiled_with": "self" } } },
+      "effects": [
+        { "op": "pump", "objects": { "self_only": true },
+          "power":     { "power_of": { "objects": { "zone": "exile", "exiled_with": "self" } } },
+          "toughness": { "power_of": { "objects": { "zone": "exile", "exiled_with": "self" } } } } ] } ] }
+```
+
+`link: true` on an `exile_from_graveyard` cost records every card the cost
+exiled as exiled with a permanent (607.2a, `zones.link_exiled`), so a later
+`{"zone": "exile", "exiled_with": "self"}` finds it -- the record the `exile`
+op's `link` writes. Whose permanent depends on the payer:
+
+- **A permanent spell's `additional_cost`**: the permanent the spell becomes.
+  Nothing is linked while the spell is on the stack; the cards wait on the
+  spell's object (`GameObject.cast_exile_links`) and are linked as it enters the
+  battlefield from the stack, before its enters triggers are checked. A spell
+  that is countered or bounced becomes no permanent and links nothing, and a card
+  that left exile meanwhile is a new object (400.7) and is not linked.
+- **An activated ability's cost**: its source, at once.
+
+Only cards that arrived in exile are linked. `link` combines with `as` and
+`count`. The loader refuses anything but `true`, and `link` on any other cost --
+an instant's or sorcery's additional cost, a flashback, a tax -- because nothing
+there is or becomes a permanent to read the link.
+
+Not `as`, which names the cards to an activated ability's own effects and is
+gone once it resolves; Redemptor's trigger fires turns later from the
+permanent. Not `additional_paid`, which says the cost was paid but not which
+card, and so cannot give "the power of the exiled card".
 
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 

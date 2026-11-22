@@ -1196,7 +1196,7 @@ ABILITY_COSTS: dict[str, Entry] = {
     "discard_x": ("Discard X cards, X announced and bounded by the hand.",
                   "`discard_x` — discard X cards, X announced"),
     "exert": ("Exert the source.", "`exert` — the keyword as a cost"),
-    "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects.",
+    "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects, `link` exiles them with the permanent.",
                              "Coin of Fate — an exile-from-graveyard cost that names what it exiled"),
     "exile_from_hand": ("Exile a matching card from your hand (a pitch cost).",
                         "`exile_from_hand` — the pitch cost, and why it is not a discard"),

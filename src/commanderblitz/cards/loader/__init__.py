@@ -2168,7 +2168,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"additional cost's mana is folded into the spell's price. Put the "
             f"reduction on the card's 'cost_reduction' instead"
         )
-    additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    additional_cost = (
+        _compile_cost(
+            model.additional_cost,
+            where,
+            # A permanent spell becomes the permanent its cost's exiled cards
+            # are linked to; an instant or sorcery becomes nothing.
+            may_link=bool(set(model.types) & PERMANENT_TYPES),
+        )
+        if model.additional_cost
+        else None
+    )
     additional_cost_options: tuple = ()
     if model.additional_cost_options:
         if model.additional_cost is not None:
@@ -3712,7 +3722,12 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         )
 
     cost = (
-        _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)
+        _compile_cost(
+            model.cost,
+            where,
+            defines_x=kind is AbilityKind.ACTIVATED,
+            may_link=kind is AbilityKind.ACTIVATED,
+        )
         if model.cost
         else None
     )
