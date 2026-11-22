@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**531 cards** blocked by **449** capabilities.
+**530 cards** blocked by **447** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -390,7 +390,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
-| [reveal-as-drawn](#reveal-as-drawn) | 1 | 13095 | trigger_event |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
@@ -435,7 +434,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
-| [token-cherubael](#token-cherubael) | 1 | 13095 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
@@ -6542,20 +6540,6 @@ Blocks **1** card.
 
 </details>
 
-## reveal-as-drawn
-
-Blocks **1** card.
-
-- **(trigger_event)** an optional reveal of the first card a player draws each turn made at the moment it is drawn (the miracle-style reveal, granted by a permanent rather than printed on the drawn card), plus a 'card revealed this way' event carrying the revealed card so a trigger can filter it by type (instant or sorcery)
-  <br>Why the existing vocabulary won't do: The `draw` trigger with `max_per_turn`/`nth` and a type filter fires on the draw itself and its `reveal` op would happen only on resolution, so the reveal is no longer 'as you draw it' and the trigger is keyed on drawing rather than on choosing to reveal; the `miracle` rider is a card's own reveal and cannot be granted to the first draw of any card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inquisitor Eisenhorn** (rank 13095) — `inquisitor_eisenhorn`
-  - You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.
-
-</details>
-
 ## reveal-from-hand
 
 Blocks **1** card.
@@ -7184,20 +7168,6 @@ Blocks **1** card.
 
 - **Gwaihir, Greatest of the Eagles** (rank 5992) — `gwaihir_greatest_of_the_eagles`
   - At the beginning of each end step, if you gained 3 or more life this turn, create a 3/3 white Bird creature token with flying and "Whenever this token attacks, target attacking creature gains flying until end of turn."
-
-</details>
-
-## token-cherubael
-
-Blocks **1** card.
-
-- **(token)** Cherubael, a legendary 4/4 black Demon creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has only demon_x_x_b_flying (a nonlegendary X/X Demon) and vampire_demon_4_3_wb_flying (a white-black 4/3 Vampire Demon); neither is a named legendary 4/4 black Demon
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inquisitor Eisenhorn** (rank 13095) — `inquisitor_eisenhorn`
-  - You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.
 
 </details>
 

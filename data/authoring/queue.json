@@ -137242,12 +137242,12 @@
     },
     "Inquisitor Eisenhorn": {
       "edhrec_rank": 13095,
-      "gate": "template",
+      "gate": null,
       "name": "Inquisitor Eisenhorn",
-      "reason": "no template for: You may reveal the first card you draw each turn as you draw it. Whenever you reveal an in",
+      "reason": "",
       "scryfall_id": "9780ef78-4177-4e19-81d1-a69b8f2dad3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inquisitor Exarch": {

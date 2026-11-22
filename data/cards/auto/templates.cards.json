@@ -145818,6 +145818,77 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "reveal_first_draw",
+          "kind": "static",
+          "reveal_optional": true,
+          "text": "You may reveal the first card you draw each turn as you draw it."
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "cherubael_4_4_b_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.",
+          "trigger": {
+            "event": "reveals_first_draw",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "investigate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Inquisitor Eisenhorn deals combat damage to a player, investigate that many times. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "inquisitor_eisenhorn",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Inquisitor Eisenhorn",
+      "oracle_text": "You may reveal the first card you draw each turn as you draw it. Whenever you reveal an instant or sorcery card this way, create Cherubael, a legendary 4/4 black Demon creature token with flying.\nWhenever Inquisitor Eisenhorn deals combat damage to a player, investigate that many times. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Inquisitor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,

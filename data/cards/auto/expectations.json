@@ -12251,6 +12251,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "inquisitor_eisenhorn": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "inquisitor_greyfax": {
     "battlefield_count": 33,
     "granted": {

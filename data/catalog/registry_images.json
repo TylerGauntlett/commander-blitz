@@ -3459,6 +3459,10 @@
     "artist": "MSCHF",
     "scryfall_id": "36b587ec-5952-4ead-ba17-f63e1c1b0321"
   },
+  "cherubael_4_4_b_flying": {
+    "artist": "Kev Walker",
+    "scryfall_id": "1f75f7a3-b4d2-40e1-9721-cbe6a63971ba"
+  },
   "chief_of_the_edge": {
     "artist": "David Palumbo",
     "scryfall_id": "28822a9a-97fa-4784-ad97-072fcfc7b9ed"
@@ -10380,6 +10384,10 @@
   "innocuous_researcher": {
     "artist": "Simon Dominic",
     "scryfall_id": "32e2a1e7-0f26-4f5e-8206-928c2bf12f12"
+  },
+  "inquisitor_eisenhorn": {
+    "artist": "Jake Murray",
+    "scryfall_id": "9780ef78-4177-4e19-81d1-a69b8f2dad3d"
   },
   "inquisitor_greyfax": {
     "artist": "Lie Setiawan",
