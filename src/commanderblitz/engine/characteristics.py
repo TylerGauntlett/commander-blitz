@@ -2686,6 +2686,9 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     Nimble Mongoose counts the graveyard of whoever controls it, which is what
     "your" means on a permanent.
     """
+    if is_chosen_player_spec(spec):
+        pid = source.chosen_player
+        return [pid] if pid is not None and state.is_alive(pid) else []
     who = str(spec or "you")
     if who == "you":
         return [source.controller]
@@ -2700,6 +2703,17 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
         pid = state.monarch
         return [pid] if pid is not None and state.is_alive(pid) else []
     return state.alive()
+
+
+def is_chosen_player_spec(spec: Any) -> bool:
+    """Is ``spec`` ``{"chosen_player_of": "self"}`` -- the seat this static's
+    source remembered with `choose_player`'s ``remember``?
+
+    The player twin of ``{"chosen_color_of": "self"}``. Its readers resolve it
+    against `GameObject.chosen_player` and match nothing while that is
+    ``None``; the loader admits exactly this spelling and nothing else.
+    """
+    return isinstance(spec, Mapping) and spec.get("chosen_player_of") == "self"
 
 
 def resolve_chosen_subtype_list(entries: Any, source: GameObject | None) -> list[str]:
@@ -3377,6 +3391,14 @@ def _matches_wherever(
         return False
     if controller == "opponent" and obj.controller == source.controller:
         return False
+    # "…a permanent **the chosen player** controls" (Sawhorn Nemesis). The seat
+    # `choose_player` remembered on this static's source -- written by an
+    # effect, never by a layer, so a pipeline input. Nobody chosen yet matches
+    # nothing, `enchanted_player`'s safe direction.
+    if is_chosen_player_spec(controller) and (
+        source.chosen_player is None or obj.controller != source.chosen_player
+    ):
+        return False
     # "Creatures **enchanted player** controls…" -- an Aura on a seat (303.4a),
     # read off its own link. Answered here rather than left to fall through,
     # because an unrecognised controller word matches *everything*: a static
@@ -3530,7 +3552,14 @@ def _matches_wherever(
     if (who := selector.get("attacking_player")) is not None:
         from .effects.selectors import attacking_player_matches
 
-        if not attacking_player_matches(combat, obj.oid, str(who), source.controller, state):
+        # "Creatures attacking **the last chosen player**" (Triarch Stalker):
+        # the seat remembered on the source, and nobody before any choice.
+        if is_chosen_player_spec(who):
+            if source.chosen_player is None or not attacking_player_matches(
+                combat, obj.oid, source.chosen_player, source.controller, state
+            ):
+                return False
+        elif not attacking_player_matches(combat, obj.oid, str(who), source.controller, state):
             return False
     if "blocking" in selector:
         blocking = bool(combat and combat.blocking(obj.oid))

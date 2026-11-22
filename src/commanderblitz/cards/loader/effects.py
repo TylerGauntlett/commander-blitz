@@ -1943,10 +1943,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # else on the card can reach it -- so an omitted 'as' is a prompt whose
         # answer is thrown away, and two of them sharing a default name would
         # silently overwrite each other on a card that chose twice.
-        if not effect.get("as"):
+        if "remember" in effect and effect["remember"] is not True:
+            # "Remember" is a yes; `false` would read as no clause at all.
             raise DslError(
-                f"{where}: choose_player needs an 'as' -- the chosen player is "
-                f"only reachable through the binding it is stored under"
+                f"{where}: choose_player 'remember' is true only -- it keeps the "
+                f"chosen player on the source for {{'chosen_player_of': 'self'}}"
+            )
+        if not effect.get("as") and not effect.get("remember"):
+            raise DslError(
+                f"{where}: choose_player needs an 'as' (or 'remember': true) -- "
+                f"the chosen player is only reachable through the binding it is "
+                f"stored under, or the source's remembered choice"
             )
         if "players" in effect:
             _validate_player_spec(effect["players"], f"{where}.players", target_kinds)

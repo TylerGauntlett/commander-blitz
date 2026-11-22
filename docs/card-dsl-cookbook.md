@@ -13627,6 +13627,48 @@ ability ("Target … chosen at random"), drawn as the ability goes on the stack.
 is `choose_mode` with `random` over a "you" mode and an "opponent" mode: that is
 not uniform over the seats at a pod.
 
+## "The chosen player" on a static — `choose_player` with `remember`
+
+Sawhorn Nemesis — *"As this creature enters, choose a player. If a source would
+deal damage to the chosen player or a permanent they control, it deals double
+that damage instead."*
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "choose_player", "players": "each_player", "remember": true } ] },
+{ "kind": "static", "effect": "replace_damage", "damage_multiplier": 2,
+  "affects": { "controller": { "chosen_player_of": "self" } },
+  "affects_player": { "chosen_player_of": "self" } }
+```
+
+Triarch Stalker — *"At the beginning of combat on your turn, choose an
+opponent. Creatures attacking the last chosen player have menace."*
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "begin_combat", "controller": "you" },
+  "effects": [ { "op": "choose_player", "players": "each_opponent", "remember": true } ] },
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["menace"],
+  "affects": { "types": ["Creature"], "controller": "any",
+               "attacking_player": { "chosen_player_of": "self" } } }
+```
+
+`remember: true` keeps the chosen seat on the source permanent
+(`GameObject.chosen_player`), the player twin of `choose_color`'s slot; `as` is
+optional beside it. Each later choice overwrites it, which is "the **last**
+chosen player"; a choice with nobody to choose leaves the previous one. The
+slot is cleared when the permanent leaves the battlefield, and until something
+is chosen every reader names nobody. "As this enters" is a `self_enters`
+trigger, `choose_type`'s divergence.
+
+`{"chosen_player_of": "self"}` is read in a static's `affects` as `controller`
+and `attacking_player`, and as `affects_player` on `replace_damage` only — the
+other player-wide statics compare words, so the loader refuses it there. Any
+other dict in those places is refused: a static binds nothing, so a
+`{"binding": …}` would name nobody.
+
+The near miss is `affects_player: "opponent"` (or `attacking_player:
+"opponent"`): at a pod that names every opponent, and can never name you.
+
 ## One choice across two zones — `union`
 
 Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand

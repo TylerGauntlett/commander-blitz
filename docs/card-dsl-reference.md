@@ -220,7 +220,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_mode` | Control flow |  | Choose one or more modes and run them; `repeatable` lets one mode be chosen more than once, each instance with its own targets. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
-| `choose_player` | Control flow | yes | Choose a player; `as` records the seat; `random: true` draws it at random, asking nobody. | ["Choose a player at random" — choose_player with random](card-dsl-cookbook.md#choose-a-player-at-random--choose_player-with-random) |
+| `choose_player` | Control flow | yes | Choose a player; `as` records the seat; `remember: true` keeps it on the source for `{"chosen_player_of": "self"}`; `random: true` draws it at random, asking nobody. | ["Choose a player at random" — choose_player with random](card-dsl-cookbook.md#choose-a-player-at-random--choose_player-with-random) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
 | `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
@@ -247,7 +247,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attacked_this_turn` | Attacked this turn (read after combat). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attacking` | Is attacking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
+| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, a `binding`'s seat, or on a static `{"chosen_player_of": "self"}`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `base_power` | A comparison on base power (layer 7a/7b). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `base_toughness` | A comparison on base toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `binding` | Exactly the objects a named `as` recorded. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
@@ -256,7 +256,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `chooser` | Who picks: `controller`, `owner`, `none` or a player spec; on a triggered ability's one target spec, the player who declares the target. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
-| `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `controller` | Controlled by `you`/`opponent`/`any` or a player spec (on a static, `{"chosen_player_of": "self"}`: the seat its source remembered). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `convoked` | The creatures that convoked the resolving spell (702.51c); true only. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `count` | How many: an int or value, `all`, or `any`. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
@@ -552,10 +552,10 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `any_of` | A union of whole selectors: any one may match. | [Triggers](card-dsl.md#triggers) |
 | `any_types` | Any one of these card types is enough. | [Triggers](card-dsl.md#triggers) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Triggers](card-dsl.md#triggers) |
-| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
+| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, a `binding`'s seat, or on a static `{"chosen_player_of": "self"}`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Triggers](card-dsl.md#triggers) |
-| `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
+| `controller` | Controlled by `you`/`opponent`/`any` or a player spec (on a static, `{"chosen_player_of": "self"}`: the seat its source remembered). | [Triggers](card-dsl.md#triggers) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
 | `damaged_by` | Was dealt damage this turn by the named object. | ["…dealt damage by this creature this turn"](card-dsl-cookbook.md#dealt-damage-by-this-creature-this-turn) |
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
@@ -1039,11 +1039,11 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
-| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
+| `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, a `binding`'s seat, or on a static `{"chosen_player_of": "self"}`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
-| `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
+| `controller` | Controlled by `you`/`opponent`/`any` or a player spec (on a static, `{"chosen_player_of": "self"}`: the seat its source remembered). | [Static abilities](card-dsl.md#static-abilities) |
 | `derived_types` | `true`, on a `buff`: its type clauses read the types layer 4 left, not the printed face. | [derived_types — an anthem reads the types layer 4 left](card-dsl.md#derived_types--an-anthem-reads-the-types-layer-4-left) |
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
@@ -1133,7 +1133,7 @@ The keys an `affects_spells` filter may use. Defined under [What the filter may 
 |---|---|---|
 | `any_types` | Any one of these card types is enough. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `colors` | Has one of these colors. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
-| `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
+| `controller` | Controlled by `you`/`opponent`/`any` or a player spec (on a static, `{"chosen_player_of": "self"}`: the seat its source remembered). | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `keywords` | Has all of these keywords. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `mana_cost` | Printed mana cost is one of these. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |

@@ -963,7 +963,12 @@ class AbilityModel(BaseModel):
     #: counted on the source snapshots in `TurnLedger.ability_sources`.
     #: Requires `affects_abilities: {"any": true}` and `affects`.
     first_each_turn: bool = False
-    affects_player: Literal["you", "opponent", "any"] | None = None
+    #: Whose seat a player-wide static reaches, relative to its controller.
+    #: ``{"chosen_player_of": "self"}`` -- the seat its source remembered with
+    #: `choose_player`'s ``remember`` -- is admitted on `replace_damage` alone
+    #: (Sawhorn Nemesis); the loader refuses it on every other effect, whose
+    #: readers take only the words.
+    affects_player: Literal["you", "opponent", "any"] | dict[str, Any] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
     #: cost is equal to that card's mana cost."

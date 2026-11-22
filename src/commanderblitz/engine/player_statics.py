@@ -23,6 +23,7 @@ from .characteristics import (
     card_in_exile_characteristics,
     chars,
     compare_pt,
+    is_chosen_player_spec,
     resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
@@ -135,6 +136,10 @@ def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> 
     card and is only a floor under hand-built states.
     """
     who = static.get("affects_player", "you")
+    if is_chosen_player_spec(who):
+        # "…to **the chosen player**" (Sawhorn Nemesis): the seat the source
+        # remembered, and nobody before it has chosen.
+        return source.chosen_player is not None and source.chosen_player == pid
     if who == "you":
         return source.controller == pid
     if who == "opponent":
@@ -3666,6 +3671,11 @@ def _matches_damage_source(
         # abilities' damage is dealt by it, and a burn spell never is.
         if dealer.get("exclude_self") and obj.oid == source_obj.oid:
             return False
+        if is_chosen_player_spec(dealer.get("controller")):
+            return (
+                source_obj.chosen_player is not None
+                and obj.controller == source_obj.chosen_player
+            )
         who = str(dealer.get("controller") or "you")
         if who == "you":
             return obj.controller == source_obj.controller

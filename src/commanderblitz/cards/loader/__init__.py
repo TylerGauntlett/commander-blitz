@@ -4828,9 +4828,25 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
     # the static's controller. `true` is the tempting spelling -- it is how
     # `attacking` is written -- and would name nobody; the effect selector's
     # `{"binding": name}` form names a seat a static never binds.
-    if "attacking_player" in filt and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS:
+    # "…the chosen player": a static has no bindings, so the one seat it can
+    # name is the one its source remembered with `choose_player`'s `remember`.
+    # Any other dict -- a `{"binding": …}` borrowed from the effect selector --
+    # would name nobody, or (as a `controller`) be an unrecognised word that
+    # matches everything.
+    for key in ("controller", "attacking_player"):
+        if isinstance(filt.get(key), dict) and filt[key] != {"chosen_player_of": "self"}:
+            raise DslError(
+                f"{path}.{key}: a static names one seat only as "
+                f'{{"chosen_player_of": "self"}}, not {filt[key]!r}'
+            )
+    if (
+        "attacking_player" in filt
+        and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS
+        and filt["attacking_player"] != {"chosen_player_of": "self"}
+    ):
         raise DslError(
-            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} -- "
+            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} or "
+            f'{{"chosen_player_of": "self"}} -- '
             f"whom the creature attacks, a player and never a planeswalker or "
             f"battle; use 'attacking' for true/false"
         )
@@ -6484,6 +6500,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
+    if isinstance(model.affects_player, dict):
+        # "…to **the chosen player**" (Sawhorn Nemesis). Only `replace_damage`
+        # reads a seat through `player_statics._reaches_player`, which knows
+        # this spelling; every other player-wide reader compares words, and
+        # would read the dict as nobody or as everybody.
+        if model.affects_player != {"chosen_player_of": "self"}:
+            raise DslError(
+                f"{where}.affects_player: 'you', 'opponent', 'any', or "
+                f'{{"chosen_player_of": "self"}}, not {model.affects_player!r}'
+            )
+        if model.effect != "replace_damage":
+            raise DslError(
+                f"{where}.affects_player: {{'chosen_player_of': 'self'}} is read "
+                f"by a replace_damage static only, not by {model.effect!r}"
+            )
     if model.effect == "replace_damage":
         # Two axes, exactly one per static -- `replace_life_gain`'s shape:
         # "double that damage" (`damage_multiplier`) and "that much damage
