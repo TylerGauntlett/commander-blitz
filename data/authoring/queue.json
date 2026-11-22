@@ -288832,12 +288832,12 @@
     },
     "Tomb Blade": {
       "edhrec_rank": 16385,
-      "gate": "template",
+      "gate": null,
       "name": "Tomb Blade",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, that player loses life equal to th",
+      "reason": "",
       "scryfall_id": "2f5f2e19-41ce-40c6-9732-d0f88ad6735f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tomb Fortress": {

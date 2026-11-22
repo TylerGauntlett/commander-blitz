@@ -26341,6 +26341,13 @@
   "tolarian_scholar": {
     "zone": "battlefield"
   },
+  "tomb_blade": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tomb_fortress": {
     "battlefield_count": 33,
     "zone": "battlefield"

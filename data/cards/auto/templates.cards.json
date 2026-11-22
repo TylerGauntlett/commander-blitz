@@ -316987,6 +316987,132 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [],
+              "else": [
+                {
+                  "amount": {
+                    "count": {
+                      "controller": {
+                        "binding": "event_player"
+                      },
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Sacrifice a creature? (Otherwise you lose life equal to the number of creatures you control.)"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, that player loses life equal to the number of creatures they control unless they sacrifice a creature of their choice.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{6}{B}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {6}{B}{B}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "tomb_blade",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Tomb Blade",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, that player loses life equal to the number of creatures they control unless they sacrifice a creature of their choice.\nUnearth {6}{B}{B}",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

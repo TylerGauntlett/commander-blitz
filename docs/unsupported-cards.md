@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**529 cards** blocked by **446** capabilities.
+**541 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -48,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
+| [chosen-player](#chosen-player) | 2 | 6383 | selector |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
@@ -58,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
+| [min-blockers](#min-blockers) | 2 | 2786 | static_effect |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
@@ -84,6 +86,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
+| [ability-cost-reduction-minimum](#ability-cost-reduction-minimum) | 1 | 11680 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [activated-this-turn](#activated-this-turn) | 1 | 13487 | selector |
@@ -115,6 +118,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
+| [becomes-crewed](#becomes-crewed) | 1 | 13388 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -128,8 +132,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
+| [cast-during-resolution-pay-life](#cast-during-resolution-pay-life) | 1 | 6626 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
+| [cast-from-graveyard-nonpermanent](#cast-from-graveyard-nonpermanent) | 1 | 8554 | static_effect |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
@@ -151,7 +157,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
-| [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [combat-damage-to-own-owner](#combat-damage-to-own-owner) | 1 | 10812 | trigger_event |
@@ -254,6 +259,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
+| [gain-graveyard-activated-abilities](#gain-graveyard-activated-abilities) | 1 | 10047 | static_effect |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
@@ -297,6 +303,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [madness](#madness) | 1 | 3016 | replacement |
+| [mana-ability-cost-binding](#mana-ability-cost-binding) | 1 | 5215 | value |
 | [mana-ability-cost-lki](#mana-ability-cost-lki) | 1 | 2247 | value |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
@@ -308,6 +315,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
+| [mana-trigger-chosen-color-produced](#mana-trigger-chosen-color-produced) | 1 | 899 | static_effect |
 | [manifest-dread](#manifest-dread) | 1 | 8930 | op |
 | [manifest-from-hand](#manifest-from-hand) | 1 | 3975 | op |
 | [mark-of-the-rani-token](#mark-of-the-rani-token) | 1 | 13009 | token |
@@ -315,7 +323,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [min-blockers](#min-blockers) | 1 | 2786 | static_effect |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -329,7 +336,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
-| [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
 | [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
@@ -384,6 +390,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
+| [replace-empty-draw-with-effects](#replace-empty-draw-with-effects) | 1 | 3298 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
@@ -396,6 +403,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-resolve-own-triggers](#sandbox-resolve-own-triggers) | 1 | 13330 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -423,6 +431,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [stun-counters-cant-be-removed](#stun-counters-cant-be-removed) | 1 | 3452 | static_effect |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [suspend-itself-on-cast](#suspend-itself-on-cast) | 1 | 14357 | op |
+| [tap-x-with-mana-x](#tap-x-with-mana-x) | 1 | 12408 | cost |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-single](#targets-only-single) | 1 | 13586 | trigger_event |
 | [targets-share-characteristic](#targets-share-characteristic) | 1 | 4421 | selector |
@@ -435,6 +444,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
+| [total-mana-value-pick](#total-mana-value-pick) | 1 | 9376 | selector |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -449,6 +459,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
+| [unearth](#unearth) | 1 | 13388 | op |
 | [unleash](#unleash) | 1 | 12169 | keyword |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
@@ -1510,6 +1521,26 @@ Blocks **2** cards.
 
 </details>
 
+## chosen-player
+
+Blocks **2** cards.
+
+- **(selector)** an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {"chosen_player_of": "self"} and an affects filter controller: {"chosen_player_of": "self"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control
+  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod
+- **(selector)** a player choice made by a triggered ability's choose_player (players: opponents) that is remembered on the source permanent and overwritten by each later choice ("the last chosen player"), readable by a static as a player spec -- e.g. a grant_keyword static {keywords: [menace]} whose affects is {types: [Creature], attacking_player: {chosen_player_of: self}}, matching every attacking creature (any controller) attacking that player, and matching nothing before any choice has been made
+  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types, colors and card types. A static's attacking_player takes only the words you/opponent/any/most_life (ATTACKING_PLAYER_WORDS) and the loader refuses the {binding} form on a static, so 'opponent' would give menace to creatures attacking every opponent -- a different card in a multiplayer pod
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
+  - As this creature enters, choose a player
+  - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
+- **Triarch Stalker** (rank 14529) — `triarch_stalker`
+  - Targeting Relay — At the beginning of combat on your turn, choose an opponent.
+  - Creatures attacking the last chosen player have menace.
+
+</details>
+
 ## copy-for-each-other-target
 
 Blocks **2** cards.
@@ -1690,6 +1721,24 @@ Blocks **2** cards.
   - Whenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
 - **We Ride at Dawn** (rank 9389) — `we_ride_at_dawn`
   - Whenever your commander attacks, create a 1/1 red Mercenary creature token with "{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery."
+
+</details>
+
+## min-blockers
+
+Blocks **2** cards.
+
+- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 6` with `affects: {self_only: true}`), checked on the complete block declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
+  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap) and `require_all`, but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it. Same need as the existing troll_of_khazad_dum gap (three or more)
+- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 3` with `affects: {self_only: true}`), checked in combat.blocks_valid on the complete declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
+  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap, Challenger Troll) and `require_all` (Tromokratis), but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Troll of Khazad-dûm** (rank 2786) — `troll_of_khazad_dum`
+  - This creature can't be blocked except by three or more creatures.
+- **Hexmark Destroyer** (rank 14267) — `hexmark_destroyer`
+  - Multi-threat Eliminator — This creature can't be blocked except by six or more creatures.
 
 </details>
 
@@ -2174,6 +2223,20 @@ Blocks **2** cards.
 
 </details>
 
+## ability-cost-reduction-minimum
+
+Blocks **1** card.
+
+- **(static_effect)** an ability_cost_reduction static that reaches activated abilities of cards in a graveyard (affects: {zone: graveyard, owner/controller: you}, any ability class, not only equip/boast) and carries a floor so the discount cannot reduce the ability's total mana cost below one mana (a mana_floor: 1 key applied after the reduction in costs.ability_mana)
+  <br>Why the existing vocabulary won't do: ability_cost_reduction's affects_abilities offers equip, boast and any, where any is accepted only beside targeting or first_each_turn; and its discount is clamped only at zero generic by costs.ability_mana, so nothing expresses 'can't reduce the mana in that ability's activation cost to less than one mana'. Dropping the floor would make {2}-costed graveyard abilities free, which the card forbids
+
+<details><summary>Cards waiting on this</summary>
+
+- **Convergence of Dominion** (rank 11680) — `convergence_of_dominion`
+  - Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -2614,6 +2677,20 @@ Blocks **1** card.
 
 </details>
 
+## becomes-crewed
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired when a Vehicle becomes crewed (702.122d), i.e. when a crew ability of that Vehicle resolves, whatever source activated or caused it, filterable to self
+  <br>Why the existing vocabulary won't do: trigger_events has ability_activated, becomes_tapped and state but no crewed event; folding the effect into the Crew 2 ability's own effects would turn a separate triggered ability into part of the crew ability's resolution and would miss crewing by other means
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghost Ark** (rank 13388) — `ghost_ark`
+  - Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.
+
+</details>
+
 ## blocked-by-source
 
 Blocks **1** card.
@@ -2799,6 +2876,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-during-resolution-pay-life
+
+Blocks **1** card.
+
+- **(op)** a pay-life price on cast_from_hand: during the attack trigger's resolution, optionally cast one artifact card from your hand or graveyard (zones: ["hand", "graveyard"], selector types ["Artifact"]) right then, ignoring timing, paying life equal to its mana value as an alternative cost instead of casting it free (e.g. a `pay_life_instead: true` option on cast_from_hand)
+  <br>Why the existing vocabulary won't do: cast_from_hand already takes zones and a selector and casts during resolution, but only without paying its mana cost (op_cast_from_hand offers only the free cast), so it would make the artifact free rather than cost life. grant_playable with playable_pay_life_instead, limit 1 and playable_cast_only has the right price but only leaves a standing permission at normal timing, so a non-flash artifact could not be cast during combat when the trigger resolves and would instead be castable later in the turn, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Anrakyr the Traveller** (rank 6626) — `anrakyr_the_traveller`
+  - Lord of the Pyrrhian Legions — Whenever Anrakyr the Traveller attacks, you may cast an artifact spell from your hand or graveyard by paying life equal to its mana value rather than paying its mana cost.
+
+</details>
+
 ## cast-exiled-for-life-equal-to-mana-value
 
 Blocks **1** card.
@@ -2824,6 +2915,20 @@ Blocks **1** card.
 
 - **The Face of Boe** (rank 16296) — `the_face_of_boe`
   - {T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery.
+
+</details>
+
+## cast-from-graveyard-nonpermanent
+
+Blocks **1** card.
+
+- **(static_effect)** the card's own unconditional permission to cast an instant or sorcery from its owner's graveyard at its printed mana cost (X included, announced as usual), with no alternative cost involved; the spell then goes wherever it normally would, which here is exile via exiles_itself
+  <br>Why the existing vocabulary won't do: The `cast_from_graveyard` static with active_zones ["graveyard"] is exactly this permission, but the loader refuses it on any card without a permanent type ('supported on permanent cards only -- the nonpermanent form has no witness'). `graveyard_cast` + `graveyard_cost` is an alternative cost (escape-style), not a cast at the printed price, so writing graveyard_cost {X}{B}{B}{B}{B} would change how it interacts with other alternative costs and free-cast effects; `flashback`/`retrace` add exile or a discard that is not printed; `grant_graveyard_cast` is a permission granted to other spells. The rest of the card is expressible: create_token necron_warrior_2_2_b_artifact with amount {x}, tapped: true; gain_life amount {count: artifacts you control}; exiles_itself: true
+
+<details><summary>Cards waiting on this</summary>
+
+- **Their Number Is Legion** (rank 8554) — `their_number_is_legion`
+  - You may cast this card from your graveyard.
 
 </details>
 
@@ -2859,8 +2964,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(selector)** the `colorless` key (zero colours, 105.2c) admitted in a cast_from_library_top static's `affects_spells` filter, so the colorless half of "artifact spells and colorless spells" can be written as a second permission beside the {"types": ["Artifact"]} one (or `any_of` over the two branches)
-  <br>Why the existing vocabulary won't do: cast_from_library_top's affects_spells is checked against LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has no `colorless` and no `any_of`; `colors` is a membership test that cannot say zero colours, and `not_types`/`min_colors` cannot either. characteristics._matches_printed already honours `colorless`, so only the loader whitelist blocks it. Writing only the Artifact half would silently drop every colorless nonartifact spell (Eldrazi, Kozilek's Return-style colorless cards).
+- **(selector)** a `colorless: true` key in the `affects_spells` filter of a cast_from_library_top static, so "colorless spells" can be matched against the top card (zero printed colours, 105.2c); the artifact half is then a second cast_from_library_top static with types ["Artifact"], or one filter using any_of over the two
+  <br>Why the existing vocabulary won't do: cast_from_library_top's affects_spells accepts only LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has neither `colorless` nor `any_of`; `colors` is a membership test and cannot say zero colours, and `min_colors` only sets a floor. characteristics._matches_printed already reads `colorless` and `any_of`, so the change is admitting the key in the loader's vocabulary. Writing only the artifact half would drop colorless nonartifact spells (Eldrazi, Kozilek's Return-style colorless cards)
 
 <details><summary>Cards waiting on this</summary>
 
@@ -3126,21 +3231,6 @@ Blocks **1** card.
 - **Talion, the Kindly Lord** (rank 1610) — `talion_the_kindly_lord`
   - As Talion enters, choose a number between 1 and 10.
   - Whenever an opponent casts a spell with mana value, power, or toughness equal to the chosen number, that player loses 2 life and you draw a card.
-
-</details>
-
-## chosen-player
-
-Blocks **1** card.
-
-- **(selector)** an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {"chosen_player_of": "self"} and an affects filter controller: {"chosen_player_of": "self"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control
-  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
-  - As this creature enters, choose a player
-  - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
 
 </details>
 
@@ -4601,6 +4691,20 @@ Blocks **1** card.
 
 </details>
 
+## gain-graveyard-activated-abilities
+
+Blocks **1** card.
+
+- **(static_effect)** a static that gives the permanents it affects (here self_only) every activated ability printed on each card of a given type (Artifact) currently in its controller's graveyard, recomputed continuously as cards enter and leave the graveyard (Necrotic Ooze / Dark Impostor shape, but graveyard-sourced)
+  <br>Why the existing vocabulary won't do: grant_exiled_abilities is the same lending mechanism but reads only cards linked to the source in exile (source.exiled_cards with exiled_by == source); there is no key to point it at the graveyard. grant_ability lends only abilities written in the card's own grantable_abilities, and the gain_activated_abilities op is a one-shot snapshot, not a continuous static over a changing zone
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trazyn the Infinite** (rank 10047) — `trazyn_the_infinite`
+  - Prismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.
+
+</details>
+
 ## goad-while-source-on-battlefield
 
 Blocks **1** card.
@@ -5212,6 +5316,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-ability-cost-binding
+
+Blocks **1** card.
+
+- **(value)** a mana ability whose add_mana amount reads the object its own sacrifice cost paid with, i.e. cost {"tap": true, "sacrifice": {"types": ["Creature"], "exclude_self": true, "as": "sacrificed"}} with add_mana {"mana": "{B}", "amount": {"mana_value_of": {"binding": "sacrificed"}}}. That means passing the cost's bindings from pay() into mana_amount on Game._activate_mana, and having the payment solver either skip such sources or price each sacrifice choice as its own option
+  <br>Why the existing vocabulary won't do: sacrifice's `as` binding plus mana_value_of works only on abilities that use the stack (Broadside Bombardiers, Dina, Ghoulcaller Gisa). On the mana-ability path, Game._activate_mana calls costs.pay without a bindings dict, and costs.mana_amount builds a fresh EffectContext with no bindings, so the amount cannot see the sacrificed creature. Writing the line as a non-mana activated ability would put mana on the stack, which breaks 605.1a. add_mana_per and the board-reading amounts count permanents rather than the paid object
+
+<details><summary>Cards waiting on this</summary>
+
+- **Illuminor Szeras** (rank 5215) — `illuminor_szeras`
+  - Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.
+
+</details>
+
 ## mana-ability-cost-lki
 
 Blocks **1** card.
@@ -5368,6 +5486,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-trigger-chosen-color-produced
+
+Blocks **1** card.
+
+- **(static_effect)** an add_mana_on_tap static whose tapped_permanent.produced may be {"chosen_color_of": "self"}: it fires once when a land's mana ability adds at least one mana of the source's chosen color, and adds one more of that color (the add_mana half already accepts {"chosen_color_of": "self"}, as Utopia Sprawl does). Ideally keyed on a land's mana ability producing it rather than only on tapping, so a land that sacrifices for mana also counts
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {types: [Land]} matches every land tap, so without a produced filter it would add the chosen color even when a land made a different color (a strictly stronger card). tapped_permanent.produced is read by player_statics._tap_statics through parse_mana_production as a literal mana string, so it cannot name the chosen color; double_land_mana doubles all of a land's mana rather than adding one of a chosen color
+
+<details><summary>Cards waiting on this</summary>
+
+- **Caged Sun** (rank 899) — `caged_sun`
+  - Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.
+
+</details>
+
 ## manifest-dread
 
 Blocks **1** card.
@@ -5465,20 +5597,6 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
-
-</details>
-
-## min-blockers
-
-Blocks **1** card.
-
-- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 3` with `affects: {self_only: true}`), checked in combat.blocks_valid on the complete declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
-  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap, Challenger Troll) and `require_all` (Tromokratis), but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Troll of Khazad-dûm** (rank 2786) — `troll_of_khazad_dum`
-  - This creature can't be blocked except by three or more creatures.
 
 </details>
 
@@ -5665,20 +5783,6 @@ Blocks **1** card.
 - **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
   - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
   - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
-
-</details>
-
-## necron-warrior-token
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Necron Warrior artifact creature token (types Artifact Creature, subtypes Necron Warrior, no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has no Necron Warrior; the nearest are warrior_1_1_r / warrior_1_1_w (wrong size, colour, not artifact) and elf_warrior_1_1_g. The rest of the card is expressible: the first line is an add_subtype static with types ["Artifact"] on creatures you control plus an off_battlefield add_subtype static for creature spells and cards, and the trigger is spell_cast with filter types ["Artifact"] doing lose_life 1 then create_token.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Biotransference** (rank 4207) — `biotransference`
-  - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
 
 </details>
 
@@ -6454,6 +6558,20 @@ Blocks **1** card.
 
 </details>
 
+## replace-empty-draw-with-effects
+
+Blocks **1** card.
+
+- **(replacement)** a player-wide static replacing a draw from an empty library with an arbitrary effect list (here: the player chooses a creature card in their own graveyard and puts it onto the battlefield), with a fallback effect when that cannot be done (lose_game for that player) -- the static would carry `effects` and an `else`/`if_cant` branch read in replacements._draw_one
+  <br>Why the existing vocabulary won't do: replace_empty_draw is a yes/no that substitutes only winning the game (wins_on_empty_draw; the loader refuses any size or affects), replace_draw only multiplies the draw count, and the packet notes say a draw replacement that does something other than draw more cards is still a gap. A draw-triggered ability would not replace the draw, so the empty-library loss would still happen.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Out of the Tombs** (rank 3298) — `out_of_the_tombs`
+  - If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.
+
+</details>
+
 ## replace-enters-battlefield
 
 Blocks **1** card.
@@ -6623,6 +6741,20 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
+
+</details>
+
+## sandbox-resolve-own-triggers
+
+Blocks **1** card.
+
+- **(engine)** the behaviour gate's verify.drive must pass priority while the stack holds only the card's own triggered ability, so an enters trigger resolves even when the card also has an instant-speed activated ability the sandbox can afford (here Crew 2: tap_permanents total_power 2, payable by the two sandbox creatures)
+  <br>Why the existing vocabulary won't do: The card is fully expressible and compiles: flying keyword, self_enters trigger with create_token necron_warrior_2_2_b_artifact, and Crew 2 as tap_permanents total_power 2 + animate (Aethersphere Harvester's shape). But game._should_auto_pass never passes while state.stack is non-empty and a non-mana action is legal, and verify.drive returns at the first PRIORITY decision, so the trigger is left on the stack at measurement (tokens 0, battlefield 33). Verified: the same card without the Crew ability creates the token. Dropping source: self changes nothing (731 shipped self_enters triggers use it); dropping Crew or asserting only zone would misstate or under-test the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Night Scythe** (rank 13330) — `night_scythe`
+  - Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token.
 
 </details>
 
@@ -7016,6 +7148,20 @@ Blocks **1** card.
 
 </details>
 
+## tap-x-with-mana-x
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that pays {X} generic mana AND taps X untapped permanents matching a selector (here artifacts you control), both read from the single announced X, with the ceiling bounded by both the tap_x pool and affordable mana
+  <br>Why the existing vocabulary won't do: tap_x announces X and the loader (cards/loader/mana.py) refuses a second X in 'mana' beside it; tap_x alone drops the {X} mana payment, and mana {X} with tap_permanents needs a fixed count, so neither says the printed cost exactly
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necron Overlord** (rank 12408) — `necron_overlord`
+  - Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.
+
+</details>
+
 ## target-player-dealt-combat-damage-by
 
 Blocks **1** card.
@@ -7181,6 +7327,20 @@ Blocks **1** card.
 
 - **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
   - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
+
+</details>
+
+## total-mana-value-pick
+
+Blocks **1** card.
+
+- **(selector)** an untargeted, on-resolution pick of any number of cards from a graveyard whose mana values together are at most a cap (here 6), e.g. `total_mana_value` on return_from_graveyard's (or search_zones') `objects` with count "any", reusing the engine's _pick_within_total_mana_value so cards milled earlier in the same resolution are eligible
+  <br>Why the existing vocabulary won't do: `total_mana_value` exists only on a target spec (Phoenix, Warden of Fire) and on look_at_top (library only). A target spec is chosen when the trigger goes on the stack, before the mill, so the three milled cards could never be returned, and it makes an untargeted return targeted. A per-card `mana_value` selector caps each pick separately, a much wider card; choose_permanents' max_total_power sums power on the battlefield, not mana value in a graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Technomancer** (rank 9376) — `technomancer`
+  - When this creature enters, mill three cards, then return any number of artifact creature cards with total mana value 6 or less from your graveyard to the battlefield.
 
 </details>
 
@@ -7378,6 +7538,20 @@ Blocks **1** card.
 
 - **Become the Pilot** (rank 16395) — `become_the_pilot`
   - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
+
+</details>
+
+## unearth
+
+Blocks **1** card.
+
+- **(op)** an op granting unearth {N} until end of turn to cards in a graveyard matching a selector (here artifact creature cards in your graveyard): a sorcery-speed activated ability from the graveyard that returns the card to the battlefield, gives it haste, exiles it at the beginning of the next end step, and exiles it instead if it would leave the battlefield; the unearth keyword itself is also absent from card_level_cost_keys and keywords
+  <br>Why the existing vocabulary won't do: grant_graveyard_cast only grants casting (flashback/escape) and grant_playable grants play permissions, neither an activated return-to-battlefield ability with the haste, end-step exile and leave-the-battlefield replacement riders; grant_ability works on permanents on the battlefield only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghost Ark** (rank 13388) — `ghost_ark`
+  - Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.
 
 </details>
 
