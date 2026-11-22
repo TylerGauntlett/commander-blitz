@@ -13371,6 +13371,13 @@
   "khalni_heart_expedition": {
     "zone": "battlefield"
   },
+  "kharn_the_betrayer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kher_keep": {
     "battlefield_count": 33,
     "zone": "battlefield"

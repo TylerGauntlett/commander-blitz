@@ -148562,12 +148562,12 @@
     },
     "Khârn the Betrayer": {
       "edhrec_rank": 4530,
-      "gate": "template",
+      "gate": null,
       "name": "Khârn the Betrayer",
-      "reason": "no template for: Berzerker — attacks or blocks each combat if able",
+      "reason": "",
       "scryfall_id": "1e05c133-ff44-446f-95f7-44aa9fbf4923",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kianne, Corrupted Memory": {

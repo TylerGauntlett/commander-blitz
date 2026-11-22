@@ -159912,6 +159912,91 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "blocks_if_able",
+          "kind": "static",
+          "text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Sigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.",
+          "trigger": {
+            "event": "lose_control"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "prevent_damage",
+          "effects": [
+            {
+              "as": "betrayed_to",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to gain control of Khârn the Betrayer"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "binding": "shielded"
+              },
+              "op": "gain_control",
+              "player": {
+                "binding": "betrayed_to"
+              }
+            }
+          ],
+          "kind": "static",
+          "prevent_all": true,
+          "text": "The Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "kharn_the_betrayer",
+      "mana_cost": "{3}{R}",
+      "name": "Khârn the Betrayer",
+      "oracle_text": "Berzerker — Khârn the Betrayer attacks or blocks each combat if able.\nSigil of Corruption — When you lose control of Khârn the Betrayer, draw two cards.\nThe Betrayer — If damage would be dealt to Khârn the Betrayer, prevent that damage and an opponent of your choice gains control of it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Astartes",
+        "Berserker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
