@@ -2937,6 +2937,40 @@ state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
 what a card outside the battlefield actually has.
 
+#### `derived_types` — an anthem reads the types layer 4 left
+
+```jsonc
+// The Flesh Is Weak: "Creatures you control with +1/+1 counters on them are
+//  artifacts in addition to their other types. Nonartifact creatures get -1/-1."
+{ "kind": "static", "effect": "add_subtype", "types": ["Artifact"],
+  "affects": { "controller": "you", "types": ["Creature"], "has_counters": "+1/+1" } },
+{ "kind": "static", "effect": "buff", "power": -1, "toughness": -1,
+  "affects": { "controller": "any", "types": ["Creature"], "not_types": ["Artifact"],
+               "derived_types": true } }
+```
+
+`derived_types: true` on a `buff`'s `affects` makes its type clauses — `types`,
+`any_types`, `not_types`, `subtypes`, `not_subtypes`, `supertypes` and
+`not_supertypes` — read the object's types as layer 4 left them: every
+`add_subtype`, `set_types`, `set_creature_types` and `animate`, the recorded
+subtypes and the text changes. Every other clause keeps its reading. Rule 613.1
+applies the layers in order, so a layer-7c anthem's set of creatures is decided
+after the type changes; that is an ordered read across layers, not a 613.8
+dependency, and the anthem step of `characteristics._compute` answers it from
+the object's own working type sets without calling `chars`
+([ADR 0031](adr/0031-an-anthem-may-read-the-types-layer-4-left.md)).
+
+The loader refuses the key as anything but `true`, on any static but `buff`
+(no other reader holds the sets, and `_matches` raises when asked without
+them), inside an `any_of` branch (write it on the outer filter, where it covers
+every branch), and on a filter that names no type clause.
+
+The near miss is the same filter without the key. It loads, and it reads the
+printed face, so "nonartifact creatures get -1/-1" shrinks the creatures the
+line above it made artifacts. Without the key, a type granted by a static stays
+invisible to an anthem: a Xenograft naming Goblin does not put Bears under a
+Goblin lord.
+
 #### `face_down` — board state the static filters refuse
 
 Face-down status is board state no layer writes, so `tapped`'s licence would

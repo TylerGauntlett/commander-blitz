@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 35 |
+| [Static filter keys](#static-filter-keys) | 36 |
 | [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 24 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -1032,6 +1032,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
+| `derived_types` | `true`, on a `buff`: its type clauses read the types layer 4 left, not the printed face. | [derived_types — an anthem reads the types layer 4 left](card-dsl.md#derived_types--an-anthem-reads-the-types-layer-4-left) |
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Static abilities](card-dsl.md#static-abilities) |

@@ -114,6 +114,15 @@
    "recipient",
    "subject"
   ],
+  "DERIVED_TYPE_CLAUSES": [
+   "any_types",
+   "not_subtypes",
+   "not_supertypes",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
+  ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_abilities",
    "add_keywords",
@@ -460,6 +469,7 @@
    "colorless",
    "colors",
    "controller",
+   "derived_types",
    "enchanted_by",
    "entered_this_turn",
    "exclude_self",

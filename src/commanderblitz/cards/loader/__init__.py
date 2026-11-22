@@ -151,6 +151,7 @@ from .vocabulary import (  # noqa: F401
     DEFENDING_TRIGGERS,
     DEFENDING_WORDS,
     DELAYED_TRIGGER_KEYS,
+    DERIVED_TYPE_CLAUSES,
     FIRST_ACTIVATION_TARGETING_KEYS,
     FREE_CAST_FILTER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
@@ -4793,6 +4794,11 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
             f"whom the creature attacks, a player and never a planeswalker or "
             f"battle; use 'attacking' for true/false"
         )
+    if not top and "derived_types" in filt:
+        raise DslError(
+            f"{path}.derived_types: write it on the outer filter, where it "
+            f"applies to every branch"
+        )
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
@@ -4821,6 +4827,32 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
                 f"branch's value would replace the outer one rather than narrow it"
             )
         _check_static_affects(branch, where, here)
+
+
+def _check_derived_types(filt: Mapping[str, Any], effect: str, path: str) -> None:
+    """``derived_types``: a `buff`'s type clauses read after layer 4 (ADR 0031).
+
+    `true` only, on a `buff` only -- the anthem step of `_compute` is the one
+    reader that holds the types layer 4 left, and any other static asking it
+    would raise mid-game -- and beside at least one type clause, on the outer
+    filter or a branch, since the key changes nothing else.
+    """
+    if "derived_types" not in filt:
+        return
+    if filt["derived_types"] is not True:
+        raise DslError(f"{path}.derived_types: true only")
+    if effect != "buff":
+        raise DslError(
+            f"{path}.derived_types: read only by a 'buff' static, whose layer "
+            f"(7c) runs after the type changes; not {effect!r}"
+        )
+    branches = [b for b in filt.get("any_of") or () if isinstance(b, Mapping)]
+    clauses = set(filt).union(*(set(b) for b in branches))
+    if not clauses & DERIVED_TYPE_CLAUSES:
+        raise DslError(
+            f"{path}.derived_types: changes how {sorted(DERIVED_TYPE_CLAUSES)} "
+            f"read, and the filter names none of them"
+        )
 
 
 def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
@@ -5351,6 +5383,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         _check_attached_to_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
+        _check_derived_types(model.affects, model.effect, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that

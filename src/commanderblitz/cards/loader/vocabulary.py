@@ -1395,12 +1395,26 @@ STATIC_FILTER_KEYS = frozenset(
 #: reason. Not its ``or_planeswalkers`` widening, which asks the walker's
 #: derived types and so would read the pipeline's own output; and not the
 #: ``{"binding": name}`` form, since a static binds nothing.
+#:
+#: ``derived_types`` is affects-only and `buff`-only: "**Nonartifact**
+#: creatures get -1/-1" (The Flesh Is Weak). `true` makes the filter's type
+#: clauses read the types layer 4 left rather than the printed face -- an
+#: ordered read across layers, never a 613.8 dependency, handed to the anthem
+#: step from `characteristics._compute`'s own working sets (ADR 0031). No
+#: other static's reader holds those sets, so the loader refuses it elsewhere.
 STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {
     "any_of",
     "modified",
     "mana_value",
     "attacking_player",
+    "derived_types",
 }
+
+#: The clauses `derived_types` changes the reading of: a filter carrying the
+#: key and none of these would be a flag nothing reads.
+DERIVED_TYPE_CLAUSES = frozenset(
+    {"types", "any_types", "not_types", "subtypes", "not_subtypes", "supertypes", "not_supertypes"}
+)
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")

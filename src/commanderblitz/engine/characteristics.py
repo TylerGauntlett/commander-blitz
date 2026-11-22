@@ -55,6 +55,13 @@ same goes for the rule-modifying statics the static filter language describes
 but no layer applies -- an attack requirement and a block restriction -- which
 match with ``derived=True`` (see :func:`_matches`).
 
+One reader inside the pipeline may see another static's output, and only
+types: the anthem step, for an `affects` carrying ``derived_types`` ("nonartifact
+creatures get -1/-1" beside a line that makes creatures artifacts). Layer 7c
+runs after layer 4 (613.1), so the read is ordered rather than a dependency,
+and it is answered from :func:`_compute`'s own working type sets, never from
+:func:`chars` -- see :class:`Layer4Types` and ADR 0031.
+
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
 :func:`_battlefield_statics` -- *before* layer -1, so before any layer has
@@ -986,10 +993,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 toughness = _static_value(state, static.get("toughness"), source_obj)
 
         # 4. P/T modification (anthems)
+        #    Layer 7c, so every type change above is applied (613.1): an
+        #    `affects` carrying `derived_types` reads these working sets, not
+        #    the printed face ("Nonartifact creatures get -1/-1" spares what
+        #    The Flesh Is Weak made artifacts). Read here, not through
+        #    `chars`, so the answer is this object's own layer 4 and no
+        #    recursion is possible (ADR 0031).
+        layer4 = Layer4Types(frozenset(types), frozenset(subtypes), frozenset(supertypes))
         for source_obj, static in statics:
             if static.get("effect") != "buff":
                 continue
-            if _matches(state, obj, source_obj, static.get("affects")):
+            if _matches(state, obj, source_obj, static.get("affects"), layer4=layer4):
                 power += _static_value(state, static.get("power"), source_obj)
                 toughness += _static_value(state, static.get("toughness"), source_obj)
 
@@ -3148,6 +3162,19 @@ def enchanted_by_answer(seats: Any, spec: Any, controller: int) -> bool:
     return found if spec is not False else not found
 
 
+class Layer4Types(NamedTuple):
+    """An object's card types, subtypes and supertypes as layer 4 left them.
+
+    Handed by `_compute` to `_matches` at the anthem step, for an `affects`
+    carrying `derived_types` (ADR 0031). Built from `_compute`'s own working
+    sets, so reading it never asks `chars` anything.
+    """
+
+    types: frozenset[str]
+    subtypes: frozenset[str]
+    supertypes: frozenset[str]
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -3155,6 +3182,7 @@ def _matches(
     selector: Mapping[str, Any] | None,
     *,
     derived: bool = False,
+    layer4: Layer4Types | None = None,
 ) -> bool:
     """Match ``obj`` against a static ability's filter, using printed characteristics.
 
@@ -3171,12 +3199,18 @@ def _matches(
     able" (Graaz, Unstoppable Juggernaut) has to see the creatures Graaz's own
     third line makes Juggernauts, and rule 613 has nothing to order there --
     neither effect is a layer, so reading layer 4's output is no loop.
+
+    ``layer4`` is the object's types after layer 4, passed by the one reader
+    that runs later in the pipeline and holds them: the anthem step of
+    `_compute`. A selector with ``derived_types`` reads its type clauses off it
+    (ADR 0031); asked without it, the match raises rather than fall back to the
+    printed face.
     """
     if selector is None:
         return False
     if not obj.on_battlefield:
         return False
-    return _matches_wherever(state, obj, source, selector, derived=derived)
+    return _matches_wherever(state, obj, source, selector, derived=derived, layer4=layer4)
 
 
 def _matches_wherever(
@@ -3186,6 +3220,7 @@ def _matches_wherever(
     selector: Mapping[str, Any],
     *,
     derived: bool = False,
+    layer4: Layer4Types | None = None,
 ) -> bool:
     """`_matches` without the battlefield gate -- for an object that is *arriving*.
 
@@ -3215,7 +3250,9 @@ def _matches_wherever(
     if (branches := selector.get("any_of")) is not None:
         outer = {k: v for k, v in selector.items() if k != "any_of"}
         return any(
-            _matches_wherever(state, obj, source, {**outer, **branch}, derived=derived)
+            _matches_wherever(
+                state, obj, source, {**outer, **branch}, derived=derived, layer4=layer4
+            )
             for branch in branches
         )
 
@@ -3364,7 +3401,25 @@ def _matches_wherever(
             # `recorded_subtypes` is, and the colour half of the black Zombie a
             # Zombie lord already sees -- Bad Moon pumps it too.
             card = dataclasses.replace(card, colors=card.colors | set(added_colors))
-        if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
+        if selector.get("derived_types"):
+            # "**Nonartifact** creatures get -1/-1" (The Flesh Is Weak): the type
+            # clauses read layer 4's result, which already holds the text
+            # changes, the recorded subtypes, bestow and every type grant, so
+            # none of them is passed again. Only the anthem step holds it.
+            if layer4 is None:
+                raise DslError(
+                    "static filter 'derived_types' asked outside the anthem step"
+                )
+            card = dataclasses.replace(
+                card,
+                types=layer4.types,
+                subtypes=layer4.subtypes,
+                supertypes=layer4.supertypes,
+            )
+            matched = _matches_printed(card, selector)
+        else:
+            matched = _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes)
+        if not matched:
             return False
         size = None
 

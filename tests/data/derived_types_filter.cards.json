@@ -1,0 +1,120 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_derived_types_filter.py. t_dtf_flesh is The Flesh Is Weak, all three sentences, the witness for `derived_types` on a buff's affects. t_dtf_printed_shrink is its third sentence without the key, the near miss that reads printed types. t_dtf_goblinizer makes creatures you control Goblins and t_dtf_goblin_lord pumps Goblins with `derived_types`, the subtype half of the key. t_dtf_construct is a printed 1/1 artifact creature, and t_dtf_ogre a printed 3/3 that survives two -1/-1 anthems.",
+  "cards": [
+    {
+      "id": "t_dtf_flesh",
+      "name": "Test Flesh Is Weak",
+      "oracle_text": "When this enchantment enters, put a +1/+1 counter on each creature you control.\nCreatures you control with +1/+1 counters on them are artifacts in addition to their other types.\nNonartifact creatures get -1/-1.",
+      "mana_cost": "{2}{W}{U}{B}",
+      "types": ["Enchantment"],
+      "colors": ["W", "U", "B"],
+      "color_identity": ["W", "U", "B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, put a +1/+1 counter on each creature you control.",
+          "trigger": {"event": "self_enters"},
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": "all"}
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Creatures you control with +1/+1 counters on them are artifacts in addition to their other types.",
+          "effect": "add_subtype",
+          "types": ["Artifact"],
+          "affects": {"controller": "you", "types": ["Creature"], "has_counters": "+1/+1"}
+        },
+        {
+          "kind": "static",
+          "text": "Nonartifact creatures get -1/-1.",
+          "effect": "buff",
+          "power": -1,
+          "toughness": -1,
+          "affects": {"controller": "any", "types": ["Creature"], "not_types": ["Artifact"], "derived_types": true}
+        }
+      ]
+    },
+    {
+      "id": "t_dtf_printed_shrink",
+      "name": "Test Printed Nonartifact Shrink",
+      "oracle_text": "Nonartifact creatures get -1/-1.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Nonartifact creatures get -1/-1.",
+          "effect": "buff",
+          "power": -1,
+          "toughness": -1,
+          "affects": {"controller": "any", "types": ["Creature"], "not_types": ["Artifact"]}
+        }
+      ]
+    },
+    {
+      "id": "t_dtf_goblinizer",
+      "name": "Test Goblinizer",
+      "oracle_text": "Creatures you control are Goblins in addition to their other creature types.",
+      "mana_cost": "{1}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control are Goblins in addition to their other creature types.",
+          "effect": "add_subtype",
+          "subtypes": ["Goblin"],
+          "affects": {"controller": "you", "types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_dtf_goblin_lord",
+      "name": "Test Derived Goblin Lord",
+      "oracle_text": "Goblins you control get +1/+1.",
+      "mana_cost": "{1}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Goblins you control get +1/+1.",
+          "effect": "buff",
+          "power": 1,
+          "toughness": 1,
+          "affects": {"controller": "you", "subtypes": ["Goblin"], "derived_types": true}
+        }
+      ]
+    },
+    {
+      "id": "t_dtf_ogre",
+      "name": "Test Derived Ogre",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    },
+    {
+      "id": "t_dtf_construct",
+      "name": "Test Derived Construct",
+      "mana_cost": "{1}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "power": 1,
+      "toughness": 1
+    }
+  ]
+}

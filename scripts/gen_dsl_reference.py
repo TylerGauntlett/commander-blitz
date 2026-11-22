@@ -647,6 +647,9 @@ STATIC_FILTER_EXTRAS: dict[str, Entry] = {
                "static value's `count` only.",
                "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
+    "derived_types": ("`true`, on a `buff`: its type clauses read the types layer 4 left, not the "
+                      "printed face.",
+                      "`derived_types` — an anthem reads the types layer 4 left"),
     "modified": ("Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only).",
                  "Selectors — \"which objects\""),
     "paired": ("Is paired (soulbond).", "Soulbond — a relationship that is not attachment"),
