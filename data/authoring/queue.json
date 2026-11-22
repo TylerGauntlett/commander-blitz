@@ -281442,12 +281442,12 @@
     },
     "The Lost and the Damned": {
       "edhrec_rank": 5576,
-      "gate": "template",
+      "gate": null,
       "name": "The Lost and the Damned",
-      "reason": "no template for: Whenever a land you control enters from anywhere other than your hand or you cast a spell ",
+      "reason": "",
       "scryfall_id": "9a53cf96-b47f-48f0-b9cc-3330ae546a87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Lunar Whale": {

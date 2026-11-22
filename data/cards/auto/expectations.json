@@ -25243,6 +25243,10 @@
     },
     "zone": "battlefield"
   },
+  "the_lost_and_the_damned": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_master_mesmerist": {
     "battlefield_count": 33,
     "zone": "battlefield"

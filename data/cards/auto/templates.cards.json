@@ -303532,6 +303532,78 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spawn_3_3_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "entered_from": "hand"
+              }
+            },
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spawn_3_3_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "library",
+              "graveyard",
+              "exile",
+              "command"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "the_lost_and_the_damned",
+      "mana_cost": "{1}{U}{R}",
+      "name": "The Lost and the Damned",
+      "oracle_text": "Whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, create a 3/3 red Spawn creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
