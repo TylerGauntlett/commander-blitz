@@ -1223,10 +1223,13 @@ def _has_unmatched_spell_spec(game: Game, card: CardDef) -> bool:
     on_stack = [item.oid for item in game.state.stack if item.oid is not None]
     return any(
         not any(
-            matches(ctx, oid, spec.selector, default_zone="stack") for oid in on_stack
+            matches(ctx, oid, spec.spell_half, default_zone="stack") for oid in on_stack
         )
         for spec in (card.spree_targets or card.targets)
+        # A `spell_or_ability` spec's spell half is asked only when the card
+        # narrowed it (`spell_selector`); otherwise every dummy fits it.
         if spec.kind == "spell"
+        or (spec.kind == "spell_or_ability" and spec.spell_selector is not None)
     )
 
 

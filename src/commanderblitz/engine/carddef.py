@@ -79,6 +79,11 @@ class TargetSpec:
     #: **creature**" (Fatehold Charm). ``None`` means both halves read
     #: `selector`. See :attr:`permanent_half`.
     permanent_selector: Mapping[str, Any] | None = None
+    #: A ``"spell_or_ability"`` spec's extra clauses for its **spell** half --
+    #: "target **instant spell, sorcery spell**, activated ability, or
+    #: triggered ability" (Sister of Silence). ``None`` means the spell half
+    #: reads `selector` alone. See :attr:`spell_half`.
+    spell_selector: Mapping[str, Any] | None = None
     #: An ``"any"`` spec's player spec for its **player** half, when the printed
     #: word narrows only the players -- "target **opponent** or planeswalker".
     #: ``None`` means the player half reads `selector`'s ``controller``. See
@@ -207,6 +212,20 @@ class TargetSpec:
         """
         if self.permanent_selector is not None:
             return self.permanent_selector
+        return self.selector
+
+    @property
+    def spell_half(self) -> Mapping[str, Any]:
+        """The selector a spell on the stack is matched against for this spec.
+
+        `selector` with `spell_selector` merged over it when the card wrote
+        one, else `selector`. Read by `targeting._spell_matches`, which both
+        `candidates` and `still_legal` ask, so the spells a target is offered
+        from and re-checked against cannot disagree; the ability half never
+        sees the merged clauses.
+        """
+        if self.spell_selector is not None:
+            return {**self.selector, **self.spell_selector}
         return self.selector
 
     @property

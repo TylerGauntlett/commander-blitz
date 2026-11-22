@@ -404,6 +404,16 @@ class TargetModel(BaseModel):
     #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
+    #: The printed-characteristics clauses the **spell half** of a
+    #: ``"spell_or_ability"`` target adds to `selector` -- "counter target
+    #: **instant spell, sorcery spell**, activated ability, or triggered
+    #: ability" (Sister of Silence), where "instant, sorcery" narrows only the
+    #: spells and every activated or triggered ability stays legal. Merged over
+    #: `selector`, whose ``controller`` and ``that_targets`` still narrow both
+    #: halves. Refused on every other kind, with ``controller``,
+    #: ``that_targets`` or ``zone`` in it, and with a clause naming a sibling
+    #: target or ``{X}``.
+    spell_selector: dict[str, Any] | None = None
     #: The player spec the **player half** of a ``"any"`` target reads instead
     #: of `selector`'s ``controller`` -- "target **opponent** or planeswalker"
     #: (Theater of Horrors, Collective Defiance), where "opponent" narrows only

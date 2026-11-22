@@ -751,6 +751,45 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
         )
 
 
+def _check_spell_selector(model: TargetModel, label: str) -> None:
+    """"Counter target **instant spell, sorcery spell**, activated ability, or
+    triggered ability": the spell half's own printed-characteristics clauses.
+
+    Each refusal is a clause that would load and be read nowhere, or one that
+    belongs to both halves and so to `selector`.
+    """
+    sub = model.spell_selector or {}
+    if model.kind != "spell_or_ability":
+        # A `spell` target's `selector` already narrows its one pool, and no
+        # other kind has a spell half.
+        raise DslError(
+            f"{label}: 'spell_selector' narrows the spell half of a "
+            f"'spell_or_ability' target, and this one is {model.kind!r}"
+        )
+    if not sub:
+        raise DslError(
+            f"{label}.spell_selector: an empty selector narrows nothing -- drop it"
+        )
+    shared = set(sub) & {"controller", "that_targets"}
+    if shared:
+        # Both halves answer these, and the printed clause ("…an opponent
+        # controls", "…that targets you") is meant to narrow both: here it
+        # would narrow the spells alone, a strictly wider card.
+        raise DslError(
+            f"{label}.spell_selector: {sorted(shared)} narrow both halves -- "
+            f"put them in 'selector'"
+        )
+    if "zone" in sub:
+        raise DslError(f"{label}.spell_selector: a spell is on the stack, so 'zone' says nothing")
+    validate_selector(sub, f"{label}.spell_selector")
+    if _reads_context(sub):
+        # The linked-target walk and the X walk read `selector` only.
+        raise DslError(
+            f"{label}.spell_selector: names a sibling target or {{X}}, "
+            f"which only 'selector' may do"
+        )
+
+
 def _check_player_selector(model: TargetModel, label: str) -> None:
     """"Target **opponent** or planeswalker": the player half's own player spec.
 
@@ -826,7 +865,8 @@ def _compile_target(
         if extra:
             raise DslError(
                 f"{label}: a 'spell_or_ability' target reads only 'controller' "
-                f"and 'that_targets', not {sorted(extra)}"
+                f"and 'that_targets', not {sorted(extra)} -- a clause about the "
+                f"spell's face goes in 'spell_selector'"
             )
         if "that_targets" in model.selector:
             validate_that_targets(model.selector["that_targets"], label)
@@ -920,6 +960,8 @@ def _compile_target(
 
     if model.permanent_selector is not None:
         _check_permanent_selector(model, label)
+    if model.spell_selector is not None:
+        _check_spell_selector(model, label)
     if model.player_selector is not None:
         _check_player_selector(model, label)
 
@@ -1024,6 +1066,9 @@ def _compile_target(
         ),
         permanent_selector=(
             dict(model.permanent_selector) if model.permanent_selector is not None else None
+        ),
+        spell_selector=(
+            dict(model.spell_selector) if model.spell_selector is not None else None
         ),
         player_selector=(
             dict(model.player_selector)

@@ -1489,10 +1489,30 @@ effect never happens (701.6b). "Target spell or ability" (Deflecting Swat) is
 the same pool.
 
 The `selector` reads only `controller`, as `"you"` or `"opponent"` ("spell or
-ability an opponent controls"): it is the one clause a spell and an ability
-both answer. Every other clause, `ability_kind`, a Mapping `controller`,
-`total_mana_value` and `total_power` are refused at load time, since each would
-narrow one half or be read off the ability's source. `still_legal` re-checks a
+ability an opponent controls"), and `that_targets`: the clauses a spell and an
+ability both answer, so both halves are narrowed by them. Every other clause,
+`ability_kind`, a Mapping `controller`, `total_mana_value` and `total_power`
+are refused at load time, since each would narrow one half or be read off the
+ability's source.
+
+When the printed words narrow only the spells, `spell_selector` holds them,
+merged over `selector` for the spell half alone (`TargetSpec.spell_half`):
+
+```jsonc
+// Sister of Silence: "When this creature enters, counter target instant
+//                     spell, sorcery spell, activated ability, or triggered
+//                     ability."
+{ "id": "t1", "kind": "spell_or_ability", "count": 1,
+  "spell_selector": { "any_types": ["Instant", "Sorcery"] } }
+```
+
+Any instant or sorcery spell is legal, and every activated or triggered ability;
+a creature spell is not. It takes the printed-characteristics clauses a
+`"spell"` selector takes, and is refused on every other kind, empty, with
+`controller` or `that_targets` (they narrow both halves and belong in
+`selector`), with a `zone`, and with a clause naming a sibling target or `{X}`.
+The near miss is plain Disallow, which also counters creature, artifact,
+enchantment and planeswalker spells. `still_legal` re-checks a
 spell ref through `_spell_matches` and an ability ref through `_ability_matches`,
 the matchers `candidates` offered them through. The near miss is two specs, one
 `"spell"` and one `"ability_on_stack"`: a card that targets twice and is cast

@@ -1,0 +1,81 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_spell_or_ability_spell_selector.py. t_sister_of_silence is Sister of Silence: an ETB trigger with one spell_or_ability target whose spell_selector narrows the spells to instants and sorceries, every ability still legal. t_silence_snap is the same target on an instant, for the end-to-end counter. t_silence_snap_theirs adds the shared controller clause. t_quiet_sorcery is a sorcery to put on the stack.",
+  "cards": [
+    {
+      "id": "t_sister_of_silence",
+      "name": "Test Sister of Silence",
+      "oracle_text": "Flash\nWhen this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.",
+      "mana_cost": "{4}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["flash"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, counter target instant spell, sorcery spell, activated ability, or triggered ability.",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "spell_or_ability",
+              "count": 1,
+              "spell_selector": {"any_types": ["Instant", "Sorcery"]}
+            }
+          ],
+          "effects": [{"op": "counter", "target": "t1"}]
+        }
+      ]
+    },
+    {
+      "id": "t_silence_snap",
+      "name": "Test Silence Snap",
+      "oracle_text": "Counter target instant spell, sorcery spell, activated ability, or triggered ability.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_ability",
+          "count": 1,
+          "spell_selector": {"any_types": ["Instant", "Sorcery"]}
+        }
+      ],
+      "spell_effects": [{"op": "counter", "target": "t1"}]
+    },
+    {
+      "id": "t_silence_snap_theirs",
+      "name": "Test Silence Snap Theirs",
+      "oracle_text": "Counter target instant spell, sorcery spell, activated ability, or triggered ability an opponent controls.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_ability",
+          "count": 1,
+          "selector": {"controller": "opponent"},
+          "spell_selector": {"any_types": ["Instant", "Sorcery"]}
+        }
+      ],
+      "spell_effects": [{"op": "counter", "target": "t1"}]
+    },
+    {
+      "id": "t_quiet_sorcery",
+      "name": "Test Quiet Sorcery",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}
