@@ -38862,12 +38862,12 @@
     },
     "Canoptek Tomb Sentinel": {
       "edhrec_rank": 7811,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Tomb Sentinel",
-      "reason": "no template for: Exile Cannon — When this creature enters from a graveyard, exile up to one target nonland ",
+      "reason": "",
       "scryfall_id": "02ed7f46-f58f-412a-8aa4-71f453ee3618",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Wraith": {
@@ -46372,12 +46372,12 @@
     },
     "Chronomancer": {
       "edhrec_rank": 7427,
-      "gate": "template",
+      "gate": null,
       "name": "Chronomancer",
-      "reason": "no template for: Atomic Transmutation — {1}, {T}, Sacrifice another artifact: Draw a card",
+      "reason": "",
       "scryfall_id": "260feb59-6039-48ac-b6ac-9b7e9ac1d05c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chronomantic Escape": {
@@ -57492,12 +57492,12 @@
     },
     "Cryptek": {
       "edhrec_rank": 9026,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptek",
-      "reason": "no template for: {1}{B}, {T}: Choose another target artifact creature you control. When that creature dies ",
+      "reason": "",
       "scryfall_id": "60c1f854-5826-4208-88fe-12a5dae8d18b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cryptex": {
@@ -57652,12 +57652,12 @@
     },
     "Cryptothrall": {
       "edhrec_rank": 2756,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptothrall",
-      "reason": "no template for: Protector — Other artifact creatures you control have hexproof",
+      "reason": "",
       "scryfall_id": "086d94a0-763e-495e-b952-5c13383657c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cryptwailing": {

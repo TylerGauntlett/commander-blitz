@@ -3566,6 +3566,11 @@
     },
     "zone": "battlefield"
   },
+  "canoptek_tomb_sentinel": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "canopy_gargantuan": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4241,6 +4246,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "chronomancer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "chulane_teller_of_tales": {
@@ -5302,6 +5311,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cryptek": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cryptic_command": {
     "graveyard_size": {
       "0": 3
@@ -5314,6 +5327,10 @@
       "amount": 15,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "cryptothrall": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "crystacean": {

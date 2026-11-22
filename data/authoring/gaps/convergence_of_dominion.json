@@ -1,0 +1,21 @@
+{
+  "card_id": "convergence_of_dominion",
+  "name": "Convergence of Dominion",
+  "oracle_text": "Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.\nTranslocation Protocols — {3}, {T}: Mill three cards.",
+  "blocked_sentences": [
+    "Dynastic Command Node — As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana."
+  ],
+  "needs": [
+    {
+      "capability": "ability_cost_reduction_minimum",
+      "kind": "static_effect",
+      "what": "an ability_cost_reduction static that reaches activated abilities of cards in a graveyard (affects: {zone: graveyard, owner/controller: you}, any ability class, not only equip/boast) and carries a floor so the discount cannot reduce the ability's total mana cost below one mana (a mana_floor: 1 key applied after the reduction in costs.ability_mana)",
+      "why_existing_wont_do": "ability_cost_reduction's affects_abilities offers equip, boast and any, where any is accepted only beside targeting or first_each_turn; and its discount is clamped only at zero generic by costs.ability_mana, so nothing expresses 'can't reduce the mana in that ability's activation cost to less than one mana'. Dropping the floor would make {2}-costed graveyard abilities free, which the card forbids"
+    }
+  ],
+  "closest_existing": [
+    "ability_cost_reduction",
+    "mana_reduction"
+  ],
+  "confidence": "high"
+}

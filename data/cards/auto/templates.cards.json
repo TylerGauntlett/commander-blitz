@@ -42675,6 +42675,113 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Exile Cannon — When this creature enters from a graveyard, exile up to one target nonland permanent.",
+          "trigger": {
+            "condition": {
+              "entered_from": "graveyard"
+            },
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{7}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {7}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "canoptek_tomb_sentinel",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}",
+      "name": "Canoptek Tomb Sentinel",
+      "oracle_text": "Vigilance\nExile Cannon — When this creature enters from a graveyard, exile up to one target nonland permanent.\nUnearth {7} ({7}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -51859,6 +51966,112 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Atomic Transmutation — {1}, {T}, Sacrifice another artifact: Draw a card."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {2}{B} ({2}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "chronomancer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Chronomancer",
+      "oracle_text": "Flying\nAtomic Transmutation — {1}, {T}, Sacrifice another artifact: Draw a card.\nUnearth {2}{B} ({2}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Necron",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -64477,6 +64690,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard",
+                  "tapped": true
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When that creature dies this turn, return it to the battlefield tapped under your control.",
+              "trigger": {
+                "controller": "any",
+                "event": "dies",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{B}, {T}: Choose another target artifact creature you control. When that creature dies this turn, return it to the battlefield tapped under your control."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "cryptek",
+      "mana_cost": "{3}{B}",
+      "name": "Cryptek",
+      "oracle_text": "{1}{B}, {T}: Choose another target artifact creature you control. When that creature dies this turn, return it to the battlefield tapped under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Necron",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -64632,6 +64920,42 @@
       ],
       "toughness": 0,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Artifact",
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Protector — Other artifact creatures you control have hexproof."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cryptothrall",
+      "mana_cost": "{4}",
+      "name": "Cryptothrall",
+      "oracle_text": "Protector — Other artifact creatures you control have hexproof.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
