@@ -17,7 +17,9 @@ if TYPE_CHECKING:  # pragma: no cover
     # docstring is about: `carddef` is a leaf, but the point of `structs` is
     # that it needs nothing.
     from .carddef import Ability, TriggerSpec
+    from .characteristics import Characteristics
     from .mana import ManaOrigin
+    from .objects import GameObject
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -1685,6 +1687,22 @@ class SacrificeRestriction:
 CONVOKED_BINDING = "convoked"
 
 
+@dataclass(frozen=True)
+class LastKnown:
+    """An object as it last existed on the battlefield (113.7a, 608.2h).
+
+    ``obj`` is a shallow copy of the `GameObject` taken as it left, and
+    ``chars`` the derived characteristics it had then. Written by
+    `zones.move_object` into `StackItem.source_last_known` and asked through
+    `selectors.matches`'s ``last_known``. The engine's explicit-LKI pattern
+    again, filed only where a later question needs it rather than for every
+    object that leaves.
+    """
+
+    obj: GameObject
+    chars: Characteristics
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""
@@ -1703,6 +1721,16 @@ class StackItem:
     #: neither ``kind`` nor ``bindings`` can say it -- an activated ability's
     #: cost writes bindings too. A copy keeps it (706.10).
     ability_kind: str | None = None
+    #: The ability's source as it last existed on the battlefield, once it has
+    #: left: "copy target ability … from another **legendary** source that's
+    #: not a commander" (The Peregrine Dynamo) is still asked of a source that
+    #: was destroyed in response (113.7a). Filled by
+    #: `zones.move_object` the first time the source leaves the battlefield
+    #: with this item on the stack, and read by `targeting._ability_matches`'s
+    #: ``ability_source`` clause in preference to the object now behind the
+    #: oid -- which is a different object (400.7), or nothing for a token. A
+    #: copy keeps it (706.10). ``None`` while the source is where it was.
+    source_last_known: LastKnown | None = None
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()

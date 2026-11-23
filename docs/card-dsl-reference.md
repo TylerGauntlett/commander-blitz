@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 188 |
-| [Selectors](#selectors) | 81 |
+| [Selectors](#selectors) | 82 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
@@ -241,6 +241,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | Name | Description | Defined in |
 |---|---|---|
 | `ability_kind` | On an `ability_on_stack` target only: `triggered` or `activated`. | [Copying an ability on the stack](card-dsl.md#copying-an-ability-on-the-stack) |
+| `ability_source` | On an `ability_on_stack` target only: a selector over the ability's source (characteristics, `exclude_self`, `is_commander`, `is_token`), read as it last existed once it has left. | [Copying an ability on the stack](card-dsl.md#copying-an-ability-on-the-stack) |
 | `any_of` | A union of whole selectors: any one may match. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `any_types` | Any one of these card types is enough. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |

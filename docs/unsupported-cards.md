@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**537 cards** blocked by **453** capabilities.
+**536 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -85,7 +85,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
-| [ability-source-filter](#ability-source-filter) | 1 | 6362 | selector |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [activated-this-turn](#activated-this-turn) | 1 | 13487 | selector |
@@ -2200,20 +2199,6 @@ Blocks **2** cards.
   - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
 - **Wizened Mentor** (rank 7822) — `wizened_mentor`
   - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
-
-</details>
-
-## ability-source-filter
-
-Blocks **1** card.
-
-- **(selector)** an 'ability_on_stack' target selector that filters on the ability's SOURCE object: its supertypes (Legendary), not being the activating permanent itself (exclude_self, i.e. 'another'), and not being a commander (is_commander: false) -- read from the source's last known characteristics if it has left
-  <br>Why the existing vocabulary won't do: copy_ability with new_targets and an ability_on_stack target covers 'copy target activated or triggered ability you control', but loader/targets.py `_compile_target` refuses every ability_on_stack selector key except controller, ability_kind and that_targets, and engine/targeting.py `_ability_matches` reads only those; dropping the 'another legendary source that's not a commander' clause would let it copy any ability, a much stronger card
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Peregrine Dynamo** (rank 6362) — `the_peregrine_dynamo`
-  - {1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy. (Mana abilities can't be targeted.)
 
 </details>
 

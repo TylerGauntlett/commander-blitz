@@ -281932,12 +281932,12 @@
     },
     "The Peregrine Dynamo": {
       "edhrec_rank": 6362,
-      "gate": "template",
+      "gate": null,
       "name": "The Peregrine Dynamo",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from another legendary so",
+      "reason": "",
       "scryfall_id": "2e474c23-22d3-4249-b678-254b178ddf6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Phasing of Zhalfir": {

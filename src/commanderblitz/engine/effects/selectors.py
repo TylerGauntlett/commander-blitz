@@ -33,7 +33,7 @@ from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
 from ..objects import GRAVEYARD_ARRIVAL_WAYS
 from ..player_statics import commander_subtypes, goaders
-from ..structs import CONVOKED_BINDING
+from ..structs import CONVOKED_BINDING, LastKnown
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -459,6 +459,15 @@ SELECTOR_KEYS = frozenset(
         #: selector: `validate_selector` refuses it anywhere else, where no
         #: matcher would read it.
         "ability_kind",
+        #: "Copy target activated or triggered ability you control **from
+        #: another legendary source that's not a commander**" -- The Peregrine
+        #: Dynamo. A selector over the ability's *source* object, read by
+        #: `targeting._ability_matches` through `matches` -- live while the
+        #: source is where it was, and from `StackItem.source_last_known` once
+        #: it has left the battlefield (113.7a: the ability outlives its
+        #: source). Only an ``ability_on_stack`` target's selector may carry
+        #: it, and only `ABILITY_SOURCE_KEYS` inside it.
+        "ability_source",
         #: "Counter target spell or ability **that targets you or a creature
         #: you control**" -- Siren Stormtamer. ``{"player": <player spec>}``
         #: and/or ``{"permanent": <selector>}``, met when any of the stack
@@ -935,6 +944,7 @@ def matches(
     selector: Mapping[str, Any],
     *,
     default_zone: str | None = "battlefield",
+    last_known: LastKnown | None = None,
 ) -> bool:
     """Does one object satisfy every clause of ``selector``?
 
@@ -942,15 +952,24 @@ def matches(
     battlefield everywhere a selector *searches* a zone, and ``None`` -- no zone
     clause at all -- when the pool was named rather than searched by a
     ``binding``; see `resolve_pool`.
+
+    ``last_known`` asks the question of the object **as it last existed on the
+    battlefield** rather than as it is now: the copy of it and the derived
+    characteristics `zones.move_object` recorded as it left. Only the
+    ``ability_source`` clause passes one, and the loader admits only
+    `ABILITY_SOURCE_KEYS` there -- the clauses answered off the object and its
+    characteristics alone -- so no clause that looks the oid up elsewhere on
+    the board is ever asked of a record. No zone is asked of it either: the
+    object it describes is gone.
     """
     state = ctx.state
-    obj = state.objects.get(oid)
+    obj = last_known.obj if last_known is not None else state.objects.get(oid)
     if obj is None:
         return False
 
     zone_name = selector.get("zone", _default_zone(selector, default_zone))
     zone = ZONE_NAMES.get(zone_name) if zone_name is not None else None
-    if zone is not None and obj.zone is not zone:
+    if last_known is None and zone is not None and obj.zone is not zone:
         return False
 
     # "…if it's a creature card **of the chosen type**." Herald's Horn asks this
@@ -973,8 +992,11 @@ def matches(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
 
-    use_derived = obj.on_battlefield
-    c = chars(state, oid) if use_derived else None
+    use_derived = last_known is not None or obj.on_battlefield
+    if last_known is not None:
+        c = last_known.chars
+    else:
+        c = chars(state, oid) if use_derived else None
     # Off the battlefield the printed face, plus what an `off_battlefield`
     # `add_subtype` grants it: "creature cards you own that aren't on the
     # battlefield" are every creature type to a tutor too (Maskwood Nexus).
@@ -2182,6 +2204,7 @@ ATTACHED_TO_REFUSED_KEYS = frozenset(
         "extreme",
         "player",
         "ability_kind",
+        "ability_source",
         "that_targets",
         "object_kind",
         "encoded_by",
@@ -2280,6 +2303,13 @@ def validate_selector(selector: Any, where: str) -> None:
         # pool of permanents or cards has no ability kind to be asked.
         raise DslError(
             f"{where}: 'ability_kind' narrows an 'ability_on_stack' target and "
+            f"means nothing on any other selector"
+        )
+    if "ability_source" in selector:
+        # Lifted off an `ability_on_stack` spec by `_compile_target` and
+        # checked by `validate_ability_source`, like `ability_kind`.
+        raise DslError(
+            f"{where}: 'ability_source' narrows an 'ability_on_stack' target and "
             f"means nothing on any other selector"
         )
     if "that_targets" in selector:
@@ -2614,6 +2644,58 @@ def validate_selector(selector: Any, where: str) -> None:
             validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
+
+
+#: The clauses an ``ability_source`` selector may carry: the source's
+#: characteristics and its identity, every one of which `matches` answers off
+#: the object and its characteristics alone. That is what lets the same
+#: clauses be asked of the last-known record a departed source leaves on the
+#: stack item (`StackItem.source_last_known`). A clause that consults the rest
+#: of the board about the object by its oid -- what it is attached to, what
+#: damaged it, whether it is tapped now -- would read the object's *current*
+#: state there, which 113.7a says the ability no longer depends on, so the
+#: loader refuses it rather than answer it wrongly. No `zone`: an ability's
+#: source is wherever it is, and a departed one is read as it last was.
+ABILITY_SOURCE_KEYS = frozenset(
+    {
+        "types",
+        "not_types",
+        "any_types",
+        "subtypes",
+        "not_subtypes",
+        "supertypes",
+        "not_supertypes",
+        "colors",
+        "not_colors",
+        "colorless",
+        "min_colors",
+        "name",
+        "not_name",
+        "exclude_self",
+        "self_only",
+        "is_commander",
+        "is_token",
+    }
+)
+
+
+def validate_ability_source(clause: Any, where: str) -> None:
+    """Load-time shape of an ``ability_on_stack`` target's ``ability_source``.
+
+    A non-empty selector over `ABILITY_SOURCE_KEYS` alone; an empty one would
+    read "from any source", which is what leaving the key off already says.
+    """
+    if not isinstance(clause, Mapping) or not clause:
+        raise DslError(
+            f"{where}.ability_source: a non-empty selector over the ability's "
+            f"source, got {clause!r}"
+        )
+    if unknown := set(clause) - ABILITY_SOURCE_KEYS:
+        raise DslError(
+            f"{where}.ability_source: {sorted(unknown)} cannot be read off a "
+            f"source's last known information; only {sorted(ABILITY_SOURCE_KEYS)}"
+        )
+    validate_selector(clause, f"{where}.ability_source")
 
 
 #: The clauses a `that_targets` selector key may carry.

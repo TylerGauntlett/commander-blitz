@@ -25983,6 +25983,10 @@
     },
     "zone": "battlefield"
   },
+  "the_peregrine_dynamo": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_queen_of_dale": {
     "battlefield_count": 33,
     "zone": "battlefield"

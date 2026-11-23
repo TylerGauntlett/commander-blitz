@@ -8,6 +8,7 @@ happen in exactly one place.
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
@@ -31,7 +32,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
-from .structs import CONVOKED_BINDING, CastThisWayLink
+from .structs import CONVOKED_BINDING, CastThisWayLink, LastKnown
 from .temp_effects import end_redirects_to, end_source_bound
 from .triggers import delayed_watches_departure, fire
 
@@ -311,6 +312,16 @@ def move_object(
         for record in state.paid_objects.values():
             if record["oid"] == oid and record["power"] is None:
                 record["power"], record["toughness"] = had_power, had_toughness
+        # And into every ability of it still on the stack: "copy target ability
+        # … from another **legendary** source" (The Peregrine Dynamo) is asked
+        # of the source as it last existed (113.7a), and the object behind this
+        # oid is about to be a graveyard card or, for a token, nothing. Kept by
+        # an item that already has one, for `paid_objects`' reason.
+        lki: LastKnown | None = None
+        for item in state.stack:
+            if item.source_oid == oid and not item.is_spell and item.source_last_known is None:
+                lki = lki or LastKnown(obj=copy.copy(obj), chars=_seen)
+                item.source_last_known = lki
     else:
         had_power = had_toughness = 0
         had_keywords = []
