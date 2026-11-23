@@ -1,0 +1,98 @@
+{
+  "card": {
+    "id": "mana_cannons",
+    "name": "Mana Cannons",
+    "oracle_text": "Whenever you cast a multicolored spell, this enchantment deals X damage to any target, where X is the number of colors that spell is.",
+    "mana_cost": "{2}{R}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a multicolored spell, this enchantment deals X damage to any target, where X is the number of colors that spell is.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "min_colors": 2
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "any",
+            "count": 1,
+            "selector": {
+              "any_types": [
+                "Creature",
+                "Planeswalker",
+                "Battle"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "damage",
+            "target": "t1",
+            "amount": {
+              "sum": [
+                {
+                  "count": {
+                    "binding": "subject",
+                    "colors": [
+                      "W"
+                    ]
+                  }
+                },
+                {
+                  "count": {
+                    "binding": "subject",
+                    "colors": [
+                      "U"
+                    ]
+                  }
+                },
+                {
+                  "count": {
+                    "binding": "subject",
+                    "colors": [
+                      "B"
+                    ]
+                  }
+                },
+                {
+                  "count": {
+                    "binding": "subject",
+                    "colors": [
+                      "R"
+                    ]
+                  }
+                },
+                {
+                  "count": {
+                    "binding": "subject",
+                    "colors": [
+                      "G"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

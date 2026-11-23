@@ -88101,6 +88101,58 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "echoing_truth",
+      "mana_cost": "{1}{U}",
+      "name": "Echoing Truth",
+      "oracle_text": "Return target nonland permanent and all other permanents with the same name as that permanent to their owners' hands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "bounced",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "bounced",
+            "shares_a_name_with": "bounced",
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -101497,6 +101549,59 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+          ],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Fallaji Wayfarer is all colors. This ability doesn't affect its color identity."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "min_colors": 2
+          },
+          "effect": "grant_pay_generic_with",
+          "kind": "static",
+          "pay_generic_with": "tap_creatures",
+          "text": "Multicolored spells you cast have convoke."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "fallaji_wayfarer",
+      "mana_cost": "{2}{G}",
+      "name": "Fallaji Wayfarer",
+      "oracle_text": "Fallaji Wayfarer is all colors. This ability doesn't affect its color identity. (It can be in any deck whose commander's color identity includes green.)\nMulticolored spells you cast have convoke. (Your creatures can help cast those spells. Each creature you tap while casting a multicolored spell pays for {1} or one mana of a color that creature is.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -183231,6 +183336,54 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "cast_from_hand",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may cast a spell from your hand without paying its mana cost.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "maelstrom_archangel",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Maelstrom Archangel",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, you may cast a spell from your hand without paying its mana cost.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {

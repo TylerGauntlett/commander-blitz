@@ -79192,12 +79192,12 @@
     },
     "Echoing Truth": {
       "edhrec_rank": 9695,
-      "gate": "template",
+      "gate": null,
       "name": "Echoing Truth",
-      "reason": "no template for: Return target nonland permanent and all other permanents with the same name as that perman",
+      "reason": "",
       "scryfall_id": "490c1af2-5ec1-45cf-aa51-959eea94948b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eclipsed Boggart": {
@@ -90692,12 +90692,12 @@
     },
     "Fallaji Wayfarer": {
       "edhrec_rank": 6624,
-      "gate": "template",
+      "gate": null,
       "name": "Fallaji Wayfarer",
-      "reason": "no template for: is all colors. This ability doesn't affect its color identity",
+      "reason": "",
       "scryfall_id": "0e8435c6-94d4-4204-a196-ececb38a8c61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fallen Angel": {
@@ -164112,12 +164112,12 @@
     },
     "Maelstrom Archangel": {
       "edhrec_rank": 6535,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Archangel",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may cast a spell from your han",
+      "reason": "",
       "scryfall_id": "95ea2a05-207d-4330-bcbe-bcaacd6657f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Artisan // Rocket Volley": {
