@@ -1,0 +1,18 @@
+{
+  "card_id": "archelos_lagoon_mystic",
+  "name": "Archelos, Lagoon Mystic",
+  "oracle_text": "As long as Archelos is tapped, other permanents enter tapped.\nAs long as Archelos is untapped, other permanents enter untapped.",
+  "blocked_sentences": [
+    "As long as Archelos is untapped, other permanents enter untapped."
+  ],
+  "needs": [
+    {
+      "capability": "enters_untapped",
+      "kind": "static_effect",
+      "what": "a static effect filtered by `affects` (here every permanent, `exclude_self`, any controller) and switched by a static `condition` (this permanent untapped), that makes matching permanents enter the battlefield untapped however they arrive: it overrides a card's own printed self_enters_tapped replacement, another permanent's board `enters_tapped` static, and an effect that puts a permanent onto the battlefield tapped (fetches, ramp spells, tokens created tapped and attacking)",
+      "why_existing_wont_do": "The `enters_tapped` static only ever sets tapped to true, so it expresses the first line (with a self-tapped condition and `exclude_self`) but nothing in static_effects sets entering permanents back to untapped or suppresses self_enters_tapped and `tapped: true` on put_onto_battlefield/create_token. Same capability as horizon_explorer's gap. Note the template's starting_point wrongly gives Archelos a `self_enters_tapped` replacement; Archelos itself enters normally"
+    }
+  ],
+  "closest_existing": ["enters_tapped", "self_enters_tapped"],
+  "confidence": "high"
+}
