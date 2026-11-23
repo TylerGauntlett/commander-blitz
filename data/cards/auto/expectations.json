@@ -1328,6 +1328,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "argoth_sanctum_of_nature": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "argothian_opportunist": {
     "zone": "battlefield"
   },
@@ -10759,6 +10763,10 @@
     "zone": "battlefield"
   },
   "goliath_truck": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gond_gate": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -23904,6 +23912,15 @@
     },
     "zone": "battlefield"
   },
+  "spelunking": {
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "sphere_grid": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26929,6 +26946,9 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "titania_s_command": {
+    "zone": "graveyard"
   },
   "titans_vanguard": {
     "battlefield_count": 33,

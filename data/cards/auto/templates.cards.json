@@ -15896,6 +15896,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "bear_2_2_g"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}{G}{G}, {T}: Create a 2/2 green Bear creature token, then mill three cards. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "argoth_sanctum_of_nature",
+      "name": "Argoth, Sanctum of Nature",
+      "oracle_text": "This land enters tapped unless you control a legendary green creature.\n{T}: Add {G}.\n{2}{G}{G}, {T}: Create a 2/2 green Bear creature token, then mill three cards. Activate only as a sorcery.\n(Melds with Titania, Voice of Gaea.)",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "colors": [
+                  "G"
+                ],
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -127128,6 +127204,67 @@
       "toughness": 4,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Gate"
+            ]
+          },
+          "effect": "enters_untapped",
+          "kind": "static",
+          "text": "Gates you control enter untapped."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "controller": "you",
+                "subtypes": [
+                  "Gate"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color that a Gate you control could produce."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "gond_gate",
+      "name": "Gond Gate",
+      "oracle_text": "Gates you control enter untapped.\n{T}: Add {C}.\n{T}: Add one mana of any color that a Gate you control could produce.",
+      "source": "auto",
+      "subtypes": [
+        "Gate"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -285104,6 +285241,100 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "as": "spelunked",
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "spelunked",
+                      "subtypes": [
+                        "Cave"
+                      ]
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a land card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, draw a card, then you may put a land card from your hand onto the battlefield. If you put a Cave onto the battlefield this way, you gain 4 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "enters_untapped",
+          "kind": "static",
+          "text": "Lands you control enter untapped."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spelunking",
+      "mana_cost": "{2}{G}",
+      "name": "Spelunking",
+      "oracle_text": "When this enchantment enters, draw a card, then you may put a land card from your hand onto the battlefield. If you put a Cave onto the battlefield this way, you gain 4 life.\nLands you control enter untapped.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "counter": "+1/+1",
               "objects": {
                 "binding": "subject"
@@ -323751,6 +323982,114 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "titania_s_command",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Titania's Command",
+      "oracle_text": "Choose two —\n• Exile target player's graveyard. You gain 1 life for each card exiled this way.\n• Search your library for up to two land cards, put them onto the battlefield tapped, then shuffle.\n• Create two 2/2 green Bear creature tokens.\n• Put two +1/+1 counters on each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "as": "exiled",
+                  "objects": {
+                    "count": "all",
+                    "player": {
+                      "target": "graveyard_owner"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "exiled",
+                      "zone": "exile"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "label": "Exile target player's graveyard. You gain 1 life for each card exiled this way."
+            },
+            {
+              "effects": [
+                {
+                  "count": 2,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "label": "Search your library for up to two land cards, put them onto the battlefield tapped, then shuffle."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "create_token",
+                  "token": "bear_2_2_g"
+                }
+              ],
+              "label": "Create two 2/2 green Bear creature tokens."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "label": "Put two +1/+1 counters on each creature you control."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "graveyard_owner",
+          "kind": "player",
+          "mode": 0,
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

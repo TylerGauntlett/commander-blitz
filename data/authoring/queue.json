@@ -12912,12 +12912,12 @@
     },
     "Argoth, Sanctum of Nature": {
       "edhrec_rank": 3726,
-      "gate": "template",
+      "gate": null,
       "name": "Argoth, Sanctum of Nature",
-      "reason": "no template for: {2}{G}{G}, {T}: Create a 2/2 green Bear creature token, then mill three cards. Activate on",
+      "reason": "",
       "scryfall_id": "b29c9e4f-7b98-4610-a681-ae6297e8fc72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Argothian Elder": {
@@ -115062,12 +115062,12 @@
     },
     "Gond Gate": {
       "edhrec_rank": 2552,
-      "gate": "template",
+      "gate": null,
       "name": "Gond Gate",
-      "reason": "no template for: Gates you control enter untapped",
+      "reason": "",
       "scryfall_id": "a01096b1-a026-4dfd-bea2-de9ecb686ffa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gone Missing": {
@@ -258282,12 +258282,12 @@
     },
     "Spelunking": {
       "edhrec_rank": 727,
-      "gate": "template",
+      "gate": null,
       "name": "Spelunking",
-      "reason": "no template for: When this enchantment enters, draw a card, then you may put a land card from your hand ont",
+      "reason": "",
       "scryfall_id": "d3be4257-2316-4a2e-b347-f71c0368a947",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphere Grid": {
@@ -288102,12 +288102,12 @@
     },
     "Titania's Command": {
       "edhrec_rank": 4000,
-      "gate": "template",
+      "gate": null,
       "name": "Titania's Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "753567c7-c484-4c0d-8128-7710e23c428f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania's Song": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "the_wandering_minstrel",
+  "name": "The Wandering Minstrel",
+  "oracle_text": "Lands you control enter untapped.\nThe Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors.\n{3}{W}{U}{B}{R}{G}: Other creatures you control get +X/+X until end of turn, where X is the number of Towns you control.",
+  "blocked_sentences": [
+    "The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors."
+  ],
+  "needs": [
+    {
+      "capability": "elemental_2_2_wubrg",
+      "kind": "token",
+      "what": "a 2/2 white blue black red green Elemental creature token (\"a 2/2 Elemental creature token that's all colors\")",
+      "why_existing_wont_do": "token_ids has elemental_2_2_g (green only) and other Elementals of different sizes and colors, and create_token takes no colors override (its options are amount, as, attached_to, attacking, controller, counters, or_planeswalker, player, power, tapped, token, toughness), so the all-colors token cannot be made. The rest of the card is expressible: enters_untapped static, a begin_combat trigger with a Town count condition, and a pump over other creatures by Town count."
+    }
+  ],
+  "closest_existing": ["elemental_2_2_g", "kavu_3_3_wubrg_trample"],
+  "confidence": "high"
+}
