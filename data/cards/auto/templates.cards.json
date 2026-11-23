@@ -52799,6 +52799,75 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "Enchanted creature gets +4/+4 and has flying, first strike, vigilance, trample, and lifelink.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "first_strike",
+            "vigilance",
+            "trample",
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +4/+4 and has flying, first strike, vigilance, trample, and lifelink."
+        }
+      ],
+      "bestow": "{2}{W}{U}{B}{R}{G}",
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "chromanticore",
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance",
+        "trample",
+        "lifelink"
+      ],
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Chromanticore",
+      "oracle_text": "Bestow {2}{W}{U}{B}{R}{G} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached.)\nFlying, first strike, vigilance, trample, lifelink\nEnchanted creature gets +4/+4 and has flying, first strike, vigilance, trample, and lifelink.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Manticore"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "ability": 0,
           "affects": {
             "controller": "you",
@@ -86575,6 +86644,54 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "id": "duneblast",
+      "mana_cost": "{4}{W}{B}{G}",
+      "name": "Duneblast",
+      "oracle_text": "Choose up to one creature. Destroy the rest.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "spared",
+          "objects": {
+            "controller": "any",
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose up to one creature"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "spared",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -123117,6 +123234,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw that many cards.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Discard a card: This creature gets +1/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "glint_eye_nephilim",
+      "mana_cost": "{U}{B}{R}{G}",
+      "name": "Glint-Eye Nephilim",
+      "oracle_text": "Whenever this creature deals combat damage to a player, draw that many cards.\n{1}, Discard a card: This creature gets +1/+1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Nephilim"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -140256,6 +140442,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "human_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a multicolored spell, create a 1/1 white Human creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "min_colors": 2
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hero_of_precinct_one",
+      "mana_cost": "{1}{W}",
+      "name": "Hero of Precinct One",
+      "oracle_text": "Whenever you cast a multicolored spell, create a 1/1 white Human creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -147462,6 +147693,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "hit",
+                        "zone": "exile"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "label": "Put that card onto the battlefield."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "hit",
+                        "zone": "exile"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "label": "Put that card into your hand."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature mutates, exile cards from the top of your library until you exile a nonland permanent card. Put that card onto the battlefield or into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "mutates",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "illuna_apex_of_wishes",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{2}{G}{U}{R}",
+      "mutate": "{3}{R/G}{U}{U}",
+      "name": "Illuna, Apex of Wishes",
+      "oracle_text": "Mutate {3}{R/G}{U}{U} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nFlying, trample\nWhenever this creature mutates, exile cards from the top of your library until you exile a nonland permanent card. Put that card onto the battlefield or into your hand.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Beast",
+        "Elemental",
+        "Dinosaur"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "cast_only_during": {
         "steps": [
           "declare_blockers"
@@ -152858,6 +153178,70 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "iridian_maelstrom",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Iridian Maelstrom",
+      "oracle_text": "Destroy each creature that isn't all colors.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "any_of": [
+              {
+                "not_colors": [
+                  "W"
+                ]
+              },
+              {
+                "not_colors": [
+                  "U"
+                ]
+              },
+              {
+                "not_colors": [
+                  "B"
+                ]
+              },
+              {
+                "not_colors": [
+                  "R"
+                ]
+              },
+              {
+                "not_colors": [
+                  "G"
+                ]
+              }
+            ],
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

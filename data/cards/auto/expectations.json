@@ -4293,6 +4293,20 @@
   "choked_estuary": {
     "zone": "battlefield"
   },
+  "chromanticore": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance",
+        "trample",
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "chromatic_lantern": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7116,6 +7130,14 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "duneblast": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "dunes_of_the_dead": {
     "battlefield_count": 33,
@@ -10428,6 +10450,13 @@
     },
     "zone": "battlefield"
   },
+  "glint_eye_nephilim": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "glint_raker": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11797,6 +11826,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hero_of_precinct_one": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hero_s_blade": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12381,6 +12414,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "illuna_apex_of_wishes": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "illusionist_s_gambit": {
     "hand_size": {
       "0": 1
@@ -12847,6 +12884,14 @@
   },
   "ior_ruin_expedition": {
     "zone": "battlefield"
+  },
+  "iridian_maelstrom": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "iroas_god_of_victory": {
     "battlefield_count": 33,
