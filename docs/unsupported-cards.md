@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**534 cards** blocked by **450** capabilities.
+**538 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,6 +51,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
+| [distribute-counters-spell](#distribute-counters-spell) | 2 | 4355 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
 | [encore](#encore) | 2 | 9330 | static_effect |
@@ -190,7 +191,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dinosaur-2-2-rw-flying-haste-token](#dinosaur-2-2-rw-flying-haste-token) | 1 | 5193 | token |
 | [discard-cost-binding](#discard-cost-binding) | 1 | 5635 | cost |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
-| [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [distribute-counters-trigger](#distribute-counters-trigger) | 1 | 8153 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
@@ -201,6 +201,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [dwarf-berserker-token](#dwarf-berserker-token) | 1 | 14192 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
+| [elemental-2-2-wubrg](#elemental-2-2-wubrg) | 1 | 6140 | token |
 | [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -214,7 +215,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-animated](#enters-as-animated) | 1 | 4716 | replacement |
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
-| [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
+| [enters-replacement-exile-unless-cast-with-mana](#enters-replacement-exile-unless-cast-with-mana) | 1 | 10409 | replacement |
 | [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
@@ -222,6 +223,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [evolve](#evolve) | 1 | 6178 | trigger_event |
 | [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
+| [except-first-draw-in-draw-step](#except-first-draw-in-draw-step) | 1 | 4633 | trigger_event |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
 | [exile-face-down](#exile-face-down) | 1 | 1363 | op |
@@ -326,6 +328,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [morph](#morph) | 1 | 7536 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 16393 | op |
+| [multicolored](#multicolored) | 1 | 6988 | selector |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
@@ -346,6 +349,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
 | [per-affected-static-magnitude](#per-affected-static-magnitude) | 1 | 6915 | value |
+| [per-object-static-magnitude](#per-object-static-magnitude) | 1 | 6988 | value |
 | [per-player-damage-amount](#per-player-damage-amount) | 1 | 13205 | value |
 | [per-recipient-damage-trigger](#per-recipient-damage-trigger) | 1 | 3523 | trigger_event |
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
@@ -1570,6 +1574,24 @@ Blocks **2** cards.
 - **Otherworldly Escort** (rank 19485) — `otherworldly_escort`
   - When this creature dies, if it's not a Spirit, return it to the battlefield under its owner's control with four charge counters on it. It's a Spirit Detective. (It's no longer a Human.)
   - {1}{W}, {T}, Remove a charge counter from this creature: Destroy target creature that dealt damage to you this turn.
+
+</details>
+
+## distribute-counters-spell
+
+Blocks **2** cards.
+
+- **(op)** distribute_counters on a SPELL, inside a mode of its top-level choose_mode: a printed amount of 2 +1/+1 counters divided among one or two mode-owned target creatures (target spec count 2, min 1), with the division announced as the spell is cast (601.2d) and stored on the stack item, as Game already does for activated abilities
+  <br>Why the existing vocabulary won't do: distribute_counters exists, but the loader's _check_distribution_homes refuses it in spell_effects and nested inside a choose_mode mode (only a top-level effect of an activated ability, where Game._activate asks the division); add_counters per target cannot express the caster's 2/0 or 1/1 split over one or two targets, and asking at resolution would be a strictly better card
+- **(op)** the Adventure half Grove's Bounty ({X}{G} Sorcery -- Adventure): distribute X +1/+1 counters among any number of target creatures you control, on a SPELL with X as the amount; the packet also carries neither a back_face nor the adventure text in oracle_text, so the second_face entry cannot be authored from the packet
+  <br>Why the existing vocabulary won't do: distribute_counters exists but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'), so an X-sized distribution among any number of targets on a sorcery has no expression
+
+<details><summary>Cards waiting on this</summary>
+
+- **Abzan Charm** (rank 4355) — `abzan_charm`
+  - • Distribute two +1/+1 counters among one or two target creatures.
+- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
+  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>
 
@@ -3694,20 +3716,6 @@ Blocks **1** card.
 
 </details>
 
-## distribute-counters-spell
-
-Blocks **1** card.
-
-- **(op)** the Adventure half Grove's Bounty ({X}{G} Sorcery -- Adventure): distribute X +1/+1 counters among any number of target creatures you control, on a SPELL with X as the amount; the packet also carries neither a back_face nor the adventure text in oracle_text, so the second_face entry cannot be authored from the packet
-  <br>Why the existing vocabulary won't do: distribute_counters exists but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'), so an X-sized distribution among any number of targets on a sorcery has no expression
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
-  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
-
-</details>
-
 ## distribute-counters-trigger
 
 Blocks **1** card.
@@ -3847,6 +3855,20 @@ Blocks **1** card.
 
 - **Selective Obliteration** (rank 3587) — `selective_obliteration`
   - Each player chooses a color. Then exile each permanent unless it's colorless or it's only the color its controller chose.
+
+</details>
+
+## elemental-2-2-wubrg
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white blue black red green Elemental creature token ("a 2/2 Elemental creature token that's all colors")
+  <br>Why the existing vocabulary won't do: token_ids has elemental_2_2_g (green only) and other Elementals of different sizes and colors, and create_token takes no colors override (its options are amount, as, attached_to, attacking, controller, counters, or_planeswalker, player, power, tapped, token, toughness), so the all-colors token cannot be made. The rest of the card is expressible: enters_untapped static, a begin_combat trigger with a Town count condition, and a pump over other creatures by Town count.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Wandering Minstrel** (rank 6140) — `the_wandering_minstrel`
+  - The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors.
 
 </details>
 
@@ -4035,17 +4057,17 @@ Blocks **1** card.
 
 </details>
 
-## enters-untapped
+## enters-replacement-exile-unless-cast-with-mana
 
 Blocks **1** card.
 
-- **(static_effect)** a static effect on one permanent, filtered by `affects` (here Land, controller you), that makes matching permanents enter the battlefield untapped however they arrive: it overrides a land's own printed self_enters_tapped replacement (no 'pay 3 life' prompt needed), a board enters_tapped static from another permanent, and an effect that puts the land onto the battlefield tapped (the Lander token's own search, fetchlands, ramp spells)
-  <br>Why the existing vocabulary won't do: The closest is the `enters_tapped` static, read by zones._apply_board_enters_tapped, which only ever sets `tapped` to True; nothing in static_effects sets it back to False or suppresses the self_enters_tapped replacement and the `tapped: true` put_onto_battlefield path in stack.py. The second line is expressible (a `you_attack` trigger with create_token `lander_token`)
+- **(replacement)** a self replacement effect on the card's own battlefield entry that, when the entry is not the resolution of the card's own spell or when no mana was spent to cast that spell (free casts, put_onto_battlefield, reanimation, flicker returns), sends the card to exile instead, so it never enters and none of its enters or leaves-the-battlefield triggers fire
+  <br>Why the existing vocabulary won't do: The card-level `replacements` vocabulary only carries `self_enters_with_counters` and `self_enters_as_copy`, which modify an entry rather than redirect it; `replace_leaves_battlefield` and `replace_graveyard` redirect other zone changes. A `self_enters` trigger with a `was_cast` / `mana_spent_of` condition and an `exile` op is not the same card: the creature would enter, and its own 'When this creature leaves the battlefield' trigger would then fire and grant ten free cards, which the printed replacement exists to prevent
 
 <details><summary>Cards waiting on this</summary>
 
-- **Horizon Explorer** (rank 1877) — `horizon_explorer`
-  - Lands you control enter untapped.
+- **Primeval Spawn** (rank 10409) — `primeval_spawn`
+  - If this creature would enter and it wasn't cast or no mana was spent to cast it, exile it instead.
 
 </details>
 
@@ -4145,6 +4167,20 @@ Blocks **1** card.
 
 - **Hex** (rank 7243) — `hex`
   - Destroy six target creatures.
+
+</details>
+
+## except-first-draw-in-draw-step
+
+Blocks **1** card.
+
+- **(trigger_event)** a `draw` trigger key (e.g. `except_first_in_draw_step: true`) that skips the draw when it is the drawing player's first card drawn during their own draw step -- step is DRAW, the drawer is the active player, and state.cards_drawn_this_draw_step[drawer] was 0 before this draw (the same test as player_statics._first_draw_of_draw_step)
+  <br>Why the existing vocabulary won't do: `except_first_in_draw_step` exists only on the `replace_draw` static, not on a trigger. The `draw` trigger's `nth` counts per turn, not per draw step, and a condition built from `step_is` + `is_active_player` + `cards_drawn_this_turn == 1` miscounts whenever the opponent drew in upkeep (or a skipped/dredged draw), because no condition or value reads cards_drawn_this_draw_step
+
+<details><summary>Cards waiting on this</summary>
+
+- **Xyris, the Writhing Storm** (rank 4633) — `xyris_the_writhing_storm`
+  - Whenever an opponent draws a card except the first one they draw in each of their draw steps, create a 1/1 green Snake creature token.
 
 </details>
 
@@ -5634,6 +5670,20 @@ Blocks **1** card.
 
 </details>
 
+## multicolored
+
+Blocks **1** card.
+
+- **(selector)** `min_colors: 2` (two or more colors, 202.2b) in a static's `affects` filter, so "multicolored creature you control" can be said
+  <br>Why the existing vocabulary won't do: min_colors exists in the spell/trigger filter vocabulary but is not in static_affects_filter_keys; `colors` is a membership test (a mono-green creature matches ["G","W"])
+
+<details><summary>Cards waiting on this</summary>
+
+- **Knight of New Alara** (rank 6988) — `knight_of_new_alara`
+  - Each other multicolored creature you control gets +1/+1 for each of its colors.
+
+</details>
+
 ## multiple-kicker
 
 Blocks **1** card.
@@ -5919,6 +5969,20 @@ Blocks **1** card.
 
 - **Clamavus** (rank 6915) — `clamavus`
   - Proclamator Hailer — Each creature you control gets +1/+1 for each +1/+1 counter on it.
+
+</details>
+
+## per-object-static-magnitude
+
+Blocks **1** card.
+
+- **(value)** a static value that reads a characteristic of EACH affected object rather than one board-wide number: the number of colors of the creature the buff is being applied to ("+1/+1 for each of its colors"), so a buff static's power/toughness can be {"colors_of_affected": true}-style and differ per creature
+  <br>Why the existing vocabulary won't do: static_value_keys (count, counters_on, mana_symbols, distinct, ...) all evaluate to one number for the whole static; counters_on with self_only reads the source, not the affected creature, and none counts an object's colors
+
+<details><summary>Cards waiting on this</summary>
+
+- **Knight of New Alara** (rank 6988) — `knight_of_new_alara`
+  - Each other multicolored creature you control gets +1/+1 for each of its colors.
 
 </details>
 

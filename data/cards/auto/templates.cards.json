@@ -144083,6 +144083,65 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "enters_untapped",
+          "kind": "static",
+          "text": "Lands you control enter untapped."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "lander_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack a player, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "opponent",
+                "binding": "attackers"
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "horizon_explorer",
+      "mana_cost": "{2}{G}",
+      "name": "Horizon Explorer",
+      "oracle_text": "Lands you control enter untapped.\nWhenever you attack a player, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Scout"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "pay_life": 1,
             "tap": true

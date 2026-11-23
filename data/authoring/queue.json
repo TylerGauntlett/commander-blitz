@@ -129822,12 +129822,12 @@
     },
     "Horizon Explorer": {
       "edhrec_rank": 1877,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon Explorer",
-      "reason": "no template for: Lands you control enter untapped",
+      "reason": "",
       "scryfall_id": "3ed072ea-437b-472c-8a37-712654aef264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horizon Scholar": {

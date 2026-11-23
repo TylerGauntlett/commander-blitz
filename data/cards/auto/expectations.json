@@ -12108,6 +12108,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "horizon_explorer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "horizon_of_progress": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26948,6 +26952,16 @@
     "zone": "battlefield"
   },
   "titania_s_command": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
     "zone": "graveyard"
   },
   "titans_vanguard": {
