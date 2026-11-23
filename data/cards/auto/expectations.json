@@ -16203,6 +16203,10 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mobilizer_mech": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mocking_sprite": {
     "battlefield_count": 33,
     "hand_size": {

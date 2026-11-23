@@ -176952,12 +176952,12 @@
     },
     "Mobilizer Mech": {
       "edhrec_rank": 5250,
-      "gate": "template",
+      "gate": null,
       "name": "Mobilizer Mech",
-      "reason": "no template for: Whenever this Vehicle becomes crewed, up to one other target Vehicle you control becomes a",
+      "reason": "",
       "scryfall_id": "cf4bb9de-ba7c-4916-b8ed-e2e644c06b58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mockery of Nature": {

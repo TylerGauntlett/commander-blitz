@@ -245,3 +245,34 @@ class TestTheLoaderRefuses:
         with pytest.raises(DslError, match="crew's"):
             compile_(_vehicle(effects=[other]))
 
+
+class TestMobilizerMech:
+    """The witness: crewing the Mech animates another Vehicle without crewing it."""
+
+    def test_its_trigger_animates_the_other_vehicle_and_crews_nothing_else(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["mobilizer_mech", WATCHER, "t_big"])
+            .library(0, ["plains"] * 20)
+            .library(1, ["plains"] * 20)
+            .build()
+        )
+        mech, watcher = only_oid(game, "mobilizer_mech"), only_oid(game, WATCHER)
+        (action,) = activations(game, mech)
+        # The Giant alone is crew 3, so crew pays and resolves at once, and the
+        # trigger asks for its "up to one other target Vehicle".
+        game.apply(action)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CHOOSE and [t.id for t in a.targets] == [watcher]
+            )
+        )
+        settle(game)
+
+        assert [e.source for e in crewed(game)] == [mech]
+        assert "Creature" in chars(game.state, mech).types
+        assert "Creature" in chars(game.state, watcher).types
+        assert (chars(game.state, watcher).power, chars(game.state, watcher).toughness) == (3, 3)
+        assert game.state.players[0].life == 40
