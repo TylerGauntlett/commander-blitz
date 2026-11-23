@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**532 cards** blocked by **450** capabilities.
+**531 cards** blocked by **449** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -437,7 +437,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
 | [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
-| [total-mana-value-pick](#total-mana-value-pick) | 1 | 9376 | selector |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -7212,20 +7211,6 @@ Blocks **1** card.
 
 - **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
   - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
-
-</details>
-
-## total-mana-value-pick
-
-Blocks **1** card.
-
-- **(selector)** an untargeted, on-resolution pick of any number of cards from a graveyard whose mana values together are at most a cap (here 6), e.g. `total_mana_value` on return_from_graveyard's (or search_zones') `objects` with count "any", reusing the engine's _pick_within_total_mana_value so cards milled earlier in the same resolution are eligible
-  <br>Why the existing vocabulary won't do: `total_mana_value` exists only on a target spec (Phoenix, Warden of Fire) and on look_at_top (library only). A target spec is chosen when the trigger goes on the stack, before the mill, so the three milled cards could never be returned, and it makes an untargeted return targeted. A per-card `mana_value` selector caps each pick separately, a much wider card; choose_permanents' max_total_power sums power on the battlefield, not mana value in a graveyard
-
-<details><summary>Cards waiting on this</summary>
-
-- **Technomancer** (rank 9376) — `technomancer`
-  - When this creature enters, mill three cards, then return any number of artifact creature cards with total mana value 6 or less from your graveyard to the battlefield.
 
 </details>
 

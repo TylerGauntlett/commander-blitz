@@ -276132,12 +276132,12 @@
     },
     "Technomancer": {
       "edhrec_rank": 9376,
-      "gate": "template",
+      "gate": null,
       "name": "Technomancer",
-      "reason": "no template for: When this creature enters, mill three cards, then return any number of artifact creature c",
+      "reason": "",
       "scryfall_id": "c160c1f7-714e-444a-ab74-c64c3a099a48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tectonic Break": {

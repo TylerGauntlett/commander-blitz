@@ -299024,6 +299024,64 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "any",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "total_mana_value": {
+                "const": 6
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, mill three cards, then return any number of artifact creature cards with total mana value 6 or less from your graveyard to the battlefield",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "technomancer",
+      "mana_cost": "{5}{B}{B}",
+      "name": "Technomancer",
+      "oracle_text": "When this creature enters, mill three cards, then return any number of artifact creature cards with total mana value 6 or less from your graveyard to the battlefield.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Necron",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
