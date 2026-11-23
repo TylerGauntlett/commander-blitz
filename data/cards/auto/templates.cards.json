@@ -121910,6 +121910,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stash",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}. Put a stash counter on this artifact."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "as": "sacrificed",
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "stash",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              },
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "glittering_stockpile",
+      "mana_cost": "{2}{R}",
+      "name": "Glittering Stockpile",
+      "oracle_text": "{T}: Add {R}. Put a stash counter on this artifact.\n{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact.",
+      "source": "auto",
+      "subtypes": [
+        "Treasure"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -145056,6 +145128,59 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "illuminor_szeras",
+      "mana_cost": "{2}{B}",
+      "name": "Illuminor Szeras",
+      "oracle_text": "Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

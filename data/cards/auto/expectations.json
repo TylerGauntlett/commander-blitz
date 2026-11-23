@@ -10325,6 +10325,10 @@
   "glittering_massif": {
     "zone": "battlefield"
   },
+  "glittering_stockpile": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gloom_pangolin": {
     "zone": "battlefield"
   },
@@ -12197,6 +12201,10 @@
     "life": {
       "0": 41
     }
+  },
+  "illuminor_szeras": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "illusionist_s_gambit": {
     "hand_size": {

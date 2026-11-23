@@ -111242,12 +111242,12 @@
     },
     "Glittering Stockpile": {
       "edhrec_rank": 2247,
-      "gate": "template",
+      "gate": null,
       "name": "Glittering Stockpile",
-      "reason": "no template for: {T}: Add {R}. Put a stash counter on this artifact",
+      "reason": "",
       "scryfall_id": "74713a58-e343-4504-9900-cf9d76951242",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glittering Wish": {
@@ -133842,12 +133842,12 @@
     },
     "Illuminor Szeras": {
       "edhrec_rank": 5215,
-      "gate": "template",
+      "gate": null,
       "name": "Illuminor Szeras",
-      "reason": "no template for: Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the s",
+      "reason": "",
       "scryfall_id": "bc0cc588-f134-41f3-bf5c-aca24518c71a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illuna, Apex of Wishes": {

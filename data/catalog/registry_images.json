@@ -8576,6 +8576,10 @@
     "artist": "Jonas De Ro",
     "scryfall_id": "8943cd0a-cfa3-4795-82c1-c500e9a7269b"
   },
+  "glittering_stockpile": {
+    "artist": "Brock Grossman",
+    "scryfall_id": "74713a58-e343-4504-9900-cf9d76951242"
+  },
   "gloom_pangolin": {
     "artist": "YW Tang",
     "scryfall_id": "3f135dd7-2a4f-4c83-9a90-76bcab3cc33d"
@@ -10304,6 +10308,10 @@
   "illegitimate_business": {
     "artist": "Mikl\u00f3s Ligeti",
     "scryfall_id": "71597acf-1ce6-46a8-b6c0-88755c8a377c"
+  },
+  "illuminor_szeras": {
+    "artist": "Darren Tan",
+    "scryfall_id": "bc0cc588-f134-41f3-bf5c-aca24518c71a"
   },
   "illusion_1_1_u": {
     "artist": "Daniel Cotter",

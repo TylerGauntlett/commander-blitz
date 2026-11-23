@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**531 cards** blocked by **449** capabilities.
+**529 cards** blocked by **447** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -298,8 +298,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [madness](#madness) | 1 | 3016 | replacement |
-| [mana-ability-cost-binding](#mana-ability-cost-binding) | 1 | 5215 | value |
-| [mana-ability-cost-lki](#mana-ability-cost-lki) | 1 | 2247 | value |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
@@ -5225,34 +5223,6 @@ Blocks **1** card.
 
 - **Necrogoyf** (rank 3016) — `necrogoyf`
   - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-
-</details>
-
-## mana-ability-cost-binding
-
-Blocks **1** card.
-
-- **(value)** a mana ability whose add_mana amount reads the object its own sacrifice cost paid with, i.e. cost {"tap": true, "sacrifice": {"types": ["Creature"], "exclude_self": true, "as": "sacrificed"}} with add_mana {"mana": "{B}", "amount": {"mana_value_of": {"binding": "sacrificed"}}}. That means passing the cost's bindings from pay() into mana_amount on Game._activate_mana, and having the payment solver either skip such sources or price each sacrifice choice as its own option
-  <br>Why the existing vocabulary won't do: sacrifice's `as` binding plus mana_value_of works only on abilities that use the stack (Broadside Bombardiers, Dina, Ghoulcaller Gisa). On the mana-ability path, Game._activate_mana calls costs.pay without a bindings dict, and costs.mana_amount builds a fresh EffectContext with no bindings, so the amount cannot see the sacrificed creature. Writing the line as a non-mana activated ability would put mana on the stack, which breaks 605.1a. add_mana_per and the board-reading amounts count permanents rather than the paid object
-
-<details><summary>Cards waiting on this</summary>
-
-- **Illuminor Szeras** (rank 5215) — `illuminor_szeras`
-  - Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.
-
-</details>
-
-## mana-ability-cost-lki
-
-Blocks **1** card.
-
-- **(value)** a mana ability whose add_mana amount reads the counters its own source had as the source was sacrificed to pay the ability's cost: `counters_on` over the `as` binding of a self-sacrifice cost (or a pre-cost snapshot of the source) honoured by `costs.mana_amount`
-  <br>Why the existing vocabulary won't do: Non-mana activated abilities already do this (Crowded Crypt, Wickersmith's Tools: cost `sacrifice` with `as: "sacrificed"`, effect reads `counters_on {binding: sacrificed}`), but a mana ability never runs its effects: `Game._activate_mana` pays the cost (sacrificing the artifact) and then `activate_mana_ability` -> `costs.mana_amount` evaluates `ability.mana_amount` in a fresh EffectContext with no cost bindings, reading the live source, which is by then in the graveyard with its counters gone, so X would be 0. `counters_had` is bound only by dies/leaves triggers, and `snapshot` is an effect op, which a mana ability may not contain. The first line ({T}: Add {R} with an `add_counters` stash rider on self) is expressible; the card is filed whole because a partial answer is not allowed.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Glittering Stockpile** (rank 2247) — `glittering_stockpile`
-  - {T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact
 
 </details>
 
