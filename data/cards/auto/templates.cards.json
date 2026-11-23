@@ -310620,6 +310620,56 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects_player": "you",
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "text": "You may cast this card from your graveyard."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "exiles_itself": true,
+      "id": "their_number_is_legion",
+      "mana_cost": "{X}{B}{B}{B}{B}",
+      "name": "Their Number Is Legion",
+      "oracle_text": "Create X tapped 2/2 black Necron Warrior artifact creature tokens, then you gain life equal to the number of artifacts you control. Exile Their Number Is Legion.\nYou may cast this card from your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "tapped": true,
+          "token": "necron_warrior_2_2_b_artifact"
+        },
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "gain_life"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "any",
             "subtypes": [

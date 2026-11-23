@@ -25754,6 +25754,17 @@
     },
     "zone": "graveyard"
   },
+  "their_number_is_legion": {
+    "battlefield_count": 52,
+    "life": {
+      "0": 60
+    },
+    "tokens": {
+      "count": 20,
+      "id": "necron_warrior_2_2_b_artifact"
+    },
+    "zone": "exile"
+  },
   "thelonite_hermit": {
     "battlefield_count": 33,
     "hand_size": {

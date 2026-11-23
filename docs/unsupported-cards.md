@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**533 cards** blocked by **451** capabilities.
+**532 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -132,7 +132,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-during-resolution-pay-life](#cast-during-resolution-pay-life) | 1 | 6626 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
-| [cast-from-graveyard-nonpermanent](#cast-from-graveyard-nonpermanent) | 1 | 8554 | static_effect |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
 | [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
@@ -2857,20 +2856,6 @@ Blocks **1** card.
 
 - **The Face of Boe** (rank 16296) — `the_face_of_boe`
   - {T}: You may cast a spell with suspend from your hand. If you do, pay its suspend cost rather than its mana cost. Activate only as a sorcery.
-
-</details>
-
-## cast-from-graveyard-nonpermanent
-
-Blocks **1** card.
-
-- **(static_effect)** the card's own unconditional permission to cast an instant or sorcery from its owner's graveyard at its printed mana cost (X included, announced as usual), with no alternative cost involved; the spell then goes wherever it normally would, which here is exile via exiles_itself
-  <br>Why the existing vocabulary won't do: The `cast_from_graveyard` static with active_zones ["graveyard"] is exactly this permission, but the loader refuses it on any card without a permanent type ('supported on permanent cards only -- the nonpermanent form has no witness'). `graveyard_cast` + `graveyard_cost` is an alternative cost (escape-style), not a cast at the printed price, so writing graveyard_cost {X}{B}{B}{B}{B} would change how it interacts with other alternative costs and free-cast effects; `flashback`/`retrace` add exile or a discard that is not printed; `grant_graveyard_cast` is a permission granted to other spells. The rest of the card is expressible: create_token necron_warrior_2_2_b_artifact with amount {x}, tapped: true; gain_life amount {count: artifacts you control}; exiles_itself: true
-
-<details><summary>Cards waiting on this</summary>
-
-- **Their Number Is Legion** (rank 8554) — `their_number_is_legion`
-  - You may cast this card from your graveyard.
 
 </details>
 

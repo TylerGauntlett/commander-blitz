@@ -283052,12 +283052,12 @@
     },
     "Their Number Is Legion": {
       "edhrec_rank": 8554,
-      "gate": "template",
+      "gate": null,
       "name": "Their Number Is Legion",
-      "reason": "no template for: Create X tapped 2/2 black Necron Warrior artifact creature tokens, then you gain life equa",
+      "reason": "",
       "scryfall_id": "79641b49-faa5-44f0-9197-e693c5f52bdb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thelon of Havenwood": {
