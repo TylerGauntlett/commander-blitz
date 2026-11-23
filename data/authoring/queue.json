@@ -5962,12 +5962,12 @@
     },
     "Alesha, Who Smiles at Death": {
       "edhrec_rank": 6153,
-      "gate": "template",
+      "gate": null,
       "name": "Alesha, Who Smiles at Death",
-      "reason": "no template for: Whenever Alesha attacks, you may pay {W/B}{W/B}. If you do, return target creature card wi",
+      "reason": "",
       "scryfall_id": "7ae9ff8c-1cc8-4b10-9641-2c79648fd6c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alex Wilder, Runaway": {
@@ -7782,12 +7782,12 @@
     },
     "Anafenza, Kin-Tree Spirit": {
       "edhrec_rank": 5763,
-      "gate": "template",
+      "gate": null,
       "name": "Anafenza, Kin-Tree Spirit",
-      "reason": "no template for: Whenever another nontoken creature you control enters, bolster 1",
+      "reason": "",
       "scryfall_id": "1717da7b-9e87-4694-873b-abd4e3bcd5e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Anafenza, Unyielding Lineage": {
@@ -14752,12 +14752,12 @@
     },
     "Ashling the Pilgrim": {
       "edhrec_rank": 11512,
-      "gate": "template",
+      "gate": null,
       "name": "Ashling the Pilgrim",
-      "reason": "no template for: {1}{R}: Put a +1/+1 counter on Ashling. If this is the third time this ability has resolve",
+      "reason": "",
       "scryfall_id": "4c687123-6c34-4aef-8350-70a72b5fb58f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashling's Command": {
@@ -25842,12 +25842,12 @@
     },
     "Blackblade Reforged": {
       "edhrec_rank": 348,
-      "gate": "template",
+      "gate": null,
       "name": "Blackblade Reforged",
-      "reason": "no template for: Equipped creature gets +1/+1 for each land you control",
+      "reason": "",
       "scryfall_id": "2cde7ae2-87b9-43d0-87cf-38c8706dd95e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blackbloom Rogue // Blackbloom Bog": {
@@ -26252,12 +26252,12 @@
     },
     "Bladewing, Deathless Tyrant": {
       "edhrec_rank": 6409,
-      "gate": "template",
+      "gate": null,
       "name": "Bladewing, Deathless Tyrant",
-      "reason": "no template for: Whenever Bladewing deals combat damage to a player or planeswalker, for each creature card",
+      "reason": "",
       "scryfall_id": "7dcf3b3e-e986-4add-a3c6-4e92a6f72a12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blanchwood Armor": {

@@ -517,6 +517,10 @@
   "alert_shu_infantry": {
     "zone": "battlefield"
   },
+  "alesha_who_smiles_at_death": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alexi_s_cloak": {
     "zone": [
       "battlefield",
@@ -720,6 +724,10 @@
     "zone": "battlefield"
   },
   "anaconda": {
+    "zone": "battlefield"
+  },
+  "anafenza_kin_tree_spirit": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "anafenza_unyielding_lineage": {
@@ -1490,6 +1498,10 @@
       "amount": 3,
       "kind": "loyalty"
     },
+    "zone": "battlefield"
+  },
+  "ashling_the_pilgrim": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ashnod_s_altar": {
@@ -2503,6 +2515,10 @@
   "black_widow_natasha_romanoff": {
     "zone": "battlefield"
   },
+  "blackblade_reforged": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blackcleave_cliffs": {
     "zone": "battlefield"
   },
@@ -2543,6 +2559,10 @@
     "zone": "battlefield"
   },
   "bladetusk_boar": {
+    "zone": "battlefield"
+  },
+  "bladewing_deathless_tyrant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blanchwood_treefolk": {

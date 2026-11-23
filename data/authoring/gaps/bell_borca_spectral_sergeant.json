@@ -1,0 +1,19 @@
+{
+  "card_id": "bell_borca_spectral_sergeant",
+  "name": "Bell Borca, Spectral Sergeant",
+  "oracle_text": "Note the mana value of each card as it's put into exile.\nBell Borca's power is equal to the greatest number noted for it this turn.\nAt the beginning of your upkeep, exile the top card of your library. You may play that card this turn.",
+  "blocked_sentences": [
+    "Note the mana value of each card as it's put into exile.",
+    "Bell Borca's power is equal to the greatest number noted for it this turn."
+  ],
+  "needs": [
+    {
+      "capability": "noted_exile_mana_value",
+      "kind": "value",
+      "what": "a per-source, per-turn ledger that records the mana value of every card put into exile from any zone by anyone while the permanent is on the battlefield, plus a static value leaf (e.g. {\"greatest_noted_this_turn\": \"self\"}) usable as a characteristic-defining set_pt/power magnitude that reads the greatest recorded number this turn (0 if none), resetting at end of turn",
+      "why_existing_wont_do": "trigger_events has no 'card put into exile' event (only leaves_battlefield/leaves_graveyard), and static_value_keys has nothing that remembers exiled cards' mana values: exiled_card_power reads one linked card's power, greatest_commander_mana_value reads commanders, and value_keys' greatest_discarded_by_a_player tracks discards, not exiles. The upkeep impulse-draw line alone is expressible (exile with playable: this_turn), but the card cannot be partially authored"
+    }
+  ],
+  "closest_existing": ["exiled_card_power", "greatest_discarded_by_a_player", "set_pt"],
+  "confidence": "high"
+}
