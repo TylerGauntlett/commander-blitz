@@ -3,7 +3,7 @@
   "cards": [
     {
       "id": "t_eu_archelos",
-      "name": "Test Archelos",
+      "name": "Test Enters-Untapped Archelos",
       "oracle_text": "As long as this creature is tapped, other permanents enter tapped.\nAs long as this creature is untapped, other permanents enter untapped.",
       "mana_cost": "{2}{G}{U}",
       "types": ["Creature"],
@@ -28,7 +28,7 @@
     },
     {
       "id": "t_eu_explorer",
-      "name": "Test Explorer",
+      "name": "Test Enters-Untapped Explorer",
       "oracle_text": "Lands you control enter untapped.",
       "mana_cost": "{1}{G}",
       "types": ["Creature"],
