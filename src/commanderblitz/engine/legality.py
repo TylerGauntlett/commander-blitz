@@ -33,6 +33,7 @@ from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
+    cost_binding_preview,
     cost_x_ceiling,
     land_drops_available,
     mana_added_total,
@@ -1184,7 +1185,10 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     produced = mana_produced(
         options[mana_option],
         doubled=doubled,
-        times=mana_amount(state, oid, ability),
+        # Glittering Stockpile's X is the stash counters its own sacrifice
+        # will bind; the chip is drawn before that cost, so it reads the
+        # preview `pay` will match.
+        times=mana_amount(state, oid, ability, bindings=cost_binding_preview(state, oid, ability)),
     )
     tapping = ability.cost is not None and ability.cost.tap
     produced = plus_mana(

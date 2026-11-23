@@ -742,6 +742,25 @@ class Cost:
             or self.remove_counters_x is not None
         )
 
+    def binding_names(self) -> frozenset[str]:
+        """The names this cost writes into `costs.pay`'s ``bindings`` as it is paid.
+
+        Every cost that takes an ``as``: `sacrifice`, `return_to_hand`,
+        `tap_permanents` and `exile_from_graveyard`. The loader asks it so a
+        mana ability's amount reads only a name its own cost writes.
+        """
+        names = {
+            str(spec["as"])
+            for spec in (
+                self.sacrifice,
+                self.return_to_hand,
+                self.tap_permanents,
+                self.exile_from_graveyard,
+            )
+            if isinstance(spec, Mapping) and spec.get("as")
+        }
+        return frozenset(names)
+
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
         return (

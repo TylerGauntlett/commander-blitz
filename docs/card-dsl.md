@@ -5956,8 +5956,9 @@ token, which no longer exists once it has left, still has a power.
 
 `as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
 above 1, and anywhere but an activated ability's cost: an additional cost to
-cast, a ward or tax price and a mana ability have no effects that receive what
-the cost named, so the name would bind nothing and read 0.
+cast and a ward or tax price have no effects that receive what the cost named,
+so the name would bind nothing and read 0. A mana ability's `amount` reads it
+(Illuminor Szeras; see the cookbook's "Add {G} for each …").
 
 Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to

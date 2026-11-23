@@ -95,9 +95,35 @@ Three constraints, each with a failure behind it:
 - **One `add_mana`, or no amount.** An amount scales one symbol tuple, so a
   card that also summed several `add_mana`s or offered modes would have nothing
   single to scale.
-- **No `x`, `binding` or `loop_value`.** A mana ability is activated inside cost
-  payment: there is no X, no trigger binding and no enclosing loop, so each
-  would read 0 and make a card that silently taps for nothing. Refused at load.
+- **No `x`, `binding` or `loop_value`, except what the cost names.** A mana
+  ability is activated inside cost payment: there is no trigger binding and no
+  enclosing loop, so each would read 0 and make a card that silently taps for
+  nothing. Refused at load. The exceptions are the ability's own cost: an X it
+  takes (`Cost.takes_x`), and a name its cost writes with `as`, which
+  `Game._activate_mana` hands from `costs.pay` to `costs.mana_amount`:
+
+  ```jsonc
+  // Illuminor Szeras: {T}, Sacrifice another creature: Add an amount of {B}
+  // equal to the sacrificed creature's mana value.
+  { "cost": { "tap": true,
+              "sacrifice": { "types": ["Creature"], "exclude_self": true,
+                             "as": "sacrificed" } },
+    "is_mana_ability": true,
+    "effects": [ { "op": "add_mana", "mana": "{B}",
+                   "amount": { "mana_value_of": { "binding": "sacrificed" } } } ] }
+  ```
+
+  The binding is the sacrifice's last-known snapshot (608.2h), so a
+  self-sacrifice reads what the source had: Glittering Stockpile's
+  `counters_on` over `{"binding": "sacrificed"}` counts the stash counters the
+  artifact lost as it moved. Such a cost is never tap-only, so the solver never
+  taps the source; it is offered by hand and stays off the stack (605.3b). The
+  loader refuses a name the cost does not write (`Cost.binding_names`), and a
+  `split` amount reading one, whose combinations are offered before the cost
+  is paid. A chip label is drawn before payment too, so it previews a
+  self-sacrifice's binding from the source as it stands
+  (`costs.cost_binding_preview`). Not a stack ability with the same effects:
+  that would let a player respond to a mana ability.
 - **It is read before the tap.** The payment solver enumerates sources while
   they are still untapped; measuring after tapping would let the offer and the
   payment see two different boards.

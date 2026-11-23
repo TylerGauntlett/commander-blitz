@@ -113,6 +113,7 @@ from .mana import (
     _mana_options,
     _split_mana_rider,
     _validate_mana_amount,
+    check_mana_amount_bindings,
 )
 from .statics import (
     _validate_cast_zone_keys,
@@ -4608,6 +4609,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where, takes_x=takes_x)
+    if model.is_mana_ability and mana_amount is not None:
+        check_mana_amount_bindings(mana_amount, cost, where, split=bool(mana_split))
     mana_restriction: ManaRestriction | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:

@@ -432,7 +432,13 @@ def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) 
     return bool(evaluate(ctx, ability.activation_condition))
 
 
-def mana_amount(state: GameState, oid: int, ability: Ability, x: int = 0) -> int:
+def mana_amount(
+    state: GameState,
+    oid: int,
+    ability: Ability,
+    x: int = 0,
+    bindings: Mapping[str, Any] | None = None,
+) -> int:
     """How many times this mana ability's symbols are produced, right now.
 
     "Add {G} for each +1/+1 counter on this creature" -- Gyre Sage. The count is
@@ -450,6 +456,15 @@ def mana_amount(state: GameState, oid: int, ability: Ability, x: int = 0) -> int
     ``x`` is the number a by-hand activation announced for a cost that takes X
     permanents or cards (`cost_x_ceiling`) -- the one way a mana ability has an
     X to read. Zero everywhere else, which is what the solver's sources carry.
+
+    ``bindings`` is what the ability's own cost named as it was paid -- "Add an
+    amount of {B} equal to **the sacrificed creature's** mana value" (Illuminor
+    Szeras). `Game._activate_mana` hands over the dict `pay` wrote, so
+    ``{"binding": …}`` reads the sacrificed creature's last-known information
+    (608.2h) exactly as it does on a stack ability. Only that path has them:
+    such a cost is never tap-only, so the solver never taps the source, and
+    before the cost is paid there is nothing to read
+    (`cost_binding_preview`).
     """
     if ability.mana_split:
         # A split ability's size is already inside each option -- the
@@ -468,8 +483,28 @@ def mana_amount(state: GameState, oid: int, ability: Ability, x: int = 0) -> int
         source_oid=oid,
         source_name=state.card_of(obj).name,
         x=x,
+        bindings=dict(bindings or {}),
     )
     return max(0, int(evaluate_value(ctx, ability.mana_amount)))
+
+
+def cost_binding_preview(state: GameState, oid: int, ability: Ability) -> dict[str, Any]:
+    """What this mana ability's cost will bind, where that is known before paying.
+
+    Only a cost that sacrifices **its own source** has one answer before it is
+    paid: Glittering Stockpile's "X is the number of stash counters on this
+    artifact" names the artifact itself, so its snapshot now is the one `pay`
+    will take. Read by legality's chip label, which is drawn before the cost
+    and would otherwise promise no mana. A cost that picks among several
+    permanents previews nothing -- which one is the player's choice.
+    """
+    cost = ability.cost
+    spec = cost.sacrifice if cost is not None else None
+    if not isinstance(spec, Mapping) or not spec.get("as") or not spec.get("self_only"):
+        return {}
+    if oid not in state.objects:
+        return {}
+    return {str(spec["as"]): sacrificed_snapshot(state, oid)}
 
 
 def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
@@ -2945,6 +2980,7 @@ def activate_mana_ability(
     x: int = 0,
     option: tuple[int, ...] | None = None,
     extra_colors: Sequence[int] = (),
+    bindings: Mapping[str, Any] | None = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -2984,6 +3020,9 @@ def activate_mana_ability(
     ``option`` is the yield `Game._activate_mana` asked for once X was known --
     a split's composition, which no option index can name because the
     compositions of X are only knowable after X is.
+
+    ``bindings`` is what the ability's cost named as `Game._activate_mana` paid
+    it, for an amount that reads it (`mana_amount`).
     """
     if ability is None:
         ability = abilities_of(state, oid)[ability_index]
@@ -3010,7 +3049,7 @@ def activate_mana_ability(
     produced = mana_produced(
         options[option_index],
         doubled=doubled,
-        times=mana_amount(state, oid, ability, x),
+        times=mana_amount(state, oid, ability, x, bindings),
     )
     # "Whenever you tap a Swamp for mana, add an additional {B}." Read before
     # the tap for the reason the variable amount above is, and only when the

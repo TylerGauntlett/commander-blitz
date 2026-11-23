@@ -1,0 +1,79 @@
+{
+  "_comment": "Mana abilities whose amount reads what their own cost named as it was paid. t_cost_bound_altar is the Illuminor Szeras shape (sacrifice another creature, add {B} equal to its mana value); t_cost_bound_stockpile is the Glittering Stockpile shape (sacrifice this artifact, add X of any one colour where X is the stash counters it had). t_cost_bound_mv3 and t_cost_bound_mv5 are the creatures fed to the altar.",
+  "cards": [
+    {
+      "id": "t_cost_bound_altar",
+      "name": "Test Cost Bound Altar",
+      "oracle_text": "{T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+      "mana_cost": "{3}{B}",
+      "types": ["Artifact"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true,
+            "sacrifice": {"types": ["Creature"], "exclude_self": true, "as": "sacrificed"}
+          },
+          "effects": [
+            {"op": "add_mana", "mana": "{B}", "amount": {"mana_value_of": {"binding": "sacrificed"}}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cost_bound_stockpile",
+      "name": "Test Cost Bound Stockpile",
+      "oracle_text": "{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true,
+            "sacrifice": {"self_only": true, "zone": "battlefield", "as": "sacrificed"}
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "any_one_color": true,
+              "amount": {"counters_on": {"counter": "stash", "objects": {"binding": "sacrificed"}}}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cost_bound_mv3",
+      "name": "Test Cost Bound Three Drop",
+      "oracle_text": "",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    },
+    {
+      "id": "t_cost_bound_mv5",
+      "name": "Test Cost Bound Five Drop",
+      "oracle_text": "",
+      "mana_cost": "{4}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}
