@@ -1,0 +1,48 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_grant_graveyard_abilities.py. t_gg_trazyn is the static line of Trazyn the Infinite on its body; t_gg_relic is an artifact card whose one activated ability grows 'this permanent'.",
+  "cards": [
+    {
+      "id": "t_gg_trazyn",
+      "name": "Test Prismatic Gallery",
+      "oracle_text": "As long as this creature is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.",
+      "mana_cost": "{4}{B}",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Necron"],
+      "power": 4,
+      "toughness": 6,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this creature is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.",
+          "effect": "grant_graveyard_abilities",
+          "affects": {"self_only": true},
+          "types": ["Artifact"]
+        }
+      ]
+    },
+    {
+      "id": "t_gg_relic",
+      "name": "Test Gallery Relic",
+      "oracle_text": "{1}, {T}: Put a +1/+1 counter on this permanent.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Put a +1/+1 counter on this permanent.",
+          "cost": {"mana": "{1}", "tap": true},
+          "effects": [
+            {
+              "op": "add_counters",
+              "objects": {"self_only": true},
+              "counter": "+1/+1",
+              "amount": {"const": 1}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

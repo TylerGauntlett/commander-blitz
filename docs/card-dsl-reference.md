@@ -17,7 +17,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 67 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 109 |
+| [Static effects](#static-effects) | 110 |
 | [Player-wide statics](#player-wide-statics) | 51 |
 | [Grantable statics](#grantable-statics) | 50 |
 | [Cost reduction](#cost-reduction) | 9 |
@@ -647,6 +647,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `goaded` |  | yes | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `grant_exiled_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` exiled with this permanent. | [grant_exiled_abilities — abilities lent by the cards exiled with a permanent](card-dsl-cookbook.md#grant_exiled_abilities--abilities-lent-by-the-cards-exiled-with-a-permanent) |
+| `grant_graveyard_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` in the controller's graveyard. | [grant_graveyard_abilities — abilities lent by the cards in your graveyard](card-dsl-cookbook.md#grant_graveyard_abilities--abilities-lent-by-the-cards-in-your-graveyard) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_miracle` | yes |  | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_pay_generic_with` | yes |  | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |

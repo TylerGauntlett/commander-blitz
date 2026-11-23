@@ -302,6 +302,11 @@ STATIC_EFFECTS = frozenset(
         # collected off printed faces with `grant_ability`
         # (`characteristics.ABILITY_STATICS`).
         "grant_exiled_abilities",
+        # Trazyn the Infinite: "...it has all activated abilities of all
+        # artifact cards in your graveyard." The same lending as
+        # `grant_exiled_abilities`, read off the cards of `types` in the
+        # source's controller's graveyard rather than off its linked exiles.
+        "grant_graveyard_abilities",
         "extra_land_drops",
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.

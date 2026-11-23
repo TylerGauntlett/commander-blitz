@@ -1148,7 +1148,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 #: enchanting *another* Imprisoned in the Moon does not switch the second one
 #: off. Real Magic resolves that with dependency analysis, which is the thing
 #: layers-lite exists not to have.
-ABILITY_STATICS = ("lose_all_abilities", "grant_ability", "grant_exiled_abilities")
+ABILITY_STATICS = (
+    "lose_all_abilities",
+    "grant_ability",
+    "grant_exiled_abilities",
+    "grant_graveyard_abilities",
+)
+
+#: The `ABILITY_STATICS` that lend abilities printed on cards in another zone
+#: rather than one written in a ``grantable_abilities`` pool, so each lent
+#: ability carries a `Borrowed` provenance.
+LENDING_STATICS = ("grant_exiled_abilities", "grant_graveyard_abilities")
 
 
 class Borrowed(NamedTuple):
@@ -1200,6 +1210,34 @@ def exiled_activated_abilities(
     return out
 
 
+def graveyard_activated_abilities(
+    state: GameState, source: GameObject, static: Mapping[str, Any]
+) -> list[tuple[int, Ability]]:
+    """The activated abilities a ``grant_graveyard_abilities`` static hands over.
+
+    Trazyn the Infinite: "As long as Trazyn is on the battlefield, it has all
+    activated abilities of all artifact cards in your graveyard." Every
+    activated ability that works on the battlefield (`lendable_activated`)
+    printed on each card in the graveyard of ``source``'s **controller** whose
+    printed card types include one of ``types`` -- a card in a graveyard has
+    its printed characteristics, a pipeline input, so this reads no static's
+    output. Recomputed on every ask, so a card that arrives lends at once and
+    one that leaves stops lending. ``(card oid, ability)`` pairs, in graveyard
+    order.
+    """
+    wanted = set(static.get("types") or ())
+    out: list[tuple[int, Ability]] = []
+    for oid in state.players[source.controller].graveyard:
+        card = state.objects.get(oid)
+        if card is None:
+            continue
+        face = state.card_of(card)
+        if not wanted & set(face.types):
+            continue
+        out.extend((oid, ability) for ability in face.abilities if lendable_activated(ability))
+    return out
+
+
 def lendable_activated(ability: Ability) -> bool:
     """Is this printed ability one "all activated abilities of" hands over?
 
@@ -1208,8 +1246,8 @@ def lendable_activated(ability: Ability) -> bool:
     unearth) is left behind, since the permanent receiving it could never
     activate it there, and so is a Class level's, a Case's "Solved —" and a
     station threshold's, which are gated on the object that printed them.
-    Shared by `exiled_activated_abilities` and the `gain_activated_abilities`
-    op, which must not disagree about what "all" means.
+    Shared by `exiled_activated_abilities`, `graveyard_activated_abilities` and
+    the `gain_activated_abilities` op, which must not disagree about what "all" means.
     """
     return (
         ability.is_activated
@@ -1569,7 +1607,8 @@ def _derived_abilities(
     all.
 
     A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
-    exiled card's printed face, or a `gain_activated_abilities` op lent off
+    exiled card's printed face, a ``grant_graveyard_abilities`` static off a
+    card in a graveyard, or a `gain_activated_abilities` op lent off
     another card, which no pool index can name.
 
     Shared with `abilities_of` above rather than walked twice, because the two
@@ -1593,14 +1632,19 @@ def _derived_abilities(
         out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
         effect = static.get("effect")
-        if effect not in ("grant_ability", "grant_exiled_abilities"):
+        if effect not in ("grant_ability", *LENDING_STATICS):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        if effect == "grant_exiled_abilities":
+        if effect in LENDING_STATICS:
+            lend = (
+                exiled_activated_abilities
+                if effect == "grant_exiled_abilities"
+                else graveyard_activated_abilities
+            )
             out.extend(
                 (ability, Borrowed(card, ability.index))
-                for card, ability in exiled_activated_abilities(state, source_obj, static)
+                for card, ability in lend(state, source_obj, static)
             )
             continue
         granted = state.card_of(source_obj).grantable_abilities
@@ -1772,9 +1816,9 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
 
 
 def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
-    """Is the ability at ``index`` on this permanent borrowed off an exiled card?
+    """Is the ability at ``index`` on this permanent borrowed off another card?
 
-    ``grant_exiled_abilities``, or the `gain_activated_abilities` op's
+    ``grant_exiled_abilities``, ``grant_graveyard_abilities``, or the `gain_activated_abilities` op's
     snapshot: the definition lives on another card, not in any
     ``grantable_abilities`` pool, so an activation snapshots the ability
     itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
@@ -1785,7 +1829,7 @@ def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
         return False
     statics = _ability_statics(state)
     if not any(
-        static.get("effect") == "grant_exiled_abilities" for _, static in statics
+        static.get("effect") in LENDING_STATICS for _, static in statics
     ) and not any(temp.kind == "borrowed_abilities" for temp in obj.until_eot):
         return False
     derived = _derived_abilities(state, obj, statics)

@@ -7836,22 +7836,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"creature types ('It's still a Shapeshifter'), not {entry!r}"
                 )
 
-    if model.effect == "grant_exiled_abilities":
+    if model.effect in ("grant_exiled_abilities", "grant_graveyard_abilities"):
         # Hazel's Brewmaster: "Foods you control have all activated abilities
-        # of all creature cards exiled with this creature." `types` is the
-        # card type the linked exiled cards must have ("creature cards") and
-        # is required: left out, the static would lend the abilities of every
-        # card the source exiled, which is a stronger card than any printed.
-        # `affects` is who receives them; without it nothing would.
+        # of all creature cards exiled with this creature." Trazyn the
+        # Infinite: "...it has all activated abilities of all artifact cards in
+        # your graveyard." `types` is the card type the lending cards must have
+        # ("creature cards") and is required: left out, the static would lend
+        # the abilities of every card it reads, which is a stronger card than
+        # any printed. `affects` is who receives them; without it nothing would.
+        effect = model.effect
+        cards = "exiled cards'" if effect == "grant_exiled_abilities" else "graveyard cards'"
         if model.affects is None:
             raise DslError(
-                f"{where}: grant_exiled_abilities needs 'affects' naming the "
-                f"permanents that have the exiled cards' activated abilities"
+                f"{where}: {effect} needs 'affects' naming the "
+                f"permanents that have the {cards} activated abilities"
             )
         if not model.types:
             raise DslError(
-                f"{where}: grant_exiled_abilities needs 'types' -- the card "
-                f'types of the exiled cards it reads ("creature cards" is '
+                f"{where}: {effect} needs 'types' -- the card "
+                f'types of the cards it reads ("creature cards" is '
                 f'["Creature"])'
             )
         unknown = [t for t in model.types if t not in {c.value for c in CardType}]
@@ -7859,7 +7862,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(f"{where}.types: unknown card type(s) {unknown}")
         if model.ability is not None or model.subtypes or model.keywords:
             raise DslError(
-                f"{where}: grant_exiled_abilities lends what the exiled cards "
+                f"{where}: {effect} lends what the cards it reads "
                 f"print; it takes no 'ability', 'subtypes' or 'keywords'"
             )
 

@@ -12207,6 +12207,38 @@ written in the card's own `grantable_abilities` and cannot borrow whatever
 happens to be in exile; `imprint_characteristics` reads a card in exile but
 takes only its size and creature types.
 
+### `grant_graveyard_abilities` — abilities lent by the cards in your graveyard
+
+Trazyn the Infinite: "Prismatic Gallery — As long as Trazyn is on the
+battlefield, it has all activated abilities of all artifact cards in your
+graveyard."
+
+```json
+{"kind": "static", "effect": "grant_graveyard_abilities",
+ "affects": {"self_only": true}, "types": ["Artifact"]}
+```
+
+Each permanent `affects` matches has every activated ability that works on the
+battlefield, mana abilities included (`characteristics.lendable_activated`),
+printed on each card in the graveyard of the source's controller whose printed
+card types include one of `types` (`characteristics.graveyard_activated_abilities`).
+A card in a graveyard has its printed characteristics, so the static reads no
+other static's output. It is recomputed on every ask: a card lends from the
+moment it reaches the graveyard and stops when it leaves. The abilities are
+appended after the recipient's own, in graveyard order.
+
+Everything else is `grant_exiled_abilities`'s: the abilities are the
+recipient's (113.6, 602.1), an activation snapshots the ability onto the stack
+item (`StackItem.granted_ability`) so it resolves after the card has left the
+graveyard (608.2), the grant ends as the source leaves the battlefield, it is
+collected off printed faces (`characteristics.ABILITY_STATICS`) so it cannot
+itself be granted, and the loader refuses it without `affects` or `types`, with
+an unknown card type, and with an `ability`, `subtypes` or `keywords`.
+
+**The near misses**: `grant_exiled_abilities` reads only the cards linked to
+its source in exile; the `gain_activated_abilities` op snapshots one card's
+abilities until end of turn.
+
 ### `gain_activated_abilities` — every activated ability of another card
 
 Havengul Lich: "{1}: You may cast target creature card in a graveyard this
