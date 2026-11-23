@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**526 cards** blocked by **444** capabilities.
+**526 cards** blocked by **443** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -115,7 +115,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
-| [becomes-crewed](#becomes-crewed) | 1 | 13388 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -2609,20 +2608,6 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
-
-</details>
-
-## becomes-crewed
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when a Vehicle becomes crewed (702.122d), i.e. when a crew ability of that Vehicle resolves, whatever source activated or caused it, filterable to self
-  <br>Why the existing vocabulary won't do: trigger_events has ability_activated, becomes_tapped and state but no crewed event; folding the effect into the Crew 2 ability's own effects would turn a separate triggered ability into part of the crew ability's resolution and would miss crewing by other means
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghost Ark** (rank 13388) — `ghost_ark`
-  - Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.
 
 </details>
 

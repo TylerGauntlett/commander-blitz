@@ -1560,6 +1560,19 @@ class Ability:
         return self.kind is AbilityKind.ACTIVATED
 
     @property
+    def is_crew(self) -> bool:
+        """Is this a crew ability (702.122a)? Known by its cost.
+
+        A ``total_power`` on ``tap_permanents`` is crew's and only crew's: the
+        loader refuses it on any ability but an activated one whose one effect
+        animates this permanent, so the cost is the marker, and no crew ability
+        written before the `becomes_crewed` event needed rewriting to fire it.
+        See ADR 0032.
+        """
+        tap = self.cost.tap_permanents if self.cost is not None else None
+        return self.is_activated and tap is not None and tap.get("total_power") is not None
+
+    @property
     def is_triggered(self) -> bool:
         """714.1b: "chapter abilities are triggered abilities".
 

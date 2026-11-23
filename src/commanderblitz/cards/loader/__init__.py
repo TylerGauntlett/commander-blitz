@@ -3569,6 +3569,35 @@ def _has_optional_modes(effects: Any) -> bool:
     return False
 
 
+def _check_crew_shape(
+    model: AbilityModel, kind: AbilityKind, cost: Cost | None, where: str
+) -> None:
+    """A ``total_power`` tap cost is crew's, so its ability must be crew (702.122a).
+
+    `Ability.is_crew` reads the cost alone, and `stack._resolve_ability` fires
+    `became_crewed` off it (702.122d), so the cost is the crew marker (ADR
+    0032). Held to the printed shape -- an activated ability whose one effect
+    is this permanent becoming a creature -- so that no other ability can carry
+    the marker and make a Vehicle "become crewed" by resolving.
+    """
+    tap = cost.tap_permanents if cost is not None else None
+    if tap is None or tap.get("total_power") is None:
+        return
+    effects = [e for e in (model.effects or []) if isinstance(e, Mapping)]
+    animates_self = (
+        len(effects) == 1
+        and effects[0].get("op") == "animate"
+        and (effects[0].get("objects") or {}).get("self_only") is True
+    )
+    if kind is not AbilityKind.ACTIVATED or not animates_self:
+        raise DslError(
+            f"{where}: a 'total_power' tap cost is crew's (702.122a), and a crew "
+            f"ability is activated and does one thing, this permanent becoming a "
+            f"creature -- one 'animate' with objects 'self_only'; got a "
+            f"{kind.value} ability with {[e.get('op') for e in effects] or 'no effects'}"
+        )
+
+
 def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -3749,6 +3778,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
     _check_same_as(model.effects, cost, where)
     _check_sacrificed_names(model, cost, where)
+    _check_crew_shape(model, kind, cost, where)
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 

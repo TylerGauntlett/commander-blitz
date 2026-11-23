@@ -69,6 +69,7 @@ separately:
 - [adr/0029-an-auras-enchant-clause-is-a-standing-restriction.md](adr/0029-an-auras-enchant-clause-is-a-standing-restriction.md) — an Aura's enchant clause is re-tested as a state-based action against its host for as long as it is on the battlefield, not only as it arrives
 - [adr/0030-static-control-at-state-checks.md](adr/0030-static-control-at-state-checks.md) — a static control effect writes `GameObject.controller` and is kept true by a pass inside the state-based-action check, not computed by `chars`
 - [adr/0031-an-anthem-may-read-the-types-layer-4-left.md](adr/0031-an-anthem-may-read-the-types-layer-4-left.md) — a `buff` static's `affects` with `derived_types` reads the types layer 4 left, an ordered read across layers and no 613.8 dependency
+- [adr/0032-a-crew-ability-is-known-by-its-cost.md](adr/0032-a-crew-ability-is-known-by-its-cost.md) — a crew ability is the ability whose cost carries `total_power`, the loader keeps that cost to crew's printed shape, and `becomes_crewed` fires off it
 
 ## If you are here to...
 

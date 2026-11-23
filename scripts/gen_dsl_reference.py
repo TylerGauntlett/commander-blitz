@@ -885,6 +885,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "becomes_unattached": ("An Aura or Equipment stops being attached to a permanent, however it came off, its own departure included; the subject is the attachment, and `{\"binding\": \"host\"}` the permanent it came off.",
                            '"Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"'),
     "becomes_level": ("A Class reaches a level.", '"When this Class becomes level N"'),
+    "becomes_crewed": ("A crew ability of a Vehicle resolves (702.122d); the subject is the Vehicle.",
+                       "Whenever this Vehicle becomes crewed"),
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),
     "becomes_monstrous": ("A creature becomes monstrous.", H_MONSTROSITY),
     "becomes_tapped": ("A permanent becomes tapped.", None),

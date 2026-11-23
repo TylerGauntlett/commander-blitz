@@ -5886,6 +5886,40 @@ The near miss is `power_of`/`toughness_of` the target, which snapshots the
 Vehicle's size into a base-P/T effect of its own instead of leaving the printed
 one (301.7) under it.
 
+**The cost is the crew marker** ([ADR 0032](adr/0032-a-crew-ability-is-known-by-its-cost.md)).
+An ability whose cost carries `total_power` is a crew ability
+(`Ability.is_crew`), and nothing else may carry it: the loader refuses a
+`total_power` tap cost on any ability but an activated one whose one effect is
+an `animate` of `objects` `self_only`. A rider on the crew line ("Crew 2, and
+draw a card") is a separate `becomes_crewed` trigger, never a second effect.
+
+### Whenever this Vehicle becomes crewed
+
+```jsonc
+{ "kind": "triggered", "text": "Whenever this Vehicle becomes crewed, …",
+  "trigger": { "event": "becomes_crewed", "source": "self" },
+  "effects": [ … ] }
+```
+
+702.122d: a Vehicle becomes crewed as **a crew ability of it resolves**, whoever
+or whatever put that ability on the stack, so a copy of the crew ability
+resolving crews it again. The event (`became_crewed`) fires after crew's
+`animate`, so the Vehicle is already a creature when the trigger looks, and not
+at all when the Vehicle has left the battlefield before crew resolves (400.7).
+The subject is the Vehicle, so `controller` and `filter` ask about it, and
+`{"binding": "subject"}` is "it". Mobilizer Mech is the witness.
+
+Two near misses. `ability_activated` fires as crew is *activated*, a stack's
+width early, before the opponent has had the chance to answer the crew.
+Writing the effect onto the crew line itself turns a triggered ability into part
+of the crew's resolution, which misses a crew copied or activated by another
+source and lets the trigger's targets be chosen as crew is activated. An
+`animate` aimed at a Vehicle from somewhere else ("another target Vehicle
+becomes an artifact creature") is not crewing it, and fires nothing.
+
+"Whenever this creature **crews** a Vehicle" (Gearshift Ace) is the crewing
+creature's event, not the Vehicle's, and is not this trigger.
+
 ### Crews Vehicles as though its power were N greater
 
 ```jsonc
@@ -6913,7 +6947,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
-`creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
+`creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` · `becomes_crewed` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·

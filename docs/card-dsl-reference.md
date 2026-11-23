@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
-| [Trigger events](#trigger-events) | 67 |
+| [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 38 |
 | [Static effects](#static-effects) | 110 |
 | [Player-wide statics](#player-wide-statics) | 51 |
@@ -37,7 +37,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 24 |
-| [Engine events](#engine-events) | 88 |
+| [Engine events](#engine-events) | 89 |
 
 ## Effect ops
 
@@ -480,6 +480,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `becomes_attached` | `attached` | An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host. | ["Whenever an Aura you control becomes attached to a creature you control"](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control) |
 | `becomes_blocked` | `became_blocked` | An attacking creature becomes blocked. | [Triggers](card-dsl.md#triggers) |
+| `becomes_crewed` | `became_crewed` | A crew ability of a Vehicle resolves (702.122d); the subject is the Vehicle. | [Whenever this Vehicle becomes crewed](card-dsl.md#whenever-this-vehicle-becomes-crewed) |
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
@@ -1250,6 +1251,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `attackers_declared` | `you_attack` |  | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` |  | [Triggers](card-dsl.md#triggers) |
 | `became_blocked` | `becomes_blocked` |  | [Triggers](card-dsl.md#triggers) |
+| `became_crewed` | `becomes_crewed` |  | [Triggers](card-dsl.md#triggers) |
 | `became_level` | `becomes_level` |  | [Triggers](card-dsl.md#triggers) |
 | `became_monarch` | `becomes_monarch` |  | [Triggers](card-dsl.md#triggers) |
 | `became_monstrous` | `becomes_monstrous` |  | [Triggers](card-dsl.md#triggers) |

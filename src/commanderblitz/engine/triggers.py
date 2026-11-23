@@ -247,6 +247,11 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: the loader supplies it -- and always with the `level` it waits for, which
     #: is compared against the event exactly as `chapter` is.
     "becomes_level": EventType.BECAME_LEVEL,
+    #: "Whenever this Vehicle becomes crewed" (702.122d) with `source: "self"`:
+    #: a crew ability of the Vehicle resolved (`EventType.BECAME_CREWED`). The
+    #: subject is the Vehicle, so `controller` and `filter` ask about it too.
+    #: `ability_activated` is the near miss, a stack's width too early.
+    "becomes_crewed": EventType.BECAME_CREWED,
     "counter_placed": EventType.COUNTER_PLACED,
     #: "When the last time counter is removed from it, sacrifice it" -- the
     #: third ability of vanishing (702.63a). Always with `counter`: the kind
@@ -760,6 +765,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # The Class whose level changed, so the supplied `source: "self"` means
         # *this* Class and not every Class on the table.
         "becomes_level",
+        # The Vehicle that became crewed, so `source: "self"` is "this Vehicle"
+        # and not every crew on the table.
+        "becomes_crewed",
         # The cycled card itself, so `source: "self"` scopes the trigger to the
         # card that was cycled rather than to every cycling anywhere.
         "cycle",

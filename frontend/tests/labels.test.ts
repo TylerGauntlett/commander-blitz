@@ -338,6 +338,12 @@ describe("describeEvent", () => {
     ).toBe("Case Of The Shifting Visage is solved");
   });
 
+  it("says a Vehicle became crewed", () => {
+    expect(
+      describeEvent(event({ type: "became_crewed", data: { card: "mobilizer_mech" } }), names),
+    ).toBe("Mobilizer Mech becomes crewed");
+  });
+
   it("prettifies a card id rather than printing the raw slug", () => {
     expect(
       describeEvent(event({ type: "land_played", data: { card: "sol_ring" } }), names),

@@ -336,6 +336,15 @@ describe("beatsFor", () => {
     });
   });
 
+  it("floats Crewed off a Vehicle as it becomes crewed", () => {
+    const [beat] = beatsFor([event("became_crewed", {}, { source: 7 })], NAMES);
+    expect(beat.float).toEqual({
+      anchor: { kind: "object", oid: 7 },
+      value: "Crewed",
+      tone: "good",
+    });
+  });
+
   it("floats life gain up and life loss down", () => {
     const [gain] = beatsFor([event("life_gained", { amount: 5 })], NAMES);
     const [loss] = beatsFor([event("life_lost", { amount: 5 })], NAMES);

@@ -474,6 +474,13 @@ export function describeEvent(
     /* A Case became solved (719.3d): its "Solved" abilities switch on. */
     case "became_solved":
       return `${card ?? "A Case"} is solved`;
+    /*
+     * A Vehicle's crew ability resolved (702.122d). The `ability_activated`
+     * line said crew was started; this is the moment it finished, and the one
+     * "whenever this Vehicle becomes crewed" answers.
+     */
+    case "became_crewed":
+      return `${card ?? "A Vehicle"} becomes crewed`;
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":
