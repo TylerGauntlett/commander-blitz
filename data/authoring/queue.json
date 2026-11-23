@@ -241932,12 +241932,12 @@
     },
     "Shadow in the Warp": {
       "edhrec_rank": 3388,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow in the Warp",
-      "reason": "no template for: The first creature spell you cast each turn costs {2} less to cast",
+      "reason": "",
       "scryfall_id": "bd60cd99-1511-4903-b678-ff5a1853a742",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow of Doubt": {
@@ -261032,12 +261032,12 @@
     },
     "Sporocyst": {
       "edhrec_rank": 4751,
-      "gate": "template",
+      "gate": null,
       "name": "Sporocyst",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "72101d5f-f3a4-4490-a6f5-c320f3aeb242",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sporogenesis": {
@@ -282472,12 +282472,12 @@
     },
     "The Swarmlord": {
       "edhrec_rank": 13188,
-      "gate": "template",
+      "gate": null,
       "name": "The Swarmlord",
-      "reason": "no template for: Rapid Regeneration — enters with two +1/+1 counters on it for each time you've cast your c",
+      "reason": "",
       "scryfall_id": "1a87e989-0756-4db8-b7f7-b39d5a5fd4e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Swarmweaver": {
@@ -293802,12 +293802,12 @@
     },
     "Trygon Prime": {
       "edhrec_rank": 11702,
-      "gate": "template",
+      "gate": null,
       "name": "Trygon Prime",
-      "reason": "no template for: Subterranean Assault — Whenever this creature attacks, put a +1/+1 counter on it and a +1/",
+      "reason": "",
       "scryfall_id": "450509b6-d496-40ee-b3bc-0b4accb9f7ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trynn, Champion of Freedom": {
@@ -295382,32 +295382,32 @@
     },
     "Tyranid Harridan": {
       "edhrec_rank": 14789,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Harridan",
-      "reason": "no template for: Flying, ward {4}",
+      "reason": "",
       "scryfall_id": "dff00a51-977e-43ba-a4bf-b251e62f1100",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyranid Invasion": {
       "edhrec_rank": 17244,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Invasion",
-      "reason": "no template for: Create a number of 3/3 green Tyranid Warrior creature tokens with trample equal to the num",
+      "reason": "",
       "scryfall_id": "7082df45-6c2f-4a92-8c73-a582e9ea1948",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyranid Prime": {
       "edhrec_rank": 9831,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Prime",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "3d79ca81-3841-4d32-a981-ec17a4c8da05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrannical Pitlord": {
@@ -316502,12 +316502,12 @@
     },
     "Winged Hive Tyrant": {
       "edhrec_rank": 6302,
-      "gate": "template",
+      "gate": null,
       "name": "Winged Hive Tyrant",
-      "reason": "no template for: The Will of the Hive Mind — Other creatures you control with counters on them have flying ",
+      "reason": "",
       "scryfall_id": "2f21f7d3-377e-4436-885b-682ee42e362f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winged Portent": {

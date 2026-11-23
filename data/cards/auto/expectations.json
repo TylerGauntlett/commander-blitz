@@ -22143,6 +22143,14 @@
   "shadow_glider": {
     "zone": "battlefield"
   },
+  "shadow_in_the_warp": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "shadow_mysterious_assassin": {
     "battlefield_count": 33,
     "hand_size": {
@@ -23777,6 +23785,20 @@
     "zone": "battlefield"
   },
   "sporemound": {
+    "zone": "battlefield"
+  },
+  "sporocyst": {
+    "battlefield_count": 47,
+    "counters": {
+      "amount": 14,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 25
+    },
     "zone": "battlefield"
   },
   "spotted_griffin": {
@@ -25889,6 +25911,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_swarmlord": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_ten_rings": {
     "battlefield_count": 33,
     "hand_size": {
@@ -27119,6 +27148,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "trygon_prime": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tundra": {
     "zone": "battlefield"
   },
@@ -27273,6 +27306,25 @@
     "zone": "battlefield"
   },
   "typhoid_rats": {
+    "zone": "battlefield"
+  },
+  "tyranid_harridan": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "tyranid_invasion": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "tyranid_warrior_3_3_g_trample"
+    },
+    "zone": "graveyard"
+  },
+  "tyranid_prime": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tyrant_s_familiar": {
@@ -29335,6 +29387,10 @@
     "zone": "battlefield"
   },
   "winged_coatl": {
+    "zone": "battlefield"
+  },
+  "winged_hive_tyrant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "winged_shepherd": {
