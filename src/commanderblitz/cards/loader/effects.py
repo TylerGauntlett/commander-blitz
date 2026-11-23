@@ -5192,14 +5192,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # "Exile it instead" is a yes or a no; a string "false" read as
             # truthy would exile a spell the card sends back to the graveyard.
             raise DslError(f"{where}: cast_card's 'exiles' is true or false")
-        for key in ("free", "selector", "zones", "per_owner"):
+        for key in ("free", "selector", "zones", "per_owner", "pay_life_instead"):
             if key in effect:
                 # The near misses' keys. `cast_card` charges the mana cost; a
-                # free cast is `cast_from_hand`, and a silently ignored `free`
-                # would be the opposite card.
+                # free or life-priced cast is `cast_from_hand`, and a silently
+                # ignored `free` would be the opposite card.
                 raise DslError(
                     f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
-                    f"pool at its mana cost (a free cast is cast_from_hand)"
+                    f"pool at its mana cost (a free or life-priced cast is cast_from_hand)"
                 )
     if op == "cast_copy" and "cost" in effect:
         # "You may cast the copy by paying {3} rather than paying its mana
@@ -5373,6 +5373,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # `cast_card`'s rider and its refusal: a string "false" read as
             # truthy would exile a spell the card sends back to the graveyard.
             raise DslError(f"{where}: cast_from_hand's 'exiles' is true or false")
+        if "pay_life_instead" in effect and not isinstance(effect["pay_life_instead"], bool):
+            # Anrakyr the Traveller's price. A string "false" read as truthy
+            # would bill life for a spell the card casts free, and the reverse
+            # would hand out the free cast a life-priced card never gives.
+            raise DslError(f"{where}: cast_from_hand's 'pay_life_instead' is true or false")
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no

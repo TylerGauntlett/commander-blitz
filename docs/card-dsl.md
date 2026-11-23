@@ -156,6 +156,24 @@ is countered, and the same card cast later by another route goes back to the
 graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
 the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
 
+`pay_life_instead: true` changes the price and nothing else: the spell is still
+cast right then, inside the resolution and ignoring timing, but for life equal to
+its mana value rather than for free. Anrakyr the Traveller's attack trigger:
+
+```jsonc
+{ "op": "cast_from_hand", "zones": ["hand", "graveyard"],
+  "selector": { "types": ["Artifact"] }, "pay_life_instead": true }
+```
+
+It is an alternative cost (118.9): X is 0 (107.3b), a card whose life the player
+cannot pay is not offered (119.4), and a tax is still owed on top as generic mana
+(601.2f). It narrows the way `cast_card` does: no kicker or optional additional
+cost is offered, and a card with a mandatory additional cost is not offered at
+all. The key must be a boolean, and `cast_card` refuses it. `grant_playable`'s
+`playable_pay_life_instead` is the near miss: the same price on a permission
+used later, in a priority window, so a sorcery-speed artifact could not be cast
+in combat.
+
 `as` records the cards actually cast (a declined offer, or a card with no legal
 target, is not in it) and **accumulates** across the ops of one resolution.
 Finale of Promise casts an instant and a sorcery by two ops over two targets,

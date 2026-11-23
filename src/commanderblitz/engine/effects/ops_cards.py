@@ -2314,11 +2314,23 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     ``as`` records the cards actually cast -- the spells now on the stack --
     and accumulates across ops of one resolution, so `copy_spell`'s
     ``spells`` can copy "each of those spells" (Finale of Promise).
+
+    ``pay_life_instead: true`` changes the price and nothing else: "you may
+    cast an artifact spell from your hand or graveyard **by paying life equal
+    to its mana value rather than paying its mana cost**" -- Anrakyr the
+    Traveller. Still cast right then, inside the resolution and ignoring
+    timing (608.2g), but for the alternative cost `_life_cast_lines` prices.
+    A card whose life the player cannot pay is not on offer (119.4).
     """
 
     selector = spec.get("selector") or {}
     exiles = bool(spec.get("exiles", False))
-    prompt = "Cast a spell without paying its mana cost"
+    pay_life = bool(spec.get("pay_life_instead", False))
+    prompt = (
+        "Cast a spell by paying life equal to its mana value"
+        if pay_life
+        else "Cast a spell without paying its mana cost"
+    )
     # "…from your hand, **from your graveyard, or from among cards you own in
     # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
     # zones, not one per zone: the sentence casts *a* spell. Each zone is read
@@ -2363,6 +2375,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
                 ctx.state, pid, ctx.state.card_of(ctx.state.objects[oid])
             )
             and _matches_in_zone(ctx, oid, selector, zone)
+            and (not pay_life or bool(_life_cast_lines(ctx, pid, oid)))
         ]
         if spec.get("per_owner"):
             owners: list[int] = []
@@ -2374,13 +2387,146 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             groups = [pool] if pool else []
         for group in groups:
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
-            if picked and cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles):
+            if not picked:
+                continue
+            if pay_life:
+                if (yield from _cast_paying_life(ctx, pid, picked[0], exiles=exiles)):
+                    cast.append(picked[0])
+            elif cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles):
                 cast.append(picked[0])
     if name := spec.get("as"):
         # Accumulates: Finale of Promise casts its instant and its sorcery by
         # two ops and copies "each of those spells" in one.
         previous = ctx.bindings.get(str(name))
         ctx.bindings[str(name)] = [*(previous if isinstance(previous, list) else ()), *cast]
+
+
+def _life_cast_lines(ctx: EffectContext, pid: int, oid: int) -> list[tuple]:
+    """The target tuples a pay-life cast of ``oid`` could be made with now.
+
+    "…by paying life equal to its mana value rather than paying its mana
+    cost" -- an alternative cost (118.9) bought during a resolution
+    (`op_cast_from_hand`'s ``pay_life_instead``). Empty when the card cannot be
+    cast this way at all, so the offer never holds a card whose yes does
+    nothing (118.4):
+
+    - **X is 0** (107.3b): nothing announces it, so the life is
+      ``card.mana_value`` and a mana-value floor or a printed "X can't be 0"
+      the spell cannot then meet refuses it.
+    - **Paying life needs that much life** (119.4), which `can_pay` says.
+    - **Taxes still apply** (601.2f): `cost_reduction` with the tuple's
+      targets, netted against the alternative cost's empty mana half, so a
+      net increase is owed as generic mana on top of the life and a net
+      reduction buys nothing.
+    - `_cast_paying_mana_cost`'s narrowings: no kicker or optional additional
+      cost is offered, and a card whose additional cost is mandatory is not
+      offered at all rather than cast without it. A land is never cast (305.9).
+    """
+    from ..costs import can_pay, can_pay_mana, spell_purpose, zone_of
+    from ..mana import ManaCost
+    from ..player_statics import cast_lock_min_x
+    from ..primitives import cast_locked_zones
+    from ..targeting import additional_sized_targets, enumerate_target_tuples
+
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return []
+    card = state.card_of(obj)
+    if card.is_land:
+        return []
+    if card.additional_cost is not None and not card.additional_optional:
+        return []
+    if card.additional_cost_options:
+        return []
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        return []
+    if player_cant_cast_while_resolving(state, pid, card):
+        return []
+    min_x = cast_lock_min_x(state, pid, card)
+    if min_x is None or min_x > 0 or (card.x_minimum and card.mana_cost.x_count):
+        return []
+    if not can_pay(state, pid, Cost(pay_life=card.mana_value), None):
+        return []
+    purpose = spell_purpose(card, caster=pid, owner=obj.owner)
+    empty = ManaCost.parse("")
+
+    def payable(targets) -> bool:
+        extra = _life_cast_tax(ctx, pid, oid, targets)
+        return can_pay_mana(state, pid, empty, extra_generic=extra, purpose=purpose)
+
+    return [
+        t
+        for t in enumerate_target_tuples(
+            state,
+            pid,
+            additional_sized_targets(card.targets, 0),
+            oid,
+            size_cap=1 if card.strive is not None else None,
+        )
+        if payable(t)
+    ]
+
+
+def _life_cast_tax(ctx: EffectContext, pid: int, oid: int, targets) -> int:
+    """The generic mana a pay-life cast owes on top of its life (601.2f)."""
+    from ..cost_reduction import cost_reduction
+    from ..costs import zone_of
+
+    state = ctx.state
+    obj = state.objects[oid]
+    card = state.card_of(obj)
+    return max(
+        0, -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid), owner=obj.owner)
+    )
+
+
+def _cast_paying_life(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):
+    """Cast ``oid`` now for life equal to its mana value. Returns whether it was.
+
+    The pay-life sibling of `_cast_paying_mana_cost`, priced by
+    `_life_cast_lines`: a real cast (601.2) that uses the stack, can be
+    countered, fires its cast triggers and counts toward the turn's spells. The
+    choice of card was the "may"; the targets are asked (601.2c), then the life
+    and any tax are paid (601.2h) in one payment.
+    """
+    from ..costs import pay, spell_purpose
+    from ..mana import ManaCost
+    from ..stack import free_cast_modes, push_spell
+
+    state = ctx.state
+    tuples = _life_cast_lines(ctx, pid, oid)
+    if not tuples:
+        return False
+    obj = state.objects[oid]
+    card = state.card_of(obj)
+    targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
+    extra = _life_cast_tax(ctx, pid, oid, targets)
+    modes, mode_refs = free_cast_modes(state, pid, card, oid)
+    paid = yield from pay(
+        state,
+        pid,
+        Cost(mana=ManaCost.parse(""), pay_life=card.mana_value),
+        None,
+        extra_generic=extra,
+        purpose=spell_purpose(card, caster=pid, owner=obj.owner),
+        record_colors_on=oid,
+    )
+    if not paid:  # pragma: no cover - the offer proved this payable
+        return False
+    item = push_spell(state, oid, pid, tuple(targets) + mode_refs, exiles_instead=exiles, modes=modes)
+    fire(
+        state,
+        EventType.SPELL_CAST,
+        player=pid,
+        source=oid,
+        oid=oid,
+        spell_oid=oid,
+        sid=item.sid,
+        card=card.id,
+        x=item.x,
+    )
+    return True
 
 
 def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):

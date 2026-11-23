@@ -223,7 +223,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn; `max_per_turn` caps the casts, `grants_flashback` exiles each, `unmetered` declares neither; `escape` grants them escape instead, at that cost only.",
                              "Casting out of every graveyard, until end of turn"),
-    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
+    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost, or with `pay_life_instead` for life equal to its mana value; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast, accumulating.",
                        None),
     "cast_card": ("Cards", "Cast a named card during resolution, paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                   H_CAST_CARD),
