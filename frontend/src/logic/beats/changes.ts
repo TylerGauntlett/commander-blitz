@@ -351,6 +351,21 @@ export function changeBeat(ctx: EventContext): boolean {
       return true;
     }
 
+    /*
+     * A Vehicle becoming crewed: the Class level's beat, for its reason. The
+     * Vehicle turning into a creature is otherwise only a type line changing.
+     */
+    case "became_crewed": {
+      if (event.source === null) return true;
+      const anchor = { kind: "object", oid: event.source } as const;
+      push({
+        hold: 320,
+        float: { anchor, value: "Crewed", tone: "good" },
+        fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+      });
+      return true;
+    }
+
     /* A Case becoming solved: the Class level's beat, for its reason. */
     case "became_solved": {
       if (event.source === null) return true;

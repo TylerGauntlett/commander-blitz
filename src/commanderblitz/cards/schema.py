@@ -963,7 +963,25 @@ class AbilityModel(BaseModel):
     #: counted on the source snapshots in `TurnLedger.ability_sources`.
     #: Requires `affects_abilities: {"any": true}` and `affects`.
     first_each_turn: bool = False
-    affects_player: Literal["you", "opponent", "any"] | None = None
+    #: `ability_cost_reduction`: "activated abilities **of cards in your
+    #: graveyard**" (Convergence of Dominion). The discount reaches an ability
+    #: only while its source is a card in the graveyard of this static's
+    #: controller -- unearth, scavenge, an encore -- and never one on the
+    #: battlefield. Refuses `affects`, `first_each_turn` and
+    #: `first_during_your_turn`, which describe permanents.
+    from_graveyard: bool = False
+    #: `ability_cost_reduction`: "This effect can't reduce the mana in that
+    #: ability's activation cost to less than **one** mana" -- the fewest mana
+    #: symbols this static's discount may leave in the cost, coloured pips
+    #: included. Applied after every unfloored discount, so it bounds this
+    #: static alone. ``1`` on Convergence of Dominion.
+    mana_floor: int | None = None
+    #: Whose seat a player-wide static reaches, relative to its controller.
+    #: ``{"chosen_player_of": "self"}`` -- the seat its source remembered with
+    #: `choose_player`'s ``remember`` -- is admitted on `replace_damage` alone
+    #: (Sawhorn Nemesis); the loader refuses it on every other effect, whose
+    #: readers take only the words.
+    affects_player: Literal["you", "opponent", "any"] | dict[str, Any] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback
     #: cost is equal to that card's mana cost."
@@ -1242,6 +1260,10 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``block_restriction``: Troll of Khazad-dûm's "can't be blocked except
+    #: by three or more creatures" -- the fewest creatures that may block it,
+    #: menace's two generalised. Judged on the declaration, as the cap is.
+    min_blockers: int | None = None
     #: ``can_block_only``: which attackers the creatures it ``affects`` may
     #: block. A static filter over the *attacker*, read on its derived
     #: characteristics, so Brazen Borrower's "can block only creatures with

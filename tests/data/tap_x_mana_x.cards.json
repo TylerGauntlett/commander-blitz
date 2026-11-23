@@ -1,0 +1,24 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_tap_x_mana_x.py. `t_txm_overlord` is Necron Overlord's Relentless March on a plain creature: {X}, {T}, tap X untapped artifacts you control, target opponent loses X life -- one announced X sizing both the mana and the artifacts tapped.",
+  "cards": [
+    {
+      "id": "t_txm_overlord",
+      "name": "Test Tap X Mana X Overlord",
+      "oracle_text": "{X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.",
+      "mana_cost": "{2}{B}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Necron"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}, {T}, Tap X untapped artifacts you control: Target opponent loses X life.",
+          "cost": {"mana": "{X}", "tap": true, "tap_x": {"types": ["Artifact"]}},
+          "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+          "effects": [{"op": "lose_life", "player": {"target": "t1"}, "amount": {"x": true}}]
+        }
+      ]
+    }
+  ]
+}

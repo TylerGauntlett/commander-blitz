@@ -1148,7 +1148,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
 #: enchanting *another* Imprisoned in the Moon does not switch the second one
 #: off. Real Magic resolves that with dependency analysis, which is the thing
 #: layers-lite exists not to have.
-ABILITY_STATICS = ("lose_all_abilities", "grant_ability", "grant_exiled_abilities")
+ABILITY_STATICS = (
+    "lose_all_abilities",
+    "grant_ability",
+    "grant_exiled_abilities",
+    "grant_graveyard_abilities",
+)
+
+#: The `ABILITY_STATICS` that lend abilities printed on cards in another zone
+#: rather than one written in a ``grantable_abilities`` pool, so each lent
+#: ability carries a `Borrowed` provenance.
+LENDING_STATICS = ("grant_exiled_abilities", "grant_graveyard_abilities")
 
 
 class Borrowed(NamedTuple):
@@ -1200,6 +1210,34 @@ def exiled_activated_abilities(
     return out
 
 
+def graveyard_activated_abilities(
+    state: GameState, source: GameObject, static: Mapping[str, Any]
+) -> list[tuple[int, Ability]]:
+    """The activated abilities a ``grant_graveyard_abilities`` static hands over.
+
+    Trazyn the Infinite: "As long as Trazyn is on the battlefield, it has all
+    activated abilities of all artifact cards in your graveyard." Every
+    activated ability that works on the battlefield (`lendable_activated`)
+    printed on each card in the graveyard of ``source``'s **controller** whose
+    printed card types include one of ``types`` -- a card in a graveyard has
+    its printed characteristics, a pipeline input, so this reads no static's
+    output. Recomputed on every ask, so a card that arrives lends at once and
+    one that leaves stops lending. ``(card oid, ability)`` pairs, in graveyard
+    order.
+    """
+    wanted = set(static.get("types") or ())
+    out: list[tuple[int, Ability]] = []
+    for oid in state.players[source.controller].graveyard:
+        card = state.objects.get(oid)
+        if card is None:
+            continue
+        face = state.card_of(card)
+        if not wanted & set(face.types):
+            continue
+        out.extend((oid, ability) for ability in face.abilities if lendable_activated(ability))
+    return out
+
+
 def lendable_activated(ability: Ability) -> bool:
     """Is this printed ability one "all activated abilities of" hands over?
 
@@ -1208,8 +1246,8 @@ def lendable_activated(ability: Ability) -> bool:
     unearth) is left behind, since the permanent receiving it could never
     activate it there, and so is a Class level's, a Case's "Solved —" and a
     station threshold's, which are gated on the object that printed them.
-    Shared by `exiled_activated_abilities` and the `gain_activated_abilities`
-    op, which must not disagree about what "all" means.
+    Shared by `exiled_activated_abilities`, `graveyard_activated_abilities` and
+    the `gain_activated_abilities` op, which must not disagree about what "all" means.
     """
     return (
         ability.is_activated
@@ -1526,7 +1564,11 @@ def abilities_of(
         return ()
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
     if not obj.on_battlefield:
-        return printed
+        graveyard = _graveyard_granted_abilities(state, obj)
+        if not graveyard:
+            return printed
+        out = [*printed, *(ability for ability, _origin in graveyard)]
+        return tuple(dataclasses.replace(ability, index=i) for i, ability in enumerate(out))
     statics = _ability_statics(state)
     if (
         not statics
@@ -1569,7 +1611,8 @@ def _derived_abilities(
     all.
 
     A `Borrowed` for one a ``grant_exiled_abilities`` static lent off a linked
-    exiled card's printed face, or a `gain_activated_abilities` op lent off
+    exiled card's printed face, a ``grant_graveyard_abilities`` static off a
+    card in a graveyard, or a `gain_activated_abilities` op lent off
     another card, which no pool index can name.
 
     Shared with `abilities_of` above rather than walked twice, because the two
@@ -1593,14 +1636,19 @@ def _derived_abilities(
         out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
         effect = static.get("effect")
-        if effect not in ("grant_ability", "grant_exiled_abilities"):
+        if effect not in ("grant_ability", *LENDING_STATICS):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        if effect == "grant_exiled_abilities":
+        if effect in LENDING_STATICS:
+            lend = (
+                exiled_activated_abilities
+                if effect == "grant_exiled_abilities"
+                else graveyard_activated_abilities
+            )
             out.extend(
                 (ability, Borrowed(card, ability.index))
-                for card, ability in exiled_activated_abilities(state, source_obj, static)
+                for card, ability in lend(state, source_obj, static)
             )
             continue
         granted = state.card_of(source_obj).grantable_abilities
@@ -1716,6 +1764,29 @@ def _op_granted_abilities(
     return out
 
 
+def _graveyard_granted_abilities(
+    state: GameState, obj: GameObject
+) -> list[tuple[Ability, tuple[int, int]]]:
+    """The activated abilities a `grant_ability` op handed this graveyard card.
+
+    Ghost Ark: "…each artifact creature card in your graveyard gains unearth {3}
+    until end of turn." The record is the battlefield grant's (`primitives.
+    grant_ability`), read by `_op_granted_abilities`, and appended after the
+    printed list with the same ``(granter, index)`` provenance so legality,
+    `game._activate` and `stack.push_activated_ability` all see the one list.
+    Activated only: the loader refuses any other grant onto a graveyard card,
+    and the granted ability's own ``active_zones`` is what lets legality offer
+    it from there. Empty off a graveyard, and for nearly every card in one.
+    """
+    if obj.zone is not Zone.GRAVEYARD or not _has_op_grants(obj):
+        return []
+    return [
+        (ability, origin)
+        for ability, origin in _op_granted_abilities(state, obj)
+        if ability.is_activated
+    ]
+
+
 def _op_borrowed_abilities(obj: GameObject) -> list[tuple[Ability, Borrowed]]:
     """The activated abilities a `gain_activated_abilities` op lent this permanent.
 
@@ -1755,8 +1826,17 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     silently, because resolution could not find its definition.
     """
     obj = state.objects.get(oid)
-    if obj is None or not obj.on_battlefield:
+    if obj is None:
         return None
+    if not obj.on_battlefield:
+        # A grant on a graveyard card (Ghost Ark's unearth), appended after
+        # the printed list exactly as `abilities_of` appends it.
+        graveyard = _graveyard_granted_abilities(state, obj)
+        if not graveyard:
+            return None
+        offset = len(present_printed_abilities(obj, printed_abilities(state, obj)))
+        pos = index - offset
+        return graveyard[pos][1] if 0 <= pos < len(graveyard) else None
     if obj.face_down:
         return None
     statics = _ability_statics(state)
@@ -1772,9 +1852,9 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
 
 
 def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
-    """Is the ability at ``index`` on this permanent borrowed off an exiled card?
+    """Is the ability at ``index`` on this permanent borrowed off another card?
 
-    ``grant_exiled_abilities``, or the `gain_activated_abilities` op's
+    ``grant_exiled_abilities``, ``grant_graveyard_abilities``, or the `gain_activated_abilities` op's
     snapshot: the definition lives on another card, not in any
     ``grantable_abilities`` pool, so an activation snapshots the ability
     itself (`StackItem.granted_ability`) rather than a ``(granter, index)``
@@ -1785,7 +1865,7 @@ def borrowed_ability(state: GameState, oid: int, index: int) -> bool:
         return False
     statics = _ability_statics(state)
     if not any(
-        static.get("effect") == "grant_exiled_abilities" for _, static in statics
+        static.get("effect") in LENDING_STATICS for _, static in statics
     ) and not any(temp.kind == "borrowed_abilities" for temp in obj.until_eot):
         return False
     derived = _derived_abilities(state, obj, statics)
@@ -2686,6 +2766,9 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     Nimble Mongoose counts the graveyard of whoever controls it, which is what
     "your" means on a permanent.
     """
+    if is_chosen_player_spec(spec):
+        pid = source.chosen_player
+        return [pid] if pid is not None and state.is_alive(pid) else []
     who = str(spec or "you")
     if who == "you":
         return [source.controller]
@@ -2700,6 +2783,17 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
         pid = state.monarch
         return [pid] if pid is not None and state.is_alive(pid) else []
     return state.alive()
+
+
+def is_chosen_player_spec(spec: Any) -> bool:
+    """Is ``spec`` ``{"chosen_player_of": "self"}`` -- the seat this static's
+    source remembered with `choose_player`'s ``remember``?
+
+    The player twin of ``{"chosen_color_of": "self"}``. Its readers resolve it
+    against `GameObject.chosen_player` and match nothing while that is
+    ``None``; the loader admits exactly this spelling and nothing else.
+    """
+    return isinstance(spec, Mapping) and spec.get("chosen_player_of") == "self"
 
 
 def resolve_chosen_subtype_list(entries: Any, source: GameObject | None) -> list[str]:
@@ -3377,6 +3471,14 @@ def _matches_wherever(
         return False
     if controller == "opponent" and obj.controller == source.controller:
         return False
+    # "…a permanent **the chosen player** controls" (Sawhorn Nemesis). The seat
+    # `choose_player` remembered on this static's source -- written by an
+    # effect, never by a layer, so a pipeline input. Nobody chosen yet matches
+    # nothing, `enchanted_player`'s safe direction.
+    if is_chosen_player_spec(controller) and (
+        source.chosen_player is None or obj.controller != source.chosen_player
+    ):
+        return False
     # "Creatures **enchanted player** controls…" -- an Aura on a seat (303.4a),
     # read off its own link. Answered here rather than left to fall through,
     # because an unrecognised controller word matches *everything*: a static
@@ -3530,7 +3632,14 @@ def _matches_wherever(
     if (who := selector.get("attacking_player")) is not None:
         from .effects.selectors import attacking_player_matches
 
-        if not attacking_player_matches(combat, obj.oid, str(who), source.controller, state):
+        # "Creatures attacking **the last chosen player**" (Triarch Stalker):
+        # the seat remembered on the source, and nobody before any choice.
+        if is_chosen_player_spec(who):
+            if source.chosen_player is None or not attacking_player_matches(
+                combat, obj.oid, source.chosen_player, source.controller, state
+            ):
+                return False
+        elif not attacking_player_matches(combat, obj.oid, str(who), source.controller, state):
             return False
     if "blocking" in selector:
         blocking = bool(combat and combat.blocking(obj.oid))
@@ -4045,9 +4154,10 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     Returned as ``(source, static)`` pairs rather than answered here, for the
     same reason :func:`protection_from` returns a set: two rules read them at two
     different moments and must ask the same question.  A per-blocker filter is
-    checked in ``combat.can_block``, one pair at a time; ``require_all`` can only
-    be judged once the whole declaration exists, so it is checked in
-    ``combat.blocks_valid`` beside menace, which has exactly that shape.
+    checked in ``combat.can_block``, one pair at a time; ``require_all`` and the
+    ``max_blockers``/``min_blockers`` counts can only be judged once the whole
+    declaration exists, so they are checked in ``combat.blocks_valid`` beside
+    menace, which has exactly that shape.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:

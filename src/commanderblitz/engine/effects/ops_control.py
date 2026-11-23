@@ -616,20 +616,36 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     player. It is a choice, not a target (115.1) -- a player with hexproof can
     still be chosen; "target opponent chosen at random" is a random *target*
     spec on a triggered ability instead.
+
+    ``remember: true`` also keeps the answer on the source permanent, in
+    `GameObject.chosen_player`, where its statics read it back through
+    ``{"chosen_player_of": "self"}`` -- the player twin of `choose_color`'s
+    slot. "As this creature enters, choose a player" (Sawhorn Nemesis) and
+    "choose an opponent ... creatures attacking **the last chosen player**"
+    (Triarch Stalker): each later choice overwrites the slot, which is what
+    "last" means, and a choice with nobody to choose leaves the previous one
+    standing. ``as`` is optional beside it, since the slot is reachable.
+    The "as this enters" divergence is `choose_type`'s: a `self_enters`
+    trigger, chosen a moment after the permanent arrives.
     """
     pool = select_players(ctx, spec.get("players", "each_opponent"))
     pool = [pid for pid in pool if ctx.state.is_alive(pid)]
     if not pool:
         return
     if spec.get("random"):
-        picked = pool[0] if len(pool) == 1 else ctx.state.rng.choice(pool)
-        ctx.bindings[str(spec["as"])] = int(picked)
-        return
-    prompt = str(spec.get("prompt") or "Choose a player")
-    chosen = yield from ask_player(ctx, prompt, pool, ctx.controller)
-    if chosen is None:
-        return
-    ctx.bindings[str(spec["as"])] = int(chosen)
+        chosen = pool[0] if len(pool) == 1 else ctx.state.rng.choice(pool)
+    else:
+        prompt = str(spec.get("prompt") or "Choose a player")
+        chosen = yield from ask_player(ctx, prompt, pool, ctx.controller)
+        if chosen is None:
+            return
+    if spec.get("as"):
+        ctx.bindings[str(spec["as"])] = int(chosen)
+    if spec.get("remember"):
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if obj is not None:
+            obj.chosen_player = int(chosen)
+            ctx.state.bump_chars()
 
 
 #: "Choose left or right." The answer's labels, in the order `rotate_control`

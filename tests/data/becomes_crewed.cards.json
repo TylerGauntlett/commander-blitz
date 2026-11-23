@@ -1,0 +1,61 @@
+{
+  "_comment": "Cards that exist only for the becomes-crewed trigger tests (tests/unit/triggers/test_becomes_crewed.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_crew_watcher` gains life whenever it becomes crewed, so a test can count crewings; `t_vehicle_lifter` animates a target Vehicle the way Mobilizer Mech's trigger does, which is not crewing it.",
+  "cards": [
+    {
+      "id": "t_crew_watcher",
+      "name": "Test Crew Watcher",
+      "oracle_text": "Whenever this Vehicle becomes crewed, you gain 2 life.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "subtypes": ["Vehicle"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this Vehicle becomes crewed, you gain 2 life.",
+          "trigger": { "event": "becomes_crewed", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        },
+        {
+          "kind": "activated",
+          "text": "Crew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+          "cost": { "tap_permanents": { "controller": "you", "types": ["Creature"], "total_power": 1 } },
+          "effects": [
+            {
+              "op": "animate",
+              "keep_pt": true,
+              "types": ["Creature"],
+              "objects": { "zone": "battlefield", "self_only": true }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vehicle_lifter",
+      "name": "Test Vehicle Lifter",
+      "oracle_text": "{1}: Target Vehicle becomes an artifact creature until end of turn.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: Target Vehicle becomes an artifact creature until end of turn.",
+          "cost": { "mana": "{1}" },
+          "targets": [
+            { "id": "t1", "kind": "permanent", "selector": { "subtypes": ["Vehicle"] } }
+          ],
+          "effects": [
+            {
+              "op": "animate",
+              "keep_pt": true,
+              "types": ["Artifact", "Creature"],
+              "objects": { "target": "t1", "subtypes": ["Vehicle"] }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

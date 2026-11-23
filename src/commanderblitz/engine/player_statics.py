@@ -23,6 +23,7 @@ from .characteristics import (
     card_in_exile_characteristics,
     chars,
     compare_pt,
+    is_chosen_player_spec,
     resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
@@ -135,6 +136,10 @@ def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> 
     card and is only a floor under hand-built states.
     """
     who = static.get("affects_player", "you")
+    if is_chosen_player_spec(who):
+        # "…to **the chosen player**" (Sawhorn Nemesis): the seat the source
+        # remembered, and nobody before it has chosen.
+        return source.chosen_player is not None and source.chosen_player == pid
     if who == "you":
         return source.controller == pid
     if who == "opponent":
@@ -481,7 +486,30 @@ def wins_on_empty_draw(state: GameState, pid: int) -> bool:
     passes through one card at a time, so it applies to a `draw` op, the draw
     step, and a `draw` rider on somebody else's card alike.
     """
-    return _player_static(state, pid, "replace_empty_draw")
+    return any(not static.get("effects") for _, static in empty_draw_replacements(state, pid))
+
+
+def empty_draw_replacements(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Every active `replace_empty_draw` static that reaches ``pid``, with its source.
+
+    Two shapes share the static. Without `effects` it is Laboratory Maniac's
+    "you win the game instead" (`wins_on_empty_draw`). With them it is Out of
+    the Tombs' "instead return a creature card from your graveyard to the
+    battlefield. If you can't, you lose the game": the effects are the
+    "instead", run as the static's controller with its source, and the "if you
+    can't" is an ordinary `if` inside them.
+
+    A list rather than a yes/no because two of them applying to the same draw
+    is a choice the drawing player makes (616.1), which `replacements._draw_one`
+    asks when there is more than one.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "replace_empty_draw")
+        if _reaches_player(obj, static, pid)
+    ]
 
 
 def mill_multiplier(state: GameState, pid: int) -> int:
@@ -641,7 +669,7 @@ def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
 
 
 def mana_added_on_tap(
-    state: GameState, pid: int, oid: int, produced: Sequence[int]
+    state: GameState, pid: int, oid: int, produced: Sequence[int], *, tapping: bool = True
 ) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 
@@ -674,11 +702,21 @@ def mana_added_on_tap(
     *tap* rather than the permanent: Forsaken Monument's "whenever you tap a
     permanent **for {C}**" is ``{"produced": "{C}"}``, met when the tap made at
     least one of that mana. Once per tap however much of it there was: a Sol
-    Ring's {C}{C} is one tap for {C}, so one more {C}.
+    Ring's {C}{C} is one tap for {C}, so one more {C}. It may also be
+    ``{"chosen_color_of": "self"}`` -- Caged Sun's "mana **of the chosen
+    color**" -- read off the source as the mana is made, and met by nothing
+    while the source has chosen no colour.
+
+    ``tapping`` is whether the mana ability being activated has {T} in its cost
+    (106.12). A static only answers an ability that does not tap when its
+    ``tapped_permanent`` says ``"any_mana_ability": true``: Caged Sun's
+    "whenever **a land's ability causes you to add**" mana counts Molten
+    Slagheap's remove-counters ability, which Crypt Ghast's "whenever you tap
+    a Swamp for mana" does not.
     """
     return [
         (source.oid, _mana_added(source, static.get("add_mana", "")))
-        for source, static in _tap_statics(state, pid, oid, produced)
+        for source, static in _tap_statics(state, pid, oid, produced, tapping=tapping)
         if not _adds_any_color(static)
     ]
 
@@ -710,7 +748,7 @@ def _adds_any_color(static: Mapping[str, Any]) -> bool:
 
 
 def _tap_statics(
-    state: GameState, pid: int, oid: int, produced: Sequence[int]
+    state: GameState, pid: int, oid: int, produced: Sequence[int], *, tapping: bool = True
 ) -> list[tuple[Any, Mapping[str, Any]]]:
     """Every ``add_mana_on_tap`` static that applies to this tap, with its
     source: the matching half of `mana_added_on_tap`, shared with
@@ -721,6 +759,8 @@ def _tap_statics(
         if not _reaches_player(source, static, pid):
             continue
         wanted = static.get("tapped_permanent") or {}
+        if not tapping and not wanted.get("any_mana_ability"):
+            continue
         if wanted.get("attached") and source.attached_to != oid:
             continue
         if tapped is None:
@@ -732,12 +772,27 @@ def _tap_statics(
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
             continue
-        if (tapped_for := wanted.get("produced")) is not None and not all(
-            produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n
+        if (tapped_for := wanted.get("produced")) is not None and not _made(
+            source, tapped_for, produced
         ):
             continue
         out.append((source, static))
     return out
+
+
+def _made(source: Any, tapped_for: Any, produced: Sequence[int]) -> bool:
+    """Did the mana ability make at least one of ``tapped_for``?
+
+    A literal symbol (Forsaken Monument's ``"{C}"``) or the source's chosen
+    colour (Caged Sun's ``{"chosen_color_of": "self"}``). A source that has
+    chosen nothing is met by no mana at all, rather than by every colour.
+    """
+    if isinstance(tapped_for, Mapping):
+        colors = resolve_chosen_color_list([tapped_for], source)
+        if not colors:
+            return False
+        tapped_for = "".join(f"{{{c}}}" for c in colors)
+    return all(produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n)
 
 
 def _mana_added(source: Any, add_mana: Any) -> tuple[int, ...]:
@@ -2020,13 +2075,56 @@ def ability_cost_reduction(
     turn, of an ability whose source matches ``affects``, mana abilities
     included; see `_first_activation_each_turn`.
 
+    ``from_graveyard`` is "activated abilities **of cards in your
+    graveyard**" (Convergence of Dominion): the ability's source must be a card
+    in the graveyard of the static's controller, and is never a permanent.
+
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
-    reduced price is also charged at it.
+    reduced price is also charged at it. A static with a ``mana_floor`` is not
+    in it; `ability_cost_floored_reductions` answers for those.
     """
+    return sum(
+        amount
+        for static, amount in _ability_cost_reductions(state, pid, ability, source_oid, targets)
+        if static.get("mana_floor") is None
+    )
+
+
+def ability_cost_floored_reductions(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None = None,
+) -> list[tuple[int, int]]:
+    """The discounts that may not take an ability's mana below a floor.
+
+    "This effect can't reduce the mana in that ability's activation cost to
+    less than one mana" -- Convergence of Dominion. ``(floor, amount)`` per
+    matching `ability_cost_reduction` with a ``mana_floor``, highest floor
+    first: `costs.ability_mana` applies them after every unfloored discount, and
+    in that order, because 601.2f lets the payer order reductions and that
+    order leaves the cheapest total.
+    """
+    found = [
+        (int(static["mana_floor"]), amount)
+        for static, amount in _ability_cost_reductions(state, pid, ability, source_oid, targets)
+        if static.get("mana_floor") is not None
+    ]
+    return sorted(found, key=lambda pair: -pair[0])
+
+
+def _ability_cost_reductions(
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None,
+) -> Iterator[tuple[Mapping[str, Any], int]]:
+    """Each `ability_cost_reduction` that reaches this activation, with its amount."""
     if ability is None:
-        return 0
-    total = 0
+        return
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "ability_cost_reduction":
             continue
@@ -2047,7 +2145,13 @@ def ability_cost_reduction(
             continue
         if who == "opponent" and source_obj.controller == pid:
             continue
-        if static.get("first_each_turn"):
+        if static.get("from_graveyard"):
+            # "Cards in **your** graveyard": the card's owner is the static's
+            # controller, since a card goes to its owner's graveyard (400.3).
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or obj.zone is not Zone.GRAVEYARD or obj.owner != source_obj.controller:
+                continue
+        elif static.get("first_each_turn"):
             # Asks `affects` of a snapshot, this activation's and every earlier
             # one's alike, so both are judged on the same characteristics.
             if not _first_activation_each_turn(state, pid, source_oid, source_obj, static):
@@ -2071,8 +2175,7 @@ def ability_cost_reduction(
             state, pid, source_obj, static
         ):
             continue
-        total += _static_value(state, static.get("amount"), source_obj)
-    return total
+        yield static, _static_value(state, static.get("amount"), source_obj)
 
 
 def _first_matching_activation(
@@ -3666,6 +3769,11 @@ def _matches_damage_source(
         # abilities' damage is dealt by it, and a burn spell never is.
         if dealer.get("exclude_self") and obj.oid == source_obj.oid:
             return False
+        if is_chosen_player_spec(dealer.get("controller")):
+            return (
+                source_obj.chosen_player is not None
+                and obj.controller == source_obj.chosen_player
+            )
         who = str(dealer.get("controller") or "you")
         if who == "you":
             return obj.controller == source_obj.controller

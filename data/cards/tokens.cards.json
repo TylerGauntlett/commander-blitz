@@ -6401,6 +6401,48 @@
       "is_token": true
     },
     {
+      "id": "necron_warrior_2_2_b_artifact",
+      "name": "Necron Warrior Token",
+      "oracle_text": "2/2 black Necron Warrior artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Necron",
+        "Warrior"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "insect_1_1_c_artifact_flying",
+      "name": "Insect Token",
+      "oracle_text": "1/1 colorless Insect artifact creature token with flying.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "spawn_3_3_r",
       "name": "Spawn Token",
       "oracle_text": "3/3 red Spawn creature token.",

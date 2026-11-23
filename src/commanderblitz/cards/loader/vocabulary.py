@@ -165,8 +165,16 @@ def normalize_keyword(word: str) -> str:
 #: *tap*, not the permanent. Forsaken Monument's "whenever you tap a permanent
 #: **for {C}**" is ``{"produced": "{C}"}`` -- one mana symbol the tap must have
 #: made at least one of, so a painland tapped for {R} does not count and one
-#: tapped for {C} does.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached", "produced"})
+#: tapped for {C} does. It may instead be ``{"chosen_color_of": "self"}``,
+#: Caged Sun's "mana **of the chosen color**", read off the source.
+#:
+#: `any_mana_ability` widens "tapped for mana" to every mana ability of the
+#: permanent, tapping or not: Caged Sun's "whenever **a land's ability causes you
+#: to add** mana" counts Molten Slagheap's remove-counters ability. ``true`` or
+#: absent, like `attached`.
+TAPPED_PERMANENT_KEYS = frozenset(
+    {"types", "subtypes", "supertypes", "attached", "produced", "any_mana_ability"}
+)
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
@@ -294,6 +302,11 @@ STATIC_EFFECTS = frozenset(
         # collected off printed faces with `grant_ability`
         # (`characteristics.ABILITY_STATICS`).
         "grant_exiled_abilities",
+        # Trazyn the Infinite: "...it has all activated abilities of all
+        # artifact cards in your graveyard." The same lending as
+        # `grant_exiled_abilities`, read off the cards of `types` in the
+        # source's controller's graveyard rather than off its linked exiles.
+        "grant_graveyard_abilities",
         "extra_land_drops",
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
@@ -899,6 +912,8 @@ STATIC_EFFECTS = frozenset(
         # that static, whose only parameter is a number refused below 2.  Read
         # in `replacements._draw_one`, before the doublers, so an empty library
         # wins on the first of a doubled pair rather than after both have failed.
+        # With `effects` (Out of the Tombs) the "instead" is those effects, run
+        # inside the draw as the static's controller, rather than the win.
         "replace_empty_draw",
         # Tekuthal, Inquiry Dominus.  "If you would proliferate, proliferate
         # twice instead."  A replacement of an *action* rather than a quantity:
@@ -1243,7 +1258,26 @@ WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
 #: `player_statics.library_top_cast_permissions` measures the top card where it
 #: sits, its characteristic-defining abilities applied (604.3), and a `*/*`
 #: answered off the printed face would be a 0 in every zone.
-LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", "toughness"}
+#:
+#: ``colorless`` and ``any_of`` are Mystic Forge's: "You may cast **artifact
+#: spells and colorless spells** from the top of your library" is a union of
+#: two printed shapes, and "colorless" is zero colours (105.2c), which neither
+#: `colors` (a membership test) nor `min_colors` (a floor) can say. Both are
+#: read by `characteristics._matches_printed`, which the reader asks first.
+#: A branch of ``any_of`` takes `LIBRARY_TOP_CAST_BRANCH_KEYS`.
+LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {
+    "power",
+    "toughness",
+    "colorless",
+    "any_of",
+}
+
+#: What one branch of a ``cast_from_library_top`` filter's ``any_of`` may use:
+#: the printed keys only. `player_statics.library_top_cast_permissions` measures
+#: ``power`` and ``toughness`` on the object at the top level and hands the
+#: branches to `_matches_printed`, which does not read them -- so a size in a
+#: branch would load and be ignored, a silently wider permission.
+LIBRARY_TOP_CAST_BRANCH_KEYS = LIBRARY_TOP_CAST_FILTER_KEYS - {"power", "toughness"}
 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
@@ -2048,6 +2082,17 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 #: -- `zones.offer_named_host`. Every other arrival of an Aura chooses its host
 #: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
+
+#: The ops that read an effect-level ``total_mana_value``: a cap on the **sum**
+#: of the printed mana values an untargeted pick takes, asked one card at a
+#: time by `ops_cards._pick_within_total_mana_value`. `look_at_top` is Ao, the
+#: Dawn Sky's "any number of nonland permanent cards with total mana value 4 or
+#: less from among them"; `return_from_graveyard` is Technomancer's "return any
+#: number of artifact creature cards with total mana value 6 or less from your
+#: graveyard", chosen on resolution so the cards its own mill binned are
+#: eligible. The target key of the same name is the targeted spelling, chosen
+#: as the ability is put on the stack.
+TOTAL_MANA_VALUE_OPS = frozenset({"look_at_top", "return_from_graveyard"})
 
 #: The keys an arrival's ``aura_host`` filter may use: "Only **creatures** can
 #: be enchanted this way" (Retether). It narrows the host an arriving Aura

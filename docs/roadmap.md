@@ -91,7 +91,7 @@ each heading; this table is generated from them.
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
 | [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
-| [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | nothing | 0 |
 | [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) | L | high | nothing | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | nothing | 0 |
@@ -131,6 +131,7 @@ each heading; this table is generated from them.
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) | M | medium | nothing | 1 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -152,45 +153,45 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-3. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-4. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-5. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-6. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-7. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-8. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-9. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-10. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-11. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-12. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-13. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-14. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-15. [The Ring tempts you](#the-ring-tempts-you) — M, high
-16. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-17. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-18. [Difficulty](#difficulty) — S, medium
-19. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-20. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-21. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-22. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-23. [Why a press is refused](#why-a-press-is-refused) — S, medium
-24. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-25. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-26. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-27. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-28. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-29. [Secret choices](#secret-choices) — M, medium
-30. [Experience counters](#experience-counters) — M, medium
-31. [Outcomes as data](#outcomes-as-data) — M, medium
-32. [Rad counters](#rad-counters) — M, medium
-33. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-34. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-35. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-36. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-37. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-38. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-39. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-40. [Replays and sharing](#replays-and-sharing) — M, medium
+2. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+3. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+4. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+5. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+6. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+7. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+8. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+9. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+10. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+11. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+12. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+13. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+14. [The Ring tempts you](#the-ring-tempts-you) — M, high
+15. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+16. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+17. [Difficulty](#difficulty) — S, medium
+18. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+19. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+20. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+21. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+22. [Why a press is refused](#why-a-press-is-refused) — S, medium
+23. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+24. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+25. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+26. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+27. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+28. [Secret choices](#secret-choices) — M, medium
+29. [Experience counters](#experience-counters) — M, medium
+30. [Outcomes as data](#outcomes-as-data) — M, medium
+31. [Rad counters](#rad-counters) — M, medium
+32. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+33. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+34. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+35. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+36. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+37. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+38. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+39. [Replays and sharing](#replays-and-sharing) — M, medium
+40. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
 41. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
 42. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 43. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
@@ -243,6 +244,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
 - [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
+- [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1591,6 +1593,69 @@ golden pool re-pinned once.
 - **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
   the existing comment already promise, and its line goes in the "Type
   changes" row of rules-coverage.md.
+
+### The authoring sandbox resolves a card's own triggers
+
+Effort **M** · Impact **medium**, a card whose enters trigger sits under a castable ability, such as a Vehicle with crew, cannot prove its trigger, so Night Scythe in the Necron Dynasties precon waits on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Gate 5 of the authoring pipeline casts the card in a sandbox and measures the
+board against its expectation. `cards/authoring/verify.py::drive` answers
+every decision until the card is done, and treats any `PRIORITY` decision as
+"done" (`_NOT_OUR_BUSINESS`): priority is taken to mean the card has finished
+resolving. The engine only asks for priority when passing is a choice
+(`engine/game.py::_should_auto_pass`). One such window is a non-empty stack
+while its player holds an activated ability they can pay for.
+
+So a permanent whose own enters trigger goes on the stack while it offers a
+payable activated ability is measured with that trigger still unresolved.
+Crew (`tap_permanents` with `total_power`) is the common case: the sandbox's
+creatures can pay it. Night Scythe ("When this Vehicle enters, create a 2/2
+black Necron Warrior artifact creature token", Crew 2) fails gate 5 with "0
+tokens, expected 1". Its gap record is `data/authoring/gaps/night_scythe.json`,
+capability `sandbox_resolve_own_triggers`. The same card without crew creates
+the token.
+
+Shipped cards of this shape pass only because their expectations measure the
+board before the trigger: Thunderhawk Gunship, Esika's Chariot and Aethersphere
+Harvester in `data/cards/auto/expectations.json` assert only the zone and the
+pre-trigger permanent count. Their triggers are therefore unproven by gate 5.
+
+#### The change
+
+1. In `drive`, a `PRIORITY` decision with the card's own triggered ability on
+   top of the stack passes priority instead of returning, until the stack
+   holds nothing the card put there. Every other priority window still ends
+   the drive, and the turn-boundary stop is unchanged.
+2. Re-measure every shipped card whose outcome changes, and strengthen its
+   expectation to what the trigger now visibly does. This is the bulk of the
+   work: no expectation may be loosened, and a card whose trigger now shows it
+   doing the wrong thing is a bug fixed in the same pull request.
+3. Harvest Night Scythe, which finishes the Necron Dynasties precon; see
+   [precon-40k-necron-dynasties](precon-40k-necron-dynasties.md).
+
+It does not make the sandbox attack, block or activate abilities. A trigger
+that needs combat stays the weak fallback the worker brief allows.
+
+#### Gate
+
+A unit test under `tests/unit/authoring/`: a test-pool Vehicle with an enters
+trigger and a payable crew is measured after its trigger resolves, while a
+card with no trigger of its own still stops at its first priority window. Then
+`tests/cards` over the whole pool, with the strengthened expectations, and
+Night Scythe's six gates.
+
+#### Open questions
+
+- **Which triggers the sandbox resolves.** Recommended: only triggered
+  abilities whose source is the card under test. Resolving everything on the
+  stack would fold the dummy board's own triggers into every card's outcome,
+  which is what `drive` stops at priority to avoid.
+- **The re-measure.** Recommended: one pull request that strengthens every
+  changed expectation through `--collect`, run per affected card, rather than
+  loosening any. If the changed set turns out large, phase it: the harness
+  change with the cards it touches first, then Night Scythe.
 
 ### Target tapped creature" is not "enters tapped
 
@@ -3992,7 +4057,7 @@ whole-game test able to draw the deck.
 
 ### Necron Dynasties (Warhammer 40,000 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers).
 
 #### Today
 
@@ -4003,6 +4068,11 @@ coming-soon shell on the shelf: its row `40k_necron_dynasties` is in
 `python scripts/sync_precons.py --missing 40k_necron_dynasties` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card but Night Scythe is now native. Night Scythe's DSL is complete, but
+gate 5 cannot see its enters trigger resolve, because its crew ability holds the
+sandbox at priority. That waits on
+[sandbox-resolves-own-triggers](sandbox-resolves-own-triggers.md).
 
 #### The change
 

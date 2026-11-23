@@ -1678,6 +1678,21 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         # permanent that entered without the promise gives nothing.
         _give_gift(state, ctx, item.controller, item.source_oid, card.id)
     yield from execute(ctx, ability.effects)
+    if ability.is_crew:
+        # 702.122d: the Vehicle "becomes crewed" as its crew ability resolves,
+        # whoever or whatever put the ability on the stack. After the effects,
+        # so the Vehicle is a creature by the time its trigger looks; and only
+        # while it is still the object the ability came from (400.7).
+        vehicle = state.objects.get(item.source_oid) if item.source_oid is not None else None
+        if vehicle is not None and vehicle.on_battlefield:
+            fire(
+                state,
+                EventType.BECAME_CREWED,
+                player=item.controller,
+                source=vehicle.oid,
+                oid=vehicle.oid,
+                card=vehicle.def_id,
+            )
     # The records a cost named for this ability have been read for the last
     # time; without this every Station activation would leave one behind for
     # `zones.move_object` to walk for the rest of the game.

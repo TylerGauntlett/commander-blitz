@@ -309,6 +309,22 @@ class EventType:
     #: after the designation is written -- `became_level`'s order, so the
     #: "Solved —" abilities are on the permanent when anything looks.
     BECAME_SOLVED = "became_solved"
+    #: A Vehicle **became crewed** (702.122d): a crew ability of it resolved.
+    #: ``source`` and ``data["oid"]`` are the Vehicle, ``player`` the ability's
+    #: controller.
+    #:
+    #: Fired by `stack._resolve_ability` after the crew ability's effects, so
+    #: the Vehicle is already a creature when "whenever this Vehicle becomes
+    #: crewed" looks at it. A crew ability is recognised by its cost
+    #: (`Ability.is_crew`, ADR 0032), so a copy of one resolving crews too,
+    #: and an animation that is not a crew ability (Mobilizer Mech's "another
+    #: target Vehicle becomes an artifact creature") does not. Nothing fires when the Vehicle is no longer the
+    #: object the ability came from.
+    #:
+    #: `ability_activated` is the near miss: it fires as crew is *activated*, a
+    #: stack's width earlier, and an opponent can answer the crew before it
+    #: resolves.
+    BECAME_CREWED = "became_crewed"
     #: A Saga's lore counters **reached** a chapter number (714.2c). ``source``
     #: and ``data["oid"]`` are the Saga, ``data["chapter"]`` the number reached.
     #:

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**529 cards** blocked by **446** capabilities.
+**525 cards** blocked by **442** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -132,7 +132,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
 | [cast-from-library-top-additional-cost](#cast-from-library-top-additional-cost) | 1 | 5828 | static_effect |
-| [cast-from-library-top-colorless](#cast-from-library-top-colorless) | 1 | 414 | selector |
 | [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
 | [cast-only-if](#cast-only-if) | 1 | 12277 | engine |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
@@ -151,7 +150,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [chosen-names-on-permanent](#chosen-names-on-permanent) | 1 | 13799 | engine |
 | [chosen-number](#chosen-number) | 1 | 1610 | engine |
-| [chosen-player](#chosen-player) | 1 | 6383 | selector |
 | [colored-cost-reduction](#colored-cost-reduction) | 1 | 1541 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [combat-damage-to-own-owner](#combat-damage-to-own-owner) | 1 | 10812 | trigger_event |
@@ -297,7 +295,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [madness](#madness) | 1 | 3016 | replacement |
-| [mana-ability-cost-lki](#mana-ability-cost-lki) | 1 | 2247 | value |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
@@ -315,7 +312,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [mercenary-1-1-r-pump](#mercenary-1-1-r-pump) | 1 | 18634 | token |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [min-blockers](#min-blockers) | 1 | 2786 | static_effect |
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
@@ -329,7 +325,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
-| [necron-warrior-token](#necron-warrior-token) | 1 | 4207 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
 | [next-spell-cost-reduction](#next-spell-cost-reduction) | 1 | 8432 | op |
 | [no-counters-of-kind-filter](#no-counters-of-kind-filter) | 1 | 15432 | selector |
@@ -396,6 +391,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-resolve-own-triggers](#sandbox-resolve-own-triggers) | 1 | 13330 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -2855,20 +2851,6 @@ Blocks **1** card.
 
 </details>
 
-## cast-from-library-top-colorless
-
-Blocks **1** card.
-
-- **(selector)** the `colorless` key (zero colours, 105.2c) admitted in a cast_from_library_top static's `affects_spells` filter, so the colorless half of "artifact spells and colorless spells" can be written as a second permission beside the {"types": ["Artifact"]} one (or `any_of` over the two branches)
-  <br>Why the existing vocabulary won't do: cast_from_library_top's affects_spells is checked against LIBRARY_TOP_CAST_FILTER_KEYS (SPELL_FILTER_KEYS minus controller, plus power/toughness), which has no `colorless` and no `any_of`; `colors` is a membership test that cannot say zero colours, and `not_types`/`min_colors` cannot either. characteristics._matches_printed already honours `colorless`, so only the loader whitelist blocks it. Writing only the Artifact half would silently drop every colorless nonartifact spell (Eldrazi, Kozilek's Return-style colorless cards).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mystic Forge** (rank 414) — `mystic_forge`
-  - You may cast artifact spells and colorless spells from the top of your library.
-
-</details>
-
 ## cast-only-from-graveyard
 
 Blocks **1** card.
@@ -3126,21 +3108,6 @@ Blocks **1** card.
 - **Talion, the Kindly Lord** (rank 1610) — `talion_the_kindly_lord`
   - As Talion enters, choose a number between 1 and 10.
   - Whenever an opponent casts a spell with mana value, power, or toughness equal to the chosen number, that player loses 2 life and you draw a card.
-
-</details>
-
-## chosen-player
-
-Blocks **1** card.
-
-- **(selector)** an 'as this enters, choose a player' choice remembered on the permanent (the player twin of chosen_type_of/chosen_color_of), readable by statics as a player spec -- e.g. affects_player: {"chosen_player_of": "self"} and an affects filter controller: {"chosen_player_of": "self"} -- so a replace_damage static with damage_multiplier 2 and damage_source controller any can be keyed to the chosen player and the permanents they control
-  <br>Why the existing vocabulary won't do: choose_player only writes ctx.bindings for the resolving ability, which a static never sees; persistent choices exist only for creature types (chosen_type_of), colors (chosen_color_of) and card types (chosen_card_type_of). replace_damage's affects_player takes you/opponent/any, so 'opponent' would double damage to every opponent (and can never pick yourself), which is a different card at a pod
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sawhorn Nemesis** (rank 6383) — `sawhorn_nemesis`
-  - As this creature enters, choose a player
-  - If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead
 
 </details>
 
@@ -5212,20 +5179,6 @@ Blocks **1** card.
 
 </details>
 
-## mana-ability-cost-lki
-
-Blocks **1** card.
-
-- **(value)** a mana ability whose add_mana amount reads the counters its own source had as the source was sacrificed to pay the ability's cost: `counters_on` over the `as` binding of a self-sacrifice cost (or a pre-cost snapshot of the source) honoured by `costs.mana_amount`
-  <br>Why the existing vocabulary won't do: Non-mana activated abilities already do this (Crowded Crypt, Wickersmith's Tools: cost `sacrifice` with `as: "sacrificed"`, effect reads `counters_on {binding: sacrificed}`), but a mana ability never runs its effects: `Game._activate_mana` pays the cost (sacrificing the artifact) and then `activate_mana_ability` -> `costs.mana_amount` evaluates `ability.mana_amount` in a fresh EffectContext with no cost bindings, reading the live source, which is by then in the graveyard with its counters gone, so X would be 0. `counters_had` is bound only by dies/leaves triggers, and `snapshot` is an effect op, which a mana ability may not contain. The first line ({T}: Add {R} with an `add_counters` stash rider on self) is expressible; the card is filed whole because a partial answer is not allowed.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Glittering Stockpile** (rank 2247) — `glittering_stockpile`
-  - {T}, Sacrifice this artifact: Add X mana of any one color, where X is the number of stash counters on this artifact
-
-</details>
-
 ## mana-ability-leading-rider
 
 Blocks **1** card.
@@ -5468,20 +5421,6 @@ Blocks **1** card.
 
 </details>
 
-## min-blockers
-
-Blocks **1** card.
-
-- **(static_effect)** a minimum-blockers field on the block_restriction static (e.g. `min_blockers: 3` with `affects: {self_only: true}`), checked in combat.blocks_valid on the complete declaration: an attacker it affects may be blocked by zero creatures or by at least N, generalising menace's hard-coded two
-  <br>Why the existing vocabulary won't do: block_restriction carries `blockers` (a per-blocker filter), `max_blockers` (an upper cap, Challenger Troll) and `require_all` (Tromokratis), but no lower bound; the menace keyword is the only minimum and it is fixed at two, so granting menace would let two creatures block it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Troll of Khazad-dûm** (rank 2786) — `troll_of_khazad_dum`
-  - This creature can't be blocked except by three or more creatures.
-
-</details>
-
 ## miracle-x
 
 Blocks **1** card.
@@ -5665,20 +5604,6 @@ Blocks **1** card.
 - **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
   - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
   - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
-
-</details>
-
-## necron-warrior-token
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Necron Warrior artifact creature token (types Artifact Creature, subtypes Necron Warrior, no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has no Necron Warrior; the nearest are warrior_1_1_r / warrior_1_1_w (wrong size, colour, not artifact) and elf_warrior_1_1_g. The rest of the card is expressible: the first line is an add_subtype static with types ["Artifact"] on creatures you control plus an off_battlefield add_subtype static for creature spells and cards, and the trigger is spell_cast with filter types ["Artifact"] doing lose_life 1 then create_token.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Biotransference** (rank 4207) — `biotransference`
-  - Whenever you cast an artifact spell, you lose 1 life and create a 2/2 black Necron Warrior artifact creature token.
 
 </details>
 
@@ -6623,6 +6548,20 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
+
+</details>
+
+## sandbox-resolve-own-triggers
+
+Blocks **1** card.
+
+- **(engine)** the behaviour gate's verify.drive must pass priority while the stack holds only the card's own triggered ability, so an enters trigger resolves even when the card also has an instant-speed activated ability the sandbox can afford (here Crew 2: tap_permanents total_power 2, payable by the two sandbox creatures)
+  <br>Why the existing vocabulary won't do: The card is fully expressible and compiles: flying keyword, self_enters trigger with create_token necron_warrior_2_2_b_artifact, and Crew 2 as tap_permanents total_power 2 + animate (Aethersphere Harvester's shape). But game._should_auto_pass never passes while state.stack is non-empty and a non-mana action is legal, and verify.drive returns at the first PRIORITY decision, so the trigger is left on the stack at measurement (tokens 0, battlefield 33). Verified: the same card without the Crew ability creates the token. Dropping source: self changes nothing (731 shipped self_enters triggers use it); dropping Crew or asserting only zone would misstate or under-test the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Night Scythe** (rank 13330) — `night_scythe`
+  - Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token.
 
 </details>
 

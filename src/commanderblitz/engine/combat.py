@@ -392,11 +392,12 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
 
     "…if able" is asked per attacker, as the named requirement asks it:
     `can_block` with ``ignore_existing``, and no block tax owed (509.1c).
-    Menace is the one declaration-wide restriction that can make a per-pair
-    "able" a lie -- a creature alone cannot block a menacing attacker, and
-    `drop_illegal_blocks` would not retract that block -- so a menacing
-    attacker counts only when a second creature of the same player could
-    block it beside this one.
+    A minimum number of blockers (menace's two, a `min_blockers` restriction's
+    N) is the one declaration-wide restriction that can make a per-pair "able"
+    a lie -- a creature alone cannot block a menacing attacker, and
+    `drop_illegal_blocks` would retract that block -- so such an attacker
+    counts only when enough other creatures of the same player could block it
+    beside this one.
     """
     obj = state.objects.get(oid)
     if obj is None or obj.controller != defender:
@@ -413,10 +414,12 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
             continue
         if not can_block(state, oid, attacker, defender, ignore_existing=True):
             continue
-        if Keyword.MENACE.value in chars(state, attacker).keywords and not any(
-            other != oid and can_block(state, other, attacker, defender, ignore_existing=True)
+        needed = min_blockers(state, attacker)
+        if needed > 1 and sum(
+            1
             for other in state.battlefield
-        ):
+            if other != oid and can_block(state, other, attacker, defender, ignore_existing=True)
+        ) < needed - 1:
             continue
         return True
     return False
@@ -1413,6 +1416,11 @@ def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
     to offer and `blocks_valid` withholds "Done blocking", so the game cannot
     continue. A four-player rollout found exactly that on turn 47.
 
+    A minimum is the same trap from the other side: five creatures blocking
+    Hexmark Destroyer ("can't be blocked except by six or more creatures"), or
+    one blocking a menacing attacker, once no sixth or second block is left
+    to add.
+
     Blocks like these were never legal, so dropping them is not a concession:
     "no creature blocks Tromokratis" is precisely what the rules would have
     produced. Returns the blockers it retracted.
@@ -1430,7 +1438,10 @@ def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
             if state.objects.get(b) is not None
             and state.objects[b].controller == defender
         ]
-        if not blockers or _all_blockers_present(state, attacker_oid, defender, blockers):
+        if not blockers or (
+            _all_blockers_present(state, attacker_oid, defender, blockers)
+            and len(blockers) >= min_blockers(state, attacker_oid)
+        ):
             continue
         for b in blockers:
             combat.blockers.pop(b, None)
@@ -1502,8 +1513,9 @@ def _alone_blocks_valid(state: GameState, blocking: list[int]) -> bool:
 def blocks_valid(state: GameState, defender: int) -> bool:
     """Check evasion requirements that only make sense on the *complete* declaration.
 
-    Three of them.  Menace: an attacker with menace must be blocked by zero or
-    at least two creatures.  ``require_all``, Tromokratis' "can't be blocked
+    Three of them.  A minimum: an attacker with menace must be blocked by zero
+    or at least two creatures, and one under a ``min_blockers`` restriction by
+    zero or at least N (Troll of Khazad-dûm's three).  ``require_all``, Tromokratis' "can't be blocked
     unless all creatures defending player controls block it" -- which cannot be
     a per-pair check, because whether *this* block is legal depends on what
     every other creature is doing.  And "this creature can't block alone"
@@ -1535,11 +1547,7 @@ def blocks_valid(state: GameState, defender: int) -> bool:
             if state.objects.get(b) is not None
             and state.objects[b].controller == defender
         ]
-        if (
-            blockers
-            and Keyword.MENACE.value in chars(state, attacker_oid).keywords
-            and len(blockers) < 2
-        ):
+        if blockers and len(blockers) < min_blockers(state, attacker_oid):
             return False
         if blockers and not _all_blockers_present(state, attacker_oid, defender, blockers):
             return False
@@ -1562,6 +1570,24 @@ def _blocker_count(
         and (obj := state.objects.get(b)) is not None
         and obj.controller == defender
     )
+
+
+def min_blockers(state: GameState, attacker_oid: int) -> int:
+    """The fewest creatures that may block this attacker, if any block it at all.
+
+    One without a minimum. Menace (702.111b) is two; a `block_restriction` with
+    `min_blockers` is its N ("can't be blocked except by three or more
+    creatures", Troll of Khazad-dûm). Every minimum is obeyed, so the greatest
+    wins. Public because the CPU's `ai.strategy.board.blockers_for` asks it too.
+    """
+    floors = [
+        int(static["min_blockers"])
+        for _source, static in block_restrictions(state, attacker_oid)
+        if static.get("min_blockers") is not None
+    ]
+    if Keyword.MENACE.value in chars(state, attacker_oid).keywords:
+        floors.append(2)
+    return max(floors, default=1)
 
 
 def _max_blockers(state: GameState, attacker_oid: int) -> float:

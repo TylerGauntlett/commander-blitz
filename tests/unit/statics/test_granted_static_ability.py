@@ -50,7 +50,12 @@ from commanderblitz.cards.loader.vocabulary import (
 )
 from commanderblitz.cards.registry import CardRegistry, authored_card_paths
 from commanderblitz.cards.schema import CardModel
-from commanderblitz.engine.characteristics import ABILITY_STATICS, abilities_of, chars
+from commanderblitz.engine.characteristics import (
+    ABILITY_STATICS,
+    LENDING_STATICS,
+    abilities_of,
+    chars,
+)
 from commanderblitz.engine.enums import Keyword
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.primitives import change_control, create_token
@@ -341,7 +346,7 @@ class TestWhatMayBeGranted:
                     "effect": effect,
                     "affects": {"types": ["Creature"]},
                     **({"ability": 0} if effect == "grant_ability" else {}),
-                    **({"types": ["Creature"]} if effect == "grant_exiled_abilities" else {}),
+                    **({"types": ["Creature"]} if effect in LENDING_STATICS else {}),
                 }
             )
             with pytest.raises(DslError, match="printed faces"):

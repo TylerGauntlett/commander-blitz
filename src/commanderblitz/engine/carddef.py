@@ -742,6 +742,25 @@ class Cost:
             or self.remove_counters_x is not None
         )
 
+    def binding_names(self) -> frozenset[str]:
+        """The names this cost writes into `costs.pay`'s ``bindings`` as it is paid.
+
+        Every cost that takes an ``as``: `sacrifice`, `return_to_hand`,
+        `tap_permanents` and `exile_from_graveyard`. The loader asks it so a
+        mana ability's amount reads only a name its own cost writes.
+        """
+        names = {
+            str(spec["as"])
+            for spec in (
+                self.sacrifice,
+                self.return_to_hand,
+                self.tap_permanents,
+                self.exile_from_graveyard,
+            )
+            if isinstance(spec, Mapping) and spec.get("as")
+        }
+        return frozenset(names)
+
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
         return (
@@ -1539,6 +1558,19 @@ class Ability:
     @property
     def is_activated(self) -> bool:
         return self.kind is AbilityKind.ACTIVATED
+
+    @property
+    def is_crew(self) -> bool:
+        """Is this a crew ability (702.122a)? Known by its cost.
+
+        A ``total_power`` on ``tap_permanents`` is crew's and only crew's: the
+        loader refuses it on any ability but an activated one whose one effect
+        animates this permanent, so the cost is the marker, and no crew ability
+        written before the `becomes_crewed` event needed rewriting to fire it.
+        See ADR 0032.
+        """
+        tap = self.cost.tap_permanents if self.cost is not None else None
+        return self.is_activated and tap is not None and tap.get("total_power") is not None
 
     @property
     def is_triggered(self) -> bool:

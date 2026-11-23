@@ -1,0 +1,18 @@
+{
+  "card_id": "night_scythe",
+  "name": "Night Scythe",
+  "oracle_text": "Flying\nInvasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "blocked_sentences": [
+    "Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact creature token."
+  ],
+  "needs": [
+    {
+      "capability": "sandbox_resolve_own_triggers",
+      "kind": "engine",
+      "what": "the behaviour gate's verify.drive must pass priority while the stack holds only the card's own triggered ability, so an enters trigger resolves even when the card also has an instant-speed activated ability the sandbox can afford (here Crew 2: tap_permanents total_power 2, payable by the two sandbox creatures)",
+      "why_existing_wont_do": "The card is fully expressible and compiles: flying keyword, self_enters trigger with create_token necron_warrior_2_2_b_artifact, and Crew 2 as tap_permanents total_power 2 + animate (Aethersphere Harvester's shape). But game._should_auto_pass never passes while state.stack is non-empty and a non-mana action is legal, and verify.drive returns at the first PRIORITY decision, so the trigger is left on the stack at measurement (tokens 0, battlefield 33). Verified: the same card without the Crew ability creates the token. Dropping source: self changes nothing (731 shipped self_enters triggers use it); dropping Crew or asserting only zone would misstate or under-test the card"
+    }
+  ],
+  "closest_existing": ["aethersphere_harvester"],
+  "confidence": "high"
+}

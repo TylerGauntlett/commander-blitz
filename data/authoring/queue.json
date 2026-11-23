@@ -9772,12 +9772,12 @@
     },
     "Anrakyr the Traveller": {
       "edhrec_rank": 6626,
-      "gate": "template",
+      "gate": null,
       "name": "Anrakyr the Traveller",
-      "reason": "no template for: Lord of the Pyrrhian Legions — Whenever attacks, you may cast an artifact spell from your ",
+      "reason": "",
       "scryfall_id": "3bf144d8-fc0e-4e21-87b9-4d32b545bead",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Answered Prayers": {
@@ -22522,12 +22522,12 @@
     },
     "Beacon of Unrest": {
       "edhrec_rank": 4395,
-      "gate": "template",
+      "gate": null,
       "name": "Beacon of Unrest",
-      "reason": "no template for: Put target artifact or creature card from a graveyard onto the battlefield under your cont",
+      "reason": "",
       "scryfall_id": "12f1428e-39ab-464e-a7b3-585f06fb8051",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beaming Defiance": {
@@ -25082,12 +25082,12 @@
     },
     "Biotransference": {
       "edhrec_rank": 4207,
-      "gate": "template",
+      "gate": null,
       "name": "Biotransference",
-      "reason": "no template for: Creatures you control are artifacts in addition to their other types. The same is true for",
+      "reason": "",
       "scryfall_id": "1789c4ad-c258-469a-b875-f2d48976401d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Biovisionary": {
@@ -37712,12 +37712,12 @@
     },
     "Caged Sun": {
       "edhrec_rank": 899,
-      "gate": "template",
+      "gate": null,
       "name": "Caged Sun",
-      "reason": "no template for: As this artifact enters, choose a color",
+      "reason": "",
       "scryfall_id": "d9e97c13-c3a3-4d7a-9598-a7f5e4e076a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caged Zombie": {
@@ -38842,42 +38842,42 @@
     },
     "Canoptek Scarab Swarm": {
       "edhrec_rank": 3945,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Scarab Swarm",
-      "reason": "no template for: Feeder Mandibles — When this creature enters, exile target player's graveyard. For each ar",
+      "reason": "",
       "scryfall_id": "3ce2021c-1422-4901-a554-2d4fab72c8e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Spyder": {
       "edhrec_rank": 3232,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Spyder",
-      "reason": "no template for: Fabricator Claw Array — Whenever another nontoken artifact creature or Vehicle you control",
+      "reason": "",
       "scryfall_id": "56ae1e4b-b620-480b-b6fc-66f2137d7d89",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Tomb Sentinel": {
       "edhrec_rank": 7811,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Tomb Sentinel",
-      "reason": "no template for: Exile Cannon — When this creature enters from a graveyard, exile up to one target nonland ",
+      "reason": "",
       "scryfall_id": "02ed7f46-f58f-412a-8aa4-71f453ee3618",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canoptek Wraith": {
       "edhrec_rank": 6674,
-      "gate": "template",
+      "gate": null,
       "name": "Canoptek Wraith",
-      "reason": "no template for: Wraith Form — This creature can't be blocked",
+      "reason": "",
       "scryfall_id": "02e11c4e-15b3-41b5-8bf7-2eb8ebf1bef3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Canopy Baloth": {
@@ -46372,12 +46372,12 @@
     },
     "Chronomancer": {
       "edhrec_rank": 7427,
-      "gate": "template",
+      "gate": null,
       "name": "Chronomancer",
-      "reason": "no template for: Atomic Transmutation — {1}, {T}, Sacrifice another artifact: Draw a card",
+      "reason": "",
       "scryfall_id": "260feb59-6039-48ac-b6ac-9b7e9ac1d05c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chronomantic Escape": {
@@ -52872,12 +52872,12 @@
     },
     "Convergence of Dominion": {
       "edhrec_rank": 11680,
-      "gate": "template",
+      "gate": null,
       "name": "Convergence of Dominion",
-      "reason": "no template for: Dynastic Command Node — As long as you control your commander, activated abilities of card",
+      "reason": "",
       "scryfall_id": "e03d8676-f693-4155-b75f-dcbe2890ccb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Conversion": {
@@ -57492,12 +57492,12 @@
     },
     "Cryptek": {
       "edhrec_rank": 9026,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptek",
-      "reason": "no template for: {1}{B}, {T}: Choose another target artifact creature you control. When that creature dies ",
+      "reason": "",
       "scryfall_id": "60c1f854-5826-4208-88fe-12a5dae8d18b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cryptex": {
@@ -57652,12 +57652,12 @@
     },
     "Cryptothrall": {
       "edhrec_rank": 2756,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptothrall",
-      "reason": "no template for: Protector — Other artifact creatures you control have hexproof",
+      "reason": "",
       "scryfall_id": "086d94a0-763e-495e-b952-5c13383657c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cryptwailing": {
@@ -74392,12 +74392,12 @@
     },
     "Dread Return": {
       "edhrec_rank": 530,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Return",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "0e2181c0-e0ff-4e5e-b59c-0e389642d45c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Rider": {
@@ -97612,12 +97612,12 @@
     },
     "Flayed One": {
       "edhrec_rank": 12017,
-      "gate": "template",
+      "gate": null,
       "name": "Flayed One",
-      "reason": "no template for: Flesh Flayer — When this creature enters, mill three cards",
+      "reason": "",
       "scryfall_id": "6296e73f-52ca-4ebd-b9eb-66ea393679fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flayer Drone": {
@@ -105932,12 +105932,12 @@
     },
     "Gauntlet of Power": {
       "edhrec_rank": 2522,
-      "gate": "template",
+      "gate": null,
       "name": "Gauntlet of Power",
-      "reason": "no template for: As this artifact enters, choose a color",
+      "reason": "",
       "scryfall_id": "1b98e9c2-8843-4b59-828c-af54e1628e98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gauntlets of Chaos": {
@@ -107772,12 +107772,12 @@
     },
     "Ghost Ark": {
       "edhrec_rank": 13388,
-      "gate": "template",
+      "gate": null,
       "name": "Ghost Ark",
-      "reason": "no template for: Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your g",
+      "reason": "",
       "scryfall_id": "0641ac68-75da-468a-af51-0520e6954d8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghost Council of Orzhova": {
@@ -111242,12 +111242,12 @@
     },
     "Glittering Stockpile": {
       "edhrec_rank": 2247,
-      "gate": "template",
+      "gate": null,
       "name": "Glittering Stockpile",
-      "reason": "no template for: {T}: Add {R}. Put a stash counter on this artifact",
+      "reason": "",
       "scryfall_id": "74713a58-e343-4504-9900-cf9d76951242",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glittering Wish": {
@@ -127142,12 +127142,12 @@
     },
     "Hexmark Destroyer": {
       "edhrec_rank": 14267,
-      "gate": "template",
+      "gate": null,
       "name": "Hexmark Destroyer",
-      "reason": "no template for: Multi-threat Eliminator — This creature can't be blocked except by six or more creatures",
+      "reason": "",
       "scryfall_id": "0c9d6f62-3946-48c8-9c51-21c577bff160",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hexplate Golem": {
@@ -133842,12 +133842,12 @@
     },
     "Illuminor Szeras": {
       "edhrec_rank": 5215,
-      "gate": "template",
+      "gate": null,
       "name": "Illuminor Szeras",
-      "reason": "no template for: Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the s",
+      "reason": "",
       "scryfall_id": "bc0cc588-f134-41f3-bf5c-aca24518c71a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illuna, Apex of Wishes": {
@@ -134442,12 +134442,12 @@
     },
     "Imotekh the Stormlord": {
       "edhrec_rank": 4869,
-      "gate": "template",
+      "gate": null,
       "name": "Imotekh the Stormlord",
-      "reason": "no template for: Phaeron — Whenever one or more artifact cards leave your graveyard, create two 2/2 black N",
+      "reason": "",
       "scryfall_id": "1287e69f-5e92-48f4-80de-d43cb5be21ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imoti, Celebrant of Bounty": {
@@ -160642,12 +160642,12 @@
     },
     "Lokhust Heavy Destroyer": {
       "edhrec_rank": 11074,
-      "gate": "template",
+      "gate": null,
       "name": "Lokhust Heavy Destroyer",
-      "reason": "no template for: Enmitic Exterminator — When this creature enters, each player sacrifices a creature of the",
+      "reason": "",
       "scryfall_id": "1ad67201-0613-4d4f-9b1d-898a882b3503",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loki Laufeyson": {
@@ -163492,12 +163492,12 @@
     },
     "Lychguard": {
       "edhrec_rank": 14778,
-      "gate": "template",
+      "gate": null,
       "name": "Lychguard",
-      "reason": "no template for: Guardian Protocols — {3}{B}, Sacrifice this creature: Return all legendary creature cards ",
+      "reason": "",
       "scryfall_id": "6737a276-b5e9-4c55-b995-ada96eca4e6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lydia Frye": {
@@ -176952,12 +176952,12 @@
     },
     "Mobilizer Mech": {
       "edhrec_rank": 5250,
-      "gate": "template",
+      "gate": null,
       "name": "Mobilizer Mech",
-      "reason": "no template for: Whenever this Vehicle becomes crewed, up to one other target Vehicle you control becomes a",
+      "reason": "",
       "scryfall_id": "cf4bb9de-ba7c-4916-b8ed-e2e644c06b58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mockery of Nature": {
@@ -182272,12 +182272,12 @@
     },
     "Mystic Forge": {
       "edhrec_rank": 414,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Forge",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "375e6985-e212-4bd0-b06c-0ca7dc1f68e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mystic Gate": {
@@ -184522,32 +184522,32 @@
     },
     "Necron Deathmark": {
       "edhrec_rank": 4770,
-      "gate": "template",
+      "gate": null,
       "name": "Necron Deathmark",
-      "reason": "no template for: Synaptic Disintegrator — When this creature enters, destroy up to one target creature and ",
+      "reason": "",
       "scryfall_id": "4129cb0d-eefe-4971-9db8-1196201ef353",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necron Monolith": {
       "edhrec_rank": 10815,
-      "gate": "template",
+      "gate": null,
       "name": "Necron Monolith",
-      "reason": "no template for: Eternity Gate — Whenever this Vehicle attacks, mill three cards. For each creature card mi",
+      "reason": "",
       "scryfall_id": "9b1ecad3-8cec-4a18-9401-6eebc7feeacc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necron Overlord": {
       "edhrec_rank": 12408,
-      "gate": "template",
+      "gate": null,
       "name": "Necron Overlord",
-      "reason": "no template for: Relentless March — {X}, {T}, Tap X untapped artifacts you control: Target opponent loses X",
+      "reason": "",
       "scryfall_id": "18cdd4b0-d969-43f3-a1a1-c9ad3fedce10",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necropanther": {
@@ -186502,12 +186502,12 @@
     },
     "Night Scythe": {
       "edhrec_rank": 13330,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Night Scythe",
-      "reason": "no template for: Invasion Beams — When this Vehicle enters, create a 2/2 black Necron Warrior artifact crea",
+      "reason": "necron_warrior_2_2_b_artifact tokens is 0, expected 1; your battlefield is 33, expected 34",
       "scryfall_id": "9a71531f-d4b6-4cc7-8193-b2f5bce33b21",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Night Soil": {
@@ -195492,12 +195492,12 @@
     },
     "Out of the Tombs": {
       "edhrec_rank": 3298,
-      "gate": "template",
+      "gate": null,
       "name": "Out of the Tombs",
-      "reason": "no template for: At the beginning of your upkeep, put two eon counters on this enchantment, then mill cards",
+      "reason": "",
       "scryfall_id": "68e8f389-9323-49b8-84c9-f79c2c231eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Out of the Way": {
@@ -204072,12 +204072,12 @@
     },
     "Plasmancer": {
       "edhrec_rank": 13731,
-      "gate": "template",
+      "gate": null,
       "name": "Plasmancer",
-      "reason": "no template for: Dynastic Advisor — When this creature enters, search your library for a basic Swamp card, ",
+      "reason": "",
       "scryfall_id": "8deb5d3a-0762-4c4f-afef-fd86728914b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plate Armor": {
@@ -209492,12 +209492,12 @@
     },
     "Psychomancer": {
       "edhrec_rank": 8799,
-      "gate": "template",
+      "gate": null,
       "name": "Psychomancer",
-      "reason": "no template for: Harbinger of Despair — Whenever this creature or another nontoken artifact you control is ",
+      "reason": "",
       "scryfall_id": "32c7cab2-4fc9-4d53-ba67-902f72799d20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Psychosis Crawler": {
@@ -221842,12 +221842,12 @@
     },
     "Resurrection Orb": {
       "edhrec_rank": 4194,
-      "gate": "template",
+      "gate": null,
       "name": "Resurrection Orb",
-      "reason": "no template for: Whenever equipped creature dies, return that card to the battlefield under its owner's con",
+      "reason": "",
       "scryfall_id": "2d6209c8-9fa1-4f0a-ab65-ac2fedfcd09b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Resuscitate": {
@@ -228382,12 +228382,12 @@
     },
     "Royal Warden": {
       "edhrec_rank": 10179,
-      "gate": "template",
+      "gate": null,
       "name": "Royal Warden",
-      "reason": "no template for: Unearth {3}{B}",
+      "reason": "",
       "scryfall_id": "0a968eac-2840-41ba-b7de-3182964d4913",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rubble Reading": {
@@ -233902,12 +233902,12 @@
     },
     "Sautekh Immortal": {
       "edhrec_rank": 16022,
-      "gate": "template",
+      "gate": null,
       "name": "Sautekh Immortal",
-      "reason": "no template for: Elite Troops — This creature enters with a +1/+1 counter on it for each creature that died",
+      "reason": "",
       "scryfall_id": "b5c6995e-30b9-4bc1-89ec-f179b7de2e14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Savaen Elves": {
@@ -234422,12 +234422,12 @@
     },
     "Sawhorn Nemesis": {
       "edhrec_rank": 6383,
-      "gate": "template",
+      "gate": null,
       "name": "Sawhorn Nemesis",
-      "reason": "no template for: As this creature enters, choose a player",
+      "reason": "",
       "scryfall_id": "29b33e43-ffd5-4697-8261-9b4f5de36a19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sawtooth Loon": {
@@ -235442,12 +235442,12 @@
     },
     "Sceptre of Eternal Glory": {
       "edhrec_rank": 2309,
-      "gate": "template",
+      "gate": null,
       "name": "Sceptre of Eternal Glory",
-      "reason": "no template for: {T}: Add three mana of any one color. Activate only if you control three or more lands wit",
+      "reason": "",
       "scryfall_id": "b04abe51-babe-4c93-a42a-424337de3984",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Schema Thief": {
@@ -242842,22 +242842,22 @@
     },
     "Shard of the Nightbringer": {
       "edhrec_rank": 5407,
-      "gate": "template",
+      "gate": null,
       "name": "Shard of the Nightbringer",
-      "reason": "no template for: Drain Life — When this creature enters, if you cast it, target opponent loses half their l",
+      "reason": "",
       "scryfall_id": "21e4140e-22b3-479f-a259-0f56ed02b8ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shard of the Void Dragon": {
       "edhrec_rank": 9611,
-      "gate": "template",
+      "gate": null,
       "name": "Shard of the Void Dragon",
-      "reason": "no template for: Spear of the Void Dragon — Whenever this creature attacks, each opponent sacrifices a nonl",
+      "reason": "",
       "scryfall_id": "04112aaa-4da1-43cf-99e9-440771ff1b9f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sharding Sphinx": {
@@ -249802,22 +249802,22 @@
     },
     "Skorpekh Destroyer": {
       "edhrec_rank": 16695,
-      "gate": "template",
+      "gate": null,
       "name": "Skorpekh Destroyer",
-      "reason": "no template for: Hyperphase Threshers — Whenever an artifact you control enters, this creature gains first ",
+      "reason": "",
       "scryfall_id": "49e9b104-413b-4d07-9eb8-b335510747ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skorpekh Lord": {
       "edhrec_rank": 7589,
-      "gate": "template",
+      "gate": null,
       "name": "Skorpekh Lord",
-      "reason": "no template for: Command Protocols — Other artifact creatures you control get +1/+0 and have menace",
+      "reason": "",
       "scryfall_id": "ab2f2c6b-335f-4c95-9ef2-02f7b3efc7b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skred": {
@@ -273352,12 +273352,12 @@
     },
     "Szarekh, the Silent King": {
       "edhrec_rank": 9936,
-      "gate": "template",
+      "gate": null,
       "name": "Szarekh, the Silent King",
-      "reason": "no template for: My Will Be Done — Whenever Szarekh attacks, mill three cards. You may put an artifact crea",
+      "reason": "",
       "scryfall_id": "12a3400d-7a8b-4bae-9a4f-c9a1bc741e68",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Szarel, Genesis Shepherd": {
@@ -276132,12 +276132,12 @@
     },
     "Technomancer": {
       "edhrec_rank": 9376,
-      "gate": "template",
+      "gate": null,
       "name": "Technomancer",
-      "reason": "no template for: When this creature enters, mill three cards, then return any number of artifact creature c",
+      "reason": "",
       "scryfall_id": "c160c1f7-714e-444a-ab74-c64c3a099a48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tectonic Break": {
@@ -282852,12 +282852,12 @@
     },
     "The War in Heaven": {
       "edhrec_rank": 10720,
-      "gate": "template",
+      "gate": null,
       "name": "The War in Heaven",
-      "reason": "no template for: I — You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "6d4070ea-9674-4a5d-ad73-60d942447918",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Warring Triad": {
@@ -283042,22 +283042,22 @@
     },
     "Their Name Is Death": {
       "edhrec_rank": 3858,
-      "gate": "template",
+      "gate": null,
       "name": "Their Name Is Death",
-      "reason": "no template for: Destroy all nonartifact creatures",
+      "reason": "",
       "scryfall_id": "9ea57442-b2ff-4799-b147-d683c0583236",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Their Number Is Legion": {
       "edhrec_rank": 8554,
-      "gate": "template",
+      "gate": null,
       "name": "Their Number Is Legion",
-      "reason": "no template for: Create X tapped 2/2 black Necron Warrior artifact creature tokens, then you gain life equa",
+      "reason": "",
       "scryfall_id": "79641b49-faa5-44f0-9197-e693c5f52bdb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thelon of Havenwood": {
@@ -288832,22 +288832,22 @@
     },
     "Tomb Blade": {
       "edhrec_rank": 16385,
-      "gate": "template",
+      "gate": null,
       "name": "Tomb Blade",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, that player loses life equal to th",
+      "reason": "",
       "scryfall_id": "2f5f2e19-41ce-40c6-9732-d0f88ad6735f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tomb Fortress": {
       "edhrec_rank": 4966,
-      "gate": "template",
+      "gate": null,
       "name": "Tomb Fortress",
-      "reason": "no template for: {2}{B}{B}{B}, {T}, Exile this land: Mill four cards, then return a creature card from your",
+      "reason": "",
       "scryfall_id": "5ffd1a43-5613-4058-9e51-fd3cc1585651",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tomb Hex": {
@@ -291742,12 +291742,12 @@
     },
     "Trazyn the Infinite": {
       "edhrec_rank": 10047,
-      "gate": "template",
+      "gate": null,
       "name": "Trazyn the Infinite",
-      "reason": "no template for: Prismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilitie",
+      "reason": "",
       "scryfall_id": "1ae95cfb-1c3e-43cc-acfa-68f25b0f6e52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treacherous Blessing": {
@@ -292582,22 +292582,22 @@
     },
     "Triarch Praetorian": {
       "edhrec_rank": 9124,
-      "gate": "template",
+      "gate": null,
       "name": "Triarch Praetorian",
-      "reason": "no template for: Dynastic Codes — When this creature enters from a graveyard, you draw two cards and you lo",
+      "reason": "",
       "scryfall_id": "5ad67a79-cb13-44b8-adac-36cfd211f2d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triarch Stalker": {
       "edhrec_rank": 14529,
-      "gate": "template",
+      "gate": null,
       "name": "Triarch Stalker",
-      "reason": "no template for: Targeting Relay — At the beginning of combat on your turn, choose an opponent",
+      "reason": "",
       "scryfall_id": "531ea7e2-71ca-4290-8a8b-45a8edf5ab1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triassic Egg": {
@@ -293212,12 +293212,12 @@
     },
     "Troll of Khazad-dûm": {
       "edhrec_rank": 2786,
-      "gate": "template",
+      "gate": null,
       "name": "Troll of Khazad-dûm",
-      "reason": "no template for: This creature can't be blocked except by three or more creatures",
+      "reason": "",
       "scryfall_id": "5edb0c1d-be6a-42b1-829c-ffbea3647ad8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Troll-Horn Cameo": {

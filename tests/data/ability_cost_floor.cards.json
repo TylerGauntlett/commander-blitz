@@ -1,0 +1,94 @@
+{
+  "_comment": "Witnesses for tests/unit/costs/test_ability_cost_floor.py. `t_acf_node` carries Convergence of Dominion's Dynastic Command Node on a bare enchantment. `t_acf_two` and `t_acf_pip` are graveyard-active abilities costing {2} and {B}, the floor's two boundaries; Reassembling Skeleton ({1}{B}) is the shipped coloured case. `t_acf_engine` is the same {2} ability active on the battlefield, the near miss the discount must not reach. `t_acf_plain` is the node without its floor, the unfloored contrast.",
+  "cards": [
+    {
+      "id": "t_acf_node",
+      "name": "Test Command Node",
+      "oracle_text": "As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you control your commander, activated abilities of cards in your graveyard cost {2} less to activate. This effect can't reduce the mana in that ability's activation cost to less than one mana.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {"any": true},
+          "activated_by": "you",
+          "from_graveyard": true,
+          "mana_floor": 1,
+          "condition": {"exists": {"controller": "you", "is_commander": true, "zone": "battlefield"}},
+          "amount": {"const": 2}
+        }
+      ]
+    },
+    {
+      "id": "t_acf_plain",
+      "name": "Test Graveyard Ability Discount",
+      "oracle_text": "Activated abilities of cards in your graveyard cost {2} less to activate.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Activated abilities of cards in your graveyard cost {2} less to activate.",
+          "effect": "ability_cost_reduction",
+          "affects_abilities": {"any": true},
+          "activated_by": "you",
+          "from_graveyard": true,
+          "amount": {"const": 2}
+        }
+      ]
+    },
+    {
+      "id": "t_acf_two",
+      "name": "Test Graveyard Two",
+      "oracle_text": "{2}: Return this card from your graveyard to the battlefield tapped.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: Return this card from your graveyard to the battlefield tapped.",
+          "active_zones": ["graveyard"],
+          "cost": {"mana": "{2}"},
+          "effects": [
+            {"op": "put_onto_battlefield", "controller": "you", "objects": {"self_only": true, "zone": "graveyard"}, "tapped": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_acf_pip",
+      "name": "Test Graveyard Pip",
+      "oracle_text": "{B}: Return this card from your graveyard to the battlefield tapped.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{B}: Return this card from your graveyard to the battlefield tapped.",
+          "active_zones": ["graveyard"],
+          "cost": {"mana": "{B}"},
+          "effects": [
+            {"op": "put_onto_battlefield", "controller": "you", "objects": {"self_only": true, "zone": "graveyard"}, "tapped": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_acf_engine",
+      "name": "Test Battlefield Two",
+      "oracle_text": "{2}: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: Draw a card.",
+          "cost": {"mana": "{2}"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

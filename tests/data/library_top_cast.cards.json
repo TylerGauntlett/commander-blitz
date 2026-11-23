@@ -1,5 +1,5 @@
 {
-  "_comment": "Cards that exist only for the cast-off-the-top tests (tests/unit/casting/test_cast_from_library_top.py and test_cast_from_library_top_filter.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana. `t_thundermane` is Thundermane Dragon's: creature spells with power 4 or greater off the top at their printed cost, gaining haste until end of turn.",
+  "_comment": "Cards that exist only for the cast-off-the-top tests (tests/unit/casting/test_cast_from_library_top.py, test_cast_from_library_top_filter.py and test_cast_from_library_top_colorless.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana. `t_thundermane` is Thundermane Dragon's: creature spells with power 4 or greater off the top at their printed cost, gaining haste until end of turn. `t_forge` is Mystic Forge's: artifact spells and colorless spells off the top, an `any_of` over `types` and `colorless`; the `t_mf_*` cards are the four corners it sorts -- a colored artifact, a colorless nonartifact, a colorless artifact and a colored nonartifact.",
   "cards": [
     {
       "id": "t_citadel",
@@ -43,6 +43,103 @@
           "cast_gains_keywords": ["haste"]
         }
       ]
+    },
+    {
+      "id": "t_forge",
+      "name": "Test Forge",
+      "oracle_text": "You may cast artifact spells and colorless spells from the top of your library.",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast artifact spells and colorless spells from the top of your library.",
+          "effect": "cast_from_library_top",
+          "affects_player": "you",
+          "affects_spells": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "colorless": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_mf_red_construct",
+      "name": "Test Red Construct",
+      "oracle_text": "",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_mf_eldrazi",
+      "name": "Test Colorless Eldrazi",
+      "oracle_text": "",
+      "mana_cost": "{3}",
+      "types": [
+        "Creature"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 3,
+      "toughness": 3
+    },
+    {
+      "id": "t_mf_trinket",
+      "name": "Test Colorless Trinket",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_mf_green_bear",
+      "name": "Test Green Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2
     }
   ]
 }

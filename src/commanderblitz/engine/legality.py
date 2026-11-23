@@ -33,6 +33,7 @@ from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
+    cost_binding_preview,
     cost_x_ceiling,
     land_drops_available,
     mana_added_total,
@@ -961,7 +962,9 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            taken_ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+            taken_ceiling = cost_x_ceiling(
+                state, pid, ability.cost, oid, purpose=purpose, ability=ability
+            )
             if ability.cost.loyalty_x or taken_ceiling is not None:
                 # The ceiling of a -X is the loyalty there is to remove (606.4),
                 # and of "Discard X cards", "Sacrifice X Foods" or "Tap X
@@ -1182,12 +1185,18 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     produced = mana_produced(
         options[mana_option],
         doubled=doubled,
-        times=mana_amount(state, oid, ability),
+        # Glittering Stockpile's X is the stash counters its own sacrifice
+        # will bind; the chip is drawn before that cost, so it reads the
+        # preview `pay` will match.
+        times=mana_amount(state, oid, ability, bindings=cost_binding_preview(state, oid, ability)),
     )
-    if ability.cost is not None and ability.cost.tap:
-        produced = plus_mana(
-            produced, mana_added_total(state, state.objects[oid].controller, oid, produced)
-        )
+    tapping = ability.cost is not None and ability.cost.tap
+    produced = plus_mana(
+        produced,
+        mana_added_total(
+            state, state.objects[oid].controller, oid, produced, tapping=tapping
+        ),
+    )
     return format_symbols(produced)
 
 

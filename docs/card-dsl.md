@@ -156,6 +156,24 @@ is countered, and the same card cast later by another route goes back to the
 graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
 the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
 
+`pay_life_instead: true` changes the price and nothing else: the spell is still
+cast right then, inside the resolution and ignoring timing, but for life equal to
+its mana value rather than for free. Anrakyr the Traveller's attack trigger:
+
+```jsonc
+{ "op": "cast_from_hand", "zones": ["hand", "graveyard"],
+  "selector": { "types": ["Artifact"] }, "pay_life_instead": true }
+```
+
+It is an alternative cost (118.9): X is 0 (107.3b), a card whose life the player
+cannot pay is not offered (119.4), and a tax is still owed on top as generic mana
+(601.2f). It narrows the way `cast_card` does: no kicker or optional additional
+cost is offered, and a card with a mandatory additional cost is not offered at
+all. The key must be a boolean, and `cast_card` refuses it. `grant_playable`'s
+`playable_pay_life_instead` is the near miss: the same price on a permission
+used later, in a priority window, so a sorcery-speed artifact could not be cast
+in combat.
+
 `as` records the cards actually cast (a declined offer, or a card with no legal
 target, is not in it) and **accumulates** across the ops of one resolution.
 Finale of Promise casts an instant and a sorcery by two ops over two targets,
@@ -3047,6 +3065,41 @@ An op-granted **triggered** ability is kept off the derived list — and that is
 fact about `_op_granted_abilities`, not a refusal at load, because
 `triggers.collect` yields one off the grant record itself.
 
+### Granting unearth to cards in a graveyard
+
+```jsonc
+// Ghost Ark — "…each artifact creature card in your graveyard gains unearth {3}
+// until end of turn."
+{ "op": "grant_ability", "ability": 0,
+  "objects": { "zone": "graveyard", "controller": "you",
+               "types": ["Artifact", "Creature"] } }
+// grantable_abilities[0]: the printed unearth's expanded ability, at {3}
+{ "kind": "activated", "text": "Unearth {3} (…)", "active_zones": ["graveyard"],
+  "sorcery_speed_only": true, "cost": { "mana": "{3}" },
+  "effects": [ put_onto_battlefield self, replace_leaves_battlefield exile,
+               grant_keyword haste permanent, delay end_step exile ] }
+```
+
+The `grant_ability` op reaches cards in a graveyard as well as permanents. A
+granted keyword that works from the graveyard is the activated ability its
+reminder text spells out, written once in `grantable_abilities` exactly as a
+printed unearth is (Chronomancer), with `active_zones: ["graveyard"]`.
+`abilities_of` appends it after the card's own abilities, so a card with a
+printed unearth offers both, each at its own price, and activating the granted
+one puts the granter's ability on the stack.
+
+The grant reaches the cards in the graveyard as it resolves and no card that
+arrives later (611.2c). It ends at cleanup — `clear_until_eot` sweeps graveyards
+— or when the card leaves the graveyard, since the card that comes back is a new
+object (400.7). Only an activated grant is offered there, so the loader refuses a
+`grant_ability` onto graveyard cards whose grantable is not an activated
+ability with `active_zones: ["graveyard"]`, and refuses that grantable handed to
+permanents by the op or the static.
+
+The near misses: `grant_graveyard_cast` and `grant_playable` grant *casting* a
+card (flashback, escape), not an ability of it; a `grant_graveyard_abilities`
+static lends a graveyard card's abilities to a permanent, the other direction.
+
 ### Losing all abilities because an effect said so
 
 ```jsonc
@@ -3292,6 +3345,36 @@ since an artifact you activate need not be yours.
 
 The near miss is `first_during_your_turn`, which counts only the activator's own
 turn and picks activations out by their targets.
+
+### "Activated abilities of cards in your graveyard cost {2} less … not to less than one mana"
+
+```jsonc
+// Convergence of Dominion
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "from_graveyard": true,
+  "mana_floor": 1,
+  "condition": { "exists": { "controller": "you", "is_commander": true,
+                             "zone": "battlefield" } },
+  "amount": { "const": 2 } }
+```
+
+`from_graveyard` limits the discount to abilities whose source is a card in the
+graveyard of the static's controller: an unearth, a Reassembling Skeleton. The
+same ability on a permanent is not discounted. The loader accepts
+`affects_abilities: {"any": true}` beside it without `targeting`, because the
+payment solver taps only permanents, so a graveyard card's ability is always
+priced through `costs.ability_mana`. It refuses `affects`, `first_each_turn`,
+`first_during_your_turn` and any `activated_by` but `you` beside it.
+
+`mana_floor` is "this effect can't reduce the mana in that ability's activation
+cost to less than N mana". It bounds only this static's cut: generic comes off
+until the cost holds `mana_floor` mana, coloured pips counted, so {2} becomes
+{1}, {1}{B} becomes {B} and {B} stays {B}. `costs.ability_mana` applies floored
+discounts after every unfloored one and the tax, highest floor first, so an
+unfloored discount beside it still reaches zero. It must be at least 1, since
+every reduction already stops at zero generic.
 
 ### A delayed trigger scoped to one chosen object
 
@@ -5379,10 +5462,27 @@ compositions of X cannot be offered as options before X is known, so the
 `_split_options` fold does not apply), any other ability one option, scaled by
 X.
 
+**Beside an `{X}` in `mana`.** "{X}, {T}, Tap X untapped artifacts you
+control: Target opponent loses X life." — Necron Overlord.
+
+```jsonc
+"cost": { "mana": "{X}", "tap": true, "tap_x": { "types": ["Artifact"] } }
+```
+
+The `{X}` is the same announced X, not a second one: the ability costs X mana
+and X permanents. The two halves are paid together (601.2g–h), and a mana rock
+is both a source and an artifact, so one tapped for the mana is not left to tap
+for the rest. A `tap_x` cost with any mana half is bounded by both at once —
+`costs.cost_x_ceiling` takes the largest X for which some choice of sources
+pays the mana and leaves X of the pool untapped (`costs.tap_x_payable`), and
+`pay` pays the mana from such sources, spending as few of the pool as it can,
+before the payer picks the X. Two Sol Rings and no lands make X at most 1.
+
 Not `tap_permanents` with a `count`, which is a number the card fixes. The
 loader refuses `count`, `total_power`, `as` and `tapped` inside it, the key
-beside `tap_permanents`, beside an `{X}` in `mana`, `pay_life_x`, `loyalty_x`,
-`discard_x` or `sacrifice_x`, and anywhere but an activated ability's cost.
+beside `tap_permanents`, beside `pay_life_x`, `loyalty_x`, `discard_x`,
+`sacrifice_x`, `x_value` or `x_minimum`, and anywhere but an activated ability's
+cost.
 
 ### `remove_counters_x` — remove X counters, X announced
 
@@ -5821,6 +5921,40 @@ The near miss is `power_of`/`toughness_of` the target, which snapshots the
 Vehicle's size into a base-P/T effect of its own instead of leaving the printed
 one (301.7) under it.
 
+**The cost is the crew marker** ([ADR 0032](adr/0032-a-crew-ability-is-known-by-its-cost.md)).
+An ability whose cost carries `total_power` is a crew ability
+(`Ability.is_crew`), and nothing else may carry it: the loader refuses a
+`total_power` tap cost on any ability but an activated one whose one effect is
+an `animate` of `objects` `self_only`. A rider on the crew line ("Crew 2, and
+draw a card") is a separate `becomes_crewed` trigger, never a second effect.
+
+### Whenever this Vehicle becomes crewed
+
+```jsonc
+{ "kind": "triggered", "text": "Whenever this Vehicle becomes crewed, …",
+  "trigger": { "event": "becomes_crewed", "source": "self" },
+  "effects": [ … ] }
+```
+
+702.122d: a Vehicle becomes crewed as **a crew ability of it resolves**, whoever
+or whatever put that ability on the stack, so a copy of the crew ability
+resolving crews it again. The event (`became_crewed`) fires after crew's
+`animate`, so the Vehicle is already a creature when the trigger looks, and not
+at all when the Vehicle has left the battlefield before crew resolves (400.7).
+The subject is the Vehicle, so `controller` and `filter` ask about it, and
+`{"binding": "subject"}` is "it". Mobilizer Mech is the witness.
+
+Two near misses. `ability_activated` fires as crew is *activated*, a stack's
+width early, before the opponent has had the chance to answer the crew.
+Writing the effect onto the crew line itself turns a triggered ability into part
+of the crew's resolution, which misses a crew copied or activated by another
+source and lets the trigger's targets be chosen as crew is activated. An
+`animate` aimed at a Vehicle from somewhere else ("another target Vehicle
+becomes an artifact creature") is not crewing it, and fires nothing.
+
+"Whenever this creature **crews** a Vehicle" (Gearshift Ace) is the crewing
+creature's event, not the Vehicle's, and is not this trigger.
+
 ### Crews Vehicles as though its power were N greater
 
 ```jsonc
@@ -5909,8 +6043,9 @@ token, which no longer exists once it has left, still has a power.
 
 `as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
 above 1, and anywhere but an activated ability's cost: an additional cost to
-cast, a ward or tax price and a mana ability have no effects that receive what
-the cost named, so the name would bind nothing and read 0.
+cast and a ward or tax price have no effects that receive what the cost named,
+so the name would bind nothing and read 0. A mana ability's `amount` reads it
+(Illuminor Szeras; see the cookbook's "Add {G} for each …").
 
 Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to
@@ -6847,7 +6982,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
-`creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
+`creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` · `becomes_crewed` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `put_into_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·

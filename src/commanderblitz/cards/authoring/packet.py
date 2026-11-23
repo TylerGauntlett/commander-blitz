@@ -962,7 +962,12 @@ def reference() -> dict:
             " trigger that draws an extra card. \"Skip your draw step\" is"
             " `skip_draw_step`, and a replacement that does something other"
             " than draw more cards (\"exile the top card instead\") is still a"
-            " gap.",
+            " gap -- except from an empty library: \"If you would draw a card"
+            " while your library has no cards in it, you win the game instead\""
+            " is the player-wide static `replace_empty_draw` with"
+            " `affects_player: \"you\"`, and \"...instead <do X>\" is the same"
+            " static with `effects` (\"if you can't, <Y>\" is an `if` inside"
+            " them whose `else` is Y).",
             "\"Crew N\" is an activated ability whose `cost` is `tap_permanents`"
             " with `total_power: N`. \"This creature crews Vehicles as though"
             " its power were 2 greater\" is the static `crew_power_bonus` with"
@@ -1124,7 +1129,9 @@ def reference() -> dict:
             " `cast_from_graveyard` static with `\"active_zones\":"
             " [\"graveyard\"]`, `\"affects_player\": \"you\"` and the \"as long"
             " as\" as its `condition`; no `affects_spells` or `max_per_turn`,"
-            " since it frees only the card carrying it. Permanent cards only."
+            " since it frees only the card carrying it. On an instant or"
+            " sorcery too: cast at its normal timing, it goes where it normally"
+            " would, so \"Exile <this>\" printed in its text is `exiles_itself`."
             " It is not `graveyard_cost`, which is an alternative price with no"
             " condition, offered always.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"

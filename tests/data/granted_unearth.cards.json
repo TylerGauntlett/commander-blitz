@@ -1,0 +1,135 @@
+{
+  "_comment": "Fixtures for tests/unit/keywords/test_granted_unearth.py: `t_gu_barge` is Ghost Ark's Repair Barge on a {T} ability of a plain artifact, so the grant can be made at will; the golem, bear and relic are the artifact creature card that matches, and the two cards that do not. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_gu_barge",
+      "name": "Test Repair Barge",
+      "oracle_text": "{T}: Each artifact creature card in your graveyard gains unearth {3} until end of turn.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Each artifact creature card in your graveyard gains unearth {3} until end of turn.",
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "grant_ability",
+              "ability": 0,
+              "objects": {
+                "zone": "graveyard",
+                "controller": "you",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "Unearth {3} ({3}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "controller": "you",
+              "objects": {
+                "zone": "graveyard",
+                "self_only": true
+              }
+            },
+            {
+              "op": "replace_leaves_battlefield",
+              "destination": "exile",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "duration": "permanent",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield.",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "zone": "battlefield",
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gu_golem",
+      "name": "Test Barge Golem",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3
+    },
+    {
+      "id": "t_gu_bear",
+      "name": "Test Barge Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_gu_relic",
+      "name": "Test Barge Relic",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ]
+    }
+  ]
+}

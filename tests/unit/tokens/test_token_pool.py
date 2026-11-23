@@ -3818,3 +3818,50 @@ class TestTheBlueHorrorPingsOnInstantsAndSorceries:
 
     def test_the_black_horror_is_still_a_separate_token(self, pool):
         assert sorted(pool.get("horror_2_2_b_enchantment").colors) == ["B"]
+
+
+class TestTheNecronWarriorIsABlackArtifact:
+    """Imotekh the Stormlord, Biotransference, Royal Warden and the Necron
+    vehicles: *"create a **2/2 black Necron Warrior artifact** creature token."*
+
+    The near miss is the black `astartes_warrior_2_2_b_menace`: a black Warrior
+    of the same size, but an Astartes, not an artifact, and with menace.
+    """
+
+    def test_it_is_a_two_two_black_necron_warrior_artifact(self, pool):
+        token = pool.get("necron_warrior_2_2_b_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Necron", "Warrior"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_the_astartes_warrior_is_still_a_separate_token(self, pool):
+        astartes = pool.get("astartes_warrior_2_2_b_menace")
+        assert "Artifact" not in astartes.types
+        assert list(astartes.keywords) == ["menace"]
+
+
+class TestTheColorlessInsectIsAFlyingArtifact:
+    """Canoptek Scarab Swarm: *"create a **1/1 colorless Insect artifact**
+    creature token **with flying**."*
+
+    The near miss is the black `insect_1_1_b_flying`: the same flying 1/1
+    Insect, but black and not an artifact.
+    """
+
+    def test_it_is_a_one_one_colorless_flying_artifact_insect(self, pool):
+        token = pool.get("insect_1_1_c_artifact_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Insect"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_black_insect_is_still_a_separate_token(self, pool):
+        black = pool.get("insect_1_1_b_flying")
+        assert sorted(black.colors) == ["B"]
+        assert "Artifact" not in black.types

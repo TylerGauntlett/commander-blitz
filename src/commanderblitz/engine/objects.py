@@ -1282,6 +1282,17 @@ class GameObject:
     #: object as far as the rules are concerned, and chooses again.
     chosen_color: str | None = None
 
+    #: "As this creature enters, choose a player" (Sawhorn Nemesis); "choose an
+    #: opponent ... creatures attacking **the last chosen player** have menace"
+    #: (Triarch Stalker). The seat a `choose_player` with ``remember: true``
+    #: named, overwritten by each later choice, and read back by this
+    #: permanent's statics through ``{"chosen_player_of": "self"}``.
+    #:
+    #: The player twin of ``chosen_color``, and reset with it: a permanent that
+    #: leaves and comes back is a new object and has chosen nobody yet, so its
+    #: statics name no one until it chooses again.
+    chosen_player: int | None = None
+
     #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
     #: no mana cost." Embalm and eternalize.
     #:
@@ -1594,6 +1605,7 @@ class GameObject:
         self.chosen_type = None
         self.chosen_card_type = None
         self.chosen_color = None
+        self.chosen_player = None
         self.added_subtypes = ()
         self.text_changes = ()
         self.transformed = False

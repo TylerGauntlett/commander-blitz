@@ -293,8 +293,25 @@
    "Planeswalker",
    "Sorcery"
   ],
-  "LIBRARY_TOP_CAST_FILTER_KEYS": [
+  "LIBRARY_TOP_CAST_BRANCH_KEYS": [
+   "any_of",
    "any_types",
+   "colorless",
+   "colors",
+   "keywords",
+   "mana_cost",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
+  ],
+  "LIBRARY_TOP_CAST_FILTER_KEYS": [
+   "any_of",
+   "any_types",
+   "colorless",
    "colors",
    "keywords",
    "mana_cost",
@@ -635,6 +652,7 @@
    "goaded",
    "grant_ability",
    "grant_exiled_abilities",
+   "grant_graveyard_abilities",
    "grant_keyword",
    "grant_miracle",
    "grant_pay_generic_with",
@@ -815,6 +833,7 @@
    "zone"
   ],
   "TAPPED_PERMANENT_KEYS": [
+   "any_mana_ability",
    "attached",
    "produced",
    "subtypes",
@@ -858,6 +877,7 @@
    "freeze_opponent_lands",
    "grant_ability",
    "grant_exiled_abilities",
+   "grant_graveyard_abilities",
    "grant_miracle",
    "grant_pay_generic_with",
    "grant_warp",

@@ -1311,7 +1311,12 @@ class Game:
                 pid,
                 loyalty_cost=True,
             )
-        elif (ceiling := cost_x_ceiling(state, pid, ability.cost, oid)) is not None:
+        elif (
+            ceiling := cost_x_ceiling(
+                state, pid, ability.cost, oid, purpose=purpose, ability=ability,
+                targets=action.targets,
+            )
+        ) is not None:
             # "Discard X cards" (Gix, Yawgmoth Praetor), "Sacrifice X Foods"
             # (Insatiable Frugivore), "Tap X untapped tokens" (Hazel of the
             # Rootbloom): announced now, before the cost is paid (601.2b), and
@@ -2199,7 +2204,9 @@ class Game:
         # tap-only), so the question never lands inside somebody's payment.
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
         x = 0
-        ceiling = cost_x_ceiling(state, pid, ability.cost, oid)
+        ceiling = cost_x_ceiling(
+            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid), ability=ability
+        )
         if ceiling is not None:
             x = yield from ask_x(ctx, f"Choose X for {card.name}", ceiling, pid)
 
@@ -2208,6 +2215,11 @@ class Game:
         # left `None` because `legality._ability_aims` gates this path through
         # the same `can_pay`, and a cost found payable there and refused here
         # would strand the payment.
+        # "Add an amount of {B} equal to **the sacrificed creature's** mana
+        # value" -- Illuminor Szeras. What the cost names as it is paid, read
+        # by the amount below exactly as a stack ability's effects read it;
+        # held here rather than on a stack item, since a mana ability has none.
+        bindings: dict[str, Any] = {}
         ok = yield from pay(
             state,
             pid,
@@ -2216,6 +2228,7 @@ class Game:
             x=x,
             purpose=ability_purpose(state, oid),
             ability=ability,
+            bindings=bindings,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
@@ -2257,7 +2270,7 @@ class Game:
                 produced = mana_produced(
                     yielded,
                     doubled=player_doubles_mana_from(state, pid, oid),
-                    times=mana_amount(state, oid, ability, x),
+                    times=mana_amount(state, oid, ability, x, bindings),
                 )
                 for _ in any_color_added_on_tap(state, pid, oid, produced):
                     picked = yield from ask_mode(
@@ -2279,6 +2292,7 @@ class Game:
             x=x,
             option=option,
             extra_colors=extra_colors,
+            bindings=bindings,
         )
 
     def _pass_priority(self) -> None:

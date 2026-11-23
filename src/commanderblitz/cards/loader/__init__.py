@@ -113,6 +113,7 @@ from .mana import (
     _mana_options,
     _split_mana_rider,
     _validate_mana_amount,
+    check_mana_amount_bindings,
 )
 from .statics import (
     _validate_cast_zone_keys,
@@ -161,6 +162,7 @@ from .vocabulary import (  # noqa: F401
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
+    LIBRARY_TOP_CAST_BRANCH_KEYS,
     LIBRARY_TOP_CAST_FILTER_KEYS,
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
@@ -261,10 +263,19 @@ def _check_grant_targets(
             )
 
 
+    def from_graveyard(index: Any) -> bool:
+        granted = grantable[int(index)]
+        return granted.is_activated and Zone.GRAVEYARD in granted.active_zones
+
     for ability in abilities:
         static = ability.static or {}
         if ability.is_static and static.get("effect") == "grant_ability":
             check(static.get("ability", 0), "grant_ability static")
+            if from_graveyard(static.get("ability", 0)):
+                raise DslError(
+                    f"{where}: a grant_ability static hands its ability to "
+                    f"permanents, where one that works from a graveyard never runs"
+                )
 
     for replacement in model.replacements:
         # "…and it has "{T}: Add {U}."" (Machine God's Effigy): `card_of`
@@ -294,6 +305,20 @@ def _check_grant_targets(
                 continue
             index = effect.get("ability", effect.get("ability_index"))
             check(index, "grant_ability op")
+            objects = effect.get("objects")
+            onto_graveyard = isinstance(objects, Mapping) and objects.get("zone") == "graveyard"
+            # "…each artifact creature card in your graveyard gains unearth {3}"
+            # (Ghost Ark). The two halves must agree: `abilities_of` offers a
+            # graveyard card its activated grants alone and legality offers one
+            # only from a zone it names, so either mismatch is a grant held on
+            # the card and never offered.
+            if onto_graveyard != from_graveyard(index):
+                raise DslError(
+                    f"{where}: grant_ability onto cards in a graveyard needs an "
+                    f"activated grantable with active_zones [\"graveyard\"], and "
+                    f"that grantable may be granted only onto cards in a graveyard "
+                    f"-- anything else would sit on the card and never work"
+                )
 
 
 def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
@@ -1789,13 +1814,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # trigger already carried, so it resolves after the grant has gone
             # with its source (608.2).
             zones = tuple(ability.active_zones or ())
-            if zones and zones != (Zone.BATTLEFIELD,):
-                # A grant lives on a *permanent*, and `abilities_of` only derives
-                # one there. Granted cycling would load clean and never be
-                # offered from the hand it is printed to work in.
+            if zones and zones not in ((Zone.BATTLEFIELD,), (Zone.GRAVEYARD,)):
+                # A grant lives on a permanent or on a graveyard card, and
+                # `abilities_of` derives one nowhere else. Granted cycling would
+                # load clean and never be offered from the hand it is printed to
+                # work in. A graveyard one (Ghost Ark's unearth) is held to the
+                # grant that hands it over by `_check_grant_targets`.
                 raise DslError(
                     f"{where}.grantable[{ability.index}]: a granted activated "
-                    f"ability works on the battlefield only, not from "
+                    f"ability works on the battlefield only (or, granted onto a "
+                    f"graveyard card, from the graveyard), not from "
                     f"{[z.value for z in zones]}"
                 )
             continue
@@ -2837,22 +2865,6 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"'graveyard_cost', so it could never be true"
         )
 
-    # Gravecrawler's own graveyard permission is cast at the printed price and
-    # the card goes wherever it normally would. For a permanent that is the
-    # battlefield. An instant or sorcery cast this way would go back to the
-    # graveyard, a form with no witness or test behind it, so the line is
-    # refused rather than loaded untested.
-    owns_graveyard_permission = any(
-        ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
-        for ability in model.abilities
-    )
-    if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
-        raise DslError(
-            f"{where}: a card's own permission to cast itself from the graveyard "
-            f"is supported on permanent cards only -- the nonpermanent form has "
-            f"no witness"
-        )
-
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
     _validate_attach_to_player(model, where)
@@ -3583,6 +3595,35 @@ def _has_optional_modes(effects: Any) -> bool:
     return False
 
 
+def _check_crew_shape(
+    model: AbilityModel, kind: AbilityKind, cost: Cost | None, where: str
+) -> None:
+    """A ``total_power`` tap cost is crew's, so its ability must be crew (702.122a).
+
+    `Ability.is_crew` reads the cost alone, and `stack._resolve_ability` fires
+    `became_crewed` off it (702.122d), so the cost is the crew marker (ADR
+    0032). Held to the printed shape -- an activated ability whose one effect
+    is this permanent becoming a creature -- so that no other ability can carry
+    the marker and make a Vehicle "become crewed" by resolving.
+    """
+    tap = cost.tap_permanents if cost is not None else None
+    if tap is None or tap.get("total_power") is None:
+        return
+    effects = [e for e in (model.effects or []) if isinstance(e, Mapping)]
+    animates_self = (
+        len(effects) == 1
+        and effects[0].get("op") == "animate"
+        and (effects[0].get("objects") or {}).get("self_only") is True
+    )
+    if kind is not AbilityKind.ACTIVATED or not animates_self:
+        raise DslError(
+            f"{where}: a 'total_power' tap cost is crew's (702.122a), and a crew "
+            f"ability is activated and does one thing, this permanent becoming a "
+            f"creature -- one 'animate' with objects 'self_only'; got a "
+            f"{kind.value} ability with {[e.get('op') for e in effects] or 'no effects'}"
+        )
+
+
 def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -3763,6 +3804,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
     _check_same_as(model.effects, cost, where)
     _check_sacrificed_names(model, cost, where)
+    _check_crew_shape(model, kind, cost, where)
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 
@@ -4623,6 +4665,8 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where, takes_x=takes_x)
+    if model.is_mana_ability and mana_amount is not None:
+        check_mana_amount_bindings(mana_amount, cost, where, split=bool(mana_split))
     mana_restriction: ManaRestriction | None = None
     if model.mana_restriction is not None:
         if not model.is_mana_ability:
@@ -4828,9 +4872,25 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
     # the static's controller. `true` is the tempting spelling -- it is how
     # `attacking` is written -- and would name nobody; the effect selector's
     # `{"binding": name}` form names a seat a static never binds.
-    if "attacking_player" in filt and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS:
+    # "…the chosen player": a static has no bindings, so the one seat it can
+    # name is the one its source remembered with `choose_player`'s `remember`.
+    # Any other dict -- a `{"binding": …}` borrowed from the effect selector --
+    # would name nobody, or (as a `controller`) be an unrecognised word that
+    # matches everything.
+    for key in ("controller", "attacking_player"):
+        if isinstance(filt.get(key), dict) and filt[key] != {"chosen_player_of": "self"}:
+            raise DslError(
+                f"{path}.{key}: a static names one seat only as "
+                f'{{"chosen_player_of": "self"}}, not {filt[key]!r}'
+            )
+    if (
+        "attacking_player" in filt
+        and filt["attacking_player"] not in ATTACKING_PLAYER_WORDS
+        and filt["attacking_player"] != {"chosen_player_of": "self"}
+    ):
         raise DslError(
-            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} -- "
+            f"{path}.attacking_player: one of {list(ATTACKING_PLAYER_WORDS)} or "
+            f'{{"chosen_player_of": "self"}} -- '
             f"whom the creature attacks, a player and never a planeswalker or "
             f"battle; use 'attacking' for true/false"
         )
@@ -4922,6 +4982,49 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
         if not isinstance(branch, Mapping):
             raise DslError(f"{where}.any_of[{i}]: must be a filter object")
         _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
+
+
+def _check_library_top_cast_branches(filt: Mapping[str, Any], where: str) -> None:
+    """``any_of`` in a `cast_from_library_top` filter: printed shapes, two or more.
+
+    "You may cast artifact spells and colorless spells from the top of your
+    library" -- Mystic Forge. Every other key is ANDed, so the two shapes in
+    one filter would be "colorless artifact" and drop Kozilek's Return.
+
+    A branch takes `LIBRARY_TOP_CAST_BRANCH_KEYS`: the reader measures a size
+    only at the top level and gives the branches to `_matches_printed`, which
+    ignores one. A chosen quality is refused in a branch too, because the
+    reader resolves "the chosen color" on the top-level filter alone and a
+    branch would be matched against the unresolved marker.
+    """
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{where}.any_of: takes at least two filters -- a disjunction of one "
+            f"is the filter itself, written the long way"
+        )
+    for i, branch in enumerate(branches):
+        at = f"{where}.any_of[{i}]"
+        if not isinstance(branch, Mapping) or not branch:
+            raise DslError(f"{at}: must be a non-empty filter object")
+        unknown = set(branch) - LIBRARY_TOP_CAST_BRANCH_KEYS
+        if unknown:
+            raise DslError(
+                f"{at}: a branch is matched against the printed face, so it "
+                f"cannot measure power or toughness or name the caster; "
+                f"unsupported keys {sorted(unknown)}"
+            )
+        for key in ("colors", "subtypes"):
+            if any(isinstance(v, Mapping) for v in branch.get(key) or ()):
+                raise DslError(
+                    f"{at}.{key}: a chosen quality is resolved on the top-level "
+                    f"filter only; write it outside any_of"
+                )
+        _check_mana_cost_key(branch, at)
+        validate_colorless_key(branch, at)
+        _check_library_top_cast_branches(branch, at)
 
 
 def _validate_state_trigger(model: AbilityModel, where: str) -> None:
@@ -5021,12 +5124,32 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     # One, because "for {C}{C}" is not a printed condition and would read as
     # "made two" to nobody; a number ("{2}") is refused because a mana ability
     # makes {C}, never generic.
+    # Or Caged Sun's "mana of the chosen color", the spelling `add_mana` uses.
     if "produced" in tapped:
         tapped_for = tapped["produced"]
-        if tapped_for not in ("{W}", "{U}", "{B}", "{R}", "{G}", "{C}"):
+        if tapped_for != {"chosen_color_of": "self"} and tapped_for not in (
+            "{W}", "{U}", "{B}", "{R}", "{G}", "{C}"
+        ):
             raise DslError(
                 f"{where}.tapped_permanent.produced: one mana symbol the tap made, "
-                f"such as '{{C}}' or '{{G}}', got {tapped_for!r}"
+                f"such as '{{C}}' or '{{G}}', or {{'chosen_color_of': 'self'}}, "
+                f"got {tapped_for!r}"
+            )
+    # "Whenever a land's ability causes you to add mana" (Caged Sun): every mana
+    # ability of the permanent, not only one with {T} in its cost. A flag, so
+    # `true` or absent, as `attached` is. Refused beside "one mana of any color":
+    # that colour is asked for only when the ability taps (`Game._activate_mana`),
+    # and an extra nobody picks would be a quietly smaller card.
+    if "any_mana_ability" in tapped:
+        if tapped["any_mana_ability"] is not True:
+            raise DslError(
+                f"{where}.tapped_permanent.any_mana_ability: must be true if present "
+                f"(omit the key to mean only tapping for mana)"
+            )
+        if model.add_mana == {"any_color": 1}:
+            raise DslError(
+                f"{where}.tapped_permanent.any_mana_ability: not with "
+                f"add_mana {{'any_color': 1}}, which is picked only on a tap"
             )
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
@@ -5421,6 +5544,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "replace_lose_game":
         _validate_lose_game_replacement(model, where)
+    elif model.effect == "replace_empty_draw" and model.effects:
+        # "If you would draw a card while your library has no cards in it,
+        # instead return a creature card from your graveyard to the
+        # battlefield. If you can't, you lose the game" (Out of the Tombs).
+        # The effects run as the static's controller, so "you" in them is the
+        # drawing player only when the static names its controller.
+        if model.affects_player != "you":
+            raise DslError(
+                f"{where}: replace_empty_draw with 'effects' replaces its "
+                f"controller's draw, whose 'you' the effects mean; "
+                f"'affects_player' is 'you', not {model.affects_player!r}"
+            )
+        for i, effect in enumerate(model.effects):
+            _validate_effect(effect, f"{where}.effects[{i}]", {})
     elif model.effects and model.effect != "prevent_damage":
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
@@ -5450,12 +5587,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # moments and a static carrying neither is an evasion ability that
         # evades nothing -- which loads clean and shows nothing on the board.
         forms = (
-            (model.blockers is not None) + bool(model.require_all) + (model.max_blockers is not None)
+            (model.blockers is not None)
+            + bool(model.require_all)
+            + (model.max_blockers is not None)
+            + (model.min_blockers is not None)
         )
         if forms != 1:
             raise DslError(
                 f"{where}: block_restriction needs exactly one of 'blockers' "
-                f"(a filter on the would-be blocker), 'require_all' or 'max_blockers'"
+                f"(a filter on the would-be blocker), 'require_all', 'max_blockers' "
+                f"or 'min_blockers'"
             )
         # "More than one" is the printed floor; zero would be "can't be
         # blocked", which is a different static and a different card.
@@ -5466,6 +5607,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: block_restriction 'max_blockers' is a positive integer, "
                 f"got {model.max_blockers!r}"
             )
+        # "Except by two or more creatures" is menace, a keyword other cards
+        # count ("creatures with menace"), so the static would be a near miss
+        # of it; one would restrict nothing.
+        if model.min_blockers is not None and (
+            isinstance(model.min_blockers, bool) or model.min_blockers < 3
+        ):
+            raise DslError(
+                f"{where}: block_restriction 'min_blockers' is an integer of at least 3 "
+                f"(two is the menace keyword), got {model.min_blockers!r}"
+            )
         if model.blockers is not None:
             unknown = set(model.blockers) - STATIC_FILTER_KEYS
             if unknown:
@@ -5474,10 +5625,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
-    elif model.blockers is not None or model.require_all or model.max_blockers is not None:
+    elif (
+        model.blockers is not None
+        or model.require_all
+        or model.max_blockers is not None
+        or model.min_blockers is not None
+    ):
         raise DslError(
-            f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
-            f"block_restriction static, not on {model.effect!r}"
+            f"{where}: 'blockers'/'require_all'/'max_blockers'/'min_blockers' only mean "
+            f"anything on a block_restriction static, not on {model.effect!r}"
         )
     if model.effect == "can_block_only":
         # Without a filter the static says "can block only creatures", which
@@ -6160,6 +6316,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"face and no board state, and `affects_player` already names the "
                 f"caster; unsupported keys {sorted(unknown)}"
             )
+        _check_library_top_cast_branches(model.affects_spells, f"{where}.affects_spells")
         if model.affects is not None:
             raise DslError(
                 f"{where}: cast_from_library_top filters spells with "
@@ -6204,11 +6361,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
-        if model.affects_abilities.get("any") and model.targeting is None and not model.first_each_turn:
+        if model.from_graveyard:
+            # "Activated abilities of cards in your graveyard": the source is a
+            # card, not a permanent, so the permanent-describing keys have
+            # nothing to read -- `affects` is matched on the battlefield only,
+            # and the first-activation snapshots describe permanents.
+            if model.affects is not None or model.first_each_turn or model.first_during_your_turn:
+                raise DslError(
+                    f"{where}: from_graveyard discounts abilities of cards in your "
+                    f"graveyard; 'affects', 'first_each_turn' and "
+                    f"'first_during_your_turn' describe permanents"
+                )
+            if who != "you":
+                raise DslError(
+                    f"{where}: from_graveyard is 'your graveyard', which only you "
+                    f"activate from; 'activated_by' must be 'you', got {who!r}"
+                )
+        if model.affects_abilities.get("any") and model.targeting is None and not (
+            model.first_each_turn or model.from_graveyard
+        ):
             # A mana ability is priced by the payment solver, which never
             # reaches this static, so "every activated ability" with nothing
             # else said would quietly skip them. A `targeting` clause makes the
-            # gap moot: a mana ability has no targets (605.1a).
+            # gap moot: a mana ability has no targets (605.1a). So does
+            # `from_graveyard`: the solver taps only permanents, and an ability
+            # of a graveyard card is activated by hand and priced through here.
             raise DslError(
                 f"{where}: affects_abilities 'any' needs a 'targeting' clause -- "
                 f"mana abilities are priced where this static is not read"
@@ -6324,6 +6501,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
             f"ability_cost_reduction or ability_cost_increase static, not on "
             f"{model.effect!r}"
+        )
+    if (model.from_graveyard or model.mana_floor is not None) and (
+        model.effect != "ability_cost_reduction"
+    ):
+        raise DslError(
+            f"{where}: 'from_graveyard' and 'mana_floor' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+    if model.mana_floor is not None and model.mana_floor < 1:
+        raise DslError(
+            f"{where}.mana_floor: the fewest mana the discount may leave, at least 1 "
+            f"(every reduction already stops at zero), got {model.mana_floor!r}"
         )
     if model.first_each_turn and model.effect != "ability_cost_reduction":
         raise DslError(
@@ -6465,6 +6654,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
+    if isinstance(model.affects_player, dict):
+        # "…to **the chosen player**" (Sawhorn Nemesis). Only `replace_damage`
+        # reads a seat through `player_statics._reaches_player`, which knows
+        # this spelling; every other player-wide reader compares words, and
+        # would read the dict as nobody or as everybody.
+        if model.affects_player != {"chosen_player_of": "self"}:
+            raise DslError(
+                f"{where}.affects_player: 'you', 'opponent', 'any', or "
+                f'{{"chosen_player_of": "self"}}, not {model.affects_player!r}'
+            )
+        if model.effect != "replace_damage":
+            raise DslError(
+                f"{where}.affects_player: {{'chosen_player_of': 'self'}} is read "
+                f"by a replace_damage static only, not by {model.effect!r}"
+            )
     if model.effect == "replace_damage":
         # Two axes, exactly one per static -- `replace_life_gain`'s shape:
         # "double that damage" (`damage_multiplier`) and "that much damage
@@ -6837,12 +7041,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
     ):
-        # The replacement has no size -- it substitutes winning for drawing --
-        # so there is nothing for either key to mean, and a key nothing reads
+        # The replacement has no size -- it substitutes winning, or its
+        # `effects`, for drawing -- so there is nothing for either key to mean, and a key nothing reads
         # would load clean and print a line that promises more than it does.
         raise DslError(
-            f"{where}: replace_empty_draw takes 'affects_player' and an "
-            f"optional 'condition', and no 'affects' or 'amount'"
+            f"{where}: replace_empty_draw takes 'affects_player', optional "
+            f"'effects' and an optional 'condition', and no 'affects' or 'amount'"
         )
     if model.effect == "replace_proliferate" and (
         model.affects is not None or model.amount is not None
@@ -7688,22 +7892,25 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"creature types ('It's still a Shapeshifter'), not {entry!r}"
                 )
 
-    if model.effect == "grant_exiled_abilities":
+    if model.effect in ("grant_exiled_abilities", "grant_graveyard_abilities"):
         # Hazel's Brewmaster: "Foods you control have all activated abilities
-        # of all creature cards exiled with this creature." `types` is the
-        # card type the linked exiled cards must have ("creature cards") and
-        # is required: left out, the static would lend the abilities of every
-        # card the source exiled, which is a stronger card than any printed.
-        # `affects` is who receives them; without it nothing would.
+        # of all creature cards exiled with this creature." Trazyn the
+        # Infinite: "...it has all activated abilities of all artifact cards in
+        # your graveyard." `types` is the card type the lending cards must have
+        # ("creature cards") and is required: left out, the static would lend
+        # the abilities of every card it reads, which is a stronger card than
+        # any printed. `affects` is who receives them; without it nothing would.
+        effect = model.effect
+        cards = "exiled cards'" if effect == "grant_exiled_abilities" else "graveyard cards'"
         if model.affects is None:
             raise DslError(
-                f"{where}: grant_exiled_abilities needs 'affects' naming the "
-                f"permanents that have the exiled cards' activated abilities"
+                f"{where}: {effect} needs 'affects' naming the "
+                f"permanents that have the {cards} activated abilities"
             )
         if not model.types:
             raise DslError(
-                f"{where}: grant_exiled_abilities needs 'types' -- the card "
-                f'types of the exiled cards it reads ("creature cards" is '
+                f"{where}: {effect} needs 'types' -- the card "
+                f'types of the cards it reads ("creature cards" is '
                 f'["Creature"])'
             )
         unknown = [t for t in model.types if t not in {c.value for c in CardType}]
@@ -7711,7 +7918,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(f"{where}.types: unknown card type(s) {unknown}")
         if model.ability is not None or model.subtypes or model.keywords:
             raise DslError(
-                f"{where}: grant_exiled_abilities lends what the exiled cards "
+                f"{where}: {effect} lends what the cards it reads "
                 f"print; it takes no 'ability', 'subtypes' or 'keywords'"
             )
 
@@ -7938,13 +8145,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     static: dict[str, Any] = {"effect": model.effect}
     if model.effect == "replace_lose_game" or (
-        model.effect == "prevent_damage" and model.effects
+        model.effect in ("prevent_damage", "replace_empty_draw") and model.effects
     ):
         # What happens instead, carried on the mapping because the mapping is
         # all `player_statics.lose_game_replacement` ever sees -- and, on a
         # `prevent_damage` total shield, the 615.5 rider
         # `characteristics.damage_prevented_with_effects` hands to
-        # `primitives.damage_permanent`.
+        # `primitives.damage_permanent`; on `replace_empty_draw`, what
+        # `replacements._replace_empty_draw` runs instead of winning.
         static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)
@@ -7983,6 +8191,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["first_during_your_turn"] = True
     if model.first_each_turn:
         static["first_each_turn"] = True
+    if model.from_graveyard:
+        static["from_graveyard"] = True
+    if model.mana_floor is not None:
+        static["mana_floor"] = model.mana_floor
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_addend is not None:
@@ -8106,6 +8318,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    if model.min_blockers is not None:
+        static["min_blockers"] = model.min_blockers
     if model.attackers is not None:
         static["attackers"] = dict(model.attackers)
     # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,

@@ -109,10 +109,11 @@ def _compile_cost(
             )
         if not defines_x:
             # Only an activated ability hands its cost a place to write the
-            # name (`costs.pay`'s `bindings`) and reads it back on resolution.
-            # An additional cost to cast, a ward or attack tax, or a mana
-            # ability would pay the sacrifice and bind nothing, so every read
-            # of the name would answer 0 while the card looked implemented.
+            # name (`costs.pay`'s `bindings`) and reads it back -- on
+            # resolution, or a mana ability's amount as it is activated. An
+            # additional cost to cast or a ward or attack tax would pay the
+            # sacrifice and bind nothing, so every read of the name would
+            # answer 0 while the card looked implemented.
             raise DslError(
                 f"{where}.cost.sacrifice.as: only an activated ability's effects "
                 f"can read what its cost sacrificed; this cost names it for nothing"
@@ -330,17 +331,28 @@ def _compile_cost(
                 f"{where}.cost: 'tap_x' is the whole tap cost (X permanents); give it "
                 f"or 'tap_permanents', not both"
             )
+        # An `{X}` in `mana` is not a second X: "{X}, {T}, Tap X untapped
+        # artifacts you control" (Necron Overlord) pays X mana and taps X
+        # permanents off the one announcement, bounded by both at once
+        # (`costs.cost_x_ceiling`).
         if (
-            "X" in str(model.mana or "").upper()
-            or model.pay_life_x
+            model.pay_life_x
             or model.loyalty_x
             or model.discard_x
             or model.sacrifice_x is not None
         ):
             raise DslError(
                 f"{where}.cost: 'tap_x' announces this ability's X, so the cost may "
-                f"not carry a second X in 'mana', 'pay_life_x', 'loyalty_x', "
-                f"'discard_x' or 'sacrifice_x'"
+                f"not carry a second X in 'pay_life_x', 'loyalty_x', 'discard_x' or "
+                f"'sacrifice_x'"
+            )
+        if model.x_value is not None or model.x_minimum:
+            # The `{X}` beside `tap_x` is the announced X, so nothing defines
+            # it, and the announcement is bounded by what the cost takes, which
+            # no printed floor is read against.
+            raise DslError(
+                f"{where}.cost: 'tap_x' announces this ability's X, so the cost may "
+                f"not carry 'x_value' or 'x_minimum'"
             )
         for key in ("count", "total_power", "as", "tapped"):
             if key in tap_x:
@@ -748,6 +760,49 @@ def _validate_mana_amount(amount: Any, where: str, *, takes_x: bool = False) -> 
         raise DslError(
             f"{where}: a mana ability is activated during payment, with no X, "
             f"targets, bindings or loop -- {sorted(bad)} would always read 0"
+        )
+
+
+def _bindings_read(tree: Any) -> set[str]:
+    """Every ``{"binding": name}`` a value expression reads, however deep."""
+    if isinstance(tree, Mapping):
+        found = {str(tree["binding"])} if isinstance(tree.get("binding"), str) else set()
+        for value in tree.values():
+            found |= _bindings_read(value)
+        return found
+    if isinstance(tree, (list, tuple)):
+        return set().union(*(_bindings_read(v) for v in tree)) if tree else set()
+    return set()
+
+
+def check_mana_amount_bindings(
+    amount: Any, cost: Any, where: str, *, split: bool = False
+) -> None:
+    """A mana ability's amount may read only what its own cost names as paid.
+
+    "Add an amount of {B} equal to the sacrificed creature's mana value" --
+    Illuminor Szeras, ``{"mana_value_of": {"binding": "sacrificed"}}`` over a
+    `sacrifice` cost with ``as: "sacrificed"``. `Game._activate_mana` hands the
+    names `pay` wrote to `costs.mana_amount`, and nothing else binds anything on
+    that path, so any other name would read 0 for ever while the card looked
+    implemented. A split ability is refused outright: its compositions are
+    offered before the cost is paid (`legality._mana_option_indices`), so there
+    is no binding yet to size them by.
+    """
+    names = _bindings_read(amount)
+    if not names:
+        return
+    bound = cost.binding_names() if cost is not None else frozenset()
+    unbound = sorted(names - bound)
+    if unbound:
+        raise DslError(
+            f"{where}.amount: a mana ability's amount reads only what its own cost "
+            f"names with 'as' ({sorted(bound)}); {unbound} is bound by nothing"
+        )
+    if split:
+        raise DslError(
+            f"{where}.amount: a split mana ability offers its combinations before "
+            f"the cost is paid, so its size cannot read what the cost names"
         )
 
 

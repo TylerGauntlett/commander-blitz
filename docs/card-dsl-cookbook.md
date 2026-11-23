@@ -95,9 +95,35 @@ Three constraints, each with a failure behind it:
 - **One `add_mana`, or no amount.** An amount scales one symbol tuple, so a
   card that also summed several `add_mana`s or offered modes would have nothing
   single to scale.
-- **No `x`, `binding` or `loop_value`.** A mana ability is activated inside cost
-  payment: there is no X, no trigger binding and no enclosing loop, so each
-  would read 0 and make a card that silently taps for nothing. Refused at load.
+- **No `x`, `binding` or `loop_value`, except what the cost names.** A mana
+  ability is activated inside cost payment: there is no trigger binding and no
+  enclosing loop, so each would read 0 and make a card that silently taps for
+  nothing. Refused at load. The exceptions are the ability's own cost: an X it
+  takes (`Cost.takes_x`), and a name its cost writes with `as`, which
+  `Game._activate_mana` hands from `costs.pay` to `costs.mana_amount`:
+
+  ```jsonc
+  // Illuminor Szeras: {T}, Sacrifice another creature: Add an amount of {B}
+  // equal to the sacrificed creature's mana value.
+  { "cost": { "tap": true,
+              "sacrifice": { "types": ["Creature"], "exclude_self": true,
+                             "as": "sacrificed" } },
+    "is_mana_ability": true,
+    "effects": [ { "op": "add_mana", "mana": "{B}",
+                   "amount": { "mana_value_of": { "binding": "sacrificed" } } } ] }
+  ```
+
+  The binding is the sacrifice's last-known snapshot (608.2h), so a
+  self-sacrifice reads what the source had: Glittering Stockpile's
+  `counters_on` over `{"binding": "sacrificed"}` counts the stash counters the
+  artifact lost as it moved. Such a cost is never tap-only, so the solver never
+  taps the source; it is offered by hand and stays off the stack (605.3b). The
+  loader refuses a name the cost does not write (`Cost.binding_names`), and a
+  `split` amount reading one, whose combinations are offered before the cost
+  is paid. A chip label is drawn before payment too, so it previews a
+  self-sacrifice's binding from the source as it stands
+  (`costs.cost_binding_preview`). Not a stack ability with the same effects:
+  that would let a player respond to a mana ability.
 - **It is read before the tap.** The payment solver enumerates sources while
   they are still untapped; measuring after tapping would let the offer and the
   payment see two different boards.
@@ -256,6 +282,8 @@ empty filter is a load error rather than an Orrery.
 { "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
   "affects_spells": { "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
   "cast_gains_keywords": ["haste"] }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "affects_spells": { "any_of": [{ "types": ["Artifact"] }, { "colorless": true }] } }
 ```
 
 Bolas's Citadel: *"You may … cast spells from the top of your library. If you
@@ -285,6 +313,19 @@ its own characteristic-defining abilities applied
 creatures is a number in a library too. A noncreature has no power and never
 passes the clause.
 
+**`colorless` and `any_of` are Mystic Forge's** *"You may cast artifact spells
+and colorless spells from the top of your library."* `colorless: true` is zero
+colours (105.2c), which `colors` (a membership test) and `min_colors` (a floor)
+cannot say. The sentence is a union, and every other key is ANDed, so the two
+shapes in one filter would be "colorless artifact"; `any_of` takes two or more
+branches and the card passes if any does. A branch is matched against the
+printed face alone (`LIBRARY_TOP_CAST_BRANCH_KEYS`): `power` and `toughness`,
+which the reader measures on the object at the top level only, and a chosen
+colour or type, which it resolves at the top level only, are load errors inside
+one. The near miss is two `cast_from_library_top` statics, one per shape: the
+lines offered are the same, but the card prints one ability and the DSL writes
+one static per printed ability.
+
 **`cast_gains_keywords` is the rider**, "it gains haste until end of turn". It is
 staged on the spell after `push_spell` in `GameObject.mana_granted_keywords` —
 Arena of Glory's field, carried across the reset onto the battlefield and
@@ -295,7 +336,8 @@ offers both prices (601.2b). Refused on every other static.
 
 `tests/unit/casting/test_cast_from_library_top.py` pins the Citadel;
 `test_cast_from_library_top_filter.py` pins the filter, the CDA, the printed
-price, the rider and its wearing off, and the two lanes side by side.
+price, the rider and its wearing off, and the two lanes side by side;
+`test_cast_from_library_top_colorless.py` pins the union and its branch refusals.
 
 ### `free_cast_permission` — Dracogenesis' standing free cast
 
@@ -2052,7 +2094,7 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes`, `supertypes`, `attached` and `produced`. The first three are matched
+`subtypes`, `supertypes`, `attached`, `produced` and `any_mana_ability`. The first three are matched
 against the tapped permanent's **current** characteristics, so a land Urborg made
 a Swamp counts. `produced` describes the tap rather than the permanent: Forsaken
 Monument's "whenever you tap a permanent **for {C}**" is `{"produced": "{C}"}`,
@@ -2060,7 +2102,11 @@ one mana symbol the tap must have made at least one of. It is asked per mana
 option, so a Battlefield Forge tapped for {C} gets the extra and the same Forge
 tapped for {R} does not, and it fires once per tap however much of that mana
 there was — a Sol Ring makes {C}{C}{C}. It combines with the other keys:
-Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`. An empty
+Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`.
+`produced` also takes `{"chosen_color_of": "self"}`, Caged Sun's "mana **of the
+chosen color**", read off the static's source and met by nothing while no colour
+has been chosen; written without it, Caged Sun would add the chosen colour to an
+Island's {U}. An empty
 `tapped_permanent` is refused; written that way, the Monument would pay out for
 every Forest. `attached` is the odd one out and the only one that names *a* permanent
 rather than a class: it is Wild Growth's "enchanted land", checked against the
@@ -2072,7 +2118,15 @@ mana added. `affects_player` names whose taps count: `"you"` for "whenever you
 tap", `"any"` for Vernal Bloom's "whenever a Forest is tapped for mana, its
 controller adds". The mana always goes to the player who tapped. Each static
 adds its mana separately, tagged with its own source. Only abilities with {T}
-in their cost count (106.12). The loader requires both keys and refuses
+in their cost count (106.12), unless `tapped_permanent` says
+`"any_mana_ability": true`: Caged Sun's "whenever **a land's ability causes you
+to add** mana" also answers a mana ability that does not tap, such as Molten
+Slagheap's remove-counters ability, which is activated by hand. The flag is
+`true` or absent, and refused beside `{"any_color": 1}`, whose colour is asked
+only on a tap. Caged Sun's line is `{"types": ["Land"], "produced":
+{"chosen_color_of": "self"}, "any_mana_ability": true}` with `add_mana`
+`{"chosen_color_of": "self"}`; Gauntlet of Power's "whenever a basic land is
+tapped for mana of the chosen color" drops the flag. The loader requires both keys and refuses
 `affects` and `amount`. "Enchanted land" (Wild Growth, Utopia Sprawl) is
 `{"attached": true}`. `add_mana` also takes `{"chosen_color_of": "self"}` for
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
@@ -6577,6 +6631,10 @@ quality it names is a parameter:
 { "kind": "static", "effect": "block_restriction",
   "affects": { "controller": "you", "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
   "max_blockers": 1 }
+
+// Troll of Khazad-dûm: can't be blocked except by three or more creatures
+{ "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
+  "min_blockers": 3 }
 ```
 
 The forms are evaluated at different moments and none is another with a
@@ -6629,7 +6687,18 @@ no later choice could make that declaration legal again. Two caps on one
 creature are both obeyed, so the least wins. "Can't be blocked by more than one"
 is not `blockers` refusing everyone, which would be "can't be blocked".
 
-A `block_restriction` carrying none of the three fields, or more than one, is
+`min_blockers` is the other count: the fewest creatures that may block the
+attacker if any do, an integer of at least three — "except by two or more" is
+the `menace` keyword, which other cards count, so two is refused at load time.
+`combat.min_blockers` is the one reader of every minimum, menace included, and
+the greatest wins. It is never refused per pair, because the next blocker is
+what makes the block legal: `blocks_valid` withholds "Done blocking" while a
+blocked attacker is under its floor, and `drop_illegal_blocks` retracts the
+block on finishing once no further blocker can be added. A creature compelled
+to block "if able" is excused from an attacker it could not reach the floor
+on, and the CPU's `blockers_for` counts no blockers below it.
+
+A `block_restriction` carrying none of the four fields, or more than one, is
 refused at load time — an evasion ability that evades nothing would load
 perfectly cleanly.
 
@@ -7780,10 +7849,29 @@ than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
 `enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and
 `pay_life_instead`. The permission frees only the card carrying it, at its
 printed price, and each use takes that card out of the graveyard, so no reader
-looks at those keys. It is refused on an instant or sorcery, a form with no
-witness or test behind it. The near miss is `graveyard_cost`
+looks at those keys. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
+
+The same static is an instant's or a sorcery's own permission. The spell is cast
+at its normal timing, X announced as usual, and goes where it normally would
+(608.2n): back to the graveyard, to be cast again, unless the card itself says
+otherwise. "Exile Their Number Is Legion" is the card's `exiles_itself`:
+
+```jsonc
+// Their Number Is Legion -- "Create X tapped 2/2 black Necron Warrior artifact
+//  creature tokens, then you gain life equal to the number of artifacts you
+//  control. Exile Their Number Is Legion. / You may cast this card from your
+//  graveyard."
+"mana_cost": "{X}{B}{B}{B}{B}", "types": ["Sorcery"], "exiles_itself": true,
+"abilities": [
+  { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+    "active_zones": ["graveyard"] } ]
+```
+
+The near miss there is `graveyard_cost` with the printed mana, or `flashback`:
+both are an alternative cost (118.9) and exile the spell whether or not the card
+says so.
 
 #### A graveyard permission priced in life
 
@@ -9744,6 +9832,49 @@ every player-wide static; `affects` and `amount` are refused, and
 `draw_multiplier`/`except_first_in_draw_step` are refused on any other effect.
 A replacement that does something *other* than draw more ("exile the top card of
 your library instead") is not this static.
+
+## "If you would draw a card while your library has no cards in it"
+
+```jsonc
+// Laboratory Maniac; Jace, Wielder of Mysteries
+{ "kind": "static",
+  "text": "If you would draw a card while your library has no cards in it, you win the game instead.",
+  "effect": "replace_empty_draw",
+  "affects_player": "you" }
+
+// Out of the Tombs
+{ "kind": "static",
+  "text": "If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.",
+  "effect": "replace_empty_draw",
+  "affects_player": "you",
+  "effects": [
+    { "op": "if",
+      "condition": { "exists": { "zone": "graveyard", "controller": "you", "types": ["Creature"] } },
+      "then": [ { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+                  "objects": { "zone": "graveyard", "controller": "you", "types": ["Creature"], "count": 1 } } ],
+      "else": [ { "op": "lose_game", "player": "you" } ] } ] }
+```
+
+A **replacement** of a draw that finds no card, read in `replacements._draw_one`
+after `draw_limit` and dredge and before any `replace_draw` doubler, so an
+empty library is replaced on the first of a doubled pair. Without `effects` the
+player wins (`sba.declare_win`); with them the effects run instead, as the
+static's controller with its source, inside the draw -- so they may ask, as
+"return a creature card" does. Either way `draw_cards` is never called, so the
+104.3c "will lose" flag is never set; a trigger could not do this, because an
+empty library fires no `DRAW` and the state-based action would eliminate the
+player first.
+
+**"If you can't"** is an `if` inside the effects, not a key on the static.
+Leaving it out prints a stronger card: an empty graveyard would replace the
+draw with nothing and the player would never deck.
+
+**Two of them on one draw** are the drawing player's choice (616.1), asked as a
+`choose_objects` over the sources with purpose `choose_permanents`; only the
+chosen one applies, because it leaves no draw for the other.
+
+`affects_player` is required; with `effects` it must be `"you"`, since "you" in
+the effects is the static's controller. `affects` and `amount` are refused.
 
 ## Untapping on somebody else's turn
 
@@ -12076,6 +12207,38 @@ written in the card's own `grantable_abilities` and cannot borrow whatever
 happens to be in exile; `imprint_characteristics` reads a card in exile but
 takes only its size and creature types.
 
+### `grant_graveyard_abilities` — abilities lent by the cards in your graveyard
+
+Trazyn the Infinite: "Prismatic Gallery — As long as Trazyn is on the
+battlefield, it has all activated abilities of all artifact cards in your
+graveyard."
+
+```json
+{"kind": "static", "effect": "grant_graveyard_abilities",
+ "affects": {"self_only": true}, "types": ["Artifact"]}
+```
+
+Each permanent `affects` matches has every activated ability that works on the
+battlefield, mana abilities included (`characteristics.lendable_activated`),
+printed on each card in the graveyard of the source's controller whose printed
+card types include one of `types` (`characteristics.graveyard_activated_abilities`).
+A card in a graveyard has its printed characteristics, so the static reads no
+other static's output. It is recomputed on every ask: a card lends from the
+moment it reaches the graveyard and stops when it leaves. The abilities are
+appended after the recipient's own, in graveyard order.
+
+Everything else is `grant_exiled_abilities`'s: the abilities are the
+recipient's (113.6, 602.1), an activation snapshots the ability onto the stack
+item (`StackItem.granted_ability`) so it resolves after the card has left the
+graveyard (608.2), the grant ends as the source leaves the battlefield, it is
+collected off printed faces (`characteristics.ABILITY_STATICS`) so it cannot
+itself be granted, and the loader refuses it without `affects` or `types`, with
+an unknown card type, and with an `ability`, `subtypes` or `keywords`.
+
+**The near misses**: `grant_exiled_abilities` reads only the cards linked to
+its source in exile; the `gain_activated_abilities` op snapshots one card's
+abilities until end of turn.
+
 ### `gain_activated_abilities` — every activated ability of another card
 
 Havengul Lich: "{1}: You may cast target creature card in a graveyard this
@@ -13612,6 +13775,48 @@ ability ("Target … chosen at random"), drawn as the ability goes on the stack.
 is `choose_mode` with `random` over a "you" mode and an "opponent" mode: that is
 not uniform over the seats at a pod.
 
+## "The chosen player" on a static — `choose_player` with `remember`
+
+Sawhorn Nemesis — *"As this creature enters, choose a player. If a source would
+deal damage to the chosen player or a permanent they control, it deals double
+that damage instead."*
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "choose_player", "players": "each_player", "remember": true } ] },
+{ "kind": "static", "effect": "replace_damage", "damage_multiplier": 2,
+  "affects": { "controller": { "chosen_player_of": "self" } },
+  "affects_player": { "chosen_player_of": "self" } }
+```
+
+Triarch Stalker — *"At the beginning of combat on your turn, choose an
+opponent. Creatures attacking the last chosen player have menace."*
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "begin_combat", "controller": "you" },
+  "effects": [ { "op": "choose_player", "players": "each_opponent", "remember": true } ] },
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["menace"],
+  "affects": { "types": ["Creature"], "controller": "any",
+               "attacking_player": { "chosen_player_of": "self" } } }
+```
+
+`remember: true` keeps the chosen seat on the source permanent
+(`GameObject.chosen_player`), the player twin of `choose_color`'s slot; `as` is
+optional beside it. Each later choice overwrites it, which is "the **last**
+chosen player"; a choice with nobody to choose leaves the previous one. The
+slot is cleared when the permanent leaves the battlefield, and until something
+is chosen every reader names nobody. "As this enters" is a `self_enters`
+trigger, `choose_type`'s divergence.
+
+`{"chosen_player_of": "self"}` is read in a static's `affects` as `controller`
+and `attacking_player`, and as `affects_player` on `replace_damage` only — the
+other player-wide statics compare words, so the loader refuses it there. Any
+other dict in those places is refused: a static binds nothing, so a
+`{"binding": …}` would name nobody.
+
+The near miss is `affects_player: "opponent"` (or `attacking_player:
+"opponent"`): at a pod that names every opponent, and can never name you.
+
 ## One choice across two zones — `union`
 
 Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand
@@ -13867,6 +14072,33 @@ two") — `"all"` or a mandatory number would demand picks the cap can forbid �
 and refuses the key beside `destinations`, whose steps it would not cap. The
 near miss is a per-card `mana_value` ceiling in the selector, which lets Ao put
 three 4-drops onto the battlefield.
+
+## "…mill three cards, then return any number of … with total mana value 6 or less" — an untargeted return capped by a sum
+
+Technomancer:
+
+```jsonc
+{ "op": "mill", "amount": 3, "player": "you" },
+{ "op": "return_from_graveyard", "total_mana_value": 6,
+  "objects": { "zone": "graveyard", "controller": "you",
+               "types": ["Artifact", "Creature"], "count": "any" },
+  "destination": "battlefield" }
+```
+
+`total_mana_value` on `return_from_graveyard` is the same cap as
+`look_at_top`'s — a value expression read once as the op resolves, the sum of
+the printed mana values of the cards returned, asked one card at a time from
+what still fits (`ops_cards._pick_within_total_mana_value`) — over a graveyard
+pool instead of a looked-at window. The loader holds it to the same counts
+(`count: "any"` or an `optional` integer) and refuses the key on any op that
+does not read it (`TOTAL_MANA_VALUE_OPS`).
+
+The near miss is the target key of the same name, and it is wrong for a card
+that names no target: a target is chosen as the trigger goes on the stack
+(601.2c), before the mill, so a card the mill bins can never be returned, and
+the return becomes targeted. Write the target key only where the card says
+"target" (Phoenix, Warden of Fire); write this one where the cards are chosen
+as the effect resolves.
 
 ## "…with total power 10 or less" — the same cap, summing power
 

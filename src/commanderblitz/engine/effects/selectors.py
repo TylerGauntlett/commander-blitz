@@ -1489,7 +1489,7 @@ def _attacks_player_itself(
 def attacking_player_matches(
     combat: Any,
     oid: int,
-    who: str,
+    who: str | int,
     controller: int,
     state: Any = None,
     *,
@@ -1526,6 +1526,10 @@ def attacking_player_matches(
     if not _attacks_player_itself(combat, oid, state, or_planeswalkers):
         return False
     defender = combat.attackers[oid]
+    if isinstance(who, int):
+        # One seat by id -- a static's ``{"chosen_player_of": "self"}``,
+        # resolved by its caller against the source's remembered choice.
+        return defender == who
     if who == "you":
         return defender == controller
     if who == "opponent":
