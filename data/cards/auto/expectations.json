@@ -17786,6 +17786,20 @@
   "old_growth_dryads": {
     "zone": "battlefield"
   },
+  "old_one_eye": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 4,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "tyranid_5_5_g"
+    },
+    "zone": "battlefield"
+  },
   "olivia_opulent_outlaw": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19441,6 +19455,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "purestrain_genestealer": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "putrefy": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -19913,6 +19935,20 @@
     "zone": "battlefield"
   },
   "raul_trouble_shooter": {
+    "zone": "battlefield"
+  },
+  "ravener": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "ravenform": {
@@ -21618,6 +21654,10 @@
     "life": {
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "screamer_killer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "screams_from_within": {

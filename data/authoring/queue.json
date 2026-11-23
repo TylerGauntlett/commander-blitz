@@ -192022,12 +192022,12 @@
     },
     "Old One Eye": {
       "edhrec_rank": 6722,
-      "gate": "template",
+      "gate": null,
       "name": "Old One Eye",
-      "reason": "no template for: Other creatures you control have trample",
+      "reason": "",
       "scryfall_id": "214a778a-61d5-4bbe-b0e1-e9eb542f441d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Old Rutstein": {
@@ -210142,12 +210142,12 @@
     },
     "Purestrain Genestealer": {
       "edhrec_rank": 11316,
-      "gate": "template",
+      "gate": null,
       "name": "Purestrain Genestealer",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4f15be08-085a-464a-aad5-e4305279e04a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Purgatory": {
@@ -216122,12 +216122,12 @@
     },
     "Ravener": {
       "edhrec_rank": 9984,
-      "gate": "template",
+      "gate": null,
       "name": "Ravener",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "5d041e47-fdc3-4e64-970d-d757a9330194",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenform": {
@@ -236602,12 +236602,12 @@
     },
     "Screamer-Killer": {
       "edhrec_rank": 9540,
-      "gate": "template",
+      "gate": null,
       "name": "Screamer-Killer",
-      "reason": "no template for: Bio-Plasmic Scream — Whenever you cast a creature spell with mana value 5 or greater, this",
+      "reason": "",
       "scryfall_id": "078b560f-9b86-401a-afff-21ddb1ebed61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Screaming Fury": {
