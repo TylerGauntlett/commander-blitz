@@ -432,12 +432,12 @@
     },
     "Aberrant": {
       "edhrec_rank": 5695,
-      "gate": "template",
+      "gate": null,
       "name": "Aberrant",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "49dfee68-c242-4579-94b1-c23238f8c87d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aberrant Manawurm": {
@@ -1622,12 +1622,12 @@
     },
     "Acolyte Hybrid": {
       "edhrec_rank": 14705,
-      "gate": "template",
+      "gate": null,
       "name": "Acolyte Hybrid",
-      "reason": "no template for: Heavy Rock Cutter — Whenever this creature attacks, destroy up to one target artifact. If ",
+      "reason": "",
       "scryfall_id": "b229697e-b6ff-450b-8020-45c454da9b3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Acolyte of Aclazotz": {
@@ -15562,12 +15562,12 @@
     },
     "Atalan Jackal": {
       "edhrec_rank": 5129,
-      "gate": "template",
+      "gate": null,
       "name": "Atalan Jackal",
-      "reason": "no template for: Skilled Outrider — Whenever this creature deals combat damage to a player, you may search ",
+      "reason": "",
       "scryfall_id": "3fc069f7-2445-44ff-bcff-5b0741841690",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atalya, Samite Master": {
@@ -41712,12 +41712,12 @@
     },
     "Cave of Temptation": {
       "edhrec_rank": 9204,
-      "gate": "template",
+      "gate": null,
       "name": "Cave of Temptation",
-      "reason": "no template for: {4}, {T}, Sacrifice this land: Put two +1/+1 counters on target creature. Activate only as",
+      "reason": "",
       "scryfall_id": "4c468c5f-f2c6-473a-8353-a762ec3ab467",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cave of the Frost Dragon": {
@@ -63622,12 +63622,12 @@
     },
     "Death's Presence": {
       "edhrec_rank": 4749,
-      "gate": "template",
+      "gate": null,
       "name": "Death's Presence",
-      "reason": "no template for: Whenever a creature you control dies, put X +1/+1 counters on target creature you control,",
+      "reason": "",
       "scryfall_id": "bec96ee5-91c3-4c97-9af2-51cc576035c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death's Shadow": {
@@ -63942,12 +63942,12 @@
     },
     "Deathleaper, Terror Weapon": {
       "edhrec_rank": 11245,
-      "gate": "template",
+      "gate": null,
       "name": "Deathleaper, Terror Weapon",
-      "reason": "no template for: Flesh Hooks — Creatures you control that entered this turn have double strike",
+      "reason": "",
       "scryfall_id": "651939e8-5de0-4a6b-b318-a3a25ee50fc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathless Ancient": {
@@ -88082,12 +88082,12 @@
     },
     "Exocrine": {
       "edhrec_rank": 7006,
-      "gate": "template",
+      "gate": null,
       "name": "Exocrine",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "5b8c1303-6829-4c82-96de-a67bc0d72e42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exorcise": {
@@ -105182,12 +105182,12 @@
     },
     "Gargoyle Flock": {
       "edhrec_rank": 15836,
-      "gate": "template",
+      "gate": null,
       "name": "Gargoyle Flock",
-      "reason": "no template for: Skyswarm — At the beginning of your end step, if a creature entered the battlefield under ",
+      "reason": "",
       "scryfall_id": "0b8c7302-a5ae-484e-8ba5-397ffeb3b19c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gargoyle Sentinel": {
@@ -106802,12 +106802,12 @@
     },
     "Genestealer Locus": {
       "edhrec_rank": 19788,
-      "gate": "template",
+      "gate": null,
       "name": "Genestealer Locus",
-      "reason": "no template for: Neurotraumal Rod — Whenever a creature attacks you, it gets -1/-0 until end of turn",
+      "reason": "",
       "scryfall_id": "4cdc3172-6df0-48a8-85d6-c4b727202f83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genestealer Patriarch": {
@@ -114942,12 +114942,12 @@
     },
     "Goliath Truck": {
       "edhrec_rank": 13464,
-      "gate": "template",
+      "gate": null,
       "name": "Goliath Truck",
-      "reason": "no template for: Stowage — Whenever this Vehicle attacks, put two +1/+1 counters on another target attackin",
+      "reason": "",
       "scryfall_id": "347a5d65-ef0f-4859-b433-807af500f52d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goliath, Mass Manipulator": {
@@ -123092,12 +123092,12 @@
     },
     "Haruspex": {
       "edhrec_rank": 11768,
-      "gate": "template",
+      "gate": null,
       "name": "Haruspex",
-      "reason": "no template for: Rapacious Hunger — Whenever another creature dies, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "7127218e-420a-4db5-b812-340f2558aab3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harvest Gwyllion": {
@@ -129892,12 +129892,12 @@
     },
     "Hormagaunt Horde": {
       "edhrec_rank": 9629,
-      "gate": "template",
+      "gate": null,
       "name": "Hormagaunt Horde",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "0666bb2e-bd40-4487-953f-8eece37ad0df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horn of Deafening": {
@@ -157512,12 +157512,12 @@
     },
     "Lictor": {
       "edhrec_rank": 18098,
-      "gate": "template",
+      "gate": null,
       "name": "Lictor",
-      "reason": "no template for: Pheromone Trail — When this creature enters, if a creature entered the battlefield under a",
+      "reason": "",
       "scryfall_id": "3c4d8f36-461f-48a6-a4e4-9ddfb388de19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lidless Gaze": {
@@ -165792,12 +165792,12 @@
     },
     "Malanthrope": {
       "edhrec_rank": 11648,
-      "gate": "template",
+      "gate": null,
       "name": "Malanthrope",
-      "reason": "no template for: Scavenge the Dead — When this creature enters, exile target player's graveyard. Put a +1/+",
+      "reason": "",
       "scryfall_id": "28d4eb51-a6ec-488a-a79a-ec4676d7af52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malboro": {
@@ -169752,12 +169752,12 @@
     },
     "Mawloc": {
       "edhrec_rank": 7114,
-      "gate": "template",
+      "gate": null,
       "name": "Mawloc",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "bbec97ff-bb84-4496-9e09-d4fc1570c516",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maximize Altitude": {
@@ -185932,12 +185932,12 @@
     },
     "New Horizons": {
       "edhrec_rank": 6987,
-      "gate": "template",
+      "gate": null,
       "name": "New Horizons",
-      "reason": "no template for: When this Aura enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "86b3923c-c35c-4eb2-9dd3-b15c13778ecf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "New Master of Arms": {
@@ -192022,12 +192022,12 @@
     },
     "Old One Eye": {
       "edhrec_rank": 6722,
-      "gate": "template",
+      "gate": null,
       "name": "Old One Eye",
-      "reason": "no template for: Other creatures you control have trample",
+      "reason": "",
       "scryfall_id": "214a778a-61d5-4bbe-b0e1-e9eb542f441d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Old Rutstein": {
@@ -195972,12 +195972,12 @@
     },
     "Overgrowth": {
       "edhrec_rank": 3021,
-      "gate": "template",
+      "gate": null,
       "name": "Overgrowth",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional {G}{G}",
+      "reason": "",
       "scryfall_id": "0bf13b7d-736b-4bf9-8b30-6e182986ddbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overgrowth Elemental": {
@@ -210142,12 +210142,12 @@
     },
     "Purestrain Genestealer": {
       "edhrec_rank": 11316,
-      "gate": "template",
+      "gate": null,
       "name": "Purestrain Genestealer",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "4f15be08-085a-464a-aad5-e4305279e04a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Purgatory": {
@@ -216122,12 +216122,12 @@
     },
     "Ravener": {
       "edhrec_rank": 9984,
-      "gate": "template",
+      "gate": null,
       "name": "Ravener",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "5d041e47-fdc3-4e64-970d-d757a9330194",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenform": {
@@ -236602,12 +236602,12 @@
     },
     "Screamer-Killer": {
       "edhrec_rank": 9540,
-      "gate": "template",
+      "gate": null,
       "name": "Screamer-Killer",
-      "reason": "no template for: Bio-Plasmic Scream — Whenever you cast a creature spell with mana value 5 or greater, this",
+      "reason": "",
       "scryfall_id": "078b560f-9b86-401a-afff-21ddb1ebed61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Screaming Fury": {
@@ -241932,12 +241932,12 @@
     },
     "Shadow in the Warp": {
       "edhrec_rank": 3388,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow in the Warp",
-      "reason": "no template for: The first creature spell you cast each turn costs {2} less to cast",
+      "reason": "",
       "scryfall_id": "bd60cd99-1511-4903-b678-ff5a1853a742",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow of Doubt": {
@@ -261032,12 +261032,12 @@
     },
     "Sporocyst": {
       "edhrec_rank": 4751,
-      "gate": "template",
+      "gate": null,
       "name": "Sporocyst",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "72101d5f-f3a4-4490-a6f5-c320f3aeb242",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sporogenesis": {
@@ -278192,12 +278192,12 @@
     },
     "Termagant Swarm": {
       "edhrec_rank": 6564,
-      "gate": "template",
+      "gate": null,
       "name": "Termagant Swarm",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "31079fcb-49bf-41a2-a9b4-07c96f93399d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Terminal Agony": {
@@ -278712,12 +278712,12 @@
     },
     "Tervigon": {
       "edhrec_rank": 5716,
-      "gate": "template",
+      "gate": null,
       "name": "Tervigon",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "50909e0e-0bed-423a-beb4-a24b14e95edc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tesak, Judith's Hellhound": {
@@ -280842,12 +280842,12 @@
     },
     "The First Tyrannic War": {
       "edhrec_rank": 10937,
-      "gate": "template",
+      "gate": null,
       "name": "The First Tyrannic War",
-      "reason": "no template for: I — You may put a creature card from your hand onto the battlefield. If its mana cost cont",
+      "reason": "",
       "scryfall_id": "64c814f3-8d4e-4c64-ad00-fd8b836b48b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Five Doctors": {
@@ -282082,12 +282082,12 @@
     },
     "The Red Terror": {
       "edhrec_rank": 7544,
-      "gate": "template",
+      "gate": null,
       "name": "The Red Terror",
-      "reason": "no template for: Advanced Species — Whenever a red source you control deals damage to one or more permanent",
+      "reason": "",
       "scryfall_id": "1d16f75d-988d-4417-9a5e-549b785f9dc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Regalia": {
@@ -282472,12 +282472,12 @@
     },
     "The Swarmlord": {
       "edhrec_rank": 13188,
-      "gate": "template",
+      "gate": null,
       "name": "The Swarmlord",
-      "reason": "no template for: Rapid Regeneration — enters with two +1/+1 counters on it for each time you've cast your c",
+      "reason": "",
       "scryfall_id": "1a87e989-0756-4db8-b7f7-b39d5a5fd4e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Swarmweaver": {
@@ -290522,12 +290522,12 @@
     },
     "Toxicrene": {
       "edhrec_rank": 13357,
-      "gate": "template",
+      "gate": null,
       "name": "Toxicrene",
-      "reason": "no template for: Hypertoxic Miasma — All lands have \"{T}: Add one mana of any color\" and lose all other abi",
+      "reason": "",
       "scryfall_id": "72e05f1d-fdd5-44d3-ab8e-b31d61c6bd76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Toxin Analysis": {
@@ -293802,12 +293802,12 @@
     },
     "Trygon Prime": {
       "edhrec_rank": 11702,
-      "gate": "template",
+      "gate": null,
       "name": "Trygon Prime",
-      "reason": "no template for: Subterranean Assault — Whenever this creature attacks, put a +1/+1 counter on it and a +1/",
+      "reason": "",
       "scryfall_id": "450509b6-d496-40ee-b3bc-0b4accb9f7ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trynn, Champion of Freedom": {
@@ -295382,32 +295382,32 @@
     },
     "Tyranid Harridan": {
       "edhrec_rank": 14789,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Harridan",
-      "reason": "no template for: Flying, ward {4}",
+      "reason": "",
       "scryfall_id": "dff00a51-977e-43ba-a4bf-b251e62f1100",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyranid Invasion": {
       "edhrec_rank": 17244,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Invasion",
-      "reason": "no template for: Create a number of 3/3 green Tyranid Warrior creature tokens with trample equal to the num",
+      "reason": "",
       "scryfall_id": "7082df45-6c2f-4a92-8c73-a582e9ea1948",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyranid Prime": {
       "edhrec_rank": 9831,
-      "gate": "template",
+      "gate": null,
       "name": "Tyranid Prime",
-      "reason": "no template for: Evolve",
+      "reason": "",
       "scryfall_id": "3d79ca81-3841-4d32-a981-ec17a4c8da05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrannical Pitlord": {
@@ -295432,12 +295432,12 @@
     },
     "Tyrant Guard": {
       "edhrec_rank": 5689,
-      "gate": "template",
+      "gate": null,
       "name": "Tyrant Guard",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "4e785abe-ae43-4e6b-9d6d-56e39ea348ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrant of Discord": {
@@ -316502,12 +316502,12 @@
     },
     "Winged Hive Tyrant": {
       "edhrec_rank": 6302,
-      "gate": "template",
+      "gate": null,
       "name": "Winged Hive Tyrant",
-      "reason": "no template for: The Will of the Hive Mind — Other creatures you control with counters on them have flying ",
+      "reason": "",
       "scryfall_id": "2f21f7d3-377e-4436-885b-682ee42e362f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winged Portent": {
@@ -322912,12 +322912,12 @@
     },
     "Zoanthrope": {
       "edhrec_rank": 6752,
-      "gate": "template",
+      "gate": null,
       "name": "Zoanthrope",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "3540411d-8611-4c74-9deb-e13dae25bbd6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zodiac Dog": {

@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [distributed-counters-on-triggers, draw-replacement-effects]
 status: proposed
 rank: 84
 ---

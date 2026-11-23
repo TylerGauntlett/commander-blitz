@@ -1,0 +1,18 @@
+{
+  "card_id": "genestealer_patriarch",
+  "name": "Genestealer Patriarch",
+  "oracle_text": "Genestealer's Kiss — Whenever this creature attacks, put an infection counter on target creature defending player controls.\nChildren of the Cult — Whenever a creature with an infection counter on it dies, you create a token that's a copy of that creature, except it's a Tyranid in addition to its other types.",
+  "blocked_sentences": [
+    "Children of the Cult — Whenever a creature with an infection counter on it dies, you create a token that's a copy of that creature, except it's a Tyranid in addition to its other types."
+  ],
+  "needs": [
+    {
+      "capability": "copy_from_last_known_information",
+      "kind": "op",
+      "what": "copy_permanent able to copy a creature that has died using its last known copiable values (608.2h / 707.2), read from the dies event's snapshot rather than from a live object -- so that a dying TOKEN (which ceases to exist as a state-based action before the trigger resolves) is still copied, and a nontoken card that has left the graveyard in response is still copied. E.g. `objects: {\"binding\": \"subject\"}` falling back to the dies snapshot (def_id plus the dead permanent's own copy_overrides / copying target) when the oid is no longer in state.objects or no longer in the graveyard",
+      "why_existing_wont_do": "copy_permanent resolves its pool from live objects and skips any oid missing from state.objects (`if source is None: continue`); sba._tokens_and_attachments pops a token from state.objects as soon as it is off the battlefield, so the trigger finds nothing to copy and makes no token. The infection counters go on the OPPONENT's creatures, which are often tokens, so this is the common case, not an edge. The only LKI copy fallback in op_copy_permanent is for `self_only` (the source itself, 608.2h for Jace). Nightmare Shepherd's pattern (exile the subject, copy from exile) works only because it is restricted to nontoken creatures and owns the move. The rest of the line is expressible: a `creature_dies` trigger with `controller: \"any\"` and condition `{\"cmp\": \">\", \"left\": {\"counters_had\": \"infection\"}, \"right\": {\"const\": 0}}` (as Slurrk does), and `copy_permanent` with `controller: \"you\"` and `except_: {\"add_subtypes\": [\"Tyranid\"]}`. The Genestealer's Kiss line (attacks trigger, add_counters infection on a target creature defending player controls) is not blocked."
+    }
+  ],
+  "closest_existing": ["copy_permanent", "counters_had", "snapshot"],
+  "confidence": "high"
+}

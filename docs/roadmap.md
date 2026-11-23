@@ -92,7 +92,7 @@ each heading; this table is generated from them.
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
 | [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
 | [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
-| [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
 | [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) | L | high | nothing | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | nothing | 0 |
 | [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | nothing | 0 |
@@ -128,6 +128,7 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
+| [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) | M | medium | nothing | 1 |
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
@@ -141,6 +142,7 @@ each heading; this table is generated from them.
 | [Archidekt import](#archidekt-import) | S | low | nothing | 0 |
 | [Sound](#sound) | S | low | nothing | 0 |
 | [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) | S | low | nothing | 0 |
+| [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) | M | low | nothing | 1 |
 | [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) | L | low | nothing | 7 |
 
 ## What to do next
@@ -153,41 +155,41 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-3. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-4. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-5. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-6. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-7. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-8. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-9. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-10. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-11. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-12. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-13. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-14. [The Ring tempts you](#the-ring-tempts-you) — M, high
-15. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-16. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-17. [Difficulty](#difficulty) — S, medium
-18. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-19. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-20. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-21. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-22. [Why a press is refused](#why-a-press-is-refused) — S, medium
-23. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-24. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-25. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-26. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-27. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-28. [Secret choices](#secret-choices) — M, medium
-29. [Experience counters](#experience-counters) — M, medium
-30. [Outcomes as data](#outcomes-as-data) — M, medium
-31. [Rad counters](#rad-counters) — M, medium
-32. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-33. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-34. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-35. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-36. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+2. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+3. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+4. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+5. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+6. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+7. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+8. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+9. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+10. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+11. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+12. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+13. [The Ring tempts you](#the-ring-tempts-you) — M, high
+14. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+15. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+16. [Difficulty](#difficulty) — S, medium
+17. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+18. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+19. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+20. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+21. [Why a press is refused](#why-a-press-is-refused) — S, medium
+22. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+23. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+24. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+25. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+26. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+27. [Secret choices](#secret-choices) — M, medium
+28. [Experience counters](#experience-counters) — M, medium
+29. [Outcomes as data](#outcomes-as-data) — M, medium
+30. [Rad counters](#rad-counters) — M, medium
+31. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+32. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+33. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+34. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+35. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+36. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
 37. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
 38. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
 39. [Replays and sharing](#replays-and-sharing) — M, medium
@@ -200,7 +202,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 46. [Archidekt import](#archidekt-import) — S, low
 47. [Sound](#sound) — S, low
 48. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-49. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+49. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+50. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -245,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
 - [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
 - [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
+- [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1453,6 +1457,59 @@ pass.
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
 
+### Distributing counters from a triggered ability
+
+Effort **M** · Impact **medium**, Broodlord in the Tyranid Swarm precon and every 'when this enters, distribute N counters' creature wait on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Distributing counters (601.2d, 602.2b) works only on an activated ability.
+`cards.loader`'s `_check_distribution_homes` accepts `distribute_counters` as
+a top-level effect of an activated ability and refuses it on a spell, a
+trigger and nested in a branch; `Game._activate` asks the division through
+`Game._ask_distribution` and stores the shares on the stack item's
+`bindings["distribution"]`. `_validate_effect` in `cards/loader/effects.py`
+also refuses a computed `amount`. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "`distribute_counters` on a spell or a triggered ability" as not
+implemented. [Distributing counters from a spell](distributed-counters-on-spells.md)
+plans the spell half and leaves the trigger half out.
+
+A triggered ability's modes and targets are chosen as it is put on the stack,
+in `stack.push_triggered_ability` (603.3d), which is also where its division
+has to be announced. Nothing asks it there.
+
+So Broodlord ("When this creature enters, distribute X +1/+1 counters among
+any number of other target creatures you control"), the card in the Tyranid
+Swarm precon that found it, has no expression; its Ravenous half is already
+expressible. Its gap record is `data/authoring/gaps/broodlord.json`
+(capability `distribute_counters_trigger`).
+
+#### The change
+
+1. `_check_distribution_homes` accepts `distribute_counters` as a top-level
+   effect of a triggered ability, keeping the refusal inside branches.
+2. `stack.push_triggered_ability` asks the division after the targets, by the
+   same `_ask_distribution` walk the activation uses, and stores the shares on
+   the stack item's `bindings["distribution"]`; the op's resolution side is
+   unchanged, and a target gone by resolution loses its share (608.2b).
+3. The `amount` may be a value the trigger can read when it is put on the
+   stack, `{"binding": "x"}` for a permanent's cast X among them; each target
+   still gets at least one counter, so the targets declared are capped by the
+   amount.
+4. Harvest Broodlord with `/author-cards`, then one wave over the catalog's
+   other "distribute … counters" triggers.
+
+It does not touch the spell half (`distributed-counters-on-spells`) or
+divided damage.
+
+#### Gate
+
+A unit test under `tests/unit/counters/` for a distributing trigger: the
+division is asked as the trigger goes on the stack and not on resolution, every
+target gets at least one counter, a target that leaves before resolution
+loses its share, and an X of zero declares no targets. Broodlord passes the
+six authoring gates in `tests/cards`.
+
 ### Encore, granted to cards in a graveyard
 
 Effort **M** · Impact **medium**, every card that hands encore to the creature cards in your graveyard waits on it, Wire Surgeons in the Urza's Iron Alliance precon among them · Depends on nothing · Awaiting decisions.
@@ -1693,6 +1750,55 @@ oracle text.
 - **Scope.** The template fix and the cards it mis-authored only, or an audit
   of every template keyword that can appear inside a target phrase?
   Recommended: this fix and its cards only; an audit is its own item.
+
+### A draw replaced by something other than more draws
+
+Effort **M** · Impact **low**, Abundance in the Tyranid Swarm precon and every 'if you would draw a card, instead…' card wait on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Every draw goes through `replacements._draw_one`, which offers the draw's
+replacements one at a time (616.1): the Narset cap, dredge
+(`replacements._dredge`), the empty-library `replace_empty_draw` static
+(`player_statics.empty_draw_replacements`, which may carry `effects` run inside
+the draw, Out of the Tombs), and the `replace_draw` static
+(`player_statics.draw_replacements`), which reads only a `draw_multiplier` and
+turns one draw into that many. Nothing replaces a draw from a non-empty
+library with effects of its own. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists it under "A general replacement system": "replacements that do
+something other than draw more" are engine work, not a card key.
+
+So Abundance ("If you would draw a card, you may instead choose land or
+nonland and reveal cards from the top of your library until you reveal a card
+of the chosen kind…"), the card in the Tyranid Swarm precon that found it, has
+no expression. Its gap record is `data/authoring/gaps/abundance.json`
+(capability `draw_replacement_effects`).
+
+#### The change
+
+1. `replace_draw` accepts `effects` in place of `draw_multiplier`, with an
+   optional `may` ("you may instead"): the effects run inside the draw, the way
+   `_replace_empty_draw` runs Out of the Tombs', and the draw does not happen,
+   so `cards_drawn_this_turn` is not bumped and miracle is not offered.
+2. `_draw_one` offers an effects replacement in the same pass as dredge, before
+   the doublers, so the affected player's 616.1 choice between them is asked
+   over the sources (the `ask_objects` pattern `_replace_empty_draw` uses); a
+   declined `may` falls through to the next replacement and then the draw.
+3. The loader refuses `effects` beside `draw_multiplier` on one static.
+4. Harvest Abundance with `/author-cards`, then one wave over the catalog's
+   other "If you would draw a card, … instead" cards the change reaches.
+
+It does not build the general replacement system (616) the rules-coverage
+line names: no event object and no "replaced by" chain, only one more named
+hook on the draw.
+
+#### Gate
+
+A unit test under `tests/unit/players/` for the replaced draw: the effects
+run and no card is drawn, a declined `may` draws normally, the replacement
+applies once per draw (614.5) when two cards are drawn, and the choice between
+it and dredge is offered. Abundance passes the six authoring gates in
+`tests/cards`.
 
 ## Decks
 
@@ -4111,7 +4217,7 @@ whole-game test able to draw the deck.
 
 ### Tyranid Swarm (Warhammer 40,000 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws).
 
 #### Today
 

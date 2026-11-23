@@ -1,0 +1,18 @@
+{
+  "card_id": "ghyrson_starn_kelermorph",
+  "name": "Ghyrson Starn, Kelermorph",
+  "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nThree Autostubs — Whenever another source you control deals exactly 1 damage to a permanent or player, Ghyrson Starn deals 2 damage to that permanent or player.",
+  "blocked_sentences": [
+    "Three Autostubs — Whenever another source you control deals exactly 1 damage to a permanent or player, Ghyrson Starn deals 2 damage to that permanent or player."
+  ],
+  "needs": [
+    {
+      "capability": "per_recipient_damage_trigger",
+      "kind": "trigger_event",
+      "what": "a damage trigger that fires once per recipient (permanent or player) of damage dealt by any source matching a dealer filter (\"another source you control\", spells and abilities included), exposing that recipient's own share of the damage as a binding (to compare == 1) and the recipient itself as a binding a damage op can point at (\"that permanent or player\")",
+      "why_existing_wont_do": "`deals_damage` has the dealer as subject but folds every recipient of one damage event into a single firing (`_joins_damage_dealt` sums `amount`), so a 1-damage share beside a larger one reads as the total and no binding names the recipient; `dealt_damage` fires per victim but only for permanents, and its `damaged_by` filter takes only `self` or an oid, so it cannot say \"another source you control\"; `deals_damage_to_player` covers only the player half, and splitting the one printed sentence across two triggers is not a faithful single ability"
+    }
+  ],
+  "closest_existing": ["deals_damage", "dealt_damage", "deals_damage_to_player"],
+  "confidence": "high"
+}

@@ -3865,3 +3865,74 @@ class TestTheColorlessInsectIsAFlyingArtifact:
         black = pool.get("insect_1_1_b_flying")
         assert sorted(black.colors) == ["B"]
         assert "Artifact" not in black.types
+
+
+class TestTheTyranidGargoyleIsABlueFlier:
+    """Gargoyle Flock and Tyranid Harridan: *"create a **1/1 blue Tyranid
+    Gargoyle** creature token **with flying**."*
+
+    The near miss is `bird_1_1_u_flying`: the same blue flying 1/1, but a Bird.
+    """
+
+    def test_it_is_a_one_one_blue_flying_tyranid_gargoyle(self, pool):
+        token = pool.get("tyranid_gargoyle_1_1_u_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["U"]
+        assert sorted(token.subtypes) == ["Gargoyle", "Tyranid"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_bird_is_still_a_separate_token(self, pool):
+        assert list(pool.get("bird_1_1_u_flying").subtypes) == ["Bird"]
+
+
+class TestTheTyranidWarriorHasTrample:
+    """Lictor and Tyranid Invasion: *"create a **3/3 green Tyranid Warrior**
+    creature token **with trample**."*
+
+    The near miss is `beast_3_3_g`: a green 3/3 with no trample and no Tyranid.
+    """
+
+    def test_it_is_a_three_three_green_tyranid_warrior_with_trample(self, pool):
+        token = pool.get("tyranid_warrior_3_3_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Tyranid", "Warrior"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_beast_is_still_a_separate_token(self, pool):
+        beast = pool.get("beast_3_3_g")
+        assert "Tyranid" not in beast.subtypes
+        assert not beast.keywords
+
+
+class TestThePlainTyranidsAreGreenVanillas:
+    """Old One Eye: *"create a **5/5 green Tyranid** creature token"*;
+    Termagant Swarm and Tervigon: *"**1/1 green Tyranid** creature tokens"*.
+
+    The near misses are `wurm_5_5_g` and `saproling_1_1_g`: the same green
+    bodies with another creature type.
+    """
+
+    def test_the_five_five_is_a_green_tyranid(self, pool):
+        token = pool.get("tyranid_5_5_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (5, 5)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Tyranid"]
+        assert not token.keywords
+
+    def test_the_one_one_is_a_green_tyranid(self, pool):
+        token = pool.get("tyranid_1_1_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Tyranid"]
+        assert not token.keywords
+
+    def test_the_wurm_and_saproling_are_still_separate_tokens(self, pool):
+        assert list(pool.get("wurm_5_5_g").subtypes) == ["Wurm"]
+        assert list(pool.get("saproling_1_1_g").subtypes) == ["Saproling"]

@@ -1,0 +1,18 @@
+{
+  "card_id": "abundance",
+  "name": "Abundance",
+  "oracle_text": "If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in any order.",
+  "blocked_sentences": [
+    "If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in any order."
+  ],
+  "needs": [
+    {
+      "capability": "draw_replacement_effects",
+      "kind": "replacement",
+      "what": "an optional per-draw replacement static (affects_player: you) that, instead of each single draw, runs an effect list -- here a choose_mode of two modes (land / nonland), each a reveal_until with selector types:[Land] or not_types:[Land], destination hand, rest_to_bottom -- with the controller choosing on each draw whether to apply it",
+      "why_existing_wont_do": "replace_draw only accepts draw_multiplier (>= 2), except_first_in_draw_step and condition; the loader rejects anything else, and there is no 'may' or 'effects' on it. replace_empty_draw takes effects but only fires when the library is empty. reveal_until can express the replacement's body, but nothing lets it stand in for a draw"
+    }
+  ],
+  "closest_existing": ["replace_draw", "replace_empty_draw", "reveal_until"],
+  "confidence": "high"
+}
