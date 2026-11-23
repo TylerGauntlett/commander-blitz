@@ -432,12 +432,12 @@
     },
     "Aberrant": {
       "edhrec_rank": 5695,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Aberrant",
-      "reason": "your battlefield is 31, expected 33",
+      "reason": "",
       "scryfall_id": "49dfee68-c242-4579-94b1-c23238f8c87d",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aberrant Manawurm": {
@@ -41712,12 +41712,12 @@
     },
     "Cave of Temptation": {
       "edhrec_rank": 9204,
-      "gate": "template",
+      "gate": null,
       "name": "Cave of Temptation",
-      "reason": "no template for: {4}, {T}, Sacrifice this land: Put two +1/+1 counters on target creature. Activate only as",
+      "reason": "",
       "scryfall_id": "4c468c5f-f2c6-473a-8353-a762ec3ab467",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cave of the Frost Dragon": {
@@ -63622,12 +63622,12 @@
     },
     "Death's Presence": {
       "edhrec_rank": 4749,
-      "gate": "template",
+      "gate": null,
       "name": "Death's Presence",
-      "reason": "no template for: Whenever a creature you control dies, put X +1/+1 counters on target creature you control,",
+      "reason": "",
       "scryfall_id": "bec96ee5-91c3-4c97-9af2-51cc576035c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Death's Shadow": {
@@ -63942,12 +63942,12 @@
     },
     "Deathleaper, Terror Weapon": {
       "edhrec_rank": 11245,
-      "gate": "template",
+      "gate": null,
       "name": "Deathleaper, Terror Weapon",
-      "reason": "no template for: Flesh Hooks — Creatures you control that entered this turn have double strike",
+      "reason": "",
       "scryfall_id": "651939e8-5de0-4a6b-b318-a3a25ee50fc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathless Ancient": {
@@ -88082,12 +88082,12 @@
     },
     "Exocrine": {
       "edhrec_rank": 7006,
-      "gate": "template",
+      "gate": null,
       "name": "Exocrine",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "5b8c1303-6829-4c82-96de-a67bc0d72e42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exorcise": {
@@ -105182,12 +105182,12 @@
     },
     "Gargoyle Flock": {
       "edhrec_rank": 15836,
-      "gate": "template",
+      "gate": null,
       "name": "Gargoyle Flock",
-      "reason": "no template for: Skyswarm — At the beginning of your end step, if a creature entered the battlefield under ",
+      "reason": "",
       "scryfall_id": "0b8c7302-a5ae-484e-8ba5-397ffeb3b19c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gargoyle Sentinel": {
@@ -106802,12 +106802,12 @@
     },
     "Genestealer Locus": {
       "edhrec_rank": 19788,
-      "gate": "template",
+      "gate": null,
       "name": "Genestealer Locus",
-      "reason": "no template for: Neurotraumal Rod — Whenever a creature attacks you, it gets -1/-0 until end of turn",
+      "reason": "",
       "scryfall_id": "4cdc3172-6df0-48a8-85d6-c4b727202f83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genestealer Patriarch": {

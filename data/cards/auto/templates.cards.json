@@ -405,6 +405,101 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ravenous",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "x"
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": {
+                  "binding": "event_player"
+                },
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Heavy Power Hammer — Whenever this creature deals combat damage to a player, destroy target artifact or enchantment that player controls.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "aberrant",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{X}{1}{G}",
+      "name": "Aberrant",
+      "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nTrample\nHeavy Power Hammer — Whenever this creature deals combat damage to a player, destroy target artifact or enchantment that player controls.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Tyranid",
+        "Mutant"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -47291,6 +47386,137 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{C}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{1}, {T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, {T}, Sacrifice this land: Put two +1/+1 counters on target creature. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cave_of_temptation",
+      "name": "Cave of Temptation",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\n{4}, {T}, Sacrifice this land: Put two +1/+1 counters on target creature. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{W}",
               "op": "add_mana"
             }
@@ -72105,6 +72331,58 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control dies, put X +1/+1 counters on target creature you control, where X is the power of the creature that died.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "death_s_presence",
+      "mana_cost": "{5}{G}",
+      "name": "Death's Presence",
+      "oracle_text": "Whenever a creature you control dies, put X +1/+1 counters on target creature you control, where X is the power of the creature that died.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -72529,6 +72807,53 @@
         "Dinosaur"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "entered_this_turn": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "Flesh Hooks — Creatures you control that entered this turn have double strike."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "deathleaper_terror_weapon",
+      "keywords": [
+        "flash",
+        "haste"
+      ],
+      "mana_cost": "{2}{R}{G}",
+      "name": "Deathleaper, Terror Weapon",
+      "oracle_text": "Flash\nHaste\nFlesh Hooks — Creatures you control that entered this turn have double strike.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -97372,6 +97697,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ravenous",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "x"
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Bio-plasmic Barrage — When this creature enters, it deals X damage to each player and each other creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "exocrine",
+      "mana_cost": "{X}{2}{R}",
+      "name": "Exocrine",
+      "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nBio-plasmic Barrage — When this creature enters, it deals X damage to each player and each other creature.",
+      "power": 2,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -114261,6 +114670,66 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "tyranid_gargoyle_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Skyswarm — At the beginning of your end step, if a creature entered the battlefield under your control this turn, create a 1/1 blue Tyranid Gargoyle creature token with flying",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "permanents_entered_this_turn": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "gargoyle_flock",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{G}{U}",
+      "name": "Gargoyle Flock",
+      "oracle_text": "Flying\nSkyswarm — At the beginning of your end step, if a creature entered the battlefield under your control this turn, create a 1/1 blue Tyranid Gargoyle creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid",
+        "Gargoyle"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },
@@ -116385,6 +116854,86 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": -1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Neurotraumal Rod — Whenever a creature attacks you, it gets -1/-0 until end of turn",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 0
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature attacks one of your opponents, it gets +0/+1 until end of turn",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "genestealer_locus",
+      "mana_cost": "{3}{U}",
+      "name": "Genestealer Locus",
+      "oracle_text": "Neurotraumal Rod — Whenever a creature attacks you, it gets -1/-0 until end of turn.\nWhenever a creature attacks one of your opponents, it gets +0/+1 until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid",
+        "Human"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

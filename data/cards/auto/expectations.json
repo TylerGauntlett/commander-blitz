@@ -29,6 +29,15 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "aberrant": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "aberrant_return": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -3903,6 +3912,10 @@
     },
     "zone": "battlefield"
   },
+  "cave_of_temptation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cave_of_the_frost_dragon": {
     "zone": "battlefield"
   },
@@ -5950,6 +5963,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "death_s_presence": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deathbloom_gardener": {
     "zone": "battlefield"
   },
@@ -5972,6 +5989,16 @@
     },
     "life": {
       "0": 42
+    },
+    "zone": "battlefield"
+  },
+  "deathleaper_terror_weapon": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "double_strike"
+      ]
     },
     "zone": "battlefield"
   },
@@ -8132,6 +8159,23 @@
   "exocomp": {
     "zone": "battlefield"
   },
+  "exocrine": {
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 20,
+      "1": 20
+    },
+    "zone": "battlefield"
+  },
   "exorcise": {
     "graveyard_size": {
       "0": 3
@@ -9719,6 +9763,10 @@
   "gangly_stompling": {
     "zone": "battlefield"
   },
+  "gargoyle_flock": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "garruk_apex_predator": {
     "battlefield_count": 33,
     "counters": {
@@ -9892,6 +9940,13 @@
       "0": 20
     },
     "zone": "graveyard"
+  },
+  "genestealer_locus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "genji_glove": {
     "battlefield_count": 33,
