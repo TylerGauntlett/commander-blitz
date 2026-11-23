@@ -338917,6 +338917,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_ability",
+                  "sid": {
+                    "binding": "sid"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": {
+                  "binding": "life_paid"
+                }
+              },
+              "prompt": "Pay that much life again to copy that ability?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.",
+          "trigger": {
+            "controller": "you",
+            "event": "ability_activated",
+            "life_paid_to_activate": true,
+            "mana_ability": false
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "verrak_warped_sengir",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Verrak, Warped Sengir",
+      "oracle_text": "Flying, deathtouch, lifelink\nWhenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

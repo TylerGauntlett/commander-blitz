@@ -878,7 +878,7 @@ STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
 }
 
 TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
-    "ability_activated": ("An ability is activated.", None),
+    "ability_activated": ("An ability is activated; binds `sid` (that ability) and `life_paid` (the life its own cost took).", None),
     "attacks": ("A creature attacks.", None),
     "attacks_unblocked": ("An attacking creature goes unblocked; `batched` fires once per block declaration.",
                           H_BATCHED),

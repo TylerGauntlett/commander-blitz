@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **452** capabilities.
+**535 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -294,7 +294,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
-| [life-paid-to-activate](#life-paid-to-activate) | 1 | 11136 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -5177,20 +5176,6 @@ Blocks **1** card.
 - **Rakdos, Lord of Riots** (rank 2559) — `rakdos_lord_of_riots`
   - You can't cast Rakdos unless an opponent lost life this turn.
   - Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.
-
-</details>
-
-## life-paid-to-activate
-
-Blocks **1** card.
-
-- **(value)** a value readable from an ability_activated trigger giving the amount of life paid as part of the triggering ability's activation cost (pay_life, pay_life_x, or any life payment), usable both as an intervening-if condition (> 0) and as the amount of a `may` with `pay: {pay_life: <that value>}` before copy_ability
-  <br>Why the existing vocabulary won't do: The ability_activated trigger with mana_ability: false and copy_ability (with new_targets) cover the trigger and the copy, and trigger_keys has sacrificed_to_activate for a sacrifice cost, but no trigger key, condition or value_keys entry records the life paid to activate the triggering ability; life_lost_this_turn counts all life loss this turn, not this activation's payment
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verrak, Warped Sengir** (rank 11136) — `verrak_warped_sengir`
-  - Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.
 
 </details>
 

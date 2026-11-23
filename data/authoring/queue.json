@@ -303332,12 +303332,12 @@
     },
     "Verrak, Warped Sengir": {
       "edhrec_rank": 11136,
-      "gate": "template",
+      "gate": null,
       "name": "Verrak, Warped Sengir",
-      "reason": "no template for: Whenever you activate an ability that isn't a mana ability, if life was paid to activate i",
+      "reason": "",
       "scryfall_id": "8ca7f49a-ab5a-49de-b07b-96c803daaf7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vertigo": {

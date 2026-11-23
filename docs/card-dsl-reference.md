@@ -476,7 +476,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 
 | Name | Engine event | Description | Defined in |
 |---|---|---|---|
-| `ability_activated` | `ability_activated` | An ability is activated. | [Triggers](card-dsl.md#triggers) |
+| `ability_activated` | `ability_activated` | An ability is activated; binds `sid` (that ability) and `life_paid` (the life its own cost took). | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` | A creature attacks. | [Triggers](card-dsl.md#triggers) |
 | `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `becomes_attached` | `attached` | An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host. | ["Whenever an Aura you control becomes attached to a creature you control"](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control) |

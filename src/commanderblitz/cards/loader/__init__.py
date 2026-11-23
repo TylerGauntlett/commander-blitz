@@ -4132,6 +4132,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 "trigger with 'mana_ability': false"
             )
 
+        if model.trigger.life_paid_to_activate is not None and (
+            model.trigger.event != "ability_activated" or model.trigger.mana_ability is not False
+        ):
+            # `sacrificed_to_activate`'s rule and reason: only the non-mana
+            # activation path puts `life_paid` on its event.
+            raise DslError(
+                f"{where}: 'life_paid_to_activate' needs an ability_activated "
+                "trigger with 'mana_ability': false"
+            )
+
         if model.trigger.targeted_by is not None and model.trigger.event != "becomes_target":
             # Same reasoning as `mana_ability` above: only BECAME_TARGET is
             # tagged with what did the targeting, so anywhere else this would
@@ -4387,6 +4397,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
             sacrificed_to_activate=model.trigger.sacrificed_to_activate,
+            life_paid_to_activate=model.trigger.life_paid_to_activate,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,

@@ -1,0 +1,98 @@
+{
+  "_comment": "Cards for tests/unit/triggers/test_life_paid_to_activate.py. Never part of a deck list. `t_lpa_copier` is Verrak, Warped Sengir's trigger without the creature body: a noncreature artifact. `t_lpa_drainer` pays 2 life for 'each opponent loses 3 life', so the copy is visible on the opponent's total and the second payment on its controller's. `t_lpa_font` is a {G/P} drain, payable with a Forest or 2 life. `t_lpa_watcher` is the same trigger read the other way (`life_paid_to_activate: false`). t_mutator ({G}: +1/+1) is the shared ability that pays no life.",
+  "cards": [
+    {
+      "id": "t_lpa_copier",
+      "name": "Test Life Copier",
+      "oracle_text": "Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.",
+          "trigger": {
+            "event": "ability_activated",
+            "controller": "you",
+            "mana_ability": false,
+            "life_paid_to_activate": true
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Pay that much life again to copy that ability?",
+              "pay": {"pay_life": {"binding": "life_paid"}},
+              "effects": [
+                {"op": "copy_ability", "sid": {"binding": "sid"}, "new_targets": true}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lpa_watcher",
+      "name": "Test Lifeless Watcher",
+      "oracle_text": "Whenever you activate an ability that isn't a mana ability, if no life was paid to activate it, each opponent loses 1 life.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you activate an ability that isn't a mana ability, if no life was paid to activate it, each opponent loses 1 life.",
+          "trigger": {
+            "event": "ability_activated",
+            "controller": "you",
+            "mana_ability": false,
+            "life_paid_to_activate": false
+          },
+          "effects": [
+            {"op": "lose_life", "player": "each_opponent", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lpa_drainer",
+      "name": "Test Life Drainer",
+      "oracle_text": "Pay 2 life: Each opponent loses 3 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Pay 2 life: Each opponent loses 3 life.",
+          "cost": {"pay_life": 2},
+          "effects": [
+            {"op": "lose_life", "player": "each_opponent", "amount": {"const": 3}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_lpa_font",
+      "name": "Test Phyrexian Drain",
+      "oracle_text": "{G/P}: Each opponent loses 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G/P}: Each opponent loses 1 life.",
+          "cost": {"mana": "{G/P}"},
+          "effects": [
+            {"op": "lose_life", "player": "each_opponent", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6648,6 +6648,7 @@ and the filter keys are
     "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
+    "life_paid_to_activate": true,   // beside `mana_ability: false`: the cost took life
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
@@ -7655,6 +7656,27 @@ cost paid.
 { "event": "ability_activated", "controller": "you", "mana_ability": false,
   "sacrificed_to_activate": true,
   "filter": { "any_types": ["Artifact", "Creature"] } }
+```
+
+`life_paid_to_activate` is "if **life was paid** to activate it" (Verrak, Warped
+Sengir), on the same terms and under the same loader rule as
+`sacrificed_to_activate`: `true` fires only when the activation's own cost took
+life, `false` only when it took none, omitted is either. The amount is
+`costs.cost_life_paid` — the cost's `pay_life` (a value expression at the price
+`pay` charges) plus 2 for each Phyrexian pip the payer bought with life (107.4f)
+— carried on the event and bound on the trigger as `life_paid`, so "you may pay
+**that much life** again" is a `may` whose `pay` reads it. The Phyrexian
+question is asked before the event fires (`costs.choose_life_for_mana`) and
+handed to `pay`, which then asks nothing. Life lost any other way while
+activating — a painland tapped for the mana — was not paid to activate it.
+`life_lost_this_turn` is the near miss: it counts every loss this turn.
+
+```jsonc
+{ "trigger": { "event": "ability_activated", "controller": "you",
+               "mana_ability": false, "life_paid_to_activate": true },
+  "effects": [ { "op": "may", "pay": { "pay_life": { "binding": "life_paid" } },
+                 "effects": [ { "op": "copy_ability", "sid": { "binding": "sid" },
+                                "new_targets": true } ] } ] }
 ```
 
 `zone` and `any_types` in a **trigger filter** are honoured. Harsh Mentor needs

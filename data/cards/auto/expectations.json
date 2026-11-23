@@ -28317,6 +28317,10 @@
     },
     "zone": "battlefield"
   },
+  "verrak_warped_sengir": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vestige_of_emrakul": {
     "zone": "battlefield"
   },
