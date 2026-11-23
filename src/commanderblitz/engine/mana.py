@@ -1271,6 +1271,12 @@ class SpendPurpose:
     #: face (108.3), so `costs.spell_purpose` answers it only when the caller
     #: hands it both the object's owner and the caster; ``None`` otherwise.
     not_owned: bool | None = None
+    #: How many colours that card (or source) has -- "Spend this mana only to
+    #: cast a **multicolored** spell", Obsidian Obelisk (202.2b: two or more).
+    #: A count rather than a yes-or-no for `min_colors`' reason everywhere else:
+    #: the number is what the rule says. ``None`` is a purpose that cannot say,
+    #: which a group asking it refuses.
+    colors_count: int | None = None
 
 
 #: The purpose of every :data:`OTHER` payment. It names nothing, because no
@@ -1298,7 +1304,9 @@ RESTRICTION_OPS: dict[str, Any] = {
 #: be read by nobody, and leave the group permitting everything its names alone
 #: permit -- which is the strictly-better card this whole grammar exists to
 #: refuse.
-RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost", "colorless", "not_owned"})
+RESTRICTION_PREDICATES = frozenset(
+    {"mana_value", "x_in_mana_cost", "colorless", "not_owned", "min_colors"}
+)
 
 
 @dataclass(frozen=True)
@@ -1342,6 +1350,9 @@ class RestrictionGroup:
     #: "…only to cast spells **you don't own**" -- ``True`` or ``None``. Asked of
     #: the cast half only; `compile_restriction` refuses it under `activate`.
     not_owned: bool | None = None
+    #: "…only to cast a **multicolored** spell" -- at least this many colours,
+    #: 202.2b. ``None`` is a group that does not ask.
+    min_colors: int | None = None
 
     def names(self) -> frozenset[str]:
         """Every name mentioned, either way round -- for `dynamic`'s scan."""
@@ -1365,6 +1376,10 @@ class RestrictionGroup:
         if self.colorless is not None and purpose.colorless is not self.colorless:
             return False
         if self.not_owned is not None and purpose.not_owned is not self.not_owned:
+            return False
+        if self.min_colors is not None and (
+            purpose.colors_count is None or purpose.colors_count < self.min_colors
+        ):
             return False
         return not (
             self.x_in_mana_cost is not None and purpose.x_in_mana_cost is not self.x_in_mana_cost
@@ -1668,6 +1683,7 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
                 x_in_mana_cost=predicates.get("x_in_mana_cost"),
                 colorless=predicates.get("colorless"),
                 not_owned=predicates.get("not_owned"),
+                min_colors=predicates.get("min_colors"),
             )
         )
     return tuple(out)
@@ -1704,6 +1720,16 @@ def _restriction_predicate(entry: Mapping[str, Any], where: str) -> tuple[str, A
             raise DslError(
                 f"{where}.not_owned: true only -- the spell's owner is not the "
                 f"player spending the mana (108.3)"
+            )
+        return key, spec
+    if key == "min_colors":
+        # "…only to cast a **multicolored** spell" (Obsidian Obelisk): two or
+        # more colours, 202.2b, as the filter languages spell it. A whole number
+        # from 1 to 5; a bool would read as 0 or 1 and fund the wrong spells.
+        if isinstance(spec, bool) or not isinstance(spec, int) or not 1 <= spec <= 5:
+            raise DslError(
+                f"{where}.min_colors: a whole number from 1 to 5 (multicolored is 2), "
+                f"not {spec!r}"
             )
         return key, spec
     if key == "colorless":
@@ -1790,6 +1816,13 @@ def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
             f"{where}: {entry!r} is a predicate, not a type -- write it as an "
             f"object in the group, e.g. {{\"mana_value\": {{\"op\": \">=\", "
             f'"value": 4}}}}'
+        )
+    # "Multicolored" is not a type either, and the one colour word a card
+    # prints after "only to cast a": as a name it would match nothing, ever.
+    if isinstance(entry, str) and entry.lower() == "multicolored":
+        raise DslError(
+            f'{where}: "multicolored" is a colour count, not a type -- write it '
+            f'as {{"min_colors": 2}} in the group'
         )
     # A card type, a supertype, or a subtype. Subtypes are open-ended in Magic
     # and there is no closed list to check one against, so the guard is the

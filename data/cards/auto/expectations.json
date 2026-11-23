@@ -17890,6 +17890,13 @@
   "obsidian_giant": {
     "zone": "battlefield"
   },
+  "obsidian_obelisk": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "obyra_dreaming_duelist": {
     "battlefield_count": 33,
     "life": {

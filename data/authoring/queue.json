@@ -190862,12 +190862,12 @@
     },
     "Obsidian Obelisk": {
       "edhrec_rank": 10361,
-      "gate": "template",
+      "gate": null,
       "name": "Obsidian Obelisk",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a multicolored spell",
+      "reason": "",
       "scryfall_id": "2dcf9804-ccd6-4a03-90ca-088388800e7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obstinate Baloth": {
