@@ -800,7 +800,12 @@ def _move_found(
 
 
 def _pick_within_total_mana_value(
-    ctx: EffectContext, pool: list[int], selector: Mapping[str, Any], cap: int
+    ctx: EffectContext,
+    pool: list[int],
+    selector: Mapping[str, Any],
+    cap: int,
+    prompt: str = "Take a card",
+    purpose: str = "look_at_top",
 ):
     """Up to the selector's count of ``pool``, their total mana value at most ``cap``.
 
@@ -816,7 +821,8 @@ def _pick_within_total_mana_value(
     The mana value is the card's printed one (202.3b: an X in a library card's
     cost is 0). The selector's ``count`` is ``"any"`` or an optional integer
     (the loader holds it): "up to two" is the ceiling on how many, the cap on
-    how much.
+    how much. ``prompt`` and ``purpose`` are the asking op's: `look_at_top`
+    takes from a window, `return_from_graveyard` returns from a graveyard.
     """
     count_spec = selector.get("count", "any")
     limit = len(pool) if count_spec == "any" else int(evaluate_value(ctx, count_spec))
@@ -832,7 +838,7 @@ def _pick_within_total_mana_value(
         if not fits:
             break
         chosen = yield from pick_from_pool(
-            ctx, fits, one_more, f"Take a card ({budget} mana value left)", "look_at_top"
+            ctx, fits, one_more, f"{prompt} ({budget} mana value left)", purpose
         )
         if not chosen:
             break
@@ -1432,11 +1438,38 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     `add_color` over the one creature returned. `link` is the near miss: it
     ties the creature to the source, which a sorcery that exiles itself
     cannot be asked about afterwards.
+
+    ``total_mana_value`` caps the **sum** of the returned cards' mana values --
+    Technomancer: "mill three cards, then return any number of artifact
+    creature cards with total mana value 6 or less from your graveyard to the
+    battlefield." Untargeted, so the pick is made here, on resolution, and the
+    three cards the mill just binned are eligible; the target key of the same
+    name is chosen as the trigger goes on the stack, before the mill, and
+    would make the return targeted besides. A value expression read once, and
+    asked one card at a time by :func:`_pick_within_total_mana_value`, as
+    `look_at_top`'s is.
     """
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "graveyard")
     destination = DESTINATIONS[spec.get("destination", "hand")]
-    oids = yield from choose_objects(ctx, selector, "Return from graveyard")
+    if "total_mana_value" in spec:
+        pool = resolve_pool(ctx, selector)
+        oids = (
+            (
+                yield from _pick_within_total_mana_value(
+                    ctx,
+                    pool,
+                    selector,
+                    evaluate_value(ctx, spec["total_mana_value"]),
+                    "Return from graveyard",
+                    "choose",
+                )
+            )
+            if pool
+            else []
+        )
+    else:
+        oids = yield from choose_objects(ctx, selector, "Return from graveyard")
     hosts = named_hosts(ctx, spec)
     face_down = spec.get("face_down", False)
     returned: list[int] = []

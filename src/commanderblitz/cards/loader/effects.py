@@ -86,6 +86,7 @@ from .vocabulary import (
     PLURAL_PLAYER_SPEC_NAMES,
     SPELL_FILTER_KEYS,
     STATIC_FILTER_KEYS,
+    TOTAL_MANA_VALUE_OPS,
     WAS_CAST_TRIGGERS,
     refuse_numbered_grant,
 )
@@ -1257,6 +1258,33 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"face-down permanent is a 2/2 creature, not an Aura (708.2)"
             )
 
+    # "…any number of … cards with total mana value 6 or less" -- a cap on the
+    # **sum** of an untargeted pick, read as the op resolves (Ao, the Dawn Sky's
+    # look; Technomancer's return, which may take the cards its own mill just
+    # binned). Only the two ops that run `ops_cards._pick_within_total_mana_value`
+    # read it; on any other it would load and cap nothing. The cap bounds how
+    # much, the count how many, and the count must let the chooser stop short:
+    # "all" would take every card whatever the sum, and a mandatory number is a
+    # demand the cap can make impossible to meet.
+    if "total_mana_value" in effect:
+        if op not in TOTAL_MANA_VALUE_OPS:
+            raise DslError(
+                f"{where}: 'total_mana_value' caps the picks of "
+                f"{sorted(TOTAL_MANA_VALUE_OPS)}, not of {op!r}"
+            )
+        validate_value(effect["total_mana_value"], f"{where}.total_mana_value")
+        objects = effect.get("objects") or effect.get("selector")
+        count = objects.get("count") if isinstance(objects, Mapping) else None
+        if not (
+            count == "any"
+            or (count not in (None, "all") and isinstance(objects, Mapping)
+                and objects.get("optional") is True)
+        ):
+            raise DslError(
+                f"{where}: 'total_mana_value' needs 'objects' with count: \"any\" "
+                f"or an optional count (\"up to N\")"
+            )
+
     if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
@@ -2037,24 +2065,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # and must let the chooser stop short -- "all" would take every card
         # whatever the sum, and a mandatory number is a demand the cap can make
         # impossible to meet.
-        if "total_mana_value" in effect:
-            validate_value(effect["total_mana_value"], f"{where}.total_mana_value")
-            if effect.get("destinations"):
-                raise DslError(
-                    f"{where}: 'total_mana_value' caps look_at_top's single pick, "
-                    f"not its 'destinations' steps"
-                )
-            objects = effect.get("objects") or effect.get("selector")
-            count = objects.get("count") if isinstance(objects, Mapping) else None
-            if not (
-                count == "any"
-                or (count not in (None, "all") and isinstance(objects, Mapping)
-                    and objects.get("optional") is True)
-            ):
-                raise DslError(
-                    f"{where}: 'total_mana_value' needs 'objects' with count: \"any\" "
-                    f"or an optional count (\"up to N\")"
-                )
+        if "total_mana_value" in effect and effect.get("destinations"):
+            raise DslError(
+                f"{where}: 'total_mana_value' caps look_at_top's single pick, "
+                f"not its 'destinations' steps"
+            )
         # "Put one into your hand, one on the bottom and exile one" (Expressive
         # Iteration); "a creature card and/or a land card" (Kiora, Master of the
         # Depths). A step's `to` is a zone the op can reach, its `selector` a

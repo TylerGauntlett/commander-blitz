@@ -13972,6 +13972,33 @@ and refuses the key beside `destinations`, whose steps it would not cap. The
 near miss is a per-card `mana_value` ceiling in the selector, which lets Ao put
 three 4-drops onto the battlefield.
 
+## "…mill three cards, then return any number of … with total mana value 6 or less" — an untargeted return capped by a sum
+
+Technomancer:
+
+```jsonc
+{ "op": "mill", "amount": 3, "player": "you" },
+{ "op": "return_from_graveyard", "total_mana_value": 6,
+  "objects": { "zone": "graveyard", "controller": "you",
+               "types": ["Artifact", "Creature"], "count": "any" },
+  "destination": "battlefield" }
+```
+
+`total_mana_value` on `return_from_graveyard` is the same cap as
+`look_at_top`'s — a value expression read once as the op resolves, the sum of
+the printed mana values of the cards returned, asked one card at a time from
+what still fits (`ops_cards._pick_within_total_mana_value`) — over a graveyard
+pool instead of a looked-at window. The loader holds it to the same counts
+(`count: "any"` or an `optional` integer) and refuses the key on any op that
+does not read it (`TOTAL_MANA_VALUE_OPS`).
+
+The near miss is the target key of the same name, and it is wrong for a card
+that names no target: a target is chosen as the trigger goes on the stack
+(601.2c), before the mill, so a card the mill bins can never be returned, and
+the return becomes targeted. Write the target key only where the card says
+"target" (Phoenix, Warden of Fire); write this one where the cards are chosen
+as the effect resolves.
+
 ## "…with total power 10 or less" — the same cap, summing power
 
 Reunion of the House:

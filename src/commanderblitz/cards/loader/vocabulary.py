@@ -2076,6 +2076,17 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 #: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
 
+#: The ops that read an effect-level ``total_mana_value``: a cap on the **sum**
+#: of the printed mana values an untargeted pick takes, asked one card at a
+#: time by `ops_cards._pick_within_total_mana_value`. `look_at_top` is Ao, the
+#: Dawn Sky's "any number of nonland permanent cards with total mana value 4 or
+#: less from among them"; `return_from_graveyard` is Technomancer's "return any
+#: number of artifact creature cards with total mana value 6 or less from your
+#: graveyard", chosen on resolution so the cards its own mill binned are
+#: eligible. The target key of the same name is the targeted spelling, chosen
+#: as the ability is put on the stack.
+TOTAL_MANA_VALUE_OPS = frozenset({"look_at_top", "return_from_graveyard"})
+
 #: The keys an arrival's ``aura_host`` filter may use: "Only **creatures** can
 #: be enchanted this way" (Retether). It narrows the host an arriving Aura
 #: chooses (`zones.offer_aura_host`) to the permanents also matching it, so it
