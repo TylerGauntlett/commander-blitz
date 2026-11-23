@@ -15672,12 +15672,12 @@
     },
     "Atla Palani, Nest Tender": {
       "edhrec_rank": 4464,
-      "gate": "template",
+      "gate": null,
       "name": "Atla Palani, Nest Tender",
-      "reason": "no template for: {2}, {T}: Create a 0/1 green Egg creature token with defender",
+      "reason": "",
       "scryfall_id": "c851c20d-a028-4af9-bcfa-36ceaf36bdfb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atlantean Cavalry": {
@@ -142072,12 +142072,12 @@
     },
     "Jared Carthalion": {
       "edhrec_rank": 9061,
-      "gate": "template",
+      "gate": null,
       "name": "Jared Carthalion",
-      "reason": "no template for: +1: Create a 3/3 Kavu creature token with trample that's all colors",
+      "reason": "",
       "scryfall_id": "5acffa48-9e3f-4ba3-a55f-d459307f46df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jared Carthalion, True Heir": {
@@ -198592,12 +198592,12 @@
     },
     "Path to the World Tree": {
       "edhrec_rank": 18375,
-      "gate": "template",
+      "gate": null,
       "name": "Path to the World Tree",
-      "reason": "no template for: When this enchantment enters, search your library for a basic land card, reveal it, put it",
+      "reason": "",
       "scryfall_id": "eadb3a01-f610-4df1-972b-7dd8c8bccdb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pathbreaker Ibex": {
@@ -322042,12 +322042,12 @@
     },
     "Zaxara, the Exemplary": {
       "edhrec_rank": 5675,
-      "gate": "template",
+      "gate": null,
       "name": "Zaxara, the Exemplary",
-      "reason": "no template for: Whenever you cast a spell with {X} in its mana cost, create a 0/0 green Hydra creature tok",
+      "reason": "",
       "scryfall_id": "44043b50-9837-40d2-ad08-d515faed216c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zealot il-Vec": {

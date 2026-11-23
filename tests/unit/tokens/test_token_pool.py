@@ -3961,3 +3961,76 @@ class TestZeriamsGriffinIsAGriffin:
         other = pool.get("pegasus_2_2_w_flying")
         assert other is not None
         assert list(other.subtypes) == ["Pegasus"]
+
+
+class TestAtlaPalanisEggIsAGreenDefender:
+    """Atla Palani, Nest Tender: *"{2}, {T}: Create a **0/1 green Egg** creature
+    token with defender"* and *"Whenever an **Egg** you control dies, ..."*.
+
+    The near miss is `plant_0_1_g`: the same 0/1 green body, but with no
+    defender and no Egg subtype, so it could attack and Atla Palani's second
+    ability would never see it die. `dragon_egg_0_2_r_defender` is an Egg, but a
+    red 0/2 with a dies trigger of its own.
+    """
+
+    def test_it_is_a_zero_one_green_egg_with_defender(self, pool):
+        token = pool.get("egg_0_1_g_defender")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Egg"]
+        assert list(token.keywords) == ["defender"]
+        assert not token.abilities
+
+    def test_the_plant_is_still_a_separate_token(self, pool):
+        other = pool.get("plant_0_1_g")
+        assert other is not None
+        assert list(other.subtypes) == ["Plant"]
+        assert not other.keywords
+
+
+class TestJaredsKavuIsAllColors:
+    """Jared Carthalion: *"+1: Create a **3/3 Kavu** creature token with
+    trample that's **all colors**."*
+
+    The near miss is `dinosaur_3_3_g_trample`: the same 3/3 trampler in one
+    color. Jared's -3 puts a counter on a creature for each of its colors, so a
+    mono-green token would get one counter where the Kavu gets five.
+    """
+
+    def test_it_is_a_three_three_kavu_with_trample(self, pool):
+        token = pool.get("kavu_3_3_wubrg_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert list(token.subtypes) == ["Kavu"]
+        assert list(token.keywords) == ["trample"]
+
+    def test_it_is_all_five_colors(self, pool):
+        assert sorted(pool.get("kavu_3_3_wubrg_trample").colors) == sorted("WUBRG")
+
+    def test_the_dinosaur_is_still_a_separate_token(self, pool):
+        other = pool.get("dinosaur_3_3_g_trample")
+        assert other is not None
+        assert sorted(other.colors) == ["G"]
+
+
+class TestPathToTheWorldTreesBearIsABear:
+    """Path to the World Tree: *"create a **2/2 green Bear** creature token"*.
+
+    The near misses are the other vanilla 2/2 greens (`boar_2_2_g`,
+    `wolf_2_2_g`, `cat_2_2_g`): the same body, with a creature type a tribal
+    card would count differently.
+    """
+
+    def test_it_is_a_vanilla_two_two_green_bear(self, pool):
+        token = pool.get("bear_2_2_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Bear"]
+        assert not token.keywords
+
+    def test_the_wolf_is_still_a_separate_token(self, pool):
+        other = pool.get("wolf_2_2_g")
+        assert other is not None
+        assert list(other.subtypes) == ["Wolf"]

@@ -1612,6 +1612,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "atla_palani_nest_tender": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "atomize": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -13105,6 +13112,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jared_carthalion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jarvis_earth_s_mightiest_butler": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18573,6 +18584,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "path_to_the_world_tree": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "patriot_shield_wielder": {
@@ -30216,6 +30231,10 @@
     "zone": "battlefield"
   },
   "zarda_the_power_princess": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "zaxara_the_exemplary": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
