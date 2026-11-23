@@ -223682,12 +223682,12 @@
     },
     "Rienne, Angel of Rebirth": {
       "edhrec_rank": 6992,
-      "gate": "template",
+      "gate": null,
       "name": "Rienne, Angel of Rebirth",
-      "reason": "no template for: Other multicolored creatures you control get +1/+0",
+      "reason": "",
       "scryfall_id": "78660bdf-0edb-4fd0-a737-1c95f93cced1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rift Bolt": {

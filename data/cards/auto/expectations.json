@@ -20876,6 +20876,16 @@
   "ridgetop_raptor": {
     "zone": "battlefield"
   },
+  "rienne_angel_of_rebirth": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "righteous_avengers": {
     "zone": "battlefield"
   },

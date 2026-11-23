@@ -249066,6 +249066,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "min_colors": 2,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other multicolored creatures you control get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another multicolored creature you control dies, return it to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true,
+              "min_colors": 2
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "rienne_angel_of_rebirth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{G}{W}",
+      "name": "Rienne, Angel of Rebirth",
+      "oracle_text": "Flying\nOther multicolored creatures you control get +1/+0.\nWhenever another multicolored creature you control dies, return it to its owner's hand at the beginning of the next end step.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

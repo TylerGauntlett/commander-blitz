@@ -1481,12 +1481,21 @@ STATIC_FILTER_KEYS = frozenset(
 #: ordered read across layers, never a 613.8 dependency, handed to the anthem
 #: step from `characteristics._compute`'s own working sets (ADR 0031). No
 #: other static's reader holds those sets, so the loader refuses it elsewhere.
+#:
+#: ``min_colors`` is affects-only: "Other **multicolored** creatures you
+#: control get +1/+0" (Rienne, Angel of Rebirth). Two or more colours, 202.2b,
+#: which `colors` cannot say -- it is a membership test, so ``["W", "U"]``
+#: matches a mono-white creature. Read by `characteristics._matches_printed`
+#: off the same printed-plus-recorded colours `colors` reads, so it is as safe
+#: here as `colors` is; kept off `STATIC_FILTER_KEYS`, whose other readers
+#: (blockers, targeting, the counting filters) do not all answer it.
 STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {
     "any_of",
     "modified",
     "mana_value",
     "attacking_player",
     "derived_types",
+    "min_colors",
 }
 
 #: The clauses `derived_types` changes the reading of: a filter carrying the

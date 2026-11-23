@@ -1923,6 +1923,7 @@ trigger's `subject`.
 
 ```jsonc
 { "any_types": ["Instant", "Sorcery"], "min_colors": 2 }
+"affects": { "types": ["Creature"], "controller": "you", "min_colors": 2, "exclude_self": true }   // Rienne's anthem
 ```
 
 Two or more colors (202.2b). `colors` cannot say it — that is a membership test,
@@ -1931,6 +1932,12 @@ those colours and no others. Written as a number rather than a `multicolored`
 boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
+
+A static's `affects` takes it too, and no other static filter does (`blockers`,
+`targeting` and the counting filters refuse it). It reads the printed colours,
+as `colors` does there: a colour another static writes is not seen, and a
+colour-setting characteristic-defining ability ("is all colors", 604.3) is part
+of the printed card and is. The loader holds it to a whole number from 1 to 5.
 
 ### "Colorless" — `colorless`
 

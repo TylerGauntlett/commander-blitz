@@ -1,0 +1,45 @@
+{
+  "_comment": "Cards that exist only for tests/unit/statics/test_static_min_colors.py. Never part of a deck list. t_mc_angel is Rienne, Angel of Rebirth's anthem line; t_mc_gold is a white-blue 2/2 and t_mc_shard a white-blue-black 2/2.",
+  "cards": [
+    {
+      "id": "t_mc_angel",
+      "name": "Test Multicolored Angel",
+      "oracle_text": "Other multicolored creatures you control get +1/+0.",
+      "mana_cost": "{2}{R}{G}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 5,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other multicolored creatures you control get +1/+0.",
+          "effect": "buff",
+          "affects": {"types": ["Creature"], "controller": "you", "min_colors": 2, "exclude_self": true},
+          "power": {"const": 1},
+          "toughness": {"const": 0}
+        }
+      ]
+    },
+    {
+      "id": "t_mc_gold",
+      "name": "Test Gold Bear",
+      "oracle_text": "",
+      "mana_cost": "{W}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_mc_shard",
+      "name": "Test Shard Bear",
+      "oracle_text": "",
+      "mana_cost": "{W}{U}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}
