@@ -3502,6 +3502,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cadric_soul_kindler": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "caelorna_coral_tyrant": {
     "zone": "battlefield"
   },
@@ -6468,6 +6475,11 @@
   },
   "digsite_engineer": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dihada_binder_of_wills": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "diluvian_primordial": {
@@ -9787,6 +9799,21 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "garna_the_bloodflame": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "garruk_apex_predator": {
     "battlefield_count": 33,
     "counters": {
@@ -9980,6 +10007,10 @@
     "zone": "battlefield"
   },
   "geralf_s_mindcrusher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gerrard_s_hourglass_pendant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11970,6 +12001,10 @@
       "0": 44
     }
   },
+  "honor_worn_shaku": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "honored_dreyleader": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13421,6 +13456,17 @@
     },
     "zone": "battlefield"
   },
+  "kaya_s_wrath": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 42,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "kaya_the_inexorable": {
     "battlefield_count": 33,
     "counters": {
@@ -14008,6 +14054,16 @@
     "zone": "battlefield"
   },
   "koth_s_courier": {
+    "zone": "battlefield"
+  },
+  "kothophed_soul_hoarder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "kozilek_s_channeler": {
@@ -16344,6 +16400,10 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mobilized_district": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mobilizer_mech": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16368,6 +16428,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "moira_urborg_haunt": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "moldering_karok": {
@@ -22501,6 +22565,10 @@
     "zone": "battlefield"
   },
   "shivan_reef": {
+    "zone": "battlefield"
+  },
+  "shizo_death_s_storehouse": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shoot_the_sheriff": {

@@ -37662,12 +37662,12 @@
     },
     "Cadric, Soul Kindler": {
       "edhrec_rank": 5161,
-      "gate": "template",
+      "gate": null,
       "name": "Cadric, Soul Kindler",
-      "reason": "no template for: The \"legend rule\" doesn't apply to tokens you control",
+      "reason": "",
       "scryfall_id": "00541f77-f1ca-4de5-b080-de2dcdfe17e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caduceus, Staff of Hermes": {
@@ -68662,12 +68662,12 @@
     },
     "Dihada, Binder of Wills": {
       "edhrec_rank": 3418,
-      "gate": "template",
+      "gate": null,
       "name": "Dihada, Binder of Wills",
-      "reason": "no template for: +2: Up to one target legendary creature gains vigilance, lifelink, and indestructible unti",
+      "reason": "",
       "scryfall_id": "cea0ea07-6963-4de1-953d-b1ac41d8c6b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diligent Excavator": {
@@ -105232,12 +105232,12 @@
     },
     "Garna, the Bloodflame": {
       "edhrec_rank": 9331,
-      "gate": "template",
+      "gate": null,
       "name": "Garna, the Bloodflame",
-      "reason": "no template for: When Garna enters, return to your hand all creature cards in your graveyard that were put ",
+      "reason": "",
       "scryfall_id": "732797d3-59e1-4fff-bcf0-22c2606a7a5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garnet, Princess of Alexandria": {
@@ -107132,12 +107132,12 @@
     },
     "Gerrard's Hourglass Pendant": {
       "edhrec_rank": 7413,
-      "gate": "template",
+      "gate": null,
       "name": "Gerrard's Hourglass Pendant",
-      "reason": "no template for: If a player would begin an extra turn, that player skips that turn instead",
+      "reason": "",
       "scryfall_id": "091135ec-4f4c-432c-bd6c-e7e2fb7561a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gerrard's Irregulars": {
@@ -129382,12 +129382,12 @@
     },
     "Honor-Worn Shaku": {
       "edhrec_rank": 4096,
-      "gate": "template",
+      "gate": null,
       "name": "Honor-Worn Shaku",
-      "reason": "no template for: Tap an untapped legendary permanent you control: Untap this artifact",
+      "reason": "",
       "scryfall_id": "dd39f563-2ea9-4ddd-8d76-900fa14b480c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Honorable Passage": {
@@ -146972,12 +146972,12 @@
     },
     "Kaya's Wrath": {
       "edhrec_rank": 4139,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya's Wrath",
-      "reason": "no template for: Destroy all creatures. You gain life equal to the number of creatures you controlled that ",
+      "reason": "",
       "scryfall_id": "20adee32-2144-44ad-a70c-ebfbda0900ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaya, Bane of the Dead": {
@@ -151882,12 +151882,12 @@
     },
     "Kothophed, Soul Hoarder": {
       "edhrec_rank": 8759,
-      "gate": "template",
+      "gate": null,
       "name": "Kothophed, Soul Hoarder",
-      "reason": "no template for: Whenever a permanent owned by another player is put into a graveyard from the battlefield,",
+      "reason": "",
       "scryfall_id": "e0f3414d-3c79-4771-a6ba-812608855922",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kotis, Sibsig Champion": {
@@ -176942,12 +176942,12 @@
     },
     "Mobilized District": {
       "edhrec_rank": 9239,
-      "gate": "template",
+      "gate": null,
       "name": "Mobilized District",
-      "reason": "no template for: {4}: This land becomes a 3/3 Citizen creature with vigilance until end of turn. It's still",
+      "reason": "",
       "scryfall_id": "c7921b97-083b-480a-a7df-f2ab82e6f8fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mobilizer Mech": {
@@ -177312,12 +177312,12 @@
     },
     "Moira, Urborg Haunt": {
       "edhrec_rank": 14890,
-      "gate": "template",
+      "gate": null,
       "name": "Moira, Urborg Haunt",
-      "reason": "no template for: Whenever Moira deals combat damage to a player, return to the battlefield target creature ",
+      "reason": "",
       "scryfall_id": "0a5c9d99-8fbc-4a74-99a5-32ba71eb2b62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moku, Meandering Drummer": {
@@ -244902,12 +244902,12 @@
     },
     "Shizo, Death's Storehouse": {
       "edhrec_rank": 610,
-      "gate": "template",
+      "gate": null,
       "name": "Shizo, Death's Storehouse",
-      "reason": "no template for: {B}, {T}: Target legendary creature gains fear until end of turn",
+      "reason": "",
       "scryfall_id": "099352e2-38c8-4fb4-a25f-6d928aa20f9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shizuko, Caller of Autumn": {
