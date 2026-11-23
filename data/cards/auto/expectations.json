@@ -124,6 +124,10 @@
     },
     "zone": "battlefield"
   },
+  "acolyte_hybrid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adagia_windswept_bastion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1550,6 +1554,13 @@
     "tokens": {
       "count": 1,
       "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
+  },
+  "atalan_jackal": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
     },
     "zone": "battlefield"
   },

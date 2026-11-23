@@ -432,12 +432,12 @@
     },
     "Aberrant": {
       "edhrec_rank": 5695,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Aberrant",
-      "reason": "no template for: Ravenous",
+      "reason": "your battlefield is 31, expected 33",
       "scryfall_id": "49dfee68-c242-4579-94b1-c23238f8c87d",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Aberrant Manawurm": {
@@ -1622,12 +1622,12 @@
     },
     "Acolyte Hybrid": {
       "edhrec_rank": 14705,
-      "gate": "template",
+      "gate": null,
       "name": "Acolyte Hybrid",
-      "reason": "no template for: Heavy Rock Cutter — Whenever this creature attacks, destroy up to one target artifact. If ",
+      "reason": "",
       "scryfall_id": "b229697e-b6ff-450b-8020-45c454da9b3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Acolyte of Aclazotz": {
@@ -15562,12 +15562,12 @@
     },
     "Atalan Jackal": {
       "edhrec_rank": 5129,
-      "gate": "template",
+      "gate": null,
       "name": "Atalan Jackal",
-      "reason": "no template for: Skilled Outrider — Whenever this creature deals combat damage to a player, you may search ",
+      "reason": "",
       "scryfall_id": "3fc069f7-2445-44ff-bcff-5b0741841690",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atalya, Samite Master": {
