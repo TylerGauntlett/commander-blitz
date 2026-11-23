@@ -1,0 +1,839 @@
+{
+  "id": "dmc_legends_legacy",
+  "name": "Legends' Legacy",
+  "commanders": [
+    "dihada_binder_of_wills"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "DMC",
+    "set_name": "Dominaria United Commander",
+    "date": "2022-09-09"
+  },
+  "notes": "Dominaria United Commander precon, card for card (https://mtgjson.com/api/v5/decks/LegendsLegacy_DMC.json).",
+  "tags": [
+    "Legends",
+    "Mardu",
+    "Combat",
+    "Treasure"
+  ],
+  "strategy": "Dihada, Binder of Wills digs four cards deep for legends and pays Treasure for every miss, and its +2 makes a legendary creature a vigilant, lifelinking, indestructible attacker until your next turn. The deck is almost all legends: Cadric, Soul Kindler copies each one that enters, Shanid, Sleepers' Scourge and The Circle of Loyalty draw or make a Knight for every legendary spell, and Tyrite Sanctum, Sword of the Chosen, Tenza, Godo's Maul and Blackblade Reforged turn whichever one is on the table into the threat. Alesha, Tajic, Neheb, Moira and Bladewing push damage through, Garna and Gerrard's Hourglass Pendant bring back what died this turn, and Kaya's Wrath, Urza's Ruinous Blast, Hero's Downfall and Mortify clear the way.",
+  "archetype": "aggro",
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "dihada_binder_of_wills",
+      "why": "Its -3 looks at four cards, keeps every legend and makes a Treasure for each card that misses."
+    },
+    {
+      "card_id": "cadric_soul_kindler",
+      "why": "Each other nontoken legend that enters can be copied for {1}, as a hasty token sacrificed at the end step."
+    },
+    {
+      "card_id": "shanid_sleepers_scourge",
+      "why": "Every legendary spell or land draws a card, and every other legendary creature gets menace."
+    },
+    {
+      "card_id": "the_circle_of_loyalty",
+      "why": "An anthem that gets cheaper with Knights and makes a 2/2 Knight for every legendary spell you cast."
+    }
+  ],
+  "printings": {
+    "adriana_captain_of_the_guard": {
+      "scryfall_id": "01c2337d-1c3c-4c5e-8b06-dc8a8c56164e",
+      "artist": "Chris Rallis",
+      "set_code": "dmc",
+      "collector_number": "139"
+    },
+    "alesha_who_smiles_at_death": {
+      "scryfall_id": "7ae9ff8c-1cc8-4b10-9641-2c79648fd6c2",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "dmc",
+      "collector_number": "118"
+    },
+    "ambition_s_cost": {
+      "scryfall_id": "2341686a-1b75-431a-8c89-d723ce3a867f",
+      "artist": "Zezhou Chen",
+      "set_code": "dmc",
+      "collector_number": "110"
+    },
+    "anafenza_kin_tree_spirit": {
+      "scryfall_id": "5ba5e8b8-ce9d-450c-8804-2f8e2ef51ff0",
+      "artist": "Ryan Yee",
+      "set_code": "dmc",
+      "collector_number": "97"
+    },
+    "arcane_signet": {
+      "scryfall_id": "1bf50ef8-e7e8-4099-ba91-0d7c31b04541",
+      "artist": "Dan Murayama Scott",
+      "set_code": "dmc",
+      "collector_number": "177"
+    },
+    "arvad_the_cursed": {
+      "scryfall_id": "3b85ed69-bb0b-477b-8600-b2e7f3c95ce4",
+      "artist": "Lius Lasahido",
+      "set_code": "dmc",
+      "collector_number": "141"
+    },
+    "ashling_the_pilgrim": {
+      "scryfall_id": "b60633ed-6428-4672-9497-9a17f823b981",
+      "artist": "Wayne Reynolds",
+      "set_code": "dmc",
+      "collector_number": "119"
+    },
+    "battlefield_forge": {
+      "scryfall_id": "57c43ae5-8427-4c10-b437-c214017637d9",
+      "artist": "Darrell Riche",
+      "set_code": "dmc",
+      "collector_number": "198"
+    },
+    "bedevil": {
+      "scryfall_id": "fc81669c-af6e-4af4-b1eb-43ff7fdda590",
+      "artist": "Seb McKinnon",
+      "set_code": "dmc",
+      "collector_number": "144"
+    },
+    "bell_borca_spectral_sergeant": {
+      "scryfall_id": "4fdcd559-477f-48cb-a221-23a653b0dde1",
+      "artist": "Mila Pesic",
+      "set_code": "dmc",
+      "collector_number": "145"
+    },
+    "blackblade_reforged": {
+      "scryfall_id": "240448cd-c308-49ae-9e4b-0c35adc59fba",
+      "artist": "Chris Rahn",
+      "set_code": "dmc",
+      "collector_number": "178"
+    },
+    "bladewing_deathless_tyrant": {
+      "scryfall_id": "7dcf3b3e-e986-4add-a3c6-4e92a6f72a12",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "dmc",
+      "collector_number": "9"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "c6525da7-49d9-4c92-a319-35a63dabadc6",
+      "artist": "Howard Lyon",
+      "set_code": "dmc",
+      "collector_number": "199"
+    },
+    "bontu_s_monument": {
+      "scryfall_id": "171a9a3f-6278-4921-9848-2b8459869d6c",
+      "artist": "Jonas De Ro",
+      "set_code": "dmc",
+      "collector_number": "179"
+    },
+    "boros_garrison": {
+      "scryfall_id": "d7cd5af5-67de-4d4d-b84f-5f2c95bee52e",
+      "artist": "John Avon",
+      "set_code": "dmc",
+      "collector_number": "200"
+    },
+    "cadric_soul_kindler": {
+      "scryfall_id": "f82f8cab-5039-4e3a-a2ba-cbf829db80ed",
+      "artist": "Joseph Weston",
+      "set_code": "dmc",
+      "collector_number": "10"
+    },
+    "captain_lannery_storm": {
+      "scryfall_id": "98a2cd4c-f02e-4a5e-a5f5-1aad52132b90",
+      "artist": "Chris Rallis",
+      "set_code": "dmc",
+      "collector_number": "120"
+    },
+    "caves_of_koilos": {
+      "scryfall_id": "99264beb-2149-4cd4-9880-f0dc5c570c1b",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "dmu",
+      "collector_number": "244"
+    },
+    "command_tower": {
+      "scryfall_id": "77a679dd-220c-4fbe-a158-a8db57f55b86",
+      "artist": "Evan Shipard",
+      "set_code": "dmc",
+      "collector_number": "204"
+    },
+    "commanders_sphere": {
+      "scryfall_id": "e6458206-bfbd-4f4c-b2cf-e2853a939d50",
+      "artist": "Ryan Alexander Lee",
+      "set_code": "dmc",
+      "collector_number": "181"
+    },
+    "day_of_destiny": {
+      "scryfall_id": "56b27e0c-bf8e-43d6-b99d-3e25d4954d34",
+      "artist": "Daren Bader",
+      "set_code": "dmc",
+      "collector_number": "99"
+    },
+    "dihada_binder_of_wills": {
+      "scryfall_id": "ddeb54d6-a600-42b9-98df-20f8d58caed8",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "dmc",
+      "collector_number": "1"
+    },
+    "dragonskull_summit": {
+      "scryfall_id": "8c5a9cb7-6c97-47fd-acd0-bc6dd11b77b4",
+      "artist": "Alayna Danner",
+      "set_code": "dmc",
+      "collector_number": "207"
+    },
+    "drana_liberator_of_malakir": {
+      "scryfall_id": "dbee85f6-a880-49ce-8139-5c439a202821",
+      "artist": "Mike Bierek",
+      "set_code": "dmc",
+      "collector_number": "111"
+    },
+    "etali_primal_storm": {
+      "scryfall_id": "a03fb3a7-3ef6-4162-aad2-82610492aa72",
+      "artist": "Raymond Swanland",
+      "set_code": "dmc",
+      "collector_number": "121"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "b2f20d21-6666-4851-a293-469152c347cf",
+      "artist": "Steven Belledin",
+      "set_code": "dmc",
+      "collector_number": "208"
+    },
+    "faithless_looting": {
+      "scryfall_id": "84c3b38c-a6f7-49a2-8c47-d91b6be0a967",
+      "artist": "Karl Kopinski",
+      "set_code": "dmc",
+      "collector_number": "122"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "5bf29f9d-0745-4aab-b7fc-7b04ba2eeaba",
+      "artist": "John Avon",
+      "set_code": "dmc",
+      "collector_number": "182"
+    },
+    "foreboding_ruins": {
+      "scryfall_id": "be7a14d1-5846-492e-a41a-d5c2045c3cc7",
+      "artist": "Adam Paquette",
+      "set_code": "dmc",
+      "collector_number": "211"
+    },
+    "garna_the_bloodflame": {
+      "scryfall_id": "732797d3-59e1-4fff-bcf0-22c2606a7a5f",
+      "artist": "Winona Nelson",
+      "set_code": "dmc",
+      "collector_number": "151"
+    },
+    "geier_reach_sanitarium": {
+      "scryfall_id": "0b9fa570-770d-45a7-9b87-2def6992a22b",
+      "artist": "Cliff Childs",
+      "set_code": "dmc",
+      "collector_number": "213"
+    },
+    "generous_gift": {
+      "scryfall_id": "18c2efbd-fac9-471b-98e2-a162704b193c",
+      "artist": "Kev Walker",
+      "set_code": "dmc",
+      "collector_number": "100"
+    },
+    "gerrard_s_hourglass_pendant": {
+      "scryfall_id": "580ca958-4df7-4f42-b497-d412d286bd4e",
+      "artist": "Sam Burley",
+      "set_code": "dmc",
+      "collector_number": "17"
+    },
+    "hazoret_s_monument": {
+      "scryfall_id": "3c862fc4-e2fe-4fad-8bc1-a53f1fecc4de",
+      "artist": "Richard Wright",
+      "set_code": "dmc",
+      "collector_number": "183"
+    },
+    "hedron_archive": {
+      "scryfall_id": "27b2db81-cdf6-4989-a38a-eb728d63d9be",
+      "artist": "Craig J Spearing",
+      "set_code": "dmc",
+      "collector_number": "184"
+    },
+    "hero_s_blade": {
+      "scryfall_id": "792600fb-7e8b-4a0f-8a59-93b00d4509ce",
+      "artist": "Aaron Miller",
+      "set_code": "dmc",
+      "collector_number": "186"
+    },
+    "heroes_podium": {
+      "scryfall_id": "1b2bee5c-7ea0-4713-a60b-dccaf89c5d48",
+      "artist": "Willian Murai",
+      "set_code": "dmc",
+      "collector_number": "185"
+    },
+    "heros_downfall": {
+      "scryfall_id": "33c5f81a-395d-41bf-9563-6cf0e406ee18",
+      "artist": "Chris Rallis",
+      "set_code": "dmc",
+      "collector_number": "112"
+    },
+    "honor_worn_shaku": {
+      "scryfall_id": "3c308e5c-40f1-4100-8f7b-8529bbbfcfb4",
+      "artist": "Tony Szczudlo",
+      "set_code": "dmc",
+      "collector_number": "187"
+    },
+    "jazal_goldmane": {
+      "scryfall_id": "9eec64e1-a9c9-4a84-bf78-1d8bc5255a04",
+      "artist": "Aaron Miller",
+      "set_code": "dmc",
+      "collector_number": "102"
+    },
+    "josu_vess_lich_knight": {
+      "scryfall_id": "0beb8de5-e54d-4642-b2e4-0e3ffbaa2435",
+      "artist": "Tyler Jacobson",
+      "set_code": "dmc",
+      "collector_number": "113"
+    },
+    "kari_zev_skyship_raider": {
+      "scryfall_id": "52de8af2-d260-42a8-b8c2-b26b392632d1",
+      "artist": "Brad Rigney",
+      "set_code": "dmc",
+      "collector_number": "123"
+    },
+    "kaya_s_wrath": {
+      "scryfall_id": "20adee32-2144-44ad-a70c-ebfbda0900ec",
+      "artist": "Victor Adame Minguez",
+      "set_code": "dmc",
+      "collector_number": "155"
+    },
+    "kothophed_soul_hoarder": {
+      "scryfall_id": "a1070dd6-944f-44a0-8834-02eae93dabaa",
+      "artist": "Jakub Kasper",
+      "set_code": "dmc",
+      "collector_number": "114"
+    },
+    "krenko_tin_street_kingpin": {
+      "scryfall_id": "3425e774-2b71-46be-9f58-9cbc121384cd",
+      "artist": "Mark Behm",
+      "set_code": "dmc",
+      "collector_number": "124"
+    },
+    "mikokoro_center_of_the_sea": {
+      "scryfall_id": "d80eb098-5433-4b1e-aad5-0fd31bf598dd",
+      "artist": "John Avon",
+      "set_code": "dmc",
+      "collector_number": "217"
+    },
+    "mobilized_district": {
+      "scryfall_id": "cf58d89a-03f9-46f0-8ce3-4dd9e97c292f",
+      "artist": "Jedd Chevrier",
+      "set_code": "dmc",
+      "collector_number": "218"
+    },
+    "moira_urborg_haunt": {
+      "scryfall_id": "0a5c9d99-8fbc-4a74-99a5-32ba71eb2b62",
+      "artist": "Marta Nael",
+      "set_code": "dmc",
+      "collector_number": "6"
+    },
+    "mortify": {
+      "scryfall_id": "ff33c675-04cb-429d-8568-57487edee25e",
+      "artist": "Anthony Palumbo",
+      "set_code": "dmc",
+      "collector_number": "161"
+    },
+    "mountain": {
+      "scryfall_id": "a82f782e-abc8-4b92-a193-17b2c383f765",
+      "artist": "Titus Lunter",
+      "set_code": "dmu",
+      "collector_number": "271"
+    },
+    "neheb_dreadhorde_champion": {
+      "scryfall_id": "a8cbc3ba-f552-43fd-a59b-f3d8e3edd12f",
+      "artist": "Igor Kieryluk",
+      "set_code": "dmc",
+      "collector_number": "125"
+    },
+    "nights_whisper": {
+      "scryfall_id": "2a16686d-a4eb-46c4-98a9-dcc87b89872e",
+      "artist": "John Severin Brassell",
+      "set_code": "dmc",
+      "collector_number": "115"
+    },
+    "nomad_outpost": {
+      "scryfall_id": "9c003287-993d-4cc2-8b91-47919dbaa1ec",
+      "artist": "Kamila Szutenberg",
+      "set_code": "dmc",
+      "collector_number": "222"
+    },
+    "odric_lunarch_marshal": {
+      "scryfall_id": "a2d5c9f2-8f58-40ac-a01c-f4ac4ab4d7f0",
+      "artist": "Chase Stone",
+      "set_code": "dmc",
+      "collector_number": "103"
+    },
+    "oketra_s_monument": {
+      "scryfall_id": "a7f1d5a6-bdf2-4b12-b11e-70f58b59dd80",
+      "artist": "Christine Choi",
+      "set_code": "dmc",
+      "collector_number": "188"
+    },
+    "orzhov_basilica": {
+      "scryfall_id": "b4895407-2ff7-4a68-b47e-eb9733c95451",
+      "artist": "John Avon",
+      "set_code": "dmc",
+      "collector_number": "224"
+    },
+    "plains": {
+      "scryfall_id": "5822b027-369d-46da-b6dd-c31207e2f449",
+      "artist": "Lorenzo Lanfranconi",
+      "set_code": "dmu",
+      "collector_number": "262"
+    },
+    "primevals_glorious_rebirth": {
+      "scryfall_id": "e11471f9-6bf4-4b31-8eb6-f5f9e8abd797",
+      "artist": "Yigit Koroglu",
+      "set_code": "dmc",
+      "collector_number": "165"
+    },
+    "rakdos_carnarium": {
+      "scryfall_id": "19906ffa-c43e-4c11-b9c0-4a8b77d6691a",
+      "artist": "John Avon",
+      "set_code": "dmc",
+      "collector_number": "226"
+    },
+    "read_the_bones": {
+      "scryfall_id": "ef841309-60fa-4956-bc3f-dcf1ef55de94",
+      "artist": "Lars Grant-West",
+      "set_code": "dmc",
+      "collector_number": "117"
+    },
+    "reliquary_tower": {
+      "scryfall_id": "2bdb402f-b3a9-499c-8b00-31a36c3cba89",
+      "artist": "Jesper Ejsing",
+      "set_code": "dmc",
+      "collector_number": "227"
+    },
+    "shanid_sleepers_scourge": {
+      "scryfall_id": "1b0fb859-055d-4aa1-814c-0894cd2ccd4a",
+      "artist": "Ryan Pancoast",
+      "set_code": "dmc",
+      "collector_number": "4"
+    },
+    "shivan_gorge": {
+      "scryfall_id": "d3162830-4d06-4c69-8544-876d2fa8ea10",
+      "artist": "John Matson",
+      "set_code": "dmc",
+      "collector_number": "232"
+    },
+    "shizo_death_s_storehouse": {
+      "scryfall_id": "099352e2-38c8-4fb4-a25f-6d928aa20f9e",
+      "artist": "John Matson",
+      "set_code": "dmc",
+      "collector_number": "233"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "5613def4-c9fe-48e0-920d-48dd3a193ecc",
+      "artist": "Adam Paquette",
+      "set_code": "dmc",
+      "collector_number": "234"
+    },
+    "sol_ring": {
+      "scryfall_id": "beebe533-29b9-4041-ab66-0a8233c50d56",
+      "artist": "Mike Bierek",
+      "set_code": "dmc",
+      "collector_number": "190"
+    },
+    "swamp": {
+      "scryfall_id": "5a846f00-ccb9-4ee2-8358-7c7722258601",
+      "artist": "Seb McKinnon",
+      "set_code": "dmu",
+      "collector_number": "268"
+    },
+    "sword_of_the_chosen": {
+      "scryfall_id": "6de493a9-d1df-4507-b7c3-e775c4c50db9",
+      "artist": "Adam Rex",
+      "set_code": "dmc",
+      "collector_number": "192"
+    },
+    "tajic_blade_of_the_legion": {
+      "scryfall_id": "eea2cdad-529a-499f-8be7-53f939153b7e",
+      "artist": "James Ryman",
+      "set_code": "dmc",
+      "collector_number": "171"
+    },
+    "temple_of_malice": {
+      "scryfall_id": "0b5d626b-c04e-4573-ab07-cf0143baa8b7",
+      "artist": "Jonas De Ro",
+      "set_code": "dmc",
+      "collector_number": "236"
+    },
+    "temple_of_silence": {
+      "scryfall_id": "3b7db6c9-509a-4556-b855-338c34e3cb9b",
+      "artist": "Adam Paquette",
+      "set_code": "dmc",
+      "collector_number": "237"
+    },
+    "temple_of_triumph": {
+      "scryfall_id": "506e6398-174b-42ce-a326-2c74671c3777",
+      "artist": "Piotr Dura",
+      "set_code": "dmc",
+      "collector_number": "238"
+    },
+    "tenza_godo_s_maul": {
+      "scryfall_id": "3f918d2a-5769-43ce-a8e8-41db6c8f251d",
+      "artist": "Paolo Parente",
+      "set_code": "dmc",
+      "collector_number": "193"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "74d8849c-fe0d-4749-9165-a22f8643888a",
+      "artist": "Dan Murayama Scott",
+      "set_code": "dmc",
+      "collector_number": "239"
+    },
+    "teshar_ancestor_s_apostle": {
+      "scryfall_id": "0ec9ef7c-88de-4346-a8f9-44beda59fa68",
+      "artist": "Even Amundsen",
+      "set_code": "dmc",
+      "collector_number": "105"
+    },
+    "the_circle_of_loyalty": {
+      "scryfall_id": "81910ade-a742-4ed7-ab15-bca95850f8b5",
+      "artist": "Bastien L. Deharme",
+      "set_code": "dmc",
+      "collector_number": "98"
+    },
+    "the_peregrine_dynamo": {
+      "scryfall_id": "2e474c23-22d3-4249-b678-254b178ddf6f",
+      "artist": "Zoltan Boros",
+      "set_code": "dmc",
+      "collector_number": "19"
+    },
+    "the_reaver_cleaver": {
+      "scryfall_id": "5bcd1591-b5b9-49fc-9f2a-45f31ed1871e",
+      "artist": "Yigit Koroglu",
+      "set_code": "dmc",
+      "collector_number": "8"
+    },
+    "thrill_of_possibility": {
+      "scryfall_id": "9752ed44-dc5e-4f73-9422-c1d267b60a3c",
+      "artist": "Izzy",
+      "set_code": "dmc",
+      "collector_number": "127"
+    },
+    "traxos_scourge_of_kroog": {
+      "scryfall_id": "8566e91a-5f2c-4854-aeb3-68b3c4344582",
+      "artist": "Lius Lasahido",
+      "set_code": "dmc",
+      "collector_number": "195"
+    },
+    "tyrite_sanctum": {
+      "scryfall_id": "6d56df43-e5b4-4633-a961-dafc10ffafc5",
+      "artist": "Volkan Baǵa",
+      "set_code": "dmc",
+      "collector_number": "240"
+    },
+    "unbreakable_formation": {
+      "scryfall_id": "92b4cc4b-8906-4e4d-8f41-2819c66d753e",
+      "artist": "Matt Stewart",
+      "set_code": "dmc",
+      "collector_number": "106"
+    },
+    "urza_s_ruinous_blast": {
+      "scryfall_id": "b918993f-2a6c-490d-b639-224f15303630",
+      "artist": "Slawomir Maniak",
+      "set_code": "dmc",
+      "collector_number": "107"
+    },
+    "verrak_warped_sengir": {
+      "scryfall_id": "8ca7f49a-ab5a-49de-b07b-96c803daaf7d",
+      "artist": "Alix Branwyn",
+      "set_code": "dmc",
+      "collector_number": "16"
+    },
+    "wear_tear": {
+      "scryfall_id": "f8e1bd2d-ff66-4e68-9ad0-0be9c134e6f5",
+      "artist": "Ryan Pancoast",
+      "set_code": "dmc",
+      "collector_number": "174"
+    },
+    "zeriam_golden_wind": {
+      "scryfall_id": "e7efbb9a-e0b3-412c-9ee7-a90123033999",
+      "artist": "John Tedrick",
+      "set_code": "dmc",
+      "collector_number": "5"
+    },
+    "zetalpa_primal_dawn": {
+      "scryfall_id": "77bcb902-70c0-4406-bbcf-49d23fd71a68",
+      "artist": "Chris Rallis",
+      "set_code": "dmc",
+      "collector_number": "108"
+    }
+  },
+  "cards": [
+    {
+      "id": "adriana_captain_of_the_guard"
+    },
+    {
+      "id": "alesha_who_smiles_at_death"
+    },
+    {
+      "id": "ambition_s_cost"
+    },
+    {
+      "id": "anafenza_kin_tree_spirit"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "arvad_the_cursed"
+    },
+    {
+      "id": "ashling_the_pilgrim"
+    },
+    {
+      "id": "battlefield_forge"
+    },
+    {
+      "id": "bedevil"
+    },
+    {
+      "id": "bell_borca_spectral_sergeant"
+    },
+    {
+      "id": "blackblade_reforged"
+    },
+    {
+      "id": "bladewing_deathless_tyrant"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "bontu_s_monument"
+    },
+    {
+      "id": "boros_garrison"
+    },
+    {
+      "id": "cadric_soul_kindler"
+    },
+    {
+      "id": "captain_lannery_storm"
+    },
+    {
+      "id": "caves_of_koilos"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commanders_sphere"
+    },
+    {
+      "id": "day_of_destiny"
+    },
+    {
+      "id": "dragonskull_summit"
+    },
+    {
+      "id": "drana_liberator_of_malakir"
+    },
+    {
+      "id": "etali_primal_storm"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "faithless_looting"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "foreboding_ruins"
+    },
+    {
+      "id": "garna_the_bloodflame"
+    },
+    {
+      "id": "geier_reach_sanitarium"
+    },
+    {
+      "id": "generous_gift"
+    },
+    {
+      "id": "gerrard_s_hourglass_pendant"
+    },
+    {
+      "id": "hazoret_s_monument"
+    },
+    {
+      "id": "hedron_archive"
+    },
+    {
+      "id": "hero_s_blade"
+    },
+    {
+      "id": "heroes_podium"
+    },
+    {
+      "id": "heros_downfall"
+    },
+    {
+      "id": "honor_worn_shaku"
+    },
+    {
+      "id": "jazal_goldmane"
+    },
+    {
+      "id": "josu_vess_lich_knight"
+    },
+    {
+      "id": "kari_zev_skyship_raider"
+    },
+    {
+      "id": "kaya_s_wrath"
+    },
+    {
+      "id": "kothophed_soul_hoarder"
+    },
+    {
+      "id": "krenko_tin_street_kingpin"
+    },
+    {
+      "id": "mikokoro_center_of_the_sea"
+    },
+    {
+      "id": "mobilized_district"
+    },
+    {
+      "id": "moira_urborg_haunt"
+    },
+    {
+      "id": "mortify"
+    },
+    {
+      "id": "mountain",
+      "qty": 5
+    },
+    {
+      "id": "neheb_dreadhorde_champion"
+    },
+    {
+      "id": "nights_whisper"
+    },
+    {
+      "id": "nomad_outpost"
+    },
+    {
+      "id": "odric_lunarch_marshal"
+    },
+    {
+      "id": "oketra_s_monument"
+    },
+    {
+      "id": "orzhov_basilica"
+    },
+    {
+      "id": "plains",
+      "qty": 6
+    },
+    {
+      "id": "primevals_glorious_rebirth"
+    },
+    {
+      "id": "rakdos_carnarium"
+    },
+    {
+      "id": "read_the_bones"
+    },
+    {
+      "id": "reliquary_tower"
+    },
+    {
+      "id": "shanid_sleepers_scourge"
+    },
+    {
+      "id": "shivan_gorge"
+    },
+    {
+      "id": "shizo_death_s_storehouse"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "swamp",
+      "qty": 5
+    },
+    {
+      "id": "sword_of_the_chosen"
+    },
+    {
+      "id": "tajic_blade_of_the_legion"
+    },
+    {
+      "id": "temple_of_malice"
+    },
+    {
+      "id": "temple_of_silence"
+    },
+    {
+      "id": "temple_of_triumph"
+    },
+    {
+      "id": "tenza_godo_s_maul"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "teshar_ancestor_s_apostle"
+    },
+    {
+      "id": "the_circle_of_loyalty"
+    },
+    {
+      "id": "the_peregrine_dynamo"
+    },
+    {
+      "id": "the_reaver_cleaver"
+    },
+    {
+      "id": "thrill_of_possibility"
+    },
+    {
+      "id": "traxos_scourge_of_kroog"
+    },
+    {
+      "id": "tyrite_sanctum"
+    },
+    {
+      "id": "unbreakable_formation"
+    },
+    {
+      "id": "urza_s_ruinous_blast"
+    },
+    {
+      "id": "verrak_warped_sengir"
+    },
+    {
+      "id": "wear_tear"
+    },
+    {
+      "id": "zeriam_golden_wind"
+    },
+    {
+      "id": "zetalpa_primal_dawn"
+    }
+  ]
+}
