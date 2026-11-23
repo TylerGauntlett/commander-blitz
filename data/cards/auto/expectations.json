@@ -9949,6 +9949,10 @@
     },
     "zone": "graveyard"
   },
+  "ghost_ark": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ghost_of_ramirez_depietro": {
     "zone": "battlefield"
   },

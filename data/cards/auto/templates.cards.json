@@ -117062,6 +117062,135 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "ability": 0,
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.",
+          "trigger": {
+            "event": "becomes_crewed",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "replace_leaves_battlefield"
+            },
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step or if it would leave the battlefield."
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Unearth {3} ({3}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)"
+        }
+      ],
+      "id": "ghost_ark",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}",
+      "name": "Ghost Ark",
+      "oracle_text": "Flying\nRepair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

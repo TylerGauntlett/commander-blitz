@@ -107772,12 +107772,12 @@
     },
     "Ghost Ark": {
       "edhrec_rank": 13388,
-      "gate": "template",
+      "gate": null,
       "name": "Ghost Ark",
-      "reason": "no template for: Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your g",
+      "reason": "",
       "scryfall_id": "0641ac68-75da-468a-af51-0520e6954d8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghost Council of Orzhova": {

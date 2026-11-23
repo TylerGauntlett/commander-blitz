@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**526 cards** blocked by **443** capabilities.
+**525 cards** blocked by **442** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -445,7 +445,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
 | [unblockable-unless-attacking-owner](#unblockable-unless-attacking-owner) | 1 | 16395 | static_effect |
-| [unearth](#unearth) | 1 | 13388 | op |
 | [unleash](#unleash) | 1 | 12169 | keyword |
 | [untapped-during-untap-step](#untapped-during-untap-step) | 1 | 7041 | trigger_event |
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
@@ -7318,20 +7317,6 @@ Blocks **1** card.
 
 - **Become the Pilot** (rank 16395) — `become_the_pilot`
   - Enchanted creature gets +2/+2 and can't be blocked unless it's attacking its owner or a permanent its owner controls.
-
-</details>
-
-## unearth
-
-Blocks **1** card.
-
-- **(op)** an op granting unearth {N} until end of turn to cards in a graveyard matching a selector (here artifact creature cards in your graveyard): a sorcery-speed activated ability from the graveyard that returns the card to the battlefield, gives it haste, exiles it at the beginning of the next end step, and exiles it instead if it would leave the battlefield; the unearth keyword itself is also absent from card_level_cost_keys and keywords
-  <br>Why the existing vocabulary won't do: grant_graveyard_cast only grants casting (flashback/escape) and grant_playable grants play permissions, neither an activated return-to-battlefield ability with the haste, end-step exile and leave-the-battlefield replacement riders; grant_ability works on permanents on the battlefield only
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghost Ark** (rank 13388) — `ghost_ark`
-  - Repair Barge — Whenever this Vehicle becomes crewed, each artifact creature card in your graveyard gains unearth {3} until end of turn.
 
 </details>
 
