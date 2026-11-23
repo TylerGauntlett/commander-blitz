@@ -7823,10 +7823,29 @@ than `you`, and `affects_spells`, `affects`, `max_per_turn`, `grants_flashback`,
 `enters_tapped`, `arrived_this_turn_from`, `surveilled_this_turn` and
 `pay_life_instead`. The permission frees only the card carrying it, at its
 printed price, and each use takes that card out of the graveyard, so no reader
-looks at those keys. It is refused on an instant or sorcery, a form with no
-witness or test behind it. The near miss is `graveyard_cost`
+looks at those keys. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
+
+The same static is an instant's or a sorcery's own permission. The spell is cast
+at its normal timing, X announced as usual, and goes where it normally would
+(608.2n): back to the graveyard, to be cast again, unless the card itself says
+otherwise. "Exile Their Number Is Legion" is the card's `exiles_itself`:
+
+```jsonc
+// Their Number Is Legion -- "Create X tapped 2/2 black Necron Warrior artifact
+//  creature tokens, then you gain life equal to the number of artifacts you
+//  control. Exile Their Number Is Legion. / You may cast this card from your
+//  graveyard."
+"mana_cost": "{X}{B}{B}{B}{B}", "types": ["Sorcery"], "exiles_itself": true,
+"abilities": [
+  { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you",
+    "active_zones": ["graveyard"] } ]
+```
+
+The near miss there is `graveyard_cost` with the printed mana, or `flashback`:
+both are an alternative cost (118.9) and exile the spell whether or not the card
+says so.
 
 #### A graveyard permission priced in life
 

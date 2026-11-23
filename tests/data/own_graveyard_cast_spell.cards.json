@@ -1,0 +1,66 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_own_graveyard_cast_spell.py. Instants and sorceries carrying their own unconditional permission to be cast from their owner's graveyard at the printed price. t_gy_legion is Their Number Is Legion's shape (X, exiles itself); t_gy_recur goes back to the graveyard; t_gy_quick is the instant.",
+  "cards": [
+    {
+      "id": "t_gy_legion",
+      "name": "Test Legion",
+      "oracle_text": "Create X tapped 2/2 black Necron Warrior artifact creature tokens, then you gain life equal to the number of artifacts you control. Exile Test Legion.\nYou may cast this card from your graveyard.",
+      "mana_cost": "{X}{B}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "exiles_itself": true,
+      "spell_effects": [
+        {"op": "create_token", "token": "necron_warrior_2_2_b_artifact", "amount": {"x": true}, "tapped": true},
+        {"op": "gain_life", "amount": {"count": {"types": ["Artifact"], "controller": "you"}}}
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast this card from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "active_zones": ["graveyard"]
+        }
+      ]
+    },
+    {
+      "id": "t_gy_recur",
+      "name": "Test Recurring Sorcery",
+      "oracle_text": "Draw a card.\nYou may cast this card from your graveyard.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast this card from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "active_zones": ["graveyard"]
+        }
+      ]
+    },
+    {
+      "id": "t_gy_quick",
+      "name": "Test Recurring Instant",
+      "oracle_text": "You gain 1 life.\nYou may cast this card from your graveyard.",
+      "mana_cost": "{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}}],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast this card from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "active_zones": ["graveyard"]
+        }
+      ]
+    }
+  ]
+}

@@ -2838,22 +2838,6 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"'graveyard_cost', so it could never be true"
         )
 
-    # Gravecrawler's own graveyard permission is cast at the printed price and
-    # the card goes wherever it normally would. For a permanent that is the
-    # battlefield. An instant or sorcery cast this way would go back to the
-    # graveyard, a form with no witness or test behind it, so the line is
-    # refused rather than loaded untested.
-    owns_graveyard_permission = any(
-        ability.effect == "cast_from_graveyard" and "graveyard" in ability.active_zones
-        for ability in model.abilities
-    )
-    if owns_graveyard_permission and not (set(model.types) & PERMANENT_TYPES):
-        raise DslError(
-            f"{where}: a card's own permission to cast itself from the graveyard "
-            f"is supported on permanent cards only -- the nonpermanent form has "
-            f"no witness"
-        )
-
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
     _validate_attach_to_player(model, where)

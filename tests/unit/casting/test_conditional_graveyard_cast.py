@@ -212,19 +212,20 @@ class TestLoadTimeRefusals:
         with pytest.raises(DslError, match="must be 'you'"):
             compile_card(crawler_model(affects_player="opponent"))
 
-    def test_a_nonpermanent(self):
-        with pytest.raises(DslError, match="permanent cards only"):
-            compile_card(
-                crawler_model(
-                    card={
-                        "types": ["Sorcery"],
-                        "subtypes": [],
-                        "power": None,
-                        "toughness": None,
-                        "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
-                    }
-                )
+    def test_a_nonpermanent_loads(self):
+        """Their Number Is Legion's shape; its behaviour is
+        `test_own_graveyard_cast_spell.py`."""
+        compile_card(
+            crawler_model(
+                card={
+                    "types": ["Sorcery"],
+                    "subtypes": [],
+                    "power": None,
+                    "toughness": None,
+                    "spell_effects": [{"op": "draw", "amount": {"const": 1}}],
+                }
             )
+        )
 
     def test_a_bad_condition(self):
         with pytest.raises(DslError):

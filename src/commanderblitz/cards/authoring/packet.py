@@ -1124,7 +1124,9 @@ def reference() -> dict:
             " `cast_from_graveyard` static with `\"active_zones\":"
             " [\"graveyard\"]`, `\"affects_player\": \"you\"` and the \"as long"
             " as\" as its `condition`; no `affects_spells` or `max_per_turn`,"
-            " since it frees only the card carrying it. Permanent cards only."
+            " since it frees only the card carrying it. On an instant or"
+            " sorcery too: cast at its normal timing, it goes where it normally"
+            " would, so \"Exile <this>\" printed in its text is `exiles_itself`."
             " It is not `graveyard_cost`, which is an alternative price with no"
             " condition, offered always.",
             "\"Create a <Name> Role token attached to <it>\" is `create_token`"
