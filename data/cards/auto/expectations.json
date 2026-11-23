@@ -25427,6 +25427,20 @@
     },
     "zone": "graveyard"
   },
+  "termagant_swarm": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "terminus": {
     "battlefield_count": 30,
     "library_size": {
@@ -25481,6 +25495,20 @@
   },
   "terror_of_the_peaks": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tervigon": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "teshar_ancestor_s_apostle": {
@@ -25606,6 +25634,17 @@
   },
   "the_fifth_doctor": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_first_tyrannic_war": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_five_doctors": {
@@ -25809,6 +25848,10 @@
     "zone": "battlefield"
   },
   "the_reaver_cleaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_red_terror": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -26739,6 +26782,10 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "toxicrene": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "trading_post": {
     "battlefield_count": 33,

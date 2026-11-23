@@ -278192,12 +278192,12 @@
     },
     "Termagant Swarm": {
       "edhrec_rank": 6564,
-      "gate": "template",
+      "gate": null,
       "name": "Termagant Swarm",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "31079fcb-49bf-41a2-a9b4-07c96f93399d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Terminal Agony": {
@@ -278712,12 +278712,12 @@
     },
     "Tervigon": {
       "edhrec_rank": 5716,
-      "gate": "template",
+      "gate": null,
       "name": "Tervigon",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "50909e0e-0bed-423a-beb4-a24b14e95edc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tesak, Judith's Hellhound": {
@@ -280842,12 +280842,12 @@
     },
     "The First Tyrannic War": {
       "edhrec_rank": 10937,
-      "gate": "template",
+      "gate": null,
       "name": "The First Tyrannic War",
-      "reason": "no template for: I — You may put a creature card from your hand onto the battlefield. If its mana cost cont",
+      "reason": "",
       "scryfall_id": "64c814f3-8d4e-4c64-ad00-fd8b836b48b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Five Doctors": {
@@ -282082,12 +282082,12 @@
     },
     "The Red Terror": {
       "edhrec_rank": 7544,
-      "gate": "template",
+      "gate": null,
       "name": "The Red Terror",
-      "reason": "no template for: Advanced Species — Whenever a red source you control deals damage to one or more permanent",
+      "reason": "",
       "scryfall_id": "1d16f75d-988d-4417-9a5e-549b785f9dc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Regalia": {
@@ -290522,12 +290522,12 @@
     },
     "Toxicrene": {
       "edhrec_rank": 13357,
-      "gate": "template",
+      "gate": null,
       "name": "Toxicrene",
-      "reason": "no template for: Hypertoxic Miasma — All lands have \"{T}: Add one mana of any color\" and lose all other abi",
+      "reason": "",
       "scryfall_id": "72e05f1d-fdd5-44d3-ab8e-b31d61c6bd76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Toxin Analysis": {
