@@ -852,12 +852,12 @@
     },
     "Abstruse Archaic": {
       "edhrec_rank": 5562,
-      "gate": "template",
+      "gate": null,
       "name": "Abstruse Archaic",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from a colorless source. ",
+      "reason": "",
       "scryfall_id": "1fc2871b-c685-4951-b8e2-7370b9668f7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abstruse Interference": {
@@ -79072,12 +79072,12 @@
     },
     "Echo, Perceptive Prodigy": {
       "edhrec_rank": 13844,
-      "gate": "template",
+      "gate": null,
       "name": "Echo, Perceptive Prodigy",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from a creature source. Y",
+      "reason": "",
       "scryfall_id": "cd9b9be6-0143-467c-8a2a-937ecafe0473",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echocasting Symposium": {
@@ -117962,12 +117962,12 @@
     },
     "Griffin Aerie": {
       "edhrec_rank": 5175,
-      "gate": "template",
+      "gate": null,
       "name": "Griffin Aerie",
-      "reason": "no template for: At the beginning of your end step, if you gained 3 or more life this turn, create a 2/2 wh",
+      "reason": "",
       "scryfall_id": "b0c1cd62-aa6e-4120-ba70-1f12c8efe389",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Griffin Canyon": {
@@ -117992,12 +117992,12 @@
     },
     "Griffin Guide": {
       "edhrec_rank": 16328,
-      "gate": "template",
+      "gate": null,
       "name": "Griffin Guide",
-      "reason": "no template for: When enchanted creature dies, create a 2/2 white Griffin creature token with flying",
+      "reason": "",
       "scryfall_id": "344c8ece-80d7-4efc-badb-985fecb11761",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Griffin Protector": {
@@ -235612,12 +235612,12 @@
     },
     "Scientist Supreme of A.I.M.": {
       "edhrec_rank": 18715,
-      "gate": "template",
+      "gate": null,
       "name": "Scientist Supreme of A.I.M.",
-      "reason": "no template for: Pay 2 life: Copy target activated or triggered ability you control from an artifact source",
+      "reason": "",
       "scryfall_id": "0473a990-88c4-4921-a492-377d9171318a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion Summoner": {
@@ -275892,12 +275892,12 @@
     },
     "Tawnos, Urza's Apprentice": {
       "edhrec_rank": 16520,
-      "gate": "template",
+      "gate": null,
       "name": "Tawnos, Urza's Apprentice",
-      "reason": "no template for: {U}{R}, {T}: Copy target activated or triggered ability you control from an artifact sourc",
+      "reason": "",
       "scryfall_id": "dfdbd336-699f-4e29-922a-d6fb247f5b13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tawnos, the Toymaker": {
@@ -312842,12 +312842,12 @@
     },
     "Weaver of Harmony": {
       "edhrec_rank": 2045,
-      "gate": "template",
+      "gate": null,
       "name": "Weaver of Harmony",
-      "reason": "no template for: Other enchantment creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "3009fad8-40cb-4421-9fa8-fd525c5f7189",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weaver of Lies": {

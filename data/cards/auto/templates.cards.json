@@ -734,6 +734,56 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_source": {
+                  "colorless": true
+                },
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Copy target activated or triggered ability you control from a colorless source. You may choose new targets for the copy."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "abstruse_archaic",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}",
+      "name": "Abstruse Archaic",
+      "oracle_text": "Vigilance\n{1}, {T}: Copy target activated or triggered ability you control from a colorless source. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -87683,6 +87733,66 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_source": {
+                  "types": [
+                    "Creature"
+                  ]
+                },
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Copy target activated or triggered ability you control from a creature source. You may choose new targets for the copy. (Mana abilities can't be targeted.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "echo_perceptive_prodigy",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Echo, Perceptive Prodigy",
+      "oracle_text": "Vigilance\n{1}, {T}: Copy target activated or triggered ability you control from a creature source. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -130516,6 +130626,129 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "griffin_2_2_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you gained 3 or more life this turn, create a 2/2 white Griffin creature token with flying.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "griffin_aerie",
+      "mana_cost": "{1}{W}",
+      "name": "Griffin Aerie",
+      "oracle_text": "At the beginning of your end step, if you gained 3 or more life this turn, create a 2/2 white Griffin creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and has flying.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and has flying."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "griffin_2_2_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, create a 2/2 white Griffin creature token with flying.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "griffin_guide",
+      "mana_cost": "{2}{W}",
+      "name": "Griffin Guide",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has flying.\nWhen enchanted creature dies, create a 2/2 white Griffin creature token with flying.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -259093,6 +259326,69 @@
     {
       "abilities": [
         {
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_source": {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "Pay 2 life: Copy target activated or triggered ability you control from an artifact source. You may choose new targets for the copy. Activate only during your turn and only once each turn. (Mana abilities can't be targeted.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "scientist_supreme_of_a_i_m",
+      "mana_cost": "{U}{B}",
+      "name": "Scientist Supreme of A.I.M.",
+      "oracle_text": "Pay 2 life: Copy target activated or triggered ability you control from an artifact source. You may choose new targets for the copy. Activate only during your turn and only once each turn. (Mana abilities can't be targeted.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -302616,6 +302912,68 @@
       "mana_cost": "{1}{U}",
       "name": "Tawnos, Solemn Survivor",
       "oracle_text": "{2}, {T}: Create a token that's a copy of up to one target artifact token you control. Mill two cards.\n{1}{W}{U}{B}, {T}, Sacrifice two artifact tokens, Exile an artifact or creature card from your graveyard: Create a token that's a copy of the exiled card, except it's an artifact in addition to its other types. Activate only as a sorcery.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{U}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_source": {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{U}{R}, {T}: Copy target activated or triggered ability you control from an artifact source. You may choose new targets for the copy. (Mana abilities can't be targeted.)"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "tawnos_urza_s_apprentice",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Tawnos, Urza's Apprentice",
+      "oracle_text": "Haste\n{U}{R}, {T}: Copy target activated or triggered ability you control from an artifact source. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
       "power": 1,
       "source": "auto",
       "subtypes": [
@@ -347890,6 +348248,80 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Enchantment",
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other enchantment creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_source": {
+                  "types": [
+                    "Enchantment"
+                  ]
+                },
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{G}, {T}: Copy target activated or triggered ability you control from an enchantment source. You may choose new targets for the copy. (Mana abilities can't be targeted.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "weaver_of_harmony",
+      "mana_cost": "{1}{G}",
+      "name": "Weaver of Harmony",
+      "oracle_text": "Other enchantment creatures you control get +1/+1.\n{G}, {T}: Copy target activated or triggered ability you control from an enchantment source. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },

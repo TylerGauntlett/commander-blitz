@@ -62,6 +62,10 @@
     },
     "zone": "battlefield"
   },
+  "abstruse_archaic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "abundant_countryside": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7238,6 +7242,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "echo_perceptive_prodigy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "echo_storm": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -11016,6 +11024,18 @@
   "grey_knight_paragon": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "griffin_aerie": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "griffin_guide": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
     "zone": "battlefield"
   },
   "griffin_sentinel": {
@@ -21673,6 +21693,13 @@
   "school_of_the_unseen": {
     "zone": "battlefield"
   },
+  "scientist_supreme_of_a_i_m": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "scion_of_calamity": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -25230,6 +25257,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "tawnos_urza_s_apprentice": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tcri_building": {
@@ -29099,6 +29130,10 @@
     }
   },
   "weaver_of_currents": {
+    "zone": "battlefield"
+  },
+  "weaver_of_harmony": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "web": {
