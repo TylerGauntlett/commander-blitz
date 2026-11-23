@@ -2029,6 +2029,29 @@
       "is_token": true
     },
     {
+      "id": "griffin_2_2_w_flying",
+      "name": "Griffin Token",
+      "oracle_text": "2/2 white Griffin creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Griffin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "pest_1_1_bg",
       "name": "Pest Token",
       "oracle_text": "1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
