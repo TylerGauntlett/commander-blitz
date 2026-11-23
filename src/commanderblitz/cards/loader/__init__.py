@@ -263,10 +263,19 @@ def _check_grant_targets(
             )
 
 
+    def from_graveyard(index: Any) -> bool:
+        granted = grantable[int(index)]
+        return granted.is_activated and Zone.GRAVEYARD in granted.active_zones
+
     for ability in abilities:
         static = ability.static or {}
         if ability.is_static and static.get("effect") == "grant_ability":
             check(static.get("ability", 0), "grant_ability static")
+            if from_graveyard(static.get("ability", 0)):
+                raise DslError(
+                    f"{where}: a grant_ability static hands its ability to "
+                    f"permanents, where one that works from a graveyard never runs"
+                )
 
     for replacement in model.replacements:
         # "…and it has "{T}: Add {U}."" (Machine God's Effigy): `card_of`
@@ -296,6 +305,20 @@ def _check_grant_targets(
                 continue
             index = effect.get("ability", effect.get("ability_index"))
             check(index, "grant_ability op")
+            objects = effect.get("objects")
+            onto_graveyard = isinstance(objects, Mapping) and objects.get("zone") == "graveyard"
+            # "…each artifact creature card in your graveyard gains unearth {3}"
+            # (Ghost Ark). The two halves must agree: `abilities_of` offers a
+            # graveyard card its activated grants alone and legality offers one
+            # only from a zone it names, so either mismatch is a grant held on
+            # the card and never offered.
+            if onto_graveyard != from_graveyard(index):
+                raise DslError(
+                    f"{where}: grant_ability onto cards in a graveyard needs an "
+                    f"activated grantable with active_zones [\"graveyard\"], and "
+                    f"that grantable may be granted only onto cards in a graveyard "
+                    f"-- anything else would sit on the card and never work"
+                )
 
 
 def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
@@ -1791,13 +1814,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # trigger already carried, so it resolves after the grant has gone
             # with its source (608.2).
             zones = tuple(ability.active_zones or ())
-            if zones and zones != (Zone.BATTLEFIELD,):
-                # A grant lives on a *permanent*, and `abilities_of` only derives
-                # one there. Granted cycling would load clean and never be
-                # offered from the hand it is printed to work in.
+            if zones and zones not in ((Zone.BATTLEFIELD,), (Zone.GRAVEYARD,)):
+                # A grant lives on a permanent or on a graveyard card, and
+                # `abilities_of` derives one nowhere else. Granted cycling would
+                # load clean and never be offered from the hand it is printed to
+                # work in. A graveyard one (Ghost Ark's unearth) is held to the
+                # grant that hands it over by `_check_grant_targets`.
                 raise DslError(
                     f"{where}.grantable[{ability.index}]: a granted activated "
-                    f"ability works on the battlefield only, not from "
+                    f"ability works on the battlefield only (or, granted onto a "
+                    f"graveyard card, from the graveyard), not from "
                     f"{[z.value for z in zones]}"
                 )
             continue

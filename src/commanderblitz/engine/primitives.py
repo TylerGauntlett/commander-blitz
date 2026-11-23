@@ -2823,10 +2823,17 @@ def grant_ability(
     dies, …'" prints no duration, and a grant swept at cleanup would be a
     strictly weaker card that looks identical on the turn it was made. The two
     durations live in different lists because only one of them is swept.
+
+    A card **in a graveyard** takes a grant too: "each artifact creature card in
+    your graveyard gains unearth {3} until end of turn" (Ghost Ark). The record
+    sits on the card the same way, `clear_until_eot` sweeps graveyards beside
+    the battlefield, and the card leaving the graveyard ends it (400.7,
+    `reset_permanent_state`), so only the cards there as the grant resolved ever
+    have it (611.2c).
     """
 
     obj = state.objects.get(oid)
-    if obj is None or not obj.on_battlefield:
+    if obj is None or not (obj.on_battlefield or obj.zone is Zone.GRAVEYARD):
         return
     effect = TempEffect(
         kind="ability",
@@ -2969,6 +2976,14 @@ def clear_until_eot(state: GameState) -> None:
     # (702.26d). Walking only the battlefield list left a phased-out creature
     # carrying the turn's damage until it phased back in -- and died to it.
     phased_out = [oid for oid, obj in state.objects.items() if obj.phased_out]
+    # A graveyard card's until-end-of-turn grant (`grant_ability` on a card in
+    # a graveyard, Ghost Ark's "gains unearth {3} until end of turn") ends on
+    # the same clock, read by the same `_ends_this_cleanup`.
+    for player in state.players:
+        for oid in player.graveyard:
+            obj = state.objects.get(oid)
+            if obj is not None and obj.until_eot:
+                obj.until_eot = [t for t in obj.until_eot if not _ends_this_cleanup(state, t)]
     for oid in [*state.battlefield, *phased_out]:
         obj = state.objects.get(oid)
         if obj is None:

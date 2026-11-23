@@ -270,7 +270,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "freeze": ("Board", "Tap and it doesn't untap during its controller's next untap step.", None),
     "copy_permanent": ("Board", "Create a token copy of a permanent; `as` records the copies.",
                        "Token copies"),
-    "grant_ability": ("Board", "Give permanents one of the card's `grantable_abilities`.",
+    "grant_ability": ("Board", "Give permanents, or cards in a graveyard, one of the card's "
+                      "`grantable_abilities`.",
                       "Granting an ability"),
     "gain_activated_abilities": ("Board", "Permanents gain every activated ability of the card `from` "
                                  "names, read as the op resolves, until end of turn.",

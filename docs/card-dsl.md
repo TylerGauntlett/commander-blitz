@@ -3065,6 +3065,41 @@ An op-granted **triggered** ability is kept off the derived list — and that is
 fact about `_op_granted_abilities`, not a refusal at load, because
 `triggers.collect` yields one off the grant record itself.
 
+### Granting unearth to cards in a graveyard
+
+```jsonc
+// Ghost Ark — "…each artifact creature card in your graveyard gains unearth {3}
+// until end of turn."
+{ "op": "grant_ability", "ability": 0,
+  "objects": { "zone": "graveyard", "controller": "you",
+               "types": ["Artifact", "Creature"] } }
+// grantable_abilities[0]: the printed unearth's expanded ability, at {3}
+{ "kind": "activated", "text": "Unearth {3} (…)", "active_zones": ["graveyard"],
+  "sorcery_speed_only": true, "cost": { "mana": "{3}" },
+  "effects": [ put_onto_battlefield self, replace_leaves_battlefield exile,
+               grant_keyword haste permanent, delay end_step exile ] }
+```
+
+The `grant_ability` op reaches cards in a graveyard as well as permanents. A
+granted keyword that works from the graveyard is the activated ability its
+reminder text spells out, written once in `grantable_abilities` exactly as a
+printed unearth is (Chronomancer), with `active_zones: ["graveyard"]`.
+`abilities_of` appends it after the card's own abilities, so a card with a
+printed unearth offers both, each at its own price, and activating the granted
+one puts the granter's ability on the stack.
+
+The grant reaches the cards in the graveyard as it resolves and no card that
+arrives later (611.2c). It ends at cleanup — `clear_until_eot` sweeps graveyards
+— or when the card leaves the graveyard, since the card that comes back is a new
+object (400.7). Only an activated grant is offered there, so the loader refuses a
+`grant_ability` onto graveyard cards whose grantable is not an activated
+ability with `active_zones: ["graveyard"]`, and refuses that grantable handed to
+permanents by the op or the static.
+
+The near misses: `grant_graveyard_cast` and `grant_playable` grant *casting* a
+card (flashback, escape), not an ability of it; a `grant_graveyard_abilities`
+static lends a graveyard card's abilities to a permanent, the other direction.
+
 ### Losing all abilities because an effect said so
 
 ```jsonc

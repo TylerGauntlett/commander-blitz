@@ -1564,7 +1564,11 @@ def abilities_of(
         return ()
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
     if not obj.on_battlefield:
-        return printed
+        graveyard = _graveyard_granted_abilities(state, obj)
+        if not graveyard:
+            return printed
+        out = [*printed, *(ability for ability, _origin in graveyard)]
+        return tuple(dataclasses.replace(ability, index=i) for i, ability in enumerate(out))
     statics = _ability_statics(state)
     if (
         not statics
@@ -1760,6 +1764,29 @@ def _op_granted_abilities(
     return out
 
 
+def _graveyard_granted_abilities(
+    state: GameState, obj: GameObject
+) -> list[tuple[Ability, tuple[int, int]]]:
+    """The activated abilities a `grant_ability` op handed this graveyard card.
+
+    Ghost Ark: "…each artifact creature card in your graveyard gains unearth {3}
+    until end of turn." The record is the battlefield grant's (`primitives.
+    grant_ability`), read by `_op_granted_abilities`, and appended after the
+    printed list with the same ``(granter, index)`` provenance so legality,
+    `game._activate` and `stack.push_activated_ability` all see the one list.
+    Activated only: the loader refuses any other grant onto a graveyard card,
+    and the granted ability's own ``active_zones`` is what lets legality offer
+    it from there. Empty off a graveyard, and for nearly every card in one.
+    """
+    if obj.zone is not Zone.GRAVEYARD or not _has_op_grants(obj):
+        return []
+    return [
+        (ability, origin)
+        for ability, origin in _op_granted_abilities(state, obj)
+        if ability.is_activated
+    ]
+
+
 def _op_borrowed_abilities(obj: GameObject) -> list[tuple[Ability, Borrowed]]:
     """The activated abilities a `gain_activated_abilities` op lent this permanent.
 
@@ -1799,8 +1826,17 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     silently, because resolution could not find its definition.
     """
     obj = state.objects.get(oid)
-    if obj is None or not obj.on_battlefield:
+    if obj is None:
         return None
+    if not obj.on_battlefield:
+        # A grant on a graveyard card (Ghost Ark's unearth), appended after
+        # the printed list exactly as `abilities_of` appends it.
+        graveyard = _graveyard_granted_abilities(state, obj)
+        if not graveyard:
+            return None
+        offset = len(present_printed_abilities(obj, printed_abilities(state, obj)))
+        pos = index - offset
+        return graveyard[pos][1] if 0 <= pos < len(graveyard) else None
     if obj.face_down:
         return None
     statics = _ability_statics(state)
