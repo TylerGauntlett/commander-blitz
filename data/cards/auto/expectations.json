@@ -29981,6 +29981,19 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "zoanthrope": {
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "zodiac_dog": {
     "zone": "battlefield"
   },
