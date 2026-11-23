@@ -184962,12 +184962,12 @@
     },
     "Neheb, Dreadhorde Champion": {
       "edhrec_rank": 3855,
-      "gate": "template",
+      "gate": null,
       "name": "Neheb, Dreadhorde Champion",
-      "reason": "no template for: Whenever Neheb deals combat damage to a player or planeswalker, you may discard any number",
+      "reason": "",
       "scryfall_id": "b5c81384-c3c7-4033-9e5c-70143f145be5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neheb, the Eternal": {
@@ -242612,12 +242612,12 @@
     },
     "Shanid, Sleepers' Scourge": {
       "edhrec_rank": 4550,
-      "gate": "template",
+      "gate": null,
       "name": "Shanid, Sleepers' Scourge",
-      "reason": "no template for: Other legendary creatures you control have menace",
+      "reason": "",
       "scryfall_id": "1b0fb859-055d-4aa1-814c-0894cd2ccd4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shanna, Purifying Blade": {
@@ -272352,12 +272352,12 @@
     },
     "Sword of the Chosen": {
       "edhrec_rank": 13970,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Chosen",
-      "reason": "no template for: {T}: Target legendary creature gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "6de493a9-d1df-4507-b7c3-e775c4c50db9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword of the Meek": {
@@ -273892,12 +273892,12 @@
     },
     "Tajic, Blade of the Legion": {
       "edhrec_rank": 9507,
-      "gate": "template",
+      "gate": null,
       "name": "Tajic, Blade of the Legion",
-      "reason": "no template for: Battalion — Whenever Tajic and at least two other creatures attack, Tajic gets +5/+5 until",
+      "reason": "",
       "scryfall_id": "eea2cdad-529a-499f-8be7-53f939153b7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tajic, Legion's Edge": {
@@ -278072,12 +278072,12 @@
     },
     "Tenza, Godo's Maul": {
       "edhrec_rank": 5686,
-      "gate": "template",
+      "gate": null,
       "name": "Tenza, Godo's Maul",
-      "reason": "no template for: Equipped creature gets +1/+1. As long as it's legendary, it gets an additional +2/+2. As l",
+      "reason": "",
       "scryfall_id": "3f918d2a-5769-43ce-a8e8-41db6c8f251d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teo, Spirited Glider": {
@@ -280182,12 +280182,12 @@
     },
     "The Circle of Loyalty": {
       "edhrec_rank": 6694,
-      "gate": "template",
+      "gate": null,
       "name": "The Circle of Loyalty",
-      "reason": "no template for: Affinity for Knights",
+      "reason": "",
       "scryfall_id": "29a37ed7-223e-4e19-b318-83cac54f6b16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The City on the Edge of Forever": {
@@ -295512,12 +295512,12 @@
     },
     "Tyrite Sanctum": {
       "edhrec_rank": 1090,
-      "gate": "template",
+      "gate": null,
       "name": "Tyrite Sanctum",
-      "reason": "no template for: {2}, {T}: Target legendary creature becomes a God in addition to its other types. Put a +1",
+      "reason": "",
       "scryfall_id": "27906645-7d43-4c18-a20b-8d683069351e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrox, Saurid Tyrant": {

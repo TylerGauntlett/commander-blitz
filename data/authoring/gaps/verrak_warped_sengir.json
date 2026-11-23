@@ -1,0 +1,18 @@
+{
+  "card_id": "verrak_warped_sengir",
+  "name": "Verrak, Warped Sengir",
+  "oracle_text": "Flying, deathtouch, lifelink\nWhenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.",
+  "blocked_sentences": [
+    "Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "life_paid_to_activate",
+      "kind": "value",
+      "what": "a value readable from an ability_activated trigger giving the amount of life paid as part of the triggering ability's activation cost (pay_life, pay_life_x, or any life payment), usable both as an intervening-if condition (> 0) and as the amount of a `may` with `pay: {pay_life: <that value>}` before copy_ability",
+      "why_existing_wont_do": "The ability_activated trigger with mana_ability: false and copy_ability (with new_targets) cover the trigger and the copy, and trigger_keys has sacrificed_to_activate for a sacrifice cost, but no trigger key, condition or value_keys entry records the life paid to activate the triggering ability; life_lost_this_turn counts all life loss this turn, not this activation's payment"
+    }
+  ],
+  "closest_existing": ["ability_activated", "copy_ability", "sacrificed_to_activate", "life_lost_this_turn"],
+  "confidence": "high"
+}

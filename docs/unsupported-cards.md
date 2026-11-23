@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **451** capabilities.
+**538 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -85,6 +85,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 2 | 5182 | engine |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [zombie-1-1-w](#zombie-1-1-w) | 2 | 3702 | token |
+| [ability-source-filter](#ability-source-filter) | 1 | 6362 | selector |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [activate-only-once](#activate-only-once) | 1 | 9335 | engine |
 | [activated-this-turn](#activated-this-turn) | 1 | 13487 | selector |
@@ -275,6 +276,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [griffin-2-2-w-flying](#griffin-2-2-w-flying) | 1 | 14065 | token |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hexproof-from](#hexproof-from) | 1 | 7920 | keyword |
@@ -294,6 +296,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [library-top-play-shared-limit](#library-top-play-shared-limit) | 1 | 9924 | static_effect |
 | [library-top-play-trigger](#library-top-play-trigger) | 1 | 9924 | trigger_event |
 | [life-lost-this-turn-static-value](#life-lost-this-turn-static-value) | 1 | 2559 | value |
+| [life-paid-to-activate](#life-paid-to-activate) | 1 | 11136 | value |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [lightning-rager-token](#lightning-rager-token) | 1 | 3304 | token |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -2198,6 +2201,20 @@ Blocks **2** cards.
   - Whenever one or more cards leave your graveyard, create a 1/1 white Zombie creature token.
 - **Wizened Mentor** (rank 7822) — `wizened_mentor`
   - Whenever an opponent activates an ability of a permanent that isn't a mana ability, you create a 1/1 white Zombie creature token. This ability triggers only once each turn.
+
+</details>
+
+## ability-source-filter
+
+Blocks **1** card.
+
+- **(selector)** an 'ability_on_stack' target selector that filters on the ability's SOURCE object: its supertypes (Legendary), not being the activating permanent itself (exclude_self, i.e. 'another'), and not being a commander (is_commander: false) -- read from the source's last known characteristics if it has left
+  <br>Why the existing vocabulary won't do: copy_ability with new_targets and an ability_on_stack target covers 'copy target activated or triggered ability you control', but loader/targets.py `_compile_target` refuses every ability_on_stack selector key except controller, ability_kind and that_targets, and engine/targeting.py `_ability_matches` reads only those; dropping the 'another legendary source that's not a commander' clause would let it copy any ability, a much stronger card
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Peregrine Dynamo** (rank 6362) — `the_peregrine_dynamo`
+  - {1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy. (Mana abilities can't be targeted.)
 
 </details>
 
@@ -4909,6 +4926,20 @@ Blocks **1** card.
 
 </details>
 
+## griffin-2-2-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Griffin creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Griffin token; the nearest is pegasus_2_2_w_flying, which has the wrong creature type. The trigger itself is expressible with deals_combat_damage_to_player and a Griffin/controller-you filter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zeriam, Golden Wind** (rank 14065) — `zeriam_golden_wind`
+  - Whenever a Griffin you control deals combat damage to a player, create a 2/2 white Griffin creature token with flying.
+
+</details>
+
 ## harmonize
 
 Blocks **1** card.
@@ -5176,6 +5207,20 @@ Blocks **1** card.
 - **Rakdos, Lord of Riots** (rank 2559) — `rakdos_lord_of_riots`
   - You can't cast Rakdos unless an opponent lost life this turn.
   - Creature spells you cast cost {1} less to cast for each 1 life your opponents have lost this turn.
+
+</details>
+
+## life-paid-to-activate
+
+Blocks **1** card.
+
+- **(value)** a value readable from an ability_activated trigger giving the amount of life paid as part of the triggering ability's activation cost (pay_life, pay_life_x, or any life payment), usable both as an intervening-if condition (> 0) and as the amount of a `may` with `pay: {pay_life: <that value>}` before copy_ability
+  <br>Why the existing vocabulary won't do: The ability_activated trigger with mana_ability: false and copy_ability (with new_targets) cover the trigger and the copy, and trigger_keys has sacrificed_to_activate for a sacrifice cost, but no trigger key, condition or value_keys entry records the life paid to activate the triggering ability; life_lost_this_turn counts all life loss this turn, not this activation's payment
+
+<details><summary>Cards waiting on this</summary>
+
+- **Verrak, Warped Sengir** (rank 11136) — `verrak_warped_sengir`
+  - Whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again. If you do, copy that ability. You may choose new targets for the copy.
 
 </details>
 

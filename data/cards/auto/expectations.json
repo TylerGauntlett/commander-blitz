@@ -17181,6 +17181,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "neheb_dreadhorde_champion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "neheb_the_eternal": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22336,6 +22340,22 @@
     },
     "zone": "battlefield"
   },
+  "shanid_sleepers_scourge": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "menace"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shanodin_dryads": {
     "zone": "battlefield"
   },
@@ -24815,6 +24835,10 @@
     },
     "zone": "battlefield"
   },
+  "sword_of_the_chosen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sword_of_the_squeak": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24983,6 +25007,10 @@
     "zone": "battlefield"
   },
   "tainted_wood": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tajic_blade_of_the_legion": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25510,6 +25538,10 @@
     },
     "zone": "battlefield"
   },
+  "tenza_godo_s_maul": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "terastodon": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -25687,6 +25719,13 @@
   },
   "the_chain_veil": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_circle_of_loyalty": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_council_of_four": {
@@ -27424,6 +27463,10 @@
     "zone": "battlefield"
   },
   "tyrant_s_familiar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tyrite_sanctum": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

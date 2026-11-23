@@ -1,0 +1,18 @@
+{
+  "card_id": "the_peregrine_dynamo",
+  "name": "The Peregrine Dynamo",
+  "oracle_text": "Haste\n{1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+  "blocked_sentences": [
+    "{1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy. (Mana abilities can't be targeted.)"
+  ],
+  "needs": [
+    {
+      "capability": "ability_source_filter",
+      "kind": "selector",
+      "what": "an 'ability_on_stack' target selector that filters on the ability's SOURCE object: its supertypes (Legendary), not being the activating permanent itself (exclude_self, i.e. 'another'), and not being a commander (is_commander: false) -- read from the source's last known characteristics if it has left",
+      "why_existing_wont_do": "copy_ability with new_targets and an ability_on_stack target covers 'copy target activated or triggered ability you control', but loader/targets.py `_compile_target` refuses every ability_on_stack selector key except controller, ability_kind and that_targets, and engine/targeting.py `_ability_matches` reads only those; dropping the 'another legendary source that's not a commander' clause would let it copy any ability, a much stronger card"
+    }
+  ],
+  "closest_existing": ["copy_ability", "ability_on_stack"],
+  "confidence": "high"
+}
