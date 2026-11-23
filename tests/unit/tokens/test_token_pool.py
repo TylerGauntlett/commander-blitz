@@ -3936,3 +3936,28 @@ class TestThePlainTyranidsAreGreenVanillas:
     def test_the_wurm_and_saproling_are_still_separate_tokens(self, pool):
         assert list(pool.get("wurm_5_5_g").subtypes) == ["Wurm"]
         assert list(pool.get("saproling_1_1_g").subtypes) == ["Saproling"]
+
+
+class TestZeriamsGriffinIsAGriffin:
+    """Zeriam, Golden Wind: *"Whenever a **Griffin** you control deals combat
+    damage to a player, create a **2/2 white Griffin** creature token with
+    flying."*
+
+    The near miss is `pegasus_2_2_w_flying`: the same white flying body with
+    another creature type. On this card the type is the whole engine -- a
+    Pegasus token would never trigger Zeriam, so the loop the card prints
+    would stop after one hit.
+    """
+
+    def test_it_is_a_two_two_white_griffin_with_flying(self, pool):
+        token = pool.get("griffin_2_2_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.subtypes) == ["Griffin"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_pegasus_is_still_a_separate_token(self, pool):
+        other = pool.get("pegasus_2_2_w_flying")
+        assert other is not None
+        assert list(other.subtypes) == ["Pegasus"]

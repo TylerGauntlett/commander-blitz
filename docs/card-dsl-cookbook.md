@@ -12168,6 +12168,36 @@ with nothing exiled with it (400.7). A static, so it follows every re-equip.
 evaluated once, and `extreme_value`, which reads only mana value; neither can
 name the linked card.
 
+### A size read off the mana values noted as cards are exiled
+
+Bell Borca, Spectral Sergeant: "Note the mana value of each card as it's put
+into exile. Bell Borca's power is equal to the greatest number noted for it
+this turn."
+
+```jsonc
+{ "kind": "static", "effect": "note_exiled_mana_value",
+  "text": "Note the mana value of each card as it's put into exile." },
+{ "kind": "static", "effect": "set_pt", "affects": { "self_only": true },
+  "power": { "greatest_noted_exile_mana_value": "self" }, "toughness": { "const": 5 } }
+```
+
+The `note_exiled_mana_value` static is the first sentence. While its permanent
+is on the battlefield with the ability, every object put into exile — a card
+or a token, from the library, a hand, a graveyard, the battlefield or the
+stack, by anyone — adds its mana value to `TurnLedger.exile_mana_values_noted`
+under that permanent's oid (`zones.note_exiled_mana_value`, called from
+`zones.move_object`). The number is the object's in exile, so a spell's X is
+0. It takes nothing but its `text`; a filter is refused, and so is a grant.
+
+The static value `greatest_noted_exile_mana_value` is the second sentence: the
+largest number noted for this permanent this turn, 0 with none. `"self"` is the
+only spec, and the loader refuses it on a card with no `note_exiled_mana_value`
+static, where nothing would ever be noted. The notes belong to the object: a
+card exiled before the permanent entered was noted for nobody, one that leaves
+and comes back is a new object with nothing noted (400.7), and the cleanup
+step forgets them all. The near miss is `extreme_value` over exile, which reads
+cards still there from any turn and forgets one that has left.
+
 ### `grant_exiled_abilities` — abilities lent by the cards exiled with a permanent
 
 Hazel's Brewmaster: "Foods you control have all activated abilities of all

@@ -608,6 +608,12 @@ class TriggerModel(BaseModel):
     #: ``false`` those whose cost sacrificed none. Permanents sacrificed by mana
     #: abilities that paid the cost never count.
     sacrificed_to_activate: bool | None = None
+    #: For ``ability_activated`` with ``mana_ability: false``: "…if life was
+    #: paid to activate it" (Verrak, Warped Sengir). ``true`` keeps activations
+    #: whose own cost took life -- ``pay_life`` or a Phyrexian pip paid with
+    #: life -- ``false`` those whose cost took none. The amount is the
+    #: trigger's ``{"binding": "life_paid"}``.
+    life_paid_to_activate: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
     #: only (activated and triggered alike), ``"activated_ability"`` on

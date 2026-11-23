@@ -62,6 +62,10 @@
     },
     "zone": "battlefield"
   },
+  "abstruse_archaic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "abundant_countryside": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -517,6 +521,10 @@
   "alert_shu_infantry": {
     "zone": "battlefield"
   },
+  "alesha_who_smiles_at_death": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alexi_s_cloak": {
     "zone": [
       "battlefield",
@@ -720,6 +728,10 @@
     "zone": "battlefield"
   },
   "anaconda": {
+    "zone": "battlefield"
+  },
+  "anafenza_kin_tree_spirit": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "anafenza_unyielding_lineage": {
@@ -1492,6 +1504,10 @@
     },
     "zone": "battlefield"
   },
+  "ashling_the_pilgrim": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ashnod_s_altar": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2239,6 +2255,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bell_borca_spectral_sergeant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bello_bard_of_the_brambles": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2503,6 +2523,10 @@
   "black_widow_natasha_romanoff": {
     "zone": "battlefield"
   },
+  "blackblade_reforged": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blackcleave_cliffs": {
     "zone": "battlefield"
   },
@@ -2543,6 +2567,10 @@
     "zone": "battlefield"
   },
   "bladetusk_boar": {
+    "zone": "battlefield"
+  },
+  "bladewing_deathless_tyrant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blanchwood_treefolk": {
@@ -3480,6 +3508,13 @@
   },
   "cactus_preserve": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cadric_soul_kindler": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
@@ -6450,6 +6485,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "dihada_binder_of_wills": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "diluvian_primordial": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -7199,6 +7239,10 @@
     "zone": "battlefield"
   },
   "eccentric_pestfinder_turn_stones": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "echo_perceptive_prodigy": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9767,6 +9811,21 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "garna_the_bloodflame": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "garruk_apex_predator": {
     "battlefield_count": 33,
     "counters": {
@@ -9960,6 +10019,10 @@
     "zone": "battlefield"
   },
   "geralf_s_mindcrusher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gerrard_s_hourglass_pendant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10963,6 +11026,18 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "griffin_aerie": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "griffin_guide": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "griffin_sentinel": {
     "zone": "battlefield"
   },
@@ -11949,6 +12024,10 @@
     "life": {
       "0": 44
     }
+  },
+  "honor_worn_shaku": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "honored_dreyleader": {
     "battlefield_count": 33,
@@ -13401,6 +13480,17 @@
     },
     "zone": "battlefield"
   },
+  "kaya_s_wrath": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 42,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "kaya_the_inexorable": {
     "battlefield_count": 33,
     "counters": {
@@ -13988,6 +14078,16 @@
     "zone": "battlefield"
   },
   "koth_s_courier": {
+    "zone": "battlefield"
+  },
+  "kothophed_soul_hoarder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "kozilek_s_channeler": {
@@ -16324,6 +16424,10 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mobilized_district": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mobilizer_mech": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16348,6 +16452,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "moira_urborg_haunt": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "moldering_karok": {
@@ -17094,6 +17202,10 @@
     "zone": "battlefield"
   },
   "negative_zone_portal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "neheb_dreadhorde_champion": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21581,6 +21693,13 @@
   "school_of_the_unseen": {
     "zone": "battlefield"
   },
+  "scientist_supreme_of_a_i_m": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "scion_of_calamity": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -22252,6 +22371,22 @@
     },
     "zone": "battlefield"
   },
+  "shanid_sleepers_scourge": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "menace"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shanodin_dryads": {
     "zone": "battlefield"
   },
@@ -22481,6 +22616,10 @@
     "zone": "battlefield"
   },
   "shivan_reef": {
+    "zone": "battlefield"
+  },
+  "shizo_death_s_storehouse": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shoot_the_sheriff": {
@@ -24727,6 +24866,10 @@
     },
     "zone": "battlefield"
   },
+  "sword_of_the_chosen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sword_of_the_squeak": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24895,6 +25038,10 @@
     "zone": "battlefield"
   },
   "tainted_wood": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "tajic_blade_of_the_legion": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25110,6 +25257,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "tawnos_urza_s_apprentice": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tcri_building": {
@@ -25422,6 +25573,10 @@
     },
     "zone": "battlefield"
   },
+  "tenza_godo_s_maul": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "terastodon": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -25599,6 +25754,13 @@
   },
   "the_chain_veil": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_circle_of_loyalty": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "the_council_of_four": {
@@ -25854,6 +26016,10 @@
     "library_size": {
       "0": 35
     },
+    "zone": "battlefield"
+  },
+  "the_peregrine_dynamo": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_queen_of_dale": {
@@ -27339,6 +27505,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tyrite_sanctum": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tyrox_saurid_tyrant": {
     "zone": "battlefield"
   },
@@ -28182,6 +28352,10 @@
     },
     "zone": "battlefield"
   },
+  "verrak_warped_sengir": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vestige_of_emrakul": {
     "zone": "battlefield"
   },
@@ -28956,6 +29130,10 @@
     }
   },
   "weaver_of_currents": {
+    "zone": "battlefield"
+  },
+  "weaver_of_harmony": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "web": {
@@ -29951,6 +30129,10 @@
     "zone": "battlefield"
   },
   "zephyrim": {
+    "zone": "battlefield"
+  },
+  "zeriam_golden_wind": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zetalpa_primal_dawn": {

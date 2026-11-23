@@ -11,13 +11,13 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 188 |
-| [Selectors](#selectors) | 81 |
+| [Selectors](#selectors) | 82 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 79 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 110 |
+| [Static effects](#static-effects) | 111 |
 | [Player-wide statics](#player-wide-statics) | 51 |
 | [Grantable statics](#grantable-statics) | 50 |
 | [Cost reduction](#cost-reduction) | 9 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 36 |
 | [Static conditions](#static-conditions) | 15 |
-| [Static values](#static-values) | 26 |
+| [Static values](#static-values) | 27 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -241,6 +241,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | Name | Description | Defined in |
 |---|---|---|
 | `ability_kind` | On an `ability_on_stack` target only: `triggered` or `activated`. | [Copying an ability on the stack](card-dsl.md#copying-an-ability-on-the-stack) |
+| `ability_source` | On an `ability_on_stack` target only: a selector over the ability's source (characteristics, `exclude_self`, `is_commander`, `is_token`), read as it last existed once it has left. | [Copying an ability on the stack](card-dsl.md#copying-an-ability-on-the-stack) |
 | `any_of` | A union of whole selectors: any one may match. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `any_types` | Any one of these card types is enough. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -475,7 +476,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 
 | Name | Engine event | Description | Defined in |
 |---|---|---|---|
-| `ability_activated` | `ability_activated` | An ability is activated. | [Triggers](card-dsl.md#triggers) |
+| `ability_activated` | `ability_activated` | An ability is activated; binds `sid` (that ability) and `life_paid` (the life its own cost took). | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` | A creature attacks. | [Triggers](card-dsl.md#triggers) |
 | `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `becomes_attached` | `attached` | An Aura, Equipment or Fortification becomes attached to a permanent or player; the subject is the attachment, and the filter's `attached_to` asks the host. | ["Whenever an Aura you control becomes attached to a creature you control"](card-dsl-cookbook.md#whenever-an-aura-you-control-becomes-attached-to-a-creature-you-control) |
@@ -665,6 +666,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `must_attack_with_at_least_one_creature` | yes |  | The player must attack with at least one creature each combat if able. | ["…must attack with at least one creature" — a requirement on a player](card-dsl-cookbook.md#must-attack-with-at-least-one-creature--a-requirement-on-a-player) |
 | `no_hand_limit` | yes |  | The player has no maximum hand size. | [Static abilities](card-dsl.md#static-abilities) |
+| `note_exiled_mana_value` |  |  | This permanent notes the mana value of each card put into exile while it is on the battlefield; read back by `greatest_noted_exile_mana_value`. | [A size read off the mana values noted as cards are exiled](card-dsl-cookbook.md#a-size-read-off-the-mana-values-noted-as-cards-are-exiled) |
 | `opponents_cant_force_discard_or_sacrifice` | yes |  | Opponents' spells and abilities can't make the player discard or sacrifice. | ["Can't cause you to discard cards or sacrifice permanents"](card-dsl-cookbook.md#cant-cause-you-to-discard-cards-or-sacrifice-permanents) |
 | `play_lands_from_graveyard` | yes |  | The player may play lands from their graveyard: every land, or only those whose printed face matches `affects_spells`, or those surveilled this turn with `surveilled_this_turn`. | [Static abilities](card-dsl.md#static-abilities) |
 | `play_lands_from_library_top` | yes |  | The player may play lands from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
@@ -1110,6 +1112,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `exiled_card_power` | The power of the card this permanent exiled, while it stays in exile; `"self"` only, 0 with none. | [A size read off the card this permanent exiled](card-dsl-cookbook.md#a-size-read-off-the-card-this-permanent-exiled) |
 | `extreme_value` | The greatest/least printed mana value among a counting filter's pool, or a `union` of them. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `greatest_noted_exile_mana_value` | The greatest mana value this permanent's `note_exiled_mana_value` static noted this turn; `"self"` only, 0 with none. | [A size read off the mana values noted as cards are exiled](card-dsl-cookbook.md#a-size-read-off-the-mana-values-noted-as-cards-are-exiled) |
 | `life_gained_this_turn` | Life a player spec's players have gained this turn, re-read as each gain happens; the bare player spec only. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `life_lost_this_turn` | Life a player spec's players have lost this turn, summed and re-read as each loss happens; the bare player spec only. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `mana_symbols` | Pips of a color, or of any of a list of colors, among a pool's mana costs (chroma, devotion). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |

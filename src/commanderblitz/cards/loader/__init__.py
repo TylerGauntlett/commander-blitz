@@ -1431,6 +1431,33 @@ def _compile_flash_if_targets(model: CardModel, where: str) -> dict[str, Any] | 
     return dict(filt)
 
 
+def _mentions_key(value: Any, key: str) -> bool:
+    if isinstance(value, Mapping):
+        return key in value or any(_mentions_key(v, key) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_mentions_key(v, key) for v in value)
+    return False
+
+
+def _check_exile_notes(abilities: tuple[Ability, ...], where: str) -> None:
+    """A `greatest_noted_exile_mana_value` reads the notes of this card's own
+    `note_exiled_mana_value` static. Without one nothing is ever noted for it,
+    and the size would load clean and read 0 for ever."""
+    reads = any(
+        ability.is_static and ability.static and _mentions_key(ability.static, "greatest_noted_exile_mana_value")
+        for ability in abilities
+    )
+    notes = any(
+        ability.is_static and ability.static and ability.static.get("effect") == "note_exiled_mana_value"
+        for ability in abilities
+    )
+    if reads and not notes:
+        raise DslError(
+            f"{where}: greatest_noted_exile_mana_value reads the numbers this card's "
+            f"own 'note_exiled_mana_value' static notes, and the card has none"
+        )
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -1763,6 +1790,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     _check_case(model, abilities, where)
     _check_reveal_first_draw(abilities, where)
     _check_reflexive_wiring(model, abilities, where)
+    _check_exile_notes(abilities, where)
 
     for ability in grantable:
         if ability.solved or _is_to_solve_line(ability):
@@ -4132,6 +4160,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 "trigger with 'mana_ability': false"
             )
 
+        if model.trigger.life_paid_to_activate is not None and (
+            model.trigger.event != "ability_activated" or model.trigger.mana_ability is not False
+        ):
+            # `sacrificed_to_activate`'s rule and reason: only the non-mana
+            # activation path puts `life_paid` on its event.
+            raise DslError(
+                f"{where}: 'life_paid_to_activate' needs an ability_activated "
+                "trigger with 'mana_ability': false"
+            )
+
         if model.trigger.targeted_by is not None and model.trigger.event != "becomes_target":
             # Same reasoning as `mana_ability` above: only BECAME_TARGET is
             # tagged with what did the targeting, so anywhere else this would
@@ -4387,6 +4425,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             removed_by=model.trigger.removed_by,
             mana_ability=model.trigger.mana_ability,
             sacrificed_to_activate=model.trigger.sacrificed_to_activate,
+            life_paid_to_activate=model.trigger.life_paid_to_activate,
             targeted_by=model.trigger.targeted_by,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
@@ -7135,6 +7174,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: all_damage_wither reaches all damage; it takes an optional "
             f"'condition' and no 'affects', 'affects_player' or 'amount'"
         )
+    if model.effect == "note_exiled_mana_value":
+        # "Note the mana value of each card as it's put into exile" names no
+        # card, no zone and no player -- each card, from anywhere, by anyone.
+        # A filter would be read by nothing and load as a narrower card than
+        # the printed one.
+        extra = set(model.model_fields_set) - {"kind", "text", "effect"}
+        if extra:
+            raise DslError(
+                f"{where}: note_exiled_mana_value notes every card put into exile; "
+                f"it takes nothing but its 'text', got {sorted(extra)}"
+            )
     if model.effect == "damage_cant_be_prevented" and (
         model.affects is not None
         or model.affects_player is not None
@@ -7362,6 +7412,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Its sibling line, "All damage is dealt as though its source had
         # wither": every source, every creature.
         "all_damage_wither",
+        # Bell Borca's "note the mana value of each card as it's put into
+        # exile": each card, so no filter; its own guard above refuses one.
+        "note_exiled_mana_value",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no

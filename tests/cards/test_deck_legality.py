@@ -38,6 +38,7 @@ PRECONS = {
     "blc_peace_offering",
     "blc_squirreled_away",
     "brc_mishras_burnished_banner",
+    "dmc_legends_legacy",
     "drc_living_energy",
     "fdc_calling_all_angels",
     "fdc_keen_engineering",

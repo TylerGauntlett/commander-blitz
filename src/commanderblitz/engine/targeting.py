@@ -246,17 +246,19 @@ def _ability_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> b
     `types` clause -- the same class of silently-inert selector `_spell_matches`
     was itself written to stop.
 
-    So exactly two clauses are honoured, the two this family of printed cards
-    carries: ``controller`` -- "an ability **you control**" (Peter Parker's
-    Camera, Lithoform Engine, Strionic Resonator) -- and ``ability_kind`` --
-    "target **triggered** ability" (Strionic Resonator, Mister Fantastic),
-    read off `StackItem.ability_kind`, which is recorded as the ability goes on
-    the stack. Guessing it from `bindings` would be wrong, since an activated
-    ability's cost writes bindings too (`costs.bind_paid_object`). The loader
-    refuses every other key on such a spec, so a clause that cannot be
-    answered here is a load error rather than a restriction the card does not
-    have. Both `candidates` and `still_legal` ask this, so an ability that no
-    longer matches on resolution is an illegal target there too.
+    So the clauses honoured are the ones this family of printed cards carries:
+    ``controller`` -- "an ability **you control**" (Peter Parker's Camera,
+    Lithoform Engine, Strionic Resonator) -- ``ability_kind`` -- "target
+    **triggered** ability" (Strionic Resonator, Mister Fantastic), read off
+    `StackItem.ability_kind`, which is recorded as the ability goes on the
+    stack -- ``that_targets``, and ``ability_source``, which asks about the
+    source *by name* rather than by pretending the ability has a face (see
+    `_source_matches`). Guessing the kind from `bindings` would be wrong, since
+    an activated ability's cost writes bindings too (`costs.bind_paid_object`).
+    The loader refuses every other key on such a spec, so a clause that cannot
+    be answered here is a load error rather than a restriction the card does
+    not have. Both `candidates` and `still_legal` ask this, so an ability that
+    no longer matches on resolution is an illegal target there too.
     """
     selector = dict(spec.selector)
     who = selector.get("controller")
@@ -266,8 +268,43 @@ def _ability_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> b
         return False
     if not _targets_clause_met(ctx, item, selector.get("that_targets")):
         return False
+    if (source := selector.get("ability_source")) is not None and not _source_matches(
+        ctx, item, source
+    ):
+        return False
     wanted = selector.get("ability_kind")
     return wanted is None or item.ability_kind == wanted
+
+
+def _source_matches(ctx: EffectContext, item: StackItem, source: Mapping[str, Any]) -> bool:
+    """Is the ability's **source** an object ``source`` describes?
+
+    "…from **another legendary** source **that's not a commander**" -- The
+    Peregrine Dynamo. Asked of the source object through `matches`, so the
+    clause is an ordinary selector: ``supertypes``, ``exclude_self`` (another
+    than the asking permanent, ``ctx.source_oid``), ``is_commander`` and the
+    rest of `ABILITY_SOURCE_KEYS`.
+
+    113.7a: the ability exists independently of its source, and a source that
+    has left the battlefield is asked as it last existed there -- the record
+    `zones.move_object` filed on the stack item as it left. Without it a
+    legendary source destroyed in response would be read off its graveyard
+    card (no granted supertype) and a token source would be no object at all,
+    so its ability could never be chosen. With no record -- the source has not
+    left, or left before the ability reached the stack (a dies trigger, a
+    source sacrificed to pay its own cost) -- it is read as it now is, with no
+    zone asked: a trigger of a card in a graveyard or the command zone has a
+    source there.
+    """
+    if item.source_oid is None:
+        return False
+    return matches(
+        ctx,
+        item.source_oid,
+        source,
+        default_zone=None,
+        last_known=item.source_last_known,
+    )
 
 
 def _targets_clause_met(

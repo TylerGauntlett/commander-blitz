@@ -2436,6 +2436,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         if card is None:
             return 0
         return card_in_exile_characteristics(state, card)[0]
+    if "greatest_noted_exile_mana_value" in expr:
+        # Bell Borca, Spectral Sergeant: "power is equal to the greatest number
+        # noted for it this turn." The numbers its `note_exiled_mana_value`
+        # static noted under this oid (`TurnLedger.exile_mana_values_noted`),
+        # 0 with none -- off the battlefield, where a new object has noted
+        # nothing (400.7), as well. A pipeline input: `zones.note_exiled_mana_value`
+        # writes it and bumps `char_version`, the cleanup step empties it, and
+        # no layer touches it.
+        noted = state.turn_ledger.exile_mana_values_noted.get(source.oid, ())
+        return max(noted, default=0)
     if "greatest_commander_mana_value" in expr:
         # Tangleweave Armor: "+X/+X, where X is the greatest mana value among
         # your commanders." Read off the commander's printed card wherever it is

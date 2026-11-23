@@ -523,14 +523,49 @@ may choose new targets for the copy" (Lithoform Engine, Peter Parker's Camera)
 //                               "selector": { "controller": "you" } }
 ```
 
-An `ability_on_stack` target's selector reads exactly two clauses: `controller`
-and `ability_kind`, which is `"triggered"` or `"activated"` — "copy target
-**triggered** ability you control" (Strionic Resonator, Mister Fantastic) is
+An `ability_on_stack` target's selector reads four clauses: `controller`,
+`that_targets` (below), `ability_kind` and `ability_source`. `ability_kind` is
+`"triggered"` or `"activated"` — "copy target **triggered** ability you
+control" (Strionic Resonator, Mister Fantastic) is
 `{ "controller": "you", "ability_kind": "triggered" }`. The kind is recorded on
 the stack item as the ability is put there, and both the target's candidates
-and its re-check on resolution read it. The loader refuses any other clause on
-such a target, and `ability_kind` on any other selector. "Copy … twice" is two
-`copy_ability` effects on the same target, each with its own `new_targets`.
+and its re-check on resolution read it.
+
+`ability_source` is an object selector asked of the ability's **source** — an
+ability has no characteristics of its own (113.7a), so a clause about "a
+legendary source" is a clause about another object. "Copy target activated or
+triggered ability you control from **another legendary source that's not a
+commander**" (The Peregrine Dynamo):
+
+```jsonc
+{ "id": "t1", "kind": "ability_on_stack", "count": 1,
+  "selector": { "controller": "you",
+                "ability_source": { "supertypes": ["Legendary"],
+                                    "exclude_self": true,      // "another"
+                                    "is_commander": false } } }
+```
+
+It takes the characteristic and identity clauses only — `types`, `not_types`,
+`any_types`, `subtypes`, `not_subtypes`, `supertypes`, `not_supertypes`,
+`colors`, `not_colors`, `colorless`, `min_colors`, `name`, `not_name`,
+`exclude_self`, `self_only`, `is_commander` and `is_token` — because a source
+that has left the battlefield is asked **as it last existed there**: the
+departure files a copy of the object and its derived characteristics on every
+ability of it still on the stack, and the clause reads that record from then
+on. A legendary source destroyed in response still counts, and so does a
+token that has ceased to exist. A source that has not left is read live, with no zone asked,
+so a trigger from a card in a graveyard or the command zone is asked of that
+card. `exclude_self` is the permanent doing the targeting. A source that left
+before its ability was put on the stack — a dies trigger, or a source
+sacrificed to pay its own ability's cost — has no record and is read as the card
+it now is; a token there is no object and matches nothing.
+
+The loader refuses any other clause on such a target (a face clause belongs
+inside `ability_source`), any other key inside `ability_source` (`zone`,
+`tapped`, `attached_to`: each would read the object now, not as it last
+existed), an empty `ability_source`, and `ability_kind` or `ability_source` on
+any other selector. "Copy … twice" is two `copy_ability` effects on the same
+target, each with its own `new_targets`.
 
 It is a different op from `copy_spell` because the two copy different kinds of
 object: `copy_spell` written for an ability loads clean and does nothing. The
@@ -6613,6 +6648,7 @@ and the filter keys are
     "removed_by": "you",             // `counter_removed` only: YOU removed them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
+    "life_paid_to_activate": true,   // beside `mana_ability: false`: the cost took life
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
@@ -7620,6 +7656,27 @@ cost paid.
 { "event": "ability_activated", "controller": "you", "mana_ability": false,
   "sacrificed_to_activate": true,
   "filter": { "any_types": ["Artifact", "Creature"] } }
+```
+
+`life_paid_to_activate` is "if **life was paid** to activate it" (Verrak, Warped
+Sengir), on the same terms and under the same loader rule as
+`sacrificed_to_activate`: `true` fires only when the activation's own cost took
+life, `false` only when it took none, omitted is either. The amount is
+`costs.cost_life_paid` — the cost's `pay_life` (a value expression at the price
+`pay` charges) plus 2 for each Phyrexian pip the payer bought with life (107.4f)
+— carried on the event and bound on the trigger as `life_paid`, so "you may pay
+**that much life** again" is a `may` whose `pay` reads it. The Phyrexian
+question is asked before the event fires (`costs.choose_life_for_mana`) and
+handed to `pay`, which then asks nothing. Life lost any other way while
+activating — a painland tapped for the mana — was not paid to activate it.
+`life_lost_this_turn` is the near miss: it counts every loss this turn.
+
+```jsonc
+{ "trigger": { "event": "ability_activated", "controller": "you",
+               "mana_ability": false, "life_paid_to_activate": true },
+  "effects": [ { "op": "may", "pay": { "pay_life": { "binding": "life_paid" } },
+                 "effects": [ { "op": "copy_ability", "sid": { "binding": "sid" },
+                                "new_targets": true } ] } ] }
 ```
 
 `zone` and `any_types` in a **trigger filter** are honoured. Harsh Mentor needs

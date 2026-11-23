@@ -1278,6 +1278,75 @@ def life_for_mana_range(
     return None
 
 
+def _ask_life_for_mana(
+    ctx: EffectContext, pid: int, fewest: int, most: int
+) -> Generator[Any, list[int], int]:
+    """How many Phyrexian pips, between ``fewest`` and ``most``, the payer buys.
+
+    The payer's choice, made while paying (601.2g-h) -- the same choice the
+    cast line offers as separate lines, asked here because an activation or a
+    resolving "unless" has no lines. Asks nothing when the range is one number.
+    """
+    if most <= fewest:
+        return fewest
+    labels = [
+        "Pay with mana"
+        if n == 0
+        else f"Pay {n * 2} life for {n} mana symbol{'s' if n > 1 else ''}"
+        for n in range(fewest, most + 1)
+    ]
+    picked = yield from ask_mode(ctx, "Pay mana symbols with 2 life each?", labels, pid)
+    return fewest + (picked[0] if picked else 0)
+
+
+def choose_life_for_mana(
+    state: GameState,
+    pid: int,
+    cost: Cost | None,
+    source_oid: int | None,
+    *,
+    x: int = 0,
+    purpose: SpendPurpose | None = None,
+    ability=None,
+    targets=None,
+) -> Generator[Any, list[int], int]:
+    """The Phyrexian pips of ``cost`` the payer buys with life, asked now.
+
+    The question `pay` would ask as it reached the pips, asked ahead of it so
+    the activation event -- which fires before the cost is paid -- can carry
+    the life the payment will take (:func:`cost_life_paid`). Hand the answer
+    to `pay` as ``phyrexian_bought``. 0 when nothing in the cost may be paid
+    with life.
+    """
+    if cost is None:
+        return 0
+    span = life_for_mana_range(
+        state, pid, cost, source_oid, x=x, purpose=purpose, ability=ability, targets=targets
+    )
+    if span is None or not span[2]:
+        return 0
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return (yield from _ask_life_for_mana(ctx, pid, span[1], span[2]))
+
+
+def cost_life_paid(
+    state: GameState, pid: int, cost: Cost | None, source_oid: int | None, phyrexian_bought: int
+) -> int:
+    """How much life paying ``cost`` takes, with that many Phyrexian pips bought.
+
+    "…if **life was paid** to activate it, you may pay **that much life**
+    again" (Verrak, Warped Sengir). Its ``pay_life`` (War Room's value
+    expression included, at the price `pay` charges) plus 2 for each pip bought
+    with life (107.4f) -- every way an activation's own cost spends life. Known
+    before the cost is paid for the reason `cost_sacrifice_count` is: `pay`
+    takes exactly this or the activation does not happen.
+    """
+    if cost is None:
+        return 0
+    life = life_cost(state, pid, cost, source_oid) if cost.pay_life else 0
+    return life + 2 * max(phyrexian_bought, 0)
+
+
 def most_life_for_mana(
     state: GameState, pid: int, cost: Cost, source_oid: int | None
 ) -> ManaCost:
@@ -2285,6 +2354,7 @@ def pay(
     record_colors_on: int | None = None,
     bindings: dict[str, Any] | None = None,
     life_for_mana: bool = True,
+    phyrexian_bought: int | None = None,
     ability=None,
     targets=None,
 ) -> Generator[Any, list[int], bool]:
@@ -2317,6 +2387,10 @@ def pay(
     line alone, which has already made that choice as the line it offered
     (`Action.phyrexian`), so every pip still in its cost is one the caster chose
     to pay with mana.
+
+    ``phyrexian_bought`` is that choice made ahead of the payment, by
+    :func:`choose_life_for_mana`: how many pips go the life way, asked of nobody
+    here. ``None`` asks as the payment reaches the pips.
     """
     # A payment is one group, the way an effect op is: an
     # `exile_from_graveyard` cost that takes three cards takes them at
@@ -2357,21 +2431,13 @@ def pay(
         )
         if span is not None and span[2]:
             mana, fewest, most = span
-            bought = fewest
-            if most > fewest:
-                # The payer's choice, made while paying (601.2g-h) -- the same
-                # choice the cast line offers as separate lines, asked here
-                # because an activation or a resolving "unless" has no lines.
-                labels = [
-                    "Pay with mana"
-                    if n == 0
-                    else f"Pay {n * 2} life for {n} mana symbol{'s' if n > 1 else ''}"
-                    for n in range(fewest, most + 1)
-                ]
-                picked = yield from ask_mode(
-                    ctx, "Pay mana symbols with 2 life each?", labels, pid
-                )
-                bought = fewest + (picked[0] if picked else 0)
+            if phyrexian_bought is not None:
+                # Already chosen by the caller (`Game._activate`, so the
+                # activation event can say how much life it cost), and kept
+                # inside the range the board allows now.
+                bought = min(max(phyrexian_bought, fewest), most)
+            else:
+                bought = yield from _ask_life_for_mana(ctx, pid, fewest, most)
             remaining, phyrexian_life = mana.paying_phyrexian(bought)
             cost = replace(cost, mana=remaining)
     req = ability_mana(state, pid, cost, x, source_oid, ability=ability, targets=targets)

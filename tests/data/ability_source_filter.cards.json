@@ -1,0 +1,68 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_ability_source_filter.py. t_dynamo is The Peregrine Dynamo's copy ability, plus a second ability of its own so 'another' has something to refuse; t_legend_gainer is a legendary source with an activated ability to copy. The nonlegendary near side is t_gainer in copy_ability.cards.json.",
+  "cards": [
+    {
+      "id": "t_dynamo",
+      "name": "Test Dynamo",
+      "oracle_text": "{1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy.\n{2}: You gain 1 life.",
+      "mana_cost": "{3}",
+      "supertypes": ["Legendary"],
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy.",
+          "cost": {"mana": "{1}", "tap": true},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "count": 1,
+              "selector": {
+                "controller": "you",
+                "ability_source": {
+                  "supertypes": ["Legendary"],
+                  "exclude_self": true,
+                  "is_commander": false
+                }
+              }
+            }
+          ],
+          "effects": [
+            {"op": "copy_ability", "target": "t1", "new_targets": true}
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 1 life.",
+          "cost": {"mana": "{2}"},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_legend_gainer",
+      "name": "Test Legend Gainer",
+      "oracle_text": "{T}: You gain 2 life.",
+      "mana_cost": "{1}",
+      "supertypes": ["Legendary"],
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: You gain 2 life.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+          ]
+        }
+      ]
+    }
+  ]
+}

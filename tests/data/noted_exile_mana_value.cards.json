@@ -1,0 +1,32 @@
+{
+  "_comment": "Cards that exist only for the noted-exile-mana-value test (tests/unit/statics/test_noted_exile_mana_value.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_exile_noter` is Bell Borca, Spectral Sergeant's first two lines on a */5: a `note_exiled_mana_value` static and a `set_pt` whose power is the greatest number noted for it this turn.",
+  "cards": [
+    {
+      "id": "t_exile_noter",
+      "name": "Test Exile Noter",
+      "oracle_text": "Note the mana value of each card as it's put into exile.\nThis creature's power is equal to the greatest number noted for it this turn.",
+      "mana_cost": "{2}{R}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Spirit", "Soldier"],
+      "colors": ["R", "W"],
+      "color_identity": ["R", "W"],
+      "power": 0,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Note the mana value of each card as it's put into exile.",
+          "effect": "note_exiled_mana_value"
+        },
+        {
+          "kind": "static",
+          "text": "This creature's power is equal to the greatest number noted for it this turn.",
+          "effect": "set_pt",
+          "affects": {"self_only": true},
+          "power": {"greatest_noted_exile_mana_value": "self"},
+          "toughness": {"const": 5}
+        }
+      ]
+    }
+  ]
+}

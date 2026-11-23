@@ -17,7 +17,9 @@ if TYPE_CHECKING:  # pragma: no cover
     # docstring is about: `carddef` is a leaf, but the point of `structs` is
     # that it needs nothing.
     from .carddef import Ability, TriggerSpec
+    from .characteristics import Characteristics
     from .mana import ManaOrigin
+    from .objects import GameObject
 
 TargetKind = Literal["object", "player", "stack"]
 
@@ -1685,6 +1687,22 @@ class SacrificeRestriction:
 CONVOKED_BINDING = "convoked"
 
 
+@dataclass(frozen=True)
+class LastKnown:
+    """An object as it last existed on the battlefield (113.7a, 608.2h).
+
+    ``obj`` is a shallow copy of the `GameObject` taken as it left, and
+    ``chars`` the derived characteristics it had then. Written by
+    `zones.move_object` into `StackItem.source_last_known` and asked through
+    `selectors.matches`'s ``last_known``. The engine's explicit-LKI pattern
+    again, filed only where a later question needs it rather than for every
+    object that leaves.
+    """
+
+    obj: GameObject
+    chars: Characteristics
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""
@@ -1703,6 +1721,16 @@ class StackItem:
     #: neither ``kind`` nor ``bindings`` can say it -- an activated ability's
     #: cost writes bindings too. A copy keeps it (706.10).
     ability_kind: str | None = None
+    #: The ability's source as it last existed on the battlefield, once it has
+    #: left: "copy target ability … from another **legendary** source that's
+    #: not a commander" (The Peregrine Dynamo) is still asked of a source that
+    #: was destroyed in response (113.7a). Filled by
+    #: `zones.move_object` the first time the source leaves the battlefield
+    #: with this item on the stack, and read by `targeting._ability_matches`'s
+    #: ``ability_source`` clause in preference to the object now behind the
+    #: oid -- which is a different object (400.7), or nothing for a token. A
+    #: copy keeps it (706.10). ``None`` while the source is where it was.
+    source_last_known: LastKnown | None = None
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()
@@ -2680,6 +2708,22 @@ class TurnLedger:
     #: counted and nothing that gave energy offsets them. Not derivable from
     #: `Player.energy`: getting two and paying two leaves it where it was.
     energy_spent: dict[int, int] = field(default_factory=dict)
+    #: The **mana values noted** for each noting permanent this turn: noter
+    #: oid -> every number noted, in order. Bell Borca, Spectral Sergeant:
+    #: "Note the mana value of each card as it's put into exile. Bell Borca's
+    #: power is equal to the greatest number noted for it this turn."
+    #:
+    #: Written by `zones.note_exiled_mana_value` for every battlefield permanent
+    #: with an active `note_exiled_mana_value` static as anything -- a card or a
+    #: token, from any zone, by anyone -- arrives in exile, read off the object
+    #: in exile (a spell's X is 0 there). Per noter rather than one list of
+    #: every exile this turn, because the numbers belong to the object that
+    #: noted them: a card exiled before the noter entered, or while it had lost
+    #: its abilities, was noted for nobody. `zones.move_object` drops the
+    #: noter's entry at its next zone change, since the object that comes back
+    #: is a new one with nothing noted (400.7). Read by the static value
+    #: `greatest_noted_exile_mana_value`.
+    exile_mana_values_noted: dict[int, list[int]] = field(default_factory=dict)
 
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
@@ -2865,6 +2909,7 @@ class TurnLedger:
         self.discarded.clear()
         self.cards_discarded.clear()
         self.energy_spent.clear()
+        self.exile_mana_values_noted.clear()
         self.permanents_entered.clear()
         self.counters_put.clear()
         self.graveyard_arrivals.clear()

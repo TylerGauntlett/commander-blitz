@@ -852,12 +852,12 @@
     },
     "Abstruse Archaic": {
       "edhrec_rank": 5562,
-      "gate": "template",
+      "gate": null,
       "name": "Abstruse Archaic",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from a colorless source. ",
+      "reason": "",
       "scryfall_id": "1fc2871b-c685-4951-b8e2-7370b9668f7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abstruse Interference": {
@@ -5962,12 +5962,12 @@
     },
     "Alesha, Who Smiles at Death": {
       "edhrec_rank": 6153,
-      "gate": "template",
+      "gate": null,
       "name": "Alesha, Who Smiles at Death",
-      "reason": "no template for: Whenever Alesha attacks, you may pay {W/B}{W/B}. If you do, return target creature card wi",
+      "reason": "",
       "scryfall_id": "7ae9ff8c-1cc8-4b10-9641-2c79648fd6c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alex Wilder, Runaway": {
@@ -7782,12 +7782,12 @@
     },
     "Anafenza, Kin-Tree Spirit": {
       "edhrec_rank": 5763,
-      "gate": "template",
+      "gate": null,
       "name": "Anafenza, Kin-Tree Spirit",
-      "reason": "no template for: Whenever another nontoken creature you control enters, bolster 1",
+      "reason": "",
       "scryfall_id": "1717da7b-9e87-4694-873b-abd4e3bcd5e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Anafenza, Unyielding Lineage": {
@@ -14752,12 +14752,12 @@
     },
     "Ashling the Pilgrim": {
       "edhrec_rank": 11512,
-      "gate": "template",
+      "gate": null,
       "name": "Ashling the Pilgrim",
-      "reason": "no template for: {1}{R}: Put a +1/+1 counter on Ashling. If this is the third time this ability has resolve",
+      "reason": "",
       "scryfall_id": "4c687123-6c34-4aef-8350-70a72b5fb58f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ashling's Command": {
@@ -23312,12 +23312,12 @@
     },
     "Bell Borca, Spectral Sergeant": {
       "edhrec_rank": 16555,
-      "gate": "template",
+      "gate": null,
       "name": "Bell Borca, Spectral Sergeant",
-      "reason": "no template for: Note the mana value of each card as it's put into exile",
+      "reason": "",
       "scryfall_id": "4fdcd559-477f-48cb-a221-23a653b0dde1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Belladonna Took": {
@@ -25842,12 +25842,12 @@
     },
     "Blackblade Reforged": {
       "edhrec_rank": 348,
-      "gate": "template",
+      "gate": null,
       "name": "Blackblade Reforged",
-      "reason": "no template for: Equipped creature gets +1/+1 for each land you control",
+      "reason": "",
       "scryfall_id": "2cde7ae2-87b9-43d0-87cf-38c8706dd95e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blackbloom Rogue // Blackbloom Bog": {
@@ -26252,12 +26252,12 @@
     },
     "Bladewing, Deathless Tyrant": {
       "edhrec_rank": 6409,
-      "gate": "template",
+      "gate": null,
       "name": "Bladewing, Deathless Tyrant",
-      "reason": "no template for: Whenever Bladewing deals combat damage to a player or planeswalker, for each creature card",
+      "reason": "",
       "scryfall_id": "7dcf3b3e-e986-4add-a3c6-4e92a6f72a12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blanchwood Armor": {
@@ -37662,12 +37662,12 @@
     },
     "Cadric, Soul Kindler": {
       "edhrec_rank": 5161,
-      "gate": "template",
+      "gate": null,
       "name": "Cadric, Soul Kindler",
-      "reason": "no template for: The \"legend rule\" doesn't apply to tokens you control",
+      "reason": "",
       "scryfall_id": "00541f77-f1ca-4de5-b080-de2dcdfe17e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caduceus, Staff of Hermes": {
@@ -68662,12 +68662,12 @@
     },
     "Dihada, Binder of Wills": {
       "edhrec_rank": 3418,
-      "gate": "template",
+      "gate": null,
       "name": "Dihada, Binder of Wills",
-      "reason": "no template for: +2: Up to one target legendary creature gains vigilance, lifelink, and indestructible unti",
+      "reason": "",
       "scryfall_id": "cea0ea07-6963-4de1-953d-b1ac41d8c6b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diligent Excavator": {
@@ -79072,12 +79072,12 @@
     },
     "Echo, Perceptive Prodigy": {
       "edhrec_rank": 13844,
-      "gate": "template",
+      "gate": null,
       "name": "Echo, Perceptive Prodigy",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from a creature source. Y",
+      "reason": "",
       "scryfall_id": "cd9b9be6-0143-467c-8a2a-937ecafe0473",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echocasting Symposium": {
@@ -105232,12 +105232,12 @@
     },
     "Garna, the Bloodflame": {
       "edhrec_rank": 9331,
-      "gate": "template",
+      "gate": null,
       "name": "Garna, the Bloodflame",
-      "reason": "no template for: When Garna enters, return to your hand all creature cards in your graveyard that were put ",
+      "reason": "",
       "scryfall_id": "732797d3-59e1-4fff-bcf0-22c2606a7a5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garnet, Princess of Alexandria": {
@@ -107132,12 +107132,12 @@
     },
     "Gerrard's Hourglass Pendant": {
       "edhrec_rank": 7413,
-      "gate": "template",
+      "gate": null,
       "name": "Gerrard's Hourglass Pendant",
-      "reason": "no template for: If a player would begin an extra turn, that player skips that turn instead",
+      "reason": "",
       "scryfall_id": "091135ec-4f4c-432c-bd6c-e7e2fb7561a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gerrard's Irregulars": {
@@ -117962,12 +117962,12 @@
     },
     "Griffin Aerie": {
       "edhrec_rank": 5175,
-      "gate": "template",
+      "gate": null,
       "name": "Griffin Aerie",
-      "reason": "no template for: At the beginning of your end step, if you gained 3 or more life this turn, create a 2/2 wh",
+      "reason": "",
       "scryfall_id": "b0c1cd62-aa6e-4120-ba70-1f12c8efe389",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Griffin Canyon": {
@@ -117992,12 +117992,12 @@
     },
     "Griffin Guide": {
       "edhrec_rank": 16328,
-      "gate": "template",
+      "gate": null,
       "name": "Griffin Guide",
-      "reason": "no template for: When enchanted creature dies, create a 2/2 white Griffin creature token with flying",
+      "reason": "",
       "scryfall_id": "344c8ece-80d7-4efc-badb-985fecb11761",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Griffin Protector": {
@@ -129382,12 +129382,12 @@
     },
     "Honor-Worn Shaku": {
       "edhrec_rank": 4096,
-      "gate": "template",
+      "gate": null,
       "name": "Honor-Worn Shaku",
-      "reason": "no template for: Tap an untapped legendary permanent you control: Untap this artifact",
+      "reason": "",
       "scryfall_id": "dd39f563-2ea9-4ddd-8d76-900fa14b480c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Honorable Passage": {
@@ -146972,12 +146972,12 @@
     },
     "Kaya's Wrath": {
       "edhrec_rank": 4139,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya's Wrath",
-      "reason": "no template for: Destroy all creatures. You gain life equal to the number of creatures you controlled that ",
+      "reason": "",
       "scryfall_id": "20adee32-2144-44ad-a70c-ebfbda0900ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaya, Bane of the Dead": {
@@ -151882,12 +151882,12 @@
     },
     "Kothophed, Soul Hoarder": {
       "edhrec_rank": 8759,
-      "gate": "template",
+      "gate": null,
       "name": "Kothophed, Soul Hoarder",
-      "reason": "no template for: Whenever a permanent owned by another player is put into a graveyard from the battlefield,",
+      "reason": "",
       "scryfall_id": "e0f3414d-3c79-4771-a6ba-812608855922",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kotis, Sibsig Champion": {
@@ -176942,12 +176942,12 @@
     },
     "Mobilized District": {
       "edhrec_rank": 9239,
-      "gate": "template",
+      "gate": null,
       "name": "Mobilized District",
-      "reason": "no template for: {4}: This land becomes a 3/3 Citizen creature with vigilance until end of turn. It's still",
+      "reason": "",
       "scryfall_id": "c7921b97-083b-480a-a7df-f2ab82e6f8fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mobilizer Mech": {
@@ -177312,12 +177312,12 @@
     },
     "Moira, Urborg Haunt": {
       "edhrec_rank": 14890,
-      "gate": "template",
+      "gate": null,
       "name": "Moira, Urborg Haunt",
-      "reason": "no template for: Whenever Moira deals combat damage to a player, return to the battlefield target creature ",
+      "reason": "",
       "scryfall_id": "0a5c9d99-8fbc-4a74-99a5-32ba71eb2b62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moku, Meandering Drummer": {
@@ -184962,12 +184962,12 @@
     },
     "Neheb, Dreadhorde Champion": {
       "edhrec_rank": 3855,
-      "gate": "template",
+      "gate": null,
       "name": "Neheb, Dreadhorde Champion",
-      "reason": "no template for: Whenever Neheb deals combat damage to a player or planeswalker, you may discard any number",
+      "reason": "",
       "scryfall_id": "b5c81384-c3c7-4033-9e5c-70143f145be5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neheb, the Eternal": {
@@ -235612,12 +235612,12 @@
     },
     "Scientist Supreme of A.I.M.": {
       "edhrec_rank": 18715,
-      "gate": "template",
+      "gate": null,
       "name": "Scientist Supreme of A.I.M.",
-      "reason": "no template for: Pay 2 life: Copy target activated or triggered ability you control from an artifact source",
+      "reason": "",
       "scryfall_id": "0473a990-88c4-4921-a492-377d9171318a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion Summoner": {
@@ -242612,12 +242612,12 @@
     },
     "Shanid, Sleepers' Scourge": {
       "edhrec_rank": 4550,
-      "gate": "template",
+      "gate": null,
       "name": "Shanid, Sleepers' Scourge",
-      "reason": "no template for: Other legendary creatures you control have menace",
+      "reason": "",
       "scryfall_id": "1b0fb859-055d-4aa1-814c-0894cd2ccd4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shanna, Purifying Blade": {
@@ -244902,12 +244902,12 @@
     },
     "Shizo, Death's Storehouse": {
       "edhrec_rank": 610,
-      "gate": "template",
+      "gate": null,
       "name": "Shizo, Death's Storehouse",
-      "reason": "no template for: {B}, {T}: Target legendary creature gains fear until end of turn",
+      "reason": "",
       "scryfall_id": "099352e2-38c8-4fb4-a25f-6d928aa20f9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shizuko, Caller of Autumn": {
@@ -272352,12 +272352,12 @@
     },
     "Sword of the Chosen": {
       "edhrec_rank": 13970,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Chosen",
-      "reason": "no template for: {T}: Target legendary creature gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "6de493a9-d1df-4507-b7c3-e775c4c50db9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword of the Meek": {
@@ -273892,12 +273892,12 @@
     },
     "Tajic, Blade of the Legion": {
       "edhrec_rank": 9507,
-      "gate": "template",
+      "gate": null,
       "name": "Tajic, Blade of the Legion",
-      "reason": "no template for: Battalion — Whenever Tajic and at least two other creatures attack, Tajic gets +5/+5 until",
+      "reason": "",
       "scryfall_id": "eea2cdad-529a-499f-8be7-53f939153b7e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tajic, Legion's Edge": {
@@ -275892,12 +275892,12 @@
     },
     "Tawnos, Urza's Apprentice": {
       "edhrec_rank": 16520,
-      "gate": "template",
+      "gate": null,
       "name": "Tawnos, Urza's Apprentice",
-      "reason": "no template for: {U}{R}, {T}: Copy target activated or triggered ability you control from an artifact sourc",
+      "reason": "",
       "scryfall_id": "dfdbd336-699f-4e29-922a-d6fb247f5b13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tawnos, the Toymaker": {
@@ -278072,12 +278072,12 @@
     },
     "Tenza, Godo's Maul": {
       "edhrec_rank": 5686,
-      "gate": "template",
+      "gate": null,
       "name": "Tenza, Godo's Maul",
-      "reason": "no template for: Equipped creature gets +1/+1. As long as it's legendary, it gets an additional +2/+2. As l",
+      "reason": "",
       "scryfall_id": "3f918d2a-5769-43ce-a8e8-41db6c8f251d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teo, Spirited Glider": {
@@ -280182,12 +280182,12 @@
     },
     "The Circle of Loyalty": {
       "edhrec_rank": 6694,
-      "gate": "template",
+      "gate": null,
       "name": "The Circle of Loyalty",
-      "reason": "no template for: Affinity for Knights",
+      "reason": "",
       "scryfall_id": "29a37ed7-223e-4e19-b318-83cac54f6b16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The City on the Edge of Forever": {
@@ -281932,12 +281932,12 @@
     },
     "The Peregrine Dynamo": {
       "edhrec_rank": 6362,
-      "gate": "template",
+      "gate": null,
       "name": "The Peregrine Dynamo",
-      "reason": "no template for: {1}, {T}: Copy target activated or triggered ability you control from another legendary so",
+      "reason": "",
       "scryfall_id": "2e474c23-22d3-4249-b678-254b178ddf6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Phasing of Zhalfir": {
@@ -295512,12 +295512,12 @@
     },
     "Tyrite Sanctum": {
       "edhrec_rank": 1090,
-      "gate": "template",
+      "gate": null,
       "name": "Tyrite Sanctum",
-      "reason": "no template for: {2}, {T}: Target legendary creature becomes a God in addition to its other types. Put a +1",
+      "reason": "",
       "scryfall_id": "27906645-7d43-4c18-a20b-8d683069351e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrox, Saurid Tyrant": {
@@ -303332,12 +303332,12 @@
     },
     "Verrak, Warped Sengir": {
       "edhrec_rank": 11136,
-      "gate": "template",
+      "gate": null,
       "name": "Verrak, Warped Sengir",
-      "reason": "no template for: Whenever you activate an ability that isn't a mana ability, if life was paid to activate i",
+      "reason": "",
       "scryfall_id": "8ca7f49a-ab5a-49de-b07b-96c803daaf7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vertigo": {
@@ -312842,12 +312842,12 @@
     },
     "Weaver of Harmony": {
       "edhrec_rank": 2045,
-      "gate": "template",
+      "gate": null,
       "name": "Weaver of Harmony",
-      "reason": "no template for: Other enchantment creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "3009fad8-40cb-4421-9fa8-fd525c5f7189",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Weaver of Lies": {
@@ -322442,12 +322442,12 @@
     },
     "Zeriam, Golden Wind": {
       "edhrec_rank": 14065,
-      "gate": "template",
+      "gate": null,
       "name": "Zeriam, Golden Wind",
-      "reason": "no template for: Whenever a Griffin you control deals combat damage to a player, create a 2/2 white Griffin",
+      "reason": "",
       "scryfall_id": "11302b64-b070-4fd2-957f-b8f7830e1bf6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zero Point Ballad": {

@@ -964,6 +964,14 @@ class TriggerSpec:
     #: list-form ``sacrifice`` and ``sacrifice_x`` costs -- so a Treasure
     #: sacrificed for mana to pay the cost is not counted.
     sacrificed_to_activate: bool | None = None
+    #: ``ability_activated`` only, beside ``mana_ability: False``: "…if **life
+    #: was paid** to activate it" (Verrak, Warped Sengir).  ``True`` fires only
+    #: when the activation's own cost took life, ``False`` only when it took
+    #: none, ``None`` either way.  Read off the event's ``life_paid``, which
+    #: `costs.cost_life_paid` takes from the ability's ``pay_life`` and the
+    #: Phyrexian pips the payer bought with life; the same number is the
+    #: trigger's ``life_paid`` binding.
+    life_paid_to_activate: bool | None = None
     #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
     #: Dragon), as against ward's "a spell or ability", which is the unclaused
     #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities

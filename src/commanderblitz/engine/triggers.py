@@ -1964,6 +1964,15 @@ def _matches(
     ) is not spec.sacrificed_to_activate:
         return False
 
+    # "…if **life was paid** to activate it" (Verrak, Warped Sengir). The
+    # life the activation's own cost takes -- its `pay_life` and every
+    # Phyrexian pip bought with life -- put on the event by `Game._activate`,
+    # beside `sacrificed` and under the same loader rule.
+    if spec.life_paid_to_activate is not None and (
+        int(event.data.get("life_paid", 0) or 0) > 0
+    ) is not spec.life_paid_to_activate:
+        return False
+
     # "…becomes the target of **a spell**" -- Goldspan Dragon, as against ward's
     # "a spell or ability", which is this clause omitted. `announce_targets` has
     # tagged every BECAME_TARGET with `is_spell` since the event existed and
@@ -2400,6 +2409,10 @@ EVENT_BINDING_KEYS = (
     "damage",
     "life",
     "sid",
+    # "…you may pay **that much life** again" -- Verrak, Warped Sengir, on
+    # `ability_activated`: the life the activation's own cost took
+    # (`costs.cost_life_paid`), read as ``{"binding": "life_paid"}``.
+    "life_paid",
     "defender",
     "was_attacking",
     "counter",

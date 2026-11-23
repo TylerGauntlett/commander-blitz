@@ -56,7 +56,9 @@ from .costs import (
     activate_mana_ability,
     can_pay,
     can_pay_mana,
+    choose_life_for_mana,
     commander_cost,
+    cost_life_paid,
     cost_sacrifice_count,
     cost_x_ceiling,
     defined_x,
@@ -1403,7 +1405,19 @@ class Game:
         # reads it as `{"binding": "sid"}`. The item itself is pushed below,
         # under this same sid, and is on the stack before any trigger this
         # wakes is (603.3).
+        #
+        # `life_paid` is the life this activation's own cost takes -- Verrak,
+        # Warped Sengir's "if life was paid to activate it, you may pay that
+        # much life again". Its `pay_life` is fixed now, but how many
+        # Phyrexian pips go the life way is the payer's choice, so that
+        # question is asked here rather than inside `pay`, and `pay` is handed
+        # the answer. Nothing between here and the payment changes what the
+        # payer can afford: the event only queues triggers.
         sid = state.alloc_sid()
+        phyrexian_bought = yield from choose_life_for_mana(
+            state, pid, ability.cost, oid, x=x, purpose=purpose, ability=ability,
+            targets=action.targets,
+        )
         triggers.fire(
             state,
             EventType.ABILITY_ACTIVATED,
@@ -1413,6 +1427,7 @@ class Game:
             card=card.id,
             mana_ability=False,
             sacrificed=cost_sacrifice_count(ability.cost, x),
+            life_paid=cost_life_paid(state, pid, ability.cost, oid, phyrexian_bought),
             sid=sid,
         )
 
@@ -1454,6 +1469,7 @@ class Game:
             x=x,
             purpose=purpose,
             bindings=bindings,
+            phyrexian_bought=phyrexian_bought,
             # The same ability legality priced, so a discount written on another
             # permanent is charged at the number it was offered at -- and the
             # same targets, for a discount that reads them.

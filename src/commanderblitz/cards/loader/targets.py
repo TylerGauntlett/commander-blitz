@@ -10,7 +10,11 @@ from commanderblitz.engine.carddef import (
     Ability,
     TargetSpec,
 )
-from commanderblitz.engine.effects.selectors import validate_selector, validate_that_targets
+from commanderblitz.engine.effects.selectors import (
+    validate_ability_source,
+    validate_selector,
+    validate_that_targets,
+)
 from commanderblitz.engine.effects.values import (
     validate_value,
 )
@@ -833,16 +837,34 @@ def _compile_target(
     label = f"{where}.target[{model.id}]"
     if model.kind == "ability_on_stack":
         # An ability on the stack has no face (113.7a): `_ability_matches`
-        # answers `controller` and `ability_kind` and nothing else, so any
-        # other clause would load and narrow nothing.
-        extra = set(model.selector) - {"controller", "ability_kind", "that_targets"}
+        # answers `controller`, `ability_kind`, `that_targets` and the
+        # `ability_source` selector over its source, and nothing else, so any
+        # other clause would load and narrow nothing -- or, read as the
+        # source's face, narrow the wrong object.
+        extra = set(model.selector) - {
+            "controller",
+            "ability_kind",
+            "that_targets",
+            "ability_source",
+        }
         if extra:
             raise DslError(
                 f"{label}: an 'ability_on_stack' target reads only 'controller', "
-                f"'ability_kind' and 'that_targets', not {sorted(extra)}"
+                f"'ability_kind', 'that_targets' and 'ability_source', not "
+                f"{sorted(extra)} -- a clause about the source goes in "
+                f"'ability_source'"
             )
         if "that_targets" in model.selector:
             validate_that_targets(model.selector["that_targets"], label)
+        if "ability_source" in model.selector:
+            validate_ability_source(model.selector["ability_source"], label)
+            if _reads_context(model.selector["ability_source"]):
+                # The linked-target walk reads `selector` clauses through
+                # `matches` on a pool, and this one is asked of a source.
+                raise DslError(
+                    f"{label}.ability_source: names a sibling target or {{X}}, "
+                    f"which it cannot"
+                )
         kind = model.selector.get("ability_kind")
         if kind is not None and kind not in ("triggered", "activated"):
             raise DslError(
@@ -852,7 +874,7 @@ def _compile_target(
             {
                 k: v
                 for k, v in model.selector.items()
-                if k not in ("ability_kind", "that_targets")
+                if k not in ("ability_kind", "that_targets", "ability_source")
             },
             label,
         )

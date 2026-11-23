@@ -12,7 +12,9 @@ rather than an intention.
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -242,7 +244,14 @@ def _aim_the_dummies(game: Game, clause, start: int) -> None:
         game.state.stack[i] = replace(game.state.stack[i], targets=(ref,))
 
 
-def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = None) -> None:
+def add_dummy_ability(
+    game: Game,
+    registry,
+    seat: int = 0,
+    kind: str | None = None,
+    source: Mapping[str, Any] | None = None,
+    asker: int | None = None,
+) -> None:
     """Put an **ability** on the stack for an `ability_on_stack` target to find.
 
     The sibling of `add_dummy_spell` above, and needed for the same reason at a
@@ -255,13 +264,20 @@ def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = No
     family says "an ability **you control**" (the Camera, Lithoform Engine,
     Strionic Resonator), where every counterspell wants the opponent's.
 
-    Any permanent with a non-mana activated ability will do, since
-    `_ability_matches` reads only the controller and the ability's kind -- so
-    this picks the first one in the pool rather than trying to satisfy a
-    selector it knows nothing about. ``kind`` is that selector's
+    Any permanent with a non-mana activated ability will do for the controller
+    and the ability's kind -- so this picks the first one in the pool rather
+    than trying to satisfy a selector it knows nothing about. ``kind`` is that selector's
     `ability_kind`: ``"triggered"`` (Mister Fantastic) pushes a targetless,
     modeless triggered ability instead.
+
+    ``source`` is the selector's `ability_source` -- "from another legendary
+    source that's not a commander" (The Peregrine Dynamo) -- and is the one
+    clause that does care which permanent it is: each candidate is put on the
+    battlefield and asked it through `matches`, as the activating permanent
+    ``asker`` would ask it, and taken off again when it does not match.
     """
+    from commanderblitz.engine.effects.context import EffectContext
+    from commanderblitz.engine.effects.selectors import matches
     from commanderblitz.engine.stack import push_activated_ability, push_triggered_ability
     from commanderblitz.engine.structs import TriggerInstance
 
@@ -287,6 +303,15 @@ def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = No
         obj = new_object(game.state, card_id, owner=seat, zone=Zone.BATTLEFIELD)
         obj.controller = seat
         game.state.battlefield.append(obj.oid)
+        if source is not None and not matches(
+            EffectContext(state=game.state, controller=seat, source_oid=asker),
+            obj.oid,
+            source,
+            default_zone=None,
+        ):
+            game.state.battlefield.remove(obj.oid)
+            game.state.objects.pop(obj.oid, None)
+            continue
         if kind == "triggered":
             trig = TriggerInstance(source_oid=obj.oid, ability_index=ability.index, controller=seat)
             for _ in push_triggered_ability(game.state, trig):
@@ -1578,6 +1603,8 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
                 registry,
                 1 if spec.selector.get("controller") == "opponent" else 0,
                 spec.selector.get("ability_kind"),
+                spec.selector.get("ability_source"),
+                oid,
             )
         return
     for spec in ability.targets:

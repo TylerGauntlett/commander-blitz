@@ -8,6 +8,7 @@ happen in exactly one place.
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
@@ -31,7 +32,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
-from .structs import CONVOKED_BINDING, CastThisWayLink
+from .structs import CONVOKED_BINDING, CastThisWayLink, LastKnown
 from .temp_effects import end_redirects_to, end_source_bound
 from .triggers import delayed_watches_departure, fire
 
@@ -311,6 +312,16 @@ def move_object(
         for record in state.paid_objects.values():
             if record["oid"] == oid and record["power"] is None:
                 record["power"], record["toughness"] = had_power, had_toughness
+        # And into every ability of it still on the stack: "copy target ability
+        # … from another **legendary** source" (The Peregrine Dynamo) is asked
+        # of the source as it last existed (113.7a), and the object behind this
+        # oid is about to be a graveyard card or, for a token, nothing. Kept by
+        # an item that already has one, for `paid_objects`' reason.
+        lki: LastKnown | None = None
+        for item in state.stack:
+            if item.source_oid == oid and not item.is_spell and item.source_last_known is None:
+                lki = lki or LastKnown(obj=copy.copy(obj), chars=_seen)
+                item.source_last_known = lki
     else:
         had_power = had_toughness = 0
         had_keywords = []
@@ -407,6 +418,10 @@ def move_object(
         # The same 400.7 boundary for mayhem's "if you discarded it this
         # turn": see `TurnLedger.discarded`.
         state.turn_ledger.discarded.pop(oid, None)
+        # And for "the greatest number noted for it this turn": a noter that
+        # comes back is a new object with nothing noted. See
+        # `TurnLedger.exile_mana_values_noted`.
+        state.turn_ledger.exile_mana_values_noted.pop(oid, None)
 
     if as_face is not None:
         # After the reset, which clears `transformed`, and before anything reads
@@ -475,6 +490,13 @@ def move_object(
         obj.graveyard_turn = state.turn
         obj.graveyard_from = from_zone.value
         obj.graveyard_cause = cause
+
+    # "Note the mana value of each card as it's put into exile" -- Bell Borca.
+    # After the move, so the number is the object's in exile (a spell's X is 0
+    # there) and a noter exiling itself is no longer on the battlefield to note
+    # it. A card that was under a merged pile is put into exile too.
+    if to_zone is Zone.EXILE and from_zone is not Zone.EXILE:
+        note_exiled_mana_value(state, [oid, *merged])
 
     # "Whenever one or more cards leave your graveyard" -- Spirit Mascot, Cyan.
     # Narrow on purpose: `ZONE_CHANGE` above records *every* move and stays off
@@ -611,6 +633,63 @@ def move_object(
         )
 
     return obj
+
+
+#: The static effect that notes exiled mana values -- see
+#: `note_exiled_mana_value`.
+NOTE_EXILED_MANA_VALUE = "note_exiled_mana_value"
+
+
+def _prints_exile_note(state: GameState, obj: GameObject) -> bool:
+    return any(
+        ability.is_static and ability.static and ability.static.get("effect") == NOTE_EXILED_MANA_VALUE
+        for ability in state.card_of(obj).abilities
+    )
+
+
+def note_exiled_mana_value(state: GameState, oids: list[int]) -> None:
+    """Note the mana value of each object just put into exile (Bell Borca).
+
+    Every permanent on the battlefield with an active `note_exiled_mana_value`
+    static notes each number, on `TurnLedger.exile_mana_values_noted` under its
+    own oid. The noters are read through `_battlefield_statics`, so a permanent
+    that has lost its abilities notes nothing; the static is ungrantable, so a
+    walk over printed faces first is a complete pre-check and keeps the common
+    case -- nobody noting -- to one cheap pass over the battlefield.
+
+    The number is read off the object in exile: its printed mana value, 0 for
+    a copy that has no mana cost, and X counted as 0 (202.3e is about the
+    stack). A token counts with its mana value, as the rulings say.
+    """
+    if not any(
+        (obj := state.objects.get(b)) is not None and _prints_exile_note(state, obj)
+        for b in state.battlefield
+    ):
+        return
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
+    from .characteristics import _battlefield_statics
+
+    noters = list(
+        dict.fromkeys(
+            source.oid
+            for source, static in _battlefield_statics(state)
+            if static.get("effect") == NOTE_EXILED_MANA_VALUE and source.zone is Zone.BATTLEFIELD
+        )
+    )
+    if not noters:
+        return
+    noted = state.turn_ledger.exile_mana_values_noted
+    for oid in oids:
+        obj = state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            continue
+        overrides = obj.live_copy_overrides
+        value = 0 if overrides and overrides.get("no_mana_cost") else state.card_of(obj).mana_value
+        for noter in noters:
+            noted.setdefault(noter, []).append(value)
+    # A static's input (`greatest_noted_exile_mana_value`), and `chars` caches
+    # per `char_version`.
+    state.bump_chars()
 
 
 def _card_id_of(state: GameState, oid: int | None) -> str | None:
