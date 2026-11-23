@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**525 cards** blocked by **442** capabilities.
+**534 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,8 +23,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [voting](#voting) | 6 | 6980 | decision, op |
+| [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 6 | 2672 | selector, trigger_event |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
-| [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
@@ -57,6 +57,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [lure](#lure) | 2 | 9914 | static_effect |
+| [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 2 | 653 | engine, replacement |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -159,10 +160,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
+| [copy-from-last-known-information](#copy-from-last-known-information) | 1 | 15208 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
 | [cost-reduction-attacking-player](#cost-reduction-attacking-player) | 1 | 9998 | selector |
+| [cost-reduction-per-additional-payment](#cost-reduction-per-additional-payment) | 1 | 7994 | cost |
 | [cost-reduction-per-attacker-this-turn](#cost-reduction-per-attacker-this-turn) | 1 | 9578 | value |
 | [cost-reduction-per-counter](#cost-reduction-per-counter) | 1 | 11563 | value |
 | [cost-reduction-per-life-gained-this-turn](#cost-reduction-per-life-gained-this-turn) | 1 | 15353 | value |
@@ -177,6 +180,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [deals-damage-to-creature-trigger](#deals-damage-to-creature-trigger) | 1 | 19999 | trigger_event |
 | [dealt-combat-damage-this-game-by-name](#dealt-combat-damage-this-game-by-name) | 1 | 5080 | selector |
 | [delayed-creature-dies](#delayed-creature-dies) | 1 | 1661 | trigger_event |
+| [delayed-trigger-either-event](#delayed-trigger-either-event) | 1 | 6796 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
 | [devil-token](#devil-token) | 1 | 4163 | token |
@@ -187,11 +191,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-cost-binding](#discard-cost-binding) | 1 | 5635 | cost |
 | [discard-first-time-each-turn](#discard-first-time-each-turn) | 1 | 8688 | trigger_event |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
+| [distribute-counters-trigger](#distribute-counters-trigger) | 1 | 8153 | op |
 | [divided-damage-on-activated](#divided-damage-on-activated) | 1 | 13459 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [dragon-6-6-br-flying-menace-steal-artifact-token](#dragon-6-6-br-flying-menace-steal-artifact-token) | 1 | 8277 | token |
 | [draw-from-bottom](#draw-from-bottom) | 1 | 10400 | static_effect |
 | [draw-redirection](#draw-redirection) | 1 | 1178 | replacement |
+| [draw-replacement-effects](#draw-replacement-effects) | 1 | 1831 | replacement |
 | [draw-trigger-except-first-in-draw-step](#draw-trigger-except-first-in-draw-step) | 1 | 17497 | trigger_event |
 | [dwarf-berserker-token](#dwarf-berserker-token) | 1 | 14192 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
@@ -300,8 +306,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
 | [mana-produced-color](#mana-produced-color) | 1 | 13900 | value |
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
+| [mana-restriction-cost-contains-x](#mana-restriction-cost-contains-x) | 1 | 5017 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
-| [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
@@ -339,7 +345,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
 | [pay-any-amount-of-life](#pay-any-amount-of-life) | 1 | 4322 | cost |
+| [per-affected-static-magnitude](#per-affected-static-magnitude) | 1 | 6915 | value |
 | [per-player-damage-amount](#per-player-damage-amount) | 1 | 13205 | value |
+| [per-recipient-damage-trigger](#per-recipient-damage-trigger) | 1 | 3523 | trigger_event |
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
 | [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
@@ -926,6 +934,42 @@ Blocks **6** cards.
 
 </details>
 
+## x-in-mana-cost-trigger-filter
+
+Blocks **6** cards.
+
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only in selector_keys / mana restrictions; the trigger matcher (triggers.py filter check) does not read it, so writing it in a trigger filter would load and fire on every spell
+- **(selector)** a trigger filter usable on a delayed_trigger's spell_cast event meaning 'the spell's printed mana cost contains {X}', and a matching filter on ability_activated meaning 'the activated ability's activation cost contains {X}'
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, an equality test against a whole printed cost, not a contains-{X} test; `x_in_mana_cost` exists only as a selector/mana_restriction predicate, not in trigger_filter_keys; ability_activated has no filter on the ability's activation cost at all
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` is a selector key only; `validate_trigger_filter` refuses it because TRIGGER_FILTER_KEYS does not include it and the trigger matcher never reads it
+- **(trigger_event)** a spell_cast trigger filter key `x_in_mana_cost` (printed {X} in the spell's mana cost) that is also counted by the `nth` ordinal, so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn" rather than "your first spell, if it has {X}"
+  <br>Why the existing vocabulary won't do: x_in_mana_cost exists only as a selector key (selectors.py) and a mana-restriction predicate; it is not in the packet's trigger_filter_keys, and `nth` on spell_cast counts earlier spells only through ORDINAL_FILTER_KEYS (triggers._spell_ordinal / _matches_printed), which omits it. The trigger filter's `mana_cost` key matches an exact printed cost string, not the presence of {X}. Without a filtered ordinal, an unfiltered nth:1 would miss an X spell cast after a non-X spell, and max_per_turn cannot help because the trigger filter cannot name {X} in the first place
+- **(selector)** a trigger filter for spell_cast meaning 'its mana cost contains {X}', and for ability_activated meaning 'the activated ability's activation cost contains {X}', so one trigger can fire on either and copy_spell / copy_ability the cause
+  <br>Why the existing vocabulary won't do: The `mana_cost` filter key is an equality test against whole printed costs (has_printed_cost/printed_cost_is), not a contains-{X} test, and ability_activated has no filter on the ability's activation cost at all
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher and counted by the `nth` ordinal so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (printed_cost_is), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only as a selector key and a mana_restriction predicate; the trigger matcher and the spell_cast ordinal never read it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
+  - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
+  - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
+- **Magus Lucea Kane** (rank 6796) — `magus_lucea_kane`
+  - Psychic Stimulus — {T}: Add {C}{C}. When you next cast a spell with {X} in its mana cost or activate an ability with {X} in its activation cost this turn, copy that spell or ability. You may choose new targets for the copy.
+- **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
+  - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
+- **Owlin Spiralmancer** (rank 8974) — `owlin_spiralmancer`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, you may copy it. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)
+- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
+- **Lattice Library** (rank 10607) — `lattice_library`
+  - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -959,38 +1003,6 @@ Blocks **5** cards.
   - When you unlock this door, manifest dread, then put two +1/+1 counters and a trample counter on that creature.
   - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
   - Whenever a creature you control deals combat damage to a player, turn that creature face up or put a +1/+1 counter on it.
-
-</details>
-
-## x-in-mana-cost-trigger-filter
-
-Blocks **5** cards.
-
-- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
-  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only in selector_keys / mana restrictions; the trigger matcher (triggers.py filter check) does not read it, so writing it in a trigger filter would load and fire on every spell
-- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
-  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` is a selector key only; `validate_trigger_filter` refuses it because TRIGGER_FILTER_KEYS does not include it and the trigger matcher never reads it
-- **(trigger_event)** a spell_cast trigger filter key `x_in_mana_cost` (printed {X} in the spell's mana cost) that is also counted by the `nth` ordinal, so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn" rather than "your first spell, if it has {X}"
-  <br>Why the existing vocabulary won't do: x_in_mana_cost exists only as a selector key (selectors.py) and a mana-restriction predicate; it is not in the packet's trigger_filter_keys, and `nth` on spell_cast counts earlier spells only through ORDINAL_FILTER_KEYS (triggers._spell_ordinal / _matches_printed), which omits it. The trigger filter's `mana_cost` key matches an exact printed cost string, not the presence of {X}. Without a filtered ordinal, an unfiltered nth:1 would miss an X spell cast after a non-X spell, and max_per_turn cannot help because the trigger filter cannot name {X} in the first place
-- **(selector)** a trigger filter for spell_cast meaning 'its mana cost contains {X}', and for ability_activated meaning 'the activated ability's activation cost contains {X}', so one trigger can fire on either and copy_spell / copy_ability the cause
-  <br>Why the existing vocabulary won't do: The `mana_cost` filter key is an equality test against whole printed costs (has_printed_cost/printed_cost_is), not a contains-{X} test, and ability_activated has no filter on the ability's activation cost at all
-- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher and counted by the `nth` ordinal so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn"
-  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (printed_cost_is), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only as a selector key and a mana_restriction predicate; the trigger matcher and the spell_cast ordinal never read it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
-  - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
-  - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
-- **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
-  - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
-  - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
-- **Owlin Spiralmancer** (rank 8974) — `owlin_spiralmancer`
-  - Whenever you cast your first spell with {X} in its mana cost each turn, you may copy it. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)
-- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
-  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
-- **Lattice Library** (rank 10607) — `lattice_library`
-  - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
 
 </details>
 
@@ -1668,6 +1680,24 @@ Blocks **2** cards.
 - **Marble Priest** (rank 31502) — `marble_priest`
   - All Walls able to block this creature do so.
   - Prevent all combat damage that would be dealt to this creature by Walls.
+
+</details>
+
+## mana-spent-enters-with-counters
+
+Blocks **2** cards.
+
+- **(engine)** a mana-ability rider (beside mana_grant / mana_uncounterable) that, when this ability's mana is spent to cast a spell of the given types, stages additional counters on that spell's object without using the stack -- e.g. "mana_grant": {"counters": {"+1/+1": 1}, "spell_types": ["Creature"]} writing GameObject.cast_enters_with at payment the way spell_enters_with_counters does at resolution
+  <br>Why the existing vocabulary won't do: mana_grant accepts only 'keywords' and 'spell_types' (cards/loader/mana.py _mana_grant refuses any other key). mana_spent_trigger + the spell_enters_with_counters op would put a triggered ability on the stack ('When you spend this mana...', Jade Orb's wording), but this card prints 'If this mana is spent...' -- a static effect of the mana that uses no stack and cannot be responded to or Stifled, so the trigger is an approximation. The shipped templates for Animal Attendant and Jade Orb of Dragonkind silently drop this rider, so they are not a model.
+- **(replacement)** a mana-ability rider (beside mana_grant / mana_spent_trigger) that, when this ability's mana is spent on a spell matching a filter (here is_commander), stages on that spell an 'enters with N additional +1/+1 counters' replacement for the permanent it becomes, with N a value read at spend time (command_zone_casts_of the spell, i.e. commander_casts_this_game for that commander)
+  <br>Why the existing vocabulary won't do: mana_grant carries only keywords to the resulting permanent, never counters; mana_spent_trigger is a triggered ability that resolves while the spell is still on the stack, so an add_counters on its subject would put counters on the spell, not make the permanent enter with them; enters_with_additional_counters / self_enters_with_counters are standing replacements on the entering card itself, not one-shots handed to a spell by the mana that paid for it. The add_mana half (in_commander_identity) and the count (command_zone_casts_of) both exist
+
+<details><summary>Cards waiting on this</summary>
+
+- **Opal Palace** (rank 653) — `opal_palace`
+  - {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.
+- **Biophagus** (rank 2904) — `biophagus`
+  - If this mana is spent to cast a creature spell, that creature enters with an additional +1/+1 counter on it.
 
 </details>
 
@@ -3239,6 +3269,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-from-last-known-information
+
+Blocks **1** card.
+
+- **(op)** copy_permanent able to copy a creature that has died using its last known copiable values (608.2h / 707.2), read from the dies event's snapshot rather than from a live object -- so that a dying TOKEN (which ceases to exist as a state-based action before the trigger resolves) is still copied, and a nontoken card that has left the graveyard in response is still copied. E.g. `objects: {"binding": "subject"}` falling back to the dies snapshot (def_id plus the dead permanent's own copy_overrides / copying target) when the oid is no longer in state.objects or no longer in the graveyard
+  <br>Why the existing vocabulary won't do: copy_permanent resolves its pool from live objects and skips any oid missing from state.objects (`if source is None: continue`); sba._tokens_and_attachments pops a token from state.objects as soon as it is off the battlefield, so the trigger finds nothing to copy and makes no token. The infection counters go on the OPPONENT's creatures, which are often tokens, so this is the common case, not an edge. The only LKI copy fallback in op_copy_permanent is for `self_only` (the source itself, 608.2h for Jace). Nightmare Shepherd's pattern (exile the subject, copy from exile) works only because it is restricted to nontoken creatures and owns the move. The rest of the line is expressible: a `creature_dies` trigger with `controller: "any"` and condition `{"cmp": ">", "left": {"counters_had": "infection"}, "right": {"const": 0}}` (as Slurrk does), and `copy_permanent` with `controller: "you"` and `except_: {"add_subtypes": ["Tyranid"]}`. The Genestealer's Kiss line (attacks trigger, add_counters infection on a target creature defending player controls) is not blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Genestealer Patriarch** (rank 15208) — `genestealer_patriarch`
+  - Children of the Cult — Whenever a creature with an infection counter on it dies, you create a token that's a copy of that creature, except it's a Tyranid in addition to its other types.
+
+</details>
+
 ## copy-spell-except-nonlegendary
 
 Blocks **1** card.
@@ -3292,6 +3336,20 @@ Blocks **1** card.
 
 - **Sentry Bot** (rank 9998) — `sentry_bot`
   - This spell costs {1} less to cast for each creature attacking you.
+
+</details>
+
+## cost-reduction-per-additional-payment
+
+Blocks **1** card.
+
+- **(cost)** a card-level cost_reduction shape that discounts the spell's generic mana by N for each time its optional repeatable additional_cost was paid on this cast line (Action.additional_times), e.g. {"per_additional_paid": 2} beside additional_cost {"remove_counters_from_among": {"count": 1, "counter": "+1/+1", "types": ["Creature"], "controller": "you"}} with additional_optional and additional_repeatable; legality must price each cast line with its own announced count (601.2b/601.2f) and bound the count by the +1/+1 counters available among your creatures
+  <br>Why the existing vocabulary won't do: The additional cost half is sayable (remove_counters_from_among with additional_optional + additional_repeatable, as squad/replicate do), but cost_reduction_keys (amount, count, total_power, greatest_mana_value, total_mana_value, greatest_count, creatures_died_this_turn, distinct_mana_values, energy_spent_this_turn) are all read off the board or turn ledgers; none reads the number of additional-cost payments. additional_paid is a value only for target counts and effects, not for the price, and a flat amount with a condition cannot scale per counter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hierophant Bio-Titan** (rank 7994) — `hierophant_bio_titan`
+  - Frenzied Metabolism — As an additional cost to cast this spell, you may remove any number of +1/+1 counters from among creatures you control. This spell costs {2} less to cast for each counter removed this way
 
 </details>
 
@@ -3493,6 +3551,20 @@ Blocks **1** card.
 
 </details>
 
+## delayed-trigger-either-event
+
+Blocks **1** card.
+
+- **(trigger_event)** a single once_this_turn delayed trigger (created as a mana-ability rider) that fires on whichever comes first of a matching spell_cast or a matching ability_activated, then copies the cause with copy_spell or copy_ability (new_targets) according to which it was
+  <br>Why the existing vocabulary won't do: delayed_trigger takes one `trigger.event`; two separate once_this_turn delayed triggers would each fire on their own event, so casting an X spell and later activating an X ability would copy both, whereas 'when you next ... or ...' copies only the first
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magus Lucea Kane** (rank 6796) — `magus_lucea_kane`
+  - Psychic Stimulus — {T}: Add {C}{C}. When you next cast a spell with {X} in its mana cost or activate an ability with {X} in its activation cost this turn, copy that spell or ability. You may choose new targets for the copy.
+
+</details>
+
 ## delayed-trigger-filter
 
 Blocks **1** card.
@@ -3636,6 +3708,20 @@ Blocks **1** card.
 
 </details>
 
+## distribute-counters-trigger
+
+Blocks **1** card.
+
+- **(op)** distribute_counters on a TRIGGERED ability (a self_enters trigger) with an X-sized amount ({"x": true}, the X paid for the permanent spell) among any number of other target creatures you control (target spec: up to X targets, controller you, exclude_self), the division chosen when the trigger is put on the stack
+  <br>Why the existing vocabulary won't do: distribute_counters exists, but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'); add_counters gives every target the same number, so it cannot divide X among them. Ravenous itself is expressible (x-sized enters counters plus a self_enters draw trigger with condition cmp >= {binding: x} 5, as on Jacked Rabbit); only this line is blocked
+
+<details><summary>Cards waiting on this</summary>
+
+- **Broodlord** (rank 8153) — `broodlord`
+  - Brood Telepathy — When this creature enters, distribute X +1/+1 counters among any number of other target creatures you control
+
+</details>
+
 ## divided-damage-on-activated
 
 Blocks **1** card.
@@ -3705,6 +3791,20 @@ Blocks **1** card.
 
 - **Notion Thief** (rank 1178) — `notion_thief`
   - If an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card.
+
+</details>
+
+## draw-replacement-effects
+
+Blocks **1** card.
+
+- **(replacement)** an optional per-draw replacement static (affects_player: you) that, instead of each single draw, runs an effect list -- here a choose_mode of two modes (land / nonland), each a reveal_until with selector types:[Land] or not_types:[Land], destination hand, rest_to_bottom -- with the controller choosing on each draw whether to apply it
+  <br>Why the existing vocabulary won't do: replace_draw only accepts draw_multiplier (>= 2), except_first_in_draw_step and condition; the loader rejects anything else, and there is no 'may' or 'effects' on it. replace_empty_draw takes effects but only fires when the library is empty. reveal_until can express the replacement's body, but nothing lets it stand in for a draw
+
+<details><summary>Cards waiting on this</summary>
+
+- **Abundance** (rank 1831) — `abundance`
+  - If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in any order.
 
 </details>
 
@@ -5250,6 +5350,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-restriction-cost-contains-x
+
+Blocks **1** card.
+
+- **(engine)** a mana_restriction predicate asking whether the COST BEING PAID contains {X} -- for a cast, the total cost actually paid (mana cost, or an alternative/additional cost carrying {X}); for an activation, the activated ability's own cost (e.g. "{X}, {T}: ...") -- rather than the source card's printed mana cost
+  <br>Why the existing vocabulary won't do: The closest is the restriction predicate x_in_mana_cost (Helga, Skittish Seer). On the cast half it reads only the spell card's printed mana cost, missing X in alternative or additional costs; on the activate half, costs.ability_purpose answers it from the SOURCE card's printed mana cost (card.mana_cost.x_count), so an X-cost ability of a permanent without {X} in its mana cost would be refused and a non-X ability of an X-cost permanent (e.g. a tap ability of Hangarback Walker) would be funded. Writing {"cast": [[{"x_in_mana_cost": true}]]} alone drops the activated-ability half; adding the activate half makes it pay for the wrong abilities. The grant itself (grant_ability static over basic lands with a grantable {T}: Add {C}{C} mana ability) is expressible; only the restriction is not.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nexos** (rank 5017) — `nexos`
+  - Strategic Coordinator — Basic lands you control have "{T}: Add {C}{C}. Spend this mana only on costs that contain {X}."
+
+</details>
+
 ## mana-restriction-turn-face-up
 
 Blocks **1** card.
@@ -5261,20 +5375,6 @@ Blocks **1** card.
 
 - **Overgrown Zealot** (rank 6766) — `overgrown_zealot`
   - {T}: Add two mana of any one color. Spend this mana only to turn permanents face up.
-
-</details>
-
-## mana-spent-enters-with-counters
-
-Blocks **1** card.
-
-- **(replacement)** a mana-ability rider (beside mana_grant / mana_spent_trigger) that, when this ability's mana is spent on a spell matching a filter (here is_commander), stages on that spell an 'enters with N additional +1/+1 counters' replacement for the permanent it becomes, with N a value read at spend time (command_zone_casts_of the spell, i.e. commander_casts_this_game for that commander)
-  <br>Why the existing vocabulary won't do: mana_grant carries only keywords to the resulting permanent, never counters; mana_spent_trigger is a triggered ability that resolves while the spell is still on the stack, so an add_counters on its subject would put counters on the spell, not make the permanent enter with them; enters_with_additional_counters / self_enters_with_counters are standing replacements on the entering card itself, not one-shots handed to a spell by the mana that paid for it. The add_mana half (in_commander_identity) and the count (command_zone_casts_of) both exist
-
-<details><summary>Cards waiting on this</summary>
-
-- **Opal Palace** (rank 653) — `opal_palace`
-  - {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.
 
 </details>
 
@@ -5808,6 +5908,20 @@ Blocks **1** card.
 
 </details>
 
+## per-affected-static-magnitude
+
+Blocks **1** card.
+
+- **(value)** a static value leaf that reads the permanent the static is being applied to, so a `buff` can be sized per affected creature: `power`/`toughness` = `{"counters_on": {"counter": "+1/+1", "objects": "affected"}}` (each creature gets +1/+1 for each +1/+1 counter on ITSELF)
+  <br>Why the existing vocabulary won't do: `counters_on` in static_value_keys reads counters off objects chosen relative to the static's SOURCE (`self_only` is Clamavus itself, a `count`-style filter sums over many permanents); `characteristics._static_value(state, expr, source)` is called in layer 7c with only `source_obj`, never the affected object, so every creature would get the same bonus. `AFFECTED_CONTROLLER` exists only for static conditions, not magnitudes. Writing one buff per counter count or using `has_counters` cannot scale with the number of counters.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clamavus** (rank 6915) — `clamavus`
+  - Proclamator Hailer — Each creature you control gets +1/+1 for each +1/+1 counter on it.
+
+</details>
+
 ## per-player-damage-amount
 
 Blocks **1** card.
@@ -5819,6 +5933,20 @@ Blocks **1** card.
 
 - **Spiteful Repossession** (rank 13205) — `spiteful_repossession`
   - Spiteful Repossession deals damage to each opponent who controls more lands than you equal to the difference. Then create a number of Treasure tokens equal to the damage dealt this way.
+
+</details>
+
+## per-recipient-damage-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a damage trigger that fires once per recipient (permanent or player) of damage dealt by any source matching a dealer filter ("another source you control", spells and abilities included), exposing that recipient's own share of the damage as a binding (to compare == 1) and the recipient itself as a binding a damage op can point at ("that permanent or player")
+  <br>Why the existing vocabulary won't do: `deals_damage` has the dealer as subject but folds every recipient of one damage event into a single firing (`_joins_damage_dealt` sums `amount`), so a 1-damage share beside a larger one reads as the total and no binding names the recipient; `dealt_damage` fires per victim but only for permanents, and its `damaged_by` filter takes only `self` or an oid, so it cannot say "another source you control"; `deals_damage_to_player` covers only the player half, and splitting the one printed sentence across two triggers is not a faithful single ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghyrson Starn, Kelermorph** (rank 3523) — `ghyrson_starn_kelermorph`
+  - Three Autostubs — Whenever another source you control deals exactly 1 damage to a permanent or player, Ghyrson Starn deals 2 damage to that permanent or player.
 
 </details>
 
