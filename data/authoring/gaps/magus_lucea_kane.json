@@ -1,0 +1,29 @@
+{
+  "card_id": "magus_lucea_kane",
+  "name": "Magus Lucea Kane",
+  "oracle_text": "Spiritual Leader — At the beginning of combat on your turn, put a +1/+1 counter on target creature.\nPsychic Stimulus — {T}: Add {C}{C}. When you next cast a spell with {X} in its mana cost or activate an ability with {X} in its activation cost this turn, copy that spell or ability. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)",
+  "blocked_sentences": [
+    "Psychic Stimulus — {T}: Add {C}{C}. When you next cast a spell with {X} in its mana cost or activate an ability with {X} in its activation cost this turn, copy that spell or ability. You may choose new targets for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "x_in_mana_cost_trigger_filter",
+      "kind": "selector",
+      "what": "a trigger filter usable on a delayed_trigger's spell_cast event meaning 'the spell's printed mana cost contains {X}', and a matching filter on ability_activated meaning 'the activated ability's activation cost contains {X}'",
+      "why_existing_wont_do": "trigger_filter_keys has `mana_cost`, an equality test against a whole printed cost, not a contains-{X} test; `x_in_mana_cost` exists only as a selector/mana_restriction predicate, not in trigger_filter_keys; ability_activated has no filter on the ability's activation cost at all"
+    },
+    {
+      "capability": "delayed_trigger_either_event",
+      "kind": "trigger_event",
+      "what": "a single once_this_turn delayed trigger (created as a mana-ability rider) that fires on whichever comes first of a matching spell_cast or a matching ability_activated, then copies the cause with copy_spell or copy_ability (new_targets) according to which it was",
+      "why_existing_wont_do": "delayed_trigger takes one `trigger.event`; two separate once_this_turn delayed triggers would each fire on their own event, so casting an X spell and later activating an X ability would copy both, whereas 'when you next ... or ...' copies only the first"
+    }
+  ],
+  "closest_existing": [
+    "delayed_trigger",
+    "copy_spell",
+    "copy_ability",
+    "x_in_mana_cost"
+  ],
+  "confidence": "high"
+}

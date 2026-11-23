@@ -1,0 +1,18 @@
+{
+  "card_id": "clamavus",
+  "name": "Clamavus",
+  "oracle_text": "Proclamator Hailer — Each creature you control gets +1/+1 for each +1/+1 counter on it.",
+  "blocked_sentences": [
+    "Proclamator Hailer — Each creature you control gets +1/+1 for each +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "per_affected_static_magnitude",
+      "kind": "value",
+      "what": "a static value leaf that reads the permanent the static is being applied to, so a `buff` can be sized per affected creature: `power`/`toughness` = `{\"counters_on\": {\"counter\": \"+1/+1\", \"objects\": \"affected\"}}` (each creature gets +1/+1 for each +1/+1 counter on ITSELF)",
+      "why_existing_wont_do": "`counters_on` in static_value_keys reads counters off objects chosen relative to the static's SOURCE (`self_only` is Clamavus itself, a `count`-style filter sums over many permanents); `characteristics._static_value(state, expr, source)` is called in layer 7c with only `source_obj`, never the affected object, so every creature would get the same bonus. `AFFECTED_CONTROLLER` exists only for static conditions, not magnitudes. Writing one buff per counter count or using `has_counters` cannot scale with the number of counters."
+    }
+  ],
+  "closest_existing": ["counters_on", "buff", "has_counters"],
+  "confidence": "high"
+}

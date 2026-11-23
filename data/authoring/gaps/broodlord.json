@@ -1,0 +1,21 @@
+{
+  "card_id": "broodlord",
+  "name": "Broodlord",
+  "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nBrood Telepathy — When this creature enters, distribute X +1/+1 counters among any number of other target creatures you control.",
+  "blocked_sentences": [
+    "Brood Telepathy — When this creature enters, distribute X +1/+1 counters among any number of other target creatures you control"
+  ],
+  "needs": [
+    {
+      "capability": "distribute_counters_trigger",
+      "kind": "op",
+      "what": "distribute_counters on a TRIGGERED ability (a self_enters trigger) with an X-sized amount ({\"x\": true}, the X paid for the permanent spell) among any number of other target creatures you control (target spec: up to X targets, controller you, exclude_self), the division chosen when the trigger is put on the stack",
+      "why_existing_wont_do": "distribute_counters exists, but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'); add_counters gives every target the same number, so it cannot divide X among them. Ravenous itself is expressible (x-sized enters counters plus a self_enters draw trigger with condition cmp >= {binding: x} 5, as on Jacked Rabbit); only this line is blocked"
+    }
+  ],
+  "closest_existing": [
+    "distribute_counters",
+    "add_counters"
+  ],
+  "confidence": "high"
+}

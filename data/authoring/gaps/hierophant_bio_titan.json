@@ -1,0 +1,18 @@
+{
+  "card_id": "hierophant_bio_titan",
+  "name": "Hierophant Bio-Titan",
+  "oracle_text": "Frenzied Metabolism — As an additional cost to cast this spell, you may remove any number of +1/+1 counters from among creatures you control. This spell costs {2} less to cast for each counter removed this way.\nReach, vigilance, ward {2}\nTitanic — This creature can't be blocked by creatures with power 2 or less.",
+  "blocked_sentences": [
+    "Frenzied Metabolism — As an additional cost to cast this spell, you may remove any number of +1/+1 counters from among creatures you control. This spell costs {2} less to cast for each counter removed this way"
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_per_additional_payment",
+      "kind": "cost",
+      "what": "a card-level cost_reduction shape that discounts the spell's generic mana by N for each time its optional repeatable additional_cost was paid on this cast line (Action.additional_times), e.g. {\"per_additional_paid\": 2} beside additional_cost {\"remove_counters_from_among\": {\"count\": 1, \"counter\": \"+1/+1\", \"types\": [\"Creature\"], \"controller\": \"you\"}} with additional_optional and additional_repeatable; legality must price each cast line with its own announced count (601.2b/601.2f) and bound the count by the +1/+1 counters available among your creatures",
+      "why_existing_wont_do": "The additional cost half is sayable (remove_counters_from_among with additional_optional + additional_repeatable, as squad/replicate do), but cost_reduction_keys (amount, count, total_power, greatest_mana_value, total_mana_value, greatest_count, creatures_died_this_turn, distinct_mana_values, energy_spent_this_turn) are all read off the board or turn ledgers; none reads the number of additional-cost payments. additional_paid is a value only for target counts and effects, not for the price, and a flat amount with a condition cannot scale per counter"
+    }
+  ],
+  "closest_existing": ["additional_repeatable", "remove_counters_from_among", "cost_reduction"],
+  "confidence": "high"
+}

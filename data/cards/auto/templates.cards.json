@@ -125630,6 +125630,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Stowage — Whenever this Vehicle attacks, put two +1/+1 counters on another target attacking creature.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "goliath_truck",
+      "mana_cost": "{4}",
+      "name": "Goliath Truck",
+      "oracle_text": "Stowage — Whenever this Vehicle attacks, put two +1/+1 counters on another target attacking creature.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -133909,6 +133994,72 @@
       "subtypes": [
         "Human",
         "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Rapacious Hunger — Whenever another creature dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "remove_counters_x": {
+              "counter": "+1/+1"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Devouring Monster — {T}, Remove X +1/+1 counters from this creature: Add X mana of any one color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "haruspex",
+      "mana_cost": "{3}{G}",
+      "name": "Haruspex",
+      "oracle_text": "Rapacious Hunger — Whenever another creature dies, put a +1/+1 counter on this creature.\nDevouring Monster — {T}, Remove X +1/+1 counters from this creature: Add X mana of any one color.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
       ],
       "toughness": 2,
       "types": [
@@ -172223,6 +172374,64 @@
       "toughness": 8,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "tyranid_warrior_3_3_g_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pheromone Trail — When this creature enters, if a creature entered the battlefield under an opponent's control this turn, create a 3/3 green Tyranid Warrior creature token with trample",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "permanents_entered_this_turn": {
+                  "controller": "opponent",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lictor",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Lictor",
+      "oracle_text": "Flash\nPheromone Trail — When this creature enters, if a creature entered the battlefield under an opponent's control this turn, create a 3/3 green Tyranid Warrior creature token with trample.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "toughness": 3,
+      "types": [
         "Creature"
       ]
     },

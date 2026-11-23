@@ -10644,6 +10644,10 @@
   "goliath_spider": {
     "zone": "battlefield"
   },
+  "goliath_truck": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gongaga_reactor_town": {
     "zone": "battlefield"
   },
@@ -11331,6 +11335,10 @@
     "zone": "battlefield"
   },
   "harsh_mentor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "haruspex": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14369,6 +14377,11 @@
   },
   "liberty_prime_recharged": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lictor": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "lidless_gaze": {

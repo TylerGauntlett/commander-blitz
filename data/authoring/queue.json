@@ -114942,12 +114942,12 @@
     },
     "Goliath Truck": {
       "edhrec_rank": 13464,
-      "gate": "template",
+      "gate": null,
       "name": "Goliath Truck",
-      "reason": "no template for: Stowage — Whenever this Vehicle attacks, put two +1/+1 counters on another target attackin",
+      "reason": "",
       "scryfall_id": "347a5d65-ef0f-4859-b433-807af500f52d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goliath, Mass Manipulator": {
@@ -123092,12 +123092,12 @@
     },
     "Haruspex": {
       "edhrec_rank": 11768,
-      "gate": "template",
+      "gate": null,
       "name": "Haruspex",
-      "reason": "no template for: Rapacious Hunger — Whenever another creature dies, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "7127218e-420a-4db5-b812-340f2558aab3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harvest Gwyllion": {
@@ -157512,12 +157512,12 @@
     },
     "Lictor": {
       "edhrec_rank": 18098,
-      "gate": "template",
+      "gate": null,
       "name": "Lictor",
-      "reason": "no template for: Pheromone Trail — When this creature enters, if a creature entered the battlefield under a",
+      "reason": "",
       "scryfall_id": "3c4d8f36-461f-48a6-a4e4-9ddfb388de19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lidless Gaze": {
