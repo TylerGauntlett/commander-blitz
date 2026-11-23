@@ -1,0 +1,18 @@
+{
+  "card_id": "nexos",
+  "name": "Nexos",
+  "oracle_text": "Strategic Coordinator — Basic lands you control have \"{T}: Add {C}{C}. Spend this mana only on costs that contain {X}.\"",
+  "blocked_sentences": [
+    "Strategic Coordinator — Basic lands you control have \"{T}: Add {C}{C}. Spend this mana only on costs that contain {X}.\""
+  ],
+  "needs": [
+    {
+      "capability": "mana_restriction_cost_contains_x",
+      "kind": "engine",
+      "what": "a mana_restriction predicate asking whether the COST BEING PAID contains {X} -- for a cast, the total cost actually paid (mana cost, or an alternative/additional cost carrying {X}); for an activation, the activated ability's own cost (e.g. \"{X}, {T}: ...\") -- rather than the source card's printed mana cost",
+      "why_existing_wont_do": "The closest is the restriction predicate x_in_mana_cost (Helga, Skittish Seer). On the cast half it reads only the spell card's printed mana cost, missing X in alternative or additional costs; on the activate half, costs.ability_purpose answers it from the SOURCE card's printed mana cost (card.mana_cost.x_count), so an X-cost ability of a permanent without {X} in its mana cost would be refused and a non-X ability of an X-cost permanent (e.g. a tap ability of Hangarback Walker) would be funded. Writing {\"cast\": [[{\"x_in_mana_cost\": true}]]} alone drops the activated-ability half; adding the activate half makes it pay for the wrong abilities. The grant itself (grant_ability static over basic lands with a grantable {T}: Add {C}{C} mana ability) is expressible; only the restriction is not."
+    }
+  ],
+  "closest_existing": ["mana_restriction", "x_in_mana_cost", "grant_ability"],
+  "confidence": "high"
+}

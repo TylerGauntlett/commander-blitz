@@ -129892,12 +129892,12 @@
     },
     "Hormagaunt Horde": {
       "edhrec_rank": 9629,
-      "gate": "template",
+      "gate": null,
       "name": "Hormagaunt Horde",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "0666bb2e-bd40-4487-953f-8eece37ad0df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horn of Deafening": {
@@ -165792,12 +165792,12 @@
     },
     "Malanthrope": {
       "edhrec_rank": 11648,
-      "gate": "template",
+      "gate": null,
       "name": "Malanthrope",
-      "reason": "no template for: Scavenge the Dead — When this creature enters, exile target player's graveyard. Put a +1/+",
+      "reason": "",
       "scryfall_id": "28d4eb51-a6ec-488a-a79a-ec4676d7af52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malboro": {
@@ -169752,12 +169752,12 @@
     },
     "Mawloc": {
       "edhrec_rank": 7114,
-      "gate": "template",
+      "gate": null,
       "name": "Mawloc",
-      "reason": "no template for: Ravenous",
+      "reason": "",
       "scryfall_id": "bbec97ff-bb84-4496-9e09-d4fc1570c516",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maximize Altitude": {
@@ -185932,12 +185932,12 @@
     },
     "New Horizons": {
       "edhrec_rank": 6987,
-      "gate": "template",
+      "gate": null,
       "name": "New Horizons",
-      "reason": "no template for: When this Aura enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "86b3923c-c35c-4eb2-9dd3-b15c13778ecf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "New Master of Arms": {
@@ -195972,12 +195972,12 @@
     },
     "Overgrowth": {
       "edhrec_rank": 3021,
-      "gate": "template",
+      "gate": null,
       "name": "Overgrowth",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional {G}{G}",
+      "reason": "",
       "scryfall_id": "0bf13b7d-736b-4bf9-8b30-6e182986ddbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overgrowth Elemental": {

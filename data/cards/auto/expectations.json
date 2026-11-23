@@ -11980,6 +11980,20 @@
     },
     "zone": "battlefield"
   },
+  "hormagaunt_horde": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "horn_of_gondor": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15267,6 +15281,16 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "malanthrope": {
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "malcolm_keen_eyed_navigator": {
     "zone": "battlefield"
   },
@@ -15705,6 +15729,20 @@
         "flying",
         "first_strike"
       ]
+    },
+    "zone": "battlefield"
+  },
+  "mawloc": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "battlefield"
   },
@@ -17175,6 +17213,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "new_horizons": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "neyam_shai_murad": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18056,6 +18098,10 @@
     "zone": "battlefield"
   },
   "overgrown_tomb": {
+    "zone": "battlefield"
+  },
+  "overgrowth": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "overlord_of_the_balemurk": {

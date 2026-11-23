@@ -142476,6 +142476,100 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ravenous",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "x"
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{G}"
+              },
+              "player": "you",
+              "prompt": "Pay {2}{G} to return Hormagaunt Horde from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Endless Swarm — Whenever a land you control enters, you may pay {2}{G}. If you do, return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hormagaunt_horde",
+      "mana_cost": "{X}{G}",
+      "name": "Hormagaunt Horde",
+      "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nEndless Swarm — Whenever a land you control enters, you may pay {2}{G}. If you do, return this card from your graveyard to your hand.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "create_token",
               "token": "human_soldier_1_1_w"
             }
@@ -183004,6 +183098,79 @@
         {
           "effects": [
             {
+              "as": "malanthrope_exiled",
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "malanthrope_exiled",
+                  "controller": "any",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "Scavenge the Dead — When this creature enters, exile target player's graveyard. Put a +1/+1 counter on this creature for each creature card exiled this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "malanthrope",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{G}{U}",
+      "name": "Malanthrope",
+      "oracle_text": "Flying\nScavenge the Dead — When this creature enters, exile target player's graveyard. Put a +1/+1 counter on this creature for each creature card exiled this way.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "player_count": {
                   "binding": "damaged_players"
@@ -187838,6 +188005,107 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Ravenous",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "x"
+              },
+              "right": {
+                "const": 5
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "fight",
+              "other": {
+                "target": "prey"
+              }
+            },
+            {
+              "destination": "exile",
+              "objects": {
+                "target": "prey"
+              },
+              "op": "replace_deaths"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "prey",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Terror from the Deep — When this creature enters, it fights up to one target creature an opponent controls. If that creature would die this turn, exile it instead.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "mawloc",
+      "mana_cost": "{X}{R}{G}",
+      "name": "Mawloc",
+      "oracle_text": "Ravenous (This creature enters with X +1/+1 counters on it. If X is 5 or more, draw a card when it enters.)\nTerror from the Deep — When this creature enters, it fights up to one target creature an opponent controls. If that creature would die this turn, exile it instead.",
+      "power": 2,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Tyranid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -204755,6 +205023,99 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Aura enters, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}: Add two mana of any one color.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": 2,
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add two mana of any one color."
+        }
+      ],
+      "id": "new_horizons",
+      "mana_cost": "{2}{G}",
+      "name": "New Horizons",
+      "oracle_text": "Enchant land\nWhen this Aura enters, put a +1/+1 counter on target creature you control.\nEnchanted land has \"{T}: Add two mana of any one color.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "destination": "hand",
@@ -216442,6 +216803,49 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "add_mana": "{G}{G}",
+          "affects_player": "any",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "text": "Whenever enchanted land is tapped for mana, its controller adds an additional {G}{G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "overgrowth",
+      "mana_cost": "{2}{G}",
+      "name": "Overgrowth",
+      "oracle_text": "Enchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional {G}{G}.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
