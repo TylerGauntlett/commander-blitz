@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **454** capabilities.
+**537 cards** blocked by **453** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -276,7 +276,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
-| [griffin-2-2-w-flying](#griffin-2-2-w-flying) | 1 | 14065 | token |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hexproof-from](#hexproof-from) | 1 | 7920 | keyword |
@@ -4923,20 +4922,6 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
-
-</details>
-
-## griffin-2-2-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 2/2 white Griffin creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Griffin token; the nearest is pegasus_2_2_w_flying, which has the wrong creature type. The trigger itself is expressible with deals_combat_damage_to_player and a Griffin/controller-you filter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zeriam, Golden Wind** (rank 14065) — `zeriam_golden_wind`
-  - Whenever a Griffin you control deals combat damage to a player, create a 2/2 white Griffin creature token with flying.
 
 </details>
 

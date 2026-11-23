@@ -30084,6 +30084,10 @@
   "zephyrim": {
     "zone": "battlefield"
   },
+  "zeriam_golden_wind": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "zetalpa_primal_dawn": {
     "zone": "battlefield"
   },
