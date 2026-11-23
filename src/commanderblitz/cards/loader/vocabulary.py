@@ -263,6 +263,14 @@ STATIC_EFFECTS = frozenset(
         # replacement, so a commander is exiled, makes the Zombie and then
         # goes home, as 903.9a reads.
         "replace_dies",
+        # Bell Borca, Spectral Sergeant.  "Note the mana value of each card as
+        # it's put into exile."  A record, not a layer: every object put into
+        # exile while this permanent is on the battlefield adds its mana value
+        # to `TurnLedger.exile_mana_values_noted` under the permanent's oid,
+        # written by `zones.note_exiled_mana_value` from `zones.move_object`.
+        # Read back by the static value `greatest_noted_exile_mana_value`.
+        # Takes nothing but its `text`.
+        "note_exiled_mana_value",
         "set_pt",
         "add_subtype",
         # "As long as Arixmethes has a slumber counter on it, it's a land."
@@ -1080,6 +1088,9 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
 UNGRANTABLE_STATIC_EFFECTS = (
     PLAYER_WIDE_STATIC_EFFECTS
     | {"replace_token_creation", "damage_cant_be_prevented", "all_damage_wither"}
+    # `zones.note_exiled_mana_value` finds noters by their printed faces before
+    # it walks the statics, so a granted one would note nothing.
+    | {"note_exiled_mana_value"}
     | frozenset(ABILITY_STATICS)
     # A granted static is read with its holder's timestamp, not the grant's
     # (`characteristics.static_timestamp`), and this one is nothing but a
@@ -1957,6 +1968,11 @@ STATIC_LIFE_LOST_KEYS = frozenset({"life_lost_this_turn"})
 #: with its characteristic-defining abilities (604.3) as Duplicant's size is.
 #: ``"self"`` only. A pipeline input: the link is written by `link_exiled` and
 #: the card's characteristics in exile are its printed ones.
+#: `greatest_noted_exile_mana_value` is Bell Borca's "power is equal to the
+#: greatest number noted for it this turn": the largest mana value this
+#: permanent's `note_exiled_mana_value` static noted this turn, 0 with none.
+#: ``"self"`` only. A pipeline input: `zones.note_exiled_mana_value` writes it
+#: and the cleanup step empties it.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1973,6 +1989,7 @@ STATIC_VALUE_KEYS = (
             "extreme_value",
             "distinct",
             "exiled_card_power",
+            "greatest_noted_exile_mana_value",
         }
     )
     | STATIC_LIFE_KEYS

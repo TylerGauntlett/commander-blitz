@@ -27420,6 +27420,76 @@
     {
       "abilities": [
         {
+          "effect": "note_exiled_mana_value",
+          "kind": "static",
+          "text": "Note the mana value of each card as it's put into exile."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "greatest_noted_exile_mana_value": "self"
+          },
+          "text": "Bell Borca's power is equal to the greatest number noted for it this turn.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, exile the top card of your library. You may play that card this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "bell_borca_spectral_sergeant",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Bell Borca, Spectral Sergeant",
+      "oracle_text": "Note the mana value of each card as it's put into exile.\nBell Borca's power is equal to the greatest number noted for it this turn.\nAt the beginning of your upkeep, exile the top card of your library. You may play that card this turn.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "any_of": [
               {

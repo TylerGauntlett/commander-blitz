@@ -23312,12 +23312,12 @@
     },
     "Bell Borca, Spectral Sergeant": {
       "edhrec_rank": 16555,
-      "gate": "template",
+      "gate": null,
       "name": "Bell Borca, Spectral Sergeant",
-      "reason": "no template for: Note the mana value of each card as it's put into exile",
+      "reason": "",
       "scryfall_id": "4fdcd559-477f-48cb-a221-23a653b0dde1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Belladonna Took": {

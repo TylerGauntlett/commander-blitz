@@ -808,6 +808,17 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.exiled_card_power: reads the card exiled with this "
                 f"permanent, so the only spec is 'self', got {who!r}"
             )
+    if "greatest_noted_exile_mana_value" in value:
+        # "The greatest number noted **for it**": this permanent's own notes,
+        # so the only spelling is "self". The card must also print the
+        # `note_exiled_mana_value` static that does the noting, which
+        # `loader._check_exile_notes` asks of the whole card.
+        who = value["greatest_noted_exile_mana_value"]
+        if who != "self":
+            raise DslError(
+                f"{where}.greatest_noted_exile_mana_value: reads the numbers noted "
+                f"for this permanent, so the only spec is 'self', got {who!r}"
+            )
     if "extreme_value" in value:
         _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
     if "distinct" in value:

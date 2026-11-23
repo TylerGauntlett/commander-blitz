@@ -2708,6 +2708,22 @@ class TurnLedger:
     #: counted and nothing that gave energy offsets them. Not derivable from
     #: `Player.energy`: getting two and paying two leaves it where it was.
     energy_spent: dict[int, int] = field(default_factory=dict)
+    #: The **mana values noted** for each noting permanent this turn: noter
+    #: oid -> every number noted, in order. Bell Borca, Spectral Sergeant:
+    #: "Note the mana value of each card as it's put into exile. Bell Borca's
+    #: power is equal to the greatest number noted for it this turn."
+    #:
+    #: Written by `zones.note_exiled_mana_value` for every battlefield permanent
+    #: with an active `note_exiled_mana_value` static as anything -- a card or a
+    #: token, from any zone, by anyone -- arrives in exile, read off the object
+    #: in exile (a spell's X is 0 there). Per noter rather than one list of
+    #: every exile this turn, because the numbers belong to the object that
+    #: noted them: a card exiled before the noter entered, or while it had lost
+    #: its abilities, was noted for nobody. `zones.move_object` drops the
+    #: noter's entry at its next zone change, since the object that comes back
+    #: is a new one with nothing noted (400.7). Read by the static value
+    #: `greatest_noted_exile_mana_value`.
+    exile_mana_values_noted: dict[int, list[int]] = field(default_factory=dict)
 
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
@@ -2893,6 +2909,7 @@ class TurnLedger:
         self.discarded.clear()
         self.cards_discarded.clear()
         self.energy_spent.clear()
+        self.exile_mana_values_noted.clear()
         self.permanents_entered.clear()
         self.counters_put.clear()
         self.graveyard_arrivals.clear()

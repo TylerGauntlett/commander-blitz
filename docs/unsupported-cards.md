@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **451** capabilities.
+**534 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -338,7 +338,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [nonbasic-land-type](#nonbasic-land-type) | 1 | 10422 | selector |
 | [noncombat-damage-trigger](#noncombat-damage-trigger) | 1 | 6793 | trigger_event |
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
-| [noted-exile-mana-value](#noted-exile-mana-value) | 1 | 16555 | value |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
@@ -5803,21 +5802,6 @@ Blocks **1** card.
 
 - **Everything Comes to Dust** (rank 4503) — `everything_comes_to_dust`
   - Exile all creatures except those that share a creature type with a creature that convoked this spell, all artifacts, and all enchantments.
-
-</details>
-
-## noted-exile-mana-value
-
-Blocks **1** card.
-
-- **(value)** a per-source, per-turn ledger that records the mana value of every card put into exile from any zone by anyone while the permanent is on the battlefield, plus a static value leaf (e.g. {"greatest_noted_this_turn": "self"}) usable as a characteristic-defining set_pt/power magnitude that reads the greatest recorded number this turn (0 if none), resetting at end of turn
-  <br>Why the existing vocabulary won't do: trigger_events has no 'card put into exile' event (only leaves_battlefield/leaves_graveyard), and static_value_keys has nothing that remembers exiled cards' mana values: exiled_card_power reads one linked card's power, greatest_commander_mana_value reads commanders, and value_keys' greatest_discarded_by_a_player tracks discards, not exiles. The upkeep impulse-draw line alone is expressible (exile with playable: this_turn), but the card cannot be partially authored
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bell Borca, Spectral Sergeant** (rank 16555) — `bell_borca_spectral_sergeant`
-  - Note the mana value of each card as it's put into exile.
-  - Bell Borca's power is equal to the greatest number noted for it this turn.
 
 </details>
 

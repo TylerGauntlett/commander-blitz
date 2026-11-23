@@ -861,6 +861,9 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
     "exiled_card_power": ("The power of the card this permanent exiled, while it stays in exile; "
                           "`\"self\"` only, 0 with none.",
                           "A size read off the card this permanent exiled"),
+    "greatest_noted_exile_mana_value": ("The greatest mana value this permanent's `note_exiled_mana_value` "
+                                        "static noted this turn; `\"self\"` only, 0 with none.",
+                                        "A size read off the mana values noted as cards are exiled"),
     "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; or `{player, filter}` "
                               "for spells of a type, matched on printed faces.",
                               '"As long as an opponent has cast a spell this turn"'),
@@ -1135,6 +1138,9 @@ STATICS: dict[str, Entry] = {
                          "Counters replaced on the way in"),
     "replace_damage": ("Damage dealt by or to matching permanents is multiplied, increased by N or redirected.",
                        "Damage multiplied on the way out"),
+    "note_exiled_mana_value": ("This permanent notes the mana value of each card put into exile while "
+                               "it is on the battlefield; read back by `greatest_noted_exile_mana_value`.",
+                               "A size read off the mana values noted as cards are exiled"),
     "replace_dies": ("If a matching permanent would die, exile it instead, optionally creating tokens.",
                      '"If a nontoken creature an opponent controls would die, instead exile that card"'),
     "replace_draw": ("If the player would draw a card, draw more instead.",
