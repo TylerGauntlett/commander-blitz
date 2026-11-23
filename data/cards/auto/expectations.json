@@ -24648,6 +24648,13 @@
   "sulfurous_springs": {
     "zone": "battlefield"
   },
+  "sultai_charm": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "summit_prowler": {
     "zone": "battlefield"
   },
@@ -26753,6 +26760,10 @@
   "tigereye_cameo": {
     "zone": "battlefield"
   },
+  "tiller_engine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "timber_gorge": {
     "zone": "battlefield"
   },
@@ -27913,6 +27924,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "unite_the_coalition": {
+    "zone": "graveyard"
   },
   "universal_automaton": {
     "zone": "battlefield"

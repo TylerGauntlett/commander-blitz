@@ -1,0 +1,18 @@
+{
+  "card_id": "xyris_the_writhing_storm",
+  "name": "Xyris, the Writhing Storm",
+  "oracle_text": "Flying\nWhenever an opponent draws a card except the first one they draw in each of their draw steps, create a 1/1 green Snake creature token.\nWhenever Xyris deals combat damage to a player, you and that player each draw that many cards.",
+  "blocked_sentences": [
+    "Whenever an opponent draws a card except the first one they draw in each of their draw steps, create a 1/1 green Snake creature token."
+  ],
+  "needs": [
+    {
+      "capability": "except_first_draw_in_draw_step",
+      "kind": "trigger_event",
+      "what": "a `draw` trigger key (e.g. `except_first_in_draw_step: true`) that skips the draw when it is the drawing player's first card drawn during their own draw step -- step is DRAW, the drawer is the active player, and state.cards_drawn_this_draw_step[drawer] was 0 before this draw (the same test as player_statics._first_draw_of_draw_step)",
+      "why_existing_wont_do": "`except_first_in_draw_step` exists only on the `replace_draw` static, not on a trigger. The `draw` trigger's `nth` counts per turn, not per draw step, and a condition built from `step_is` + `is_active_player` + `cards_drawn_this_turn == 1` miscounts whenever the opponent drew in upkeep (or a skipped/dredged draw), because no condition or value reads cards_drawn_this_draw_step"
+    }
+  ],
+  "closest_existing": ["replace_draw", "nth", "cards_drawn_this_turn"],
+  "confidence": "high"
+}

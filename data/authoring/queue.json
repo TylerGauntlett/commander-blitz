@@ -268642,12 +268642,12 @@
     },
     "Sultai Charm": {
       "edhrec_rank": 4962,
-      "gate": "template",
+      "gate": null,
       "name": "Sultai Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "72af6c1f-33a0-4e02-95b7-74ecaa6a6d87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sultai Devotee": {
@@ -287152,12 +287152,12 @@
     },
     "Tiller Engine": {
       "edhrec_rank": 3295,
-      "gate": "template",
+      "gate": null,
       "name": "Tiller Engine",
-      "reason": "no template for: • Untap that land",
+      "reason": "",
       "scryfall_id": "423084cf-5740-4b24-8abd-a097b5793548",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tiller of Flesh": {
@@ -298042,12 +298042,12 @@
     },
     "Unite the Coalition": {
       "edhrec_rank": 8435,
-      "gate": "template",
+      "gate": null,
       "name": "Unite the Coalition",
-      "reason": "no template for: Choose five. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "aafe06ae-1112-414a-877f-570496f0a747",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "United Battlefront": {

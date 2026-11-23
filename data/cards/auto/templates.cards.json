@@ -293391,6 +293391,159 @@
     },
     {
       "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "sultai_charm",
+      "mana_cost": "{B}{G}{U}",
+      "name": "Sultai Charm",
+      "oracle_text": "Choose one —\n• Destroy target monocolored creature.\n• Destroy target artifact or enchantment.\n• Draw two cards, then discard a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "slain"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target monocolored creature."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact or enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "label": "Draw two cards, then discard a card."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "slain",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_of": [
+              {
+                "colors": [
+                  "W"
+                ],
+                "not_colors": [
+                  "U",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "U"
+                ],
+                "not_colors": [
+                  "W",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "B"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "R"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "G"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "R"
+                ]
+              }
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -321137,6 +321290,85 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "subject"
+                      },
+                      "op": "untap"
+                    }
+                  ],
+                  "label": "Untap that land."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "tap"
+                    }
+                  ],
+                  "label": "Tap target nonland permanent an opponent controls."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a land you control enters tapped, choose one —\n• Untap that land.\n• Tap target nonland permanent an opponent controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "tapped": true,
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tiller_engine",
+      "mana_cost": "{2}",
+      "name": "Tiller Engine",
+      "oracle_text": "Whenever a land you control enters tapped, choose one —\n• Untap that land.\n• Tap target nonland permanent an opponent controls.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -334144,6 +334376,158 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "unite_the_coalition",
+      "mana_cost": "{2}{W}{U}{B}{R}{G}",
+      "name": "Unite the Coalition",
+      "oracle_text": "Choose five. You may choose the same mode more than once.\n• Target permanent phases out.\n• Target player draws a card.\n• Exile target player's graveyard.\n• Unite the Coalition deals 2 damage to any target.\n• Destroy target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 5,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "phased"
+                  },
+                  "op": "phase_out"
+                }
+              ],
+              "label": "Target permanent phases out."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "drawer"
+                  }
+                }
+              ],
+              "label": "Target player draws a card."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "player": {
+                      "target": "emptied"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target player's graveyard."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Unite the Coalition deals 2 damage to any target."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact or enchantment."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "phased",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "any",
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "drawer",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "emptied",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "any",
+          "mode": 3,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 4,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
