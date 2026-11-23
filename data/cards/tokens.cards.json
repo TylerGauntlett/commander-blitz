@@ -6523,6 +6523,94 @@
           ]
         }
       ]
+    },
+    {
+      "id": "tyranid_gargoyle_1_1_u_flying",
+      "name": "Tyranid Gargoyle Token",
+      "oracle_text": "1/1 blue Tyranid Gargoyle creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Tyranid",
+        "Gargoyle"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "tyranid_warrior_3_3_g_trample",
+      "name": "Tyranid Warrior Token",
+      "oracle_text": "3/3 green Tyranid Warrior creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Tyranid",
+        "Warrior"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "trample"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "tyranid_5_5_g",
+      "name": "Tyranid Token",
+      "oracle_text": "5/5 green Tyranid creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Tyranid"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "tyranid_1_1_g",
+      "name": "Tyranid Token",
+      "oracle_text": "1/1 green Tyranid creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Tyranid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
     }
   ]
 }
