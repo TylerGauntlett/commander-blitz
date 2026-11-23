@@ -486,7 +486,30 @@ def wins_on_empty_draw(state: GameState, pid: int) -> bool:
     passes through one card at a time, so it applies to a `draw` op, the draw
     step, and a `draw` rider on somebody else's card alike.
     """
-    return _player_static(state, pid, "replace_empty_draw")
+    return any(not static.get("effects") for _, static in empty_draw_replacements(state, pid))
+
+
+def empty_draw_replacements(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Every active `replace_empty_draw` static that reaches ``pid``, with its source.
+
+    Two shapes share the static. Without `effects` it is Laboratory Maniac's
+    "you win the game instead" (`wins_on_empty_draw`). With them it is Out of
+    the Tombs' "instead return a creature card from your graveyard to the
+    battlefield. If you can't, you lose the game": the effects are the
+    "instead", run as the static's controller with its source, and the "if you
+    can't" is an ordinary `if` inside them.
+
+    A list rather than a yes/no because two of them applying to the same draw
+    is a choice the drawing player makes (616.1), which `replacements._draw_one`
+    asks when there is more than one.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "replace_empty_draw")
+        if _reaches_player(obj, static, pid)
+    ]
 
 
 def mill_multiplier(state: GameState, pid: int) -> int:

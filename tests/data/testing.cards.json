@@ -14180,6 +14180,58 @@
       ]
     },
     {
+      "id": "t_tomb_reclaimer",
+      "name": "Test Tomb Reclaimer",
+      "oracle_text": "If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.",
+          "effect": "replace_empty_draw",
+          "affects_player": "you",
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "graveyard",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "then": [
+                {
+                  "op": "return_from_graveyard",
+                  "destination": "battlefield",
+                  "controller": "you",
+                  "objects": {
+                    "zone": "graveyard",
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_life_toll_drake",
       "name": "Test Life Toll Drake",
       "oracle_text": "Spells your opponents cast that target this creature cost an additional 3 life to cast.",

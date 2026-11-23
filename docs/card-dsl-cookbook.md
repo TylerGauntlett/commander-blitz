@@ -9833,6 +9833,49 @@ every player-wide static; `affects` and `amount` are refused, and
 A replacement that does something *other* than draw more ("exile the top card of
 your library instead") is not this static.
 
+## "If you would draw a card while your library has no cards in it"
+
+```jsonc
+// Laboratory Maniac; Jace, Wielder of Mysteries
+{ "kind": "static",
+  "text": "If you would draw a card while your library has no cards in it, you win the game instead.",
+  "effect": "replace_empty_draw",
+  "affects_player": "you" }
+
+// Out of the Tombs
+{ "kind": "static",
+  "text": "If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.",
+  "effect": "replace_empty_draw",
+  "affects_player": "you",
+  "effects": [
+    { "op": "if",
+      "condition": { "exists": { "zone": "graveyard", "controller": "you", "types": ["Creature"] } },
+      "then": [ { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+                  "objects": { "zone": "graveyard", "controller": "you", "types": ["Creature"], "count": 1 } } ],
+      "else": [ { "op": "lose_game", "player": "you" } ] } ] }
+```
+
+A **replacement** of a draw that finds no card, read in `replacements._draw_one`
+after `draw_limit` and dredge and before any `replace_draw` doubler, so an
+empty library is replaced on the first of a doubled pair. Without `effects` the
+player wins (`sba.declare_win`); with them the effects run instead, as the
+static's controller with its source, inside the draw -- so they may ask, as
+"return a creature card" does. Either way `draw_cards` is never called, so the
+104.3c "will lose" flag is never set; a trigger could not do this, because an
+empty library fires no `DRAW` and the state-based action would eliminate the
+player first.
+
+**"If you can't"** is an `if` inside the effects, not a key on the static.
+Leaving it out prints a stronger card: an empty graveyard would replace the
+draw with nothing and the player would never deck.
+
+**Two of them on one draw** are the drawing player's choice (616.1), asked as a
+`choose_objects` over the sources with purpose `choose_permanents`; only the
+chosen one applies, because it leaves no draw for the other.
+
+`affects_player` is required; with `effects` it must be `"you"`, since "you" in
+the effects is the static's controller. `affects` and `amount` are refused.
+
 ## Untapping on somebody else's turn
 
     Murkfiend Liege — "Untap all green and/or blue creatures you control during

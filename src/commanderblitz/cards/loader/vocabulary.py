@@ -907,6 +907,8 @@ STATIC_EFFECTS = frozenset(
         # that static, whose only parameter is a number refused below 2.  Read
         # in `replacements._draw_one`, before the doublers, so an empty library
         # wins on the first of a doubled pair rather than after both have failed.
+        # With `effects` (Out of the Tombs) the "instead" is those effects, run
+        # inside the draw as the static's controller, rather than the win.
         "replace_empty_draw",
         # Tekuthal, Inquiry Dominus.  "If you would proliferate, proliferate
         # twice instead."  A replacement of an *action* rather than a quantity:

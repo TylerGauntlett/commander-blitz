@@ -32,7 +32,7 @@ miracle to be the first of. ``game.start`` still calls ``draw_cards`` directly.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import stack, triggers
@@ -44,10 +44,10 @@ from .mana import ManaCost
 from .player_statics import (
     draw_cap,
     draw_replacements,
+    empty_draw_replacements,
     first_draw_reveals,
     granted_miracle_cost,
     player_cant_cast_while_resolving,
-    wins_on_empty_draw,
 )
 from .primitives import cast_locked_zones, discard_cards, draw_cards, mill_cards
 from .sba import declare_win
@@ -55,6 +55,7 @@ from .targeting import additional_sized_targets, enumerate_target_tuples
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .objects import GameObject
     from .state import GameState
 
 
@@ -120,9 +121,16 @@ def _draw_one(
     # that let the draw happen and won afterwards would lose the race: `sba`
     # checks the flag at the next opportunity, which is before anything a
     # trigger could do.
-    if not state.players[pid].library and wins_on_empty_draw(state, pid):
-        declare_win(state, pid)
-        return []
+    #
+    # Out of the Tombs is the same static carrying `effects`: "instead return
+    # a creature card from your graveyard to the battlefield. If you can't, you
+    # lose the game." The effects run here, inside the draw, so they may ask
+    # (which creature card), and the "if you can't" is an `if` among them.
+    if not state.players[pid].library:
+        empties = empty_draw_replacements(state, pid)
+        if empties:
+            yield from _replace_empty_draw(state, pid, empties)
+            return []
     for source, multiplier in draw_replacements(state, pid):
         if source in applied:
             continue
@@ -138,6 +146,47 @@ def _draw_one(
         yield from _reveal_first_draw(state, pid, got[0])
         yield from _miracle(state, pid, got[0])
     return got
+
+
+def _replace_empty_draw(
+    state: GameState, pid: int, empties: Sequence[tuple[GameObject, Mapping[str, Any]]]
+) -> Generator[Any, list[int]]:
+    """Apply one `replace_empty_draw` static to a draw from an empty library.
+
+    616.1: when two replacements apply to the same event, the affected player
+    chooses which applies, and only one can -- whichever goes first replaces
+    the draw, so there is no draw left for the other. Laboratory Maniac beside
+    Out of the Tombs is that choice, asked over the two sources.
+    """
+    chosen = empties[0]
+    if len(empties) > 1:
+        by_oid = {obj.oid: (obj, static) for obj, static in empties}
+        ctx = EffectContext(state=state, controller=pid, source_name="Empty library")
+        picked = yield from ask_objects(
+            ctx,
+            "Which replaces drawing from your empty library?",
+            list(by_oid),
+            1,
+            1,
+            pid,
+            "choose_permanents",
+        )
+        chosen = by_oid[picked[0]] if picked else empties[0]
+    obj, static = chosen
+    effects = static.get("effects")
+    if not effects:
+        declare_win(state, pid)
+        return
+    # Local, as in `sba.replace_loss`: `effects` imports this module.
+    from .effects import execute
+
+    ctx = EffectContext(
+        state=state,
+        controller=obj.controller,
+        source_oid=obj.oid,
+        source_name=state.card_of(obj).name,
+    )
+    yield from execute(ctx, list(effects))
 
 
 def discard(

@@ -5488,6 +5488,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "replace_lose_game":
         _validate_lose_game_replacement(model, where)
+    elif model.effect == "replace_empty_draw" and model.effects:
+        # "If you would draw a card while your library has no cards in it,
+        # instead return a creature card from your graveyard to the
+        # battlefield. If you can't, you lose the game" (Out of the Tombs).
+        # The effects run as the static's controller, so "you" in them is the
+        # drawing player only when the static names its controller.
+        if model.affects_player != "you":
+            raise DslError(
+                f"{where}: replace_empty_draw with 'effects' replaces its "
+                f"controller's draw, whose 'you' the effects mean; "
+                f"'affects_player' is 'you', not {model.affects_player!r}"
+            )
+        for i, effect in enumerate(model.effects):
+            _validate_effect(effect, f"{where}.effects[{i}]", {})
     elif model.effects and model.effect != "prevent_damage":
         raise DslError(f"{where}: static abilities cannot have 'effects'")
     _validate_static_subtypes(model, where)
@@ -6971,12 +6985,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect == "replace_empty_draw" and (
         model.affects is not None or model.amount is not None
     ):
-        # The replacement has no size -- it substitutes winning for drawing --
-        # so there is nothing for either key to mean, and a key nothing reads
+        # The replacement has no size -- it substitutes winning, or its
+        # `effects`, for drawing -- so there is nothing for either key to mean, and a key nothing reads
         # would load clean and print a line that promises more than it does.
         raise DslError(
-            f"{where}: replace_empty_draw takes 'affects_player' and an "
-            f"optional 'condition', and no 'affects' or 'amount'"
+            f"{where}: replace_empty_draw takes 'affects_player', optional "
+            f"'effects' and an optional 'condition', and no 'affects' or 'amount'"
         )
     if model.effect == "replace_proliferate" and (
         model.affects is not None or model.amount is not None
@@ -8072,13 +8086,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     static: dict[str, Any] = {"effect": model.effect}
     if model.effect == "replace_lose_game" or (
-        model.effect == "prevent_damage" and model.effects
+        model.effect in ("prevent_damage", "replace_empty_draw") and model.effects
     ):
         # What happens instead, carried on the mapping because the mapping is
         # all `player_statics.lose_game_replacement` ever sees -- and, on a
         # `prevent_damage` total shield, the 615.5 rider
         # `characteristics.damage_prevented_with_effects` hands to
-        # `primitives.damage_permanent`.
+        # `primitives.damage_permanent`; on `replace_empty_draw`, what
+        # `replacements._replace_empty_draw` runs instead of winning.
         static["effects"] = [dict(e) for e in model.effects]
     if model.condition is not None:
         static["condition"] = dict(model.condition)
