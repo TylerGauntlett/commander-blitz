@@ -152,58 +152,59 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander).
+
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-3. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-4. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-5. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-6. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-7. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-8. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-9. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-10. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-11. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-12. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-13. [The Ring tempts you](#the-ring-tempts-you) — M, high
-14. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-15. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-16. [Difficulty](#difficulty) — S, medium
-17. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-18. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-19. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-20. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-21. [Why a press is refused](#why-a-press-is-refused) — S, medium
-22. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-23. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-24. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-25. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-26. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-27. [Secret choices](#secret-choices) — M, medium
-28. [Experience counters](#experience-counters) — M, medium
-29. [Outcomes as data](#outcomes-as-data) — M, medium
-30. [Rad counters](#rad-counters) — M, medium
-31. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-32. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-33. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-34. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-35. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-36. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-37. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-38. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-39. [Replays and sharing](#replays-and-sharing) — M, medium
-40. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-41. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-42. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-43. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-44. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-45. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-46. [Archidekt import](#archidekt-import) — S, low
-47. [Sound](#sound) — S, low
-48. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-49. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-50. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+2. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+3. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+4. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+5. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+6. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+7. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+8. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+9. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+10. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+11. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+12. [The Ring tempts you](#the-ring-tempts-you) — M, high
+13. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+14. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+15. [Difficulty](#difficulty) — S, medium
+16. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+17. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+18. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+19. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+20. [Why a press is refused](#why-a-press-is-refused) — S, medium
+21. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+22. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+23. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+24. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+25. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+26. [Secret choices](#secret-choices) — M, medium
+27. [Experience counters](#experience-counters) — M, medium
+28. [Outcomes as data](#outcomes-as-data) — M, medium
+29. [Rad counters](#rad-counters) — M, medium
+30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+34. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+35. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+36. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+37. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+38. [Replays and sharing](#replays-and-sharing) — M, medium
+39. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+40. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+41. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+42. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+43. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+44. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+45. [Archidekt import](#archidekt-import) — S, low
+46. [Sound](#sound) — S, low
+47. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+48. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+49. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -4266,7 +4267,7 @@ whole-game test able to draw the deck.
 
 ### Legends' Legacy (Dominaria United Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
 
 #### Today
 
