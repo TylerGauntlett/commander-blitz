@@ -295432,12 +295432,12 @@
     },
     "Tyrant Guard": {
       "edhrec_rank": 5689,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Tyrant Guard",
-      "reason": "player 0 hand_size is 1, expected 2; player 0 library_size is 40, expected 39",
+      "reason": "",
       "scryfall_id": "4e785abe-ae43-4e6b-9d6d-56e39ea348ef",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyrant of Discord": {

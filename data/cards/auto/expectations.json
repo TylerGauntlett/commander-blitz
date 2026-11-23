@@ -27327,6 +27327,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tyrant_guard": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "tyrant_s_familiar": {
     "battlefield_count": 33,
     "zone": "battlefield"
