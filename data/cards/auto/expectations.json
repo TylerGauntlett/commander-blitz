@@ -13141,6 +13141,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jenson_carthalion_druid_exile": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jerrard_of_the_closed_fist": {
     "zone": "battlefield"
   },
@@ -15465,6 +15469,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mana_cannons": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mana_confluence": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17707,6 +17715,10 @@
     },
     "zone": "battlefield"
   },
+  "o_kagachi_vengeful_kami": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "oaken_siren": {
     "zone": "battlefield"
   },
@@ -19825,6 +19837,16 @@
   "radiant_destiny": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "radiant_flames": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "radiant_fountain": {
     "life": {

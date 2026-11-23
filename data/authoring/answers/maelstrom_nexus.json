@@ -1,0 +1,25 @@
+{
+  "card": {
+    "id": "maelstrom_nexus",
+    "name": "Maelstrom Nexus",
+    "oracle_text": "The first spell you cast each turn has cascade. (When you cast your first spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+    "mana_cost": "{W}{U}{B}{R}{G}",
+    "types": ["Enchantment"],
+    "colors": ["B", "G", "R", "U", "W"],
+    "color_identity": ["B", "G", "R", "U", "W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "spells_have_cascade",
+        "affects_spells": {"not_types": ["Land"]},
+        "condition": {
+          "cmp": "==",
+          "left": {"spells_cast_this_turn": "you"},
+          "right": {"const": 1}
+        },
+        "text": "The first spell you cast each turn has cascade."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

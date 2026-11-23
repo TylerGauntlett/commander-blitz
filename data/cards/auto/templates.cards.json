@@ -156626,6 +156626,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "min_colors": 5
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "angel_4_4_w_flying_vigilance"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a multicolored spell, scry 1. If that spell was all colors, create a 4/4 white Angel creature token with flying and vigilance.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "min_colors": 2
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}{U}{B}{R}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{5}, {T}: Add {W}{U}{B}{R}{G}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "jenson_carthalion_druid_exile",
+      "mana_cost": "{G}{W}",
+      "name": "Jenson Carthalion, Druid Exile",
+      "oracle_text": "Whenever you cast a multicolored spell, scry 1. If that spell was all colors, create a 4/4 white Angel creature token with flying and vigilance.\n{5}, {T}: Add {W}{U}{B}{R}{G}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -185215,6 +185298,99 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "count": {
+                      "binding": "subject",
+                      "colors": [
+                        "W"
+                      ]
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "subject",
+                      "colors": [
+                        "U"
+                      ]
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "subject",
+                      "colors": [
+                        "B"
+                      ]
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "subject",
+                      "colors": [
+                        "R"
+                      ]
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "subject",
+                      "colors": [
+                        "G"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever you cast a multicolored spell, this enchantment deals X damage to any target, where X is the number of colors that spell is.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "min_colors": 2
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "mana_cannons",
+      "mana_cost": "{2}{R}",
+      "name": "Mana Cannons",
+      "oracle_text": "Whenever you cast a multicolored spell, this enchantment deals X damage to any target, where X is the number of colors that spell is.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "pay_life": 1,
             "tap": true
@@ -211222,6 +211398,82 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever O-Kagachi deals combat damage to a player, if that player attacked you during their last turn, exile target nonland permanent that player controls.",
+          "trigger": {
+            "condition": {
+              "attacked_you_last_turn": {
+                "binding": "event_player"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "o_kagachi_vengeful_kami",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{1}{W}{U}{B}{R}{G}",
+      "name": "O-Kagachi, Vengeful Kami",
+      "oracle_text": "Flying, trample\nWhenever O-Kagachi deals combat damage to a player, if that player attacked you during their last turn, exile target nonland permanent that player controls.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]
@@ -237331,6 +237583,38 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "radiant_flames",
+      "mana_cost": "{2}{R}",
+      "name": "Radiant Flames",
+      "oracle_text": "Converge — Radiant Flames deals X damage to each creature, where X is the number of colors of mana spent to cast this spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "colors_of_mana_spent": true
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -1,0 +1,21 @@
+{
+  "card_id": "path_to_the_world_tree",
+  "name": "Path to the World Tree",
+  "oracle_text": "When this enchantment enters, search your library for a basic land card, reveal it, put it into your hand, then shuffle.\n{2}{W}{U}{B}{R}{G}, Sacrifice this enchantment: You gain 2 life and draw two cards. Target opponent loses 2 life. This enchantment deals 2 damage to up to one target creature. You create a 2/2 green Bear creature token.",
+  "blocked_sentences": [
+    "{2}{W}{U}{B}{R}{G}, Sacrifice this enchantment: You gain 2 life and draw two cards. Target opponent loses 2 life. This enchantment deals 2 damage to up to one target creature. You create a 2/2 green Bear creature token."
+  ],
+  "needs": [
+    {
+      "capability": "bear_token",
+      "kind": "token",
+      "what": "a 2/2 green Bear creature token (e.g. id bear_2_2_g)",
+      "why_existing_wont_do": "token_ids has no Bear token; the nearest 2/2 green tokens (boar_2_2_g, cat_2_2_g, wolf_2_2_g, elemental_2_2_g) have the wrong creature type. The rest of the line (sacrifice cost, gain_life, draw, lose_life on a player target, damage to an optional creature target) and the enters search_library to hand are expressible."
+    }
+  ],
+  "closest_existing": [
+    "boar_2_2_g",
+    "wolf_2_2_g"
+  ],
+  "confidence": "high"
+}

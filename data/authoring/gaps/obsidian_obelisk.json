@@ -1,0 +1,18 @@
+{
+  "card_id": "obsidian_obelisk",
+  "name": "Obsidian Obelisk",
+  "oracle_text": "This artifact enters tapped.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a multicolored spell.",
+  "blocked_sentences": [
+    "{T}: Add one mana of any color. Spend this mana only to cast a multicolored spell."
+  ],
+  "needs": [
+    {
+      "capability": "mana_restriction_multicolored",
+      "kind": "value",
+      "what": "a mana_restriction cast-group predicate meaning 'the spell is multicolored' (two or more colors), e.g. {\"multicolored\": true}, read off the spell's colors in costs.spell_purpose",
+      "why_existing_wont_do": "mana_restriction groups hold type/subtype names plus the predicates mana_value, x_in_mana_cost, colorless and not_owned (engine/mana.py RESTRICTION_PREDICATES); 'multicolored' is not a type so as a name it matches nothing, and colorless:false admits monocolored spells too. Omitting the restriction (as Pillar of the Paruns currently does) is a strictly better card"
+    }
+  ],
+  "closest_existing": ["mana_restriction", "colorless"],
+  "confidence": "high"
+}

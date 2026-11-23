@@ -142552,12 +142552,12 @@
     },
     "Jenson Carthalion, Druid Exile": {
       "edhrec_rank": 7723,
-      "gate": "template",
+      "gate": null,
       "name": "Jenson Carthalion, Druid Exile",
-      "reason": "no template for: Whenever you cast a multicolored spell, scry 1. If that spell was all colors, create a 4/4",
+      "reason": "",
       "scryfall_id": "6a67f32c-4c9a-4bda-92f4-037b99999777",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jeong Jeong's Deserters": {
@@ -166142,12 +166142,12 @@
     },
     "Mana Cannons": {
       "edhrec_rank": 9484,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Cannons",
-      "reason": "no template for: Whenever you cast a multicolored spell, this enchantment deals X damage to any target, whe",
+      "reason": "",
       "scryfall_id": "109de57a-a1a0-4608-81cc-0a104c519b7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mana Chains": {
@@ -189922,12 +189922,12 @@
     },
     "O-Kagachi, Vengeful Kami": {
       "edhrec_rank": 8259,
-      "gate": "template",
+      "gate": null,
       "name": "O-Kagachi, Vengeful Kami",
-      "reason": "no template for: Whenever O-Kagachi deals combat damage to a player, if that player attacked you during the",
+      "reason": "",
       "scryfall_id": "bc6ac0e9-7419-4a77-a144-d2983fc6aa6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "O-Naginata": {
@@ -212732,12 +212732,12 @@
     },
     "Radiant Flames": {
       "edhrec_rank": 21190,
-      "gate": "template",
+      "gate": null,
       "name": "Radiant Flames",
-      "reason": "no template for: Converge — deals X damage to each creature, where X is the number of colors of mana spent ",
+      "reason": "",
       "scryfall_id": "e80455ca-f23c-44da-b191-c3b12a9c546f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radiant Fountain": {

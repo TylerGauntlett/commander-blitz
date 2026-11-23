@@ -1,0 +1,16 @@
+{
+  "card_id": "primeval_spawn",
+  "name": "Primeval Spawn",
+  "oracle_text": "If this creature would enter and it wasn't cast or no mana was spent to cast it, exile it instead.\nVigilance, trample, lifelink\nWhen this creature leaves the battlefield, exile the top ten cards of your library. You may cast any number of spells with total mana value 10 or less from among them without paying their mana costs.",
+  "blocked_sentences": [
+    "If this creature would enter and it wasn't cast or no mana was spent to cast it, exile it instead."
+  ],
+  "needs": [{
+    "capability": "enters_replacement_exile_unless_cast_with_mana",
+    "kind": "replacement",
+    "what": "a self replacement effect on the card's own battlefield entry that, when the entry is not the resolution of the card's own spell or when no mana was spent to cast that spell (free casts, put_onto_battlefield, reanimation, flicker returns), sends the card to exile instead, so it never enters and none of its enters or leaves-the-battlefield triggers fire",
+    "why_existing_wont_do": "The card-level `replacements` vocabulary only carries `self_enters_with_counters` and `self_enters_as_copy`, which modify an entry rather than redirect it; `replace_leaves_battlefield` and `replace_graveyard` redirect other zone changes. A `self_enters` trigger with a `was_cast` / `mana_spent_of` condition and an `exile` op is not the same card: the creature would enter, and its own 'When this creature leaves the battlefield' trigger would then fire and grant ten free cards, which the printed replacement exists to prevent"
+  }],
+  "closest_existing": ["self_enters_with_counters", "replace_leaves_battlefield", "was_cast", "mana_spent_of"],
+  "confidence": "high"
+}
