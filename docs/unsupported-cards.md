@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**528 cards** blocked by **446** capabilities.
+**527 cards** blocked by **445** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -381,7 +381,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repeat-while](#repeat-while) | 1 | 1924 | op |
 | [replace-damage-noncombat](#replace-damage-noncombat) | 1 | 4163 | static_effect |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
-| [replace-empty-draw-with-effects](#replace-empty-draw-with-effects) | 1 | 3298 | replacement |
 | [replace-enters-battlefield](#replace-enters-battlefield) | 1 | 18834 | replacement |
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
@@ -6408,20 +6407,6 @@ Blocks **1** card.
 - **Gisa, Glorious Resurrector** (rank 2740) — `gisa_glorious_resurrector`
   - If a creature an opponent controls would die, exile it instead.
   - At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed.
-
-</details>
-
-## replace-empty-draw-with-effects
-
-Blocks **1** card.
-
-- **(replacement)** a player-wide static replacing a draw from an empty library with an arbitrary effect list (here: the player chooses a creature card in their own graveyard and puts it onto the battlefield), with a fallback effect when that cannot be done (lose_game for that player) -- the static would carry `effects` and an `else`/`if_cant` branch read in replacements._draw_one
-  <br>Why the existing vocabulary won't do: replace_empty_draw is a yes/no that substitutes only winning the game (wins_on_empty_draw; the loader refuses any size or affects), replace_draw only multiplies the draw count, and the packet notes say a draw replacement that does something other than draw more cards is still a gap. A draw-triggered ability would not replace the draw, so the empty-library loss would still happen.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Out of the Tombs** (rank 3298) — `out_of_the_tombs`
-  - If you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield. If you can't, you lose the game.
 
 </details>
 

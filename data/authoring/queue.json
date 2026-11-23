@@ -195492,12 +195492,12 @@
     },
     "Out of the Tombs": {
       "edhrec_rank": 3298,
-      "gate": "template",
+      "gate": null,
       "name": "Out of the Tombs",
-      "reason": "no template for: At the beginning of your upkeep, put two eon counters on this enchantment, then mill cards",
+      "reason": "",
       "scryfall_id": "68e8f389-9323-49b8-84c9-f79c2c231eb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Out of the Way": {
