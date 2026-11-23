@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [sandbox-resolves-own-triggers]
+status: proposed
 rank: 83
 ---
 
@@ -19,6 +19,11 @@ coming-soon shell on the shelf: its row `40k_necron_dynasties` is in
 `python scripts/sync_precons.py --missing 40k_necron_dynasties` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card but Night Scythe is now native. Night Scythe's DSL is complete, but
+gate 5 cannot see its enters trigger resolve, because its crew ability holds the
+sandbox at priority. That waits on
+[sandbox-resolves-own-triggers](sandbox-resolves-own-triggers.md).
 
 ## The change
 

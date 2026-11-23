@@ -91,7 +91,7 @@ each heading; this table is generated from them.
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
 | [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
-| [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | nothing | 0 |
 | [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) | L | high | nothing | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | nothing | 0 |
@@ -131,6 +131,7 @@ each heading; this table is generated from them.
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) | M | medium | nothing | 1 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -148,8 +149,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander).
 
 **Ready now, best first:**
 
@@ -192,15 +191,16 @@ same list, and `/extend-roadmap` starts at the top of it.
 37. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
 38. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
 39. [Replays and sharing](#replays-and-sharing) — M, medium
-40. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-41. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-42. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-43. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-44. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-45. [Archidekt import](#archidekt-import) — S, low
-46. [Sound](#sound) — S, low
-47. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-48. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+40. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+41. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+42. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+43. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+44. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+45. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+46. [Archidekt import](#archidekt-import) — S, low
+47. [Sound](#sound) — S, low
+48. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+49. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -244,6 +244,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
 - [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
+- [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1592,6 +1593,69 @@ golden pool re-pinned once.
 - **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
   the existing comment already promise, and its line goes in the "Type
   changes" row of rules-coverage.md.
+
+### The authoring sandbox resolves a card's own triggers
+
+Effort **M** · Impact **medium**, a card whose enters trigger sits under a castable ability, such as a Vehicle with crew, cannot prove its trigger, so Night Scythe in the Necron Dynasties precon waits on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Gate 5 of the authoring pipeline casts the card in a sandbox and measures the
+board against its expectation. `cards/authoring/verify.py::drive` answers
+every decision until the card is done, and treats any `PRIORITY` decision as
+"done" (`_NOT_OUR_BUSINESS`): priority is taken to mean the card has finished
+resolving. The engine only asks for priority when passing is a choice
+(`engine/game.py::_should_auto_pass`). One such window is a non-empty stack
+while its player holds an activated ability they can pay for.
+
+So a permanent whose own enters trigger goes on the stack while it offers a
+payable activated ability is measured with that trigger still unresolved.
+Crew (`tap_permanents` with `total_power`) is the common case: the sandbox's
+creatures can pay it. Night Scythe ("When this Vehicle enters, create a 2/2
+black Necron Warrior artifact creature token", Crew 2) fails gate 5 with "0
+tokens, expected 1". Its gap record is `data/authoring/gaps/night_scythe.json`,
+capability `sandbox_resolve_own_triggers`. The same card without crew creates
+the token.
+
+Shipped cards of this shape pass only because their expectations measure the
+board before the trigger: Thunderhawk Gunship, Esika's Chariot and Aethersphere
+Harvester in `data/cards/auto/expectations.json` assert only the zone and the
+pre-trigger permanent count. Their triggers are therefore unproven by gate 5.
+
+#### The change
+
+1. In `drive`, a `PRIORITY` decision with the card's own triggered ability on
+   top of the stack passes priority instead of returning, until the stack
+   holds nothing the card put there. Every other priority window still ends
+   the drive, and the turn-boundary stop is unchanged.
+2. Re-measure every shipped card whose outcome changes, and strengthen its
+   expectation to what the trigger now visibly does. This is the bulk of the
+   work: no expectation may be loosened, and a card whose trigger now shows it
+   doing the wrong thing is a bug fixed in the same pull request.
+3. Harvest Night Scythe, which finishes the Necron Dynasties precon; see
+   [precon-40k-necron-dynasties](precon-40k-necron-dynasties.md).
+
+It does not make the sandbox attack, block or activate abilities. A trigger
+that needs combat stays the weak fallback the worker brief allows.
+
+#### Gate
+
+A unit test under `tests/unit/authoring/`: a test-pool Vehicle with an enters
+trigger and a payable crew is measured after its trigger resolves, while a
+card with no trigger of its own still stops at its first priority window. Then
+`tests/cards` over the whole pool, with the strengthened expectations, and
+Night Scythe's six gates.
+
+#### Open questions
+
+- **Which triggers the sandbox resolves.** Recommended: only triggered
+  abilities whose source is the card under test. Resolving everything on the
+  stack would fold the dummy board's own triggers into every card's outcome,
+  which is what `drive` stops at priority to avoid.
+- **The re-measure.** Recommended: one pull request that strengthens every
+  changed expectation through `--collect`, run per affected card, rather than
+  loosening any. If the changed set turns out large, phase it: the harness
+  change with the cards it touches first, then Night Scythe.
 
 ### Target tapped creature" is not "enters tapped
 
@@ -3993,7 +4057,7 @@ whole-game test able to draw the deck.
 
 ### Necron Dynasties (Warhammer 40,000 Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers).
 
 #### Today
 
@@ -4004,6 +4068,11 @@ coming-soon shell on the shelf: its row `40k_necron_dynasties` is in
 `python scripts/sync_precons.py --missing 40k_necron_dynasties` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card but Night Scythe is now native. Night Scythe's DSL is complete, but
+gate 5 cannot see its enters trigger resolve, because its crew ability holds the
+sandbox at priority. That waits on
+[sandbox-resolves-own-triggers](sandbox-resolves-own-triggers.md).
 
 #### The change
 
