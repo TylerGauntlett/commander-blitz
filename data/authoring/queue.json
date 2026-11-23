@@ -155282,12 +155282,12 @@
     },
     "Lavalanche": {
       "edhrec_rank": 9005,
-      "gate": "template",
+      "gate": null,
       "name": "Lavalanche",
-      "reason": "no template for: deals X damage to target player or planeswalker and each creature that player or that plan",
+      "reason": "",
       "scryfall_id": "e3a3b450-d988-40cb-a1ee-8b00ccdf5071",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lavaleaper": {
@@ -164162,12 +164162,12 @@
     },
     "Maelstrom Nexus": {
       "edhrec_rank": 4752,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Nexus",
-      "reason": "no template for: The first spell you cast each turn has cascade",
+      "reason": "",
       "scryfall_id": "a3107767-6c36-4982-8e0d-e100d5fca204",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Pulse": {
@@ -184032,12 +184032,12 @@
     },
     "Naya Charm": {
       "edhrec_rank": 3058,
-      "gate": "template",
+      "gate": null,
       "name": "Naya Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "ce1d6f9b-2ca8-48b8-b4a6-46a61c7c3905",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naya Hushblade": {
@@ -270942,12 +270942,12 @@
     },
     "Surrak Dragonclaw": {
       "edhrec_rank": 3211,
-      "gate": "template",
+      "gate": null,
       "name": "Surrak Dragonclaw",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "e8efe72d-3c01-4dd6-b3dd-0382ac09dc52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surrak and Goreclaw": {
@@ -291262,12 +291262,12 @@
     },
     "Transguild Courier": {
       "edhrec_rank": 18194,
-      "gate": "template",
+      "gate": null,
       "name": "Transguild Courier",
-      "reason": "no template for: is all colors",
+      "reason": "",
       "scryfall_id": "2496ab15-2a88-43fd-8d79-74758879157b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Transguild Promenade": {
@@ -295242,12 +295242,12 @@
     },
     "Two-Headed Hellkite": {
       "edhrec_rank": 4644,
-      "gate": "template",
+      "gate": null,
       "name": "Two-Headed Hellkite",
-      "reason": "no template for: Whenever this creature attacks, draw two cards",
+      "reason": "",
       "scryfall_id": "1b363509-ddc8-4bf1-8817-acd8345cde4f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Two-Headed Hunter // Twice the Rage": {

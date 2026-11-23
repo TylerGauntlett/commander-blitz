@@ -171923,6 +171923,87 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "lavalanche",
+      "mana_cost": "{X}{B}{R}{G}",
+      "name": "Lavalanche",
+      "oracle_text": "Lavalanche deals X damage to target player or planeswalker and each creature that player or that planeswalker's controller controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "objects": {
+                "controller": {
+                  "controller_of": "each"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -183467,6 +183548,51 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "spells_cast_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "effect": "spells_have_cascade",
+          "kind": "static",
+          "text": "The first spell you cast each turn has cascade."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "maelstrom_nexus",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Maelstrom Nexus",
+      "oracle_text": "The first spell you cast each turn has cascade. (When you cast your first spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -204716,6 +204842,109 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "naya_charm",
+      "mana_cost": "{R}{G}{W}",
+      "name": "Naya Charm",
+      "oracle_text": "Choose one —\n• Naya Charm deals 3 damage to target creature.\n• Return target card from a graveyard to its owner's hand.\n• Tap all creatures target player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Naya Charm deals 3 damage to target creature."
+            },
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "raised"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target card from a graveyard to its owner's hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": {
+                      "target": "tapped_player"
+                    },
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "label": "Tap all creatures target player controls."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "raised",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "controller": "any",
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "tapped_player",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -296509,6 +296738,67 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "spells_cant_be_countered",
+          "kind": "static",
+          "text": "Creature spells you control can't be countered."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control have trample."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "surrak_dragonclaw",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{G}{U}{R}",
+      "name": "Surrak Dragonclaw",
+      "oracle_text": "Flash\nThis spell can't be countered.\nCreature spells you control can't be countered.\nOther creatures you control have trample.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "keywords": [
@@ -325677,6 +325967,53 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G"
+          ],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Transguild Courier is all colors."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "transguild_courier",
+      "mana_cost": "{4}",
+      "name": "Transguild Courier",
+      "oracle_text": "Transguild Courier is all colors.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -330132,6 +330469,59 @@
         "Dog"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, draw two cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "two_headed_hellkite",
+      "keywords": [
+        "flying",
+        "menace",
+        "haste"
+      ],
+      "mana_cost": "{1}{W}{U}{B}{R}{G}",
+      "name": "Two-Headed Hellkite",
+      "oracle_text": "Flying, menace, haste\nWhenever this creature attacks, draw two cards.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

@@ -14380,6 +14380,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lavalanche": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 20,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "lavaspur_boots": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15276,6 +15288,10 @@
     "zone": "graveyard"
   },
   "maelstrom_archangel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maelstrom_nexus": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17200,6 +17216,9 @@
   "nature_s_will": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "naya_charm": {
+    "zone": "graveyard"
   },
   "naya_panorama": {
     "zone": "battlefield"
@@ -24847,6 +24866,16 @@
     },
     "zone": "battlefield"
   },
+  "surrak_dragonclaw": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "surrak_the_hunt_caller": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -27125,6 +27154,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "transguild_courier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "transpose": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -27544,6 +27577,16 @@
     "zone": "battlefield"
   },
   "two_headed_cerberus": {
+    "zone": "battlefield"
+  },
+  "two_headed_hellkite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "two_headed_zombie": {
