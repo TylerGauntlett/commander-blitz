@@ -291742,12 +291742,12 @@
     },
     "Trazyn the Infinite": {
       "edhrec_rank": 10047,
-      "gate": "template",
+      "gate": null,
       "name": "Trazyn the Infinite",
-      "reason": "no template for: Prismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilitie",
+      "reason": "",
       "scryfall_id": "1ae95cfb-1c3e-43cc-acfa-68f25b0f6e52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treacherous Blessing": {

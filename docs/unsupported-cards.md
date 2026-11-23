@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**527 cards** blocked by **445** capabilities.
+**526 cards** blocked by **444** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -253,7 +253,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-this-turn](#free-cast-this-turn) | 1 | 6651 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [fully-unlock-room](#fully-unlock-room) | 1 | 3452 | trigger_event |
-| [gain-graveyard-activated-abilities](#gain-graveyard-activated-abilities) | 1 | 10047 | static_effect |
 | [goad-while-source-on-battlefield](#goad-while-source-on-battlefield) | 1 | 13656 | op |
 | [gold-token](#gold-token) | 1 | 705 | token |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
@@ -4582,20 +4581,6 @@ Blocks **1** card.
 - **Fear of Sleep Paralysis** (rank 3452) — `fear_of_sleep_paralysis`
   - Eerie — Whenever this creature or another enchantment you control enters and whenever you fully unlock a Room, tap up to one target creature and put a stun counter on it.
   - Stun counters can't be removed from permanents your opponents control. (They won't untap if they have stun counters.)
-
-</details>
-
-## gain-graveyard-activated-abilities
-
-Blocks **1** card.
-
-- **(static_effect)** a static that gives the permanents it affects (here self_only) every activated ability printed on each card of a given type (Artifact) currently in its controller's graveyard, recomputed continuously as cards enter and leave the graveyard (Necrotic Ooze / Dark Impostor shape, but graveyard-sourced)
-  <br>Why the existing vocabulary won't do: grant_exiled_abilities is the same lending mechanism but reads only cards linked to the source in exile (source.exiled_cards with exiled_by == source); there is no key to point it at the graveyard. grant_ability lends only abilities written in the card's own grantable_abilities, and the gain_activated_abilities op is a one-shot snapshot, not a continuous static over a changing zone
-
-<details><summary>Cards waiting on this</summary>
-
-- **Trazyn the Infinite** (rank 10047) — `trazyn_the_infinite`
-  - Prismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.
 
 </details>
 

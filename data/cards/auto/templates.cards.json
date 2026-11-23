@@ -320386,6 +320386,47 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_graveyard_abilities",
+          "kind": "static",
+          "text": "Prismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.",
+          "types": [
+            "Artifact"
+          ]
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "trazyn_the_infinite",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Trazyn the Infinite",
+      "oracle_text": "Deathtouch\nPrismatic Gallery — As long as Trazyn is on the battlefield, it has all activated abilities of all artifact cards in your graveyard.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {

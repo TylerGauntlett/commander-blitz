@@ -26676,6 +26676,10 @@
     },
     "zone": "battlefield"
   },
+  "trazyn_the_infinite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "treachery": {
     "zone": "battlefield"
   },
