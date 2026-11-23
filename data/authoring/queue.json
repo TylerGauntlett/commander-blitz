@@ -9772,12 +9772,12 @@
     },
     "Anrakyr the Traveller": {
       "edhrec_rank": 6626,
-      "gate": "template",
+      "gate": null,
       "name": "Anrakyr the Traveller",
-      "reason": "no template for: Lord of the Pyrrhian Legions — Whenever attacks, you may cast an artifact spell from your ",
+      "reason": "",
       "scryfall_id": "3bf144d8-fc0e-4e21-87b9-4d32b545bead",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Answered Prayers": {

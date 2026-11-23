@@ -11699,6 +11699,56 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "cast_from_hand",
+              "pay_life_instead": true,
+              "selector": {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "zones": [
+                "hand",
+                "graveyard"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lord of the Pyrrhian Legions — Whenever Anrakyr the Traveller attacks, you may cast an artifact spell from your hand or graveyard by paying life equal to its mana value rather than paying its mana cost.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "anrakyr_the_traveller",
+      "mana_cost": "{4}{B}",
+      "name": "Anrakyr the Traveller",
+      "oracle_text": "Lord of the Pyrrhian Legions — Whenever Anrakyr the Traveller attacks, you may cast an artifact spell from your hand or graveyard by paying life equal to its mana value rather than paying its mana cost.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Necron"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

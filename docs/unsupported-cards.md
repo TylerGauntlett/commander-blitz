@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**529 cards** blocked by **447** capabilities.
+**528 cards** blocked by **446** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -129,7 +129,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-to-graveyard-this-turn-per-player](#cards-to-graveyard-this-turn-per-player) | 1 | 2881 | value |
 | [cards-to-your-graveyard-from-zones-this-turn](#cards-to-your-graveyard-from-zones-this-turn) | 1 | 7412 | value |
 | [cast-copy-limit](#cast-copy-limit) | 1 | 13784 | op |
-| [cast-during-resolution-pay-life](#cast-during-resolution-pay-life) | 1 | 6626 | op |
 | [cast-exiled-for-life-equal-to-mana-value](#cast-exiled-for-life-equal-to-mana-value) | 1 | 7161 | op |
 | [cast-for-suspend-cost](#cast-for-suspend-cost) | 1 | 16296 | op |
 | [cast-from-hand-result](#cast-from-hand-result) | 1 | 7016 | op |
@@ -2811,20 +2810,6 @@ Blocks **1** card.
 
 - **Baron Helmut Zemo** (rank 13784) — `baron_helmut_zemo`
   - Boast — Exile any number of black cards from your graveyard with fifteen or more black mana symbols among their mana costs: Copy those exiled cards. You may cast up to three of the copies without paying their mana costs. (Activate only if this creature attacked this turn and only once each turn.)
-
-</details>
-
-## cast-during-resolution-pay-life
-
-Blocks **1** card.
-
-- **(op)** a pay-life price on cast_from_hand: during the attack trigger's resolution, optionally cast one artifact card from your hand or graveyard (zones: ["hand", "graveyard"], selector types ["Artifact"]) right then, ignoring timing, paying life equal to its mana value as an alternative cost instead of casting it free (e.g. a `pay_life_instead: true` option on cast_from_hand)
-  <br>Why the existing vocabulary won't do: cast_from_hand already takes zones and a selector and casts during resolution, but only without paying its mana cost (op_cast_from_hand offers only the free cast), so it would make the artifact free rather than cost life. grant_playable with playable_pay_life_instead, limit 1 and playable_cast_only has the right price but only leaves a standing permission at normal timing, so a non-flash artifact could not be cast during combat when the trigger resolves and would instead be castable later in the turn, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Anrakyr the Traveller** (rank 6626) — `anrakyr_the_traveller`
-  - Lord of the Pyrrhian Legions — Whenever Anrakyr the Traveller attacks, you may cast an artifact spell from your hand or graveyard by paying life equal to its mana value rather than paying its mana cost.
 
 </details>
 
