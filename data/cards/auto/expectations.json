@@ -1174,6 +1174,10 @@
     },
     "zone": "graveyard"
   },
+  "archelos_lagoon_mystic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archers_of_qarsi": {
     "zone": "battlefield"
   },

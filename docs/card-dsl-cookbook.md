@@ -2900,6 +2900,32 @@ non-matching namesake to the graveyard. `affects` is required and `amount` is
 refused. **Not** `copy_permanent`'s `remove_supertypes: ["Legendary"]`, which
 makes the copy nonlegendary — a different card for every "legendary" reader.
 
+### `enters_untapped` — other permanents enter untapped
+
+"As long as Archelos is untapped, other permanents enter untapped." — Archelos,
+Lagoon Mystic
+
+```jsonc
+{"kind": "static",
+ "text": "As long as Archelos is untapped, other permanents enter untapped.",
+ "effect": "enters_untapped",
+ "affects": {"controller": "any", "exclude_self": true},
+ "condition": {"exists": {"self_only": true, "tapped": false}}}
+```
+
+The board-wide `enters_tapped` static's mirror. It is read in
+`zones._enter_battlefield` after every way an arrival can be made tapped: the
+moving effect's own `tapped` (a fetch, a ramp spell, a token created tapped),
+a board `enters_tapped` static, and the card's own `self_enters_tapped`.
+Applying it last is the order 616.1 lets the arriving permanent's controller
+choose, and the one every controller would choose, so it wins all three and is
+not asked. The arriving permanent is never its own source. A "pay N life or it
+enters tapped" price (`unless_cost` on a tapped replacement) buys nothing on an
+arrival this untaps. It is not offered as a second land drop and not asked
+(`zones.enters_cost_offer`). `affects` is required, as `enters_tapped`'s is, and
+`amount` is refused. Horizon Explorer's "Lands you control enter untapped" is
+`{"controller": "you", "types": ["Land"]}` with no condition.
+
 ### `enters_with_additional_counters` — a static about other arrivals
 
 "Each planeswalker you control enters with an additional loyalty counter on

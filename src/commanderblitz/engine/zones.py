@@ -925,10 +925,27 @@ def enters_cost_offer(state: GameState, oid: int, controller: int, card=None):
         node = replacement.get("unless_cost")
         if not node:
             continue
+        if _price_buys_nothing(state, obj, replacement):
+            continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
         if can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
             return replacement, cost
     return None
+
+
+def _price_buys_nothing(state: GameState, obj: GameObject, replacement) -> bool:
+    """"…enters tapped unless you pay 3 life", on an arrival that enters untapped anyway.
+
+    An `enters_untapped` static (Archelos, Lagoon Mystic) untaps the permanent
+    after its own replacement applies, so paying avoids nothing and the price
+    is neither offered as a second land drop nor asked. Only the tapped kind: a
+    price that avoids something else is still offered.
+    """
+    event = replacement.get("event")
+    tapped_kind = event == "self_enters_tapped" or (
+        event == "self_enters" and (replacement.get("modify") or {}).get("tapped")
+    )
+    return bool(tapped_kind) and board_untaps_arrival(state, obj)
 
 
 def offer_enters_costs(
@@ -970,6 +987,8 @@ def offer_enters_costs(
     for replacement in card.replacements:
         node = replacement.get("unless_cost")
         if not node:
+            continue
+        if _price_buys_nothing(state, obj, replacement):
             continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
         if not can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
@@ -1599,6 +1618,49 @@ def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
         if _matches(state, obj, source_obj, static.get("affects")):
             obj.tapped = True
             return
+
+
+def board_untaps_arrival(state: GameState, obj: GameObject) -> bool:
+    """Does an `enters_untapped` static make ``obj`` enter untapped?
+
+    "As long as Archelos is untapped, other permanents enter untapped" (Archelos,
+    Lagoon Mystic); "Lands you control enter untapped" (Horizon Explorer). The
+    mirror of `_apply_board_enters_tapped`: a static on one permanent about
+    other permanents' arrivals, however they arrive.
+
+    Asked with `_matches_wherever`, so it answers for a permanent that is about
+    to arrive as well as for one already placed: `offer_enters_costs` asks it a
+    moment before the move, to skip a "pay 3 life or it enters tapped" question
+    whose answer could not change anything. The arriving permanent is excluded
+    as a source, for `_apply_board_enters_tapped`'s reason.
+    """
+    # Looked up per call: tests patch `characteristics._battlefield_statics`.
+    from .characteristics import _battlefield_statics, _matches_wherever
+
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "enters_untapped":
+            continue
+        if source_obj.oid == obj.oid:
+            continue
+        if _matches_wherever(state, obj, source_obj, static.get("affects") or {}):
+            return True
+    return False
+
+
+def _apply_board_enters_untapped(state: GameState, obj: GameObject) -> None:
+    """Untap an arrival an `enters_untapped` static describes.
+
+    Applied after everything that can make an arrival tapped: an effect that
+    puts the permanent onto the battlefield tapped, a board `enters_tapped`
+    static and the permanent's own "enters tapped" replacement. 614.12 makes
+    each of those a replacement on the same event, and 616.1 lets the affected
+    permanent's controller order them; applying this one last is the order
+    every controller would choose, so it is not asked. Two statics that
+    disagree -- Archelos untapped beside Authority of the Consuls -- end
+    untapped for the same reason.
+    """
+    if obj.tapped and board_untaps_arrival(state, obj):
+        obj.tapped = False
 
 
 def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[str, int]]:
@@ -2309,6 +2371,12 @@ def _enter_battlefield(
                 entering.setdefault(str(replacement.get("counter", "+1/+1")), []).append(
                     evaluate_value(ctx, replacement.get("amount", 1))
                 )
+
+    # "As long as Archelos is untapped, other permanents enter untapped."
+    # After every way an arrival can be made tapped above -- the moving effect's
+    # own "tapped", a board `enters_tapped` static and the card's own
+    # replacement -- so it has the last word over all three.
+    _apply_board_enters_untapped(state, obj)
 
     # Turntimber Symbiosis: the "enters with" the moving effect itself names --
     # see `move_object`'s ``enters_with``. The same placement, for Giada's

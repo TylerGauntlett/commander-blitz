@@ -211,6 +211,16 @@ STATIC_EFFECTS = frozenset(
         # graveyard. `affects` is required: the filter is the printed clause
         # and it defaults to your own side.
         "enters_tapped",
+        # Archelos, Lagoon Mystic: "As long as Archelos is untapped, other
+        # permanents enter untapped." Horizon Explorer: "Lands you control
+        # enter untapped." `enters_tapped`'s mirror, read in
+        # `zones._enter_battlefield` after every way an arrival is made tapped
+        # (the moving effect, a board `enters_tapped`, the card's own
+        # replacement), so it has the last word over all of them -- the order
+        # the arriving permanent's controller would choose (616.1). Takes
+        # `affects`, required for `enters_tapped`'s reason, and an optional
+        # `condition`.
+        "enters_untapped",
         # Oath of Gideon: "Each planeswalker you control enters with an
         # additional loyalty counter on it."  `enters_tapped`'s shape with a
         # quantity: a static on one permanent about other permanents'

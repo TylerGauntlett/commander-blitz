@@ -7766,6 +7766,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"the whole board"
             )
 
+    if model.effect == "enters_untapped":
+        if model.affects is None:
+            # The filter defaults to your own side, so a missing one would be a
+            # narrower card than "other permanents enter untapped" and a wider
+            # one than nothing; the printed clause says whose.
+            raise DslError(
+                f"{where}: enters_untapped needs 'affects' naming whose permanents "
+                f"arrive untapped -- 'other permanents' is controller 'any' with "
+                f"exclude_self"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: enters_untapped is a fact about an arrival, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
+            )
+
     if model.effect == "enters_tapped":
         if model.affects is None:
             # Whose permanents arrive tapped is the printed clause, and the

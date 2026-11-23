@@ -14065,6 +14065,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "exclude_self": true
+          },
+          "condition": {
+            "exists": {
+              "self_only": true,
+              "tapped": true
+            }
+          },
+          "effect": "enters_tapped",
+          "kind": "static",
+          "text": "As long as Archelos is tapped, other permanents enter tapped."
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "exclude_self": true
+          },
+          "condition": {
+            "exists": {
+              "self_only": true,
+              "tapped": false
+            }
+          },
+          "effect": "enters_untapped",
+          "kind": "static",
+          "text": "As long as Archelos is untapped, other permanents enter untapped."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "id": "archelos_lagoon_mystic",
+      "mana_cost": "{1}{B}{G}{U}",
+      "name": "Archelos, Lagoon Mystic",
+      "oracle_text": "As long as Archelos is tapped, other permanents enter tapped.\nAs long as Archelos is untapped, other permanents enter untapped.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Turtle",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

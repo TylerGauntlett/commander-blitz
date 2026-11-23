@@ -1074,6 +1074,7 @@ STATICS: dict[str, Entry] = {
     "draw_limit": ("The player can't draw more than N cards each turn.",
                    '"Can\'t draw more than one card each turn"'),
     "enters_tapped": ("Matching permanents enter tapped.", None),
+    "enters_untapped": ("Matching permanents enter untapped, over anything that would tap them.", None),
     "enters_with_additional_counters": ("Matching permanents enter with additional counters.",
                                         "`enters_with_additional_counters` — a static about other arrivals"),
     "extra_land_drops": ("The player may play N additional lands each turn.", None),

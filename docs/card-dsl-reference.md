@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 111 |
+| [Static effects](#static-effects) | 112 |
 | [Player-wide statics](#player-wide-statics) | 51 |
-| [Grantable statics](#grantable-statics) | 50 |
+| [Grantable statics](#grantable-statics) | 51 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -642,6 +642,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `double_triggers` |  | yes | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `draw_limit` | yes |  | The player can't draw more than N cards each turn. | ["Can't draw more than one card each turn"](card-dsl-cookbook.md#cant-draw-more-than-one-card-each-turn) |
 | `enters_tapped` |  | yes | Matching permanents enter tapped. | [Static abilities](card-dsl.md#static-abilities) |
+| `enters_untapped` |  | yes | Matching permanents enter untapped, over anything that would tap them. | [Static abilities](card-dsl.md#static-abilities) |
 | `enters_with_additional_counters` |  | yes | Matching permanents enter with additional counters. | [enters_with_additional_counters — a static about other arrivals](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals) |
 | `extra_land_drops` | yes |  | The player may play N additional lands each turn. | [Static abilities](card-dsl.md#static-abilities) |
 | `free_cast_permission` | yes |  | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
@@ -797,6 +798,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `crew_power_bonus` | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `double_triggers` | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `enters_tapped` | Matching permanents enter tapped. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `enters_untapped` | Matching permanents enter untapped, over anything that would tap them. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `enters_with_additional_counters` | Matching permanents enter with additional counters. | [enters_with_additional_counters — a static about other arrivals](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals) |
 | `goaded` | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_keyword` | Matching permanents have keywords. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |

@@ -11892,12 +11892,12 @@
     },
     "Archelos, Lagoon Mystic": {
       "edhrec_rank": 8404,
-      "gate": "template",
+      "gate": null,
       "name": "Archelos, Lagoon Mystic",
-      "reason": "no template for: As long as Archelos is untapped, other permanents enter untapped",
+      "reason": "",
       "scryfall_id": "d45ec78e-6190-46af-8057-834f5ca41ec8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archenemy's Charm": {
