@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**535 cards** blocked by **450** capabilities.
+**546 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -48,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
+| [casualty](#casualty) | 2 | 11576 | static_effect |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
@@ -137,9 +138,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-from-graveyard](#cast-only-from-graveyard) | 1 | 6819 | static_effect |
 | [cast-only-if](#cast-only-if) | 1 | 12277 | engine |
 | [cast-restriction-self](#cast-restriction-self) | 1 | 2559 | engine |
+| [cast-self-from-exile](#cast-self-from-exile) | 1 | 2197 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [cast-trigger-reads-x](#cast-trigger-reads-x) | 1 | 3909 | value |
-| [casualty](#casualty) | 1 | 12943 | static_effect |
 | [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
@@ -175,6 +176,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
+| [creature-cards-left-graveyard-this-turn](#creature-cards-left-graveyard-this-turn) | 1 | 17038 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -201,6 +203,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dwarf-berserker-token](#dwarf-berserker-token) | 1 | 14192 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [elemental-2-2-wubrg](#elemental-2-2-wubrg) | 1 | 6140 | token |
+| [elemental-5-5-ur-flying](#elemental-5-5-ur-flying) | 1 | 19526 | token |
 | [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -237,6 +240,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-upkeep-step](#extra-upkeep-step) | 1 | 7041 | op |
 | [face-down-as-land](#face-down-as-land) | 1 | 3081 | engine |
 | [face-down-counters-pt](#face-down-counters-pt) | 1 | 6774 | engine |
+| [face-down-dies-trigger](#face-down-dies-trigger) | 1 | 15268 | trigger_event |
 | [face-down-exile-controller-may-look](#face-down-exile-controller-may-look) | 1 | 1073 | op |
 | [face-down-filter](#face-down-filter) | 1 | 6544 | selector |
 | [face-down-spell-cost-reduction](#face-down-spell-cost-reduction) | 1 | 8939 | op |
@@ -360,6 +364,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [playable-spell-type-restriction](#playable-spell-type-restriction) | 1 | 4763 | op |
 | [playable-while-source-on-battlefield](#playable-while-source-on-battlefield) | 1 | 14646 | value |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
+| [player-becomes-target-trigger](#player-becomes-target-trigger) | 1 | 16431 | trigger_event |
 | [player-counter-replacement](#player-counter-replacement) | 1 | 2056 | static_effect |
 | [player-dealt-damage-trigger](#player-dealt-damage-trigger) | 1 | 4451 | trigger_event |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -383,6 +388,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
+| [rekindling-phoenix-elemental-token](#rekindling-phoenix-elemental-token) | 1 | 11540 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -400,6 +406,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
+| [same-graveyard-targets](#same-graveyard-targets) | 1 | 18721 | selector |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [sandbox-resolve-own-triggers](#sandbox-resolve-own-triggers) | 1 | 13330 | engine |
@@ -409,6 +416,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
+| [separate-permanents-into-piles](#separate-permanents-into-piles) | 1 | 5426 | op |
 | [set-base-power](#set-base-power) | 1 | 16258 | op |
 | [set-name-static](#set-name-static) | 1 | 6322 | static_effect |
 | [settlement-token](#settlement-token) | 1 | 12594 | token |
@@ -419,6 +427,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
 | [source-filtered-damage-shield](#source-filtered-damage-shield) | 1 | 3089 | op |
+| [spell-copy-replacement](#spell-copy-replacement) | 1 | 1719 | replacement |
 | [spell-has-cascade-filter](#spell-has-cascade-filter) | 1 | 12447 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
@@ -437,6 +446,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [timed-spell-cost-reduction](#timed-spell-cost-reduction) | 1 | 18879 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
@@ -1515,6 +1525,24 @@ Blocks **2** cards.
   - Once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.
 - **Fortune Teller's Talent** (rank 3755) — `fortune_teller_s_talent`
   - As long as you've cast a spell this turn, you may play cards from the top of your library.
+
+</details>
+
+## casualty
+
+Blocks **2** cards.
+
+- **(static_effect)** a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: instant or sorcery spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost during that spell's casting and, when paid, a reflexive trigger copies the spell with new targets allowed
+  <br>Why the existing vocabulary won't do: Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static in `static_effects` grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. A `spell_cast` trigger with `max_per_turn: 1` and a `may` sacrifice then `copy_spell` would move the sacrifice from casting to trigger resolution, which is a different card (the sacrifice could be answered, and the spell could already be gone)
+- **(static_effect)** a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: nonlegendary artifact spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost on that spell's cast and, when paid, copies the spell (a permanent spell's copy becoming a token)
+  <br>Why the existing vocabulary won't do: Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. There is also no static per-turn 'first matching spell' limiter on such a grant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Anhelo, the Painter** (rank 11576) — `anhelo_the_painter`
+  - The first instant or sorcery spell you cast each turn has casualty 2. (As you cast that spell, you may sacrifice a creature with power 2 or greater. When you do, copy the spell and you may choose new targets for the copy.)
+- **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
+  - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
 
 </details>
 
@@ -2942,6 +2970,20 @@ Blocks **1** card.
 
 </details>
 
+## cast-self-from-exile
+
+Blocks **1** card.
+
+- **(static_effect)** a card's own printed, unconditional, permanent permission to cast itself from exile at its printed price (like the Gravecrawler-shaped own-graveyard permission, but with active_zones ["exile"]), read off the card while it sits in its owner's exile regardless of how it got there
+  <br>Why the existing vocabulary won't do: The graveyard half is the `cast_from_graveyard` static with active_zones ["graveyard"], which the loader restricts to the graveyard alone (own_graveyard_cast_permission checks Zone.GRAVEYARD). Exile casts in casting._cast_actions come only from object-level grants (playable_by/playable_live set by exile/grant_playable effects, with durations like while_exiled), on_adventure, foretell, warp or rebound -- all granted by an effect or tied to a specific mechanic, none a printed characteristic that survives any route into exile. Writing only the graveyard half would be a partial card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Squee, the Immortal** (rank 2197) — `squee_the_immortal`
+  - You may cast this card from your graveyard or from exile.
+
+</details>
+
 ## cast-timing-restriction
 
 Blocks **1** card.
@@ -2969,20 +3011,6 @@ Blocks **1** card.
 
 - **Old Stickfingers** (rank 3909) — `old_stickfingers`
   - When you cast this spell, reveal cards from the top of your library until you reveal X creature cards.
-
-</details>
-
-## casualty
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: nonlegendary artifact spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost on that spell's cast and, when paid, copies the spell (a permanent spell's copy becoming a token)
-  <br>Why the existing vocabulary won't do: Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. There is also no static per-turn 'first matching spell' limiter on such a grant
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
-  - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
 
 </details>
 
@@ -3485,6 +3513,20 @@ Blocks **1** card.
 
 </details>
 
+## creature-cards-left-graveyard-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-turn value counting cards that left a given player's graveyard this turn, filtered by the card's printed type ("a creature card left your graveyard this turn"), e.g. {"cards_from_graveyard_this_turn": "you", "filter": {"types": ["Creature"]}}, usable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: cards_from_graveyard_this_turn takes only a player spec and reads TurnLedger.cards_from_graveyard, a bare per-owner integer with no record of which cards left, so a land or instant leaving the graveyard would satisfy it; graveyard_plays_this_turn counts casts/activations from graveyards, not cards leaving; descended_this_turn counts arrivals, the opposite direction
+
+<details><summary>Cards waiting on this</summary>
+
+- **Syrix, Carrier of the Flame** (rank 17038) — `syrix_carrier_of_the_flame`
+  - At the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.
+
+</details>
+
 ## crew-with-toughness
 
 Blocks **1** card.
@@ -3849,6 +3891,20 @@ Blocks **1** card.
 
 - **The Wandering Minstrel** (rank 6140) — `the_wandering_minstrel`
   - The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors.
+
+</details>
+
+## elemental-5-5-ur-flying
+
+Blocks **1** card.
+
+- **(token)** a 5/5 blue and red Elemental creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has elemental_3_3_ur_flying (3/3, not 5/5), elemental_4_4_ur (no flying) and elemental_5_5_rg (red green, no flying); none matches the printed token. Retrace itself is expressible as the card-level "retrace": true
+
+<details><summary>Cards waiting on this</summary>
+
+- **Call the Skybreaker** (rank 19526) — `call_the_skybreaker`
+  - Create a 5/5 blue and red Elemental creature token with flying.
 
 </details>
 
@@ -4362,6 +4418,20 @@ Blocks **1** card.
 
 - **Curator Beastie** (rank 6774) — `curator_beastie`
   - Colorless creatures you control enter with two additional +1/+1 counters on them.
+
+</details>
+
+## face-down-dies-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a dies (look-back) trigger filter that asks whether the creature was face down as it left the battlefield, e.g. a 'was_face_down' / 'left_face_down' filter key read from the departure snapshot
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has 'face_down', but validate_face_down_trigger refuses it on dies and the other LOOK_BACK_EVENTS because reset_permanent_state clears face_down as the card leaves (708.9); the engine snapshots left_face_down in move_object but no trigger filter key reads it. The rest of the line (exile the subject if it is an instant or sorcery card, playable: end_of_your_next_turn with playable_cast_only) looks expressible once the trigger can be filtered.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cryptic Pursuit** (rank 15268) — `cryptic_pursuit`
+  - Whenever a face-down creature you control dies, exile it if it's an instant or sorcery card. You may cast that card until the end of your next turn.
 
 </details>
 
@@ -6120,6 +6190,20 @@ Blocks **1** card.
 
 </details>
 
+## player-becomes-target-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a becomes_target trigger that fires when a PLAYER ("you") becomes the target of a spell or ability, matching the BECAME_TARGET event's target_player half against the trigger controller, combinable in one trigger with "or a permanent you control" (any permanent the controller controls, not just self) and controller: opponent for whose spell it is, binding sid and event_player so the ward-like may/pay_life/else counter can read them
+  <br>Why the existing vocabulary won't do: becomes_target is matched only against an object subject; stack.announce_targets fires the player-target half with target_player and no oid, and triggers.py never reads target_player, so no trigger can see 'you' being targeted. Ward's rules ability (carddef.ward_ability) is self-only and has no player half; player_hexproof/player_protection are statics, not a pay-or-counter trigger. Writing only the permanent half would silently drop the 'you' clause.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Parnesse, the Subtle Brush** (rank 16431) — `parnesse_the_subtle_brush`
+  - Whenever you or a permanent you control becomes the target of a spell or ability an opponent controls, counter that spell or ability unless that player pays 4 life.
+
+</details>
+
 ## player-counter-replacement
 
 Blocks **1** card.
@@ -6449,6 +6533,20 @@ Blocks **1** card.
 
 </details>
 
+## rekindling-phoenix-elemental-token
+
+Blocks **1** card.
+
+- **(token)** a 0/1 red Elemental creature token with "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
+  <br>Why the existing vocabulary won't do: token_ids has red Elementals only at 1/1 and larger (elemental_1_1_r, elemental_1_1_r_haste) and no 0/1 Elemental at all; none carries the upkeep sacrifice-and-reanimate trigger. create_token takes power/toughness overrides but no abilities, and creating a vanilla token then grant_ability-ing the trigger onto it would be a nearly-right substitute the notes forbid
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rekindling Phoenix** (rank 11540) — `rekindling_phoenix`
+  - When this creature dies, create a 0/1 red Elemental creature token with "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
+
+</details>
+
 ## remove-all-counters
 
 Blocks **1** card.
@@ -6693,6 +6791,20 @@ Blocks **1** card.
 
 </details>
 
+## same-graveyard-targets
+
+Blocks **1** card.
+
+- **(selector)** a target-combination constraint on a card_in_graveyard spec with count 2, up_to: true: every chosen card must be in the same graveyard (all owned by one player), with no player being targeted -- the inverse of `one_per_player`
+  <br>Why the existing vocabulary won't do: `one_per_player` enforces the opposite (no two from the same player). A sibling `player` target with the card spec's `controller: {"target": ...}` would force the right graveyard but adds an unprinted 'target player' (wrong against player hexproof/shroud and changes fizzle behaviour), and a fixed `controller` of you or opponent drops half the legal choices. The rest looks expressible: `kicker`, the card spec's `count_if_kicked: 0`, a kicked-only player target, an `if` on `kicked` choosing `exile` of the targets or of that player's whole graveyard with `as`, then `create_token` rogue_2_2_b with amount a count of the binding filtered to Creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Waste Management** (rank 18721) — `waste_management`
+  - Exile up to two target cards from a single graveyard.
+
+</details>
+
 ## same-target-for-each-target-word
 
 Blocks **1** card.
@@ -6823,6 +6935,22 @@ Blocks **1** card.
 
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
+
+</details>
+
+## separate-permanents-into-piles
+
+Blocks **1** card.
+
+- **(op)** an op that has a chosen player (each opponent, inside for_each_player) divide a set of permanents they control (their creatures) into two piles, either possibly empty, then has another player (the spell's controller) pick one pile, binding the picked pile so a following sacrifice by that pile's controller acts on it (Liliana of the Veil -2 style, Fight or Flight family)
+  <br>Why the existing vocabulary won't do: two_piles only separates the top N cards of the caster's library into hand/graveyard; choose_permanents takes no chooser, so the opponent cannot be the one who forms the pile, and its pick is a single set rather than a two-way partition followed by a different player's pile choice; sacrifice with chooser lets one player pick victims but not the separate-then-choose split
+
+<details><summary>Cards waiting on this</summary>
+
+- **Make an Example** (rank 5426) — `make_an_example`
+  - Each opponent separates the creatures they control into two piles.
+  - For each opponent, you choose one of their piles.
+  - Each opponent sacrifices the creatures in their chosen pile.
 
 </details>
 
@@ -6966,6 +7094,20 @@ Blocks **1** card.
   - Prevent all damage that would be dealt to you and planeswalkers you control this turn by sources you don't control.
   - If damage from a creature source is prevented this way, Comeuppance deals that much damage to that creature.
   - If damage from a noncreature source is prevented this way, Comeuppance deals that much damage to the source's controller.
+
+</details>
+
+## spell-copy-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement on the controller's spell-copy events: whenever you would copy a spell N >= 1 times (any copy_spell / cast_copy / storm-style copy you perform), copy it N+1 times instead, with the additional copy allowed new targets; an addend parameter (copy_addend: 1) so stacked Staffs each add one
+  <br>Why the existing vocabulary won't do: static_effects has replace_token_creation, replace_counters, replace_draw and friends but nothing that intercepts copy_spell; copy_instead belongs to replace_token_creation (which token copy is made) and double_triggers/spell_copied only react after the fact, so the extra copy cannot be produced as a replacement
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinning Staff** (rank 1719) — `twinning_staff`
+  - If you would copy a spell one or more times, instead copy it that many times plus an additional time. You may choose new targets for the additional copy
 
 </details>
 
@@ -7222,6 +7364,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## timed-spell-cost-reduction
+
+Blocks **1** card.
+
+- **(op)** a one-shot op installed by a resolving trigger that discounts EVERY spell its player casts for the rest of the turn (not just the next one) by a flat generic amount, narrowed by card types (here Instant or Sorcery), written to the player's timed table with duration this_turn so it outlives the source -- the timed form of the spell_cost_reduction static, as grant_flash_permission is of cast_as_though_flash
+  <br>Why the existing vocabulary won't do: next_spell_cost_reduction (amount, player, types) is single-use: the player's next matching cast spends it, so a second instant this turn would pay full price. The spell_cost_reduction static covers every spell but lasts only while a permanent carries it; granting it to the Soprano with grant_ability duration this_turn would end the discount when the attacking creature dies in combat, which the printed effect survives (611.2a)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spellbinding Soprano** (rank 18879) — `spellbinding_soprano`
+  - Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.
 
 </details>
 
