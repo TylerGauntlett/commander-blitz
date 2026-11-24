@@ -30657,6 +30657,10 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "zndrsplt_s_judgment": {
+    "battlefield_count": 33,
+    "zone": "graveyard"
+  },
   "zoanthrope": {
     "counters": {
       "amount": 20,

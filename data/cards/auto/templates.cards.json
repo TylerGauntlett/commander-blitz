@@ -366247,6 +366247,137 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "zndrsplt_s_judgment",
+      "mana_cost": "{4}{U}",
+      "name": "Zndrsplt's Judgment",
+      "oracle_text": "For each player, choose friend or foe. Each friend creates a token that's a copy of a creature they control. Each foe returns a creature they control to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": "you",
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "as": "friend_pool",
+                      "objects": {
+                        "chooser": "none",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "choose_permanents",
+                      "prompt": "Friend"
+                    }
+                  ],
+                  "label": "Friend"
+                },
+                {
+                  "effects": [
+                    {
+                      "as": "foe_pool",
+                      "objects": {
+                        "chooser": "none",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "choose_permanents",
+                      "prompt": "Foe"
+                    }
+                  ],
+                  "label": "Foe"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "as": "friend_picks",
+              "objects": {
+                "binding": "friend_pool",
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature you control to copy"
+            },
+            {
+              "as": "foe_picks",
+              "objects": {
+                "binding": "foe_pool",
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature you control to return to its owner's hand"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "controller": {
+                "controller_of": "each"
+              },
+              "objects": {
+                "binding": "each"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "objects": {
+            "binding": "friend_picks"
+          },
+          "op": "for_each"
+        },
+        {
+          "objects": {
+            "binding": "foe_picks"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

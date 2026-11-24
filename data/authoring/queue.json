@@ -322872,12 +322872,12 @@
     },
     "Zndrsplt's Judgment": {
       "edhrec_rank": 14407,
-      "gate": "template",
+      "gate": null,
       "name": "Zndrsplt's Judgment",
-      "reason": "no template for: For each player, choose friend or foe. Each friend creates a token that's a copy of a crea",
+      "reason": "",
       "scryfall_id": "aa97df52-1ae7-4cfe-842a-1b13deef00ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zndrsplt, Eye of Wisdom": {
