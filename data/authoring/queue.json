@@ -53442,12 +53442,12 @@
     },
     "Cormela, Glamour Thief": {
       "edhrec_rank": 6228,
-      "gate": "template",
+      "gate": null,
       "name": "Cormela, Glamour Thief",
-      "reason": "no template for: {1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells",
+      "reason": "",
       "scryfall_id": "221ac34a-94ed-4c49-afad-b19cac541731",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cornered Crook": {
@@ -72442,12 +72442,12 @@
     },
     "Double Vision": {
       "edhrec_rank": 2701,
-      "gate": "template",
+      "gate": null,
       "name": "Double Vision",
-      "reason": "no template for: Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may ",
+      "reason": "",
       "scryfall_id": "1b597992-8e11-41a0-ac87-33fffd82b993",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Double-Faced Substitute Card": {
@@ -74292,12 +74292,12 @@
     },
     "Drawn from Dreams": {
       "edhrec_rank": 10052,
-      "gate": "template",
+      "gate": null,
       "name": "Drawn from Dreams",
-      "reason": "no template for: Look at the top seven cards of your library. Put two of them into your hand and the rest o",
+      "reason": "",
       "scryfall_id": "d61e811a-a744-40df-8d98-93f41a7bb0a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread": {
@@ -97552,12 +97552,12 @@
     },
     "Flawless Forgery": {
       "edhrec_rank": 17205,
-      "gate": "template",
+      "gate": null,
       "name": "Flawless Forgery",
-      "reason": "no template for: Casualty 3",
+      "reason": "",
       "scryfall_id": "1c808629-ee2b-4f3e-a316-7182fbc38d34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flawless Maneuver": {

@@ -1,0 +1,22 @@
+{
+  "card_id": "cryptic_pursuit",
+  "name": "Cryptic Pursuit",
+  "oracle_text": "Whenever you cast an instant or sorcery spell from your hand, manifest the top card of your library. (Put that card onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nWhenever a face-down creature you control dies, exile it if it's an instant or sorcery card. You may cast that card until the end of your next turn.",
+  "blocked_sentences": [
+    "Whenever a face-down creature you control dies, exile it if it's an instant or sorcery card. You may cast that card until the end of your next turn."
+  ],
+  "needs": [
+    {
+      "capability": "face_down_dies_trigger",
+      "kind": "trigger_event",
+      "what": "a dies (look-back) trigger filter that asks whether the creature was face down as it left the battlefield, e.g. a 'was_face_down' / 'left_face_down' filter key read from the departure snapshot",
+      "why_existing_wont_do": "trigger_filter_keys has 'face_down', but validate_face_down_trigger refuses it on dies and the other LOOK_BACK_EVENTS because reset_permanent_state clears face_down as the card leaves (708.9); the engine snapshots left_face_down in move_object but no trigger filter key reads it. The rest of the line (exile the subject if it is an instant or sorcery card, playable: end_of_your_next_turn with playable_cast_only) looks expressible once the trigger can be filtered."
+    }
+  ],
+  "closest_existing": [
+    "face_down",
+    "dies",
+    "exile"
+  ],
+  "confidence": "high"
+}

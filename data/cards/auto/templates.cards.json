@@ -63321,6 +63321,92 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}{B}{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": [
+            "instant",
+            "sorcery"
+          ],
+          "text": "{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "cormela_glamour_thief",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Cormela, Glamour Thief",
+      "oracle_text": "Haste\n{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells.\nWhen Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -83097,6 +83183,48 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may choose new targets for the copy.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "double_vision",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Double Vision",
+      "oracle_text": "Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may choose new targets for the copy.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effect": "replace_token_creation",
           "kind": "static",
           "text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead",
@@ -85221,6 +85349,36 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "drawn_from_dreams",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Drawn from Dreams",
+      "oracle_text": "Look at the top seven cards of your library. Put two of them into your hand and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 2
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -109698,6 +109856,96 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 3 (As you cast this spell, you may sacrifice a creature with power 3 or greater. When you do, copy this spell and you may choose a new target for the copy.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 3
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flawless_forgery",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Flawless Forgery",
+      "oracle_text": "Casualty 3 (As you cast this spell, you may sacrifice a creature with power 3 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nExile target instant or sorcery card from an opponent's graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "forged",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "binding": "forged"
+          },
+          "op": "cast_copy",
+          "optional": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "opponent",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

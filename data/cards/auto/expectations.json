@@ -5144,6 +5144,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cormela_glamour_thief": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "corpse_augur": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6870,6 +6877,10 @@
       "0": 46
     }
   },
+  "double_vision": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "doubling_season": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7027,6 +7038,18 @@
   "drannith_magistrate": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "drawn_from_dreams": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "dread_charge": {
     "zone": "graveyard"
@@ -9261,6 +9284,12 @@
   },
   "flatline": {
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "flawless_forgery": {
+    "graveyard_size": {
+      "1": 0
+    },
     "zone": "graveyard"
   },
   "flawless_maneuver": {

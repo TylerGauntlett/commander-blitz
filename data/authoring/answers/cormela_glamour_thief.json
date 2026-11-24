@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "cormela_glamour_thief",
+    "name": "Cormela, Glamour Thief",
+    "oracle_text": "Haste\n{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells.\nWhen Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+    "mana_cost": "{1}{U}{B}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Vampire", "Rogue"],
+    "colors": ["B", "R", "U"],
+    "color_identity": ["B", "R", "U"],
+    "power": 2,
+    "toughness": 4,
+    "keywords": ["haste"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "text": "{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells.",
+        "cost": {"mana": "{1}", "tap": true},
+        "effects": [{"op": "add_mana", "mana": "{U}{B}{R}"}],
+        "mana_restriction": ["instant", "sorcery"]
+      },
+      {
+        "kind": "triggered",
+        "text": "When Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+        "trigger": {"event": "dies", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "optional": true,
+            "selector": {"controller": "you", "zone": "graveyard", "any_types": ["Instant", "Sorcery"]}
+          }
+        ],
+        "effects": [
+          {"op": "return_from_graveyard", "objects": {"target": "t1"}, "destination": "hand"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
