@@ -6172,10 +6172,27 @@ writes — so counters, anthems and pumps on the creature count, and a sacrifice
 token, which no longer exists once it has left, still has a power.
 
 `as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
-above 1, and anywhere but an activated ability's cost: an additional cost to
-cast and a ward or tax price have no effects that receive what the cost named,
-so the name would bind nothing and read 0. A mana ability's `amount` reads it
-(Illuminor Szeras; see the cookbook's "Add {G} for each …").
+above 1, and anywhere but an activated ability's cost and a spell's
+`additional_cost` (or one of its `additional_cost_options`): a ward or tax
+price, an alternative or graveyard cost have no effects that receive what the
+cost named, so the name would bind nothing and read 0. A mana ability's
+`amount` reads it (Illuminor Szeras; see the cookbook's "Add {G} for each …").
+
+On a spell's additional cost the name is bound on the spell's stack item, so
+its `spell_effects` read it on resolution and a copy of the spell reads the
+same creature (707.10):
+
+```jsonc
+{ "id": "life_s_legacy",
+  "additional_cost": { "sacrifice": { "types": ["Creature"], "as": "sacrificed" } },
+  "spell_effects": [ { "op": "draw",
+                       "amount": { "power_of": { "binding": "sacrificed" } } } ] }
+```
+
+An optional additional cost that was declined binds nothing, and the read is 0.
+The loader refuses the name beside `additional_repeatable`: a cost paid any
+number of times sacrifices one permanent per payment, and none of them is *the*
+sacrificed one.
 
 Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to

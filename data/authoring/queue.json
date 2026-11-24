@@ -157752,12 +157752,12 @@
     },
     "Life's Legacy": {
       "edhrec_rank": 2507,
-      "gate": "template",
+      "gate": null,
       "name": "Life's Legacy",
-      "reason": "no template for: Draw cards equal to the sacrificed creature's power",
+      "reason": "",
       "scryfall_id": "bf0e70d2-5f1a-441b-99b9-d003fa15b999",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifebane Zombie": {
@@ -225112,12 +225112,12 @@
     },
     "Rite of Consumption": {
       "edhrec_rank": 8076,
-      "gate": "template",
+      "gate": null,
       "name": "Rite of Consumption",
-      "reason": "no template for: deals damage equal to the sacrificed creature's power to target player or planeswalker. Yo",
+      "reason": "",
       "scryfall_id": "67cc5d9a-fba5-4a42-a3fa-d41e20b7b8fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rite of Flame": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**547 cards** blocked by **460** capabilities.
+**545 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
-| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 2 | 2507 | cost |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -1396,24 +1395,6 @@ Blocks **3** cards.
   - III — Create a 1/1 white Halfling creature token for each Food you control.
 - **Field-Tested Frying Pan** (rank 6851) — `field_tested_frying_pan`
   - When this Equipment enters, create a Food token, then create a 1/1 white Halfling creature token and attach this Equipment to it.
-
-</details>
-
-## additional-cost-sacrificed-binding
-
-Blocks **2** cards.
-
-- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as an activated ability's sacrifice cost does through `costs.pay`'s `bindings`) into the spell's stack bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` as a `draw` amount on resolution
-  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so `additional_cost: {sacrifice: ...}` pays the sacrifice and binds nothing; the `sacrifice` op with `snapshot` would pay on resolution rather than as a cost, and `power_had`/`power_of` have no other handle on the sacrificed creature
-- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
-  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Life's Legacy** (rank 2507) — `life_s_legacy`
-  - Draw cards equal to the sacrificed creature's power.
-- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
-  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
 
 </details>
 

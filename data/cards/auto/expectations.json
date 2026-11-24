@@ -14828,6 +14828,13 @@
     "opponent_battlefield_count": 7,
     "zone": "battlefield"
   },
+  "life_s_legacy": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "lifeblood_hydra": {
     "battlefield_count": 33,
     "counters": {
@@ -21267,6 +21274,13 @@
     "zone": "battlefield"
   },
   "rishkar_s_expertise": {
+    "zone": "graveyard"
+  },
+  "rite_of_consumption": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
     "zone": "graveyard"
   },
   "rite_of_flame": {

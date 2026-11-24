@@ -2234,10 +2234,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # A permanent spell becomes the permanent its cost's exiled cards
             # are linked to; an instant or sorcery becomes nothing.
             may_link=bool(set(model.types) & PERMANENT_TYPES),
+            # "Draw cards equal to **the sacrificed creature's** power" (Life's
+            # Legacy): `Game._cast` hands the payment a place to write the
+            # name and binds it on the stack item, so `spell_effects` read it.
+            binds_spell=True,
         )
         if model.additional_cost
         else None
     )
+    if (
+        additional_cost is not None
+        and model.additional_repeatable
+        and (additional_cost.sacrifice or {}).get("as")
+    ):
+        # A cost paid any number of times sacrifices one creature per payment,
+        # so no single creature is *the* sacrificed one.
+        raise DslError(
+            f"{where}.additional_cost.sacrifice.as: names *the* sacrificed "
+            f"permanent, and a repeatable additional cost sacrifices one per payment"
+        )
     additional_cost_options: tuple = ()
     if model.additional_cost_options:
         if model.additional_cost is not None:
@@ -2262,7 +2277,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'additional_repeatable' does not compose with 'additional_cost_options'"
             )
         additional_cost_options = tuple(
-            _compile_cost(option, f"{where}.additional_cost_options[{i}]")
+            _compile_cost(option, f"{where}.additional_cost_options[{i}]", binds_spell=True)
             for i, option in enumerate(model.additional_cost_options)
         )
     # Spree (702.166a): "Choose one or more additional costs." A *subset* of the

@@ -177638,6 +177638,40 @@
       ]
     },
     {
+      "additional_cost": {
+        "sacrifice": {
+          "as": "sacrificed",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "life_s_legacy",
+      "mana_cost": "{1}{G}",
+      "name": "Life's Legacy",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw cards equal to the sacrificed creature's power.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "binding": "sacrificed"
+            }
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -254407,6 +254441,61 @@
                 "const": 5
               }
             }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "additional_cost": {
+        "sacrifice": {
+          "as": "sacrificed",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "rite_of_consumption",
+      "mana_cost": "{1}{B}",
+      "name": "Rite of Consumption",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nRite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "binding": "sacrificed"
+            }
+          },
+          "as": "dealt",
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
           }
         }
       ],

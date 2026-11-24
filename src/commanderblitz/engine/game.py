@@ -969,9 +969,18 @@ class Game:
             # stack item, which is how the sweep reads `{"x": true}` on
             # resolution.
             yield from pay(state, pid, Cost(pay_life=life_x), oid)
+        # What the additional cost named as it was paid -- Life's Legacy's
+        # "the sacrificed creature", a last-known snapshot (608.2h) taken in
+        # the window where it is chosen and not yet moved. Bound on the stack
+        # item below, so the resolving `spell_effects` and a copy (707.10)
+        # read it. The loader refuses `as` on a repeatable cost, so at most
+        # one payment writes it.
+        paid_bindings: dict[str, Any] = {}
         if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
-                ok = yield from pay(state, pid, additional.without_mana(), oid)
+                ok = yield from pay(
+                    state, pid, additional.without_mana(), oid, bindings=paid_bindings
+                )
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
         # The non-mana half of the card's priced flash permission -- Tegwyll's
@@ -1184,6 +1193,7 @@ class Game:
             # `StackItem.modes_answered`.
             modes_answered=card.cast_time_modes is not None,
         )
+        item.bindings.update(paid_bindings)
         if division:
             item.bindings["distribution"] = division
         if "tap_creatures" in currencies:

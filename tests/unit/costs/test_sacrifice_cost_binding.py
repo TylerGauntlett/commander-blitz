@@ -250,16 +250,17 @@ class TestLoadTimeGuards:
                 )
             )
 
-    def test_naming_it_on_a_spells_additional_cost_is_refused(self):
-        """Only an activated ability's effects receive what its cost named; on
-        a spell the name would bind nothing and every read of it would be 0."""
+    def test_naming_it_on_a_spells_alternative_cost_is_refused(self):
+        """Only an activated ability's cost and a spell's additional cost are
+        handed a place to write the name (`test_spell_sacrifice_binding.py`);
+        on an alternative cost it would bind nothing and every read would be 0."""
         spell = {
             "id": "t_gisa_spell",
             "name": "Test Gisa Spell",
             "oracle_text": "As an additional cost, sacrifice a creature.",
             "mana_cost": "{B}",
             "types": ["Sorcery"],
-            "additional_cost": {"sacrifice": {"types": ["Creature"], "as": "eaten"}},
+            "alternative_cost": {"sacrifice": {"types": ["Creature"], "as": "eaten"}},
             "spell_effects": [
                 {
                     "op": "create_token",
@@ -268,5 +269,5 @@ class TestLoadTimeGuards:
                 }
             ],
         }
-        with pytest.raises(DslError, match="only an activated ability"):
+        with pytest.raises(DslError, match="names it for nothing"):
             compile_card(CardModel.model_validate(spell))
