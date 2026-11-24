@@ -4183,6 +4183,30 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     return out
 
 
+def lures(state: GameState, oid: int) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The "all creatures able to block this creature do so" statics on this attacker.
+
+    The requirement half of :func:`block_restrictions`, read the same way: the
+    static's ``affects`` names the attacker on its derived characteristics, and
+    its optional ``blockers`` (Marble Priest's Walls) narrows which would-be
+    blockers owe the block -- judged per blocker by ``combat``, so returned as
+    ``(source, static)`` pairs. Each pair is one requirement on every blocker
+    it binds (509.1c), so two lures on one attacker are counted twice.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return []
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "lure":
+            continue
+        # Not a layer (613): a requirement reads the attacker as it now is.
+        if not _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            continue
+        out.append((source_obj, static))
+    return out
+
+
 def protected_from(
     state: GameState, oid: int, source_oid: int | None, *, attaching: bool = False
 ) -> bool:

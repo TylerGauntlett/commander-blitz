@@ -1263,7 +1263,8 @@ class AbilityModel(BaseModel):
     ability: int | None = None
     #: ``block_restriction``: which would-be blockers are refused. A static
     #: filter over the *blocker*, so "can't be blocked by Humans" is
-    #: ``{"subtypes": ["Human"]}``.
+    #: ``{"subtypes": ["Human"]}``. On ``lure``, which would-be blockers
+    #: owe the block instead: Marble Priest's ``{"subtypes": ["Wall"]}``.
     blockers: dict[str, Any] | None = None
     #: ``block_restriction``: Tromokratis' "can't be blocked unless all
     #: creatures defending player controls block it". Judged on the whole

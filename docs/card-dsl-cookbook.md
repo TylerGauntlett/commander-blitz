@@ -6378,7 +6378,7 @@ the two carry different data on different clocks:
 
 | | |
 |---|---|
-| `must_block` | provoke and the lure family — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
+| `must_block` | provoke — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
 | `must_block_any` | "blocks this turn if able" — no attacker, so blocking any creature attacking its controller obeys it (509.1c), and it binds **every** combat this turn. Records the turn number (`GameObject.must_block_any_turn`); nothing spends it, and the next turn ends it |
 
 Both are enforced by `combat.unmet_block_requirements`, which withholds "Done
@@ -6406,6 +6406,31 @@ same combat and together are exactly the printed line.
 ```
 
 Its `affects` reads derived characteristics, as `attacks_if_able`'s does.
+
+The `lure` static is the requirement that sits on the **attacker**: "all creatures
+able to block this creature do so" (Treeshaker Chimera). Its `affects` names the
+luring attacker on derived characteristics; an optional `blockers` filter, read
+on the blocker's derived characteristics with `controller` defaulting to `any`,
+narrows who owes the block — Marble Priest's "All Walls able to block this
+creature do so". It is read live by `characteristics.lures` whenever the creature
+is attacking, so a creature put onto the battlefield attacking lures as one
+declared does, and nothing spends it.
+
+```jsonc
+{ "kind": "static", "effect": "lure", "affects": { "self_only": true },
+  "blockers": { "subtypes": ["Wall"] } }
+```
+
+Every kind is weighed together in `combat.unmet_block_requirements` (509.1c's
+maximum): provoke and each lure count one for blocking the attacker they name, a
+nameless requirement one for any block, and a creature is unmet while some
+attacker it is able to block obeys more of them than its declared block does. A
+creature owing a named block, provoke or lure, is offered by `legal_blocks` only
+the attackers that obey the most; one torn between two lures may block either.
+"If able" for a lure carries the menace exception `block_any_required` uses. The
+loader refuses `require_all`, `max_blockers` and `min_blockers` on it, and a
+`blockers` key outside `STATIC_FILTER_KEYS`. "Must be blocked if able", met by one
+blocker, is a near miss it does not say.
 
 ## Goad
 

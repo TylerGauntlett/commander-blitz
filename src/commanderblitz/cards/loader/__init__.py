@@ -5676,6 +5676,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
+    elif model.effect == "lure":
+        # "All Walls able to block this creature do so": `blockers` narrows who
+        # owes the block, and is optional -- without it every creature does.
+        # The counting forms restrict a declaration and require nothing.
+        if model.require_all or model.max_blockers is not None or model.min_blockers is not None:
+            raise DslError(
+                f"{where}: lure takes only 'affects' and 'blockers'; "
+                f"'require_all'/'max_blockers'/'min_blockers' are block_restriction's"
+            )
+        if model.blockers is not None:
+            unknown = set(model.blockers) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}: lure 'blockers' may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
+            _check_owner_key(model.blockers, f"{where}.blockers")
     elif (
         model.blockers is not None
         or model.require_all
@@ -5684,7 +5701,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     ):
         raise DslError(
             f"{where}: 'blockers'/'require_all'/'max_blockers'/'min_blockers' only mean "
-            f"anything on a block_restriction static, not on {model.effect!r}"
+            f"anything on a block_restriction static ('blockers' also on lure), "
+            f"not on {model.effect!r}"
         )
     if model.effect == "can_block_only":
         # Without a filter the static says "can block only creatures", which

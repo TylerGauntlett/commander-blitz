@@ -1011,6 +1011,8 @@ STATICS: dict[str, Entry] = {
                                 '`black_mana_as_phyrexian` — K\'rrik\'s "For each {B} in a cost"'),
     "blocks_if_able": ("Matching creatures block each combat if able (any attacker obeys it).",
                        "Block requirements"),
+    "lure": ("All creatures able to block a matching attacker do so (`blockers`: only those).",
+             "Block requirements"),
     "block_restriction": ("Matching creatures can't block, or can only block under a rule.",
                           "Block restrictions"),
     "block_tax": ("Matching creatures can't block unless their controller pays.",

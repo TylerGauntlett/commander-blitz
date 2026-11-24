@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 112 |
+| [Static effects](#static-effects) | 113 |
 | [Player-wide statics](#player-wide-statics) | 51 |
-| [Grantable statics](#grantable-statics) | 51 |
+| [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -665,6 +665,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `lose_all_abilities` |  |  | Matching permanents lose all abilities. | [lose_all_abilities, and why abilities_of exists](card-dsl-cookbook.md#lose_all_abilities-and-why-abilities_of-exists) |
 | `lose_keyword` |  | yes | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
 | `lose_keyword_timestamped` |  |  | Matching permanents lose keywords; a grant newer than the removal gives one back (613.7). | [lose_keyword_timestamped — "loses flying", with no "can't have"](card-dsl-cookbook.md#lose_keyword_timestamped--loses-flying-with-no-cant-have) |
+| `lure` |  | yes | All creatures able to block a matching attacker do so (`blockers`: only those). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -808,6 +809,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `imprint_characteristics` | This creature has the power, toughness and creature types of the last creature card exiled with it. | [imprint_characteristics — Duplicant's size from a card in exile](card-dsl-cookbook.md#imprint_characteristics--duplicants-size-from-a-card-in-exile) |
 | `legend_rule_exemption` | The legend rule doesn't apply to matching permanents. | [legend_rule_exemption — the legend rule doesn't apply](card-dsl-cookbook.md#legend_rule_exemption--the-legend-rule-doesnt-apply) |
 | `lose_keyword` | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
+| `lure` | All creatures able to block a matching attacker do so (`blockers`: only those). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `prevent_all_but` | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
 | `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |

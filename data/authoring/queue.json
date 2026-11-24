@@ -292112,12 +292112,12 @@
     },
     "Treeshaker Chimera": {
       "edhrec_rank": 7211,
-      "gate": "template",
+      "gate": null,
       "name": "Treeshaker Chimera",
-      "reason": "no template for: All creatures able to block this creature do so",
+      "reason": "",
       "scryfall_id": "332e8353-3ef3-4c17-b544-9d59728e8afc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treespring Lorian": {

@@ -27710,6 +27710,13 @@
     },
     "zone": "battlefield"
   },
+  "treeshaker_chimera": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "treetop_village": {
     "zone": "battlefield"
   },

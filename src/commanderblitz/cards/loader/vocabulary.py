@@ -629,6 +629,15 @@ STATIC_EFFECTS = frozenset(
         # printed line binds every combat for as long as it applies, where the
         # op records one turn.
         "blocks_if_able",
+        # Treeshaker Chimera, Marble Priest: "All creatures able to block this
+        # creature do so" (509.1c). The requirement that sits on the
+        # *attacker*: `affects` names the luring attacker, an optional
+        # `blockers` filter (Marble Priest's Walls) the creatures it binds.
+        # Read live by `characteristics.lures` at `combat.unmet_block_requirements`.
+        # Not the `must_block` op, which is one-shot and needs a trigger an
+        # attacker put onto the battlefield attacking never fires, nor
+        # `blocks_if_able`, which any attacker obeys.
+        "lure",
         # Coercive Impetus and the Impetus cycle: "Enchanted creature … is
         # goaded." Goad held as a continuous effect (701.38), read by
         # `player_statics.goaders` beside the `goad` op's mark. Neither

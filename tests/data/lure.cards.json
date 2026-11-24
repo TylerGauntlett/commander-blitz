@@ -1,0 +1,67 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_lure.py. `t_lurer` is Treeshaker Chimera's 'All creatures able to block this creature do so' on a vanilla body, the `lure` static with `affects: self_only`. `t_wall_lurer` is Marble Priest's narrowed form, 'All Walls able to block this creature do so', the same static with a `blockers` filter. `t_menace_lurer` adds menace, so a lone creature is excused.",
+  "cards": [
+    {
+      "id": "t_lurer",
+      "name": "Test Lurer",
+      "oracle_text": "All creatures able to block Test Lurer do so.",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All creatures able to block Test Lurer do so.",
+          "effect": "lure",
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_wall_lurer",
+      "name": "Test Wall Lurer",
+      "oracle_text": "All Walls able to block Test Wall Lurer do so.",
+      "mana_cost": "{5}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Cleric"],
+      "colors": [],
+      "color_identity": [],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All Walls able to block Test Wall Lurer do so.",
+          "effect": "lure",
+          "affects": {"self_only": true},
+          "blockers": {"subtypes": ["Wall"]}
+        }
+      ]
+    },
+    {
+      "id": "t_menace_lurer",
+      "name": "Test Menace Lurer",
+      "oracle_text": "Menace\nAll creatures able to block Test Menace Lurer do so.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["menace"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All creatures able to block Test Menace Lurer do so.",
+          "effect": "lure",
+          "affects": {"self_only": true}
+        }
+      ]
+    }
+  ]
+}

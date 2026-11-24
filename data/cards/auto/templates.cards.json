@@ -332804,6 +332804,55 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "lure",
+          "kind": "static",
+          "text": "All creatures able to block this creature do so."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw three cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "treeshaker_chimera",
+      "mana_cost": "{5}{G}{G}",
+      "name": "Treeshaker Chimera",
+      "oracle_text": "All creatures able to block this creature do so.\nWhen this creature dies, draw three cards.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Chimera"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

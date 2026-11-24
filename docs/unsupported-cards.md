@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **456** capabilities.
+**547 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,6 +41,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
+| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 2 | 2507 | cost |
 | [adventure](#adventure) | 2 | 8561 | engine |
 | [alien-token](#alien-token) | 2 | 5885 | token |
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
@@ -58,10 +59,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
-| [lure](#lure) | 2 | 9914 | static_effect |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 2 | 653 | engine, replacement |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
+| [must-be-blocked](#must-be-blocked) | 2 | 9914 | static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
@@ -93,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
-| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 1 | 8076 | cost |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
@@ -118,6 +118,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
+| [blitz](#blitz) | 1 | 7030 | static_effect |
+| [blitz-cost-reduction](#blitz-cost-reduction) | 1 | 7030 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -332,7 +334,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multicolored](#multicolored) | 1 | 6988 | selector |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
-| [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
@@ -344,7 +345,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
+| [one-of-each-card-type](#one-of-each-card-type) | 1 | 21457 | selector |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
+| [one-target-per-player](#one-target-per-player) | 1 | 21263 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
@@ -385,6 +388,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
+| [put-onto-battlefield-under-player-control](#put-onto-battlefield-under-player-control) | 1 | 11862 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -740,7 +744,6 @@ Blocks **11** cards.
 - **Sandskin** (rank 27695) — `sandskin`
   - Prevent all combat damage that would be dealt to and dealt by enchanted creature.
 - **Marble Priest** (rank 31502) — `marble_priest`
-  - All Walls able to block this creature do so.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
@@ -1396,6 +1399,24 @@ Blocks **3** cards.
 
 </details>
 
+## additional-cost-sacrificed-binding
+
+Blocks **2** cards.
+
+- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as an activated ability's sacrifice cost does through `costs.pay`'s `bindings`) into the spell's stack bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` as a `draw` amount on resolution
+  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so `additional_cost: {sacrifice: ...}` pays the sacrifice and binds nothing; the `sacrifice` op with `snapshot` would pay on resolution rather than as a cost, and `power_had`/`power_of` have no other handle on the sacrificed creature
+- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
+  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
+
+<details><summary>Cards waiting on this</summary>
+
+- **Life's Legacy** (rank 2507) — `life_s_legacy`
+  - Draw cards equal to the sacrificed creature's power.
+- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
+  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
+
+</details>
+
 ## adventure
 
 Blocks **2** cards.
@@ -1705,26 +1726,6 @@ Blocks **2** cards.
 
 </details>
 
-## lure
-
-Blocks **2** cards.
-
-- **(static_effect)** a static block requirement on the source attacker (509.1c): every creature matching a printed blocker filter (here subtypes: ["Wall"]) that is able to block this creature must do so -- Lure-style, narrowed by a `blockers` filter
-  <br>Why the existing vocabulary won't do: The `must_block` op is a one-shot on resolution with no trigger to hang it on, and the only static that reads `blockers` is `block_restriction`, which restricts who MAY block (menace, Tromokratis' `require_all`) rather than requiring blocks; no static_effect imposes a block requirement
-- **(static_effect)** a static on the creature itself requiring the defending player to block it with at least one creature if able ("must be blocked if able"), combined with the existing max_blockers 1
-  <br>Why the existing vocabulary won't do: `attacks_if_able` is the attacker-side requirement; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Foretold Soldier** (rank 9914) — `the_foretold_soldier`
-  - Whenever this creature deals damage, exile it face down. It becomes foretold.
-  - This creature must be blocked if able.
-- **Marble Priest** (rank 31502) — `marble_priest`
-  - All Walls able to block this creature do so.
-  - Prevent all combat damage that would be dealt to this creature by Walls.
-
-</details>
-
 ## mana-spent-enters-with-counters
 
 Blocks **2** cards.
@@ -1776,6 +1777,25 @@ Blocks **2** cards.
   - {1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.
 - **Time Lord Regeneration** (rank 14672) — `time_lord_regeneration`
   - Until end of turn, target Time Lord you control gains "When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
+
+</details>
+
+## must-be-blocked
+
+Blocks **2** cards.
+
+- **(static_effect)** a static block requirement on the source attacker (509.1c): while this creature is attacking, the defending player must block it with at least one creature if any creature they control is able to (one blocker satisfies it; unlike lure, not every able creature must block). Shape: a static such as `{"effect": "must_be_blocked", "affects": {"self_only": true}}` checked by combat's block-requirement maximisation
+  <br>Why the existing vocabulary won't do: `block_restriction` (with `blockers`, `max_blockers`, `require_all`) only restricts who MAY block, never requires a block; `must_block` / `must_block_any` are one-shot ops that set a requirement on a chosen defending creature on resolution, with no trigger here to hang them on and no way to say 'some creature must block this attacker'; no static_effect imposes a block requirement
+- **(static_effect)** a static on the creature itself requiring the defending player to block it with at least one creature if able ("must be blocked if able"), combined with the existing max_blockers 1
+  <br>Why the existing vocabulary won't do: the `lure` static requires every able creature (or every one its `blockers` matches) to block, where this is met by one; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Foretold Soldier** (rank 9914) — `the_foretold_soldier`
+  - Whenever this creature deals damage, exile it face down. It becomes foretold.
+  - This creature must be blocked if able.
+- **Madame Vastra** (rank 19620) — `madame_vastra`
+  - Madame Vastra must be blocked if able.
 
 </details>
 
@@ -2330,20 +2350,6 @@ Blocks **1** card.
 
 </details>
 
-## additional-cost-sacrificed-binding
-
-Blocks **1** card.
-
-- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
-  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
-  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
-
-</details>
-
 ## additional-cost-target
 
 Blocks **1** card.
@@ -2679,6 +2685,36 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
+
+</details>
+
+## blitz
+
+Blocks **1** card.
+
+- **(static_effect)** the blitz alternative cost (702.152) as a card-level cost and as a player-wide static granting it to a class of spells (affects_spells: creature, mana value >= 4), with the price 'equal to its mana cost'; when paid, the permanent gains haste and "When this creature dies, draw a card." and is sacrificed at the beginning of the next end step, plus a `blitzed` condition
+  <br>Why the existing vocabulary won't do: No `blitz` in card_level_cost_keys and no granting static: `granted_alternative_cost` takes only pay_energy/pay_life and has no rider, and `grant_warp` exiles at end step and grants neither haste nor the dies-draw trigger; approximating with those would change the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Henzie "Toolbox" Torre** (rank 7030) — `henzie_toolbox_torre`
+  - Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and "When this creature dies, draw a card." Sacrifice it at the beginning of the next end step.)
+  - Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.
+
+</details>
+
+## blitz-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide reduction that applies only to blitz costs being paid, by {1} per `commander_casts_this_game` for you
+  <br>Why the existing vocabulary won't do: `spell_cost_reduction` filters spells by characteristics, not by which alternative cost is paid; there is no blitz cost for it to key on (`plot_cost_reduction` is the analogue for plot only)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Henzie "Toolbox" Torre** (rank 7030) — `henzie_toolbox_torre`
+  - Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and "When this creature dies, draw a card." Sacrifice it at the beginning of the next end step.)
+  - Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.
 
 </details>
 
@@ -5732,20 +5768,6 @@ Blocks **1** card.
 
 </details>
 
-## must-be-blocked
-
-Blocks **1** card.
-
-- **(static_effect)** a static block requirement on the source attacker (509.1c): while this creature is attacking, the defending player must block it with at least one creature if any creature they control is able to (one blocker satisfies it; unlike lure, not every able creature must block). Shape: a static such as `{"effect": "must_be_blocked", "affects": {"self_only": true}}` checked by combat's block-requirement maximisation
-  <br>Why the existing vocabulary won't do: `block_restriction` (with `blockers`, `max_blockers`, `require_all`) only restricts who MAY block, never requires a block; `must_block` / `must_block_any` are one-shot ops that set a requirement on a chosen defending creature on resolution, with no trigger here to hang them on and no way to say 'some creature must block this attacker'; no static_effect imposes a block requirement
-
-<details><summary>Cards waiting on this</summary>
-
-- **Madame Vastra** (rank 19620) — `madame_vastra`
-  - Madame Vastra must be blocked if able.
-
-</details>
-
 ## must-be-blocked-if-able
 
 Blocks **1** card.
@@ -5904,6 +5926,20 @@ Blocks **1** card.
 
 </details>
 
+## one-of-each-card-type
+
+Blocks **1** card.
+
+- **(selector)** a choice over cards in a zone constrained to 'up to one card of each card type': the chosen set must be assignable so that no card type (artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, sorcery) is represented by more than one chosen card, so a multi-typed card (artifact creature) uses up every type it has; here over the defending player's graveyard, exiled with an `as` binding whose count feeds add_counters on self
+  <br>Why the existing vocabulary won't do: search_zones/exile carry `count` and `distinct_names` but no distinct-card-types constraint (`any_type` there is the mana-spending permission). A for_each over a list of types exiling one card per type is not exact: it lets an artifact creature be taken as the artifact and a second creature card as the creature, exiling more cards (and adding more counters) than the printed card allows
+
+<details><summary>Cards waiting on this</summary>
+
+- **Grime Gorger** (rank 21457) — `grime_gorger`
+  - Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.
+
+</details>
+
 ## one-target-per-graveyard
 
 Blocks **1** card.
@@ -5915,6 +5951,20 @@ Blocks **1** card.
 
 - **Mysterious Stranger** (rank 9139) — `mysterious_stranger`
   - When this creature enters, for each graveyard with an instant or sorcery card in it, exile target instant or sorcery card from that graveyard.
+
+</details>
+
+## one-target-per-player
+
+Blocks **1** card.
+
+- **(selector)** a target spec whose size is mandatory and set by the board: exactly one target land for EACH player who controls one (no two from the same player, nobody skipped, the caster's own seat included), so the controller must mark one of their own lands as well as one of each opponent's
+  <br>Why the existing vocabulary won't do: `one_per_player` is accepted only with count 'any', a ceiling (count N with up_to) or a literal count of 2 or more (cards/loader/targets.py), so it says 'up to one target land per player' and lets the caster skip their own land -- the card's whole drawback -- or a literal 2 that is wrong in any pod that is not two players; a computed exact count is refused by the loader. A for_each_player with a non-targeting choice would dodge hexproof/shroud and is not 'target'. The second sentence looks expressible: a deals_combat_damage_to_player trigger with an `exists` condition over lands with has_counters 'contested' controlled by {binding: event_player}, then gain_control with player {controller_of: subject}, a count-1 selector with chooser {controller_of: subject} and `as`, then untap of that binding
+
+<details><summary>Cards waiting on this</summary>
+
+- **Turf War** (rank 21263) — `turf_war`
+  - When this enchantment enters, for each player, put a contested counter on target land that player controls.
 
 </details>
 
@@ -6484,6 +6534,20 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
+
+</details>
+
+## put-onto-battlefield-under-player-control
+
+Blocks **1** card.
+
+- **(op)** a `controller` on return_from_graveyard / put_onto_battlefield that takes a player spec (here {"target": "t1"}, the targeted opponent), so a card from your graveyard enters the battlefield directly under another player's control, with that player as the one who puts it there
+  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield read `controller` only as "you" (else the card's owner), and the loader refuses any other value on the sibling ops; returning it under your control and then gain_control to the opponent would make it enter under the wrong player (its enters triggers and replacements would be yours), which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Beamtown Bullies** (rank 11862) — `the_beamtown_bullies`
+  - {T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it.
 
 </details>
 

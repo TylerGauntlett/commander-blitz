@@ -15,10 +15,10 @@
       "confidence_note": "high"
     },
     {
-      "capability": "lure",
+      "capability": "must_be_blocked",
       "kind": "static_effect",
       "what": "a static on the creature itself requiring the defending player to block it with at least one creature if able (\"must be blocked if able\"), combined with the existing max_blockers 1",
-      "why_existing_wont_do": "`attacks_if_able` is the attacker-side requirement; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks",
+      "why_existing_wont_do": "the `lure` static requires every able creature (or every one its `blockers` matches) to block, where this is met by one; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks",
       "confidence_note": "low"
     }
   ],
