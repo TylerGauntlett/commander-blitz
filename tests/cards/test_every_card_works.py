@@ -2032,11 +2032,16 @@ def _satisfy_the_attack_count(game: Game, registry, ability) -> None:
     if not isinstance(condition, dict) or "cmp" not in condition:
         return
     left, right = condition.get("left") or {}, condition.get("right") or {}
-    if "attackers_this_turn" not in left or "const" not in right:
+    # Raid's "Activate only if you attacked this turn" counts seats rather than
+    # creatures (`values.py`'s `attacked_this_turn`), and one declared attacker
+    # is what makes seat 0 one that attacked. Bloodsoaked Champion is the
+    # witness: the first card to print raid as an activation condition.
+    key = next((k for k in ("attackers_this_turn", "attacked_this_turn") if k in left), None)
+    if key is None or "const" not in right:
         return
-    if str(left["attackers_this_turn"]) != "you":
+    if str(left[key]) != "you":
         return
-    wanted = int(right["const"])
+    wanted = int(right["const"]) if key == "attackers_this_turn" else min(int(right["const"]), 1)
     if wanted <= 0:
         return
 
