@@ -1,0 +1,23 @@
+{
+  "card": {
+    "id": "aether_snap",
+    "name": "Aether Snap",
+    "oracle_text": "Remove all counters from all permanents and exile all tokens.",
+    "mana_cost": "{3}{B}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "spell_effects": [
+      {
+        "op": "remove_counters",
+        "all_kinds": true,
+        "objects": {"zone": "battlefield", "controller": "any", "count": "all"}
+      },
+      {
+        "op": "exile",
+        "objects": {"zone": "battlefield", "controller": "any", "is_token": true, "count": "all"}
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard", "battlefield_count": 32, "opponent_battlefield_count": 6}
+}

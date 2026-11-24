@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "caldaia_guardian",
+    "name": "Caldaia Guardian",
+    "oracle_text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.\nBlitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+    "mana_cost": "{3}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "evoke": "{2}{G}",
+    "evoke_label": "blitz",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.",
+        "trigger": {
+          "event": "creature_dies",
+          "controller": "you",
+          "filter": {
+            "mana_value": {"op": ">=", "value": {"const": 4}}
+          }
+        },
+        "effects": [
+          {"op": "create_token", "token": "citizen_1_1_gw", "amount": {"const": 2}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Blitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self",
+          "condition": {"evoked": true}
+        },
+        "effects": [
+          {"op": "grant_keyword", "keyword": "haste", "duration": "permanent", "objects": {"self_only": true}},
+          {"op": "grant_ability", "ability": 0, "duration": "permanent", "objects": {"self_only": true}},
+          {"op": "delay", "step": "end_step", "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]}
+        ]
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, draw a card.",
+        "trigger": {"event": "dies", "source": "self", "controller": "any"},
+        "effects": [{"op": "draw", "amount": {"const": 1}, "player": "you"}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
