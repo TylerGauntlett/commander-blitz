@@ -606,6 +606,8 @@ SELECTORS: dict[str, Entry] = {
     "not_types": ("Has none of these card types (\"noncreature\").", None),
     "object_kind": ("Restrict to cards, tokens, spells or abilities.", None),
     "optional": ("Exactly N, or none at all (\"you may\").", None),
+    "one_of_each_card_type": ("Beside `count: \"any\"`: up to one card of each card type, a multi-typed card filling one type of the chooser's assignment; never on a declared target.",
+                              "One card of each card type — `one_of_each_card_type`"),
     "or_planeswalkers": ("With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle).",
                          '"Attacks **you**" is not "attacks you and/or your planeswalkers"'),
     "owner": ("Owned by `you`/`opponent`/`any` or a player spec.", None),

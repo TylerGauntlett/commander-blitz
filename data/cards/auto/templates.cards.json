@@ -133633,6 +133633,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "gorged",
+              "objects": {
+                "count": "any",
+                "one_of_each_card_type": true,
+                "player": {
+                  "binding": "defender"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "gorged"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "grime_gorger",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{G}",
+      "name": "Grime Gorger",
+      "oracle_text": "Menace\nWhenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "discard": 1,
             "mana": "{1}",

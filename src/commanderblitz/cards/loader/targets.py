@@ -935,6 +935,13 @@ def _compile_target(
         )
     else:
         validate_selector(model.selector, label)
+    if "one_of_each_card_type" in model.selector:
+        # Staged by `pick_from_pool` on resolution; a declared target is chosen
+        # by `targeting` on the cast line, which never reads it.
+        raise DslError(
+            f"{label}: 'one_of_each_card_type' constrains a choice made on "
+            f"resolution and means nothing on a declared target"
+        )
     controller_clause = model.selector.get("controller")
     if (
         # `"any"` is a *target* word, not a player spec: `_player_allowed`

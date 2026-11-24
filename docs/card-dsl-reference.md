@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 188 |
-| [Selectors](#selectors) | 82 |
+| [Selectors](#selectors) | 83 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
@@ -293,6 +293,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_types` | Has none of these card types ("noncreature"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `object_kind` | Restrict to cards, tokens, spells or abilities. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `one_of_each_card_type` | Beside `count: "any"`: up to one card of each card type, a multi-typed card filling one type of the chooser's assignment; never on a declared target. | [One card of each card type — one_of_each_card_type](card-dsl-cookbook.md#one-card-of-each-card-type--one_of_each_card_type) |
 | `optional` | Exactly N, or none at all ("you may"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |

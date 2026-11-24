@@ -118402,12 +118402,12 @@
     },
     "Grime Gorger": {
       "edhrec_rank": 21457,
-      "gate": "template",
+      "gate": null,
       "name": "Grime Gorger",
-      "reason": "no template for: Whenever this creature attacks, exile up to one card of each card type from defending play",
+      "reason": "",
       "scryfall_id": "e72d9121-fd09-4035-bb3b-0eb6241107e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grimgrin, Corpse-Born": {

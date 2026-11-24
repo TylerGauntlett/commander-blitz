@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**544 cards** blocked by **457** capabilities.
+**543 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -342,7 +342,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [not-shares-a-creature-type-with](#not-shares-a-creature-type-with) | 1 | 4503 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
-| [one-of-each-card-type](#one-of-each-card-type) | 1 | 21457 | selector |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
 | [one-target-per-player](#one-target-per-player) | 1 | 21263 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -5872,20 +5871,6 @@ Blocks **1** card.
 
 - **Zinnia, Valley's Voice** (rank 6566) — `zinnia_valley_s_voice`
   - Creature spells you cast gain offspring {2} as you cast them. (You may pay an additional {2} as you cast a creature spell. If you do, when that creature enters, create a 1/1 token copy of it.)
-
-</details>
-
-## one-of-each-card-type
-
-Blocks **1** card.
-
-- **(selector)** a choice over cards in a zone constrained to 'up to one card of each card type': the chosen set must be assignable so that no card type (artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, sorcery) is represented by more than one chosen card, so a multi-typed card (artifact creature) uses up every type it has; here over the defending player's graveyard, exiled with an `as` binding whose count feeds add_counters on self
-  <br>Why the existing vocabulary won't do: search_zones/exile carry `count` and `distinct_names` but no distinct-card-types constraint (`any_type` there is the mana-spending permission). A for_each over a list of types exiling one card per type is not exact: it lets an artifact creature be taken as the artifact and a second creature card as the creature, exiling more cards (and adding more counters) than the printed card allows
-
-<details><summary>Cards waiting on this</summary>
-
-- **Grime Gorger** (rank 21457) — `grime_gorger`
-  - Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.
 
 </details>
 

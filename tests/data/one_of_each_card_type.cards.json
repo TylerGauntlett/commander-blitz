@@ -1,0 +1,42 @@
+{
+  "_comment": "Shapes for tests/unit/choices/test_one_of_each_card_type.py. t_ooe_gorger is Grime Gorger's attack trigger on a vanilla 3/3 without menace: up to one card of each card type exiled from the defending player's graveyard, a +1/+1 counter for each card exiled this way.",
+  "cards": [
+    {
+      "id": "t_ooe_gorger",
+      "name": "Test Grime Glutton",
+      "oracle_text": "Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Horror"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "effects": [
+            {
+              "op": "exile",
+              "objects": {
+                "zone": "graveyard",
+                "player": {"binding": "defender"},
+                "count": "any",
+                "one_of_each_card_type": true
+              },
+              "as": "gorged"
+            },
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"count": {"binding": "gorged"}},
+              "objects": {"zone": "battlefield", "self_only": true}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

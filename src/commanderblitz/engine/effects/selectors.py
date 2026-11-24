@@ -13,7 +13,7 @@ Two shorthand forms bypass matching entirely:
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping
+from collections.abc import Collection, Generator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import (
@@ -447,6 +447,16 @@ SELECTOR_KEYS = frozenset(
         #: targeted -- `look_at_top` bounds its own from the top of a library --
         #: so the word had to be spelled a second time here rather than reused.
         "optional",
+        #: "Exile **up to one card of each card type** from defending player's
+        #: graveyard" (Grime Gorger). A constraint on the chosen *set*, which no
+        #: per-candidate clause can state: the set is legal when its cards can
+        #: be assigned to card types they have, no type used twice -- a
+        #: bipartite matching (`card_types_assignable`), so an artifact creature
+        #: takes one slot, artifact or creature, at the chooser's assignment.
+        #: Staged by `pick_from_pool` one card at a time, each stage offering
+        #: only the cards that keep the set assignable. Only beside `count:
+        #: "any"`, and never on a declared target.
+        "one_of_each_card_type",
         "chooser",
         "random",
         "target",
@@ -1648,6 +1658,13 @@ def pick_from_pool(
     if count_spec == "all":
         return pool
 
+    if selector.get("one_of_each_card_type"):
+        if chooser is None:
+            chooser = resolve_chooser(ctx, pool, selector.get("chooser", "controller"))
+            if chooser is None:
+                return []
+        return (yield from _pick_one_of_each_card_type(ctx, pool, prompt, purpose, chooser))
+
     # "…put **any number of** creature cards from your hand onto the
     # battlefield."  A free subset: none of them, all of them, or anything
     # between, and the chooser decides.  Neither existing form says it --
@@ -1695,6 +1712,69 @@ def pick_from_pool(
 
     picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked
+
+
+def card_types_assignable(type_sets: Sequence[Collection[Any]]) -> bool:
+    """Whether each card can be given a card type it has, no type given twice.
+
+    "Up to one card of each card type" reads the chosen set, not any one card
+    in it: an artifact creature is *a* card of one type, of the chooser's
+    assignment, so it beside a creature card is legal (the first as the
+    artifact) while it beside an artifact card and a creature card is not --
+    three cards, two types between them. That is an injective assignment of
+    cards to their types, a bipartite matching, found here by augmenting
+    paths (Kuhn). A card with no card type can never be assigned.
+    """
+    holder: dict[Any, int] = {}
+
+    def augment(i: int, seen: set[Any]) -> bool:
+        for t in type_sets[i]:
+            if t in seen:
+                continue
+            seen.add(t)
+            if t not in holder or augment(holder[t], seen):
+                holder[t] = i
+                return True
+        return False
+
+    return all(augment(i, set()) for i in range(len(type_sets)))
+
+
+def _pick_one_of_each_card_type(
+    ctx: EffectContext, pool: list[int], prompt: str, purpose: str, chooser: int
+) -> Generator[Any, list[int], list[int]]:
+    """Stage an "up to one card of each card type" choice one card at a time.
+
+    Each stage offers only the cards that keep the chosen set assignable
+    (`card_types_assignable`), so every set the chooser can reach is legal, and
+    every legal set is reachable, because any subset of an assignable set is
+    assignable and its cards may be picked in any order. Declining a stage ends
+    the choice: "up to" is met at any size. The mirror of `ops_cards`'
+    `_search_distinct`, with a matching in place of a name comparison -- a
+    plain "no type seen twice" filter would refuse an artifact creature after a
+    creature card, and "every type used up" would refuse a creature card after
+    an artifact creature, and both are legal pairs.
+    """
+    def types_of(oid: int) -> frozenset[str]:
+        return frozenset(chars(ctx.state, oid).types)
+
+    picked: list[int] = []
+    chosen_types: list[frozenset[str]] = []
+    remaining = list(pool)
+    while True:
+        remaining = [
+            oid
+            for oid in remaining
+            if oid not in picked and card_types_assignable([*chosen_types, types_of(oid)])
+        ]
+        if not remaining:
+            return picked
+        label = prompt if not picked else f"{prompt} (another card type)"
+        one = yield from ask_objects(ctx, label, remaining, 0, 1, chooser, purpose)
+        if not one:
+            return picked
+        picked.append(one[0])
+        chosen_types.append(types_of(one[0]))
 
 
 def resolve_chooser(ctx: EffectContext, pool: list[int], chooser_spec: Any) -> int | None:
@@ -2206,6 +2286,7 @@ ATTACHED_TO_REFUSED_KEYS = frozenset(
         "count",
         "chooser",
         "optional",
+        "one_of_each_card_type",
         "random",
         "extreme",
         "player",
@@ -2530,6 +2611,22 @@ def validate_selector(selector: Any, where: str) -> None:
             raise DslError(f"{where}: count 'any' is a free choice; it cannot be random")
         if selector.get("chooser") == "none":
             raise DslError(f"{where}: count 'any' needs a chooser; use 'all' for no choice")
+    if "one_of_each_card_type" in selector:
+        # The constraint stages a choice, so it needs one to stage: "all" and a
+        # fixed number would take cards nobody assigned to a type. "Up to one of
+        # each" bounds the set by itself, which is `"any"` -- and `"any"` is
+        # already refused random or chooserless above.
+        if selector["one_of_each_card_type"] is not True:
+            raise DslError(
+                f"{where}: 'one_of_each_card_type' is true or absent, got "
+                f"{selector['one_of_each_card_type']!r}"
+            )
+        if count != "any":
+            raise DslError(
+                f"{where}: 'one_of_each_card_type' is 'up to one card of each card "
+                f"type', a free choice bounded by the types; it needs count 'any', "
+                f"got {count!r}"
+            )
     if selector.get("optional"):
         # "Exactly N, or none" is only a sentence when there is an N. `"all"`
         # is mandatory by definition and `"any"` already reaches down to zero,

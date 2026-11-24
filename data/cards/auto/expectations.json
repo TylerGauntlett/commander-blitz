@@ -11293,6 +11293,10 @@
     },
     "zone": "battlefield"
   },
+  "grime_gorger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grimoire_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"

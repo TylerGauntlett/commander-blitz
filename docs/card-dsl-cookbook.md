@@ -14022,6 +14022,46 @@ for a permanent on the battlefield — and `matches` reads derived characteristi
 for the one and printed ones for the other. Whatever it was meant to narrow
 belongs in a branch, so the loader says so rather than picking a reading.
 
+## One card of each card type — `one_of_each_card_type`
+
+Grime Gorger — *"Whenever this creature attacks, exile up to one card of each
+card type from defending player's graveyard. Put a +1/+1 counter on this
+creature for each card exiled this way."*
+
+```jsonc
+"trigger": { "event": "attacks", "source": "self" },
+"effects": [
+  { "op": "exile", "as": "gorged",
+    "objects": { "zone": "graveyard", "player": { "binding": "defender" },
+                 "count": "any", "one_of_each_card_type": true } },
+  { "op": "add_counters", "counter": "+1/+1",
+    "amount": { "count": { "binding": "gorged" } },
+    "objects": { "zone": "battlefield", "self_only": true } } ]
+```
+
+The constraint is on the chosen **set**: it is legal when each chosen card can
+be given a card type it has, no type given twice — a bipartite matching,
+`selectors.card_types_assignable`. A multi-typed card is one card of one type,
+at the chooser's assignment, so an artifact creature beside a creature card is
+legal (it is the artifact) and beside an artifact card *and* a creature card is
+not.
+
+`pick_from_pool` stages it one card at a time, each stage offering only the
+cards that keep the set assignable; declining a stage ends the choice. Any
+subset of a legal set is legal, so every legal set is reachable in any order.
+It reaches every op that resolves its `objects` through `choose_objects`.
+
+- It sits beside `count: "any"` only — the types bound the set. `"all"`, a
+  number, `random` and `chooser: "none"` are load errors, and so is the key on a
+  declared target, which `targeting` chooses on the cast line without reading it.
+- **The near miss is a `for_each` over the card types**, exiling one card per
+  type: it takes an artifact creature as the artifact and another creature card
+  as the creature beside an artifact card, three cards for two types. Filtering
+  out every type a chosen card has errs the other way and refuses the legal
+  artifact creature and creature pair.
+- `distinct_names` on the search ops is the same staging with a name
+  comparison in place of the matching.
+
 ## "Target opponent and up to one target creature they control"
 
 Cloak and Dagger, Entwined. One target spec reading another spec's answer:
