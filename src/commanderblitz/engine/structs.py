@@ -1219,6 +1219,12 @@ class NextSpellDiscount:
     spells of any of those card types; empty, it is the next spell of any kind
     (Mutated Cultist). Read by `cost_reduction.cost_reduction`, spent by
     `temp_effects.consume_next_spell_discounts` off the cast.
+
+    ``next_spell`` false is the every-spell form: "instant and sorcery spells
+    you cast this turn cost {1} less" (Spellbinding Soprano) is the same row,
+    owned by the player for the same reason -- the attacking creature may die
+    in combat and the discount outlives it (611.2a) -- but no cast spends it,
+    and it goes at cleanup with the rest.
     """
 
     #: Whose next spell is cheaper.
@@ -1227,6 +1233,9 @@ class NextSpellDiscount:
     amount: int
     #: The card types it covers (any of them); empty for every spell.
     types: tuple[str, ...] = ()
+    #: Single-use: the first matching spell its player casts removes it.
+    #: False, it discounts every matching spell until cleanup.
+    next_spell: bool = True
     #: What installed it, for the log.
     source: int | None = None
 

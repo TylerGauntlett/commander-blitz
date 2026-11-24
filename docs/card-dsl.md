@@ -3765,9 +3765,25 @@ filter misses leaves it waiting, and whatever is unspent goes at cleanup. Two
 discounts waiting for the same spell both apply. Generic only, like every
 reduction; zero installs nothing.
 
+`every_spell: true` makes it every matching spell for the rest of the turn
+rather than the next one — the timed form of the `spell_cost_reduction` static:
+
+```jsonc
+// Spellbinding Soprano — "Whenever this creature attacks, instant and sorcery
+//  spells you cast this turn cost {1} less to cast."
+{ "op": "next_spell_cost_reduction", "every_spell": true,
+  "types": ["Instant", "Sorcery"], "amount": { "const": 1 } }
+```
+
+The same player-owned row with `next_spell` false: no cast spends it, it
+outlives the permanent that installed it (611.2a), and it goes at cleanup. The
+loader refuses a non-boolean `every_spell`.
+
 The near misses are the continuous ones: a card's `cost_reduction` and the
 `spell_cost_reduction` static recount the board each time a spell is priced
-and discount every matching spell while their source stands.
+and discount every matching spell while their source stands. Granting the
+static to the source with a `duration` is the wrong reading of "spells you cast
+this turn": it ends when the source leaves the battlefield.
 
 ### A reduction that reads energy paid or lost
 

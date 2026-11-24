@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**545 cards** blocked by **459** capabilities.
+**544 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -444,7 +444,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [time-counters-suspend-exiled-card](#time-counters-suspend-exiled-card) | 1 | 10715 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
-| [timed-spell-cost-reduction](#timed-spell-cost-reduction) | 1 | 18879 | op |
 | [timed-spell-type-cast-lock](#timed-spell-type-cast-lock) | 1 | 2008 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
@@ -7335,20 +7334,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## timed-spell-cost-reduction
-
-Blocks **1** card.
-
-- **(op)** a one-shot op installed by a resolving trigger that discounts EVERY spell its player casts for the rest of the turn (not just the next one) by a flat generic amount, narrowed by card types (here Instant or Sorcery), written to the player's timed table with duration this_turn so it outlives the source -- the timed form of the spell_cost_reduction static, as grant_flash_permission is of cast_as_though_flash
-  <br>Why the existing vocabulary won't do: next_spell_cost_reduction (amount, player, types) is single-use: the player's next matching cast spends it, so a second instant this turn would pay full price. The spell_cost_reduction static covers every spell but lasts only while a permanent carries it; granting it to the Soprano with grant_ability duration this_turn would end the discount when the attacking creature dies in combat, which the printed effect survives (611.2a)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spellbinding Soprano** (rank 18879) — `spellbinding_soprano`
-  - Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.
 
 </details>
 

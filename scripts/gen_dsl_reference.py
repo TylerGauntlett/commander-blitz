@@ -437,7 +437,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                  None),
     "grant_flash_permission": ("Players", "A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash.",
                                None),
-    "next_spell_cost_reduction": ("Players", "A player's next spell of the given types this turn costs N less, N read as it resolves.",
+    "next_spell_cost_reduction": ("Players", "A player's next spell of the given types this turn (or, with `every_spell`, each of them) costs N less, N read as it resolves.",
                                   "The next spell costs less"),
     "win_game": ("Players", "A player wins the game.", '"You win the game"'),
     "no_maximum_hand_size": ("Players", "A player has no maximum hand size for the rest of the game.",

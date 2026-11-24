@@ -258002,12 +258002,12 @@
     },
     "Spellbinding Soprano": {
       "edhrec_rank": 18879,
-      "gate": "template",
+      "gate": null,
       "name": "Spellbinding Soprano",
-      "reason": "no template for: Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} les",
+      "reason": "",
       "scryfall_id": "248d71f9-89ef-492e-a854-a890f7d91ef8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spellbook": {

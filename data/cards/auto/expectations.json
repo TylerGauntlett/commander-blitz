@@ -24154,6 +24154,10 @@
   "spell_swindle": {
     "zone": "graveyard"
   },
+  "spellbinding_soprano": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spellscorn_coven_take_it_back": {
     "battlefield_count": 33,
     "hand_size": {

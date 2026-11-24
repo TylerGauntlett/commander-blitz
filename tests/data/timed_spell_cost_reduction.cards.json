@@ -1,0 +1,32 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_timed_spell_cost_reduction.py. t_soprano is Spellbinding Soprano's attack trigger without encore: instant and sorcery spells you cast this turn cost {1} less.",
+  "cards": [
+    {
+      "id": "t_soprano",
+      "name": "Test Soprano",
+      "oracle_text": "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Bard"],
+      "power": 2,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "effects": [
+            {
+              "op": "next_spell_cost_reduction",
+              "every_spell": true,
+              "types": ["Instant", "Sorcery"],
+              "amount": {"const": 1}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

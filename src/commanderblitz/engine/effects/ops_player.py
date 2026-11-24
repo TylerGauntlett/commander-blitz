@@ -242,12 +242,22 @@ def op_next_spell_cost_reduction(ctx: EffectContext, spec: Mapping[str, Any]):
     player's one-shot table (`structs.NextSpellDiscount`), spent by their next
     cast of ``types`` (any of them; omitted, any spell) and gone at cleanup.
     Zero installs nothing. Generic only, like every reduction.
+
+    ``every_spell`` makes it the timed form of the `spell_cost_reduction`
+    static: "Whenever this creature attacks, instant and sorcery spells you
+    cast this turn cost {1} less to cast" (Spellbinding Soprano). The same row,
+    not spent by any cast, so every matching spell for the rest of the turn is
+    cheaper -- and owned by the player, so it outlives the creature (611.2a),
+    which a `grant_ability` of the static to the source would not.
     """
 
     amount = max(0, int(evaluate_value(ctx, spec["amount"])))
     types = tuple(str(t) for t in spec.get("types") or ())
+    next_spell = not spec.get("every_spell", False)
     for pid in select_players(ctx, spec.get("player", "you")):
-        grant_next_spell_discount(ctx.state, pid, amount, types=types, source=ctx.source_oid)
+        grant_next_spell_discount(
+            ctx.state, pid, amount, types=types, next_spell=next_spell, source=ctx.source_oid
+        )
     yield from ()
 
 
