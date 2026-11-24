@@ -387,7 +387,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
-| [rekindling-phoenix-elemental-token](#rekindling-phoenix-elemental-token) | 1 | 11540 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -454,6 +453,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
+| [trigger-without-legal-target-removed](#trigger-without-legal-target-removed) | 1 | 11540 | engine |
 | [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
@@ -6518,20 +6518,6 @@ Blocks **1** card.
 
 </details>
 
-## rekindling-phoenix-elemental-token
-
-Blocks **1** card.
-
-- **(token)** a 0/1 red Elemental creature token with "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
-  <br>Why the existing vocabulary won't do: token_ids has red Elementals only at 1/1 and larger (elemental_1_1_r, elemental_1_1_r_haste) and no 0/1 Elemental at all; none carries the upkeep sacrifice-and-reanimate trigger. create_token takes power/toughness overrides but no abilities, and creating a vanilla token then grant_ability-ing the trigger onto it would be a nearly-right substitute the notes forbid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rekindling Phoenix** (rank 11540) — `rekindling_phoenix`
-  - When this creature dies, create a 0/1 red Elemental creature token with "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
-
-</details>
-
 ## remove-all-counters
 
 Blocks **1** card.
@@ -7475,6 +7461,20 @@ Blocks **1** card.
 
 - **Wrenn and Seven** (rank 2396) — `wrenn_and_seven`
   - −3: Create a green Treefolk creature token with reach and "This token's power and toughness are each equal to the number of lands you control."
+
+</details>
+
+## trigger-without-legal-target-removed
+
+Blocks **1** card.
+
+- **(engine)** 603.3d: a triggered ability with a required target and no legal target when it would be put on the stack is removed from the stack and does nothing. The token's "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn." must leave the token in play on an upkeep with no Rekindling Phoenix card in its controller's graveyard
+  <br>Why the existing vocabulary won't do: Everything else composes and was checked in a game: an upkeep trigger, a card_in_graveyard target with selector name "Rekindling Phoenix", sacrifice self_only, return_from_graveyard and grant_keyword haste until_end_of_turn (Admiral Brass's shape) return the Phoenix with haste. But stack.push_triggered_ability pushes the trigger with empty targets when _choose_trigger_targets finds no option, and _resolve_ability's filter_legal treats an empty target list as legal, so the untargeted sacrifice still runs and the token sacrifices itself for nothing every upkeep. A trigger condition requiring the Phoenix in the graveyard would mask it, but that is an intervening-if the card does not print. Once the engine drops a required-target trigger with no target, the token is a Tier 0 data entry (elemental_0_1_r_rekindle_phoenix) and the card a plain dies trigger
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rekindling Phoenix** (rank 11540) — `rekindling_phoenix`
+  - When this creature dies, create a 0/1 red Elemental creature token with "At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn."
 
 </details>
 
