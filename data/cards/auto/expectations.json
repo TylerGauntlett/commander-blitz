@@ -18326,6 +18326,10 @@
     },
     "zone": "battlefield"
   },
+  "orzhov_advokist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orzhov_basilica": {
     "battlefield_count": 32,
     "hand_size": {

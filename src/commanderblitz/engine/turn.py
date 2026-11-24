@@ -509,6 +509,10 @@ def _start_turn(state: GameState, player: PlayerState) -> None:
     # "That player can't attack you … during their next turn" (Willie
     # Lumpkin, Postman): the same "next turn" of the same player, armed here.
     arm_attack_restrictions(state, player.pid)
+    # "Creatures that player controls can't attack you … until your next
+    # turn" (Orzhov Advokist): the same clock, keyed to the effect's
+    # controller rather than to the attacker it binds.
+    clear_attack_restrictions(state, "until_your_next_turn", player.pid)
     # "Until your next turn, up to one target creature gets -2/-1." (Liliana,
     # the Last Hope.) The pumps, keyword grants, animations and ability locks a
     # loyalty ability stretched past cleanup -- the same clock as the tables

@@ -800,7 +800,10 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     ``duration``  ``this_turn``, ``this_combat`` or ``attacker_next_turn``
                   ("…during their next turn", Willie Lumpkin, Postman: pending
                   until the attacker's next untap step, gone at that turn's
-                  cleanup). Required, not defaulted: see
+                  cleanup), or ``until_your_next_turn`` ("…until your next
+                  turn", Orzhov Advokist: in force from resolution until the
+                  effect controller's next untap step, whoever's turns come
+                  in between). Required, not defaulted: see
                   `structs.AttackRestriction`.
 
     Both selectors are full player specs and may name several players, in which
@@ -894,6 +897,7 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
                 source=ctx.source_oid,
                 planeswalkers=planeswalkers,
                 walker_subtypes=walker_subtypes,
+                player=ctx.controller,
             )
     yield from ()
 

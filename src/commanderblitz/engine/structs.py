@@ -254,8 +254,17 @@ class TempEffect:
 #: every other duration in the DSL is a bare string a card file writes.
 #: ``attacker_next_turn`` is "that player can't attack you **during their next
 #: turn**" (Willie Lumpkin, Postman): pending until the attacker's next untap
-#: step, in force for that turn, gone at its cleanup.
-ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn")
+#: step, in force for that turn, gone at its cleanup. ``until_your_next_turn``
+#: is "creatures that player controls can't attack you … **until your next
+#: turn**" (Orzhov Advokist): in force from resolution, keyed to the effect's
+#: controller (``AttackRestriction.player``) and cleared in that player's untap
+#: step, however many turns -- extra ones included -- come in between.
+ATTACK_RESTRICTION_DURATIONS = (
+    "this_turn",
+    "this_combat",
+    "attacker_next_turn",
+    "until_your_next_turn",
+)
 
 #: The durations a control change can carry -- Captivating Vampire's steal, Act
 #: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
@@ -361,6 +370,11 @@ class AttackRestriction:
     #: the player rather than projected as a number, for detain's reason: an
     #: elimination or an extra turn moves "their next turn".
     in_force_turn: int | None = None
+    #: An ``until_your_next_turn`` restriction's clock: the player whose next
+    #: turn ends it -- the effect's controller, not ``attacker`` -- cleared by
+    #: `temp_effects.clear_attack_restrictions` in their untap step. ``None``
+    #: for every other duration.
+    player: int | None = None
 
     def in_force(self, turn: int) -> bool:
         """Does this restriction bite during ``turn``?"""
@@ -377,6 +391,7 @@ class AttackRestriction:
             "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
             "in_force_turn": self.in_force_turn,
+            "player": self.player,
         }
 
 

@@ -194982,12 +194982,12 @@
     },
     "Orzhov Advokist": {
       "edhrec_rank": 3290,
-      "gate": "template",
+      "gate": null,
       "name": "Orzhov Advokist",
-      "reason": "no template for: At the beginning of your upkeep, each player may put two +1/+1 counters on a creature they",
+      "reason": "",
       "scryfall_id": "b94f2c12-a946-4eb2-aa9c-5034b4628680",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orzhov Basilica": {

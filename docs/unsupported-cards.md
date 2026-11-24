@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**536 cards** blocked by **451** capabilities.
+**535 cards** blocked by **450** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -105,7 +105,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [assassin-token](#assassin-token) | 1 | 2604 | token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
-| [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
 | [attacked-players-binding](#attacked-players-binding) | 1 | 5087 | trigger_event |
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
@@ -2487,20 +2486,6 @@ Blocks **1** card.
 
 - **Cass, Hand of Vengeance** (rank 10726) — `cass_hand_of_vengeance`
   - Whenever Cass or another creature you control dies, if it was enchanted or equipped, return any number of Aura cards that were attached to it from your graveyard to the battlefield attached to target creature, then attach any number of Equipment that were attached to it to that creature.
-
-</details>
-
-## attack-restriction-until-your-next-turn
-
-Blocks **1** card.
-
-- **(op)** an `until_your_next_turn` duration on the `cant_attack_player` op's player form (`attacker` = the player bound by the enclosing for_each_player/may, `defender: "you"`, `planeswalkers: true`): the prohibition holds from resolution until the effect controller's next turn begins, across however many turns other players take in between, and ends at the start of the controller's next turn even if no other player has had a turn
-  <br>Why the existing vocabulary won't do: cant_attack_player's player form takes only ATTACK_RESTRICTION_DURATIONS = this_turn, this_combat, attacker_next_turn. attacker_next_turn is the nearest, but it is keyed on the ATTACKER's next turn: an opponent who takes an extra turn gets a second turn free of the lock, and if the Advokist's controller takes an extra turn first the lock wrongly persists into the opponent's next turn after the controller's next turn has started. The objects form only has while_counter and next_combat. The `cant_attack_you` static lasts while its source is on the battlefield, not until your next turn, and cannot be keyed on which players chose to take the counters. The `until_your_next_turn` delayed duration exists only for delayed triggers. The rest of the sentence (for_each_player + may with player + add_counters on a chosen creature they control) appears expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orzhov Advokist** (rank 3290) — `orzhov_advokist`
-  - At the beginning of your upkeep, each player may put two +1/+1 counters on a creature they control. If a player does, creatures that player controls can't attack you or planeswalkers you control until your next turn.
 
 </details>
 

@@ -287,7 +287,7 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # Inert either way -- a dead attacker controls nothing and a dead defender is
     # not in `alive()` -- so this is hygiene, not a fix.
     state.attack_restrictions = [
-        r for r in state.attack_restrictions if pid not in (r.attacker, r.defender)
+        r for r in state.attack_restrictions if pid not in (r.attacker, r.defender, r.player)
     ]
     # This one is not hygiene. "Until your next turn" is cleared in that
     # player's untap step, and an eliminated player never has another one -- so
