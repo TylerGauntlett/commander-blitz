@@ -94,7 +94,7 @@ each heading; this table is generated from them.
 | [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | Distributing counters from a spell | 0 |
-| [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | nothing | 0 |
+| [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | nothing | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | nothing | 0 |
 | [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
@@ -107,8 +107,8 @@ each heading; this table is generated from them.
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
+| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 1 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
-| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 0 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
@@ -152,8 +152,6 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander).
-
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
@@ -168,8 +166,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 10. [The Ring tempts you](#the-ring-tempts-you) — M, high
 11. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
 12. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-13. [Difficulty](#difficulty) — S, medium
-14. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+13. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+14. [Difficulty](#difficulty) — S, medium
 15. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 16. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
 17. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
@@ -250,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
 - [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
+- [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -4385,7 +4384,7 @@ whole-game test able to draw the deck.
 
 ### Cabaretti Cacophony (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
 
 #### Today
 
@@ -4396,6 +4395,14 @@ coming-soon shell on the shelf: its row `ncc_cabaretti_cacophony` is in
 `python scripts/sync_precons.py --missing ncc_cabaretti_cacophony` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Two cards are left. Cabaretti Courtyard is expressible but refused by gate 4
+of `cards.authoring.verify`, which lets a permanent end only on the
+battlefield while the land's own enters trigger sacrifices it; admitting it
+is the owner's call, held by [self-sacrificing-lands](self-sacrificing-lands.md).
+Zurzoth, Chaos Rider waits on a capability no item covers yet, named by its
+gap record: a batched "one or more Devils you control attack one or more
+players" trigger that binds the players attacked (`attacked_players_binding`).
 
 #### The change
 

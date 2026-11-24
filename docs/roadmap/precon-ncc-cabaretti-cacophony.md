@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [self-sacrificing-lands]
+status: proposed
 rank: 87
 ---
 
@@ -19,6 +19,14 @@ coming-soon shell on the shelf: its row `ncc_cabaretti_cacophony` is in
 `python scripts/sync_precons.py --missing ncc_cabaretti_cacophony` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Two cards are left. Cabaretti Courtyard is expressible but refused by gate 4
+of `cards.authoring.verify`, which lets a permanent end only on the
+battlefield while the land's own enters trigger sacrifices it; admitting it
+is the owner's call, held by [self-sacrificing-lands](self-sacrificing-lands.md).
+Zurzoth, Chaos Rider waits on a capability no item covers yet, named by its
+gap record: a batched "one or more Devils you control attack one or more
+players" trigger that binds the players attacked (`attacked_players_binding`).
 
 ## The change
 
