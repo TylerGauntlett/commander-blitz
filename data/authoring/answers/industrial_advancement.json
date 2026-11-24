@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "industrial_advancement",
+    "name": "Industrial Advancement",
+    "oracle_text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+    "mana_cost": "{3}{R}",
+    "types": ["Enchantment"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Sacrifice a creature to look at the top X cards of your library?",
+            "condition": {"exists": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}},
+            "effects": [
+              {
+                "op": "sacrifice",
+                "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": 1},
+                "snapshot": "sacrificed"
+              },
+              {
+                "op": "look_at_top",
+                "player": "you",
+                "amount": {"mana_value_of": {"binding": "sacrificed"}},
+                "objects": {"types": ["Creature"], "count": 1, "optional": true},
+                "destination": "battlefield",
+                "rest_to_bottom": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
