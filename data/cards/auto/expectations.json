@@ -22605,6 +22605,10 @@
     },
     "zone": "battlefield"
   },
+  "sever_the_bloodline": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "severed_legion": {
     "zone": "battlefield"
   },

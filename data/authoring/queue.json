@@ -241552,12 +241552,12 @@
     },
     "Sever the Bloodline": {
       "edhrec_rank": 17457,
-      "gate": "template",
+      "gate": null,
       "name": "Sever the Bloodline",
-      "reason": "no template for: Exile target creature and all other creatures with the same name as that creature",
+      "reason": "",
       "scryfall_id": "a2d4152d-c128-453c-86f5-f2ebcfd48b98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Severance Priest": {
