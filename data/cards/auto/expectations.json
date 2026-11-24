@@ -15502,6 +15502,15 @@
     },
     "zone": "graveyard"
   },
+  "maestros_confluence": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "magefire_wings": {
     "zone": [
       "battlefield",
@@ -23545,6 +23554,14 @@
   },
   "skyclave_relic": {
     "battlefield_count": 35,
+    "zone": "battlefield"
+  },
+  "skyclave_shade": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "skycloud_expanse": {

@@ -164232,12 +164232,12 @@
     },
     "Maestros Confluence": {
       "edhrec_rank": 14902,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Maestros Confluence",
-      "reason": "opponent battlefield is 6, expected 5",
+      "reason": "",
       "scryfall_id": "877cfc63-54d9-4288-9121-601f344a4afa",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Diabolist": {
@@ -250482,12 +250482,12 @@
     },
     "Skyclave Shade": {
       "edhrec_rank": 14054,
-      "gate": "template",
+      "gate": null,
       "name": "Skyclave Shade",
-      "reason": "no template for: Kicker {2}{B}",
+      "reason": "",
       "scryfall_id": "b4bdcf1d-3387-4e21-9159-9294af1ab0b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Shadowcat": {

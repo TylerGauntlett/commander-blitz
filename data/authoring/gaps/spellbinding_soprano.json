@@ -1,0 +1,18 @@
+{
+  "card_id": "spellbinding_soprano",
+  "name": "Spellbinding Soprano",
+  "oracle_text": "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.\nEncore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": [
+    "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "timed_spell_cost_reduction",
+      "kind": "op",
+      "what": "a one-shot op installed by a resolving trigger that discounts EVERY spell its player casts for the rest of the turn (not just the next one) by a flat generic amount, narrowed by card types (here Instant or Sorcery), written to the player's timed table with duration this_turn so it outlives the source -- the timed form of the spell_cost_reduction static, as grant_flash_permission is of cast_as_though_flash",
+      "why_existing_wont_do": "next_spell_cost_reduction (amount, player, types) is single-use: the player's next matching cast spends it, so a second instant this turn would pay full price. The spell_cost_reduction static covers every spell but lasts only while a permanent carries it; granting it to the Soprano with grant_ability duration this_turn would end the discount when the attacking creature dies in combat, which the printed effect survives (611.2a)"
+    }
+  ],
+  "closest_existing": ["next_spell_cost_reduction", "spell_cost_reduction", "grant_flash_permission"],
+  "confidence": "high"
+}
