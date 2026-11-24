@@ -1170,6 +1170,7 @@ class Game:
             gift_to=action.gift_to,
             evoked=action.evoked,
             warped=action.warp is not None,
+            blitzed=action.blitzed,
             impending=action.impending,
             flashback=action.flashback,
             granted_escape=action.escape is not None,

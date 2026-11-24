@@ -97,6 +97,7 @@ from .carddef import (
     BASIC_LAND_TYPE_COLORS,
     Ability,
     CardDef,
+    rules_ability,
     ward_ability,
 )
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
@@ -1703,6 +1704,16 @@ def granted_abilities(state: GameState, oid: int):
             continue
         source = state.objects.get(temp.source)
         if source is None:
+            continue
+        if temp.ability_index < 0:
+            # One the rules supplied rather than a card's pool -- a blitzed
+            # permanent's "When this creature dies, draw a card." when the
+            # blitz was granted (`carddef.BLITZ_DIES_DRAW`). Answered off the
+            # intern table: a negative index into a card's pool would read it
+            # from the end, a different ability and silently so.
+            ability = rules_ability(temp.ability_index)
+            if ability is not None:
+                yield source, ability
             continue
         card = state.card_of(source)
         if temp.ability_index < len(card.grantable_abilities):

@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 113 |
-| [Player-wide statics](#player-wide-statics) | 51 |
+| [Static effects](#static-effects) | 114 |
+| [Player-wide statics](#player-wide-statics) | 52 |
 | [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
@@ -652,6 +652,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `freeze_opponent_lands` | yes |  | The player's lands don't untap during their untap step. | [Static abilities](card-dsl.md#static-abilities) |
 | `goaded` |  | yes | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `grant_blitz` | yes |  | Matching creature spells the player casts have blitz at their own mana cost. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `grant_exiled_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` exiled with this permanent. | [grant_exiled_abilities — abilities lent by the cards exiled with a permanent](card-dsl-cookbook.md#grant_exiled_abilities--abilities-lent-by-the-cards-exiled-with-a-permanent) |
 | `grant_graveyard_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` in the controller's graveyard. | [grant_graveyard_abilities — abilities lent by the cards in your graveyard](card-dsl-cookbook.md#grant_graveyard_abilities--abilities-lent-by-the-cards-in-your-graveyard) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
@@ -740,6 +741,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `extra_land_drops` | The player may play N additional lands each turn. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `free_cast_permission` | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
 | `freeze_opponent_lands` | The player's lands don't untap during their untap step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `grant_blitz` | Matching creature spells the player casts have blitz at their own mana cost. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `grant_miracle` | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_pay_generic_with` | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
 | `grant_warp` | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |

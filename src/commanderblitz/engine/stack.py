@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 from .actions import DecisionOption, PendingDecision
 from .carddef import (
     BESTOW_TARGET,
+    BLITZ_DIES_DRAW,
     MUTATE_TARGET,
     Ability,
     CardDef,
@@ -45,7 +46,14 @@ from .effects.selectors import select_players
 from .effects.values import evaluate_value
 from .enums import DecisionKind, Step, Zone
 from .events import EventType
-from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
+from .primitives import (
+    attach,
+    attach_to_player,
+    grant_ability,
+    grant_keyword,
+    merge_permanents,
+    shuffle_library,
+)
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
 from .targeting import (
     describe_ref,
@@ -82,6 +90,7 @@ def push_spell(
     gift_to: int | None = None,
     evoked: bool = False,
     warped: bool = False,
+    blitzed: bool = False,
     impending: bool = False,
     flashback: bool = False,
     granted_escape: bool = False,
@@ -178,6 +187,7 @@ def push_spell(
         gift_to=gift_to,
         evoked=evoked,
         warped=warped,
+        blitzed=blitzed,
         impending=impending,
         fused=fused,
         bestowed=bestowed,
@@ -1175,6 +1185,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         card,
         enters_tapped=item.enters_tapped,
         warped=item.warped,
+        blitzed=item.blitzed,
         exiles_instead=item.exiles_instead,
         flashback=item.flashback,
     )
@@ -1228,6 +1239,7 @@ def _place_after_resolution(
     *,
     enters_tapped: bool = False,
     warped: bool = False,
+    blitzed: bool = False,
     exiles_instead: bool = False,
     flashback: bool = False,
 ):
@@ -1516,6 +1528,42 @@ def _place_after_resolution(
                 bindings={"warped": [obj.oid]},
                 source_oid=obj.oid,
                 description=f"Warp ({card.name})",
+                turn=state.turn,
+            )
+        )
+    if blitzed and destination is Zone.BATTLEFIELD:
+        # A **granted** blitz's three riders (702.152a), and like warp's they
+        # are the rule's: the card has blitz only because something else said
+        # so (Henzie "Toolbox" Torre), so it prints none of them. A printed
+        # blitz writes the same three on its own `evoked` enters trigger, and
+        # a card with both is two lines (`casting._cast_options`), each paying
+        # for one set -- never both.
+        #
+        # "It gains haste and 'When this creature dies, draw a card.'" -- gains
+        # for as long as it is this object, after the move for `rebound_by`'s
+        # reason (`reset_permanent_state` would wipe a grant made first). The
+        # draw is the rules' ability (`carddef.BLITZ_DIES_DRAW`), granted the
+        # way a printed one is, so the creature has it and can lose it.
+        grant_keyword(state, obj.oid, "haste", obj.oid, permanent=True)
+        grant_ability(state, obj.oid, BLITZ_DIES_DRAW.index, obj.oid, permanent=True)
+        # "Sacrifice it at the beginning of the next end step." Warp's delay,
+        # scoped through a binding and to the battlefield for warp's reasons:
+        # it names this permanent, and one that already died is not chased.
+        # The sacrifice is the caster's (`controller: "you"`), so a creature
+        # stolen before the end step is not sacrificed by them (701.17a).
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="end_step",
+                controller=controller,
+                effects=(
+                    {
+                        "op": "sacrifice",
+                        "objects": {"binding": "blitzed", "zone": "battlefield"},
+                    },
+                ),
+                bindings={"blitzed": [obj.oid]},
+                source_oid=obj.oid,
+                description=f"Blitz ({card.name})",
                 turn=state.turn,
             )
         )

@@ -446,6 +446,48 @@ an artifact card has warp, a red creature card has warp, a blue creature card
 with the same body does not — along with the alternative cost, the exile at the
 next end step, and the cast from exile a turn later.
 
+### `grant_blitz` — blitz at a spell's own mana cost
+
+```jsonc
+{ "kind": "static", "effect": "grant_blitz", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"],
+                      "mana_value": { "op": ">=", "value": 4 } } }
+```
+
+Henzie "Toolbox" Torre: *"Each creature spell you cast with mana value 4 or
+greater has blitz. The blitz cost is equal to its mana cost."* `grant_warp`'s
+shape with **no price to write**: each spell's blitz cost is its own mana cost,
+so the line costs what the printed line costs and `Action.blitzed` is the only
+thing telling them apart. Read by `player_statics.granted_blitz` through
+`casting.blitz_granted` every time `casting._cast_options` builds the lines.
+
+**From any zone**, unlike warp: the sentence is about spells you cast, not cards
+in your hand, so a creature cast from a graveyard or the command zone under
+another permission has blitz too, and a commander still owes its tax. Never
+beside a line that already replaces the mana cost (a free cast, airbend's
+price), and never on a card with X in its cost, whose mana value as a spell is
+not its face's (202.3e).
+
+**The riders are the rule's** (702.152a), applied by
+`stack._place_after_resolution` as the blitzed permanent arrives: haste, the
+rules-supplied `carddef.BLITZ_DIES_DRAW` ("When this creature dies, draw a
+card.") granted through the ordinary `grant_ability` record, and a delayed
+sacrifice at the beginning of the next end step bound to that object. A copy of
+a blitzed spell is blitzed (707.10). The near miss is the printed blitz — the
+`evoke` slot under `evoke_label: "blitz"` with the riders on the card's own
+`evoked` enters trigger — which the creature that is granted blitz has no text
+for.
+
+A card that prints blitz and is granted it has **two blitz lines** when the
+prices differ (always, since the loader refuses an evoke-slot cost equal to the
+mana cost); each pays for one set of riders, never both.
+
+`affects_spells` is required, must name `types: ["Creature"]` — the riders are
+a creature's — and takes `SPELL_FILTER_KEYS` plus Brisela's literal
+`mana_value` comparison (`BLITZ_GRANT_FILTER_KEYS`).
+`tests/unit/keywords/test_grant_blitz.py` pins the price, each rider, the
+scope at the mana value boundary, and the printed-and-granted pair.
+
 ### `grant_miracle` — miracle handed to cards in your hand
 
 ```jsonc
@@ -1965,6 +2007,8 @@ they take `affects_player` instead of `affects` — the full list is
   "affects_spells": { "subtypes": ["Dragon"] } }
 { "kind": "static", "effect": "grant_warp", "affects_player": "you",
   "warp_cost": "{2}{R}", "affects_spells": { "types": ["Artifact"] } }
+{ "kind": "static", "effect": "grant_blitz", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"], "mana_value": { "op": ">=", "value": 4 } } }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }

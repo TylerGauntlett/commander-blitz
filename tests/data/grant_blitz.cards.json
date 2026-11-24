@@ -1,0 +1,63 @@
+{
+  "_comment": "Cards that exist only for the granted-blitz test (tests/unit/keywords/test_grant_blitz.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_blitz_granter` is Henzie \"Toolbox\" Torre's first line on a free body, so the grant can be put on the board without paying for the granter. `t_blitz_brute` is a {3}{R} creature, mana value 4 -- the boundary the filter names; `t_blitz_cub` is a {2}{R} creature one mana value under it; `t_blitz_bonfire` a {4}{R} sorcery, over the line and not a creature.",
+  "cards": [
+    {
+      "id": "t_blitz_granter",
+      "name": "Test Blitz Granter",
+      "oracle_text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "subtypes": ["Devil"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost.",
+          "effect": "grant_blitz",
+          "affects_player": "you",
+          "affects_spells": {
+            "types": ["Creature"],
+            "mana_value": {"op": ">=", "value": 4}
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_blitz_brute",
+      "name": "Test Blitz Brute",
+      "oracle_text": "",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    },
+    {
+      "id": "t_blitz_cub",
+      "name": "Test Blitz Cub",
+      "oracle_text": "",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Cat"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    },
+    {
+      "id": "t_blitz_bonfire",
+      "name": "Test Blitz Bonfire",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{4}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

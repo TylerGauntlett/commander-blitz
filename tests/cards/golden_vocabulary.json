@@ -11,6 +11,21 @@
    "create_token",
    "put_onto_battlefield"
   ],
+  "BLITZ_GRANT_FILTER_KEYS": [
+   "any_types",
+   "colors",
+   "controller",
+   "keywords",
+   "mana_cost",
+   "mana_value",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "subtypes",
+   "supertypes",
+   "types"
+  ],
   "BOAST_CONDITION": {
    "exists": {
     "attacked_this_turn": true,
@@ -398,6 +413,7 @@
    "extra_land_drops",
    "free_cast_permission",
    "freeze_opponent_lands",
+   "grant_blitz",
    "grant_miracle",
    "grant_pay_generic_with",
    "grant_warp",
@@ -655,6 +671,7 @@
    "freeze_opponent_lands",
    "goaded",
    "grant_ability",
+   "grant_blitz",
    "grant_exiled_abilities",
    "grant_graveyard_abilities",
    "grant_keyword",
@@ -883,6 +900,7 @@
    "free_cast_permission",
    "freeze_opponent_lands",
    "grant_ability",
+   "grant_blitz",
    "grant_exiled_abilities",
    "grant_graveyard_abilities",
    "grant_miracle",

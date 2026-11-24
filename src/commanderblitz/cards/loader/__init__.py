@@ -139,6 +139,7 @@ from .vocabulary import (  # noqa: F401
     _FILTER_PLAYERS,
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
+    BLITZ_GRANT_FILTER_KEYS,
     BOAST_CONDITION,
     CAST_LOCK_FILTER_KEYS,
     CAST_ORIGIN_ZONES,
@@ -6177,6 +6178,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.warp_cost).x_count:
             raise DslError(f"{where}: a warp cost with X is not implemented")
+    elif model.effect == "grant_blitz":
+        # "Each creature spell you cast with mana value 4 or greater has blitz.
+        # The blitz cost is equal to its mana cost." Henzie "Toolbox" Torre.
+        # `grant_warp`'s guards, less the price -- the grant prices each spell
+        # at its own mana cost, so there is nothing to write -- and with the
+        # literal `mana_value` comparison the printed filter needs. A grant
+        # with no filter is blitz on every spell in the game.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_blitz filters spells with 'affects_spells', "
+                f"not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(
+                f"{where}: grant_blitz needs 'affects_spells' naming which spells "
+                f"have blitz -- without one every spell in the game has it"
+            )
+        unknown = set(model.affects_spells) - BLITZ_GRANT_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and a caster and no board state; unsupported keys {sorted(unknown)}"
+            )
+        check_literal_mana_value_key(model.affects_spells, f"{where}.affects_spells")
+        if "Creature" not in (model.affects_spells.get("types") or ()):
+            # 702.152a's riders are a creature's -- haste, "when this creature
+            # dies", a sacrifice -- and no printing grants blitz to anything
+            # else. A noncreature spell would load and blitz for its own cost.
+            raise DslError(
+                f"{where}: grant_blitz's 'affects_spells' must name "
+                f"types ['Creature'] -- blitz's riders are a creature's"
+            )
     elif model.effect == "grant_miracle":
         # `grant_warp`'s guards for its reasons: no filter is miracle on every
         # card in every hand rather than the printed "nonland cards", and no

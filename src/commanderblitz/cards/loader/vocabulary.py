@@ -426,6 +426,14 @@ STATIC_EFFECTS = frozenset(
         # by `player_statics.granted_warp_cost` at every cast, so a card drawn
         # after the granter arrived is covered.
         "grant_warp",
+        # "Each creature spell you cast with mana value 4 or greater has
+        # blitz. The blitz cost is equal to its mana cost." Henzie "Toolbox"
+        # Torre. `grant_warp`'s shape with no price to write -- each spell's
+        # blitz cost is its own mana cost -- and riders the rule supplies:
+        # haste, "When this creature dies, draw a card." and a sacrifice at
+        # the next end step (`stack._place_after_resolution`). Read by
+        # `player_statics.granted_blitz` at every cast, from any zone.
+        "grant_blitz",
         # "Nonland cards in your hand have miracle {0}." Molecule Man.
         # `grant_warp`'s shape for the draw-time price: `affects_spells` names
         # the cards and `miracle_cost` the price. Not `grant_warp` or
@@ -1036,6 +1044,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_from_library_top",
         "free_cast_permission",
         "grant_warp",
+        "grant_blitz",
         "grant_miracle",
         "grant_pay_generic_with",
         "granted_alternative_cost",
@@ -1248,6 +1257,15 @@ GRAVEYARD_ORIGIN_ZONES = frozenset(
 #: `player_statics.cast_lock_min_x`. Every other spell filter matches a card
 #: face at a moment when X means something else or nothing.
 CAST_LOCK_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"mana_value"}
+
+#: What a ``grant_blitz`` static's ``affects_spells`` filter may use.
+#:
+#: `SPELL_FILTER_KEYS` with Brisela's literal ``mana_value``: "each creature
+#: spell you cast **with mana value 4 or greater** has blitz" (Henzie
+#: "Toolbox" Torre). Safe without the X the lock reads, because
+#: `casting.blitz_granted` never offers the grant on a card with X in its
+#: cost, so the face's mana value is the spell's.
+BLITZ_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"mana_value"}
 
 #: `SPELL_FILTER_KEYS` plus the zone a free cast is offered from.
 #:

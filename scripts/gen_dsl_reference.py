@@ -1099,6 +1099,8 @@ STATICS: dict[str, Entry] = {
                                  "`granted_alternative_cost` — paying energy instead of a spell's mana cost"),
     "grant_warp": ("Matching spells the player casts have warp for a price.",
                    "`grant_warp` — a card-level price handed to somebody else's cards"),
+    "grant_blitz": ("Matching creature spells the player casts have blitz at their own mana cost.",
+                    "`grant_blitz` — blitz at a spell's own mana cost"),
     "grant_miracle": ("Matching cards in the player's hand have miracle for a price.",
                       "`grant_miracle` — miracle handed to cards in your hand"),
     "grant_pay_generic_with": ("Matching spells the player casts have convoke, improvise or delve.",

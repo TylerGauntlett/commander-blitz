@@ -2746,3 +2746,27 @@ CASCADE_TRIGGER = Ability(
     active_zones=(Zone.STACK,),
 )
 _RULES_ABILITIES.append(CASCADE_TRIGGER)
+
+
+#: The ability a **blitzed** permanent gains (702.152a): "When this creature
+#: dies, draw a card."
+#:
+#: Rules-supplied for exalted's reason: a creature that has blitz only because
+#: something granted it -- "each creature spell you cast with mana value 4 or
+#: greater has blitz" (Henzie "Toolbox" Torre) -- prints no such sentence, so
+#: there is no `grantable_abilities` entry on any card to point a grant at.
+#: `stack._place_after_resolution` grants it as the permanent arrives, through
+#: the ordinary `primitives.grant_ability` record with this negative index, so
+#: it is an ability the permanent *has*: a later "loses all abilities" hides it
+#: (613.1f timestamps), and `triggers` hears it on the creature's own death the
+#: way it hears any granted leave trigger. A printed blitz writes the same
+#: trigger on its card and grants it from there.
+BLITZ_DIES_DRAW = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="When this creature dies, draw a card.",
+    trigger=TriggerSpec(event="dies", controller="any", source="self"),
+    effects=({"op": "draw", "player": "you", "amount": {"const": 1}},),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(BLITZ_DIES_DRAW)

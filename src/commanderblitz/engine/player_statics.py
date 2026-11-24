@@ -3377,6 +3377,45 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return None
 
 
+def granted_blitz(state: GameState, pid: int, card: CardDef) -> bool:
+    """Whether a static gives this creature spell blitz as ``pid`` casts it.
+
+    "Each creature spell you cast with mana value 4 or greater has blitz. The
+    blitz cost is equal to its mana cost." -- Henzie "Toolbox" Torre.
+    `granted_warp_cost`'s shape, with two differences that are the printed
+    sentence. There is **no price on the static**: the grant prices each spell
+    at that spell's own mana cost, so `casting._cast_options` reads it off the
+    card. And there is **no zone**: the sentence is about spells you cast, not
+    cards in your hand, so a creature cast from a graveyard or the command zone
+    under another permission has blitz too -- the reason
+    `granted_alternative_cost` takes no zone either.
+
+    The filter reads the printed face, plus the literal ``mana_value``
+    comparison Brisela's lock reads; `casting` never offers the grant on a card
+    with X in its cost, whose mana value as a spell is not its face's (202.3e).
+
+    A bool, not a count: a spell with blitz twice at one price is one cast line,
+    for `granted_warp_cost`'s reason.
+    """
+    for source_obj, static in _active_player_statics(state, "grant_blitz"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` would hand blitz to
+            # every spell in the game.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return True
+    return False
+
+
 def granted_pay_generic_with(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
     """The ``pay_generic_with`` currencies statics hand ``card`` as ``pid`` casts it.
 
