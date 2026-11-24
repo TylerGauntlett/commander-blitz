@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "temur_sabertooth",
+    "name": "Temur Sabertooth",
+    "oracle_text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn.",
+    "mana_cost": "{2}{G}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Cat"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn.",
+        "cost": {"mana": "{1}{G}"},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Return another creature you control to its owner's hand?",
+            "pay": {"return_to_hand": {"controller": "you", "types": ["Creature"], "exclude_self": true}},
+            "effects": [
+              {
+                "op": "grant_keyword",
+                "keywords": ["indestructible"],
+                "objects": {"self_only": true, "zone": "battlefield"}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

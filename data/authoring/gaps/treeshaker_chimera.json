@@ -1,0 +1,22 @@
+{
+  "card_id": "treeshaker_chimera",
+  "name": "Treeshaker Chimera",
+  "oracle_text": "All creatures able to block this creature do so.\nWhen this creature dies, draw three cards.",
+  "blocked_sentences": [
+    "All creatures able to block this creature do so."
+  ],
+  "needs": [
+    {
+      "capability": "lure",
+      "kind": "static_effect",
+      "what": "a continuous static block requirement on the source attacker (509.1c, Lure): every creature (optionally narrowed by a `blockers` filter) that is able to block this creature must block it, read live at each declare-blockers step whenever this creature is attacking, however it came to be attacking",
+      "why_existing_wont_do": "`must_block` is a one-shot op naming an attacker, so it needs a trigger and an `attacks` trigger would miss a creature put onto the battlefield attacking and use the stack; the `blocks_if_able` static compels a block of ANY attacker, not this one; `block_restriction` (with `require_all`) restricts who MAY block rather than requiring blocks"
+    }
+  ],
+  "closest_existing": [
+    "must_block",
+    "blocks_if_able",
+    "block_restriction"
+  ],
+  "confidence": "high"
+}
