@@ -52,12 +52,12 @@
     },
     "A Little Chat": {
       "edhrec_rank": 14189,
-      "gate": "template",
+      "gate": null,
       "name": "A Little Chat",
-      "reason": "no template for: Casualty 1",
+      "reason": "",
       "scryfall_id": "4d7424b6-b56a-47b7-8204-294d3dca925f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "A Realm Reborn": {
@@ -16052,12 +16052,12 @@
     },
     "Audacious Swap": {
       "edhrec_rank": 14408,
-      "gate": "template",
+      "gate": null,
       "name": "Audacious Swap",
-      "reason": "no template for: Casualty 2",
+      "reason": "",
       "scryfall_id": "816cb69f-8c9f-4a1e-90d4-8c304501876c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Audacious Thief": {

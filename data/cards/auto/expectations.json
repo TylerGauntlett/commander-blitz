@@ -13,6 +13,16 @@
   "a_i_m_synthoids": {
     "zone": "battlefield"
   },
+  "a_little_chat": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "aang_and_katara": {
     "zone": "battlefield"
   },
@@ -1685,6 +1695,9 @@
   "audacious_reshapers": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "audacious_swap": {
+    "zone": "graveyard"
   },
   "augusta_order_returned": {
     "battlefield_count": 33,

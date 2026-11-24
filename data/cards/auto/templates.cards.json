@@ -199,6 +199,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you do, copy this spell.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 1
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "a_little_chat",
+      "mana_cost": "{1}{U}",
+      "name": "A Little Chat",
+      "oracle_text": "Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell.)\nLook at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "destinations": [
+            {
+              "count": 1,
+              "to": "hand"
+            }
+          ],
+          "op": "look_at_top",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U",
@@ -20278,6 +20352,146 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 2
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "audacious_swap",
+      "mana_cost": "{3}{R}",
+      "name": "Audacious Swap",
+      "oracle_text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nThe owner of target nonenchantment permanent shuffles it into their library, then exiles the top card of their library. If it's a land card, they put it onto the battlefield. Otherwise, they may cast it without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "swapped",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "owner_of": "swapped"
+          }
+        },
+        {
+          "as": "top_card",
+          "objects": {
+            "player": {
+              "owner_of": "swapped"
+            },
+            "zone": "library"
+          },
+          "op": "snapshot"
+        },
+        {
+          "objects": {
+            "binding": "top_card"
+          },
+          "op": "exile"
+        },
+        {
+          "condition": {
+            "exists": {
+              "binding": "top_card",
+              "types": [
+                "Land"
+              ],
+              "zone": "exile"
+            }
+          },
+          "else": [
+            {
+              "objects": {
+                "binding": "top_card",
+                "zone": "exile"
+              },
+              "op": "cast_from_hand",
+              "player": {
+                "owner_of": "swapped"
+              }
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
