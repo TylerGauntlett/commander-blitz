@@ -21354,6 +21354,18 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "riveteers_confluence": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "rms_titanic": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24540,6 +24552,10 @@
   "stalker_hag": {
     "zone": "battlefield"
   },
+  "stalking_vengeance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stampeding_rhino": {
     "zone": "battlefield"
   },
@@ -26038,6 +26054,10 @@
     "zone": "battlefield"
   },
   "temur_battlecrier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "temur_sabertooth": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -29639,6 +29659,13 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "wave_of_rats": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "wave_of_reckoning": {
     "zone": "graveyard"

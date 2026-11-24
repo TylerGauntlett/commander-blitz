@@ -255109,6 +255109,103 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "riveteers_confluence",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Riveteers Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• You draw a card and you lose 1 life.\n• Riveteers Confluence deals 1 damage to each creature and planeswalker you don't control.\n• You may put a land card from your hand or graveyard onto the battlefield tapped.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "lose_life",
+                  "player": "you"
+                }
+              ],
+              "label": "You draw a card and you lose 1 life."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "controller": "opponent",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "damage"
+                }
+              ],
+              "label": "Riveteers Confluence deals 1 damage to each creature and planeswalker you don't control."
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "count": {
+                        "const": 1
+                      },
+                      "destination": "battlefield",
+                      "op": "search_zones",
+                      "player": "you",
+                      "selector": {
+                        "types": [
+                          "Land"
+                        ]
+                      },
+                      "tapped": true,
+                      "zones": [
+                        "hand",
+                        "graveyard"
+                      ]
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put a land card from your hand or graveyard onto the battlefield tapped?"
+                }
+              ],
+              "label": "You may put a land card from your hand or graveyard onto the battlefield tapped."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -293039,6 +293136,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever another creature you control dies, it deals damage equal to its power to target player or planeswalker.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "stalking_vengeance",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Stalking Vengeance",
+      "oracle_text": "Haste\nWhenever another creature you control dies, it deals damage equal to its power to target player or planeswalker.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -312807,6 +312965,63 @@
       "subtypes": [
         "Orc",
         "Ranger"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "return_to_hand": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "prompt": "Return another creature you control to its owner's hand?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "temur_sabertooth",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Temur Sabertooth",
+      "oracle_text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
       ],
       "toughness": 3,
       "types": [
@@ -354838,6 +355053,124 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "player_count": {
+                  "dealt_combat_damage_by": "self"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "evoke": "{4}{B}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "wave_of_rats",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Wave of Rats",
+      "oracle_text": "Trample\nWhen this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.\nBlitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Rat"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

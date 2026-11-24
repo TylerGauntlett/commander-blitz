@@ -225772,12 +225772,12 @@
     },
     "Riveteers Confluence": {
       "edhrec_rank": 17008,
-      "gate": "template",
+      "gate": null,
       "name": "Riveteers Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "233721d8-636b-4061-b0ed-57c3b7192634",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riveteers Decoy": {
@@ -262302,12 +262302,12 @@
     },
     "Stalking Vengeance": {
       "edhrec_rank": 5207,
-      "gate": "template",
+      "gate": null,
       "name": "Stalking Vengeance",
-      "reason": "no template for: Whenever another creature you control dies, it deals damage equal to its power to target p",
+      "reason": "",
       "scryfall_id": "22ab5c53-932e-465d-84b7-2c8263c835e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stalking Yeti": {
@@ -277752,12 +277752,12 @@
     },
     "Temur Sabertooth": {
       "edhrec_rank": 1859,
-      "gate": "template",
+      "gate": null,
       "name": "Temur Sabertooth",
-      "reason": "no template for: {1}{G}: You may return another creature you control to its owner's hand. If you do, this c",
+      "reason": "",
       "scryfall_id": "a5314aa1-77e5-4946-bb9c-8a14777e4795",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temur Tawnyback": {
@@ -312142,12 +312142,12 @@
     },
     "Wave of Rats": {
       "edhrec_rank": 9312,
-      "gate": "template",
+      "gate": null,
       "name": "Wave of Rats",
-      "reason": "no template for: When this creature dies, if it dealt combat damage to a player this turn, return it to the",
+      "reason": "",
       "scryfall_id": "154dc126-67ca-4759-a424-37f0eb52e1fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wave of Reckoning": {
