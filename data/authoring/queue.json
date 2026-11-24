@@ -15272,12 +15272,12 @@
     },
     "Assemble the Entmoot": {
       "edhrec_rank": 6838,
-      "gate": "template",
+      "gate": null,
       "name": "Assemble the Entmoot",
-      "reason": "no template for: Creatures you control have reach",
+      "reason": "",
       "scryfall_id": "409c226b-ef01-4ccd-b23e-d94bdc1e4aa5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assemble the Legion": {
@@ -272652,12 +272652,12 @@
     },
     "Sylvan Offering": {
       "edhrec_rank": 4777,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvan Offering",
-      "reason": "no template for: Choose an opponent. You and that player each create an X/X green Treefolk creature token",
+      "reason": "",
       "scryfall_id": "8f171772-eb52-4cc2-b3cd-8ceb0f15732f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sylvan Paradise": {

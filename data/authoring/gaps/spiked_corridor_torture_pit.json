@@ -21,18 +21,17 @@
       "why_existing_wont_do": "self_enters fires only on entering, missing a later unlock, and fires even when this door enters locked because the other half was cast; trigger_events has no unlock event"
     },
     {
-      "capability": "devil_token",
-      "kind": "token",
-      "what": "a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
-      "why_existing_wont_do": "token_ids contains no Devil token"
-    },
-    {
       "capability": "replace_damage_noncombat",
       "kind": "static_effect",
       "what": "replace_damage restricted to noncombat damage (damage_addend 2, damage_source controller you, affects_player opponent), gated on the Torture Pit door being unlocked",
       "why_existing_wont_do": "replace_damage with damage_addend covers the plus-N part, and combat_only exists, but no key restricts it to noncombat damage; and the static must only apply while its door is unlocked, which needs the Room engine above"
     }
   ],
-  "closest_existing": ["second_face", "self_enters", "replace_damage"],
+  "closest_existing": [
+    "second_face",
+    "self_enters",
+    "replace_damage",
+    "devil_1_1_r"
+  ],
   "confidence": "high"
 }

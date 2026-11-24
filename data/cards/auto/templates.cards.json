@@ -18838,6 +18838,70 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "reach"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have reach."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "counters": {
+                "reach": {
+                  "const": 1
+                }
+              },
+              "op": "create_token",
+              "power": {
+                "life_gained_this_turn": "you"
+              },
+              "tapped": true,
+              "token": "treefolk_x_x_g",
+              "toughness": {
+                "life_gained_this_turn": "you"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "assemble_the_entmoot",
+      "mana_cost": "{3}{G}",
+      "name": "Assemble the Entmoot",
+      "oracle_text": "Creatures you control have reach.\nSacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -301089,6 +301153,84 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sylvan_offering",
+      "mana_cost": "{X}{G}",
+      "name": "Sylvan Offering",
+      "oracle_text": "Choose an opponent. You and that player each create an X/X green Treefolk creature token.\nChoose an opponent. You and that player each create X 1/1 green Elf Warrior creature tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "treefolk_player",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent to create an X/X Treefolk"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": "you",
+          "op": "create_token",
+          "power": {
+            "x": true
+          },
+          "token": "treefolk_x_x_g",
+          "toughness": {
+            "x": true
+          }
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "binding": "treefolk_player"
+          },
+          "op": "create_token",
+          "power": {
+            "x": true
+          },
+          "token": "treefolk_x_x_g",
+          "toughness": {
+            "x": true
+          }
+        },
+        {
+          "as": "elf_player",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent to create X Elf Warriors"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "elf_warrior_1_1_g"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "controller": {
+            "binding": "elf_player"
+          },
+          "op": "create_token",
+          "token": "elf_warrior_1_1_g"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

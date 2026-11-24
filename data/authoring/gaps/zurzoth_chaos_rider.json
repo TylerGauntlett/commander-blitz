@@ -3,27 +3,22 @@
   "name": "Zurzoth, Chaos Rider",
   "oracle_text": "Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"\nWhenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.",
   "blocked_sentences": [
-    "Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
     "Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random."
   ],
   "needs": [
     {
-      "capability": "devil_token",
-      "kind": "token",
-      "what": "a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
-      "why_existing_wont_do": "No Devil token exists in the packet's token_ids (nor in data/cards/tokens.cards.json), and create_token may only name an id from that closed list; no other 1/1 red token carries the dies-ping ability."
-    },
-    {
       "capability": "attacked_players_binding",
       "kind": "trigger_event",
-      "what": "a single batched trigger for 'one or more Devils you control attack one or more players' that fires once per attack declaration and binds the set of defending players, so the effect can be 'you and those players each draw a card, then discard a card at random' with you drawing exactly once",
-      "why_existing_wont_do": "creatures_attack_player fires once per defending player (the subset declared against that seat), so with two attacked opponents the controller would draw and discard twice; you_attack fires once per declaration but exposes no binding for the attacked players and no Devil-subtype filter over the attackers."
+      "what": "a binding, fixed as the trigger fires, of the players the matching attackers (the Devils you control) attack directly, so one batched 'one or more Devils you control attack one or more players' trigger can say 'you and those players each draw a card, then discard a card at random' with you drawing exactly once",
+      "why_existing_wont_do": "The trigger half is expressible: you_attack fires once per declaration and a condition {exists: {binding: attackers, subtypes: [Devil], attacking_player: any}} with recheck: false filters it to a Devil attacking a player. The missing half is 'those players'. you_attack's attacked_players binding is every seat attacked directly, so in a pod a player attacked only by a non-Devil would draw and discard too. Narrowing it at resolution (for_each_player over attacked_players with an exists-Devil-attacking_player-{binding} check) reads combat live and drops a player whose Devil died or left combat before resolution, which the printed ability does not. creatures_attack_player binds the per-defender attackers but fires once per defending player, so you would draw and discard once per attacked player. {attacked_by} only accepts self. The first sentence is expressible now that devil_1_1_r exists (draw with nth 1, controller opponent, condition not is_active_player of the event player)."
     }
   ],
   "closest_existing": [
-    "create_token",
+    "you_attack",
+    "attacked_players",
     "creatures_attack_player",
-    "you_attack"
+    "attacking_player",
+    "devil_1_1_r"
   ],
   "confidence": "high"
 }

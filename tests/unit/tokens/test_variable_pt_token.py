@@ -151,6 +151,7 @@ class TestTheToken:
                 "phyrexian_horror_x_x_c_artifact",
                 "phyrexian_wurm_x_x_g_trample_toxic",
                 "shapeshifter_x_x_c_changeling_deathtouch",
+                "treefolk_x_x_g",
             ]
         )
         assert not pool.get("fractal_0_0_gu").variable_pt

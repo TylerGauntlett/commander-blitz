@@ -1575,6 +1575,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "assemble_the_entmoot": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "reach"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "assemble_the_legion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25161,6 +25170,13 @@
   "sylvan_library": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "sylvan_offering": {
+    "tokens": {
+      "count": 1,
+      "id": "treefolk_x_x_g"
+    },
+    "zone": "graveyard"
   },
   "sylvan_reclamation": {
     "opponent_battlefield_count": 4,

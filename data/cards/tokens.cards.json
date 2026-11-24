@@ -2093,6 +2093,59 @@
       ]
     },
     {
+      "id": "devil_1_1_r",
+      "name": "Devil Token",
+      "oracle_text": "1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Devil"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token dies, it deals 1 damage to any target.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "count": 1,
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "target": "t1"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "phyrexian_myr_2_1_u_artifact",
       "name": "Phyrexian Myr Token",
       "oracle_text": "2/1 blue Phyrexian Myr artifact creature token.",
@@ -5865,6 +5918,27 @@
       ],
       "subtypes": [
         "Hydra"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "treefolk_x_x_g",
+      "name": "Treefolk Token",
+      "oracle_text": "X/X green Treefolk creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Treefolk"
       ],
       "power": 0,
       "toughness": 0,

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **458** capabilities.
+**540 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
-| [devil-token](#devil-token) | 2 | 4163 | token |
 | [distribute-counters-spell](#distribute-counters-spell) | 2 | 4355 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
@@ -446,11 +445,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
-| [token-treefolk-0-0-g](#token-treefolk-0-0-g) | 1 | 6838 | token |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
-| [treefolk-x-x-g](#treefolk-x-x-g) | 1 | 4777 | token |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
 | [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
 | [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
@@ -1581,27 +1578,6 @@ Blocks **2** cards.
 
 </details>
 
-## devil-token
-
-Blocks **2** cards.
-
-- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
-  <br>Why the existing vocabulary won't do: token_ids contains no Devil token
-- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
-  <br>Why the existing vocabulary won't do: No Devil token exists in the packet's token_ids (nor in data/cards/tokens.cards.json), and create_token may only name an id from that closed list; no other 1/1 red token carries the dies-ping ability.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
-- **Zurzoth, Chaos Rider** (rank 5087) — `zurzoth_chaos_rider`
-  - Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
-  - Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.
-
-</details>
-
 ## distribute-counters-spell
 
 Blocks **2** cards.
@@ -2550,13 +2526,12 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(trigger_event)** a single batched trigger for 'one or more Devils you control attack one or more players' that fires once per attack declaration and binds the set of defending players, so the effect can be 'you and those players each draw a card, then discard a card at random' with you drawing exactly once
-  <br>Why the existing vocabulary won't do: creatures_attack_player fires once per defending player (the subset declared against that seat), so with two attacked opponents the controller would draw and discard twice; you_attack fires once per declaration but exposes no binding for the attacked players and no Devil-subtype filter over the attackers.
+- **(trigger_event)** a binding, fixed as the trigger fires, of the players the matching attackers (the Devils you control) attack directly, so one batched 'one or more Devils you control attack one or more players' trigger can say 'you and those players each draw a card, then discard a card at random' with you drawing exactly once
+  <br>Why the existing vocabulary won't do: The trigger half is expressible: you_attack fires once per declaration and a condition {exists: {binding: attackers, subtypes: [Devil], attacking_player: any}} with recheck: false filters it to a Devil attacking a player. The missing half is 'those players'. you_attack's attacked_players binding is every seat attacked directly, so in a pod a player attacked only by a non-Devil would draw and discard too. Narrowing it at resolution (for_each_player over attacked_players with an exists-Devil-attacking_player-{binding} check) reads combat live and drops a player whose Devil died or left combat before resolution, which the printed ability does not. creatures_attack_player binds the per-defender attackers but fires once per defending player, so you would draw and discard once per attacked player. {attacked_by} only accepts self. The first sentence is expressible now that devil_1_1_r exists (draw with nth 1, controller opponent, condition not is_active_player of the event player).
 
 <details><summary>Cards waiting on this</summary>
 
 - **Zurzoth, Chaos Rider** (rank 5087) — `zurzoth_chaos_rider`
-  - Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
   - Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.
 
 </details>
@@ -7367,20 +7342,6 @@ Blocks **1** card.
 
 </details>
 
-## token-treefolk-0-0-g
-
-Blocks **1** card.
-
-- **(token)** a 0/0 green Treefolk creature token (X/X, sized by create_token's power/toughness from life_gained_this_turn)
-  <br>Why the existing vocabulary won't do: token_ids has 0/0 green Hydra, Ooze and Dinosaur Beast tokens but no Treefolk; the token list is closed and a different creature type is a different token. create_token's tapped/power/toughness/counters options and the life_gained_this_turn value would otherwise cover the sentence, provided a reach counter grants reach as a keyword counter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Assemble the Entmoot** (rank 6838) — `assemble_the_entmoot`
-  - Sacrifice this enchantment: Create three tapped X/X green Treefolk creature tokens, where X is the amount of life you gained this turn. Put a reach counter on each of them.
-
-</details>
-
 ## total-mana-value-x
 
 Blocks **1** card.
@@ -7423,26 +7384,12 @@ Blocks **1** card.
 
 </details>
 
-## treefolk-x-x-g
-
-Blocks **1** card.
-
-- **(token)** an X/X green Treefolk creature token (no abilities), its power and toughness set by create_token's power/toughness from the spell's X
-  <br>Why the existing vocabulary won't do: token_ids has no Treefolk token of any size; the nearest X/X green tokens are hydra_x_x_g and ooze_x_x_g, which carry the wrong creature type. The rest of the line (choose_player over opponents, then create_token for you and that player) and the whole Elf Warrior line (elf_warrior_1_1_g, amount X) are expressible once the token exists
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sylvan Offering** (rank 4777) — `sylvan_offering`
-  - Choose an opponent. You and that player each create an X/X green Treefolk creature token.
-
-</details>
-
 ## treefolk-x-x-g-reach-land-count
 
 Blocks **1** card.
 
 - **(token)** a 0/0 green Treefolk creature token with reach and the characteristic-defining static "This token's power and toughness are each equal to the number of lands you control." (set_pt from a count of lands you control, read continuously)
-  <br>Why the existing vocabulary won't do: token_ids has no Treefolk token; the nearest is elemental_x_x_gw_creature_count, which is a green white Elemental counting creatures rather than lands and has no reach. create_token's power/toughness options fix the size at creation and would not track lands entering or leaving. The other three loyalty lines (look_at_top with a Land selector to hand and rest_to graveyard; put_onto_battlefield of any number of land cards from hand tapped; return_to_hand of permanent cards from graveyard plus an emblem with the no_hand_limit static) look expressible
+  <br>Why the existing vocabulary won't do: token_ids' only Treefolk is treefolk_x_x_g, a vanilla X/X sized once by create_token, with no reach and no characteristic-defining static; the nearest characteristic-defining token is elemental_x_x_gw_creature_count, which is a green white Elemental counting creatures rather than lands and has no reach. create_token's power/toughness options fix the size at creation and would not track lands entering or leaving. The other three loyalty lines (look_at_top with a Land selector to hand and rest_to graveyard; put_onto_battlefield of any number of land cards from hand tapped; return_to_hand of permanent cards from graveyard plus an emblem with the no_hand_limit static) look expressible
 
 <details><summary>Cards waiting on this</summary>
 
