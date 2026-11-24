@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "protection_racket",
+    "name": "Protection Racket",
+    "oracle_text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+    "mana_cost": "{2}{B}",
+    "types": ["Enchantment"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_opponent",
+            "effects": [
+              {"op": "snapshot", "as": "racket_card", "objects": {"player": "you", "zone": "library"}},
+              {"op": "reveal", "objects": {"binding": "racket_card"}},
+              {
+                "op": "may",
+                "player": {"binding": "each_player"},
+                "pay": {"pay_life": {"mana_value_of": {"binding": "racket_card"}}},
+                "prompt": "Pay life equal to that card's mana value to exile it? (Otherwise it goes to its owner's hand.)",
+                "effects": [{"op": "exile", "objects": {"binding": "racket_card", "zone": "library"}}],
+                "else": [{"op": "return_to_hand", "objects": {"binding": "racket_card", "zone": "library"}}]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
