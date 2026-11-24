@@ -1,0 +1,21 @@
+{
+  "card_id": "waste_management",
+  "name": "Waste Management",
+  "oracle_text": "Kicker {3}{B} (You may pay an additional {3}{B} as you cast this spell.)\nExile up to two target cards from a single graveyard. If this spell was kicked, instead exile target player's graveyard. Create a 2/2 black Rogue creature token for each creature card exiled this way.",
+  "blocked_sentences": [
+    "Exile up to two target cards from a single graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "same_graveyard_targets",
+      "kind": "selector",
+      "what": "a target-combination constraint on a card_in_graveyard spec with count 2, up_to: true: every chosen card must be in the same graveyard (all owned by one player), with no player being targeted -- the inverse of `one_per_player`",
+      "why_existing_wont_do": "`one_per_player` enforces the opposite (no two from the same player). A sibling `player` target with the card spec's `controller: {\"target\": ...}` would force the right graveyard but adds an unprinted 'target player' (wrong against player hexproof/shroud and changes fizzle behaviour), and a fixed `controller` of you or opponent drops half the legal choices. The rest looks expressible: `kicker`, the card spec's `count_if_kicked: 0`, a kicked-only player target, an `if` on `kicked` choosing `exile` of the targets or of that player's whole graveyard with `as`, then `create_token` rogue_2_2_b with amount a count of the binding filtered to Creature"
+    }
+  ],
+  "closest_existing": [
+    "one_per_player",
+    "count_if_kicked"
+  ],
+  "confidence": "high"
+}
