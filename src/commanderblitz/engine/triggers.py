@@ -27,6 +27,7 @@ from .carddef import (
     annihilator_ability,
 )
 from .characteristics import (
+    _base_pt,
     _battlefield_statics,
     _matches_printed,
     abilities_of,
@@ -2807,9 +2808,15 @@ TRIGGER_FILTER_KEYS = frozenset(
         "mana_cost",
         "power",
         "toughness",
+        "base_power",
+        "base_toughness",
         "any_of",
     }
 )
+
+#: The comparisons `_compare` reads. ``base_power``/``base_toughness`` are held
+#: to them at load time: any other ``op`` would fall through to equality.
+TRIGGER_COMPARISON_OPS = frozenset({">=", "<=", ">", "<", "=", "=="})
 
 #: The words `controller` and `owner` take in a trigger filter. The effect-side
 #: selector also accepts a player spec and "enchanted_player", and this function
@@ -2832,6 +2839,9 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
             f"{where}: {sorted(unread)} would load and be ignored -- a trigger "
             f"filter answers only {sorted(TRIGGER_FILTER_KEYS)}"
         )
+    for key in ("base_power", "base_toughness"):
+        if key in filt:
+            _validate_base_pt_clause(filt[key], f"{where}.{key}")
     for key in ("controller", "owner"):
         word = filt.get(key)
         if word is not None and not (
@@ -2862,6 +2872,44 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
                     f"{here}: shares_a_creature_type_with must be 'self', got {shares!r}"
                 )
             validate_trigger_filter(branch, here)
+
+
+def _validate_base_pt_clause(spec: Any, where: str) -> None:
+    """A ``base_power``/``base_toughness`` trigger clause: a literal comparison.
+
+    A bare integer (equality), ``{"op": "<=", "value": 1}`` or
+    ``{"parity": "even"}``. Nothing is bound when a trigger filter is asked, so
+    the compared-against value is a plain integer; an expression would load and
+    be read as 0 by `_compare`, and an ``op`` it does not read would fall
+    through to equality -- a filter wider or narrower than the printed line.
+    """
+    if isinstance(spec, bool) or not isinstance(spec, (int, Mapping)):
+        raise DslError(
+            f"{where}: a comparison -- {{'op': '>=', 'value': 1}} -- or a bare "
+            f"integer, got {spec!r}"
+        )
+    if not isinstance(spec, Mapping) or "parity" in spec:
+        # The parity form is checked by `validate_parity_clauses`, which
+        # `validate_selector` has already run.
+        return
+    unknown = set(spec) - {"op", "value"}
+    if unknown:
+        raise DslError(
+            f"{where}: unknown comparison keys {sorted(unknown)} (a comparison "
+            f"is 'op' and 'value')"
+        )
+    op = spec.get("op", ">=")
+    if op not in TRIGGER_COMPARISON_OPS:
+        raise DslError(
+            f"{where}.op: {op!r} is not read by a trigger filter "
+            f"(use one of {sorted(TRIGGER_COMPARISON_OPS)})"
+        )
+    value = spec.get("value")
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise DslError(
+            f"{where}.value: a trigger filter compares against a plain integer, "
+            f"got {value!r}"
+        )
 
 
 def validate_face_down_trigger(event: str, filt: Mapping[str, Any] | None, where: str) -> None:
@@ -3247,10 +3295,27 @@ def matches_card_filter(
     ):
         return False
     toughness = filt.get("toughness")
-    return not (
-        toughness is not None
-        and not _compare((live.toughness if live else card.toughness) or 0, toughness)
-    )
+    if toughness is not None and not _compare(
+        (live.toughness if live else card.toughness) or 0, toughness
+    ):
+        return False
+    # "…creatures you control **with base power and toughness 1/1** enter" --
+    # Bess, Soul Nourisher. 613.4a/b: the copiable size, before counters,
+    # anthems and pumps, so a 1/1 token entering under an anthem is still one
+    # and a 2/2 shrunk to 1/1 is not -- both of which the live clauses above
+    # answer the other way. Read at `characteristics._base_pt`, the function
+    # the effect-side selector and `_compute` start from, so the three cannot
+    # disagree about where a creature's size begins. Off the battlefield the
+    # printed face is already the base size (the face-down shell included,
+    # substituted above), as in `selectors.matches`.
+    base_power = filt.get("base_power")
+    base_toughness = filt.get("base_toughness")
+    if base_power is None and base_toughness is None:
+        return True
+    base = _base_pt(state, obj) if obj.on_battlefield else (card.power or 0, card.toughness or 0)
+    if base_power is not None and not _compare(base[0], base_power):
+        return False
+    return base_toughness is None or _compare(base[1], base_toughness)
 
 
 def _origin_matches(
@@ -3264,7 +3329,9 @@ def _origin_matches(
     return origin_matches(origin, filt, ability_source.controller)
 
 
-def _compare(value: int, spec: Mapping[str, Any]) -> bool:
+def _compare(value: int, spec: int | Mapping[str, Any]) -> bool:
+    if isinstance(spec, int):
+        return value == spec
     if (parity := parity_matches(value, spec)) is not None:
         return parity
     op = spec.get("op", ">=")

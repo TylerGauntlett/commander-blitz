@@ -10,12 +10,13 @@
       "capability": "treefolk_x_x_g_reach_land_count",
       "kind": "token",
       "what": "a 0/0 green Treefolk creature token with reach and the characteristic-defining static \"This token's power and toughness are each equal to the number of lands you control.\" (set_pt from a count of lands you control, read continuously)",
-      "why_existing_wont_do": "token_ids has no Treefolk token; the nearest is elemental_x_x_gw_creature_count, which is a green white Elemental counting creatures rather than lands and has no reach. create_token's power/toughness options fix the size at creation and would not track lands entering or leaving. The other three loyalty lines (look_at_top with a Land selector to hand and rest_to graveyard; put_onto_battlefield of any number of land cards from hand tapped; return_to_hand of permanent cards from graveyard plus an emblem with the no_hand_limit static) look expressible"
+      "why_existing_wont_do": "token_ids' only Treefolk is treefolk_x_x_g, a vanilla X/X sized once by create_token, with no reach and no characteristic-defining static; the nearest characteristic-defining token is elemental_x_x_gw_creature_count, which is a green white Elemental counting creatures rather than lands and has no reach. create_token's power/toughness options fix the size at creation and would not track lands entering or leaving. The other three loyalty lines (look_at_top with a Land selector to hand and rest_to graveyard; put_onto_battlefield of any number of land cards from hand tapped; return_to_hand of permanent cards from graveyard plus an emblem with the no_hand_limit static) look expressible"
     }
   ],
   "closest_existing": [
     "elemental_x_x_gw_creature_count",
-    "spider_1_2_g_reach"
+    "spider_1_2_g_reach",
+    "treefolk_x_x_g"
   ],
   "confidence": "high"
 }

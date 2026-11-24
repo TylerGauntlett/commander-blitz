@@ -63,6 +63,7 @@ def restrict_attack(
     source: int | None = None,
     planeswalkers: bool = False,
     walker_subtypes: tuple[str, ...] = (),
+    player: int | None = None,
 ) -> bool:
     """ "``attacker`` can't attack ``defender``" for ``duration``.
 
@@ -93,6 +94,12 @@ def restrict_attack(
     you control"). It is part of the key for the same reason, and the two are
     never set together -- one widens a seat to its walkers, the other replaces
     the seat with some of them.
+
+    ``player`` is the clock of an ``until_your_next_turn`` entry: the player
+    whose next turn ends it, which is the effect's controller and need not be
+    either side of the pair. Refused without one, or with one already out of
+    the game, for `restrict_block`'s reason -- that untap step never comes, so
+    the restriction would last forever.
     """
 
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
@@ -101,6 +108,11 @@ def restrict_attack(
         return False
     if not state.is_alive(attacker) or not state.is_alive(defender):
         return False
+    if duration == "until_your_next_turn":
+        if player is None or not state.is_alive(player):
+            return False
+    else:
+        player = None
     entry = AttackRestriction(
         attacker=attacker,
         defender=defender,
@@ -108,6 +120,7 @@ def restrict_attack(
         planeswalkers=planeswalkers,
         walker_subtypes=tuple(walker_subtypes),
         source=source,
+        player=player,
     )
     if entry in state.attack_restrictions:
         return False
@@ -115,11 +128,14 @@ def restrict_attack(
     return True
 
 
-def clear_attack_restrictions(state: GameState, duration: str) -> None:
+def clear_attack_restrictions(state: GameState, duration: str, player: int | None = None) -> None:
     """Drop every attack restriction of one duration -- its wearing-off.
 
-    Called from two places: `turn._cleanup_step` for ``this_turn`` and
-    ``attacker_next_turn``, and `combat.end_combat` for ``this_combat``.  Split
+    Called from three places: `turn._cleanup_step` for ``this_turn`` and
+    ``attacker_next_turn``, `combat.end_combat` for ``this_combat``, and
+    `turn._untap_step` for the ``until_your_next_turn`` entries whose
+    ``player`` is untapping -- detain's clock, keyed to the seat rather than a
+    turn number, so neither an extra turn nor an elimination moves it.  Split
     by duration rather than cleared wholesale at either point, because a
     turn-scoped restriction has to survive the combat it was cast before -- Call
     for Aid is cast in a precombat main phase and means the *whole* turn, extra
@@ -136,6 +152,7 @@ def clear_attack_restrictions(state: GameState, duration: str) -> None:
         for r in state.attack_restrictions
         if r.duration != duration
         or (duration == "attacker_next_turn" and r.in_force_turn != state.turn)
+        or (duration == "until_your_next_turn" and r.player != player)
     ]
 
 

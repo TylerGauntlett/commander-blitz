@@ -2725,6 +2725,35 @@ very turn it was supposed to open. The value reads the ledger's oids instead, so
 it survives the death. Use the selector when the effect has to *reach* the
 creatures, and the value when the card is only counting them.
 
+### Which creatures dealt combat damage to a player this turn
+
+```jsonc
+// Indulge // Excess (Excess, aftermath): "Create a Treasure token for each
+// creature you controlled that dealt combat damage to a player this turn."
+{ "op": "create_token", "token": "treasure_token",
+  "amount": { "creatures_dealt_combat_damage_to_player_this_turn": "you" } }
+```
+
+`creatures_dealt_combat_damage_to_player_this_turn` takes a player spec and
+counts **creatures**, off `TurnLedger.combat_damagers_by_controller` (the seat
+that controlled each dealer as its combat damage was dealt → dealers), folded
+off each `combat_damage_to_player` event. A prevented hit records nothing, and
+damage to a creature, planeswalker or battle is not damage to a player. A
+creature that hit two players is one creature; a plural spec is a union, so a
+creature stolen between two combats that dealt damage under both controllers is
+still one.
+
+The record is about the damage, not the object: a dealer that died, or was
+bounced, still counts. One that re-enters the battlefield is a new object
+(400.7), so its old entry is re-keyed rather than dropped — the damage it dealt
+counts once, and the new object counts again only if it deals combat damage
+too.
+
+`{"player_count": {"dealt_combat_damage_by": "any"}}` is the near miss: it counts
+the **players** hit, so two creatures through to one opponent read 1.
+`{"count": …}` over the battlefield is the other: it has forgotten every dealer
+that died.
+
 ### Pack tactics — attackers' total power as declared
 
 ```jsonc
@@ -2985,6 +3014,20 @@ keywords. So the same JSON clause counts an anthem-pumped creature in a
 card-level `cost_reduction` and does not count it in a static's `count`. That
 divergence is deliberate and is pinned by
 `tests/unit/statics/test_static_power_filter.py`.
+
+A trigger filter that asks for the **base** size spells it `base_power` and
+`base_toughness`, the effect-side selector's keys, read at
+`characteristics._base_pt` on the battlefield and off the printed face
+elsewhere. Bess, Soul Nourisher's "whenever one or more other creatures you
+control with base power and toughness 1/1 enter" is
+`{"exclude_self": true, "types": ["Creature"], "base_power": 1, "base_toughness": 1}`
+on a `batched` `permanent_enters`: the filter is asked of each entering object,
+so a 1/1 token entering under an anthem counts and a 2/2 entering under a -1/-1
+effect does not. `power`/`toughness` are the near miss and answer both the other
+way. The value is a bare integer, a literal `{"op", "value"}` comparison with an
+`op` from `triggers.TRIGGER_COMPARISON_OPS`, or a parity; the loader refuses an
+expression (nothing is bound when a trigger filter is asked) and any other `op`.
+Pinned by `tests/unit/triggers/test_base_pt_trigger_filter.py`.
 
 A `spell_cost_reduction`'s `affects_spells` takes `power` too, and there it is
 the power of the **spell being cast** — Goreclaw's "creature spells you cast with
@@ -6307,7 +6350,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
+`{ "dealt_combat_damage_by": "self" | "any" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -6387,11 +6430,12 @@ permanent that comes back is a new object that has dealt nobody anything
 the stack still resolves off what it did — a Hellkite killed in response still
 destroys.
 
-The subject is one of three shapes, and anything else is a load error:
+The subject is one of these shapes, and anything else is a load error:
 
 | Subject | Whom it names |
 |---|---|
 | `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
+| `"any"` | the seats dealt combat damage by **any** source this turn |
 | `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
 | `{ "subtypes": ["Pirate"], "at_least": 3 }` | the seats dealt combat damage by at least that many **distinct** such creatures |
 | `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
@@ -6424,6 +6468,20 @@ across two players reach neither. A Pirate that hit and then re-entered the
 battlefield is a new object (400.7), so its old hit still counts and a new one
 counts again. The loader refuses it without `subtypes` and anything but a
 positive whole number. Without it, `subtypes` alone is "one or more".
+
+`"any"` reads `TurnLedger.players_dealt_combat_damage`, a seat set folded off
+the same event and never cleared per oid, so a creature that hit a player and
+then re-entered the battlefield still leaves that player counted. It is a set of
+seats: a player hit twice, or by two creatures, is one player. A union of
+`subtypes` over every creature type is the near miss — it misses a creature with
+no creature type.
+
+```jsonc
+// Vivien's Stampede: "At the beginning of the next main phase this turn, draw a
+// card for each player who was dealt combat damage this turn."
+{ "op": "draw", "player": "you",
+  "amount": { "player_count": { "dealt_combat_damage_by": "any" } } }
+```
 
 ```jsonc
 // Admiral Beckett Brass: "At the beginning of your end step, gain control of

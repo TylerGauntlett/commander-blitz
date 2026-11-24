@@ -6210,6 +6210,16 @@ with the seat. `this_turn` or `this_combat` would have run out on the turn the
 trigger resolved, and `delay` fires on a step or its controller's own turn,
 never a named other player's.
 
+The fourth, `until_your_next_turn`, is "creatures that player controls can't
+attack you or planeswalkers you control **until your next turn**" (Orzhov
+Advokist, inside `for_each_player` + `may`, `attacker` bound to the player who
+took the counters, `planeswalkers: true`). It bites from resolution and is keyed
+to the effect's **controller** (`AttackRestriction.player`), not the attacker:
+`turn._untap_step` clears it when that player's next turn begins, so an extra
+turn the locked player takes does not end it and one the controller takes does.
+`attacker_next_turn` is the near miss and is wrong both ways — pending when it
+should bite, and gone after the attacker's first turn.
+
 Three things it deliberately does **not** do:
 
 | | |

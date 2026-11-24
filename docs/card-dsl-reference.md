@@ -13,10 +13,10 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 188 |
 | [Selectors](#selectors) | 82 |
 | [Player specs](#player-specs) | 10 |
-| [Values](#values) | 79 |
+| [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
-| [Trigger filters](#trigger-filters) | 38 |
+| [Trigger filters](#trigger-filters) | 40 |
 | [Static effects](#static-effects) | 112 |
 | [Player-wide statics](#player-wide-statics) | 51 |
 | [Grantable statics](#grantable-statics) | 51 |
@@ -325,7 +325,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 
 ## Player specs
 
-The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
+The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` (subject `"self"`, `"any"`, `subtypes` or `any_of`) -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
 
 | Name | Description | Defined in |
 |---|---|---|
@@ -367,6 +367,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `creatures_dealt_combat_damage_to_player_this_turn` | How many distinct creatures the player controlled that dealt combat damage to a player this turn, kept past death and re-entry. | [Which creatures dealt combat damage to a player this turn](card-dsl.md#which-creatures-dealt-combat-damage-to-a-player-this-turn) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |
@@ -407,7 +408,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
-| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
+| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …", and with its `"any"` subject "each player who was dealt combat damage this turn"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
 | `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power; over a list of snapshots, their total. | [Value expressions](card-dsl.md#value-expressions) |
@@ -555,6 +556,8 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `any_types` | Any one of these card types is enough. | [Triggers](card-dsl.md#triggers) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Triggers](card-dsl.md#triggers) |
 | `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, a `binding`'s seat, or on a static `{"chosen_player_of": "self"}`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
+| `base_power` | A comparison on base power (layer 7a/7b). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
+| `base_toughness` | A comparison on base toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Triggers](card-dsl.md#triggers) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec (on a static, `{"chosen_player_of": "self"}`: the seat its source remembered). | [Triggers](card-dsl.md#triggers) |

@@ -1782,7 +1782,8 @@ PLAYER_SPEC_NAMES = frozenset(
 def _seats_dealt_combat_damage_by(ctx: EffectContext, subject: Any) -> set[int]:
     """The seats ``subject`` dealt combat damage to this turn, off the ledger.
 
-    ``"self"`` is the ability's source, by oid; ``{"subtypes": [...]}`` is any
+    ``"self"`` is the ability's source, by oid; ``"any"`` is every source at
+    all, off a seat set no re-entry clears; ``{"subtypes": [...]}`` is any
     creature that had one of those subtypes as the damage was dealt, whoever
     controlled it, and with ``"at_least": N`` the seats N or more distinct such
     creatures dealt it to; ``{"any_of": [...]}`` is the union of its subjects. The
@@ -1792,6 +1793,11 @@ def _seats_dealt_combat_damage_by(ctx: EffectContext, subject: Any) -> set[int]:
     ledger = ctx.state.turn_ledger
     if subject == "self":
         return set(ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set()))
+    if subject == "any":
+        # "…each player who was dealt combat damage this turn" -- Vivien's
+        # Stampede. Not a union of the per-oid record, which forgets a seat
+        # when its dealer re-enters the battlefield.
+        return set(ledger.players_dealt_combat_damage)
     if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
         # "…a player who was dealt combat damage by **three or more** Pirates
         # this turn" -- Admiral Beckett Brass. Distinct creatures per seat,

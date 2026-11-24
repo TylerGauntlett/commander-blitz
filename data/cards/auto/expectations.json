@@ -1439,6 +1439,15 @@
   "arrogant_vampire": {
     "zone": "battlefield"
   },
+  "artifact_mutation": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 2,
+      "id": "saproling_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "artisan_of_kozilek": {
     "zone": "battlefield"
   },
@@ -1564,6 +1573,15 @@
   },
   "assaultron_dominator": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "assemble_the_entmoot": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "reach"
+      ]
+    },
     "zone": "battlefield"
   },
   "assemble_the_legion": {
@@ -2360,6 +2378,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "bess_soul_nourisher": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "bessie_the_doctor_s_roadster": {
@@ -3510,6 +3532,13 @@
   "cabal_stronghold": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "cabaretti_charm": {
+    "zone": "graveyard"
+  },
+  "cabaretti_confluence": {
+    "battlefield_count": 35,
+    "zone": "graveyard"
   },
   "cache_grab": {
     "library_size": {
@@ -5257,6 +5286,13 @@
   },
   "crash_of_rhinos": {
     "zone": "battlefield"
+  },
+  "crash_the_party": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "crashing_drawbridge": {
     "battlefield_count": 33,
@@ -7194,6 +7230,10 @@
     },
     "zone": "battlefield"
   },
+  "duskana_the_rage_mother": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "duskborne_skymarcher": {
     "battlefield_count": 33,
     "hand_size": {
@@ -8596,6 +8636,11 @@
     },
     "zone": "battlefield"
   },
+  "false_floor": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "fanatic_of_rhonas": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9740,6 +9785,13 @@
     "zone": "battlefield"
   },
   "gaea_s_skyfolk": {
+    "zone": "battlefield"
+  },
+  "gahiji_honored_one": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "gala_greeters": {
@@ -12607,6 +12659,12 @@
       "graveyard"
     ]
   },
+  "indulge_excess": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "indulgent_tormentor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13972,6 +14030,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kitt_kanto_mayhem_diva": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "citizen_1_1_gw"
+    },
+    "zone": "battlefield"
+  },
   "kjeldoran_escort": {
     "zone": "battlefield"
   },
@@ -14628,6 +14694,11 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "life_of_the_party": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 7,
     "zone": "battlefield"
   },
   "lifeblood_hydra": {
@@ -15410,6 +15481,10 @@
     "zone": "battlefield"
   },
   "magus_of_the_moat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "magus_of_the_wheel": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -18251,6 +18326,10 @@
     },
     "zone": "battlefield"
   },
+  "orzhov_advokist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orzhov_basilica": {
     "battlefield_count": 32,
     "hand_size": {
@@ -18791,6 +18870,10 @@
       "amount": 3,
       "kind": "film"
     },
+    "zone": "battlefield"
+  },
+  "phabine_boss_s_confidant": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phantom_general": {
@@ -19599,6 +19682,14 @@
     "tokens": {
       "count": 1,
       "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
+  "prosperous_partnership": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "citizen_1_1_gw"
     },
     "zone": "battlefield"
   },
@@ -21365,6 +21456,13 @@
   "rumbling_sentry": {
     "zone": "battlefield"
   },
+  "rumor_gatherer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "run_away_together": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -21819,6 +21917,13 @@
   },
   "scavenging_ooze": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "scepter_of_celebration": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sceptre_of_eternal_glory": {
@@ -23214,6 +23319,10 @@
     "zone": "battlefield"
   },
   "sixth_sense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sizzling_soloist": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -25079,6 +25188,13 @@
   "sylvan_library": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "sylvan_offering": {
+    "tokens": {
+      "count": 1,
+      "id": "treefolk_x_x_g"
+    },
+    "zone": "graveyard"
   },
   "sylvan_reclamation": {
     "opponent_battlefield_count": 4,
@@ -28793,6 +28909,20 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "vivien_s_stampede": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "vigilance",
+        "trample",
+        "melee"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "vivisection": {
     "hand_size": {

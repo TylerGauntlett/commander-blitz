@@ -2003,6 +2003,38 @@ class TestWitherbloomsPestGainsLifeWhenItDies:
         assert sorted(other.colors) == ["G"]
 
 
+class TestZurzothsDevilPingsWhenItDies:
+    """Zurzoth, Chaos Rider and Spiked Corridor // Torture Pit: *"create a
+    **1/1 red Devil** creature token with 'When this token dies, it deals 1
+    damage to any target.'"*
+
+    The Pest is the nearest token with a death trigger and gains life instead;
+    Zurzoth's second ability keys on the Devil subtype, so a red 1/1 of any
+    other type would also switch it off.
+    """
+
+    def test_it_is_a_one_one_red_devil(self, pool):
+        devil = pool.get("devil_1_1_r")
+        assert devil is not None and devil.is_token and devil.is_creature
+        assert (devil.power, devil.toughness) == (1, 1)
+        assert sorted(devil.colors) == ["R"]
+        assert list(devil.types) == ["Creature"]
+        assert list(devil.subtypes) == ["Devil"]
+        assert not devil.keywords
+
+    def test_it_deals_one_damage_to_any_target_when_it_dies(self, pool):
+        (ability,) = pool.get("devil_1_1_r").abilities
+        assert ability.kind == "triggered"
+        assert ability.trigger.event == "dies" and ability.trigger.source == "self"
+        (effect,) = ability.effects
+        assert effect["op"] == "damage" and effect["amount"] == {"const": 1}
+
+    def test_the_pest_is_still_a_separate_token(self, pool):
+        other = pool.get("pest_1_1_bg")
+        assert list(other.subtypes) == ["Pest"]
+        assert other.abilities[0].effects[0]["op"] == "gain_life"
+
+
 class TestCreakwoodLiegesWormIsAPlainBlackAndGreen:
     """Creakwood Liege: *"you may create a **1/1 black and green Worm**
     creature token."*
@@ -2847,6 +2879,30 @@ class TestTheTrickyTerrainTokens:
 
     def test_the_red_warrior_is_still_mono_red(self, pool):
         assert sorted(pool.get("warrior_1_1_r").colors) == ["R"]
+
+
+class TestSylvanOfferingsTreefolkIsAGreenXX:
+    """Sylvan Offering and Assemble the Entmoot: *"create an **X/X green
+    Treefolk** creature token."*
+
+    Written 0/0 with `variable_pt`, because its size is the creating effect's
+    (see `tests/unit/tokens/test_variable_pt_token.py`). The Hydra and the Ooze
+    are the same green X/X body with the wrong creature type, and a Treefolk
+    lord or a "Treefolk you control" count would not see them.
+    """
+
+    def test_it_is_an_x_x_green_treefolk(self, pool):
+        token = pool.get("treefolk_x_x_g")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 0) and token.variable_pt
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Treefolk"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_hydra_and_the_ooze_are_still_separate_tokens(self, pool):
+        assert list(pool.get("hydra_x_x_g").subtypes) == ["Hydra"]
+        assert list(pool.get("ooze_x_x_g").subtypes) == ["Ooze"]
 
 
 class TestTheEldraziIncursionTokens:

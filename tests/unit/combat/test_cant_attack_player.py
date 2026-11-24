@@ -389,7 +389,7 @@ class TestTheLoaderGuardsIt:
                     "op": "cant_attack_player",
                     "attacker": "you",
                     "defender": "opponent",
-                    "duration": "until_your_next_turn",
+                    "duration": "until_end_of_turn",
                 }
             )
 

@@ -94,7 +94,7 @@ each heading; this table is generated from them.
 | [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | Distributing counters from a spell | 0 |
-| [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | nothing | 0 |
+| [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | nothing | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | nothing | 0 |
 | [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
@@ -107,6 +107,7 @@ each heading; this table is generated from them.
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
+| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 1 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
@@ -154,18 +155,18 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-3. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-4. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-5. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-6. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-7. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-8. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-9. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-10. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-11. [The Ring tempts you](#the-ring-tempts-you) — M, high
-12. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-13. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+2. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+3. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+4. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+5. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+6. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+7. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+8. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+9. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+10. [The Ring tempts you](#the-ring-tempts-you) — M, high
+11. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+12. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+13. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
 14. [Difficulty](#difficulty) — S, medium
 15. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 16. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
@@ -247,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
 - [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
+- [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -541,6 +543,65 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### A land that sacrifices itself on entering
+
+Effort **S** · Impact **medium**, the New Capenna Commander fetch-land cycle waits on it, and it alone keeps Cabaretti Cacophony and Blight Curse off the shelf · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The New Capenna Commander fetch lands (Cabaretti Courtyard, Riveteers
+Overlook, Maestros Theater, Obscura Storefront, Brokers Hideout) print "When
+this land enters, sacrifice it. When you do, search your library for a basic
+… card, put it onto the battlefield tapped, then shuffle and you gain 1
+life." The DSL already says it: a `self_enters` trigger that sacrifices
+`self_only`, then a `reflexive_trigger` that fetches and gains life. What
+refuses it is gate 4 of `cards.authoring.verify`: `_play_once` allows a
+permanent to end only on the battlefield (an Aura also in the graveyard), and
+these lands end in the graveyard as printed.
+`tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected`
+pins that a creature whose text is "When this creature enters, sacrifice it."
+must still fail, so admitting the lands widens a gate, and that is the
+owner's call. The gap records are `cabaretti_courtyard`, `maestros_theater`,
+`obscura_storefront` and `riveteers_overlook` under `data/authoring/gaps/`,
+all naming `self_sacrificing_permanent_gate`. The same question is open on
+[precon-ecc-blight-curse](precon-ecc-blight-curse.md), whose last card is
+Riveteers Overlook.
+
+#### The change
+
+1. Gate 4 admits the graveyard for a permanent whose unconditional
+   `self_enters` trigger opens by sacrificing `self_only` and goes straight
+   on to a `reflexive_trigger`, the way it admits an Aura; the check reads
+   the compiled card, not the oracle text.
+2. The expectation for such a card has to assert what the reflexive half did
+   (the fetched land on the battlefield, the life gained), which a card that
+   merely vanished cannot.
+3. Harvest: the cycle's cards by name through `/author-cards`, and their gap
+   records retired.
+
+It does not widen gate 4 for any other shape: a permanent that sacrifices
+itself with no reflexive half, or on a condition, still fails.
+
+#### Gate
+
+The pinned vanishing-creature test unchanged and still green; a new test in
+`tests/cards/test_authoring.py` beside it that a self-sacrificing land with a
+reflexive fetch clears all six gates, and that the same land with the
+reflexive half removed is still rejected at gate 4; the harvested lands'
+six gates.
+
+#### Open questions
+
+- **May gate 4 admit the graveyard for this one shape?** Recommended: yes,
+  narrowed to a `self_enters` trigger with no condition whose first effect
+  sacrifices `self_only` and whose next is a `reflexive_trigger`, so the
+  pinned vanishing creature, which has no reflexive half, still fails and
+  nothing else the gate catches moves.
+- **Does Blight Curse take its answer from here?** Recommended: yes; the
+  question on precon-ecc-blight-curse is this one, so answering it here and
+  adding this item to that precon's `depends_on` keeps one owner for the
+  decision.
 
 ### Granted flashback permissions without a per-turn cap
 
@@ -4323,7 +4384,7 @@ whole-game test able to draw the deck.
 
 ### Cabaretti Cacophony (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
 
 #### Today
 
@@ -4334,6 +4395,14 @@ coming-soon shell on the shelf: its row `ncc_cabaretti_cacophony` is in
 `python scripts/sync_precons.py --missing ncc_cabaretti_cacophony` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Two cards are left. Cabaretti Courtyard is expressible but refused by gate 4
+of `cards.authoring.verify`, which lets a permanent end only on the
+battlefield while the land's own enters trigger sacrifices it; admitting it
+is the owner's call, held by [self-sacrificing-lands](self-sacrificing-lands.md).
+Zurzoth, Chaos Rider waits on a capability no item covers yet, named by its
+gap record: a batched "one or more Devils you control attack one or more
+players" trigger that binds the players attacked (`attacked_players_binding`).
 
 #### The change
 

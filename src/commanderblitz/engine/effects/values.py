@@ -201,6 +201,14 @@ VALUE_KEYS = frozenset(
         # the battlefield, because an attacker that died in combat still
         # attacked and the board has forgotten it.
         "attackers_this_turn",
+        # "Create a Treasure token for each **creature you controlled that
+        # dealt combat damage to a player** this turn" -- Indulge // Excess.
+        # Creatures, not seats, off `TurnLedger.combat_damagers_by_controller`,
+        # keyed by who controlled each as the damage was dealt and kept past
+        # death and re-entry (400.7). `player_count` over
+        # `dealt_combat_damage_by` is the near miss: it counts the players hit,
+        # so two creatures through to one opponent read 1.
+        "creatures_dealt_combat_damage_to_player_this_turn",
         # Pack tactics -- "…if you attacked with creatures with **total power 6
         # or greater this combat**" (Minion of the Mighty). The power summed as
         # the attackers were declared and frozen there
@@ -858,6 +866,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for p in _players(ctx, expr["attackers_this_turn"]):
             oids |= ledger.creatures_attacked.get(p, set())
         return len(oids)
+    if "creatures_dealt_combat_damage_to_player_this_turn" in expr:
+        # A union, for `attackers_this_turn`'s reason: a creature stolen
+        # between two combats can have dealt damage under both controllers,
+        # and under `"all"` it is still one creature. A creature that hit two
+        # players is one dealer in one set.
+        dealers: set[int] = set()
+        for p in _players(ctx, expr["creatures_dealt_combat_damage_to_player_this_turn"]):
+            dealers |= ledger.combat_damagers_by_controller.get(p, set())
+        return len(dealers)
     if "attack_power_this_combat" in expr:
         # Summed per named player: only the active player declares, so "you"
         # is the whole of pack tactics and an opponent's total reads 0.
@@ -2178,6 +2195,16 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.{key}: needs a player spec, "
                 f"e.g. 'you' (under whose control they died), got {who!r}"
+            )
+    if "creatures_dealt_combat_damage_to_player_this_turn" in expr:
+        who = expr["creatures_dealt_combat_damage_to_player_this_turn"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.creatures_dealt_combat_damage_to_player_this_turn: needs a "
+                f"player spec, e.g. 'you' (who controlled the creatures as they dealt "
+                f"the damage), got {who!r}"
             )
     if "counters_put_this_turn" in expr:
         validate_counters_put_this_turn(

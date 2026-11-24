@@ -254,8 +254,17 @@ class TempEffect:
 #: every other duration in the DSL is a bare string a card file writes.
 #: ``attacker_next_turn`` is "that player can't attack you **during their next
 #: turn**" (Willie Lumpkin, Postman): pending until the attacker's next untap
-#: step, in force for that turn, gone at its cleanup.
-ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn")
+#: step, in force for that turn, gone at its cleanup. ``until_your_next_turn``
+#: is "creatures that player controls can't attack you … **until your next
+#: turn**" (Orzhov Advokist): in force from resolution, keyed to the effect's
+#: controller (``AttackRestriction.player``) and cleared in that player's untap
+#: step, however many turns -- extra ones included -- come in between.
+ATTACK_RESTRICTION_DURATIONS = (
+    "this_turn",
+    "this_combat",
+    "attacker_next_turn",
+    "until_your_next_turn",
+)
 
 #: The durations a control change can carry -- Captivating Vampire's steal, Act
 #: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
@@ -361,6 +370,11 @@ class AttackRestriction:
     #: the player rather than projected as a number, for detain's reason: an
     #: elimination or an extra turn moves "their next turn".
     in_force_turn: int | None = None
+    #: An ``until_your_next_turn`` restriction's clock: the player whose next
+    #: turn ends it -- the effect's controller, not ``attacker`` -- cleared by
+    #: `temp_effects.clear_attack_restrictions` in their untap step. ``None``
+    #: for every other duration.
+    player: int | None = None
 
     def in_force(self, turn: int) -> bool:
         """Does this restriction bite during ``turn``?"""
@@ -377,6 +391,7 @@ class AttackRestriction:
             "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
             "in_force_turn": self.in_force_turn,
+            "player": self.player,
         }
 
 
@@ -2395,6 +2410,16 @@ class TurnLedger:
     #: loses the type afterwards still dealt the damage as one. Never cleared
     #: per oid -- the record is about the damage, not about any object.
     players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
+    #: Every seat dealt combat damage this turn, by **any** source -- Vivien's
+    #: Stampede's "draw a card for each player who was dealt combat damage this
+    #: turn". The union of the two records above is the near miss and is wrong
+    #: twice: the oid-keyed one drops a seat when its dealer re-enters the
+    #: battlefield, and the subtype-keyed one never hears of a creature with no
+    #: creature type. Folded off the same COMBAT_DAMAGE_TO_PLAYER, so a
+    #: prevented hit records nothing and noncombat damage never does; a seat,
+    #: not a tally, so a player hit twice is one player. Never cleared per oid
+    #: -- the record is about the damage, not about any object.
+    players_dealt_combat_damage: set[int] = field(default_factory=set)
     #: The same record, but **which** creatures: subtype -> seat -> the
     #: dealers -- Admiral Beckett Brass's "a player who was dealt combat damage
     #: by **three or more** Pirates this turn". The seat set above says only
@@ -2407,6 +2432,20 @@ class TurnLedger:
     #: (`retire_combat_damager`): the old Pirate still counts as one of the
     #: three, and the new one is not the same Pirate counted twice.
     combat_damagers_by_subtype: dict[str, dict[int, set[int]]] = field(default_factory=dict)
+    #: Which creatures dealt combat damage to a player this turn, keyed by the
+    #: seat that **controlled** each one as the damage was dealt: controller ->
+    #: dealers -- Indulge // Excess's "create a Treasure token for each creature
+    #: you controlled that dealt combat damage to a player this turn".
+    #:
+    #: `players_dealt_combat_damage` above says whom, not which creatures, and
+    #: `players_dealt_combat_damage_by` is keyed by oid and drops an entry when
+    #: its oid re-enters, so a union of its keys would forget a creature that
+    #: was flickered after the damage. A count over the battlefield forgets one
+    #: that died. A dealer is counted once however many players it hit, and is
+    #: re-keyed with `combat_damagers_by_subtype` as it re-enters (400.7): the
+    #: old object's damage still counts once, and the new object is a second
+    #: creature only if it deals combat damage too.
+    combat_damagers_by_controller: dict[int, set[int]] = field(default_factory=dict)
     #: How many dealers `retire_combat_damager` has re-keyed this turn, so each
     #: gets a negative id nothing else holds.
     retired_combat_damagers: int = 0
@@ -2807,18 +2846,20 @@ class TurnLedger:
         return any(entry.oid == oid for entry in self.permanents_entered)
 
     def retire_combat_damager(self, oid: int) -> None:
-        """Re-key ``oid``'s `combat_damagers_by_subtype` entries as it re-enters.
+        """Re-key ``oid``'s `combat_damagers_by_subtype` and
+        `combat_damagers_by_controller` entries as it re-enters.
 
         The object that dealt the damage is gone (400.7) and the damage it
         dealt still counts, so its entries keep a dealer of their own -- one
-        negative id for every seat and subtype, since they were one creature.
+        negative id for every seat, subtype and controller, since they were one
+        creature.
         """
         holding = [
             dealers
             for seats in self.combat_damagers_by_subtype.values()
             for dealers in seats.values()
             if oid in dealers
-        ]
+        ] + [dealers for dealers in self.combat_damagers_by_controller.values() if oid in dealers]
         if not holding:
             return
         self.retired_combat_damagers += 1
@@ -2878,7 +2919,9 @@ class TurnLedger:
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.players_dealt_combat_damage_by_subtype.clear()
+        self.players_dealt_combat_damage.clear()
         self.combat_damagers_by_subtype.clear()
+        self.combat_damagers_by_controller.clear()
         self.retired_combat_damagers = 0
         self.damage_to_permanents.clear()
         self.damage_taken.clear()

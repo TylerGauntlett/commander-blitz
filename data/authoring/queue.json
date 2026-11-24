@@ -14012,12 +14012,12 @@
     },
     "Artifact Mutation": {
       "edhrec_rank": 2442,
-      "gate": "template",
+      "gate": null,
       "name": "Artifact Mutation",
-      "reason": "no template for: Destroy target artifact. It can't be regenerated. Create X 1/1 green Saproling creature to",
+      "reason": "",
       "scryfall_id": "fed09083-a259-4ab5-bb85-aeab9d0b1f7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Artifact Possession": {
@@ -15272,12 +15272,12 @@
     },
     "Assemble the Entmoot": {
       "edhrec_rank": 6838,
-      "gate": "template",
+      "gate": null,
       "name": "Assemble the Entmoot",
-      "reason": "no template for: Creatures you control have reach",
+      "reason": "",
       "scryfall_id": "409c226b-ef01-4ccd-b23e-d94bdc1e4aa5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assemble the Legion": {
@@ -24222,12 +24222,12 @@
     },
     "Bess, Soul Nourisher": {
       "edhrec_rank": 10325,
-      "gate": "template",
+      "gate": null,
       "name": "Bess, Soul Nourisher",
-      "reason": "no template for: Whenever one or more other creatures you control with base power and toughness 1/1 enter, ",
+      "reason": "",
       "scryfall_id": "4ac65212-f276-4be1-837b-27872fcd246b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bessie, the Doctor's Roadster": {
@@ -37412,22 +37412,22 @@
     },
     "Cabaretti Charm": {
       "edhrec_rank": 7537,
-      "gate": "template",
+      "gate": null,
       "name": "Cabaretti Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "08f33c8a-8e93-4296-964b-da132a854b3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cabaretti Confluence": {
       "edhrec_rank": 16411,
-      "gate": "template",
+      "gate": null,
       "name": "Cabaretti Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "374198ef-91b6-45ad-acc9-adf659b5763b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cabaretti Courtyard": {
@@ -55362,12 +55362,12 @@
     },
     "Crash the Party": {
       "edhrec_rank": 12468,
-      "gate": "template",
+      "gate": null,
       "name": "Crash the Party",
-      "reason": "no template for: Create a tapped 4/4 green Rhino Warrior creature token for each tapped creature you contro",
+      "reason": "",
       "scryfall_id": "79af4f9f-e6dc-4b36-84bd-2924a2f492eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crash the Ramparts": {
@@ -77122,12 +77122,12 @@
     },
     "Duskana, the Rage Mother": {
       "edhrec_rank": 10907,
-      "gate": "template",
+      "gate": null,
       "name": "Duskana, the Rage Mother",
-      "reason": "no template for: When Duskana enters, draw a card for each creature you control with base power and toughne",
+      "reason": "",
       "scryfall_id": "31fa9d47-43d6-44b5-ab86-fc94a83eac26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskborne Skymarcher": {
@@ -90862,12 +90862,12 @@
     },
     "False Floor": {
       "edhrec_rank": 18827,
-      "gate": "template",
+      "gate": null,
       "name": "False Floor",
-      "reason": "no template for: {2}, {T}, Exile this artifact: Exile all untapped creatures. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "65deec7d-5dfc-4f74-80bb-4c66f33418cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "False Memories": {
@@ -104212,12 +104212,12 @@
     },
     "Gahiji, Honored One": {
       "edhrec_rank": 11721,
-      "gate": "template",
+      "gate": null,
       "name": "Gahiji, Honored One",
-      "reason": "no template for: Whenever a creature attacks one of your opponents or a planeswalker an opponent controls, ",
+      "reason": "",
       "scryfall_id": "c658f583-c115-43c7-9986-2c6010549313",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gainsay": {
@@ -135892,12 +135892,12 @@
     },
     "Indulge // Excess": {
       "edhrec_rank": 10732,
-      "gate": "template",
+      "gate": null,
       "name": "Indulge // Excess",
-      "reason": "no template for: Whenever a creature you control attacks this turn, create a 1/1 green and white Citizen cr",
+      "reason": "",
       "scryfall_id": "d653b755-1e09-45c4-8d44-8a950151ca51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indulgent Tormentor": {
@@ -150092,12 +150092,12 @@
     },
     "Kitt Kanto, Mayhem Diva": {
       "edhrec_rank": 11514,
-      "gate": "template",
+      "gate": null,
       "name": "Kitt Kanto, Mayhem Diva",
-      "reason": "no template for: When Kitt Kanto enters, create a 1/1 green and white Citizen creature token",
+      "reason": "",
       "scryfall_id": "82862454-5edc-421c-9078-bee0337fa827",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kiyomaro, First to Stand": {
@@ -157732,12 +157732,12 @@
     },
     "Life of the Party": {
       "edhrec_rank": 5069,
-      "gate": "template",
+      "gate": null,
       "name": "Life of the Party",
-      "reason": "no template for: Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of ",
+      "reason": "",
       "scryfall_id": "30cfd6c9-9eed-493b-bd1d-113cb7935f61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Life's Finale": {
@@ -165282,12 +165282,12 @@
     },
     "Magus of the Wheel": {
       "edhrec_rank": 1128,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Wheel",
-      "reason": "no template for: {1}{R}, {T}, Sacrifice this creature: Each player discards their hand, then draws seven ca",
+      "reason": "",
       "scryfall_id": "0d84eb6f-2675-436c-885e-207468110d76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magus of the Will": {
@@ -194982,12 +194982,12 @@
     },
     "Orzhov Advokist": {
       "edhrec_rank": 3290,
-      "gate": "template",
+      "gate": null,
       "name": "Orzhov Advokist",
-      "reason": "no template for: At the beginning of your upkeep, each player may put two +1/+1 counters on a creature they",
+      "reason": "",
       "scryfall_id": "b94f2c12-a946-4eb2-aa9c-5034b4628680",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orzhov Basilica": {
@@ -200572,12 +200572,12 @@
     },
     "Phabine, Boss's Confidant": {
       "edhrec_rank": 10235,
-      "gate": "template",
+      "gate": null,
       "name": "Phabine, Boss's Confidant",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "b04ddd08-b1eb-4100-b0a2-62bee5d89c20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phage the Untouchable": {
@@ -208602,12 +208602,12 @@
     },
     "Prosperous Partnership": {
       "edhrec_rank": 6196,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Partnership",
-      "reason": "no template for: When this enchantment enters, create two 1/1 green and white Citizen creature tokens",
+      "reason": "",
       "scryfall_id": "a50267d1-f4b7-494f-b50b-cfb08b760b47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Pirates": {
@@ -229032,12 +229032,12 @@
     },
     "Rumor Gatherer": {
       "edhrec_rank": 1519,
-      "gate": "template",
+      "gate": null,
       "name": "Rumor Gatherer",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, scry 1. If this is the second tim",
+      "reason": "",
       "scryfall_id": "9251f658-bf7a-45e7-a71f-8e359b838921",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Run Afoul": {
@@ -235392,12 +235392,12 @@
     },
     "Scepter of Celebration": {
       "edhrec_rank": 7893,
-      "gate": "template",
+      "gate": null,
       "name": "Scepter of Celebration",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, create that many 1/1 green and",
+      "reason": "",
       "scryfall_id": "404b786c-b64c-4935-b0d3-4dd7a2d14c37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scepter of Dominance": {
@@ -248952,12 +248952,12 @@
     },
     "Sizzling Soloist": {
       "edhrec_rank": 19321,
-      "gate": "template",
+      "gate": null,
       "name": "Sizzling Soloist",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, target creature an opponent contr",
+      "reason": "",
       "scryfall_id": "958dfd59-7dbd-45e0-b6e1-e432c78b6878",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skaab Goliath": {
@@ -272652,12 +272652,12 @@
     },
     "Sylvan Offering": {
       "edhrec_rank": 4777,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvan Offering",
-      "reason": "no template for: Choose an opponent. You and that player each create an X/X green Treefolk creature token",
+      "reason": "",
       "scryfall_id": "8f171772-eb52-4cc2-b3cd-8ceb0f15732f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sylvan Paradise": {
@@ -306312,12 +306312,12 @@
     },
     "Vivien's Stampede": {
       "edhrec_rank": 15420,
-      "gate": "template",
+      "gate": null,
       "name": "Vivien's Stampede",
-      "reason": "no template for: Each creature you control gains vigilance, trample, and melee until end of turn",
+      "reason": "",
       "scryfall_id": "886531e0-425e-4bf9-813c-3db399a7223b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivien's Talent": {
