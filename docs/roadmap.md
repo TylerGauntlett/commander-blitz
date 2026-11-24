@@ -108,6 +108,7 @@ each heading; this table is generated from them.
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
+| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 0 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
@@ -168,40 +169,41 @@ same list, and `/extend-roadmap` starts at the top of it.
 11. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
 12. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
 13. [Difficulty](#difficulty) — S, medium
-14. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-15. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-16. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-17. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-18. [Why a press is refused](#why-a-press-is-refused) — S, medium
-19. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-20. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-21. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-22. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-23. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-24. [Secret choices](#secret-choices) — M, medium
-25. [Experience counters](#experience-counters) — M, medium
-26. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-27. [Outcomes as data](#outcomes-as-data) — M, medium
-28. [Rad counters](#rad-counters) — M, medium
-29. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-30. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-31. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-32. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-33. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-34. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-35. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-36. [Replays and sharing](#replays-and-sharing) — M, medium
-37. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-38. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-39. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-40. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-41. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-42. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-43. [Archidekt import](#archidekt-import) — S, low
-44. [Sound](#sound) — S, low
-45. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-46. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-47. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+14. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+15. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+16. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+17. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+18. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+19. [Why a press is refused](#why-a-press-is-refused) — S, medium
+20. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+21. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+22. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+23. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+24. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+25. [Secret choices](#secret-choices) — M, medium
+26. [Experience counters](#experience-counters) — M, medium
+27. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+28. [Outcomes as data](#outcomes-as-data) — M, medium
+29. [Rad counters](#rad-counters) — M, medium
+30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+36. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+37. [Replays and sharing](#replays-and-sharing) — M, medium
+38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+39. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+40. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+41. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+42. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+43. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+44. [Archidekt import](#archidekt-import) — S, low
+45. [Sound](#sound) — S, low
+46. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+47. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+48. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -542,6 +544,65 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### A land that sacrifices itself on entering
+
+Effort **S** · Impact **medium**, the New Capenna Commander fetch-land cycle waits on it, and it alone keeps Cabaretti Cacophony and Blight Curse off the shelf · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+The New Capenna Commander fetch lands (Cabaretti Courtyard, Riveteers
+Overlook, Maestros Theater, Obscura Storefront, Brokers Hideout) print "When
+this land enters, sacrifice it. When you do, search your library for a basic
+… card, put it onto the battlefield tapped, then shuffle and you gain 1
+life." The DSL already says it: a `self_enters` trigger that sacrifices
+`self_only`, then a `reflexive_trigger` that fetches and gains life. What
+refuses it is gate 4 of `cards.authoring.verify`: `_play_once` allows a
+permanent to end only on the battlefield (an Aura also in the graveyard), and
+these lands end in the graveyard as printed.
+`tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected`
+pins that a creature whose text is "When this creature enters, sacrifice it."
+must still fail, so admitting the lands widens a gate, and that is the
+owner's call. The gap records are `cabaretti_courtyard`, `maestros_theater`,
+`obscura_storefront` and `riveteers_overlook` under `data/authoring/gaps/`,
+all naming `self_sacrificing_permanent_gate`. The same question is open on
+[precon-ecc-blight-curse](precon-ecc-blight-curse.md), whose last card is
+Riveteers Overlook.
+
+#### The change
+
+1. Gate 4 admits the graveyard for a permanent whose unconditional
+   `self_enters` trigger opens by sacrificing `self_only` and goes straight
+   on to a `reflexive_trigger`, the way it admits an Aura; the check reads
+   the compiled card, not the oracle text.
+2. The expectation for such a card has to assert what the reflexive half did
+   (the fetched land on the battlefield, the life gained), which a card that
+   merely vanished cannot.
+3. Harvest: the cycle's cards by name through `/author-cards`, and their gap
+   records retired.
+
+It does not widen gate 4 for any other shape: a permanent that sacrifices
+itself with no reflexive half, or on a condition, still fails.
+
+#### Gate
+
+The pinned vanishing-creature test unchanged and still green; a new test in
+`tests/cards/test_authoring.py` beside it that a self-sacrificing land with a
+reflexive fetch clears all six gates, and that the same land with the
+reflexive half removed is still rejected at gate 4; the harvested lands'
+six gates.
+
+#### Open questions
+
+- **May gate 4 admit the graveyard for this one shape?** Recommended: yes,
+  narrowed to a `self_enters` trigger with no condition whose first effect
+  sacrifices `self_only` and whose next is a `reflexive_trigger`, so the
+  pinned vanishing creature, which has no reflexive half, still fails and
+  nothing else the gate catches moves.
+- **Does Blight Curse take its answer from here?** Recommended: yes; the
+  question on precon-ecc-blight-curse is this one, so answering it here and
+  adding this item to that precon's `depends_on` keeps one owner for the
+  decision.
 
 ### Granted flashback permissions without a per-turn cap
 
