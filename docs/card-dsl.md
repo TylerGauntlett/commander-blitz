@@ -1735,6 +1735,33 @@ or at or above the ceiling (that is a plain `count`). The near misses: `up_to`
 alone is zero to N, so the spell could be cast at nothing; `optional` is
 "exactly N, or none"; a fixed `count` forces exactly N.
 
+### "Target cards from a single graveyard" -- `single_graveyard`
+
+```jsonc
+// Decompose: "Exile up to three target cards from a single graveyard."
+{ "id": "t1", "kind": "card_in_graveyard", "count": 3, "up_to": true,
+  "single_graveyard": true,
+  "selector": { "zone": "graveyard", "controller": "any" } }
+```
+
+`single_graveyard` is a rule between the picks: every chosen card shares an
+owner, and so a graveyard (404.2). It is `one_per_player` inverted and sits in
+the same slot, `targeting._spec_options`, which builds subsets one graveyard at
+a time: two cards from different graveyards are never offered together, while
+one card alone and, under `up_to`, none are (601.2c). On a literal `count`
+("exile **four** target cards from a single graveyard") only full sets from one
+graveyard are offered, so a table where no graveyard holds that many cannot cast
+it; `optional` there is "you may exile two …". Nothing more is re-checked on
+resolution: ownership never changes, so the targets still in their graveyard
+(608.2b) still share one.
+
+The loader refuses it on any kind but `card_in_graveyard`, on a single card or
+a computed exact `count`, and beside `one_per_player`; like every rule between
+picks, it is refused on a mode-owned or random target. The near misses: without
+it the picks may come from two graveyards; a sibling `player` target with
+`controller: {"target": …}` adds an unprinted "target player" that hexproof
+stops; a fixed `controller` drops every other graveyard.
+
 ### "Each of X targets"
 
 ```jsonc
@@ -2301,6 +2328,8 @@ Anywhere a number is expected -- the leaf list is
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
 { "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
+{ "cards_from_graveyard_this_turn":             // Syrix; "a CREATURE card left your graveyard",
+    { "player": "you", "filter": { "types": ["Creature"] } } }  //   the printed face as it left
 { "descended_this_turn": "you" }                // descend: PERMANENT cards into YOUR graveyard, from anywhere
 { "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
                      "objects": { … } } }                      //   where `mana_value_of` sums
@@ -3765,9 +3794,25 @@ filter misses leaves it waiting, and whatever is unspent goes at cleanup. Two
 discounts waiting for the same spell both apply. Generic only, like every
 reduction; zero installs nothing.
 
+`every_spell: true` makes it every matching spell for the rest of the turn
+rather than the next one — the timed form of the `spell_cost_reduction` static:
+
+```jsonc
+// Spellbinding Soprano — "Whenever this creature attacks, instant and sorcery
+//  spells you cast this turn cost {1} less to cast."
+{ "op": "next_spell_cost_reduction", "every_spell": true,
+  "types": ["Instant", "Sorcery"], "amount": { "const": 1 } }
+```
+
+The same player-owned row with `next_spell` false: no cast spends it, it
+outlives the permanent that installed it (611.2a), and it goes at cleanup. The
+loader refuses a non-boolean `every_spell`.
+
 The near misses are the continuous ones: a card's `cost_reduction` and the
 `spell_cost_reduction` static recount the board each time a spell is priced
-and discount every matching spell while their source stands.
+and discount every matching spell while their source stands. Granting the
+static to the source with a `duration` is the wrong reading of "spells you cast
+this turn": it ends when the source leaves the battlefield.
 
 ### A reduction that reads energy paid or lost
 

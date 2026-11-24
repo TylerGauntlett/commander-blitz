@@ -4136,6 +4136,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(f"{where}: unknown card type {t!r}")
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if not isinstance(effect.get("every_spell", False), bool):
+            raise DslError(f"{where}: next_spell_cost_reduction's 'every_spell' is true or false")
     if op == "multiply_token_creation":
         # Without a duration the doubling would have no clock to end on; a
         # misspelt one would never be swept and double every token for the rest

@@ -1141,8 +1141,28 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # opposite direction across every yard at the table -- true in exactly
         # the wrong cases. Keyed by the graveyard's owner (400.3), so a card an
         # opponent reanimated out of your yard still counts as having left it.
-        pids = _players(ctx, expr["cards_from_graveyard_this_turn"])
-        return sum(ledger.cards_from_graveyard.get(p, 0) for p in pids)
+        #
+        # Either a bare player spec (Gau) or `{"player": …, "filter": …}` for
+        # the sentences that ask *which* cards -- Syrix, Carrier of the Flame's
+        # "if a **creature card** left your graveyard this turn", which a land
+        # or an instant leaving must not satisfy. Branching on `filter` as
+        # `spells_cast_this_turn` does, because a player spec is itself
+        # sometimes a mapping. Matched on the printed face recorded as the
+        # card left (`TurnLedger.cards_from_graveyard`), since by now it may be
+        # a permanent animated into something else or a card face down in exile.
+        spec = expr["cards_from_graveyard_this_turn"]
+        filt = spec.get("filter") if isinstance(spec, Mapping) and "filter" in spec else None
+        who = spec.get("player", "you") if filt is not None else spec
+        pids = _players(ctx, who)
+        if filt is None:
+            return sum(len(ledger.cards_from_graveyard.get(p, ())) for p in pids)
+        registry = ctx.state.registry
+        return sum(
+            1
+            for p in pids
+            for card_id in ledger.cards_from_graveyard.get(p, ())
+            if card_id in registry and _matches_printed(registry.get(card_id), filt)
+        )
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:
@@ -2261,6 +2281,44 @@ def validate_value(expr: Any, where: str) -> None:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
         )
+    departed = expr.get("cards_from_graveyard_this_turn")
+    if isinstance(departed, Mapping) and "filter" in departed:
+        # The typed form, refused for spells_cast_this_turn's reason: a
+        # misspelled type would match nothing and switch Syrix off for good.
+        if unknown := set(departed) - {"player", "filter"}:
+            raise DslError(
+                f"{where}.cards_from_graveyard_this_turn: unknown keys "
+                f"{sorted(unknown)} (a player spec, or 'player' and 'filter')"
+            )
+        who = departed.get("player", "you")
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.cards_from_graveyard_this_turn.player: needs a player "
+                f"spec, e.g. 'you' (whose graveyard), got {who!r}"
+            )
+        filt = departed["filter"]
+        if not isinstance(filt, Mapping) or not filt:
+            raise DslError(
+                f"{where}.cards_from_graveyard_this_turn.filter: a non-empty "
+                f'filter over the printed card, e.g. {{"types": ["Creature"]}}; '
+                f"for every card use the bare player spec"
+            )
+        # The printed-face keys a remembered card can answer -- the set the
+        # `nth` ordinals hold their filters to, less `paid_by`, which asks how
+        # a spell was paid for. Imported here because `triggers` imports this
+        # package.
+        from ..triggers import ORDINAL_FILTER_KEYS
+
+        allowed = ORDINAL_FILTER_KEYS - {"paid_by"}
+        if unprinted := set(filt) - allowed:
+            raise DslError(
+                f"{where}.cards_from_graveyard_this_turn.filter: {sorted(unprinted)} "
+                f"cannot be asked of a card that has left the graveyard -- only its "
+                f"printed face is kept. Use only {sorted(allowed)}"
+            )
+        validate_selector(filt, f"{where}.cards_from_graveyard_this_turn.filter")
     spells = expr.get("spells_cast_this_turn")
     if isinstance(spells, Mapping) and "filter" in spells:
         # The typed form. Validated as a selector so a misspelled type is a load

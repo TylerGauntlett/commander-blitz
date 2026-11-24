@@ -1,0 +1,22 @@
+{
+  "card_id": "rekindling_phoenix",
+  "name": "Rekindling Phoenix",
+  "oracle_text": "Flying\nWhen this creature dies, create a 0/1 red Elemental creature token with \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\"",
+  "blocked_sentences": [
+    "When this creature dies, create a 0/1 red Elemental creature token with \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\""
+  ],
+  "needs": [
+    {
+      "capability": "trigger_without_legal_target_removed",
+      "kind": "engine",
+      "what": "603.3d: a triggered ability with a required target and no legal target when it would be put on the stack is removed from the stack and does nothing. The token's \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\" must leave the token in play on an upkeep with no Rekindling Phoenix card in its controller's graveyard",
+      "why_existing_wont_do": "Everything else composes and was checked in a game: an upkeep trigger, a card_in_graveyard target with selector name \"Rekindling Phoenix\", sacrifice self_only, return_from_graveyard and grant_keyword haste until_end_of_turn (Admiral Brass's shape) return the Phoenix with haste. But stack.push_triggered_ability pushes the trigger with empty targets when _choose_trigger_targets finds no option, and _resolve_ability's filter_legal treats an empty target list as legal, so the untargeted sacrifice still runs and the token sacrifices itself for nothing every upkeep. A trigger condition requiring the Phoenix in the graveyard would mask it, but that is an intervening-if the card does not print. Once the engine drops a required-target trigger with no target, the token is a Tier 0 data entry (elemental_0_1_r_rekindle_phoenix) and the card a plain dies trigger"
+    }
+  ],
+  "closest_existing": [
+    "elemental_1_1_r",
+    "feather_token",
+    "admiral_brass_unsinkable"
+  ],
+  "confidence": "high"
+}

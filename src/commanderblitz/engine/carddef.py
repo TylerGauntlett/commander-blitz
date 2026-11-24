@@ -169,6 +169,13 @@ class TargetSpec:
     #: controlled by different players"), which then offers only full sets.
     #: Re-checked per target on resolution by `targeting.filter_legal`.
     one_per_player: bool = False
+    #: Every chosen card from one graveyard -- "exile up to two target cards
+    #: **from a single graveyard**" (Waste Management). `one_per_player`
+    #: inverted: all picks share an owner. Only on ``card_in_graveyard``, with
+    #: the sizes `one_per_player` takes. Checked where the combinations are
+    #: built (601.2c); ownership never changes, so resolution has nothing more
+    #: to re-check than each card's zone -- see `targeting._one_graveyard`.
+    single_graveyard: bool = False
     optional: bool = False
     #: A cap on the combined mana value of everything chosen for this spec --
     #: "any number of target creature cards **with total mana value 6 or
@@ -262,7 +269,8 @@ class TargetSpec:
     def constrains_the_set(self) -> bool:
         """Does this spec carry a rule *between* its picks?
 
-        `one_per_player`, `total_mana_value` and `total_power` are facts about
+        `one_per_player`, `single_graveyard`, `total_mana_value` and
+        `total_power` are facts about
         the chosen set rather than about any one object in it, so only the
         subset enumeration in `targeting._spec_options` can check them. Every
         path that would ask for the picks one toggle at a time instead --
@@ -271,6 +279,7 @@ class TargetSpec:
         """
         return (
             self.one_per_player
+            or self.single_graveyard
             or self.total_mana_value is not None
             or self.total_power is not None
         )

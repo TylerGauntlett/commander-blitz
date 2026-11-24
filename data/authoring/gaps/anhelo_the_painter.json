@@ -1,0 +1,18 @@
+{
+  "card_id": "anhelo_the_painter",
+  "name": "Anhelo, the Painter",
+  "oracle_text": "Deathtouch\nThe first instant or sorcery spell you cast each turn has casualty 2. (As you cast that spell, you may sacrifice a creature with power 2 or greater. When you do, copy the spell and you may choose new targets for the copy.)",
+  "blocked_sentences": [
+    "The first instant or sorcery spell you cast each turn has casualty 2. (As you cast that spell, you may sacrifice a creature with power 2 or greater. When you do, copy the spell and you may choose new targets for the copy.)"
+  ],
+  "needs": [
+    {
+      "capability": "casualty",
+      "kind": "static_effect",
+      "what": "a static ability on a permanent that grants casualty N to other spells you cast matching a spell filter (here: instant or sorcery spells), limited to the first matching spell each turn -- i.e. offers the optional 'sacrifice a creature with power N or greater' additional cost during that spell's casting and, when paid, a reflexive trigger copies the spell with new targets allowed",
+      "why_existing_wont_do": "Casualty exists only as a card's own `additional_cost` + `additional_optional` read back through `additional_paid` and `copy_spell`; no static in `static_effects` grants an additional cost to other spells. `cast_gains_keywords` grants only ability keywords on a free-cast permission, `granted_alternative_cost` is an alternative (not additional) cost, and casualty is not in `keywords`. A `spell_cast` trigger with `max_per_turn: 1` and a `may` sacrifice then `copy_spell` would move the sacrifice from casting to trigger resolution, which is a different card (the sacrifice could be answered, and the spell could already be gone)"
+    }
+  ],
+  "closest_existing": ["additional_cost", "additional_optional", "copy_spell", "granted_alternative_cost", "spell_cast"],
+  "confidence": "high"
+}

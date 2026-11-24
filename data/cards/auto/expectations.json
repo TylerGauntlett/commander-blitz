@@ -13,6 +13,16 @@
   "a_i_m_synthoids": {
     "zone": "battlefield"
   },
+  "a_little_chat": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "aang_and_katara": {
     "zone": "battlefield"
   },
@@ -1686,6 +1696,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "audacious_swap": {
+    "zone": "graveyard"
+  },
   "augusta_order_returned": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2834,6 +2847,13 @@
     },
     "zone": "battlefield"
   },
+  "bloodsoaked_champion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "bloodstained_mire": {
     "zone": "battlefield"
   },
@@ -2920,6 +2940,18 @@
       "id": "hero_1_1_c"
     },
     "zone": "battlefield"
+  },
+  "body_count": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "body_of_knowledge": {
     "battlefield_count": 33,
@@ -3639,6 +3671,14 @@
     },
     "library_size": {
       "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "call_the_skybreaker": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "elemental_5_5_ur_flying"
     },
     "zone": "graveyard"
   },
@@ -4569,6 +4609,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "clone_legion": {
+    "battlefield_count": 34,
+    "zone": "graveyard"
+  },
   "cloud_crusader": {
     "zone": "battlefield"
   },
@@ -5110,6 +5154,13 @@
   },
   "coretapper": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "cormela_glamour_thief": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "corpse_augur": {
@@ -6838,6 +6889,10 @@
       "0": 46
     }
   },
+  "double_vision": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "doubling_season": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6995,6 +7050,18 @@
   "drannith_magistrate": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "drawn_from_dreams": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "dread_charge": {
     "zone": "graveyard"
@@ -9229,6 +9296,12 @@
   },
   "flatline": {
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "flawless_forgery": {
+    "graveyard_size": {
+      "1": 0
+    },
     "zone": "graveyard"
   },
   "flawless_maneuver": {
@@ -13778,6 +13851,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kess_dissident_mage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kessig_recluse": {
     "zone": "battlefield"
   },
@@ -15418,6 +15498,27 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "maestros_charm": {
+    "graveyard_size": {
+      "0": 7
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
+  "maestros_confluence": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "magefire_wings": {
     "zone": [
       "battlefield",
@@ -16364,6 +16465,10 @@
     "zone": "battlefield"
   },
   "millikin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mimic_vat": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -21154,6 +21259,14 @@
   "river_of_tears": {
     "zone": "battlefield"
   },
+  "river_s_rebuke": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "river_song_s_diary": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22500,6 +22613,10 @@
     },
     "zone": "battlefield"
   },
+  "sever_the_bloodline": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
+  },
   "severed_legion": {
     "zone": "battlefield"
   },
@@ -23226,6 +23343,10 @@
     },
     "zone": "battlefield"
   },
+  "sinister_concierge": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sinister_gnarlbark": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -23447,6 +23568,14 @@
     "battlefield_count": 35,
     "zone": "battlefield"
   },
+  "skyclave_shade": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "skycloud_expanse": {
     "zone": "battlefield"
   },
@@ -23646,6 +23775,13 @@
     "zone": "battlefield"
   },
   "smothering_tithe": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "smuggler_s_buggy": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -24017,6 +24153,10 @@
   },
   "spell_swindle": {
     "zone": "graveyard"
+  },
+  "spellbinding_soprano": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "spellscorn_coven_take_it_back": {
     "battlefield_count": 33,
@@ -25284,6 +25424,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "syrix_carrier_of_the_flame": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "szarekh_the_silent_king": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25407,6 +25551,14 @@
   },
   "talon_trooper": {
     "zone": "battlefield"
+  },
+  "talrand_s_invocation": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "drake_2_2_u_flying"
+    },
+    "zone": "graveyard"
   },
   "talrand_sky_summoner": {
     "battlefield_count": 33,
@@ -29360,6 +29512,17 @@
   "wasp_lancer": {
     "zone": "battlefield"
   },
+  "waste_management": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "tokens": {
+      "count": 2,
+      "id": "rogue_2_2_b"
+    },
+    "zone": "graveyard"
+  },
   "wasteland_raider": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
@@ -30237,6 +30400,13 @@
   "xander_s_lounge": {
     "zone": "battlefield"
   },
+  "xander_s_pact": {
+    "battlefield_count": 32,
+    "library_size": {
+      "1": 19
+    },
+    "zone": "graveyard"
+  },
   "xenagos_god_of_revels": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -30512,6 +30682,10 @@
       "1": 1
     },
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "zndrsplt_s_judgment": {
+    "battlefield_count": 33,
     "zone": "graveyard"
   },
   "zoanthrope": {

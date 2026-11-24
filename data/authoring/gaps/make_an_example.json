@@ -1,0 +1,18 @@
+{
+  "card_id": "make_an_example",
+  "name": "Make an Example",
+  "oracle_text": "Each opponent separates the creatures they control into two piles. For each opponent, you choose one of their piles. Each opponent sacrifices the creatures in their chosen pile. (Piles can be empty.)",
+  "blocked_sentences": [
+    "Each opponent separates the creatures they control into two piles.",
+    "For each opponent, you choose one of their piles.",
+    "Each opponent sacrifices the creatures in their chosen pile."
+  ],
+  "needs": [{
+    "capability": "separate_permanents_into_piles",
+    "kind": "op",
+    "what": "an op that has a chosen player (each opponent, inside for_each_player) divide a set of permanents they control (their creatures) into two piles, either possibly empty, then has another player (the spell's controller) pick one pile, binding the picked pile so a following sacrifice by that pile's controller acts on it (Liliana of the Veil -2 style, Fight or Flight family)",
+    "why_existing_wont_do": "two_piles only separates the top N cards of the caster's library into hand/graveyard; choose_permanents takes no chooser, so the opponent cannot be the one who forms the pile, and its pick is a single set rather than a two-way partition followed by a different player's pile choice; sacrifice with chooser lets one player pick victims but not the separate-then-choose split"
+  }],
+  "closest_existing": ["two_piles", "choose_permanents", "sacrifice"],
+  "confidence": "high"
+}

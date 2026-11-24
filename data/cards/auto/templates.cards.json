@@ -199,6 +199,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you do, copy this spell.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 1
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "a_little_chat",
+      "mana_cost": "{1}{U}",
+      "name": "A Little Chat",
+      "oracle_text": "Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell.)\nLook at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "destinations": [
+            {
+              "count": 1,
+              "to": "hand"
+            }
+          ],
+          "op": "look_at_top",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U",
@@ -20283,6 +20357,146 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 2
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "audacious_swap",
+      "mana_cost": "{3}{R}",
+      "name": "Audacious Swap",
+      "oracle_text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nThe owner of target nonenchantment permanent shuffles it into their library, then exiles the top card of their library. If it's a land card, they put it onto the battlefield. Otherwise, they may cast it without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "swapped",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "owner_of": "swapped"
+          }
+        },
+        {
+          "as": "top_card",
+          "objects": {
+            "player": {
+              "owner_of": "swapped"
+            },
+            "zone": "library"
+          },
+          "op": "snapshot"
+        },
+        {
+          "objects": {
+            "binding": "top_card"
+          },
+          "op": "exile"
+        },
+        {
+          "condition": {
+            "exists": {
+              "binding": "top_card",
+              "types": [
+                "Land"
+              ],
+              "zone": "exile"
+            }
+          },
+          "else": [
+            {
+              "objects": {
+                "binding": "top_card",
+                "zone": "exile"
+              },
+              "op": "cast_from_hand",
+              "player": {
+                "owner_of": "swapped"
+              }
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -34030,6 +34244,67 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "attacked_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "activated",
+          "text": "Raid — {1}{B}: Return this card from your graveyard to the battlefield. Activate only if you attacked this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodsoaked_champion",
+      "mana_cost": "{B}",
+      "name": "Bloodsoaked Champion",
+      "oracle_text": "This creature can't block.\nRaid — {1}{B}: Return this card from your graveyard to the battlefield. Activate only if you attacked this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "pay_life": 1,
             "sacrifice": {
@@ -35004,6 +35279,43 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "condition": {
+          "cmp": ">",
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": {
+            "const": 0
+          }
+        },
+        "mana": "{B}"
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "body_count",
+      "mana_cost": "{2}{B}",
+      "name": "Body Count",
+      "oracle_text": "Spectacle {B} (You may cast this spell for its spectacle cost rather than its mana cost if an opponent lost life this turn.)\nDraw a card for each creature that died under your control this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_died_this_turn": "you"
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -44095,6 +44407,34 @@
               "Planeswalker"
             ]
           }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "call_the_skybreaker",
+      "mana_cost": "{5}{U/R}{U/R}",
+      "name": "Call the Skybreaker",
+      "oracle_text": "Create a 5/5 blue and red Elemental creature token with flying.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "elemental_5_5_ur_flying"
         }
       ],
       "types": [
@@ -56318,6 +56658,48 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "clone_legion",
+      "mana_cost": "{7}{U}{U}",
+      "name": "Clone Legion",
+      "oracle_text": "For each creature target player controls, create a token that's a copy of that creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -63003,6 +63385,92 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}{B}{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": [
+            "instant",
+            "sorcery"
+          ],
+          "text": "{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "cormela_glamour_thief",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Cormela, Glamour Thief",
+      "oracle_text": "Haste\n{1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells.\nWhen Cormela dies, return up to one target instant or sorcery card from your graveyard to your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -82785,6 +83253,48 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell",
+              "sid": {
+                "binding": "sid"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may choose new targets for the copy.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "double_vision",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Double Vision",
+      "oracle_text": "Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may choose new targets for the copy.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effect": "replace_token_creation",
           "kind": "static",
           "text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead",
@@ -84909,6 +85419,36 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "drawn_from_dreams",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Drawn from Dreams",
+      "oracle_text": "Look at the top seven cards of your library. Put two of them into your hand and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 2
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -109386,6 +109926,96 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 3 (As you cast this spell, you may sacrifice a creature with power 3 or greater. When you do, copy this spell and you may choose a new target for the copy.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 3
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flawless_forgery",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Flawless Forgery",
+      "oracle_text": "Casualty 3 (As you cast this spell, you may sacrifice a creature with power 3 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nExile target instant or sorcery card from an opponent's graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "forged",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "binding": "forged"
+          },
+          "op": "cast_copy",
+          "optional": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "opponent",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -164975,6 +165605,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cast_from_graveyard",
+          "grants_flashback": true,
+          "kind": "static",
+          "static_max_per_turn": 1,
+          "text": "Once during each of your turns, you may cast an instant or sorcery spell from your graveyard. If a spell cast this way would be put into your graveyard, exile it instead."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "kess_dissident_mage",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}{B}{R}",
+      "name": "Kess, Dissident Mage",
+      "oracle_text": "Flying\nOnce during each of your turns, you may cast an instant or sorcery spell from your graveyard. If a spell cast this way would be put into your graveyard, exile it instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -185479,6 +186160,267 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "maestros_charm",
+      "mana_cost": "{U}{B}{R}",
+      "name": "Maestros Charm",
+      "oracle_text": "Choose one —\n• Look at the top five cards of your library. Put one of those cards into your hand and the rest into your graveyard.\n• Each opponent loses 3 life and you gain 3 life.\n• Maestros Charm deals 5 damage to target creature or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": 1
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to": "graveyard"
+                }
+              ],
+              "label": "Look at the top five cards of your library. Put one of those cards into your hand and the rest into your graveyard."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "label": "Each opponent loses 3 life and you gain 3 life."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Maestros Charm deals 5 damage to target creature or planeswalker."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "burned",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "maestros_confluence",
+      "mana_cost": "{3}{U}{B}{R}",
+      "name": "Maestros Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Return target monocolored instant or sorcery card from your graveyard to your hand.\n• Target creature gets -3/-3 until end of turn.\n• Goad each creature target player controls. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "recovered"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Return target monocolored instant or sorcery card from your graveyard to your hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shrunk"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": -3
+                  },
+                  "toughness": {
+                    "const": -3
+                  }
+                }
+              ],
+              "label": "Target creature gets -3/-3 until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": {
+                      "target": "goaded_player"
+                    },
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "goad"
+                }
+              ],
+              "label": "Goad each creature target player controls."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "recovered",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "any_of": [
+              {
+                "colors": [
+                  "W"
+                ],
+                "not_colors": [
+                  "U",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "U"
+                ],
+                "not_colors": [
+                  "W",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "B"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "R"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "G"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "R"
+                ]
+              }
+            ],
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "shrunk",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "goaded_player",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -195297,6 +196239,131 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "as": "vat_imprinted",
+                  "link": true,
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "vat_imprinted",
+                      "zone": "exile"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "controller": "any",
+                        "count": "all",
+                        "exclude_binding": "vat_imprinted",
+                        "exiled_with": "self",
+                        "zone": "exile"
+                      },
+                      "op": "put_exiled_into_graveyard"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile that card with Mimic Vat?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return each other card exiled with this artifact to its owner's graveyard.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "vat_card",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a card exiled with Mimic Vat"
+            },
+            {
+              "as": "vat_token",
+              "controller": "you",
+              "objects": {
+                "binding": "vat_card",
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "vat_token",
+                "count": "all"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "vat_token",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Create a token that's a copy of a card exiled with this artifact. It gains haste. Exile it at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mimic_vat",
+      "mana_cost": "{3}",
+      "name": "Mimic Vat",
+      "oracle_text": "Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return each other card exiled with this artifact to its owner's graveyard.\n{3}, {T}: Create a token that's a copy of a card exiled with this artifact. It gains haste. Exile it at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -252498,6 +253565,47 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "river_s_rebuke",
+      "mana_cost": "{4}{U}{U}",
+      "name": "River's Rebuke",
+      "oracle_text": "Return all nonland permanents target player controls to their owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -268844,6 +269952,64 @@
       "colors": [
         "B"
       ],
+      "flashback": {
+        "mana": "{5}{B}{B}"
+      },
+      "id": "sever_the_bloodline",
+      "mana_cost": "{3}{B}",
+      "name": "Sever the Bloodline",
+      "oracle_text": "Exile target creature and all other creatures with the same name as that creature.\nFlashback {5}{B}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "victim",
+            "shares_a_name_with": "victim",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "id": "severed_legion",
       "keywords": [
         "fear"
@@ -277580,6 +278746,86 @@
         {
           "effects": [
             {
+              "condition": {
+                "exists": {
+                  "self_only": true,
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "suspend"
+                },
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile Sinister Concierge with three time counters to suspend up to one target creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature dies, you may exile it and put three time counters on it. If you do, exile up to one target creature and put three time counters on it. Each card exiled this way that doesn't have suspend gains suspend.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sinister_concierge",
+      "mana_cost": "{1}{U}",
+      "name": "Sinister Concierge",
+      "oracle_text": "When this creature dies, you may exile it and put three time counters on it. If you do, exile up to one target creature and put three time counters on it. Each card exiled this way that doesn't have suspend gains suspend. (For each card with suspend, its owner removes a time counter from it at the beginning of their upkeep. When the last is removed, they may cast it without paying its mana cost. Those creature spells have haste.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -279773,6 +281019,80 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "grant_playable",
+              "playable_cast_only": true,
+              "playable_this_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, if this card is in your graveyard and it's your turn, you may cast it from your graveyard this turn.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": true
+            },
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "skyclave_shade",
+      "kicker": "{2}{B}",
+      "mana_cost": "{1}{B}",
+      "name": "Skyclave Shade",
+      "oracle_text": "Kicker {2}{B}\nThis creature can't block.\nIf this creature was kicked, it enters with two +1/+1 counters on it.\nLandfall — Whenever a land you control enters, if this card is in your graveyard and it's your turn, you may cast it from your graveyard this turn.",
+      "power": 3,
+      "replacements": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "condition": {
+            "kicked": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Shade"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -282251,6 +283571,113 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "hideaway"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hideaway 4 (When this artifact enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "cast",
+                  "objects": {
+                    "controller": "any",
+                    "count": 1,
+                    "exiled_with": "self",
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "exile"
+                  },
+                  "op": "play_exiled"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "cast"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "self_only": true,
+                        "zone": "battlefield"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast the exiled card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle deals combat damage to a player, you may cast the exiled card without paying its mana cost. If you do, return this Vehicle to its owner's hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "smuggler_s_buggy",
+      "mana_cost": "{4}",
+      "name": "Smuggler's Buggy",
+      "oracle_text": "Hideaway 4 (When this artifact enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nWhenever this Vehicle deals combat damage to a player, you may cast the exiled card without paying its mana cost. If you do, return this Vehicle to its owner's hand.\nCrew 2",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -286847,6 +288274,120 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "every_spell": true,
+              "op": "next_spell_cost_reduction",
+              "types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}{R}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "spellbinding_soprano",
+      "mana_cost": "{1}{R}",
+      "name": "Spellbinding Soprano",
+      "oracle_text": "Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} less to cast.\nEncore {3}{R} ({3}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Bard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -302357,6 +303898,128 @@
           "effects": [
             {
               "amount": {
+                "power_of": {
+                  "target": "phoenix"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "target": "phoenix"
+              },
+              "target": "struck"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "phoenix",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Phoenix"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "struck",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "cards_from_graveyard_this_turn": {
+                  "filter": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "cast_card"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Phoenix you control dies, you may cast this card from your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Phoenix"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "syrix_carrier_of_the_flame",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Syrix, Carrier of the Flame",
+      "oracle_text": "Flying, haste\nAt the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.\nWhenever another Phoenix you control dies, you may cast this card from your graveyard.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phoenix"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "as": "milled",
@@ -304528,6 +306191,31 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "talrand_s_invocation",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Talrand's Invocation",
+      "oracle_text": "Create two 2/2 blue Drake creature tokens with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "drake_2_2_u_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -351310,6 +352998,87 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "waste_management",
+      "kicker": "{3}{B}",
+      "mana_cost": "{2}{B}",
+      "name": "Waste Management",
+      "oracle_text": "Kicker {3}{B} (You may pay an additional {3}{B} as you cast this spell.)\nExile up to two target cards from a single graveyard. If this spell was kicked, instead exile target player's graveyard. Create a 2/2 black Rogue creature token for each creature card exiled this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "kicked": true
+          },
+          "else": [
+            {
+              "as": "wasted",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "as": "wasted",
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t2"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ]
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "wasted",
+              "controller": "any",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "op": "create_token",
+          "token": "rogue_2_2_b"
+        }
+      ],
+      "targets": [
+        {
+          "count": 0,
+          "count_if_kicked": 1,
+          "id": "t2",
+          "kind": "player",
+          "selector": {}
+        },
+        {
+          "count": 2,
+          "count_if_kicked": 0,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "zone": "graveyard"
+          },
+          "single_graveyard": true,
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -361021,6 +362790,81 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 2
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "xander_s_pact",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Xander's Pact",
+      "oracle_text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)\nEach opponent exiles the top card of their library. You may cast spells from among those cards this turn. If you cast a spell this way, pay life equal to that spell's mana value rather than pay its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable_cast_only": true,
+          "playable_pay_life_instead": true,
+          "playable_this_turn": true,
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -364745,6 +366589,137 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "zndrsplt_s_judgment",
+      "mana_cost": "{4}{U}",
+      "name": "Zndrsplt's Judgment",
+      "oracle_text": "For each player, choose friend or foe. Each friend creates a token that's a copy of a creature they control. Each foe returns a creature they control to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "chooser": "you",
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "as": "friend_pool",
+                      "objects": {
+                        "chooser": "none",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "choose_permanents",
+                      "prompt": "Friend"
+                    }
+                  ],
+                  "label": "Friend"
+                },
+                {
+                  "effects": [
+                    {
+                      "as": "foe_pool",
+                      "objects": {
+                        "chooser": "none",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "choose_permanents",
+                      "prompt": "Foe"
+                    }
+                  ],
+                  "label": "Foe"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "as": "friend_picks",
+              "objects": {
+                "binding": "friend_pool",
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature you control to copy"
+            },
+            {
+              "as": "foe_picks",
+              "objects": {
+                "binding": "foe_pool",
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature you control to return to its owner's hand"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "controller": {
+                "controller_of": "each"
+              },
+              "objects": {
+                "binding": "each"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "objects": {
+            "binding": "friend_picks"
+          },
+          "op": "for_each"
+        },
+        {
+          "objects": {
+            "binding": "foe_picks"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

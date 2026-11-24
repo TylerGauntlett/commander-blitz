@@ -1,0 +1,14 @@
+{
+  "card_id": "squee_the_immortal",
+  "name": "Squee, the Immortal",
+  "oracle_text": "You may cast this card from your graveyard or from exile.",
+  "blocked_sentences": ["You may cast this card from your graveyard or from exile."],
+  "needs": [{
+    "capability": "cast_self_from_exile",
+    "kind": "static_effect",
+    "what": "a card's own printed, unconditional, permanent permission to cast itself from exile at its printed price (like the Gravecrawler-shaped own-graveyard permission, but with active_zones [\"exile\"]), read off the card while it sits in its owner's exile regardless of how it got there",
+    "why_existing_wont_do": "The graveyard half is the `cast_from_graveyard` static with active_zones [\"graveyard\"], which the loader restricts to the graveyard alone (own_graveyard_cast_permission checks Zone.GRAVEYARD). Exile casts in casting._cast_actions come only from object-level grants (playable_by/playable_live set by exile/grant_playable effects, with durations like while_exiled), on_adventure, foretell, warp or rebound -- all granted by an effect or tied to a specific mechanic, none a printed characteristic that survives any route into exile. Writing only the graveyard half would be a partial card."
+  }],
+  "closest_existing": ["cast_from_graveyard", "playable", "warp", "foretell"],
+  "confidence": "high"
+}

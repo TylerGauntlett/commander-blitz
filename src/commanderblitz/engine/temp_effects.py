@@ -757,14 +757,18 @@ def grant_next_spell_discount(
     amount: int,
     *,
     types: tuple[str, ...] = (),
+    next_spell: bool = True,
     source: int | None = None,
 ) -> None:
-    """Make ``pid``'s next spell of ``types`` this turn cost ``amount`` less."""
+    """Make ``pid``'s next spell of ``types`` this turn cost ``amount`` less --
+    or, with ``next_spell`` false, every one of them until cleanup."""
 
     if amount <= 0:
         return
     state.next_spell_discounts.append(
-        NextSpellDiscount(player=pid, amount=amount, types=tuple(types), source=source)
+        NextSpellDiscount(
+            player=pid, amount=amount, types=tuple(types), next_spell=next_spell, source=source
+        )
     )
 
 
@@ -788,10 +792,13 @@ def consume_next_spell_discounts(state: GameState, pid: int, card: CardDef) -> N
 
     `consume_next_spell_flash_permissions`'s fold and for its reason: the next
     matching spell **cast** uses it up, however it was cast. A spell the filter
-    misses -- a creature after Kaza -- leaves it waiting for the instant.
+    misses -- a creature after Kaza -- leaves it waiting for the instant. An
+    every-spell discount (Spellbinding Soprano) is not spent by anything.
     """
     state.next_spell_discounts = [
-        d for d in state.next_spell_discounts if not _discount_covers(d, pid, card)
+        d
+        for d in state.next_spell_discounts
+        if not (d.next_spell and _discount_covers(d, pid, card))
     ]
 
 

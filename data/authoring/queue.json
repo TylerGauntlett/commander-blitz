@@ -52,12 +52,12 @@
     },
     "A Little Chat": {
       "edhrec_rank": 14189,
-      "gate": "template",
+      "gate": null,
       "name": "A Little Chat",
-      "reason": "no template for: Casualty 1",
+      "reason": "",
       "scryfall_id": "4d7424b6-b56a-47b7-8204-294d3dca925f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "A Realm Reborn": {
@@ -16052,12 +16052,12 @@
     },
     "Audacious Swap": {
       "edhrec_rank": 14408,
-      "gate": "template",
+      "gate": null,
       "name": "Audacious Swap",
-      "reason": "no template for: Casualty 2",
+      "reason": "",
       "scryfall_id": "816cb69f-8c9f-4a1e-90d4-8c304501876c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Audacious Thief": {
@@ -29022,12 +29022,12 @@
     },
     "Bloodsoaked Champion": {
       "edhrec_rank": 4455,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodsoaked Champion",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "275d6137-5eff-4e82-8232-64e8679bc11c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodsoaked Insight // Sanguine Morass": {
@@ -29752,12 +29752,12 @@
     },
     "Body Count": {
       "edhrec_rank": 7873,
-      "gate": "template",
+      "gate": null,
       "name": "Body Count",
-      "reason": "no template for: Spectacle {B}",
+      "reason": "",
       "scryfall_id": "024bf289-2802-4f11-aebf-9373ffbd9c46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Body Double": {
@@ -38202,12 +38202,12 @@
     },
     "Call the Skybreaker": {
       "edhrec_rank": 19526,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Skybreaker",
-      "reason": "no template for: Create a 5/5 blue and red Elemental creature token with flying",
+      "reason": "",
       "scryfall_id": "e52586f2-dcf2-4605-b354-3ab441a43638",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Call the Spirit Dragons": {
@@ -48582,12 +48582,12 @@
     },
     "Clone Legion": {
       "edhrec_rank": 3577,
-      "gate": "template",
+      "gate": null,
       "name": "Clone Legion",
-      "reason": "no template for: For each creature target player controls, create a token that's a copy of that creature",
+      "reason": "",
       "scryfall_id": "b7ea0b25-19e3-4d75-9daa-9110dce7e6fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clone Shell": {
@@ -53442,12 +53442,12 @@
     },
     "Cormela, Glamour Thief": {
       "edhrec_rank": 6228,
-      "gate": "template",
+      "gate": null,
       "name": "Cormela, Glamour Thief",
-      "reason": "no template for: {1}, {T}: Add {U}{B}{R}. Spend this mana only to cast instant and/or sorcery spells",
+      "reason": "",
       "scryfall_id": "221ac34a-94ed-4c49-afad-b19cac541731",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cornered Crook": {
@@ -72442,12 +72442,12 @@
     },
     "Double Vision": {
       "edhrec_rank": 2701,
-      "gate": "template",
+      "gate": null,
       "name": "Double Vision",
-      "reason": "no template for: Whenever you cast your first instant or sorcery spell each turn, copy that spell. You may ",
+      "reason": "",
       "scryfall_id": "1b597992-8e11-41a0-ac87-33fffd82b993",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Double-Faced Substitute Card": {
@@ -74292,12 +74292,12 @@
     },
     "Drawn from Dreams": {
       "edhrec_rank": 10052,
-      "gate": "template",
+      "gate": null,
       "name": "Drawn from Dreams",
-      "reason": "no template for: Look at the top seven cards of your library. Put two of them into your hand and the rest o",
+      "reason": "",
       "scryfall_id": "d61e811a-a744-40df-8d98-93f41a7bb0a0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread": {
@@ -97552,12 +97552,12 @@
     },
     "Flawless Forgery": {
       "edhrec_rank": 17205,
-      "gate": "template",
+      "gate": null,
       "name": "Flawless Forgery",
-      "reason": "no template for: Casualty 3",
+      "reason": "",
       "scryfall_id": "1c808629-ee2b-4f3e-a316-7182fbc38d34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flawless Maneuver": {
@@ -148132,12 +148132,12 @@
     },
     "Kess, Dissident Mage": {
       "edhrec_rank": 3095,
-      "gate": "template",
+      "gate": null,
       "name": "Kess, Dissident Mage",
-      "reason": "no template for: Once during each of your turns, you may cast an instant or sorcery spell from your graveya",
+      "reason": "",
       "scryfall_id": "63a795db-6b70-4534-b6e9-240895875d12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kessig Cagebreakers": {
@@ -164222,22 +164222,22 @@
     },
     "Maestros Charm": {
       "edhrec_rank": 8156,
-      "gate": "template",
+      "gate": null,
       "name": "Maestros Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3b3e1bec-67d2-43fd-b799-b7c12b94d1f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Confluence": {
       "edhrec_rank": 14902,
-      "gate": "template",
+      "gate": null,
       "name": "Maestros Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "877cfc63-54d9-4288-9121-601f344a4afa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Diabolist": {
@@ -173432,12 +173432,12 @@
     },
     "Mimic Vat": {
       "edhrec_rank": 2330,
-      "gate": "template",
+      "gate": null,
       "name": "Mimic Vat",
-      "reason": "no template for: Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return ea",
+      "reason": "",
       "scryfall_id": "93d1c972-2621-4420-adae-cec1da3f965f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miming Slime": {
@@ -225652,12 +225652,12 @@
     },
     "River's Rebuke": {
       "edhrec_rank": 3133,
-      "gate": "template",
+      "gate": null,
       "name": "River's Rebuke",
-      "reason": "no template for: Return all nonland permanents target player controls to their owner's hand",
+      "reason": "",
       "scryfall_id": "32ae984e-5d1e-4497-9a71-7406f78c09f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riverchurn Monument": {
@@ -241552,12 +241552,12 @@
     },
     "Sever the Bloodline": {
       "edhrec_rank": 17457,
-      "gate": "template",
+      "gate": null,
       "name": "Sever the Bloodline",
-      "reason": "no template for: Exile target creature and all other creatures with the same name as that creature",
+      "reason": "",
       "scryfall_id": "a2d4152d-c128-453c-86f5-f2ebcfd48b98",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Severance Priest": {
@@ -248372,12 +248372,12 @@
     },
     "Sinister Concierge": {
       "edhrec_rank": 10429,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Concierge",
-      "reason": "no template for: When this creature dies, you may exile it and put three time counters on it. If you do, ex",
+      "reason": "",
       "scryfall_id": "434a43a4-cd03-4ddf-8e36-edff02be33b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Concoction": {
@@ -250482,12 +250482,12 @@
     },
     "Skyclave Shade": {
       "edhrec_rank": 14054,
-      "gate": "template",
+      "gate": null,
       "name": "Skyclave Shade",
-      "reason": "no template for: Kicker {2}{B}",
+      "reason": "",
       "scryfall_id": "b4bdcf1d-3387-4e21-9159-9294af1ab0b4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Shadowcat": {
@@ -253132,12 +253132,12 @@
     },
     "Smuggler's Buggy": {
       "edhrec_rank": 10017,
-      "gate": "template",
+      "gate": null,
       "name": "Smuggler's Buggy",
-      "reason": "no template for: Hideaway 4",
+      "reason": "",
       "scryfall_id": "0c635ea1-6395-4b28-86e7-6e136c95ca8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smuggler's Copter": {
@@ -258002,12 +258002,12 @@
     },
     "Spellbinding Soprano": {
       "edhrec_rank": 18879,
-      "gate": "template",
+      "gate": null,
       "name": "Spellbinding Soprano",
-      "reason": "no template for: Whenever this creature attacks, instant and sorcery spells you cast this turn cost {1} les",
+      "reason": "",
       "scryfall_id": "248d71f9-89ef-492e-a854-a890f7d91ef8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spellbook": {
@@ -273312,12 +273312,12 @@
     },
     "Syrix, Carrier of the Flame": {
       "edhrec_rank": 17038,
-      "gate": "template",
+      "gate": null,
       "name": "Syrix, Carrier of the Flame",
-      "reason": "no template for: At the beginning of each end step, if a creature card left your graveyard this turn, targe",
+      "reason": "",
       "scryfall_id": "492d484b-9af6-4055-9893-627b56c69544",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Systems Override": {
@@ -274592,12 +274592,12 @@
     },
     "Talrand's Invocation": {
       "edhrec_rank": 16012,
-      "gate": "template",
+      "gate": null,
       "name": "Talrand's Invocation",
-      "reason": "no template for: Create two 2/2 blue Drake creature tokens with flying",
+      "reason": "",
       "scryfall_id": "6b8a2105-8e90-45f3-8eb1-3842c6fce02f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Talrand, Sky Summoner": {
@@ -311532,12 +311532,12 @@
     },
     "Waste Management": {
       "edhrec_rank": 18721,
-      "gate": "template",
+      "gate": null,
       "name": "Waste Management",
-      "reason": "no template for: Kicker {3}{B}",
+      "reason": "",
       "scryfall_id": "0f979e7a-4e7b-4b7b-b4eb-cefa3c02d64f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waste Not": {
@@ -320132,12 +320132,12 @@
     },
     "Xander's Pact": {
       "edhrec_rank": 16329,
-      "gate": "template",
+      "gate": null,
       "name": "Xander's Pact",
-      "reason": "no template for: Casualty 2",
+      "reason": "",
       "scryfall_id": "2154df0d-9d35-4a67-aeff-c9f224b969a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xantcha, Sleeper Agent": {
@@ -322872,12 +322872,12 @@
     },
     "Zndrsplt's Judgment": {
       "edhrec_rank": 14407,
-      "gate": "template",
+      "gate": null,
       "name": "Zndrsplt's Judgment",
-      "reason": "no template for: For each player, choose friend or foe. Each friend creates a token that's a copy of a crea",
+      "reason": "",
       "scryfall_id": "aa97df52-1ae7-4cfe-842a-1b13deef00ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zndrsplt, Eye of Wisdom": {

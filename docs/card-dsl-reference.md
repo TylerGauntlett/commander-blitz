@@ -191,7 +191,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_loyalty_activation` | Players |  | A player may activate loyalty abilities an extra time this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `grant_flash_permission` | Players |  | A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash. | [Effect ops](card-dsl.md#effect-ops) |
 | `lose_game` | Players |  | A player loses the game. | ["That player loses the game"](card-dsl-cookbook.md#that-player-loses-the-game) |
-| `next_spell_cost_reduction` | Players |  | A player's next spell of the given types this turn costs N less, N read as it resolves. | [The next spell costs less](card-dsl.md#the-next-spell-costs-less) |
+| `next_spell_cost_reduction` | Players |  | A player's next spell of the given types this turn (or, with `every_spell`, each of them) costs N less, N read as it resolves. | [The next spell costs less](card-dsl.md#the-next-spell-costs-less) |
 | `no_maximum_hand_size` | Players |  | A player has no maximum hand size for the rest of the game. | ["No maximum hand size for the rest of the game"](card-dsl-cookbook.md#no-maximum-hand-size-for-the-rest-of-the-game) |
 | `win_game` | Players |  | A player wins the game. | ["You win the game"](card-dsl-cookbook.md#you-win-the-game) |
 | `add_mana` | Mana |  | Add mana to a player's pool. | [Mana abilities](card-dsl-cookbook.md#mana-abilities) |
@@ -354,7 +354,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `binding` | A number a trigger or an `as` carried. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `cards_discarded_this_turn` | Cards the player discarded this turn, wherever they went after. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
-| `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn; or `{player, filter}` for cards of a type, matched on the printed face as it left. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_in_hand` | Cards in the player's hand. | [Value expressions](card-dsl.md#value-expressions) |
 | `cards_to_graveyard_this_turn` | Cards put into any graveyard from anywhere this turn; tokens excluded. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |

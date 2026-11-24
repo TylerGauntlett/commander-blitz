@@ -1727,7 +1727,10 @@ class TestTriplicateTitansGolemsEachCarryOneKeyword:
 class TestPrismariElementalsAreBlueAndRed:
     """Prismari Pianist, Furygale Flocking, Magma Opus and Resculpt: *"a 1/1
     blue and red Elemental"*, *"two 3/3 blue and red Elemental creature tokens
-    with flying"*, *"a 4/4 blue and red Elemental creature token."*
+    with flying"*, *"a 4/4 blue and red Elemental creature token."* Call the
+    Skybreaker: *"a 5/5 blue and red Elemental creature token with flying"* --
+    the 3/3 flier's colours and keyword at a larger size, so neither stands in
+    for the other.
 
     `elemental_2_2_g` is the pool's other Elemental: green, so a count of blue
     or red permanents would not see it, and the wrong size for all three.
@@ -1739,6 +1742,7 @@ class TestPrismariElementalsAreBlueAndRed:
             ("elemental_1_1_ur", (1, 1), []),
             ("elemental_3_3_ur_flying", (3, 3), ["flying"]),
             ("elemental_4_4_ur", (4, 4), []),
+            ("elemental_5_5_ur_flying", (5, 5), ["flying"]),
         ],
     )
     def test_each_is_a_blue_and_red_elemental_of_its_size(self, pool, token_id, size, keywords):

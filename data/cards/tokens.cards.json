@@ -1550,6 +1550,31 @@
       "is_token": true
     },
     {
+      "id": "elemental_5_5_ur_flying",
+      "name": "Elemental Token",
+      "oracle_text": "5/5 blue and red Elemental creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 5,
+      "toughness": 5,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "elephant_3_3_g",
       "name": "Elephant Token",
       "types": [

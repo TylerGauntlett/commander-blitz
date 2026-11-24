@@ -1,0 +1,16 @@
+{
+  "card_id": "twinning_staff",
+  "name": "Twinning Staff",
+  "oracle_text": "If you would copy a spell one or more times, instead copy it that many times plus an additional time. You may choose new targets for the additional copy.\n{7}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+  "blocked_sentences": [
+    "If you would copy a spell one or more times, instead copy it that many times plus an additional time. You may choose new targets for the additional copy"
+  ],
+  "needs": [{
+    "capability": "spell_copy_replacement",
+    "kind": "replacement",
+    "what": "a static replacement on the controller's spell-copy events: whenever you would copy a spell N >= 1 times (any copy_spell / cast_copy / storm-style copy you perform), copy it N+1 times instead, with the additional copy allowed new targets; an addend parameter (copy_addend: 1) so stacked Staffs each add one",
+    "why_existing_wont_do": "static_effects has replace_token_creation, replace_counters, replace_draw and friends but nothing that intercepts copy_spell; copy_instead belongs to replace_token_creation (which token copy is made) and double_triggers/spell_copied only react after the fact, so the extra copy cannot be produced as a replacement"
+  }],
+  "closest_existing": ["copy_spell", "replace_token_creation", "double_triggers"],
+  "confidence": "high"
+}
