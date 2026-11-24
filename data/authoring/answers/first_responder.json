@@ -1,0 +1,46 @@
+{
+  "card": {
+    "id": "first_responder",
+    "name": "First Responder",
+    "oracle_text": "Vigilance\nAt the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature.",
+    "mana_cost": "{3}{G}",
+    "types": ["Creature"],
+    "subtypes": ["Ogre", "Citizen"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "keywords": ["vigilance"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {
+            "op": "may",
+            "player": "you",
+            "prompt": "Return another creature you control to its owner's hand?",
+            "effects": [
+              {
+                "op": "choose_permanents",
+                "as": "responder_choice",
+                "prompt": "Choose another creature you control to return",
+                "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "exclude_self": true, "count": 1}
+              },
+              {"op": "snapshot", "as": "responder_lki", "objects": {"binding": "responder_choice"}},
+              {"op": "return_to_hand", "objects": {"binding": "responder_choice"}},
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "amount": {"power_of": {"binding": "responder_lki"}},
+                "objects": {"self_only": true}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
