@@ -9209,6 +9209,10 @@
     },
     "zone": "graveyard"
   },
+  "first_responder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "first_sliver_s_chosen": {
     "battlefield_count": 33,
     "granted": {
@@ -12758,6 +12762,11 @@
       "graveyard"
     ]
   },
+  "indrik_stomphowler": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "indulge_excess": {
     "hand_size": {
       "0": 1
@@ -12777,6 +12786,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "industrial_advancement": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inexorable_tide": {
@@ -13406,6 +13419,10 @@
     "zone": "battlefield"
   },
   "jocasta_automaton_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jolene_the_plunder_queen": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

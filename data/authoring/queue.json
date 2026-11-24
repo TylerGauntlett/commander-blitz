@@ -96342,12 +96342,12 @@
     },
     "First Responder": {
       "edhrec_rank": 15640,
-      "gate": "template",
+      "gate": null,
       "name": "First Responder",
-      "reason": "no template for: At the beginning of your end step, you may return another creature you control to its owne",
+      "reason": "",
       "scryfall_id": "3688a806-9bff-4106-a14e-81d00bc6c87c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "First Response": {
@@ -135842,12 +135842,12 @@
     },
     "Indrik Stomphowler": {
       "edhrec_rank": 15041,
-      "gate": "template",
+      "gate": null,
       "name": "Indrik Stomphowler",
-      "reason": "no template for: When this creature enters, destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "fe7deb63-6236-4ff2-92cc-7cab962a258f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indrik Umbra": {
@@ -135922,12 +135922,12 @@
     },
     "Industrial Advancement": {
       "edhrec_rank": 6448,
-      "gate": "template",
+      "gate": null,
       "name": "Industrial Advancement",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice a creature. If you do, look at the to",
+      "reason": "",
       "scryfall_id": "81f1416c-48bd-4168-aacd-a9b0a3afb8bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inertia Bubble": {
@@ -143612,12 +143612,12 @@
     },
     "Jolene, the Plunder Queen": {
       "edhrec_rank": 4595,
-      "gate": "template",
+      "gate": null,
       "name": "Jolene, the Plunder Queen",
-      "reason": "no template for: Whenever a player attacks one or more of your opponents, that attacking player creates a T",
+      "reason": "",
       "scryfall_id": "61c217d9-21d5-45ef-938a-138192a901f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolly Gerbils": {

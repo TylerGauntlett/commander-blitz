@@ -109145,6 +109145,89 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "responder_choice",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose another creature you control to return"
+                },
+                {
+                  "as": "responder_lki",
+                  "objects": {
+                    "binding": "responder_choice"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "responder_choice"
+                  },
+                  "op": "return_to_hand"
+                },
+                {
+                  "amount": {
+                    "power_of": {
+                      "binding": "responder_lki"
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return another creature you control to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "first_responder",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "First Responder",
+      "oracle_text": "Vigilance\nAt the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "subtypes": [
@@ -151954,6 +152037,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target artifact or enchantment.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "indrik_stomphowler",
+      "mana_cost": "{4}{G}",
+      "name": "Indrik Stomphowler",
+      "oracle_text": "When this creature enters, destroy target artifact or enchantment.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -152168,6 +152303,80 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice",
+                  "snapshot": "sacrificed"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "binding": "sacrificed"
+                    }
+                  },
+                  "destination": "battlefield",
+                  "objects": {
+                    "count": 1,
+                    "optional": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to_bottom": true
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Sacrifice a creature to look at the top X cards of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "industrial_advancement",
+      "mana_cost": "{3}{R}",
+      "name": "Industrial Advancement",
+      "oracle_text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -159934,6 +160143,102 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player attacks one or more of your opponents, that attacking player creates a Treasure token.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "opponent",
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "any",
+            "event": "you_attack",
+            "recheck": false
+          }
+        },
+        {
+          "affects_token": {
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "and_create": [
+            "treasure_token"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If you would create one or more Treasure tokens, instead create those tokens plus an additional Treasure token."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Treasure"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice five Treasures: Put five +1/+1 counters on Jolene."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "jolene_the_plunder_queen",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Jolene, the Plunder Queen",
+      "oracle_text": "Whenever a player attacks one or more of your opponents, that attacking player creates a Treasure token.\nIf you would create one or more Treasure tokens, instead create those tokens plus an additional Treasure token.\nSacrifice five Treasures: Put five +1/+1 counters on Jolene.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
