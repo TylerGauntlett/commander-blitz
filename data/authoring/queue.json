@@ -148132,12 +148132,12 @@
     },
     "Kess, Dissident Mage": {
       "edhrec_rank": 3095,
-      "gate": "template",
+      "gate": null,
       "name": "Kess, Dissident Mage",
-      "reason": "no template for: Once during each of your turns, you may cast an instant or sorcery spell from your graveya",
+      "reason": "",
       "scryfall_id": "63a795db-6b70-4534-b6e9-240895875d12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kessig Cagebreakers": {

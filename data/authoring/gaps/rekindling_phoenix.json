@@ -1,0 +1,16 @@
+{
+  "card_id": "rekindling_phoenix",
+  "name": "Rekindling Phoenix",
+  "oracle_text": "Flying\nWhen this creature dies, create a 0/1 red Elemental creature token with \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\"",
+  "blocked_sentences": [
+    "When this creature dies, create a 0/1 red Elemental creature token with \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\""
+  ],
+  "needs": [{
+    "capability": "rekindling_phoenix_elemental_token",
+    "kind": "token",
+    "what": "a 0/1 red Elemental creature token with \"At the beginning of your upkeep, sacrifice this token and return target card named Rekindling Phoenix from your graveyard to the battlefield. It gains haste until end of turn.\"",
+    "why_existing_wont_do": "token_ids has red Elementals only at 1/1 and larger (elemental_1_1_r, elemental_1_1_r_haste) and no 0/1 Elemental at all; none carries the upkeep sacrifice-and-reanimate trigger. create_token takes power/toughness overrides but no abilities, and creating a vanilla token then grant_ability-ing the trigger onto it would be a nearly-right substitute the notes forbid"
+  }],
+  "closest_existing": ["elemental_1_1_r", "feather_token", "grant_ability"],
+  "confidence": "high"
+}
