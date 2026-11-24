@@ -1,0 +1,58 @@
+{
+  "card": {
+    "id": "wave_of_rats",
+    "name": "Wave of Rats",
+    "oracle_text": "Trample\nWhen this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.\nBlitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+    "mana_cost": "{3}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Rat"],
+    "power": 4,
+    "toughness": 2,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["trample"],
+    "evoke": "{4}{B}",
+    "evoke_label": "blitz",
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, draw a card.",
+        "trigger": {"event": "dies", "source": "self", "controller": "any"},
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.",
+        "trigger": {
+          "event": "dies",
+          "source": "self",
+          "condition": {
+            "cmp": ">",
+            "left": {"player_count": {"dealt_combat_damage_by": "self"}},
+            "right": {"const": 0}
+          }
+        },
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "objects": {"binding": "subject", "zone": "graveyard"}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Blitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+        "trigger": {"event": "self_enters", "source": "self", "condition": {"evoked": true}},
+        "effects": [
+          {"op": "grant_keyword", "keyword": "haste", "duration": "permanent", "objects": {"self_only": true}},
+          {"op": "grant_ability", "ability": 0, "duration": "permanent", "objects": {"self_only": true}},
+          {"op": "delay", "step": "end_step", "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
