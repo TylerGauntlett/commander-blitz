@@ -150870,6 +150870,81 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "indulge_excess",
+      "mana_cost": "{2}{R}",
+      "name": "Indulge // Excess",
+      "oracle_text": "Whenever a creature you control attacks this turn, create a 1/1 green and white Citizen creature token that's tapped and attacking.\nAftermath (Cast this spell only from your graveyard. Then exile it.)\nCreate a Treasure token for each creature you controlled that dealt combat damage to a player this turn.",
+      "second_face": "indulge_excess_excess",
+      "second_face_zone": "graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "indulge_citizen_defender",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose the player the Citizen token attacks"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "attacking": {
+                "binding": "indulge_citizen_defender"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "or_planeswalker": true,
+              "tapped": true,
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever a creature you control attacks this turn, create a 1/1 green and white Citizen creature token that's tapped and attacking.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "indulge_excess_excess",
+      "mana_cost": "{1}{R}",
+      "name": "Excess",
+      "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nCreate a Treasure token for each creature you controlled that dealt combat damage to a player this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_dealt_combat_damage_to_player_this_turn": "you"
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

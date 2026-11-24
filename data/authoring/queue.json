@@ -135892,12 +135892,12 @@
     },
     "Indulge // Excess": {
       "edhrec_rank": 10732,
-      "gate": "template",
+      "gate": null,
       "name": "Indulge // Excess",
-      "reason": "no template for: Whenever a creature you control attacks this turn, create a 1/1 green and white Citizen cr",
+      "reason": "",
       "scryfall_id": "d653b755-1e09-45c4-8d44-8a950151ca51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indulgent Tormentor": {

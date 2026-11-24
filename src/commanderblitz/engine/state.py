@@ -1158,6 +1158,14 @@ class GameState:
             # turn": the seat alone, whoever dealt it, kept past any 400.7.
             if pid is not None:
                 ledger.players_dealt_combat_damage.add(pid)
+            # Indulge // Excess's "each creature you controlled that dealt
+            # combat damage to a player this turn": which creature, under whose
+            # control as the damage was dealt (the event's `controller`).
+            dealer_controller = data.get("controller")
+            if attacker is not None and pid is not None and dealer_controller is not None:
+                ledger.combat_damagers_by_controller.setdefault(
+                    int(dealer_controller), set()
+                ).add(int(attacker))
         elif event.type == EventType.LIFE_LOST:
             if pid is not None:
                 amount = int(data.get("amount") or 0)

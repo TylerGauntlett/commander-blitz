@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 188 |
 | [Selectors](#selectors) | 82 |
 | [Player specs](#player-specs) | 10 |
-| [Values](#values) | 79 |
+| [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
@@ -367,6 +367,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `creatures_dealt_combat_damage_to_player_this_turn` | How many distinct creatures the player controlled that dealt combat damage to a player this turn, kept past death and re-entry. | [Which creatures dealt combat damage to a player this turn](card-dsl.md#which-creatures-dealt-combat-damage-to-a-player-this-turn) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_dealt_to_this_turn` | Damage dealt this turn to one permanent (`to`, an object reference), by sources a player spec (`by`) controlled as it was dealt; readable after the permanent has left. | ["…damage dealt to Grothama this turn by sources they controlled"](card-dsl.md#damage-dealt-to-grothama-this-turn-by-sources-they-controlled) |

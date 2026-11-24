@@ -2417,6 +2417,20 @@ class TurnLedger:
     #: (`retire_combat_damager`): the old Pirate still counts as one of the
     #: three, and the new one is not the same Pirate counted twice.
     combat_damagers_by_subtype: dict[str, dict[int, set[int]]] = field(default_factory=dict)
+    #: Which creatures dealt combat damage to a player this turn, keyed by the
+    #: seat that **controlled** each one as the damage was dealt: controller ->
+    #: dealers -- Indulge // Excess's "create a Treasure token for each creature
+    #: you controlled that dealt combat damage to a player this turn".
+    #:
+    #: `players_dealt_combat_damage` above says whom, not which creatures, and
+    #: `players_dealt_combat_damage_by` is keyed by oid and drops an entry when
+    #: its oid re-enters, so a union of its keys would forget a creature that
+    #: was flickered after the damage. A count over the battlefield forgets one
+    #: that died. A dealer is counted once however many players it hit, and is
+    #: re-keyed with `combat_damagers_by_subtype` as it re-enters (400.7): the
+    #: old object's damage still counts once, and the new object is a second
+    #: creature only if it deals combat damage too.
+    combat_damagers_by_controller: dict[int, set[int]] = field(default_factory=dict)
     #: How many dealers `retire_combat_damager` has re-keyed this turn, so each
     #: gets a negative id nothing else holds.
     retired_combat_damagers: int = 0
@@ -2817,18 +2831,20 @@ class TurnLedger:
         return any(entry.oid == oid for entry in self.permanents_entered)
 
     def retire_combat_damager(self, oid: int) -> None:
-        """Re-key ``oid``'s `combat_damagers_by_subtype` entries as it re-enters.
+        """Re-key ``oid``'s `combat_damagers_by_subtype` and
+        `combat_damagers_by_controller` entries as it re-enters.
 
         The object that dealt the damage is gone (400.7) and the damage it
         dealt still counts, so its entries keep a dealer of their own -- one
-        negative id for every seat and subtype, since they were one creature.
+        negative id for every seat, subtype and controller, since they were one
+        creature.
         """
         holding = [
             dealers
             for seats in self.combat_damagers_by_subtype.values()
             for dealers in seats.values()
             if oid in dealers
-        ]
+        ] + [dealers for dealers in self.combat_damagers_by_controller.values() if oid in dealers]
         if not holding:
             return
         self.retired_combat_damagers += 1
@@ -2890,6 +2906,7 @@ class TurnLedger:
         self.players_dealt_combat_damage_by_subtype.clear()
         self.players_dealt_combat_damage.clear()
         self.combat_damagers_by_subtype.clear()
+        self.combat_damagers_by_controller.clear()
         self.retired_combat_damagers = 0
         self.damage_to_permanents.clear()
         self.damage_taken.clear()

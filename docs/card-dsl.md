@@ -2725,6 +2725,35 @@ very turn it was supposed to open. The value reads the ledger's oids instead, so
 it survives the death. Use the selector when the effect has to *reach* the
 creatures, and the value when the card is only counting them.
 
+### Which creatures dealt combat damage to a player this turn
+
+```jsonc
+// Indulge // Excess (Excess, aftermath): "Create a Treasure token for each
+// creature you controlled that dealt combat damage to a player this turn."
+{ "op": "create_token", "token": "treasure_token",
+  "amount": { "creatures_dealt_combat_damage_to_player_this_turn": "you" } }
+```
+
+`creatures_dealt_combat_damage_to_player_this_turn` takes a player spec and
+counts **creatures**, off `TurnLedger.combat_damagers_by_controller` (the seat
+that controlled each dealer as its combat damage was dealt → dealers), folded
+off each `combat_damage_to_player` event. A prevented hit records nothing, and
+damage to a creature, planeswalker or battle is not damage to a player. A
+creature that hit two players is one creature; a plural spec is a union, so a
+creature stolen between two combats that dealt damage under both controllers is
+still one.
+
+The record is about the damage, not the object: a dealer that died, or was
+bounced, still counts. One that re-enters the battlefield is a new object
+(400.7), so its old entry is re-keyed rather than dropped — the damage it dealt
+counts once, and the new object counts again only if it deals combat damage
+too.
+
+`{"player_count": {"dealt_combat_damage_by": "any"}}` is the near miss: it counts
+the **players** hit, so two creatures through to one opponent read 1.
+`{"count": …}` over the battlefield is the other: it has forgotten every dealer
+that died.
+
 ### Pack tactics — attackers' total power as declared
 
 ```jsonc

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**537 cards** blocked by **452** capabilities.
+**536 cards** blocked by **451** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -176,7 +176,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
-| [creatures-dealt-combat-damage-to-player-this-turn](#creatures-dealt-combat-damage-to-player-this-turn) | 1 | 10732 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -3498,20 +3497,6 @@ Blocks **1** card.
 
 - **Augur of Autumn** (rank 1129) — `augur_of_autumn`
   - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
-
-</details>
-
-## creatures-dealt-combat-damage-to-player-this-turn
-
-Blocks **1** card.
-
-- **(value)** a value counting the distinct creatures controlled by a given player (at the time they dealt it) that dealt combat damage to a player this turn, including creatures that have since left the battlefield -- e.g. {"creatures_dealt_combat_damage_to_player_this_turn": "you"} -- read off the turn ledger that already records players_dealt_combat_damage_by per source
-  <br>Why the existing vocabulary won't do: value_keys has no such tally; the turn ledger's players_dealt_combat_damage_by is exposed only through the player-selector key dealt_combat_damage_by (which seats were hit) and the combat_damage_by condition (a subtype check), neither of which counts creatures. A count over a battlefield selector has no 'dealt combat damage this turn' key (damaged/damaged_by read damage received), and would miss creatures that dealt damage and then left, which 'you controlled' explicitly includes
-
-<details><summary>Cards waiting on this</summary>
-
-- **Indulge // Excess** (rank 10732) — `indulge_excess`
-  - Create a Treasure token for each creature you controlled that dealt combat damage to a player this turn.
 
 </details>
 
