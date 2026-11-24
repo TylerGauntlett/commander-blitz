@@ -265,6 +265,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "aether_snap": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "aether_spellbomb": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2313,6 +2318,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bellowing_mauler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "belonging": {
     "battlefield_count": 36,
     "tokens": {
@@ -3620,6 +3629,10 @@
   "calamity_of_cinders": {
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "caldaia_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "caldera_lake": {
     "zone": "battlefield"
@@ -6121,6 +6134,11 @@
   "deathbloom_gardener": {
     "zone": "battlefield"
   },
+  "deathbringer_regent": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "deathcap_cultivator": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6812,6 +6830,10 @@
     "zone": "battlefield"
   },
   "doctor_doom_king_of_latveria": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dodgy_jalopy": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -8291,6 +8313,10 @@
     "zone": "battlefield"
   },
   "evolution_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "evolutionary_leap": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -3152,12 +3152,12 @@
     },
     "Aether Snap": {
       "edhrec_rank": 11457,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Snap",
-      "reason": "no template for: Remove all counters from all permanents and exile all tokens",
+      "reason": "",
       "scryfall_id": "41f0bd4c-ecfd-402e-a7a6-5e48309ae80b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Spellbomb": {
@@ -23472,12 +23472,12 @@
     },
     "Bellowing Mauler": {
       "edhrec_rank": 18430,
-      "gate": "template",
+      "gate": null,
       "name": "Bellowing Mauler",
-      "reason": "no template for: At the beginning of your end step, each player loses 4 life unless they sacrifice a nontok",
+      "reason": "",
       "scryfall_id": "54fe1db9-1ee8-4ba3-b484-68a698b17359",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bellowing Saddlebrute": {
@@ -37892,12 +37892,12 @@
     },
     "Caldaia Guardian": {
       "edhrec_rank": 18123,
-      "gate": "template",
+      "gate": null,
       "name": "Caldaia Guardian",
-      "reason": "no template for: Whenever this creature or another creature you control with mana value 4 or greater dies, ",
+      "reason": "",
       "scryfall_id": "287c7d61-13a0-46f7-a8d7-33320e250bbe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caldaia Strongarm": {
@@ -63772,12 +63772,12 @@
     },
     "Deathbringer Regent": {
       "edhrec_rank": 7253,
-      "gate": "template",
+      "gate": null,
       "name": "Deathbringer Regent",
-      "reason": "no template for: When this creature enters, if you cast it from your hand and there are five or more other ",
+      "reason": "",
       "scryfall_id": "78229484-b07a-4b6c-ae27-74c7dac3d620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathbringer Thoctar": {
@@ -71392,12 +71392,12 @@
     },
     "Dodgy Jalopy": {
       "edhrec_rank": 16987,
-      "gate": "template",
+      "gate": null,
       "name": "Dodgy Jalopy",
-      "reason": "no template for: 's power is equal to the greatest mana value among creatures you control",
+      "reason": "",
       "scryfall_id": "330cae18-9b9a-4ec9-a4c6-83bbf42f1f70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Does Machines": {
@@ -87592,12 +87592,12 @@
     },
     "Evolutionary Leap": {
       "edhrec_rank": 3293,
-      "gate": "template",
+      "gate": null,
       "name": "Evolutionary Leap",
-      "reason": "no template for: {G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a cr",
+      "reason": "",
       "scryfall_id": "4d007d3c-3356-4394-9bcd-2b2c1031c20b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evolved Sleeper": {

@@ -3549,6 +3549,42 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "aether_snap",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Aether Snap",
+      "oracle_text": "Remove all counters from all permanents and exile all tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "all_kinds": true,
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "zone": "battlefield"
+          },
+          "op": "remove_counters"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "is_token": true,
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -28334,6 +28370,76 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "effects": [],
+                  "else": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "sacrifice": {
+                      "controller": "you",
+                      "count": 1,
+                      "is_token": false,
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Sacrifice a nontoken creature? (Otherwise you lose 4 life.)"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each player loses 4 life unless they sacrifice a nontoken creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bellowing_mauler",
+      "mana_cost": "{4}{B}",
+      "name": "Bellowing Mauler",
+      "oracle_text": "At the beginning of your end step, each player loses 4 life unless they sacrifice a nontoken creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 3
               },
@@ -44002,6 +44108,118 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              }
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "evoke": "{2}{G}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "caldaia_guardian",
+      "mana_cost": "{3}{G}",
+      "name": "Caldaia Guardian",
+      "oracle_text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.\nBlitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -74367,6 +74585,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if you cast it from your hand and there are five or more other creatures on the battlefield, destroy all other creatures.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cast_from_hand": true
+                },
+                {
+                  "cmp": ">=",
+                  "left": {
+                    "count": {
+                      "controller": "any",
+                      "exclude_self": true,
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "right": {
+                    "const": 5
+                  }
+                }
+              ]
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "deathbringer_regent",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Deathbringer Regent",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it from your hand and there are five or more other creatures on the battlefield, destroy all other creatures.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -82357,6 +82646,125 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "text": "Dodgy Jalopy's power is equal to the greatest mana value among creatures you control.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Scavenge {2}{G} ({2}{G}, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dodgy_jalopy",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Dodgy Jalopy",
+      "oracle_text": "Trample\nDodgy Jalopy's power is equal to the greatest mana value among creatures you control.\nCrew 3\nScavenge {2}{G} ({2}{G}, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -99407,6 +99815,52 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "evolutionary_leap",
+      "mana_cost": "{1}{G}",
+      "name": "Evolutionary Leap",
+      "oracle_text": "{G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
