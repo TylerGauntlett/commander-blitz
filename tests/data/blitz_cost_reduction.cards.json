@@ -1,0 +1,26 @@
+{
+  "_comment": "Cards that exist only for the blitz cost reduction test (tests/unit/costs/test_blitz_cost_reduction.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_blitz_discounter` is Henzie \"Toolbox\" Torre's second line on a free body, so the discount can be put on the board without paying for it; the granted blitz it discounts comes from `t_blitz_granter` (tests/data/grant_blitz.cards.json).",
+  "cards": [
+    {
+      "id": "t_blitz_discounter",
+      "name": "Test Blitz Discounter",
+      "oracle_text": "Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "subtypes": ["Devil"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.",
+          "effect": "blitz_cost_reduction",
+          "affects_player": "you",
+          "amount": {"commander_casts_this_game": "you"}
+        }
+      ]
+    }
+  ]
+}

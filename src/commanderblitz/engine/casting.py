@@ -39,6 +39,7 @@ from .enums import COLORLESS, ActionKind, Keyword, Step, Zone
 from .mana import SYMBOL_INDEX, ManaCost, max_affordable_x, solve_payment
 from .objects import playable_condition_met
 from .player_statics import (
+    blitz_cost_reduction,
     cast_lock_min_x,
     free_cast_permission,
     granted_alternative_cost,
@@ -712,6 +713,16 @@ def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     if card.warp is not None:
         return card.warp.text
     return granted_warp_cost(state, pid, card)
+
+
+def pays_blitz(card: CardDef, *, evoked: bool, blitzed: bool) -> bool:
+    """Is this line paying a blitz cost (702.152a), granted or printed?
+
+    The one question `blitz_cost_reduction` asks of a line, by `_cast_variant`
+    and `Game._cast` alike: a granted blitz is the `blitzed` flag, and a
+    printed one is the evoke slot under the card's own word for it.
+    """
+    return blitzed or (evoked and card.evoke is not None and card.evoke_label == "blitz")
 
 
 def blitz_granted(state: GameState, pid: int, card: CardDef) -> bool:
@@ -2506,6 +2517,12 @@ def _cast_variant(
         second_face=second_face,
         fused=fused,
     )
+    # "Blitz costs you pay cost {1} less for each time you've cast your
+    # commander from the command zone this game" -- Henzie "Toolbox" Torre. A
+    # discount on the cost being paid, so it rides this line's variant
+    # discount and `Game._cast` nets the same number off the same flags.
+    if pays_blitz(card, evoked=evoked, blitzed=blitzed):
+        variant_less += blitz_cost_reduction(state, pid)
 
     if free:
         # "…without paying its mana cost." Plot (702.171a). First in the chain

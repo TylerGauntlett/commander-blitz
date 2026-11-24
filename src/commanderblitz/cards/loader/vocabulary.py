@@ -757,6 +757,15 @@ STATIC_EFFECTS = frozenset(
         # `suspend.plot_price` -- the one function the plot offer in
         # `legality` and the payment in `suspend.plot_card` both reach.
         "plot_cost_reduction",
+        # Henzie "Toolbox" Torre. "Blitz costs you pay cost {1} less for each
+        # time you've cast your commander from the command zone this game."
+        # `plot_cost_reduction`'s shape for a price a *spell* line pays, and
+        # the reason `spell_cost_reduction` cannot say it: that one filters
+        # spells by what they are, and this one by which cost is being paid --
+        # a granted blitz (`Action.blitzed`) or a printed one (the evoke slot
+        # under `evoke_label: "blitz"`). Read by `casting._cast_variant` and
+        # `Game._cast` through `player_statics.blitz_cost_reduction`.
+        "blitz_cost_reduction",
         # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
         # Food, or Treasure token, instead create one of each."  Read by
         # `primitives.create_token`, which is the only moment a token creation
@@ -1089,6 +1098,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "player_hexproof",
         "player_protection",
         "plot_cost_reduction",
+        "blitz_cost_reduction",
     }
 )
 

@@ -11943,6 +11943,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "henzie_toolbox_torre": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "herald_of_amity": {
     "battlefield_count": 33,
     "library_size": {

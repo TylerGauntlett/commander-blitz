@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**545 cards** blocked by **459** capabilities.
+**544 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -117,8 +117,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
-| [blitz](#blitz) | 1 | 7030 | static_effect |
-| [blitz-cost-reduction](#blitz-cost-reduction) | 1 | 7030 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -2666,36 +2664,6 @@ Blocks **1** card.
 
 - **Nanogene Conversion** (rank 4458) — `nanogene_conversion`
   - Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.
-
-</details>
-
-## blitz
-
-Blocks **1** card.
-
-- **(static_effect)** the blitz alternative cost (702.152) as a card-level cost and as a player-wide static granting it to a class of spells (affects_spells: creature, mana value >= 4), with the price 'equal to its mana cost'; when paid, the permanent gains haste and "When this creature dies, draw a card." and is sacrificed at the beginning of the next end step, plus a `blitzed` condition
-  <br>Why the existing vocabulary won't do: No `blitz` in card_level_cost_keys and no granting static: `granted_alternative_cost` takes only pay_energy/pay_life and has no rider, and `grant_warp` exiles at end step and grants neither haste nor the dies-draw trigger; approximating with those would change the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Henzie "Toolbox" Torre** (rank 7030) — `henzie_toolbox_torre`
-  - Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and "When this creature dies, draw a card." Sacrifice it at the beginning of the next end step.)
-  - Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.
-
-</details>
-
-## blitz-cost-reduction
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide reduction that applies only to blitz costs being paid, by {1} per `commander_casts_this_game` for you
-  <br>Why the existing vocabulary won't do: `spell_cost_reduction` filters spells by characteristics, not by which alternative cost is paid; there is no blitz cost for it to key on (`plot_cost_reduction` is the analogue for plot only)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Henzie "Toolbox" Torre** (rank 7030) — `henzie_toolbox_torre`
-  - Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and "When this creature dies, draw a card." Sacrifice it at the beginning of the next end step.)
-  - Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.
 
 </details>
 

@@ -141615,6 +141615,61 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_blitz",
+          "kind": "static",
+          "text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)"
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "commander_casts_this_game": "you"
+          },
+          "effect": "blitz_cost_reduction",
+          "kind": "static",
+          "text": "Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "henzie_toolbox_torre",
+      "mana_cost": "{B}{R}{G}",
+      "name": "Henzie \"Toolbox\" Torre",
+      "oracle_text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)\nBlitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Devil",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

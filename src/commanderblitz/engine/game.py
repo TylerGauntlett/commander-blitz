@@ -40,6 +40,7 @@ from .casting import (
     pay_generic_colors,
     pay_generic_currencies,
     pay_generic_pool,
+    pays_blitz,
     permission_cost_reduction,
     strive_surcharge,
 )
@@ -90,6 +91,7 @@ from .player import PlayerState
 from .player_statics import (
     ability_mana_tax,
     any_color_added_on_tap,
+    blitz_cost_reduction,
     cast_lock_min_x,
     graveyard_cast_permissions,
     library_top_cast_permissions,
@@ -579,6 +581,10 @@ class Game:
             second_face=action.second_face,
             fused=action.fused,
         )
+        # Henzie's "blitz costs you pay cost {1} less …", decided from the same
+        # flags `_cast_variant` priced the line with (`casting.pays_blitz`).
+        if pays_blitz(card, evoked=action.evoked, blitzed=action.blitzed):
+            extra -= blitz_cost_reduction(state, pid)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on

@@ -126132,12 +126132,12 @@
     },
     "Henzie \"Toolbox\" Torre": {
       "edhrec_rank": 7030,
-      "gate": "template",
+      "gate": null,
       "name": "Henzie \"Toolbox\" Torre",
-      "reason": "no template for: Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equ",
+      "reason": "",
       "scryfall_id": "266dd649-b767-4e40-8ccc-06d9f8db9be3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Amity": {

@@ -394,6 +394,7 @@
   "PLAYER_WIDE_STATIC_EFFECTS": [
    "add_mana_on_tap",
    "black_mana_as_phyrexian",
+   "blitz_cost_reduction",
    "cant_activate_abilities",
    "cant_cast_spells",
    "cant_cast_spells_from_zones",
@@ -629,6 +630,7 @@
    "attack_tax",
    "attacks_if_able",
    "black_mana_as_phyrexian",
+   "blitz_cost_reduction",
    "block_restriction",
    "block_tax",
    "blocks_if_able",
@@ -878,6 +880,7 @@
    "add_mana_on_tap",
    "all_damage_wither",
    "black_mana_as_phyrexian",
+   "blitz_cost_reduction",
    "cant_activate_abilities",
    "cant_cast_spells",
    "cant_cast_spells_from_zones",

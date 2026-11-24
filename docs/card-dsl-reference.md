@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 114 |
-| [Player-wide statics](#player-wide-statics) | 52 |
+| [Static effects](#static-effects) | 115 |
+| [Player-wide statics](#player-wide-statics) | 53 |
 | [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
@@ -610,6 +610,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
+| `blitz_cost_reduction` | yes |  | Blitz costs the player pays cost N less generic mana. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `blocks_if_able` |  | yes | Matching creatures block each combat if able (any attacker obeys it). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
@@ -722,6 +723,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 |---|---|---|
 | `add_mana_on_tap` | Whenever a matching permanent is tapped for mana, add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `black_mana_as_phyrexian` | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
+| `blitz_cost_reduction` | Blitz costs the player pays cost N less generic mana. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `cant_activate_abilities` | The player can't activate matching abilities. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells` | The player can't cast matching spells. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells_from_zones` | The player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |

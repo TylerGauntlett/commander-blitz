@@ -485,6 +485,27 @@ mana cost); each pays for one set of riders, never both.
 `affects_spells` is required, must name `types: ["Creature"]` — the riders are
 a creature's — and takes `SPELL_FILTER_KEYS` plus Brisela's literal
 `mana_value` comparison (`BLITZ_GRANT_FILTER_KEYS`).
+
+Henzie's second line is **`blitz_cost_reduction`**, a discount on the *cost
+being paid* rather than on the spell:
+
+```jsonc
+// "Blitz costs you pay cost {1} less for each time you've cast your
+// commander from the command zone this game."
+{ "kind": "static", "effect": "blitz_cost_reduction", "affects_player": "you",
+  "amount": { "commander_casts_this_game": "you" } }
+```
+
+`plot_cost_reduction`'s shape for a spell line. `spell_cost_reduction` is the
+near miss and cannot say it: its filter reads what a spell is, and the same
+creature cast for its mana cost is not discounted. `player_statics.
+blitz_cost_reduction` is asked only on a line `casting.pays_blitz` names — a
+granted blitz (`Action.blitzed`) or a printed one (`evoked` under `evoke_label:
+"blitz"`) — by `casting._cast_variant` and `Game._cast` alike, netted into the
+generic part with every other discount and clamped at zero (601.2f). Several
+add up. The loader requires an `amount` of at least 1 and refuses `affects`
+and `affects_spells`. `tests/unit/costs/test_blitz_cost_reduction.py` pins the
+granted and printed discounts, the clamp, and the full-price printed line.
 `tests/unit/keywords/test_grant_blitz.py` pins the price, each rider, the
 scope at the mana value boundary, and the printed-and-granted pair.
 
@@ -2009,6 +2030,8 @@ they take `affects_player` instead of `affects` — the full list is
   "warp_cost": "{2}{R}", "affects_spells": { "types": ["Artifact"] } }
 { "kind": "static", "effect": "grant_blitz", "affects_player": "you",
   "affects_spells": { "types": ["Creature"], "mana_value": { "op": ">=", "value": 4 } } }
+{ "kind": "static", "effect": "blitz_cost_reduction", "affects_player": "you",
+  "amount": { "commander_casts_this_game": "you" } }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }

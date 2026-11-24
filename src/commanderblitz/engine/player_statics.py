@@ -404,6 +404,27 @@ def plot_cost_reduction(state: GameState, pid: int) -> int:
     return total
 
 
+def blitz_cost_reduction(state: GameState, pid: int) -> int:
+    """How much less generic mana ``pid`` pays for a blitz cost (`blitz_cost_reduction`).
+
+    Henzie "Toolbox" Torre: "Blitz costs you pay cost {1} less for each time
+    you've cast your commander from the command zone this game."
+    `plot_cost_reduction`'s shape for a spell line: the discount belongs to the
+    *cost being paid* rather than to the spell, so `spell_cost_reduction`'s
+    filter -- which reads what a spell is -- cannot say it. Asked only on a line
+    that pays a blitz cost, granted (`Action.blitzed`) or printed (`evoked`
+    under `evoke_label: "blitz"`), by `casting._cast_variant` and `Game._cast`
+    alike. Several add up; the total is netted into the line's generic part
+    with every other discount and clamped at zero there (601.2f), so it never
+    reaches a coloured pip.
+    """
+    total = 0
+    for obj, static in _active_player_statics(state, "blitz_cost_reduction"):
+        if _reaches_player(obj, static, pid):
+            total += max(0, _static_value(state, static.get("amount"), obj))
+    return total
+
+
 def search_forbidden(state: GameState, searcher: int, cause_controller: int | None) -> bool:
     """May ``searcher`` not search their own library right now (`cant_search_library`)?
 

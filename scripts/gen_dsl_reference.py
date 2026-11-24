@@ -1137,6 +1137,8 @@ STATICS: dict[str, Entry] = {
                                   None),
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "plot_cost_reduction": ("Plotting a card from the player's hand costs N less generic mana.", "Plot"),
+    "blitz_cost_reduction": ("Blitz costs the player pays cost N less generic mana.",
+                             "`grant_blitz` — blitz at a spell's own mana cost"),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
     "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer.",

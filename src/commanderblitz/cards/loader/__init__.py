@@ -7311,6 +7311,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: plot_cost_reduction takes 'affects_player', 'amount' "
                 f"and an optional 'condition', and no 'affects'"
             )
+    if model.effect == "blitz_cost_reduction":
+        # "Blitz costs you pay cost {1} less for each time you've cast your
+        # commander from the command zone this game." `plot_cost_reduction`'s
+        # guards, for its reasons: without the number nothing is discounted, a
+        # constant under 1 is a tax the clamp rounds away, and a permanent
+        # filter has nothing to mean on a price.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: blitz_cost_reduction needs an 'amount' -- how much "
+                f"less generic mana a blitz cost costs"
+            )
+        size = model.amount.get("const") if isinstance(model.amount, dict) else model.amount
+        if isinstance(size, int) and size < 1:
+            raise DslError(
+                f"{where}.amount: a blitz cost reduction is 1 or more, got {size!r}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: blitz_cost_reduction takes 'affects_player', 'amount' "
+                f"and an optional 'condition' -- the cost being paid is the filter"
+            )
     if model.effect == "maximum_hand_size":
         # "Your maximum hand size is twenty." Without the number `_static_value`
         # reads 0, and the card would discard its controller's whole hand every
