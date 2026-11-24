@@ -274592,12 +274592,12 @@
     },
     "Talrand's Invocation": {
       "edhrec_rank": 16012,
-      "gate": "template",
+      "gate": null,
       "name": "Talrand's Invocation",
-      "reason": "no template for: Create two 2/2 blue Drake creature tokens with flying",
+      "reason": "",
       "scryfall_id": "6b8a2105-8e90-45f3-8eb1-3842c6fce02f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Talrand, Sky Summoner": {

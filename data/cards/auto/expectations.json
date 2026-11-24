@@ -25529,6 +25529,14 @@
   "talon_trooper": {
     "zone": "battlefield"
   },
+  "talrand_s_invocation": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "drake_2_2_u_flying"
+    },
+    "zone": "graveyard"
+  },
   "talrand_sky_summoner": {
     "battlefield_count": 33,
     "zone": "battlefield"

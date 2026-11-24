@@ -305823,6 +305823,31 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "talrand_s_invocation",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Talrand's Invocation",
+      "oracle_text": "Create two 2/2 blue Drake creature tokens with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "drake_2_2_u_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
