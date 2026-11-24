@@ -6634,6 +6634,80 @@
         "G"
       ],
       "is_token": true
+    },
+    {
+      "id": "egg_0_1_g_defender",
+      "name": "Egg Token",
+      "oracle_text": "0/1 green Egg creature token with defender.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Egg"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "keywords": [
+        "defender"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "kavu_3_3_wubrg_trample",
+      "name": "Kavu Token",
+      "oracle_text": "3/3 Kavu creature token with trample that's all colors.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kavu"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "trample"
+      ],
+      "colors": [
+        "W",
+        "U",
+        "B",
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "W",
+        "U",
+        "B",
+        "R",
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "bear_2_2_g",
+      "name": "Bear Token",
+      "oracle_text": "2/2 green Bear creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
     }
   ]
 }

@@ -1723,6 +1723,9 @@ def _stock_the_graveyard(game: Game, registry, spec) -> None:
     # Loyal Retainers returns target **legendary** creature card, and the first
     # creature card by id is not one.
     supertypes = {str(s) for s in shape.get("supertypes") or []}
+    # Jared Carthalion's -6 returns target **multicolored** card, and the first
+    # card by id has one colour or none.
+    least = int(shape.get("min_colors") or 0)
     match = next(
         (
             c
@@ -1732,6 +1735,7 @@ def _stock_the_graveyard(game: Game, registry, spec) -> None:
             and types <= set(c.types)
             and (not subtypes or subtypes & set(c.subtypes))
             and supertypes <= set(c.supertypes)
+            and len(c.colors) >= least
         ),
         None,
     )

@@ -11892,12 +11892,12 @@
     },
     "Archelos, Lagoon Mystic": {
       "edhrec_rank": 8404,
-      "gate": "template",
+      "gate": null,
       "name": "Archelos, Lagoon Mystic",
-      "reason": "no template for: As long as Archelos is untapped, other permanents enter untapped",
+      "reason": "",
       "scryfall_id": "d45ec78e-6190-46af-8057-834f5ca41ec8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archenemy's Charm": {
@@ -12912,12 +12912,12 @@
     },
     "Argoth, Sanctum of Nature": {
       "edhrec_rank": 3726,
-      "gate": "template",
+      "gate": null,
       "name": "Argoth, Sanctum of Nature",
-      "reason": "no template for: {2}{G}{G}, {T}: Create a 2/2 green Bear creature token, then mill three cards. Activate on",
+      "reason": "",
       "scryfall_id": "b29c9e4f-7b98-4610-a681-ae6297e8fc72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Argothian Elder": {
@@ -15672,12 +15672,12 @@
     },
     "Atla Palani, Nest Tender": {
       "edhrec_rank": 4464,
-      "gate": "template",
+      "gate": null,
       "name": "Atla Palani, Nest Tender",
-      "reason": "no template for: {2}, {T}: Create a 0/1 green Egg creature token with defender",
+      "reason": "",
       "scryfall_id": "c851c20d-a028-4af9-bcfa-36ceaf36bdfb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Atlantean Cavalry": {
@@ -46132,12 +46132,12 @@
     },
     "Chromanticore": {
       "edhrec_rank": 9564,
-      "gate": "template",
+      "gate": null,
       "name": "Chromanticore",
-      "reason": "no template for: Bestow {2}{W}{U}{B}{R}{G}",
+      "reason": "",
       "scryfall_id": "f1182463-348b-45b3-a662-68f06ac53699",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chromatic Armor": {
@@ -76802,12 +76802,12 @@
     },
     "Duneblast": {
       "edhrec_rank": 7825,
-      "gate": "template",
+      "gate": null,
       "name": "Duneblast",
-      "reason": "no template for: Choose up to one creature. Destroy the rest",
+      "reason": "",
       "scryfall_id": "4a38e37b-d458-402a-8b36-13a0e0a115ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dunerider Outlaw": {
@@ -79192,12 +79192,12 @@
     },
     "Echoing Truth": {
       "edhrec_rank": 9695,
-      "gate": "template",
+      "gate": null,
       "name": "Echoing Truth",
-      "reason": "no template for: Return target nonland permanent and all other permanents with the same name as that perman",
+      "reason": "",
       "scryfall_id": "490c1af2-5ec1-45cf-aa51-959eea94948b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eclipsed Boggart": {
@@ -90692,12 +90692,12 @@
     },
     "Fallaji Wayfarer": {
       "edhrec_rank": 6624,
-      "gate": "template",
+      "gate": null,
       "name": "Fallaji Wayfarer",
-      "reason": "no template for: is all colors. This ability doesn't affect its color identity",
+      "reason": "",
       "scryfall_id": "0e8435c6-94d4-4204-a196-ececb38a8c61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fallen Angel": {
@@ -110962,12 +110962,12 @@
     },
     "Glint-Eye Nephilim": {
       "edhrec_rank": 18089,
-      "gate": "template",
+      "gate": null,
       "name": "Glint-Eye Nephilim",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, draw that many cards",
+      "reason": "",
       "scryfall_id": "a4f00d2b-d616-455a-bf9b-5bd82b690121",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glint-Horn Buccaneer": {
@@ -115062,12 +115062,12 @@
     },
     "Gond Gate": {
       "edhrec_rank": 2552,
-      "gate": "template",
+      "gate": null,
       "name": "Gond Gate",
-      "reason": "no template for: Gates you control enter untapped",
+      "reason": "",
       "scryfall_id": "a01096b1-a026-4dfd-bea2-de9ecb686ffa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gone Missing": {
@@ -126662,12 +126662,12 @@
     },
     "Hero of Precinct One": {
       "edhrec_rank": 8629,
-      "gate": "template",
+      "gate": null,
       "name": "Hero of Precinct One",
-      "reason": "no template for: Whenever you cast a multicolored spell, create a 1/1 white Human creature token",
+      "reason": "",
       "scryfall_id": "4564f7b4-4fa3-40a3-88e8-2f1cfd15461c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hero of the Dunes": {
@@ -129822,12 +129822,12 @@
     },
     "Horizon Explorer": {
       "edhrec_rank": 1877,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon Explorer",
-      "reason": "no template for: Lands you control enter untapped",
+      "reason": "",
       "scryfall_id": "3ed072ea-437b-472c-8a37-712654aef264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horizon Scholar": {
@@ -133852,12 +133852,12 @@
     },
     "Illuna, Apex of Wishes": {
       "edhrec_rank": 9497,
-      "gate": "template",
+      "gate": null,
       "name": "Illuna, Apex of Wishes",
-      "reason": "no template for: Mutate {3}{R/G}{U}{U}",
+      "reason": "",
       "scryfall_id": "0dfec692-66c8-4c90-8afa-095654011c3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Illusion // Reality": {
@@ -139642,12 +139642,12 @@
     },
     "Iridian Maelstrom": {
       "edhrec_rank": 10271,
-      "gate": "template",
+      "gate": null,
       "name": "Iridian Maelstrom",
-      "reason": "no template for: Destroy each creature that isn't all colors",
+      "reason": "",
       "scryfall_id": "38fe90c6-1fdd-49d0-9493-ae148a9a835e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Irini Sengir": {
@@ -142072,12 +142072,12 @@
     },
     "Jared Carthalion": {
       "edhrec_rank": 9061,
-      "gate": "template",
+      "gate": null,
       "name": "Jared Carthalion",
-      "reason": "no template for: +1: Create a 3/3 Kavu creature token with trample that's all colors",
+      "reason": "",
       "scryfall_id": "5acffa48-9e3f-4ba3-a55f-d459307f46df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jared Carthalion, True Heir": {
@@ -142552,12 +142552,12 @@
     },
     "Jenson Carthalion, Druid Exile": {
       "edhrec_rank": 7723,
-      "gate": "template",
+      "gate": null,
       "name": "Jenson Carthalion, Druid Exile",
-      "reason": "no template for: Whenever you cast a multicolored spell, scry 1. If that spell was all colors, create a 4/4",
+      "reason": "",
       "scryfall_id": "6a67f32c-4c9a-4bda-92f4-037b99999777",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jeong Jeong's Deserters": {
@@ -155282,12 +155282,12 @@
     },
     "Lavalanche": {
       "edhrec_rank": 9005,
-      "gate": "template",
+      "gate": null,
       "name": "Lavalanche",
-      "reason": "no template for: deals X damage to target player or planeswalker and each creature that player or that plan",
+      "reason": "",
       "scryfall_id": "e3a3b450-d988-40cb-a1ee-8b00ccdf5071",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lavaleaper": {
@@ -164112,12 +164112,12 @@
     },
     "Maelstrom Archangel": {
       "edhrec_rank": 6535,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Archangel",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may cast a spell from your han",
+      "reason": "",
       "scryfall_id": "95ea2a05-207d-4330-bcbe-bcaacd6657f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Artisan // Rocket Volley": {
@@ -164162,12 +164162,12 @@
     },
     "Maelstrom Nexus": {
       "edhrec_rank": 4752,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Nexus",
-      "reason": "no template for: The first spell you cast each turn has cascade",
+      "reason": "",
       "scryfall_id": "a3107767-6c36-4982-8e0d-e100d5fca204",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom Pulse": {
@@ -166142,12 +166142,12 @@
     },
     "Mana Cannons": {
       "edhrec_rank": 9484,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Cannons",
-      "reason": "no template for: Whenever you cast a multicolored spell, this enchantment deals X damage to any target, whe",
+      "reason": "",
       "scryfall_id": "109de57a-a1a0-4608-81cc-0a104c519b7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mana Chains": {
@@ -184032,12 +184032,12 @@
     },
     "Naya Charm": {
       "edhrec_rank": 3058,
-      "gate": "template",
+      "gate": null,
       "name": "Naya Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "ce1d6f9b-2ca8-48b8-b4a6-46a61c7c3905",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naya Hushblade": {
@@ -189922,12 +189922,12 @@
     },
     "O-Kagachi, Vengeful Kami": {
       "edhrec_rank": 8259,
-      "gate": "template",
+      "gate": null,
       "name": "O-Kagachi, Vengeful Kami",
-      "reason": "no template for: Whenever O-Kagachi deals combat damage to a player, if that player attacked you during the",
+      "reason": "",
       "scryfall_id": "bc6ac0e9-7419-4a77-a144-d2983fc6aa6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "O-Naginata": {
@@ -190862,12 +190862,12 @@
     },
     "Obsidian Obelisk": {
       "edhrec_rank": 10361,
-      "gate": "template",
+      "gate": null,
       "name": "Obsidian Obelisk",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a multicolored spell",
+      "reason": "",
       "scryfall_id": "2dcf9804-ccd6-4a03-90ca-088388800e7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obstinate Baloth": {
@@ -198592,12 +198592,12 @@
     },
     "Path to the World Tree": {
       "edhrec_rank": 18375,
-      "gate": "template",
+      "gate": null,
       "name": "Path to the World Tree",
-      "reason": "no template for: When this enchantment enters, search your library for a basic land card, reveal it, put it",
+      "reason": "",
       "scryfall_id": "eadb3a01-f610-4df1-972b-7dd8c8bccdb7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pathbreaker Ibex": {
@@ -212732,12 +212732,12 @@
     },
     "Radiant Flames": {
       "edhrec_rank": 21190,
-      "gate": "template",
+      "gate": null,
       "name": "Radiant Flames",
-      "reason": "no template for: Converge — deals X damage to each creature, where X is the number of colors of mana spent ",
+      "reason": "",
       "scryfall_id": "e80455ca-f23c-44da-b191-c3b12a9c546f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Radiant Fountain": {
@@ -223682,12 +223682,12 @@
     },
     "Rienne, Angel of Rebirth": {
       "edhrec_rank": 6992,
-      "gate": "template",
+      "gate": null,
       "name": "Rienne, Angel of Rebirth",
-      "reason": "no template for: Other multicolored creatures you control get +1/+0",
+      "reason": "",
       "scryfall_id": "78660bdf-0edb-4fd0-a737-1c95f93cced1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rift Bolt": {
@@ -258282,12 +258282,12 @@
     },
     "Spelunking": {
       "edhrec_rank": 727,
-      "gate": "template",
+      "gate": null,
       "name": "Spelunking",
-      "reason": "no template for: When this enchantment enters, draw a card, then you may put a land card from your hand ont",
+      "reason": "",
       "scryfall_id": "d3be4257-2316-4a2e-b347-f71c0368a947",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphere Grid": {
@@ -268642,12 +268642,12 @@
     },
     "Sultai Charm": {
       "edhrec_rank": 4962,
-      "gate": "template",
+      "gate": null,
       "name": "Sultai Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "72af6c1f-33a0-4e02-95b7-74ecaa6a6d87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sultai Devotee": {
@@ -270942,12 +270942,12 @@
     },
     "Surrak Dragonclaw": {
       "edhrec_rank": 3211,
-      "gate": "template",
+      "gate": null,
       "name": "Surrak Dragonclaw",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "e8efe72d-3c01-4dd6-b3dd-0382ac09dc52",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surrak and Goreclaw": {
@@ -287152,12 +287152,12 @@
     },
     "Tiller Engine": {
       "edhrec_rank": 3295,
-      "gate": "template",
+      "gate": null,
       "name": "Tiller Engine",
-      "reason": "no template for: • Untap that land",
+      "reason": "",
       "scryfall_id": "423084cf-5740-4b24-8abd-a097b5793548",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tiller of Flesh": {
@@ -288102,12 +288102,12 @@
     },
     "Titania's Command": {
       "edhrec_rank": 4000,
-      "gate": "template",
+      "gate": null,
       "name": "Titania's Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "753567c7-c484-4c0d-8128-7710e23c428f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania's Song": {
@@ -291262,12 +291262,12 @@
     },
     "Transguild Courier": {
       "edhrec_rank": 18194,
-      "gate": "template",
+      "gate": null,
       "name": "Transguild Courier",
-      "reason": "no template for: is all colors",
+      "reason": "",
       "scryfall_id": "2496ab15-2a88-43fd-8d79-74758879157b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Transguild Promenade": {
@@ -295242,12 +295242,12 @@
     },
     "Two-Headed Hellkite": {
       "edhrec_rank": 4644,
-      "gate": "template",
+      "gate": null,
       "name": "Two-Headed Hellkite",
-      "reason": "no template for: Whenever this creature attacks, draw two cards",
+      "reason": "",
       "scryfall_id": "1b363509-ddc8-4bf1-8817-acd8345cde4f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Two-Headed Hunter // Twice the Rage": {
@@ -298042,12 +298042,12 @@
     },
     "Unite the Coalition": {
       "edhrec_rank": 8435,
-      "gate": "template",
+      "gate": null,
       "name": "Unite the Coalition",
-      "reason": "no template for: Choose five. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "aafe06ae-1112-414a-877f-570496f0a747",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "United Battlefront": {
@@ -322042,12 +322042,12 @@
     },
     "Zaxara, the Exemplary": {
       "edhrec_rank": 5675,
-      "gate": "template",
+      "gate": null,
       "name": "Zaxara, the Exemplary",
-      "reason": "no template for: Whenever you cast a spell with {X} in its mana cost, create a 0/0 green Hydra creature tok",
+      "reason": "",
       "scryfall_id": "44043b50-9837-40d2-ad08-d515faed216c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zealot il-Vec": {

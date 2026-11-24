@@ -93,7 +93,7 @@ each heading; this table is generated from them.
 | [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
 | [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
-| [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | nothing | 0 |
+| [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | Distributing counters from a spell | 0 |
 | [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | nothing | 0 |
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | nothing | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | nothing | 0 |
@@ -120,13 +120,13 @@ each heading; this table is generated from them.
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 3 |
+| [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
-| [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
 | [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) | M | medium | nothing | 1 |
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
@@ -154,54 +154,53 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-3. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-4. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-5. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-6. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-7. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-8. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-9. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-10. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-11. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-12. [The Ring tempts you](#the-ring-tempts-you) — M, high
-13. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-14. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-15. [Difficulty](#difficulty) — S, medium
-16. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-17. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-18. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-19. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-20. [Why a press is refused](#why-a-press-is-refused) — S, medium
-21. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-22. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-23. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-24. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-25. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-26. [Secret choices](#secret-choices) — M, medium
-27. [Experience counters](#experience-counters) — M, medium
+2. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+3. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+4. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+5. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+6. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+7. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+8. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+9. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+10. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+11. [The Ring tempts you](#the-ring-tempts-you) — M, high
+12. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+13. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+14. [Difficulty](#difficulty) — S, medium
+15. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+16. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+17. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+18. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+19. [Why a press is refused](#why-a-press-is-refused) — S, medium
+20. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+21. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+22. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+23. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+24. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+25. [Secret choices](#secret-choices) — M, medium
+26. [Experience counters](#experience-counters) — M, medium
+27. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 28. [Outcomes as data](#outcomes-as-data) — M, medium
 29. [Rad counters](#rad-counters) — M, medium
 30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
 31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-34. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-35. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-36. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-37. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-38. [Replays and sharing](#replays-and-sharing) — M, medium
-39. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-40. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-41. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-42. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-43. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-44. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-45. [Archidekt import](#archidekt-import) — S, low
-46. [Sound](#sound) — S, low
-47. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-48. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-49. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+36. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+37. [Replays and sharing](#replays-and-sharing) — M, medium
+38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+39. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+40. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+41. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+42. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+43. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+44. [Archidekt import](#archidekt-import) — S, low
+45. [Sound](#sound) — S, low
+46. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+47. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+48. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -247,6 +246,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
 - [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
+- [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1125,6 +1125,81 @@ removes them. Meren's six gates pass, and the generated DSL reference
   rule (122.1), and its line moves from "not implemented" to the
   implemented table in rules-coverage.md.
 
+### Distributing counters from a spell
+
+Effort **M** · Impact **medium**, every 'distribute N counters among any number of target creatures' spell waits on it, Grove's Bounty in the Quandrix Unlimited precon and Biogenic Upgrade among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Distributing counters (601.2d, 602.2b) works only on an activated ability.
+`cards.loader`'s `_check_distribution_homes` accepts `distribute_counters` as
+a top-level effect of an activated ability and refuses it in `spell_effects`,
+on a trigger and nested in a branch; `Game._activate` asks the division
+through `Game._ask_distribution`, which walks the declared targets with
+`_divide` and stores the shares on the stack item's
+`bindings["distribution"]`. `_validate_effect` in `cards/loader/effects.py`
+also refuses a computed `amount`, so "distribute X counters" is refused even
+where the op is allowed. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "`distribute_counters` on a spell or a triggered ability" as not
+implemented.
+
+The spell half of the same announcement already exists for damage:
+`Game._ask_damage_division` divides a spell's `divided` damage on the cast
+line, after targets and X are chosen, under the purpose tag `divide_damage`.
+
+So every "distribute N +1/+1 counters among any number of target creatures"
+instant or sorcery is unwritable. Grove's Bounty, the Adventure half of
+Elusive Otter in the Quandrix Unlimited precon, is the card that found it
+(with X as the number); Biogenic Upgrade, Abzan Charm's third mode, Bounty of
+the Hunt and Elven Rite are the same sentence. Its gap record is
+`data/authoring/gaps/elusive_otter_grove_s_bounty.json`, which also names a
+second, unrelated need (a block restriction by relative power).
+
+#### The change
+
+1. `_check_distribution_homes` accepts `distribute_counters` as a top-level
+   effect of `spell_effects`, keeping the refusal on triggers and inside
+   branches.
+2. `Game._cast` asks the division on the cast line the way it asks divided
+   damage, after modes, X and targets (601.2d), by calling
+   `_ask_distribution` over the spell's effects and storing the shares on the
+   stack item's `bindings["distribution"]`; the op's resolution side is
+   unchanged.
+3. The `amount` may be `{"x": true}` on a spell, read from the X announced
+   before the division; each target still gets at least one counter, so a
+   target ceiling larger than the amount stays refused for a printed number,
+   and for X the cast line is withheld when X is smaller than the number of
+   targets declared.
+4. Harvest: Elusive Otter once its other need is built, then the catalog's
+   other distribute-from-a-spell cards through the template tier with
+   `--retry` and one `/author-cards` wave.
+
+It does not add distribution on a triggered ability (603.3d), which announces
+the division as the trigger is put on the stack, nor touch divided damage
+(`divided-damage-any-target`).
+
+#### Gate
+
+A unit test under `tests/unit/` for `distribute_counters` on a spell: the
+division asked on casting with the announced X, the shares bound on the stack
+item, each share placed on resolution, a share lost when its target is no
+longer legal (608.2b), a cast with fewer counters than targets refused, and
+the loader still refusing the op on a trigger. Biogenic Upgrade's six gates
+pass.
+
+#### Open questions
+
+- **Scope of X.** Accept a computed `amount` only as `{"x": true}`, or any
+  value expression? Recommended: only X, because 601.2d needs the total known
+  when the division is announced, and X is the one computed number fixed by
+  then.
+- **Triggers in the same pull request.** Recommended: no; a trigger announces
+  its division at 603.3d, in `stack` rather than `Game._cast`, and no card in
+  a precon on the roadmap needs it yet.
+- **Is it an ADR.** Recommended: no; it moves an existing announcement to the
+  cast line, where divided damage already sits, and the line in
+  rules-coverage.md narrows to triggered abilities.
+
 ### Rad counters
 
 Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
@@ -1379,81 +1454,6 @@ DSL reference (`tests/cards/test_dsl_reference.py`) lists the new static.
   are two cycling abilities by the rules (702.29). Recommended: the first
   grant wins over another grant, as `granted_miracle_cost` does, while a
   printed cycling and a grant stay two offers, since their costs differ.
-
-### Distributing counters from a spell
-
-Effort **M** · Impact **medium**, every 'distribute N counters among any number of target creatures' spell waits on it, Grove's Bounty in the Quandrix Unlimited precon and Biogenic Upgrade among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-Distributing counters (601.2d, 602.2b) works only on an activated ability.
-`cards.loader`'s `_check_distribution_homes` accepts `distribute_counters` as
-a top-level effect of an activated ability and refuses it in `spell_effects`,
-on a trigger and nested in a branch; `Game._activate` asks the division
-through `Game._ask_distribution`, which walks the declared targets with
-`_divide` and stores the shares on the stack item's
-`bindings["distribution"]`. `_validate_effect` in `cards/loader/effects.py`
-also refuses a computed `amount`, so "distribute X counters" is refused even
-where the op is allowed. [rules-coverage.md](rules-coverage.md#not-implemented)
-lists "`distribute_counters` on a spell or a triggered ability" as not
-implemented.
-
-The spell half of the same announcement already exists for damage:
-`Game._ask_damage_division` divides a spell's `divided` damage on the cast
-line, after targets and X are chosen, under the purpose tag `divide_damage`.
-
-So every "distribute N +1/+1 counters among any number of target creatures"
-instant or sorcery is unwritable. Grove's Bounty, the Adventure half of
-Elusive Otter in the Quandrix Unlimited precon, is the card that found it
-(with X as the number); Biogenic Upgrade, Abzan Charm's third mode, Bounty of
-the Hunt and Elven Rite are the same sentence. Its gap record is
-`data/authoring/gaps/elusive_otter_grove_s_bounty.json`, which also names a
-second, unrelated need (a block restriction by relative power).
-
-#### The change
-
-1. `_check_distribution_homes` accepts `distribute_counters` as a top-level
-   effect of `spell_effects`, keeping the refusal on triggers and inside
-   branches.
-2. `Game._cast` asks the division on the cast line the way it asks divided
-   damage, after modes, X and targets (601.2d), by calling
-   `_ask_distribution` over the spell's effects and storing the shares on the
-   stack item's `bindings["distribution"]`; the op's resolution side is
-   unchanged.
-3. The `amount` may be `{"x": true}` on a spell, read from the X announced
-   before the division; each target still gets at least one counter, so a
-   target ceiling larger than the amount stays refused for a printed number,
-   and for X the cast line is withheld when X is smaller than the number of
-   targets declared.
-4. Harvest: Elusive Otter once its other need is built, then the catalog's
-   other distribute-from-a-spell cards through the template tier with
-   `--retry` and one `/author-cards` wave.
-
-It does not add distribution on a triggered ability (603.3d), which announces
-the division as the trigger is put on the stack, nor touch divided damage
-(`divided-damage-any-target`).
-
-#### Gate
-
-A unit test under `tests/unit/` for `distribute_counters` on a spell: the
-division asked on casting with the announced X, the shares bound on the stack
-item, each share placed on resolution, a share lost when its target is no
-longer legal (608.2b), a cast with fewer counters than targets refused, and
-the loader still refusing the op on a trigger. Biogenic Upgrade's six gates
-pass.
-
-#### Open questions
-
-- **Scope of X.** Accept a computed `amount` only as `{"x": true}`, or any
-  value expression? Recommended: only X, because 601.2d needs the total known
-  when the division is announced, and X is the one computed number fixed by
-  then.
-- **Triggers in the same pull request.** Recommended: no; a trigger announces
-  its division at 603.3d, in `stack` rather than `Game._cast`, and no card in
-  a precon on the roadmap needs it yet.
-- **Is it an ADR.** Recommended: no; it moves an existing announcement to the
-  cast line, where divided damage already sits, and the line in
-  rules-coverage.md narrows to triggered abilities.
 
 ### Distributing counters from a triggered ability
 
@@ -4264,7 +4264,7 @@ whole-game test able to draw the deck.
 
 ### Painbow (Dominaria United Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Distributing counters from a spell](#distributing-counters-from-a-spell).
 
 #### Today
 
@@ -4275,6 +4275,16 @@ coming-soon shell on the shelf: its row `dmc_painbow` is in
 `python scripts/sync_precons.py --missing dmc_painbow` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Four cards are left. Abzan Charm's third mode distributes two +1/+1 counters
+from a spell, so it waits on
+[distributed-counters-on-spells](distributed-counters-on-spells.md), whose
+questions are still open. The other three each wait on a capability no item
+covers yet, named by its gap record: Knight of New Alara on a static whose
+size is read per affected creature (`per_object_static_magnitude`), Primeval
+Spawn on a self-arrival replacement that exiles it when it was not cast with
+mana, and Xyris, the Writhing Storm on a `draw` trigger that skips the first
+draw of each draw step.
 
 #### The change
 

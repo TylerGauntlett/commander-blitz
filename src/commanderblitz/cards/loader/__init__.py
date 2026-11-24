@@ -4933,6 +4933,18 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
             f"whom the creature attacks, a player and never a planeswalker or "
             f"battle; use 'attacking' for true/false"
         )
+    # "Multicolored" is ``min_colors: 2``: a whole number of colours from one
+    # to five. A bool would read as 1 (True) or 0 and match the wrong set, and
+    # anything above five matches nothing.
+    if "min_colors" in filt and (
+        isinstance(filt["min_colors"], bool)
+        or not isinstance(filt["min_colors"], int)
+        or not 1 <= filt["min_colors"] <= 5
+    ):
+        raise DslError(
+            f"{path}.min_colors: a whole number from 1 to 5 (two or more colors "
+            f"is 2), not {filt['min_colors']!r}"
+        )
     if not top and "derived_types" in filt:
         raise DslError(
             f"{path}.derived_types: write it on the outer filter, where it "
@@ -7752,6 +7764,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: untap_limit needs 'affects' naming which permanents are "
                 f"capped -- Winter Orb says lands, and a filterless cap holds down "
                 f"the whole board"
+            )
+
+    if model.effect == "enters_untapped":
+        if model.affects is None:
+            # The filter defaults to your own side, so a missing one would be a
+            # narrower card than "other permanents enter untapped" and a wider
+            # one than nothing; the printed clause says whose.
+            raise DslError(
+                f"{where}: enters_untapped needs 'affects' naming whose permanents "
+                f"arrive untapped -- 'other permanents' is controller 'any' with "
+                f"exclude_self"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: enters_untapped is a fact about an arrival, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
             )
 
     if model.effect == "enters_tapped":

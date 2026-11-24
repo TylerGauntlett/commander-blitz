@@ -211,6 +211,16 @@ STATIC_EFFECTS = frozenset(
         # graveyard. `affects` is required: the filter is the printed clause
         # and it defaults to your own side.
         "enters_tapped",
+        # Archelos, Lagoon Mystic: "As long as Archelos is untapped, other
+        # permanents enter untapped." Horizon Explorer: "Lands you control
+        # enter untapped." `enters_tapped`'s mirror, read in
+        # `zones._enter_battlefield` after every way an arrival is made tapped
+        # (the moving effect, a board `enters_tapped`, the card's own
+        # replacement), so it has the last word over all of them -- the order
+        # the arriving permanent's controller would choose (616.1). Takes
+        # `affects`, required for `enters_tapped`'s reason, and an optional
+        # `condition`.
+        "enters_untapped",
         # Oath of Gideon: "Each planeswalker you control enters with an
         # additional loyalty counter on it."  `enters_tapped`'s shape with a
         # quantity: a static on one permanent about other permanents'
@@ -1481,12 +1491,21 @@ STATIC_FILTER_KEYS = frozenset(
 #: ordered read across layers, never a 613.8 dependency, handed to the anthem
 #: step from `characteristics._compute`'s own working sets (ADR 0031). No
 #: other static's reader holds those sets, so the loader refuses it elsewhere.
+#:
+#: ``min_colors`` is affects-only: "Other **multicolored** creatures you
+#: control get +1/+0" (Rienne, Angel of Rebirth). Two or more colours, 202.2b,
+#: which `colors` cannot say -- it is a membership test, so ``["W", "U"]``
+#: matches a mono-white creature. Read by `characteristics._matches_printed`
+#: off the same printed-plus-recorded colours `colors` reads, so it is as safe
+#: here as `colors` is; kept off `STATIC_FILTER_KEYS`, whose other readers
+#: (blockers, targeting, the counting filters) do not all answer it.
 STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {
     "any_of",
     "modified",
     "mana_value",
     "attacking_player",
     "derived_types",
+    "min_colors",
 }
 
 #: The clauses `derived_types` changes the reading of: a filter carrying the

@@ -164,6 +164,7 @@ def spell_purpose(
         x_in_mana_cost=card.mana_cost.x_count > 0,
         colorless=not card.colors,
         not_owned=None if caster is None or owner is None else owner != caster,
+        colors_count=len(card.colors),
     )
 
 
@@ -212,6 +213,7 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
         mana_value=card.mana_value,
         x_in_mana_cost=card.mana_cost.x_count > 0,
         colorless=not colors,
+        colors_count=len(colors),
     )
 
 

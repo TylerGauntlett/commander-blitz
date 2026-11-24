@@ -1174,6 +1174,10 @@
     },
     "zone": "graveyard"
   },
+  "archelos_lagoon_mystic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archers_of_qarsi": {
     "zone": "battlefield"
   },
@@ -1321,6 +1325,10 @@
     "zone": "battlefield"
   },
   "arena_of_glory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "argoth_sanctum_of_nature": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1610,6 +1618,13 @@
   },
   "athreos_shroud_veiled": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "atla_palani_nest_tender": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "atomize": {
@@ -4291,6 +4306,20 @@
     "zone": "battlefield"
   },
   "choked_estuary": {
+    "zone": "battlefield"
+  },
+  "chromanticore": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance",
+        "trample",
+        "lifelink"
+      ]
+    },
     "zone": "battlefield"
   },
   "chromatic_lantern": {
@@ -7117,6 +7146,14 @@
     },
     "zone": "battlefield"
   },
+  "duneblast": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "dunes_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7257,6 +7294,13 @@
   },
   "echoing_deeps": {
     "zone": "battlefield"
+  },
+  "echoing_truth": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
   },
   "eclipsed_flamekin": {
     "battlefield_count": 33,
@@ -8525,6 +8569,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "fallaji_wayfarer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fallen_ideal": {
@@ -10428,6 +10476,13 @@
     },
     "zone": "battlefield"
   },
+  "glint_eye_nephilim": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "glint_raker": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10708,6 +10763,10 @@
     "zone": "battlefield"
   },
   "goliath_truck": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gond_gate": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11797,6 +11856,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hero_of_precinct_one": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hero_s_blade": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12042,6 +12105,10 @@
     "zone": "battlefield"
   },
   "horizon_canopy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "horizon_explorer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -12378,6 +12445,10 @@
     }
   },
   "illuminor_szeras": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "illuna_apex_of_wishes": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -12848,6 +12919,14 @@
   "ior_ruin_expedition": {
     "zone": "battlefield"
   },
+  "iridian_maelstrom": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "iroas_god_of_victory": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13049,6 +13128,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jared_carthalion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jarvis_earth_s_mightiest_butler": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13082,6 +13165,10 @@
     }
   },
   "jenny_generated_anomaly": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jenson_carthalion_druid_exile": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14320,6 +14407,18 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lavalanche": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 20,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "lavaspur_boots": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15215,6 +15314,14 @@
     },
     "zone": "graveyard"
   },
+  "maelstrom_archangel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maelstrom_nexus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "maelstrom_of_the_spirit_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15402,6 +15509,10 @@
     "zone": "battlefield"
   },
   "mana_bloom": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mana_cannons": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -17133,6 +17244,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "naya_charm": {
+    "zone": "graveyard"
+  },
   "naya_panorama": {
     "zone": "battlefield"
   },
@@ -17647,6 +17761,10 @@
     },
     "zone": "battlefield"
   },
+  "o_kagachi_vengeful_kami": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "oaken_siren": {
     "zone": "battlefield"
   },
@@ -17786,6 +17904,13 @@
     "zone": "battlefield"
   },
   "obsidian_giant": {
+    "zone": "battlefield"
+  },
+  "obsidian_obelisk": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "obyra_dreaming_duelist": {
@@ -18482,6 +18607,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "path_to_the_world_tree": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "patriot_shield_wielder": {
@@ -19766,6 +19895,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "radiant_flames": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "radiant_fountain": {
     "life": {
       "0": 42
@@ -20758,6 +20897,16 @@
     "zone": "battlefield"
   },
   "ridgetop_raptor": {
+    "zone": "battlefield"
+  },
+  "rienne_angel_of_rebirth": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
     "zone": "battlefield"
   },
   "righteous_avengers": {
@@ -23767,6 +23916,15 @@
     },
     "zone": "battlefield"
   },
+  "spelunking": {
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "sphere_grid": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24547,6 +24705,13 @@
   "sulfurous_springs": {
     "zone": "battlefield"
   },
+  "sultai_charm": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "summit_prowler": {
     "zone": "battlefield"
   },
@@ -24759,6 +24924,16 @@
     "battlefield_count": 33,
     "granted": {
       "count": 3,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "surrak_dragonclaw": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
       "keywords": [
         "trample"
       ]
@@ -26642,6 +26817,10 @@
   "tigereye_cameo": {
     "zone": "battlefield"
   },
+  "tiller_engine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "timber_gorge": {
     "zone": "battlefield"
   },
@@ -26771,6 +26950,19 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "titania_s_command": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
   },
   "titans_vanguard": {
     "battlefield_count": 33,
@@ -27040,6 +27232,10 @@
     "zone": "battlefield"
   },
   "transcendent_envoy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "transguild_courier": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -27464,6 +27660,16 @@
   "two_headed_cerberus": {
     "zone": "battlefield"
   },
+  "two_headed_hellkite": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "two_headed_zombie": {
     "zone": "battlefield"
   },
@@ -27788,6 +27994,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "unite_the_coalition": {
+    "zone": "graveyard"
   },
   "universal_automaton": {
     "zone": "battlefield"
@@ -30077,6 +30286,10 @@
     "zone": "battlefield"
   },
   "zarda_the_power_princess": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "zaxara_the_exemplary": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

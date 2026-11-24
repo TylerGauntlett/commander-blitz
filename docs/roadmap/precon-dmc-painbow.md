@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [distributed-counters-on-spells]
 status: proposed
 rank: 86
 ---
@@ -19,6 +19,16 @@ coming-soon shell on the shelf: its row `dmc_painbow` is in
 `python scripts/sync_precons.py --missing dmc_painbow` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Four cards are left. Abzan Charm's third mode distributes two +1/+1 counters
+from a spell, so it waits on
+[distributed-counters-on-spells](distributed-counters-on-spells.md), whose
+questions are still open. The other three each wait on a capability no item
+covers yet, named by its gap record: Knight of New Alara on a static whose
+size is read per affected creature (`per_object_static_magnitude`), Primeval
+Spawn on a self-arrival replacement that exiles it when it was not cast with
+mana, and Xyris, the Writhing Storm on a `draw` trigger that skips the first
+draw of each draw step.
 
 ## The change
 

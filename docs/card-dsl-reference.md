@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 38 |
-| [Static effects](#static-effects) | 111 |
+| [Static effects](#static-effects) | 112 |
 | [Player-wide statics](#player-wide-statics) | 51 |
-| [Grantable statics](#grantable-statics) | 50 |
+| [Grantable statics](#grantable-statics) | 51 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 36 |
+| [Static filter keys](#static-filter-keys) | 37 |
 | [Static conditions](#static-conditions) | 15 |
 | [Static values](#static-values) | 27 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -642,6 +642,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `double_triggers` |  | yes | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `draw_limit` | yes |  | The player can't draw more than N cards each turn. | ["Can't draw more than one card each turn"](card-dsl-cookbook.md#cant-draw-more-than-one-card-each-turn) |
 | `enters_tapped` |  | yes | Matching permanents enter tapped. | [Static abilities](card-dsl.md#static-abilities) |
+| `enters_untapped` |  | yes | Matching permanents enter untapped, over anything that would tap them. | [Static abilities](card-dsl.md#static-abilities) |
 | `enters_with_additional_counters` |  | yes | Matching permanents enter with additional counters. | [enters_with_additional_counters — a static about other arrivals](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals) |
 | `extra_land_drops` | yes |  | The player may play N additional lands each turn. | [Static abilities](card-dsl.md#static-abilities) |
 | `free_cast_permission` | yes |  | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
@@ -797,6 +798,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `crew_power_bonus` | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `double_triggers` | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |
 | `enters_tapped` | Matching permanents enter tapped. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `enters_untapped` | Matching permanents enter untapped, over anything that would tap them. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `enters_with_additional_counters` | Matching permanents enter with additional counters. | [enters_with_additional_counters — a static about other arrivals](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals) |
 | `goaded` | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_keyword` | Matching permanents have keywords. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
@@ -1058,6 +1060,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `keywords` | Has all of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `mana_cost` | Printed mana cost is one of these. | [Static abilities](card-dsl.md#static-abilities) |
 | `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
+| `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
 | `modified` | Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_keywords` | Has none of these keywords. | [Static abilities](card-dsl.md#static-abilities) |
 | `not_subtypes` | Has none of these subtypes. | [Static abilities](card-dsl.md#static-abilities) |

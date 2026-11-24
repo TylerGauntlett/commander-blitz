@@ -1,0 +1,22 @@
+{
+  "card_id": "abzan_charm",
+  "name": "Abzan Charm",
+  "oracle_text": "Choose one —\n• Exile target creature with power 3 or greater.\n• You draw two cards and you lose 2 life.\n• Distribute two +1/+1 counters among one or two target creatures.",
+  "blocked_sentences": [
+    "• Distribute two +1/+1 counters among one or two target creatures."
+  ],
+  "needs": [
+    {
+      "capability": "distribute_counters_spell",
+      "kind": "op",
+      "what": "distribute_counters on a SPELL, inside a mode of its top-level choose_mode: a printed amount of 2 +1/+1 counters divided among one or two mode-owned target creatures (target spec count 2, min 1), with the division announced as the spell is cast (601.2d) and stored on the stack item, as Game already does for activated abilities",
+      "why_existing_wont_do": "distribute_counters exists, but the loader's _check_distribution_homes refuses it in spell_effects and nested inside a choose_mode mode (only a top-level effect of an activated ability, where Game._activate asks the division); add_counters per target cannot express the caster's 2/0 or 1/1 split over one or two targets, and asking at resolution would be a strictly better card"
+    }
+  ],
+  "closest_existing": [
+    "distribute_counters",
+    "add_counters",
+    "choose_mode"
+  ],
+  "confidence": "high"
+}

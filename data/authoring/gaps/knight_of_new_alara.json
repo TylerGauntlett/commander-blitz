@@ -1,0 +1,24 @@
+{
+  "card_id": "knight_of_new_alara",
+  "name": "Knight of New Alara",
+  "oracle_text": "Each other multicolored creature you control gets +1/+1 for each of its colors.",
+  "blocked_sentences": [
+    "Each other multicolored creature you control gets +1/+1 for each of its colors."
+  ],
+  "needs": [
+    {
+      "capability": "per_object_static_magnitude",
+      "kind": "value",
+      "what": "a static value that reads a characteristic of EACH affected object rather than one board-wide number: the number of colors of the creature the buff is being applied to (\"+1/+1 for each of its colors\"), so a buff static's power/toughness can be {\"colors_of_affected\": true}-style and differ per creature",
+      "why_existing_wont_do": "static_value_keys (count, counters_on, mana_symbols, distinct, ...) all evaluate to one number for the whole static; counters_on with self_only reads the source, not the affected creature, and none counts an object's colors"
+    },
+    {
+      "capability": "multicolored",
+      "kind": "selector",
+      "what": "`min_colors: 2` (two or more colors, 202.2b) in a static's `affects` filter, so \"multicolored creature you control\" can be said",
+      "why_existing_wont_do": "min_colors exists in the spell/trigger filter vocabulary but is not in static_affects_filter_keys; `colors` is a membership test (a mono-green creature matches [\"G\",\"W\"])"
+    }
+  ],
+  "closest_existing": ["buff", "counters_on", "min_colors"],
+  "confidence": "high"
+}
