@@ -2108,6 +2108,33 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
     raise DslError(f"unparsable player spec {spec!r}")
 
 
+def arrival_controller(ctx: EffectContext, spec: Mapping[str, Any], owner: int) -> int | None:
+    """Under whose control a card put onto the battlefield arrives (110.2).
+
+    The ``controller`` key of `put_onto_battlefield` and of
+    `return_from_graveyard` to the battlefield: ``"you"`` is the effect's
+    controller, ``"owner"`` or no key at all the card's owner (110.2's default),
+    and any other player spec names one seat -- "target opponent whose turn it
+    is **puts** target creature card from your graveyard onto the battlefield
+    **under their control**" (The Beamtown Bullies). That seat is the one who
+    puts it there, so every arrival question is theirs and the permanent enters
+    under them: its enters triggers and "as this enters" choices are theirs,
+    which `gain_control` after the move cannot reproduce.
+
+    ``None`` when the spec names nobody -- the targeted player left the game or
+    stopped being a legal target -- and then the card is not moved at all: no
+    one is there to put it onto the battlefield. The loader holds the spec to a
+    single seat, so the first is the only one.
+    """
+    who = spec.get("controller")
+    if who is None or who == "owner":
+        return owner
+    if who == "you":
+        return ctx.controller
+    seats = select_players(ctx, who)
+    return seats[0] if seats else None
+
+
 def validate_players_with_poison(spec: Any, where: str, players: Any) -> None:
     """Shared by the effect-side and static-side value validators.
 

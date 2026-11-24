@@ -539,6 +539,7 @@ class TestActivatedAbilities:
             _provide_the_attacker(game, registry, ability)
             _satisfy_the_attack_count(game, registry, ability)
             _attack_with_the_source(game, ability, oid)
+            _reach_an_opponents_turn(game, ability)
 
             action = next(
                 (
@@ -1927,6 +1928,43 @@ def _be_attacked_by(game: Game, oid: int) -> None:
         if passing is None:
             return
         game.apply(passing)
+
+
+def _reach_an_opponents_turn(game: Game, ability) -> None:
+    """Play into the opponent's turn and stop at player 0's first priority there.
+
+    The Beamtown Bullies: "Target opponent **whose turn it is** puts…". A player
+    target naming the active player as well as excluding you has no legal
+    choice on the sandbox's own turn, so the ability is correctly not offered
+    there and "not activatable" would only mean the board was wrong. Read off
+    the target spec, deliberately dumb: only a player target whose clause names
+    ``active_player`` moves the position, every declaration on the way is made
+    empty, and anything unexpected bails for the caller's assertion to report.
+    """
+    if not any(
+        spec.kind == "player" and "active_player" in json.dumps(spec.player_clause)
+        for spec in ability.targets
+    ):
+        return
+    for _ in range(80):
+        decision = game.pending()
+        if decision is None or game.over:
+            return
+        if (
+            decision.kind is DecisionKind.PRIORITY
+            and decision.player == 0
+            and game.state.active_player != 0
+        ):
+            return
+        wanted = (
+            ActionKind.PASS
+            if decision.kind is DecisionKind.PRIORITY
+            else ActionKind.FINISH_DECLARATION
+        )
+        step = next((a for a in game.legal_actions() if a.kind is wanted), None)
+        if step is None:
+            return
+        game.apply(step)
 
 
 def _walk_past_blocks(game: Game) -> None:

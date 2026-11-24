@@ -356,10 +356,13 @@ The pick and the arrival are separate questions: the chooser above already
 hands the pick to "you", and without `controller` the picked card still enters
 under its owner — Lonis would sacrifice its Clues to give the opponent a free
 permanent. The library's player stays the owner, and "the rest" goes back to
-that library. It is the spelling `reveal_until`, `put_onto_battlefield` and
-`return_from_graveyard` use. The loader admits only `"you"`, and only beside a
-battlefield arrival — `destination: "battlefield"` or a `destinations` step
-`to` it — never with `cast_free`.
+that library. It is the key `reveal_until`, `put_onto_battlefield` and
+`return_from_graveyard` read. Here the loader admits only `"you"`, and only
+beside a battlefield arrival — `destination: "battlefield"` or a `destinations`
+step `to` it — never with `cast_free`; `put_onto_battlefield` and
+`return_from_graveyard` also take a player spec naming the one seat who puts
+the card there ([under another player's
+control](card-dsl-cookbook.md#put-onto-the-battlefield-under-another-players-control)).
 
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it

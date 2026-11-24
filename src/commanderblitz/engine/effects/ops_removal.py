@@ -44,6 +44,7 @@ from .context import EffectContext
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
+    arrival_controller,
     choose_objects,
     named_hosts,
     pick_from_pool,
@@ -745,6 +746,11 @@ def _each_player_chooses(ctx: EffectContext, players: Any, selector: Mapping[str
 def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """Put objects onto the battlefield, optionally tapped and attacking.
 
+    ``controller`` is whose control they enter under (110.2): ``"you"``,
+    ``"owner"`` (the default), or a player spec naming the one seat who puts
+    them there, read by `selectors.arrival_controller` -- the same key
+    `return_from_graveyard` reads, for the same arrival.
+
     ``attacking`` is "put … onto the battlefield tapped and attacking".
     ``true`` attacks whatever the source is attacking, or failing that the
     first declared attacker's defender (`_attack_defender`); a player spec
@@ -795,7 +801,9 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
-        controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+        controller = arrival_controller(ctx, spec, obj.owner)
+        if controller is None:
+            continue
         # 303.4f: an Aura this puts down chooses its host as it enters, and
         # stays where it is when nothing could be enchanted -- before anything
         # else is asked about an arrival that may not happen. ``host_named`` is

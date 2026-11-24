@@ -315700,6 +315700,127 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "bullied",
+              "controller": {
+                "target": "t1"
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t2"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "bullied",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "At the beginning of the next end step, exile it."
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": {
+                  "except": "you",
+                  "not": {
+                    "not": "active_player"
+                  }
+                }
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "the_beamtown_bullies",
+      "keywords": [
+        "vigilance",
+        "haste"
+      ],
+      "mana_cost": "{1}{B}{R}{G}",
+      "name": "The Beamtown Bullies",
+      "oracle_text": "Vigilance, haste\n{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Devil",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

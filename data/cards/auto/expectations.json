@@ -26306,6 +26306,17 @@
     },
     "zone": "battlefield"
   },
+  "the_beamtown_bullies": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "vigilance",
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "the_chain_veil": {
     "battlefield_count": 33,
     "zone": "battlefield"

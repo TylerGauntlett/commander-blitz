@@ -15976,6 +15976,54 @@ controller still controls the creatures. A [permanent goad](#goad) records the
 mark even then, so each opponent's new creature must attack a player other than
 Dack's controller for the rest of the game.
 
+### Put onto the battlefield under another player's control
+
+```jsonc
+// The Beamtown Bullies — "{T}: Target opponent whose turn it is puts target
+// nonlegendary creature card from your graveyard onto the battlefield under
+// their control. It gains haste. Goad it. At the beginning of the next end
+// step, exile it."
+"targets": [
+  { "id": "t1", "kind": "player", "count": 1,
+    "selector": { "controller": { "except": "you", "not": { "not": "active_player" } } } },
+  { "id": "t2", "kind": "card_in_graveyard", "count": 1,
+    "selector": { "controller": "you", "types": ["Creature"],
+                  "not_supertypes": ["Legendary"], "zone": "graveyard" } }
+],
+"effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield",
+    "controller": { "target": "t1" }, "objects": { "target": "t2" }, "as": "bullied" },
+  { "op": "grant_keyword", "duration": "permanent", "keywords": ["haste"],
+    "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } },
+  { "op": "goad", "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } },
+  { "op": "delay", "step": "end_step",
+    "effects": [ { "op": "exile",
+                   "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } } ] }
+]
+```
+
+`controller` on `put_onto_battlefield`, and on `return_from_graveyard` beside
+`destination: "battlefield"`, is whose control the card enters under (110.2):
+`"you"`, `"owner"` (the default), or a player spec naming one seat, read by
+`selectors.arrival_controller`. That seat is the one who puts the card there
+(110.2a), so it answers every arrival question — the Aura host, the "would
+enter" replacement, riot, "as this enters" — and the permanent's enters
+triggers are its own (603.3a). With the spec naming nobody, the target player
+gone or no longer legal, the card stays where it was. The loader refuses a
+plural word (`"each_opponent"`), an undeclared target, and a player spec on a
+return to anywhere but the battlefield.
+
+`return_from_graveyard` under `"you"` followed by `gain_control` is the near
+miss: the creature enters under you, so its enters triggers are yours and the
+opponent never put it anywhere.
+
+"Target opponent **whose turn it is**" needs no key of its own: `except` takes
+you out of `{"not": {"not": "active_player"}}`, the active player as a mapping
+`except` can narrow, so on your own turn nobody is a legal target and the
+ability cannot be activated. `"opponent"` with an "activate only during an
+opponent's turn" condition is wider — at a pod it reaches the opponents whose
+turn it is not.
+
 ### Exchanging control
 
 ```jsonc

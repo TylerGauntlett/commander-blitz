@@ -3914,6 +3914,33 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # refusal at load, and every mapping form fails silently by resolving to
         # nobody -- a card that prints "they create a token" and creates none.
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op in ("put_onto_battlefield", "return_from_graveyard") and "controller" in effect:
+        # Under whose control the card arrives (110.2), read by
+        # `selectors.arrival_controller`: "you", "owner" (the default), or a
+        # player spec naming the one seat that puts it there -- "target
+        # opponent … puts target creature card from your graveyard onto the
+        # battlefield under their control". Unchecked, a misspelled word fell
+        # through to the owner, which is a card that steals nothing, and a
+        # plural spec ("each_opponent") would quietly hand the card to the first
+        # seat it named.
+        who = effect["controller"]
+        if who != "owner":
+            if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
+                raise DslError(
+                    f"{where}.controller: names one player who puts the card onto "
+                    f"the battlefield, and {who!r} can be several"
+                )
+            _validate_player_spec(who, f"{where}.controller", target_kinds)
+        if (
+            op == "return_from_graveyard"
+            and who not in ("you", "owner")
+            and effect.get("destination") != "battlefield"
+        ):
+            raise DslError(
+                f"{where}.controller: only a return to the battlefield puts a card "
+                f"under another player's control; a card goes to its owner's hand, "
+                f"library or graveyard"
+            )
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
         if isinstance(effect["attacking"], Mapping) and "same_as" in effect["attacking"]:

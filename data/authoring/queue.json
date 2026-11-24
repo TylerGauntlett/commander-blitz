@@ -279892,12 +279892,12 @@
     },
     "The Beamtown Bullies": {
       "edhrec_rank": 11862,
-      "gate": "template",
+      "gate": null,
       "name": "The Beamtown Bullies",
-      "reason": "no template for: {T}: Target opponent whose turn it is puts target nonlegendary creature card from your gra",
+      "reason": "",
       "scryfall_id": "087edfc0-4d57-4c2d-95a6-e52ed8f78327",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Bears of Littjara": {

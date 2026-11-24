@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**543 cards** blocked by **456** capabilities.
+**542 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -384,7 +384,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
-| [put-onto-battlefield-under-player-control](#put-onto-battlefield-under-player-control) | 1 | 11862 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -6468,20 +6467,6 @@ Blocks **1** card.
 
 - **The War Doctor** (rank 7780) — `the_war_doctor`
   - Whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on The War Doctor.
-
-</details>
-
-## put-onto-battlefield-under-player-control
-
-Blocks **1** card.
-
-- **(op)** a `controller` on return_from_graveyard / put_onto_battlefield that takes a player spec (here {"target": "t1"}, the targeted opponent), so a card from your graveyard enters the battlefield directly under another player's control, with that player as the one who puts it there
-  <br>Why the existing vocabulary won't do: return_from_graveyard and put_onto_battlefield read `controller` only as "you" (else the card's owner), and the loader refuses any other value on the sibling ops; returning it under your control and then gain_control to the opponent would make it enter under the wrong player (its enters triggers and replacements would be yours), which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Beamtown Bullies** (rank 11862) — `the_beamtown_bullies`
-  - {T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it.
 
 </details>
 
