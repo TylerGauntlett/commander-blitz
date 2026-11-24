@@ -253132,12 +253132,12 @@
     },
     "Smuggler's Buggy": {
       "edhrec_rank": 10017,
-      "gate": "template",
+      "gate": null,
       "name": "Smuggler's Buggy",
-      "reason": "no template for: Hideaway 4",
+      "reason": "",
       "scryfall_id": "0c635ea1-6395-4b28-86e7-6e136c95ca8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smuggler's Copter": {
