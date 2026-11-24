@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "audacious_swap",
+    "name": "Audacious Swap",
+    "oracle_text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nThe owner of target nonenchantment permanent shuffles it into their library, then exiles the top card of their library. If it's a land card, they put it onto the battlefield. Otherwise, they may cast it without paying its mana cost.",
+    "mana_cost": "{3}{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "additional_cost": {
+      "sacrifice": {
+        "controller": "you",
+        "types": ["Creature"],
+        "power": {"op": ">=", "value": {"const": 2}}
+      }
+    },
+    "additional_optional": true,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "active_zones": ["stack"],
+        "text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell and you may choose a new target for the copy.)",
+        "trigger": {
+          "event": "spell_cast",
+          "source": "self",
+          "controller": "you",
+          "condition": {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+        },
+        "effects": [{"op": "copy_spell", "new_targets": true}]
+      }
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"zone": "battlefield", "not_types": ["Enchantment"]}
+      }
+    ],
+    "spell_effects": [
+      {"op": "snapshot", "target": "t1", "as": "swapped"},
+      {"op": "put_on_top", "objects": {"target": "t1"}},
+      {"op": "shuffle", "player": {"owner_of": "swapped"}},
+      {
+        "op": "snapshot",
+        "as": "top_card",
+        "objects": {"player": {"owner_of": "swapped"}, "zone": "library"}
+      },
+      {"op": "exile", "objects": {"binding": "top_card"}},
+      {
+        "op": "if",
+        "condition": {"exists": {"binding": "top_card", "zone": "exile", "types": ["Land"]}},
+        "then": [{"op": "put_onto_battlefield", "objects": {"binding": "top_card"}}],
+        "else": [
+          {
+            "op": "cast_from_hand",
+            "player": {"owner_of": "swapped"},
+            "objects": {"binding": "top_card", "zone": "exile"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}

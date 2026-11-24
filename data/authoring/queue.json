@@ -29022,12 +29022,12 @@
     },
     "Bloodsoaked Champion": {
       "edhrec_rank": 4455,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodsoaked Champion",
-      "reason": "no template for: This creature can't block",
+      "reason": "",
       "scryfall_id": "275d6137-5eff-4e82-8232-64e8679bc11c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodsoaked Insight // Sanguine Morass": {
@@ -29752,12 +29752,12 @@
     },
     "Body Count": {
       "edhrec_rank": 7873,
-      "gate": "template",
+      "gate": null,
       "name": "Body Count",
-      "reason": "no template for: Spectacle {B}",
+      "reason": "",
       "scryfall_id": "024bf289-2802-4f11-aebf-9373ffbd9c46",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Body Double": {

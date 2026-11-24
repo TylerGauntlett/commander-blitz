@@ -34030,6 +34030,67 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "attacked_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "activated",
+          "text": "Raid — {1}{B}: Return this card from your graveyard to the battlefield. Activate only if you attacked this turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodsoaked_champion",
+      "mana_cost": "{B}",
+      "name": "Bloodsoaked Champion",
+      "oracle_text": "This creature can't block.\nRaid — {1}{B}: Return this card from your graveyard to the battlefield. Activate only if you attacked this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "pay_life": 1,
             "sacrifice": {
@@ -35004,6 +35065,43 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "condition": {
+          "cmp": ">",
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": {
+            "const": 0
+          }
+        },
+        "mana": "{B}"
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "body_count",
+      "mana_cost": "{2}{B}",
+      "name": "Body Count",
+      "oracle_text": "Spectacle {B} (You may cast this spell for its spectacle cost rather than its mana cost if an opponent lost life this turn.)\nDraw a card for each creature that died under your control this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "creatures_died_this_turn": "you"
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
