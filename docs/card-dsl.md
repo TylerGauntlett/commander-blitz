@@ -6321,7 +6321,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
+`{ "dealt_combat_damage_by": "self" | "any" | { "subtypes": [ … ], "at_least"?: N } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -6401,11 +6401,12 @@ permanent that comes back is a new object that has dealt nobody anything
 the stack still resolves off what it did — a Hellkite killed in response still
 destroys.
 
-The subject is one of three shapes, and anything else is a load error:
+The subject is one of these shapes, and anything else is a load error:
 
 | Subject | Whom it names |
 |---|---|
 | `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
+| `"any"` | the seats dealt combat damage by **any** source this turn |
 | `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
 | `{ "subtypes": ["Pirate"], "at_least": 3 }` | the seats dealt combat damage by at least that many **distinct** such creatures |
 | `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
@@ -6438,6 +6439,20 @@ across two players reach neither. A Pirate that hit and then re-entered the
 battlefield is a new object (400.7), so its old hit still counts and a new one
 counts again. The loader refuses it without `subtypes` and anything but a
 positive whole number. Without it, `subtypes` alone is "one or more".
+
+`"any"` reads `TurnLedger.players_dealt_combat_damage`, a seat set folded off
+the same event and never cleared per oid, so a creature that hit a player and
+then re-entered the battlefield still leaves that player counted. It is a set of
+seats: a player hit twice, or by two creatures, is one player. A union of
+`subtypes` over every creature type is the near miss — it misses a creature with
+no creature type.
+
+```jsonc
+// Vivien's Stampede: "At the beginning of the next main phase this turn, draw a
+// card for each player who was dealt combat damage this turn."
+{ "op": "draw", "player": "you",
+  "amount": { "player_count": { "dealt_combat_damage_by": "any" } } }
+```
 
 ```jsonc
 // Admiral Beckett Brass: "At the beginning of your end step, gain control of

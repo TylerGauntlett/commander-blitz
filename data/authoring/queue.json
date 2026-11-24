@@ -306312,12 +306312,12 @@
     },
     "Vivien's Stampede": {
       "edhrec_rank": 15420,
-      "gate": "template",
+      "gate": null,
       "name": "Vivien's Stampede",
-      "reason": "no template for: Each creature you control gains vigilance, trample, and melee until end of turn",
+      "reason": "",
       "scryfall_id": "886531e0-425e-4bf9-813c-3db399a7223b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivien's Talent": {

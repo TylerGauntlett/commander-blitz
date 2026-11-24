@@ -747,7 +747,7 @@ VALUES: dict[str, Entry] = {
     "max_poison_of": ("The most poison counters on any one of a spec's players (corrupted).",
                       'Corrupted — "an opponent has three or more poison counters"'),
     "min": ("The least of several values.", None),
-    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\"; with `dealt_combat_damage_by`, \"the number of your opponents who were dealt combat damage by …\"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison (\"the number of opponents who control more creatures than you\").",
+    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\"; with `dealt_combat_damage_by`, \"the number of your opponents who were dealt combat damage by …\", and with its `\"any\"` subject \"each player who was dealt combat damage this turn\"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison (\"the number of opponents who control more creatures than you\").",
                      None),
     "players_with_poison": ("How many of a spec's players each have at least `at_least` poison counters (\"the number of opponents who have three or more poison counters\").",
                             'Poison across the table — "each poison counter your opponents have"'),
@@ -1568,7 +1568,7 @@ def families() -> list[Family]:
             "The named player specs. The structured forms -- `{\"target\": …}`, "
             "`{\"controller_of_target\": …}`, `{\"controller_of\": …}`, `{\"owner_of\": …}`, "
             "`{\"binding\": …}`, `{\"not\": …}`, `{\"attacked_by\": …}`, "
-            "`{\"dealt_combat_damage_by\": …}` -- are described "
+            "`{\"dealt_combat_damage_by\": …}` (subject `\"self\"`, `\"any\"`, `subtypes` or `any_of`) -- are described "
             "under the same heading.",
             own=PLAYER_SPECS,
         ),

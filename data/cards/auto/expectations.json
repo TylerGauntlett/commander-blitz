@@ -28900,6 +28900,20 @@
     },
     "zone": "battlefield"
   },
+  "vivien_s_stampede": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "vigilance",
+        "trample",
+        "melee"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "vivisection": {
     "hand_size": {
       "0": 4

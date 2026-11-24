@@ -325,7 +325,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 
 ## Player specs
 
-The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
+The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` (subject `"self"`, `"any"`, `subtypes` or `any_of`) -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
 
 | Name | Description | Defined in |
 |---|---|---|
@@ -407,7 +407,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
-| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
+| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …", and with its `"any"` subject "each player who was dealt combat damage this turn"); with `player`, `objects`, `cmp` and `than`, how many of a spec's players each have a count passing a comparison ("the number of opponents who control more creatures than you"). | [Value expressions](card-dsl.md#value-expressions) |
 | `players_with_poison` | How many of a spec's players each have at least `at_least` poison counters ("the number of opponents who have three or more poison counters"). | [Poison across the table — "each poison counter your opponents have"](card-dsl.md#poison-across-the-table--each-poison-counter-your-opponents-have) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power; over a list of snapshots, their total. | [Value expressions](card-dsl.md#value-expressions) |

@@ -2395,6 +2395,16 @@ class TurnLedger:
     #: loses the type afterwards still dealt the damage as one. Never cleared
     #: per oid -- the record is about the damage, not about any object.
     players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
+    #: Every seat dealt combat damage this turn, by **any** source -- Vivien's
+    #: Stampede's "draw a card for each player who was dealt combat damage this
+    #: turn". The union of the two records above is the near miss and is wrong
+    #: twice: the oid-keyed one drops a seat when its dealer re-enters the
+    #: battlefield, and the subtype-keyed one never hears of a creature with no
+    #: creature type. Folded off the same COMBAT_DAMAGE_TO_PLAYER, so a
+    #: prevented hit records nothing and noncombat damage never does; a seat,
+    #: not a tally, so a player hit twice is one player. Never cleared per oid
+    #: -- the record is about the damage, not about any object.
+    players_dealt_combat_damage: set[int] = field(default_factory=set)
     #: The same record, but **which** creatures: subtype -> seat -> the
     #: dealers -- Admiral Beckett Brass's "a player who was dealt combat damage
     #: by **three or more** Pirates this turn". The seat set above says only
@@ -2878,6 +2888,7 @@ class TurnLedger:
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.players_dealt_combat_damage_by_subtype.clear()
+        self.players_dealt_combat_damage.clear()
         self.combat_damagers_by_subtype.clear()
         self.retired_combat_damagers = 0
         self.damage_to_permanents.clear()

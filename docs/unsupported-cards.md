@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **453** capabilities.
+**537 cards** blocked by **452** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -368,7 +368,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-to-your-right](#player-to-your-right) | 1 | 5281 | selector |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
-| [players-dealt-combat-damage-this-turn](#players-dealt-combat-damage-this-turn) | 1 | 15420 | selector |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
@@ -6234,20 +6233,6 @@ Blocks **1** card.
 - **Anya, Merciless Angel** (rank 10833) — `anya_merciless_angel`
   - Anya gets +3/+3 for each opponent whose life total is less than half their starting life total.
   - As long as an opponent's life total is less than half their starting life total, Anya has indestructible.
-
-</details>
-
-## players-dealt-combat-damage-this-turn
-
-Blocks **1** card.
-
-- **(selector)** a player spec (or value) naming every player who was dealt combat damage this turn by ANY source, so the delayed trigger's draw amount can be {"player_count": {"dealt_combat_damage_by": "any"}}; it needs a per-turn seat set folded off COMBAT_DAMAGE_TO_PLAYER that is never cleared per oid
-  <br>Why the existing vocabulary won't do: The player spec `dealt_combat_damage_by` (selectors._seats_dealt_combat_damage_by) accepts only "self", {"subtypes": [...]} (optionally with at_least) and {"any_of": [...]} -- no 'any creature' subject. TurnLedger.players_dealt_combat_damage_by is keyed by oid and an oid's entry is popped when it re-enters the battlefield, so a union over it would also be wrong. `damage_taken_this_turn` counts all damage, not only combat damage, and sums amounts rather than counting players; `player_count` with an objects comparison reads board counts, not the damage ledger. Listing every creature subtype under `subtypes` would miss creatures with no creature type and is an approximation. The delayed-trigger half (delayed_trigger on postcombat_main, duration once_this_turn) and the first sentence (grant_keyword vigilance/trample/melee) are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vivien's Stampede** (rank 15420) — `vivien_s_stampede`
-  - At the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn.
 
 </details>
 

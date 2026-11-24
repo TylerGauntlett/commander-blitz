@@ -346421,6 +346421,58 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "vivien_s_stampede",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Vivien's Stampede",
+      "oracle_text": "Each creature you control gains vigilance, trample, and melee until end of turn. (Whenever a creature with melee attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nAt the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "vigilance",
+            "trample",
+            "melee"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "duration": "once_this_turn",
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": "any"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "trigger": {
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",

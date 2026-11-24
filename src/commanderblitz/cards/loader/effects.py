@@ -823,17 +823,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
 def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
     """Check whom a ``dealt_combat_damage_by`` spec asks about.
 
-    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names,
+    ``"self"``, ``"any"`` (every source), ``{"subtypes": [...]}`` (a non-empty list of subtype names,
     optionally with ``"at_least": N``, a positive count of distinct creatures)
     or ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
     reads the ledger under a key nothing writes, so it counts nobody -- on
     Estinien Varlineau that is a card that silently never draws.
     """
     shape = (
-        f'{where}: takes "self", {{"subtypes": ["Dragon"]}} or '
+        f'{where}: takes "self", "any", {{"subtypes": ["Dragon"]}} or '
         f'{{"any_of": ["self", {{"subtypes": ["Dragon"]}}]}}, got {subject!r}'
     )
-    if subject == "self":
+    if subject in ("self", "any"):
         return
     if isinstance(subject, Mapping) and "subtypes" in subject and "at_least" in subject:
         # "…by **three or more** Pirates": a count of distinct creatures per

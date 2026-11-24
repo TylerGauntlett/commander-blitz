@@ -1154,6 +1154,10 @@ class GameState:
             # seat that was dealt it.
             if attacker is not None and pid is not None:
                 ledger.players_dealt_combat_damage_by.setdefault(int(attacker), set()).add(pid)
+            # Vivien's Stampede's "each player who was dealt combat damage this
+            # turn": the seat alone, whoever dealt it, kept past any 400.7.
+            if pid is not None:
+                ledger.players_dealt_combat_damage.add(pid)
         elif event.type == EventType.LIFE_LOST:
             if pid is not None:
                 amount = int(data.get("amount") or 0)
