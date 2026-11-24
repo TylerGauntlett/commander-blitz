@@ -3674,6 +3674,14 @@
     },
     "zone": "graveyard"
   },
+  "call_the_skybreaker": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "elemental_5_5_ur_flying"
+    },
+    "zone": "graveyard"
+  },
   "callidus_assassin": {
     "zone": "battlefield"
   },

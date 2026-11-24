@@ -38202,12 +38202,12 @@
     },
     "Call the Skybreaker": {
       "edhrec_rank": 19526,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Skybreaker",
-      "reason": "no template for: Create a 5/5 blue and red Elemental creature token with flying",
+      "reason": "",
       "scryfall_id": "e52586f2-dcf2-4605-b354-3ab441a43638",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Call the Spirit Dragons": {

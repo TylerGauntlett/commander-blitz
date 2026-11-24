@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**546 cards** blocked by **460** capabilities.
+**545 cards** blocked by **459** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -203,7 +203,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dwarf-berserker-token](#dwarf-berserker-token) | 1 | 14192 | token |
 | [each-player-chooses-color](#each-player-chooses-color) | 1 | 3587 | op |
 | [elemental-2-2-wubrg](#elemental-2-2-wubrg) | 1 | 6140 | token |
-| [elemental-5-5-ur-flying](#elemental-5-5-ur-flying) | 1 | 19526 | token |
 | [elemental-token](#elemental-token) | 1 | 5906 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -3891,20 +3890,6 @@ Blocks **1** card.
 
 - **The Wandering Minstrel** (rank 6140) — `the_wandering_minstrel`
   - The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors.
-
-</details>
-
-## elemental-5-5-ur-flying
-
-Blocks **1** card.
-
-- **(token)** a 5/5 blue and red Elemental creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has elemental_3_3_ur_flying (3/3, not 5/5), elemental_4_4_ur (no flying) and elemental_5_5_rg (red green, no flying); none matches the printed token. Retrace itself is expressible as the card-level "retrace": true
-
-<details><summary>Cards waiting on this</summary>
-
-- **Call the Skybreaker** (rank 19526) — `call_the_skybreaker`
-  - Create a 5/5 blue and red Elemental creature token with flying.
 
 </details>
 
