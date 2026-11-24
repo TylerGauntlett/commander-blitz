@@ -95,7 +95,7 @@ each heading; this table is generated from them.
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | Distributing counters from a spell | 0 |
 | [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
-| [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | nothing | 0 |
+| [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | nothing | 0 |
 | [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | nothing | 0 |
@@ -106,8 +106,8 @@ each heading; this table is generated from them.
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
+| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 2 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
-| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 1 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
@@ -125,6 +125,7 @@ each heading; this table is generated from them.
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
+| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
@@ -133,7 +134,6 @@ each heading; this table is generated from them.
 | [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) | M | medium | nothing | 1 |
-| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 0 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -152,8 +152,6 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander).
-
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
@@ -166,8 +164,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 8. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
 9. [The Ring tempts you](#the-ring-tempts-you) — M, high
 10. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-11. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-12. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+11. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+12. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
 13. [Difficulty](#difficulty) — S, medium
 14. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 15. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
@@ -185,15 +183,15 @@ same list, and `/extend-roadmap` starts at the top of it.
 27. [Outcomes as data](#outcomes-as-data) — M, medium
 28. [Rad counters](#rad-counters) — M, medium
 29. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-30. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-31. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-32. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-33. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-34. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-35. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-36. [Replays and sharing](#replays-and-sharing) — M, medium
-37. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-38. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+30. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+36. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+37. [Replays and sharing](#replays-and-sharing) — M, medium
+38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
 39. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 40. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
 41. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
@@ -250,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
 - [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
 - [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
+- [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -490,61 +489,6 @@ op, event, selector key and value.
   granted abilities, is a shape later designations (the initiative, rad
   counters) will copy or reverse.
 
-### Time Lord as one creature type
-
-Effort **S** · Impact **medium**, every Doctor Who card that names a Time Lord waits on it, Trenzalore Clocktower and Time Lord Regeneration in the Blast from the Past precon among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-"Time Lord" is a single creature type (205.3m), the only one printed as two
-words. `cards.proxy.split_type_line` splits the subtypes after the dash on
-whitespace (`right.split()`), so every Time Lord the pool ships carries the two
-subtypes `Time` and `Lord`: The Second, Third, Fifth and Thirteenth Doctor,
-Romana II and The Master, Mesmerist. `SUBTYPE_CLASS` in `engine/enums.py`
-knows neither word, so `characteristics` files both as creature types.
-
-A selector naming the type, `{"subtypes": ["Time Lord"]}`, compiles and
-matches nothing. So Trenzalore Clocktower's "Activate only if you control a
-Time Lord" can never be met, and Time Lord Regeneration's "target Time Lord you
-control" never has a target. Both cards are gapped under
-`multiword_subtype_time_lord` (`data/authoring/gaps/trenzalore_clocktower.json`,
-`data/authoring/gaps/time_lord_regeneration.json`), and TARDIS names a Time
-Lord too. Naming `Time` or `Lord` alone would match the wrong things: `Lord`
-is not a creature type, and a changeling would count twice.
-
-#### The change
-
-1. `split_type_line` keeps a known multi-word subtype whole: a small table of
-   the printed multi-word subtypes ("Time Lord"), joined before the split, so
-   no whitelist of ordinary subtypes is needed.
-2. `SUBTYPE_CLASS` learns `Time Lord` as a creature type, so changeling and
-   `shares_a_creature_type_with` read it as one.
-3. The six shipped Time Lords are re-collected through `--collect` with
-   `["Time Lord", ...]` in place of `Time` and `Lord`, never hand-edited, and
-   the golden pool and `registry_images.json` are re-pinned.
-4. Trenzalore Clocktower and Time Lord Regeneration are authored again, in
-   the same pull request, now that their selector matches.
-
-It does not touch any other subtype.
-
-#### Gate
-
-A unit test under `tests/unit/` that `split_type_line("Legendary Creature —
-Time Lord Doctor")` yields `["Time Lord", "Doctor"]`, and that a permanent
-with that type line matches `{"subtypes": ["Time Lord"]}` and not
-`{"subtypes": ["Lord"]}`; `tests/cards` green over the re-collected cards, with
-Trenzalore Clocktower's activated ability reached by the ability sandbox.
-
-#### Open questions
-
-- **Where the joined name lives.** A table in `cards/proxy.py`, or a
-  multi-word entry in `SUBTYPE_CLASS` that the splitter reads? Recommended: the
-  splitter reads `SUBTYPE_CLASS`, so the engine's list of subtypes stays the
-  one place a name is known.
-- **Hand-written cards.** None print a Time Lord today; should the loader
-  refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
-  bring the split back? Recommended: yes, a loader error naming "Time Lord".
-
 ### A land that sacrifices itself on entering
 
 Effort **S** · Impact **medium**, the New Capenna Commander fetch-land cycle waits on it, and it alone keeps Cabaretti Cacophony and Blight Curse off the shelf · Depends on nothing · Awaiting decisions.
@@ -603,6 +547,61 @@ six gates.
   question on precon-ecc-blight-curse is this one, so answering it here and
   adding this item to that precon's `depends_on` keeps one owner for the
   decision.
+
+### Time Lord as one creature type
+
+Effort **S** · Impact **medium**, every Doctor Who card that names a Time Lord waits on it, Trenzalore Clocktower and Time Lord Regeneration in the Blast from the Past precon among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+"Time Lord" is a single creature type (205.3m), the only one printed as two
+words. `cards.proxy.split_type_line` splits the subtypes after the dash on
+whitespace (`right.split()`), so every Time Lord the pool ships carries the two
+subtypes `Time` and `Lord`: The Second, Third, Fifth and Thirteenth Doctor,
+Romana II and The Master, Mesmerist. `SUBTYPE_CLASS` in `engine/enums.py`
+knows neither word, so `characteristics` files both as creature types.
+
+A selector naming the type, `{"subtypes": ["Time Lord"]}`, compiles and
+matches nothing. So Trenzalore Clocktower's "Activate only if you control a
+Time Lord" can never be met, and Time Lord Regeneration's "target Time Lord you
+control" never has a target. Both cards are gapped under
+`multiword_subtype_time_lord` (`data/authoring/gaps/trenzalore_clocktower.json`,
+`data/authoring/gaps/time_lord_regeneration.json`), and TARDIS names a Time
+Lord too. Naming `Time` or `Lord` alone would match the wrong things: `Lord`
+is not a creature type, and a changeling would count twice.
+
+#### The change
+
+1. `split_type_line` keeps a known multi-word subtype whole: a small table of
+   the printed multi-word subtypes ("Time Lord"), joined before the split, so
+   no whitelist of ordinary subtypes is needed.
+2. `SUBTYPE_CLASS` learns `Time Lord` as a creature type, so changeling and
+   `shares_a_creature_type_with` read it as one.
+3. The six shipped Time Lords are re-collected through `--collect` with
+   `["Time Lord", ...]` in place of `Time` and `Lord`, never hand-edited, and
+   the golden pool and `registry_images.json` are re-pinned.
+4. Trenzalore Clocktower and Time Lord Regeneration are authored again, in
+   the same pull request, now that their selector matches.
+
+It does not touch any other subtype.
+
+#### Gate
+
+A unit test under `tests/unit/` that `split_type_line("Legendary Creature —
+Time Lord Doctor")` yields `["Time Lord", "Doctor"]`, and that a permanent
+with that type line matches `{"subtypes": ["Time Lord"]}` and not
+`{"subtypes": ["Lord"]}`; `tests/cards` green over the re-collected cards, with
+Trenzalore Clocktower's activated ability reached by the ability sandbox.
+
+#### Open questions
+
+- **Where the joined name lives.** A table in `cards/proxy.py`, or a
+  multi-word entry in `SUBTYPE_CLASS` that the splitter reads? Recommended: the
+  splitter reads `SUBTYPE_CLASS`, so the engine's list of subtypes stays the
+  one place a name is known.
+- **Hand-written cards.** None print a Time Lord today; should the loader
+  refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
+  bring the split back? Recommended: yes, a loader error naming "Time Lord".
 
 ### Granted flashback permissions without a per-turn cap
 
@@ -4442,7 +4441,7 @@ whole-game test able to draw the deck.
 
 ### Maestros Massacre (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
 
 #### Today
 
@@ -5278,6 +5277,52 @@ draws the refusal at the handheld floors.
   floors and the phone viewport, asserting the line is drawn and that the
   board's box does not move when it appears (ADR 0016).
 
+### A fixed target count is exact, not a ceiling
+
+Effort **M** · Impact **medium**, every "N target" spell can be cast today with fewer targets than it prints, which makes it a cheaper card than the paper one · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A target spec with a literal `count` and no `up_to` is printed as an exact
+number ("six target permanents"), and 601.2c asks for exactly that many.
+`targeting._spec_options` enumerates the choices as combinations of
+`min(count, len(options))` candidates, so with fewer legal candidates than the
+count the spell is offered with a short set: Aether Gale can be cast with one
+permanent on the table. The one exception is `one_per_player` on an exact count,
+which asks for the full size (Run Away Together). Making every fixed count exact
+breaks `tests/unit/keywords/test_monstrosity.py`, whose position relies on the
+short set.
+
+#### The change
+
+1. `_spec_options` asks for the full `count` on every fixed-size spec without
+   `up_to`, as it already does under `one_per_player`; a spell with too few
+   candidates has no cast line, and a triggered ability with too few is
+   removed from the stack (603.3d).
+2. The Monstrosity test's position is given enough candidates, or reads the
+   card the way it is printed, whichever the card says.
+3. `tests/cards` is the witness that no shipped card relied on the short set;
+   any card it fails was authored against the bug and is re-collected, never
+   hand-edited.
+
+It does not change `up_to`, `min_count` or "any number" specs.
+
+#### Gate
+
+A unit test under `tests/unit/targets/` that a "two target creatures" spell has
+no cast line with one creature on the battlefield and one with two, and that a
+triggered ability with too few candidates leaves the stack; `tests/cards`
+green.
+
+#### Open questions
+
+- **Triggered abilities.** Should a trigger with too few candidates be removed
+  (603.3d) or fire with what there is? Recommended: removed, as the rules say,
+  in the same pull request, since the enumeration is shared.
+- **Cards that break.** If `tests/cards` shows shipped cards that only pass
+  with a short set, are they re-collected here or each filed as a gap?
+  Recommended: re-collected here, since the fix is what makes them right.
+
 ### CPU takeover and reconnection
 
 Effort **M** · Impact **medium**, every multi-human game somebody drops from; required before strangers share a table · Depends on nothing · Awaiting decisions.
@@ -5335,52 +5380,6 @@ the game; this item makes it a URL.
 A server test that a shared tape replays to the same final state and the
 same event log as the game that produced it; a client test that the viewer
 sends no action; and the arena accepting a tape as a position under test.
-
-### A fixed target count is exact, not a ceiling
-
-Effort **M** · Impact **medium**, every "N target" spell can be cast today with fewer targets than it prints, which makes it a cheaper card than the paper one · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-A target spec with a literal `count` and no `up_to` is printed as an exact
-number ("six target permanents"), and 601.2c asks for exactly that many.
-`targeting._spec_options` enumerates the choices as combinations of
-`min(count, len(options))` candidates, so with fewer legal candidates than the
-count the spell is offered with a short set: Aether Gale can be cast with one
-permanent on the table. The one exception is `one_per_player` on an exact count,
-which asks for the full size (Run Away Together). Making every fixed count exact
-breaks `tests/unit/keywords/test_monstrosity.py`, whose position relies on the
-short set.
-
-#### The change
-
-1. `_spec_options` asks for the full `count` on every fixed-size spec without
-   `up_to`, as it already does under `one_per_player`; a spell with too few
-   candidates has no cast line, and a triggered ability with too few is
-   removed from the stack (603.3d).
-2. The Monstrosity test's position is given enough candidates, or reads the
-   card the way it is printed, whichever the card says.
-3. `tests/cards` is the witness that no shipped card relied on the short set;
-   any card it fails was authored against the bug and is re-collected, never
-   hand-edited.
-
-It does not change `up_to`, `min_count` or "any number" specs.
-
-#### Gate
-
-A unit test under `tests/unit/targets/` that a "two target creatures" spell has
-no cast line with one creature on the battlefield and one with two, and that a
-triggered ability with too few candidates leaves the stack; `tests/cards`
-green.
-
-#### Open questions
-
-- **Triggered abilities.** Should a trigger with too few candidates be removed
-  (603.3d) or fire with what there is? Recommended: removed, as the rules say,
-  in the same pull request, since the enumeration is shared.
-- **Cards that break.** If `tests/cards` shows shipped cards that only pass
-  with a short set, are they re-collected here or each filed as a gap?
-  Recommended: re-collected here, since the fix is what makes them right.
 
 ### Archidekt import
 
