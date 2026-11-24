@@ -1,0 +1,180 @@
+{
+  "card": {
+    "id": "maestros_confluence",
+    "name": "Maestros Confluence",
+    "oracle_text": "Choose three. You may choose the same mode more than once.\n• Return target monocolored instant or sorcery card from your graveyard to your hand.\n• Target creature gets -3/-3 until end of turn.\n• Goad each creature target player controls. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+    "mana_cost": "{3}{U}{B}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B",
+      "R",
+      "U"
+    ],
+    "color_identity": [
+      "B",
+      "R",
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 3,
+        "repeatable": true,
+        "modes": [
+          {
+            "label": "Return target monocolored instant or sorcery card from your graveyard to your hand.",
+            "effects": [
+              {
+                "op": "return_from_graveyard",
+                "destination": "hand",
+                "objects": {
+                  "target": "recovered"
+                }
+              }
+            ]
+          },
+          {
+            "label": "Target creature gets -3/-3 until end of turn.",
+            "effects": [
+              {
+                "op": "pump",
+                "objects": {
+                  "target": "shrunk"
+                },
+                "power": {
+                  "const": -3
+                },
+                "toughness": {
+                  "const": -3
+                }
+              }
+            ]
+          },
+          {
+            "label": "Goad each creature target player controls.",
+            "effects": [
+              {
+                "op": "goad",
+                "objects": {
+                  "controller": {
+                    "target": "goaded_player"
+                  },
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "targets": [
+      {
+        "id": "recovered",
+        "kind": "card_in_graveyard",
+        "count": 1,
+        "mode": 0,
+        "selector": {
+          "zone": "graveyard",
+          "controller": "you",
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ],
+          "any_of": [
+            {
+              "colors": [
+                "W"
+              ],
+              "not_colors": [
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            },
+            {
+              "colors": [
+                "U"
+              ],
+              "not_colors": [
+                "W",
+                "B",
+                "R",
+                "G"
+              ]
+            },
+            {
+              "colors": [
+                "B"
+              ],
+              "not_colors": [
+                "W",
+                "U",
+                "R",
+                "G"
+              ]
+            },
+            {
+              "colors": [
+                "R"
+              ],
+              "not_colors": [
+                "W",
+                "U",
+                "B",
+                "G"
+              ]
+            },
+            {
+              "colors": [
+                "G"
+              ],
+              "not_colors": [
+                "W",
+                "U",
+                "B",
+                "R"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "shrunk",
+        "kind": "permanent",
+        "count": 1,
+        "mode": 1,
+        "selector": {
+          "zone": "battlefield",
+          "controller": "any",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      {
+        "id": "goaded_player",
+        "kind": "player",
+        "count": 1,
+        "mode": 2,
+        "selector": {
+          "controller": "any"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 5,
+    "graveyard_size": {
+      "0": 4
+    }
+  }
+}

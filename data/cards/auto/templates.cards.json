@@ -196045,6 +196045,131 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "as": "vat_imprinted",
+                  "link": true,
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "vat_imprinted",
+                      "zone": "exile"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "controller": "any",
+                        "count": "all",
+                        "exclude_binding": "vat_imprinted",
+                        "exiled_with": "self",
+                        "zone": "exile"
+                      },
+                      "op": "put_exiled_into_graveyard"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile that card with Mimic Vat?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return each other card exiled with this artifact to its owner's graveyard.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "vat_card",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a card exiled with Mimic Vat"
+            },
+            {
+              "as": "vat_token",
+              "controller": "you",
+              "objects": {
+                "binding": "vat_card",
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "vat_token",
+                "count": "all"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "vat_token",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Create a token that's a copy of a card exiled with this artifact. It gains haste. Exile it at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mimic_vat",
+      "mana_cost": "{3}",
+      "name": "Mimic Vat",
+      "oracle_text": "Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return each other card exiled with this artifact to its owner's graveyard.\n{3}, {T}: Create a token that's a copy of a card exiled with this artifact. It gains haste. Exile it at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -253241,6 +253366,47 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "river_s_rebuke",
+      "mana_cost": "{4}{U}{U}",
+      "name": "River's Rebuke",
+      "oracle_text": "Return all nonland permanents target player controls to their owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -278314,6 +278480,86 @@
         "Shaman"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "self_only": true,
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "suspend"
+                },
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "suspend"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile Sinister Concierge with three time counters to suspend up to one target creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature dies, you may exile it and put three time counters on it. If you do, exile up to one target creature and put three time counters on it. Each card exiled this way that doesn't have suspend gains suspend.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sinister_concierge",
+      "mana_cost": "{1}{U}",
+      "name": "Sinister Concierge",
+      "oracle_text": "When this creature dies, you may exile it and put three time counters on it. If you do, exile up to one target creature and put three time counters on it. Each card exiled this way that doesn't have suspend gains suspend. (For each card with suspend, its owner removes a time counter from it at the beginning of their upkeep. When the last is removed, they may cast it without paying its mana cost. Those creature spells have haste.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

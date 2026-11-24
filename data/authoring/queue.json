@@ -164232,12 +164232,12 @@
     },
     "Maestros Confluence": {
       "edhrec_rank": 14902,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Maestros Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "opponent battlefield is 6, expected 5",
       "scryfall_id": "877cfc63-54d9-4288-9121-601f344a4afa",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Maestros Diabolist": {
@@ -173432,12 +173432,12 @@
     },
     "Mimic Vat": {
       "edhrec_rank": 2330,
-      "gate": "template",
+      "gate": null,
       "name": "Mimic Vat",
-      "reason": "no template for: Imprint — Whenever a nontoken creature dies, you may exile that card. If you do, return ea",
+      "reason": "",
       "scryfall_id": "93d1c972-2621-4420-adae-cec1da3f965f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miming Slime": {
@@ -225652,12 +225652,12 @@
     },
     "River's Rebuke": {
       "edhrec_rank": 3133,
-      "gate": "template",
+      "gate": null,
       "name": "River's Rebuke",
-      "reason": "no template for: Return all nonland permanents target player controls to their owner's hand",
+      "reason": "",
       "scryfall_id": "32ae984e-5d1e-4497-9a71-7406f78c09f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riverchurn Monument": {
@@ -248372,12 +248372,12 @@
     },
     "Sinister Concierge": {
       "edhrec_rank": 10429,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Concierge",
-      "reason": "no template for: When this creature dies, you may exile it and put three time counters on it. If you do, ex",
+      "reason": "",
       "scryfall_id": "434a43a4-cd03-4ddf-8e36-edff02be33b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Concoction": {

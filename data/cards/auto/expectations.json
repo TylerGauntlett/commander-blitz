@@ -16451,6 +16451,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mimic_vat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "minas_tirith": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21238,6 +21242,14 @@
   "river_of_tears": {
     "zone": "battlefield"
   },
+  "river_s_rebuke": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "river_song_s_diary": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -23308,6 +23320,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "sinister_concierge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sinister_gnarlbark": {
