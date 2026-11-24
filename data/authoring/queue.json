@@ -320132,12 +320132,12 @@
     },
     "Xander's Pact": {
       "edhrec_rank": 16329,
-      "gate": "template",
+      "gate": null,
       "name": "Xander's Pact",
-      "reason": "no template for: Casualty 2",
+      "reason": "",
       "scryfall_id": "2154df0d-9d35-4a67-aeff-c9f224b969a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Xantcha, Sleeper Agent": {

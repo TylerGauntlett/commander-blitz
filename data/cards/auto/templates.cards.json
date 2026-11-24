@@ -362445,6 +362445,81 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "power": {
+            "op": ">=",
+            "value": {
+              "const": 2
+            }
+          },
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "xander_s_pact",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Xander's Pact",
+      "oracle_text": "Casualty 2 (As you cast this spell, you may sacrifice a creature with power 2 or greater. When you do, copy this spell.)\nEach opponent exiles the top card of their library. You may cast spells from among those cards this turn. If you cast a spell this way, pay life equal to that spell's mana value rather than pay its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable_cast_only": true,
+          "playable_pay_life_instead": true,
+          "playable_this_turn": true,
+          "player": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
