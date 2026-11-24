@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**538 cards** blocked by **454** capabilities.
+**540 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -113,6 +113,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
+| [base-pt-trigger-filter](#base-pt-trigger-filter) | 1 | 10325 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
@@ -175,6 +176,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
+| [creatures-dealt-combat-damage-to-player-this-turn](#creatures-dealt-combat-damage-to-player-this-turn) | 1 | 10732 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -2606,6 +2608,20 @@ Blocks **1** card.
 
 </details>
 
+## base-pt-trigger-filter
+
+Blocks **1** card.
+
+- **(selector)** base_power / base_toughness accepted in a trigger filter (TRIGGER_FILTER_KEYS, read in triggers.matches_card_filter via characteristics._base_pt), so a batched permanent_enters trigger can match 'creatures you control with base power and toughness 1/1' per entering object
+  <br>Why the existing vocabulary won't do: The trigger filter's power/toughness read the LIVE value (Welcoming Vampire semantics), so a 1/1 token entering under an anthem or with a counter would be missed and a creature shrunk to 1/1 would wrongly count; base_power/base_toughness exist only in the effect selector and validate_trigger_filter refuses them. A trigger condition with exists over the subject binding only checks the first event of a batch, not 'one or more' of them
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bess, Soul Nourisher** (rank 10325) — `bess_soul_nourisher`
+  - Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.
+
+</details>
+
 ## batched-combat-damage-amount
 
 Blocks **1** card.
@@ -3486,6 +3502,20 @@ Blocks **1** card.
 
 - **Augur of Autumn** (rank 1129) — `augur_of_autumn`
   - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
+
+</details>
+
+## creatures-dealt-combat-damage-to-player-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value counting the distinct creatures controlled by a given player (at the time they dealt it) that dealt combat damage to a player this turn, including creatures that have since left the battlefield -- e.g. {"creatures_dealt_combat_damage_to_player_this_turn": "you"} -- read off the turn ledger that already records players_dealt_combat_damage_by per source
+  <br>Why the existing vocabulary won't do: value_keys has no such tally; the turn ledger's players_dealt_combat_damage_by is exposed only through the player-selector key dealt_combat_damage_by (which seats were hit) and the combat_damage_by condition (a subtype check), neither of which counts creatures. A count over a battlefield selector has no 'dealt combat damage this turn' key (damaged/damaged_by read damage received), and would miss creatures that dealt damage and then left, which 'you controlled' explicitly includes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Indulge // Excess** (rank 10732) — `indulge_excess`
+  - Create a Treasure token for each creature you controlled that dealt combat damage to a player this turn.
 
 </details>
 

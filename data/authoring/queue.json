@@ -14012,12 +14012,12 @@
     },
     "Artifact Mutation": {
       "edhrec_rank": 2442,
-      "gate": "template",
+      "gate": null,
       "name": "Artifact Mutation",
-      "reason": "no template for: Destroy target artifact. It can't be regenerated. Create X 1/1 green Saproling creature to",
+      "reason": "",
       "scryfall_id": "fed09083-a259-4ab5-bb85-aeab9d0b1f7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Artifact Possession": {
@@ -37412,22 +37412,22 @@
     },
     "Cabaretti Charm": {
       "edhrec_rank": 7537,
-      "gate": "template",
+      "gate": null,
       "name": "Cabaretti Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "08f33c8a-8e93-4296-964b-da132a854b3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cabaretti Confluence": {
       "edhrec_rank": 16411,
-      "gate": "template",
+      "gate": null,
       "name": "Cabaretti Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "374198ef-91b6-45ad-acc9-adf659b5763b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cabaretti Courtyard": {
@@ -55362,12 +55362,12 @@
     },
     "Crash the Party": {
       "edhrec_rank": 12468,
-      "gate": "template",
+      "gate": null,
       "name": "Crash the Party",
-      "reason": "no template for: Create a tapped 4/4 green Rhino Warrior creature token for each tapped creature you contro",
+      "reason": "",
       "scryfall_id": "79af4f9f-e6dc-4b36-84bd-2924a2f492eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crash the Ramparts": {
@@ -90862,12 +90862,12 @@
     },
     "False Floor": {
       "edhrec_rank": 18827,
-      "gate": "template",
+      "gate": null,
       "name": "False Floor",
-      "reason": "no template for: {2}, {T}, Exile this artifact: Exile all untapped creatures. Activate only as a sorcery",
+      "reason": "",
       "scryfall_id": "65deec7d-5dfc-4f74-80bb-4c66f33418cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "False Memories": {
@@ -165282,12 +165282,12 @@
     },
     "Magus of the Wheel": {
       "edhrec_rank": 1128,
-      "gate": "template",
+      "gate": null,
       "name": "Magus of the Wheel",
-      "reason": "no template for: {1}{R}, {T}, Sacrifice this creature: Each player discards their hand, then draws seven ca",
+      "reason": "",
       "scryfall_id": "0d84eb6f-2675-436c-885e-207468110d76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Magus of the Will": {

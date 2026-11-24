@@ -1439,6 +1439,15 @@
   "arrogant_vampire": {
     "zone": "battlefield"
   },
+  "artifact_mutation": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 2,
+      "id": "saproling_1_1_g"
+    },
+    "zone": "graveyard"
+  },
   "artisan_of_kozilek": {
     "zone": "battlefield"
   },
@@ -3511,6 +3520,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cabaretti_charm": {
+    "zone": "graveyard"
+  },
+  "cabaretti_confluence": {
+    "battlefield_count": 35,
+    "zone": "graveyard"
+  },
   "cache_grab": {
     "library_size": {
       "0": 36
@@ -5257,6 +5273,13 @@
   },
   "crash_of_rhinos": {
     "zone": "battlefield"
+  },
+  "crash_the_party": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "crashing_drawbridge": {
     "battlefield_count": 33,
@@ -8594,6 +8617,11 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "false_floor": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -15410,6 +15438,10 @@
     "zone": "battlefield"
   },
   "magus_of_the_moat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "magus_of_the_wheel": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

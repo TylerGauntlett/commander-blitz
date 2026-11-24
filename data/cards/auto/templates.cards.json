@@ -17131,6 +17131,62 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "artifact_mutation",
+      "mana_cost": "{R}{G}",
+      "name": "Artifact Mutation",
+      "oracle_text": "Destroy target artifact. It can't be regenerated. Create X 1/1 green Saproling creature tokens, where X is that artifact's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "no_regeneration": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "var": "victim"
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "saproling_1_1_g"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "active_zones": [
@@ -42375,6 +42431,266 @@
     },
     {
       "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "cabaretti_charm",
+      "mana_cost": "{R}{G}{W}",
+      "name": "Cabaretti Charm",
+      "oracle_text": "Choose one —\n• Cabaretti Charm deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Creatures you control get +1/+1 and gain trample until end of turn.\n• Create two 1/1 green and white Citizen creature tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "creatures_you_control": true
+                  },
+                  "op": "damage",
+                  "target": "zapped"
+                }
+              ],
+              "label": "Cabaretti Charm deals damage equal to the number of creatures you control to target creature or planeswalker."
+            },
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 1
+                  }
+                },
+                {
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Creatures you control get +1/+1 and gain trample until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "create_token",
+                  "token": "citizen_1_1_gw"
+                }
+              ],
+              "label": "Create two 1/1 green and white Citizen creature tokens."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "zapped",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "cabaretti_confluence",
+      "mana_cost": "{3}{R}{G}{W}",
+      "name": "Cabaretti Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Create a token that's a copy of target creature you control. It gains haste. Sacrifice it at the beginning of the next end step.\n• Exile target artifact or enchantment.\n• Creatures target player controls get +1/+1 and gain first strike until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "as": "cabaretti_copy",
+                  "controller": "you",
+                  "objects": {
+                    "target": "copied"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "cabaretti_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "cabaretti_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice it at the beginning of the next end step."
+                }
+              ],
+              "label": "Create a token that's a copy of target creature you control. It gains haste. Sacrifice it at the beginning of the next end step."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "exiled"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target artifact or enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "controller": {
+                      "target": "rallied"
+                    },
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 1
+                  }
+                },
+                {
+                  "keywords": [
+                    "first_strike"
+                  ],
+                  "objects": {
+                    "controller": {
+                      "target": "rallied"
+                    },
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Creatures target player controls get +1/+1 and gain first strike until end of turn."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "copied",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "exiled",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "rallied",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -64386,6 +64702,40 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "crash_the_party",
+      "mana_cost": "{5}{G}",
+      "name": "Crash the Party",
+      "oracle_text": "Create a tapped 4/4 green Rhino Warrior creature token for each tapped creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "tapped": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "controller": "you",
+          "op": "create_token",
+          "tapped": true,
+          "token": "rhino_warrior_4_4_g"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -102048,6 +102398,60 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "enters_tapped",
+          "kind": "static",
+          "text": "Creatures enter tapped."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "tapped": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}, {T}, Exile this artifact: Exile all untapped creatures. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "false_floor",
+      "mana_cost": "{4}",
+      "name": "False Floor",
+      "oracle_text": "This artifact enters tapped.\nCreatures enter tapped.\n{2}, {T}, Exile this artifact: Exile all untapped creatures. Activate only as a sorcery.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -185031,6 +185435,57 @@
       "name": "Magus of the Moat",
       "oracle_text": "Creatures without flying can't attack.",
       "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "discard",
+              "player": "each_player",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 7
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, {T}, Sacrifice this creature: Each player discards their hand, then draws seven cards."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "magus_of_the_wheel",
+      "mana_cost": "{2}{R}",
+      "name": "Magus of the Wheel",
+      "oracle_text": "{1}{R}, {T}, Sacrifice this creature: Each player discards their hand, then draws seven cards.",
+      "power": 3,
       "source": "auto",
       "subtypes": [
         "Human",

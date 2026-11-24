@@ -1,0 +1,16 @@
+{
+  "card_id": "bess_soul_nourisher",
+  "name": "Bess, Soul Nourisher",
+  "oracle_text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.\nWhenever Bess attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on Bess.",
+  "blocked_sentences": [
+    "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess."
+  ],
+  "needs": [{
+    "capability": "base_pt_trigger_filter",
+    "kind": "selector",
+    "what": "base_power / base_toughness accepted in a trigger filter (TRIGGER_FILTER_KEYS, read in triggers.matches_card_filter via characteristics._base_pt), so a batched permanent_enters trigger can match 'creatures you control with base power and toughness 1/1' per entering object",
+    "why_existing_wont_do": "The trigger filter's power/toughness read the LIVE value (Welcoming Vampire semantics), so a 1/1 token entering under an anthem or with a counter would be missed and a creature shrunk to 1/1 would wrongly count; base_power/base_toughness exist only in the effect selector and validate_trigger_filter refuses them. A trigger condition with exists over the subject binding only checks the first event of a batch, not 'one or more' of them"
+  }],
+  "closest_existing": ["permanent_enters batched filter power/toughness", "selector base_power/base_toughness"],
+  "confidence": "high"
+}
