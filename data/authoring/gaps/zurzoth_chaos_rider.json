@@ -1,0 +1,29 @@
+{
+  "card_id": "zurzoth_chaos_rider",
+  "name": "Zurzoth, Chaos Rider",
+  "oracle_text": "Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"\nWhenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.",
+  "blocked_sentences": [
+    "Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
+    "Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random."
+  ],
+  "needs": [
+    {
+      "capability": "devil_token",
+      "kind": "token",
+      "what": "a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
+      "why_existing_wont_do": "No Devil token exists in the packet's token_ids (nor in data/cards/tokens.cards.json), and create_token may only name an id from that closed list; no other 1/1 red token carries the dies-ping ability."
+    },
+    {
+      "capability": "attacked_players_binding",
+      "kind": "trigger_event",
+      "what": "a single batched trigger for 'one or more Devils you control attack one or more players' that fires once per attack declaration and binds the set of defending players, so the effect can be 'you and those players each draw a card, then discard a card at random' with you drawing exactly once",
+      "why_existing_wont_do": "creatures_attack_player fires once per defending player (the subset declared against that seat), so with two attacked opponents the controller would draw and discard twice; you_attack fires once per declaration but exposes no binding for the attacked players and no Devil-subtype filter over the attackers."
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "creatures_attack_player",
+    "you_attack"
+  ],
+  "confidence": "high"
+}

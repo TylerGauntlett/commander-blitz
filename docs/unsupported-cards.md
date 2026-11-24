@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **456** capabilities.
+**542 cards** blocked by **458** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,6 +51,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
+| [devil-token](#devil-token) | 2 | 4163 | token |
 | [distribute-counters-spell](#distribute-counters-spell) | 2 | 4355 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
@@ -107,6 +108,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attachments-had](#attachments-had) | 1 | 10726 | selector |
 | [attack-restriction-until-your-next-turn](#attack-restriction-until-your-next-turn) | 1 | 3290 | op |
 | [attack-tax-x-count](#attack-tax-x-count) | 1 | 671 | value |
+| [attacked-players-binding](#attacked-players-binding) | 1 | 5087 | trigger_event |
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
@@ -186,7 +188,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-trigger-either-event](#delayed-trigger-either-event) | 1 | 6796 | trigger_event |
 | [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 12175 | trigger_event |
 | [demon-token-5-5-b-flying](#demon-token-5-5-b-flying) | 1 | 7993 | token |
-| [devil-token](#devil-token) | 1 | 4163 | token |
 | [devoid](#devoid) | 1 | 6026 | keyword |
 | [die-rolled-trigger](#die-rolled-trigger) | 1 | 5966 | trigger_event |
 | [died-attacking-or-blocking-alone](#died-attacking-or-blocking-alone) | 1 | 22760 | selector |
@@ -369,6 +370,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-to-your-right](#player-to-your-right) | 1 | 5281 | selector |
 | [players-attacked-last-combat](#players-attacked-last-combat) | 1 | 6681 | value |
 | [players-below-half-starting-life](#players-below-half-starting-life) | 1 | 10833 | value |
+| [players-dealt-combat-damage-this-turn](#players-dealt-combat-damage-this-turn) | 1 | 15420 | selector |
 | [players-lost-the-game](#players-lost-the-game) | 1 | 6258 | value |
 | [players-lost-the-game-count](#players-lost-the-game-count) | 1 | 4941 | value |
 | [power-of-creatures-died-this-turn](#power-of-creatures-died-this-turn) | 1 | 7739 | value |
@@ -1579,6 +1581,27 @@ Blocks **2** cards.
 
 </details>
 
+## devil-token
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
+  <br>Why the existing vocabulary won't do: token_ids contains no Devil token
+- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
+  <br>Why the existing vocabulary won't do: No Devil token exists in the packet's token_ids (nor in data/cards/tokens.cards.json), and create_token may only name an id from that closed list; no other 1/1 red token carries the dies-ping ability.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
+  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
+  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
+  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
+- **Zurzoth, Chaos Rider** (rank 5087) — `zurzoth_chaos_rider`
+  - Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
+  - Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.
+
+</details>
+
 ## distribute-counters-spell
 
 Blocks **2** cards.
@@ -2520,6 +2543,21 @@ Blocks **1** card.
 
 - **Sphere of Safety** (rank 671) — `sphere_of_safety`
   - Creatures can't attack you or planeswalkers you control unless their controller pays {X} for each of those creatures, where X is the number of enchantments you control.
+
+</details>
+
+## attacked-players-binding
+
+Blocks **1** card.
+
+- **(trigger_event)** a single batched trigger for 'one or more Devils you control attack one or more players' that fires once per attack declaration and binds the set of defending players, so the effect can be 'you and those players each draw a card, then discard a card at random' with you drawing exactly once
+  <br>Why the existing vocabulary won't do: creatures_attack_player fires once per defending player (the subset declared against that seat), so with two attacked opponents the controller would draw and discard twice; you_attack fires once per declaration but exposes no binding for the attacked players and no Devil-subtype filter over the attackers.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zurzoth, Chaos Rider** (rank 5087) — `zurzoth_chaos_rider`
+  - Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
+  - Whenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.
 
 </details>
 
@@ -3642,22 +3680,6 @@ Blocks **1** card.
 
 - **Demonic Covenant** (rank 7993) — `demonic_covenant`
   - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
-
-</details>
-
-## devil-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 red Devil creature token with "When this token dies, it deals 1 damage to any target."
-  <br>Why the existing vocabulary won't do: token_ids contains no Devil token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spiked Corridor // Torture Pit** (rank 4163) — `spiked_corridor_torture_pit`
-  - When you unlock this door, create three 1/1 red Devil creature tokens with "When this token dies, it deals 1 damage to any target."
-  - (You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)
-  - If a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead.
 
 </details>
 
@@ -6253,6 +6275,20 @@ Blocks **1** card.
 - **Anya, Merciless Angel** (rank 10833) — `anya_merciless_angel`
   - Anya gets +3/+3 for each opponent whose life total is less than half their starting life total.
   - As long as an opponent's life total is less than half their starting life total, Anya has indestructible.
+
+</details>
+
+## players-dealt-combat-damage-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a player spec (or value) naming every player who was dealt combat damage this turn by ANY source, so the delayed trigger's draw amount can be {"player_count": {"dealt_combat_damage_by": "any"}}; it needs a per-turn seat set folded off COMBAT_DAMAGE_TO_PLAYER that is never cleared per oid
+  <br>Why the existing vocabulary won't do: The player spec `dealt_combat_damage_by` (selectors._seats_dealt_combat_damage_by) accepts only "self", {"subtypes": [...]} (optionally with at_least) and {"any_of": [...]} -- no 'any creature' subject. TurnLedger.players_dealt_combat_damage_by is keyed by oid and an oid's entry is popped when it re-enters the battlefield, so a union over it would also be wrong. `damage_taken_this_turn` counts all damage, not only combat damage, and sums amounts rather than counting players; `player_count` with an objects comparison reads board counts, not the damage ledger. Listing every creature subtype under `subtypes` would miss creatures with no creature type and is an approximation. The delayed-trigger half (delayed_trigger on postcombat_main, duration once_this_turn) and the first sentence (grant_keyword vigilance/trample/melee) are expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vivien's Stampede** (rank 15420) — `vivien_s_stampede`
+  - At the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn.
 
 </details>
 

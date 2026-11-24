@@ -1,0 +1,18 @@
+{
+  "card_id": "vivien_s_stampede",
+  "name": "Vivien's Stampede",
+  "oracle_text": "Each creature you control gains vigilance, trample, and melee until end of turn. (Whenever a creature with melee attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nAt the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn.",
+  "blocked_sentences": [
+    "At the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn."
+  ],
+  "needs": [
+    {
+      "capability": "players_dealt_combat_damage_this_turn",
+      "kind": "selector",
+      "what": "a player spec (or value) naming every player who was dealt combat damage this turn by ANY source, so the delayed trigger's draw amount can be {\"player_count\": {\"dealt_combat_damage_by\": \"any\"}}; it needs a per-turn seat set folded off COMBAT_DAMAGE_TO_PLAYER that is never cleared per oid",
+      "why_existing_wont_do": "The player spec `dealt_combat_damage_by` (selectors._seats_dealt_combat_damage_by) accepts only \"self\", {\"subtypes\": [...]} (optionally with at_least) and {\"any_of\": [...]} -- no 'any creature' subject. TurnLedger.players_dealt_combat_damage_by is keyed by oid and an oid's entry is popped when it re-enters the battlefield, so a union over it would also be wrong. `damage_taken_this_turn` counts all damage, not only combat damage, and sums amounts rather than counting players; `player_count` with an objects comparison reads board counts, not the damage ledger. Listing every creature subtype under `subtypes` would miss creatures with no creature type and is an approximation. The delayed-trigger half (delayed_trigger on postcombat_main, duration once_this_turn) and the first sentence (grant_keyword vigilance/trample/melee) are expressible."
+    }
+  ],
+  "closest_existing": ["dealt_combat_damage_by", "damage_taken_this_turn", "player_count"],
+  "confidence": "high"
+}

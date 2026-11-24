@@ -115094,6 +115094,65 @@
         {
           "effects": [
             {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature attacks one of your opponents or a planeswalker an opponent controls, that creature gets +2/+0 until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "opponent",
+              "or_planeswalkers": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "gahiji_honored_one",
+      "mana_cost": "{2}{R}{G}{W}",
+      "name": "Gahiji, Honored One",
+      "oracle_text": "Whenever a creature attacks one of your opponents or a planeswalker an opponent controls, that creature gets +2/+0 until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "modes": [
                 {
@@ -167780,6 +167839,134 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Kitt Kanto enters, create a 1/1 green and white Citizen creature token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "kitt_kanto_goad",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "tap_permanents": {
+                  "controller": "you",
+                  "count": 2,
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "player": "you",
+              "prompt": "Tap two untapped creatures you control to pump and goad a creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on each player's turn, you may tap two untapped creatures you control.",
+          "trigger": {
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "id": "kitt_kanto_goad",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, target creature that player controls gets +2/+2 and gains trample until end of turn. Goad that creature."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "kitt_kanto_mayhem_diva",
+      "mana_cost": "{1}{R}{G}{W}",
+      "name": "Kitt Kanto, Mayhem Diva",
+      "oracle_text": "When Kitt Kanto enters, create a 1/1 green and white Citizen creature token.\nAt the beginning of combat on each player's turn, you may tap two untapped creatures you control. When you do, target creature that player controls gets +2/+2 and gains trample until end of turn. Goad that creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Bard",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -175538,6 +175725,93 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "creatures_you_control": true
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of creatures you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "party_tokens",
+              "controller": "opponent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "binding": "party_tokens"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if it's not a token, each opponent creates a token that's a copy of it. The tokens are goaded for the rest of the game. (They attack each combat if able and attack a player other than you if able.)",
+          "trigger": {
+            "condition": {
+              "not": {
+                "exists": {
+                  "is_token": true,
+                  "self_only": true
+                }
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "life_of_the_party",
+      "keywords": [
+        "first_strike",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Life of the Party",
+      "oracle_text": "First strike, trample, haste\nWhenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of creatures you control.\nWhen this creature enters, if it's not a token, each opponent creates a token that's a copy of it. The tokens are goaded for the rest of the game. (They attack each combat if able and attack a player other than you if able.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -225847,6 +226121,160 @@
               "Creature"
             ]
           },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creature tokens you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "parley_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "citizen_1_1_gw"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "not_types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "pump",
+                      "power": {
+                        "const": 1
+                      },
+                      "toughness": {
+                        "const": 1
+                      }
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parley — At the beginning of combat on your turn, each player reveals the top card of their library. For each land card revealed this way, you create a 1/1 green and white Citizen creature token. Then creatures you control get +1/+1 until end of turn for each nonland card revealed this way. Then each player draws a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "phabine_boss_s_confidant",
+      "mana_cost": "{3}{R}{G}{W}",
+      "name": "Phabine, Boss's Confidant",
+      "oracle_text": "Creature tokens you control have haste.\nParley — At the beginning of combat on your turn, each player reveals the top card of their library. For each land card revealed this way, you create a 1/1 green and white Citizen creature token. Then creatures you control get +1/+1 until end of turn for each nonland card revealed this way. Then each player draws a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
           "effect": "buff",
           "kind": "static",
           "power": {
@@ -235578,6 +236006,67 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create two 1/1 green and white Citizen creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "Tap three untapped creatures you control: Create a Treasure token."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "prosperous_partnership",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Prosperous Partnership",
+      "oracle_text": "When this enchantment enters, create two 1/1 green and white Citizen creature tokens.\nTap three untapped creatures you control: Create a Treasure token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -255262,6 +255751,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "scry",
+                  "player": "you"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Alliance — Whenever another creature you control enters, scry 1. If this is the second time this ability has resolved this turn, draw a card instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rumor_gatherer",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Rumor Gatherer",
+      "oracle_text": "Alliance — Whenever another creature you control enters, scry 1. If this is the second time this ability has resolved this turn, draw a card instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -261254,6 +261813,103 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0 and has trample.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+0 and has trample."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, create that many 1/1 green and white Citizen creature tokens.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "scepter_of_celebration",
+      "mana_cost": "{2}{G}",
+      "name": "Scepter of Celebration",
+      "oracle_text": "Equipped creature gets +2/+0 and has trample.\nWhenever equipped creature deals combat damage to a player, create that many 1/1 green and white Citizen creature tokens.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -277345,6 +278001,88 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cant_block"
+            },
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 2
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "next_combat",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "must_attack"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Alliance — Whenever another creature you control enters, target creature an opponent controls can't block this turn. If this is the second time this ability has resolved this turn, that creature attacks during its controller's next combat phase if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sizzling_soloist",
+      "mana_cost": "{3}{R}",
+      "name": "Sizzling Soloist",
+      "oracle_text": "Alliance — Whenever another creature you control enters, target creature an opponent controls can't block this turn. If this is the second time this ability has resolved this turn, that creature attacks during its controller's next combat phase if able.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

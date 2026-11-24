@@ -9770,6 +9770,13 @@
   "gaea_s_skyfolk": {
     "zone": "battlefield"
   },
+  "gahiji_honored_one": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "gala_greeters": {
     "zone": "battlefield"
   },
@@ -14000,6 +14007,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kitt_kanto_mayhem_diva": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "citizen_1_1_gw"
+    },
+    "zone": "battlefield"
+  },
   "kjeldoran_escort": {
     "zone": "battlefield"
   },
@@ -14656,6 +14671,11 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "life_of_the_party": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 7,
     "zone": "battlefield"
   },
   "lifeblood_hydra": {
@@ -18825,6 +18845,10 @@
     },
     "zone": "battlefield"
   },
+  "phabine_boss_s_confidant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "phantom_general": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19631,6 +19655,14 @@
     "tokens": {
       "count": 1,
       "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
+  "prosperous_partnership": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "citizen_1_1_gw"
     },
     "zone": "battlefield"
   },
@@ -21397,6 +21429,13 @@
   "rumbling_sentry": {
     "zone": "battlefield"
   },
+  "rumor_gatherer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "run_away_together": {
     "battlefield_count": 31,
     "graveyard_size": {
@@ -21851,6 +21890,13 @@
   },
   "scavenging_ooze": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "scepter_of_celebration": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "sceptre_of_eternal_glory": {
@@ -23246,6 +23292,10 @@
     "zone": "battlefield"
   },
   "sixth_sense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sizzling_soloist": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

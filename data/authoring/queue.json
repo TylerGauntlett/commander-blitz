@@ -104212,12 +104212,12 @@
     },
     "Gahiji, Honored One": {
       "edhrec_rank": 11721,
-      "gate": "template",
+      "gate": null,
       "name": "Gahiji, Honored One",
-      "reason": "no template for: Whenever a creature attacks one of your opponents or a planeswalker an opponent controls, ",
+      "reason": "",
       "scryfall_id": "c658f583-c115-43c7-9986-2c6010549313",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gainsay": {
@@ -150092,12 +150092,12 @@
     },
     "Kitt Kanto, Mayhem Diva": {
       "edhrec_rank": 11514,
-      "gate": "template",
+      "gate": null,
       "name": "Kitt Kanto, Mayhem Diva",
-      "reason": "no template for: When Kitt Kanto enters, create a 1/1 green and white Citizen creature token",
+      "reason": "",
       "scryfall_id": "82862454-5edc-421c-9078-bee0337fa827",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kiyomaro, First to Stand": {
@@ -157732,12 +157732,12 @@
     },
     "Life of the Party": {
       "edhrec_rank": 5069,
-      "gate": "template",
+      "gate": null,
       "name": "Life of the Party",
-      "reason": "no template for: Whenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of ",
+      "reason": "",
       "scryfall_id": "30cfd6c9-9eed-493b-bd1d-113cb7935f61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Life's Finale": {
@@ -200572,12 +200572,12 @@
     },
     "Phabine, Boss's Confidant": {
       "edhrec_rank": 10235,
-      "gate": "template",
+      "gate": null,
       "name": "Phabine, Boss's Confidant",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "b04ddd08-b1eb-4100-b0a2-62bee5d89c20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phage the Untouchable": {
@@ -208602,12 +208602,12 @@
     },
     "Prosperous Partnership": {
       "edhrec_rank": 6196,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Partnership",
-      "reason": "no template for: When this enchantment enters, create two 1/1 green and white Citizen creature tokens",
+      "reason": "",
       "scryfall_id": "a50267d1-f4b7-494f-b50b-cfb08b760b47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prosperous Pirates": {
@@ -229032,12 +229032,12 @@
     },
     "Rumor Gatherer": {
       "edhrec_rank": 1519,
-      "gate": "template",
+      "gate": null,
       "name": "Rumor Gatherer",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, scry 1. If this is the second tim",
+      "reason": "",
       "scryfall_id": "9251f658-bf7a-45e7-a71f-8e359b838921",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Run Afoul": {
@@ -235392,12 +235392,12 @@
     },
     "Scepter of Celebration": {
       "edhrec_rank": 7893,
-      "gate": "template",
+      "gate": null,
       "name": "Scepter of Celebration",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, create that many 1/1 green and",
+      "reason": "",
       "scryfall_id": "404b786c-b64c-4935-b0d3-4dd7a2d14c37",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scepter of Dominance": {
@@ -248952,12 +248952,12 @@
     },
     "Sizzling Soloist": {
       "edhrec_rank": 19321,
-      "gate": "template",
+      "gate": null,
       "name": "Sizzling Soloist",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, target creature an opponent contr",
+      "reason": "",
       "scryfall_id": "958dfd59-7dbd-45e0-b6e1-e432c78b6878",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skaab Goliath": {
