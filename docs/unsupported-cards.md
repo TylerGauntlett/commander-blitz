@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**544 cards** blocked by **458** capabilities.
+**543 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -176,7 +176,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
-| [creature-cards-left-graveyard-this-turn](#creature-cards-left-graveyard-this-turn) | 1 | 17038 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
@@ -3508,20 +3507,6 @@ Blocks **1** card.
 
 - **Augur of Autumn** (rank 1129) — `augur_of_autumn`
   - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
-
-</details>
-
-## creature-cards-left-graveyard-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-turn value counting cards that left a given player's graveyard this turn, filtered by the card's printed type ("a creature card left your graveyard this turn"), e.g. {"cards_from_graveyard_this_turn": "you", "filter": {"types": ["Creature"]}}, usable as an end_step trigger's intervening-if condition
-  <br>Why the existing vocabulary won't do: cards_from_graveyard_this_turn takes only a player spec and reads TurnLedger.cards_from_graveyard, a bare per-owner integer with no record of which cards left, so a land or instant leaving the graveyard would satisfy it; graveyard_plays_this_turn counts casts/activations from graveyards, not cards leaving; descended_this_turn counts arrivals, the opposite direction
-
-<details><summary>Cards waiting on this</summary>
-
-- **Syrix, Carrier of the Flame** (rank 17038) — `syrix_carrier_of_the_flame`
-  - At the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.
 
 </details>
 

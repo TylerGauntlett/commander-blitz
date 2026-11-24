@@ -692,7 +692,8 @@ VALUES: dict[str, Entry] = {
     "cards_drawn_this_turn": ("Cards the player drew this turn.", H_LEDGER),
     "cards_discarded_this_turn": ("Cards the player discarded this turn, wherever they went after.", H_LEDGER),
     "energy_spent_this_turn": ("Energy ({E}) the player paid or lost this turn.", H_LEDGER),
-    "cards_from_graveyard_this_turn": ("Cards that left the player's graveyard this turn.", H_LEDGER),
+    "cards_from_graveyard_this_turn": ("Cards that left the player's graveyard this turn; or `{player, filter}` "
+                                       "for cards of a type, matched on the printed face as it left.", H_LEDGER),
     "descended_this_turn": ("Permanent cards put into the player's own graveyard from anywhere this turn: how many times they descended.", H_LEDGER),
     "cards_in_hand": ("Cards in the player's hand.", None),
     "cards_to_graveyard_this_turn": ("Cards put into any graveyard from anywhere this turn; tokens excluded.", H_LEDGER),

@@ -2301,6 +2301,8 @@ Anywhere a number is expected -- the leaf list is
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
 { "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
+{ "cards_from_graveyard_this_turn":             // Syrix; "a CREATURE card left your graveyard",
+    { "player": "you", "filter": { "types": ["Creature"] } } }  //   the printed face as it left
 { "descended_this_turn": "you" }                // descend: PERMANENT cards into YOUR graveyard, from anywhere
 { "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
                      "objects": { … } } }                      //   where `mana_value_of` sums

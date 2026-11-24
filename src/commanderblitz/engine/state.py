@@ -1343,6 +1343,11 @@ class GameState:
             # by whoever moved the card: "a card left *your* graveyard" is a
             # fact about the yard, and a Reanimate cast by an opponent on your
             # creature still emptied your graveyard by one.
+            #
+            # The printed id rather than the event's `card`, which is the face
+            # the object *arrives* as: a card returned to the battlefield
+            # transformed left the graveyard as its front face (712.8a), and
+            # that is the face "a creature card left" is asked about.
             if (
                 data.get("from") == Zone.GRAVEYARD.value
                 and data.get("to") != Zone.GRAVEYARD.value
@@ -1350,9 +1355,7 @@ class GameState:
                 and not obj.is_token
                 and pid is not None
             ):
-                ledger.cards_from_graveyard[pid] = (
-                    ledger.cards_from_graveyard.get(pid, 0) + 1
-                )
+                ledger.cards_from_graveyard.setdefault(pid, []).append(obj.def_id)
 
     def bump_chars(self) -> None:
         """Invalidate the derived-characteristics cache."""

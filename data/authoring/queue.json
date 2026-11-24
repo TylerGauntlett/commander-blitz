@@ -273312,12 +273312,12 @@
     },
     "Syrix, Carrier of the Flame": {
       "edhrec_rank": 17038,
-      "gate": "template",
+      "gate": null,
       "name": "Syrix, Carrier of the Flame",
-      "reason": "no template for: At the beginning of each end step, if a creature card left your graveyard this turn, targe",
+      "reason": "",
       "scryfall_id": "492d484b-9af6-4055-9893-627b56c69544",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Systems Override": {

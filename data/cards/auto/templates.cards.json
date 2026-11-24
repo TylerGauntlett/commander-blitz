@@ -303898,6 +303898,128 @@
           "effects": [
             {
               "amount": {
+                "power_of": {
+                  "target": "phoenix"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "target": "phoenix"
+              },
+              "target": "struck"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "phoenix",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Phoenix"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "struck",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "cards_from_graveyard_this_turn": {
+                  "filter": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "cast_card"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Phoenix you control dies, you may cast this card from your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "exclude_self": true,
+              "subtypes": [
+                "Phoenix"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "syrix_carrier_of_the_flame",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Syrix, Carrier of the Flame",
+      "oracle_text": "Flying, haste\nAt the beginning of each end step, if a creature card left your graveyard this turn, target Phoenix you control deals damage equal to its power to any target.\nWhenever another Phoenix you control dies, you may cast this card from your graveyard.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phoenix"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "as": "milled",

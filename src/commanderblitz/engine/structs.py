@@ -2591,7 +2591,15 @@ class TurnLedger:
     #: Tokens are excluded for the same reason they are there: a token in a
     #: graveyard ceases to exist as a state-based action, and counting that as
     #: "a card left" would make the condition true every turn anything died.
-    cards_from_graveyard: dict[int, int] = field(default_factory=dict)
+    #:
+    #: The departed cards' **ids**, in order, rather than a bare count:
+    #: Syrix, Carrier of the Flame asks whether "a **creature** card left your
+    #: graveyard", and a count alone is satisfied by a land or an instant. The
+    #: id is the printed card's (`GameObject.def_id`), the face a card has in
+    #: a graveyard (712.8a), recorded as it leaves, so a typed filter is
+    #: matched on that face however the card has changed since -- one returned
+    #: transformed, or exiled face down, still left as what it was.
+    cards_from_graveyard: dict[int, list[str]] = field(default_factory=dict)
     #: Every creature **subtype** that has dealt combat damage to a player this
     #: turn -- prowl, and the one tally here that is not a number.
     #:

@@ -354,7 +354,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `binding` | A number a trigger or an `as` carried. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `cards_discarded_this_turn` | Cards the player discarded this turn, wherever they went after. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
-| `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn; or `{player, filter}` for cards of a type, matched on the printed face as it left. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_in_hand` | Cards in the player's hand. | [Value expressions](card-dsl.md#value-expressions) |
 | `cards_to_graveyard_this_turn` | Cards put into any graveyard from anywhere this turn; tokens excluded. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |
