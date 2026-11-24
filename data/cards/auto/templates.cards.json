@@ -172397,6 +172397,67 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "power_had": true
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put +1/+1 counters on Kresh?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that creature's power.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "kresh_the_bloodbraided",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Kresh the Bloodbraided",
+      "oracle_text": "Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that creature's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "not": {
                   "has_turn_flag": "krile_trace_aether"
@@ -196178,6 +196239,116 @@
               "amount": {
                 "const": 1
               },
+              "any_color": true,
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile the top card of each player's library. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {2}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": "{2}{R}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "mezzio_mugger",
+      "mana_cost": "{4}{R}",
+      "name": "Mezzio Mugger",
+      "oracle_text": "Whenever this creature attacks, exile the top card of each player's library. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.\nBlitz {2}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Lizard",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "as": "soldier",
               "controller": "you",
               "op": "create_token",
@@ -200018,6 +200189,88 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "oozes",
+              "controller": "you",
+              "op": "create_token",
+              "power": {
+                "const": 2
+              },
+              "token": "ooze_x_x_g",
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "binding": "oozes"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this token dies, create two 1/1 green Ooze creature tokens.\"",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "power": {
+                "const": 1
+              },
+              "token": "ooze_x_x_g",
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this token dies, create two 1/1 green Ooze creature tokens.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "mitotic_slime",
+      "mana_cost": "{4}{G}",
+      "name": "Mitotic Slime",
+      "oracle_text": "When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this token dies, create two 1/1 green Ooze creature tokens.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -210918,6 +211171,144 @@
           "selector": {
             "types": [
               "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "next_of_kin_put",
+                  "controller": "you",
+                  "objects": {
+                    "chooser": "you",
+                    "count": 1,
+                    "union": [
+                      {
+                        "controller": "you",
+                        "mana_value": {
+                          "op": "<",
+                          "value": {
+                            "mana_value_of": {
+                              "binding": "subject"
+                            }
+                          }
+                        },
+                        "owner": "you",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "hand"
+                      },
+                      {
+                        "mana_value": {
+                          "op": "<",
+                          "value": {
+                            "mana_value_of": {
+                              "binding": "subject"
+                            }
+                          }
+                        },
+                        "owner": "you",
+                        "player": "you",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "command"
+                      }
+                    ]
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "next_of_kin_put",
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "effects": [
+                        {
+                          "condition": {
+                            "exists": {
+                              "binding": "next_of_kin_put",
+                              "zone": "battlefield"
+                            }
+                          },
+                          "op": "if",
+                          "then": [
+                            {
+                              "controller": "you",
+                              "destination": "battlefield",
+                              "host_named": {
+                                "binding": "next_of_kin_put",
+                                "zone": "battlefield"
+                              },
+                              "objects": {
+                                "self_only": true,
+                                "zone": "graveyard"
+                              },
+                              "op": "return_from_graveyard"
+                            }
+                          ]
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_step",
+                      "text": "Return this card to the battlefield attached to that creature at the beginning of the next end step."
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a creature card with lesser mana value from your hand or the command zone onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, you may put a creature card you own with lesser mana value from your hand or from the command zone onto the battlefield. If you do, return this card to the battlefield attached to that creature at the beginning of the next end step.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "next_of_kin",
+      "mana_cost": "{2}{G}",
+      "name": "Next of Kin",
+      "oracle_text": "Enchant creature\nWhen enchanted creature dies, you may put a creature card you own with lesser mana value from your hand or from the command zone onto the battlefield. If you do, return this card to the battlefield attached to that creature at the beginning of the next end step.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
             ],
             "zone": "battlefield"
           }
@@ -238430,6 +238821,86 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "racket_card",
+                  "objects": {
+                    "player": "you",
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "racket_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "racket_card",
+                        "zone": "library"
+                      },
+                      "op": "exile"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "binding": "racket_card",
+                        "zone": "library"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "pay_life": {
+                      "mana_value_of": {
+                        "binding": "racket_card"
+                      }
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Pay life equal to that card's mana value to exile it? (Otherwise it goes to its owner's hand.)"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "protection_racket",
+      "mana_cost": "{2}{B}",
+      "name": "Protection Racket",
+      "oracle_text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

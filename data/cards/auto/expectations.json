@@ -14391,6 +14391,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kresh_the_bloodbraided": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "krile_baldesion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16434,6 +16438,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mezzio_mugger": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "midnight_angel_armor": {
     "battlefield_count": 34,
     "tokens": {
@@ -16726,6 +16737,10 @@
     "zone": "battlefield"
   },
   "misty_rainforest": {
+    "zone": "battlefield"
+  },
+  "mitotic_slime": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mizzix_s_mastery": {
@@ -17664,6 +17679,13 @@
   },
   "new_horizons": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "next_of_kin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "neyam_shai_murad": {
@@ -19847,6 +19869,10 @@
   },
   "protection_magic": {
     "zone": "graveyard"
+  },
+  "protection_racket": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "protector_of_the_wastes": {
     "battlefield_count": 33,

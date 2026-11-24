@@ -152522,12 +152522,12 @@
     },
     "Kresh the Bloodbraided": {
       "edhrec_rank": 9129,
-      "gate": "template",
+      "gate": null,
       "name": "Kresh the Bloodbraided",
-      "reason": "no template for: Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that cre",
+      "reason": "",
       "scryfall_id": "8b4b3c5f-32ea-4208-86d4-bb86e3b8d7d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krile Baldesion": {
@@ -172502,12 +172502,12 @@
     },
     "Mezzio Mugger": {
       "edhrec_rank": 12455,
-      "gate": "template",
+      "gate": null,
       "name": "Mezzio Mugger",
-      "reason": "no template for: Whenever this creature attacks, exile the top card of each player's library. You may play ",
+      "reason": "",
       "scryfall_id": "5aaa4be7-32d2-4e17-95c0-78344b09c889",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miara, Thorn of the Glade": {
@@ -176582,12 +176582,12 @@
     },
     "Mitotic Slime": {
       "edhrec_rank": 9554,
-      "gate": "template",
+      "gate": null,
       "name": "Mitotic Slime",
-      "reason": "no template for: When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this t",
+      "reason": "",
       "scryfall_id": "883840b7-32db-4bda-8e02-0f6ba844fd34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mizzium Meddler": {
@@ -186002,12 +186002,12 @@
     },
     "Next of Kin": {
       "edhrec_rank": 19705,
-      "gate": "template",
+      "gate": null,
       "name": "Next of Kin",
-      "reason": "no template for: When enchanted creature dies, you may put a creature card you own with lesser mana value f",
+      "reason": "",
       "scryfall_id": "51a4414b-3cab-463f-a2b5-e49104f251da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nexus Mentality": {
@@ -208722,12 +208722,12 @@
     },
     "Protection Racket": {
       "edhrec_rank": 7012,
-      "gate": "template",
+      "gate": null,
       "name": "Protection Racket",
-      "reason": "no template for: At the beginning of your upkeep, repeat the following process for each opponent in turn or",
+      "reason": "",
       "scryfall_id": "046c2801-4e94-4e33-9039-9b7d2f409d19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protection of the Hekma": {
