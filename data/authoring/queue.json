@@ -48582,12 +48582,12 @@
     },
     "Clone Legion": {
       "edhrec_rank": 3577,
-      "gate": "template",
+      "gate": null,
       "name": "Clone Legion",
-      "reason": "no template for: For each creature target player controls, create a token that's a copy of that creature",
+      "reason": "",
       "scryfall_id": "b7ea0b25-19e3-4d75-9daa-9110dce7e6fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clone Shell": {
@@ -164222,12 +164222,12 @@
     },
     "Maestros Charm": {
       "edhrec_rank": 8156,
-      "gate": "template",
+      "gate": null,
       "name": "Maestros Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3b3e1bec-67d2-43fd-b799-b7c12b94d1f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Confluence": {

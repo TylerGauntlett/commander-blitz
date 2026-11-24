@@ -56630,6 +56630,48 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "clone_legion",
+      "mana_cost": "{7}{U}{U}",
+      "name": "Clone Legion",
+      "oracle_text": "For each creature target player controls, create a token that's a copy of that creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -186036,6 +186078,96 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "id": "maestros_charm",
+      "mana_cost": "{U}{B}{R}",
+      "name": "Maestros Charm",
+      "oracle_text": "Choose one —\n• Look at the top five cards of your library. Put one of those cards into your hand and the rest into your graveyard.\n• Each opponent loses 3 life and you gain 3 life.\n• Maestros Charm deals 5 damage to target creature or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "destination": "hand",
+                  "objects": {
+                    "count": 1
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to": "graveyard"
+                }
+              ],
+              "label": "Look at the top five cards of your library. Put one of those cards into your hand and the rest into your graveyard."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "label": "Each opponent loses 3 life and you gain 3 life."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Maestros Charm deals 5 damage to target creature or planeswalker."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "burned",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
