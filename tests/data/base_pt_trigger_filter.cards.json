@@ -1,0 +1,117 @@
+{
+  "_comment": "Cards that exist only for tests/unit/triggers/test_base_pt_trigger_filter.py. Never part of a deck list. `t_soul_nourisher` is Bess, Soul Nourisher's first line, which asks the entering creatures' BASE power and toughness; `t_live_nourisher` is the near miss, the same trigger reading the live `power`/`toughness`, so the two readings can be measured against each other on one board. `t_token_anthem` and `t_token_blight` move a token's size as it enters, the one up and the other down, without touching the Nourisher.",
+  "cards": [
+    {
+      "id": "t_soul_nourisher",
+      "name": "Test Soul Nourisher",
+      "oracle_text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this creature.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Citizen"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "batched": true,
+            "filter": {
+              "exclude_self": true,
+              "types": ["Creature"],
+              "base_power": 1,
+              "base_toughness": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {"self_only": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_live_nourisher",
+      "name": "Test Live Nourisher",
+      "oracle_text": "Whenever one or more other creatures you control with power 1 and toughness 1 enter, put a +1/+1 counter on this creature.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Citizen"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control with power 1 and toughness 1 enter, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "batched": true,
+            "filter": {
+              "exclude_self": true,
+              "types": ["Creature"],
+              "power": {"op": "==", "value": 1},
+              "toughness": {"op": "==", "value": 1}
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {"self_only": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_token_anthem",
+      "name": "Test Token Anthem",
+      "oracle_text": "Creature tokens you control get +1/+1.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature tokens you control get +1/+1.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"], "is_token": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    },
+    {
+      "id": "t_token_blight",
+      "name": "Test Token Blight",
+      "oracle_text": "Creature tokens get -1/-1.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature tokens get -1/-1.",
+          "effect": "buff",
+          "affects": {"types": ["Creature"], "is_token": true},
+          "power": {"const": -1},
+          "toughness": {"const": -1}
+        }
+      ]
+    }
+  ]
+}

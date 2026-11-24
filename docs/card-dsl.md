@@ -2986,6 +2986,20 @@ card-level `cost_reduction` and does not count it in a static's `count`. That
 divergence is deliberate and is pinned by
 `tests/unit/statics/test_static_power_filter.py`.
 
+A trigger filter that asks for the **base** size spells it `base_power` and
+`base_toughness`, the effect-side selector's keys, read at
+`characteristics._base_pt` on the battlefield and off the printed face
+elsewhere. Bess, Soul Nourisher's "whenever one or more other creatures you
+control with base power and toughness 1/1 enter" is
+`{"exclude_self": true, "types": ["Creature"], "base_power": 1, "base_toughness": 1}`
+on a `batched` `permanent_enters`: the filter is asked of each entering object,
+so a 1/1 token entering under an anthem counts and a 2/2 entering under a -1/-1
+effect does not. `power`/`toughness` are the near miss and answer both the other
+way. The value is a bare integer, a literal `{"op", "value"}` comparison with an
+`op` from `triggers.TRIGGER_COMPARISON_OPS`, or a parity; the loader refuses an
+expression (nothing is bound when a trigger filter is asked) and any other `op`.
+Pinned by `tests/unit/triggers/test_base_pt_trigger_filter.py`.
+
 A `spell_cost_reduction`'s `affects_spells` takes `power` too, and there it is
 the power of the **spell being cast** — Goreclaw's "creature spells you cast with
 power 4 or greater cost {2} less": printed, or what a `*/*`'s characteristic-defining

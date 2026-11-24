@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**540 cards** blocked by **455** capabilities.
+**538 cards** blocked by **453** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -114,7 +114,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
-| [base-pt-trigger-filter](#base-pt-trigger-filter) | 1 | 10325 | selector |
 | [batched-combat-damage-amount](#batched-combat-damage-amount) | 1 | 3943 | value |
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
@@ -449,7 +448,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
 | [treefolk-x-x-g-reach-land-count](#treefolk-x-x-g-reach-land-count) | 1 | 2396 | token |
-| [trigger-filter-base-pt](#trigger-filter-base-pt) | 1 | 10907 | selector |
 | [triggered-abilities-cant-sacrifice-or-exile](#triggered-abilities-cant-sacrifice-or-exile) | 1 | 3624 | static_effect |
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
@@ -2618,20 +2616,6 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
-
-</details>
-
-## base-pt-trigger-filter
-
-Blocks **1** card.
-
-- **(selector)** base_power / base_toughness accepted in a trigger filter (TRIGGER_FILTER_KEYS, read in triggers.matches_card_filter via characteristics._base_pt), so a batched permanent_enters trigger can match 'creatures you control with base power and toughness 1/1' per entering object
-  <br>Why the existing vocabulary won't do: The trigger filter's power/toughness read the LIVE value (Welcoming Vampire semantics), so a 1/1 token entering under an anthem or with a counter would be missed and a creature shrunk to 1/1 would wrongly count; base_power/base_toughness exist only in the effect selector and validate_trigger_filter refuses them. A trigger condition with exists over the subject binding only checks the first event of a batch, not 'one or more' of them
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bess, Soul Nourisher** (rank 10325) — `bess_soul_nourisher`
-  - Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.
 
 </details>
 
@@ -7395,20 +7379,6 @@ Blocks **1** card.
 
 - **Wrenn and Seven** (rank 2396) — `wrenn_and_seven`
   - −3: Create a green Treefolk creature token with reach and "This token's power and toughness are each equal to the number of lands you control."
-
-</details>
-
-## trigger-filter-base-pt
-
-Blocks **1** card.
-
-- **(selector)** base_power / base_toughness keys in a trigger filter (TRIGGER_FILTER_KEYS / matches_card_filter), read through characteristics._base_pt like the effect-side selector, so an `attacks` trigger can match 'a creature you control with base power and toughness 2/2' at the moment it attacks
-  <br>Why the existing vocabulary won't do: trigger_filter_keys carries `power` and `toughness`, but matches_card_filter reads them off the LIVE characteristics (chars(state, oid)), so a 2/2 under an anthem or with a +1/+1 counter would not trigger and a pumped-down bigger creature would; base_power/base_toughness exist only in the effect-side selector_keys. Triggering on every attacker and narrowing the pump's objects (or an `if`/trigger condition) at resolution would put a trigger on the stack for every attacker and check base P/T at the wrong time, which is not the printed trigger condition
-
-<details><summary>Cards waiting on this</summary>
-
-- **Duskana, the Rage Mother** (rank 10907) — `duskana_the_rage_mother`
-  - Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.
 
 </details>
 

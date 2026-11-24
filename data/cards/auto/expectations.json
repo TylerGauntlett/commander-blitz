@@ -2380,6 +2380,10 @@
     },
     "zone": "battlefield"
   },
+  "bess_soul_nourisher": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bessie_the_doctor_s_roadster": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7224,6 +7228,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "duskana_the_rage_mother": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "duskborne_skymarcher": {

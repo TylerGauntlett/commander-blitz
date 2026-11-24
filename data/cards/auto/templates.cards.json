@@ -29044,6 +29044,105 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "base_power": 1,
+              "base_toughness": 1,
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "base_power": 1,
+                "base_toughness": 1,
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "toughness": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Bess attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on Bess.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "bess_soul_nourisher",
+      "mana_cost": "{1}{G}{W}",
+      "name": "Bess, Soul Nourisher",
+      "oracle_text": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.\nWhenever Bess attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on Bess.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "duration": "this_turn",
               "objects": {
                 "target": "t1"
@@ -87771,6 +87870,90 @@
         "Ouphe"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "base_power": 2,
+                  "base_toughness": 2,
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Duskana enters, draw a card for each creature you control with base power and toughness 2/2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "base_power": 2,
+              "base_toughness": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "duskana_the_rage_mother",
+      "mana_cost": "{2}{R}{G}{W}",
+      "name": "Duskana, the Rage Mother",
+      "oracle_text": "When Duskana enters, draw a card for each creature you control with base power and toughness 2/2.\nWhenever a creature you control with base power and toughness 2/2 attacks, it gets +3/+3 until end of turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Bear"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

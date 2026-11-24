@@ -24222,12 +24222,12 @@
     },
     "Bess, Soul Nourisher": {
       "edhrec_rank": 10325,
-      "gate": "template",
+      "gate": null,
       "name": "Bess, Soul Nourisher",
-      "reason": "no template for: Whenever one or more other creatures you control with base power and toughness 1/1 enter, ",
+      "reason": "",
       "scryfall_id": "4ac65212-f276-4be1-837b-27872fcd246b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bessie, the Doctor's Roadster": {
@@ -77122,12 +77122,12 @@
     },
     "Duskana, the Rage Mother": {
       "edhrec_rank": 10907,
-      "gate": "template",
+      "gate": null,
       "name": "Duskana, the Rage Mother",
-      "reason": "no template for: When Duskana enters, draw a card for each creature you control with base power and toughne",
+      "reason": "",
       "scryfall_id": "31fa9d47-43d6-44b5-ab86-fc94a83eac26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskborne Skymarcher": {
