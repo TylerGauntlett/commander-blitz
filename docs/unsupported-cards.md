@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**543 cards** blocked by **457** capabilities.
+**542 cards** blocked by **456** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -403,7 +403,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reveal-top-of-library](#reveal-top-of-library) | 1 | 12729 | selector |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
-| [same-graveyard-targets](#same-graveyard-targets) | 1 | 18721 | selector |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
 | [sandbox-resolve-own-triggers](#sandbox-resolve-own-triggers) | 1 | 13330 | engine |
@@ -6743,20 +6742,6 @@ Blocks **1** card.
 
 - **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
   - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
-
-</details>
-
-## same-graveyard-targets
-
-Blocks **1** card.
-
-- **(selector)** a target-combination constraint on a card_in_graveyard spec with count 2, up_to: true: every chosen card must be in the same graveyard (all owned by one player), with no player being targeted -- the inverse of `one_per_player`
-  <br>Why the existing vocabulary won't do: `one_per_player` enforces the opposite (no two from the same player). A sibling `player` target with the card spec's `controller: {"target": ...}` would force the right graveyard but adds an unprinted 'target player' (wrong against player hexproof/shroud and changes fizzle behaviour), and a fixed `controller` of you or opponent drops half the legal choices. The rest looks expressible: `kicker`, the card spec's `count_if_kicked: 0`, a kicked-only player target, an `if` on `kicked` choosing `exile` of the targets or of that player's whole graveyard with `as`, then `create_token` rogue_2_2_b with amount a count of the binding filtered to Creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Waste Management** (rank 18721) — `waste_management`
-  - Exile up to two target cards from a single graveyard.
 
 </details>
 

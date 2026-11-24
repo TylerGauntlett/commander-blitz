@@ -352998,6 +352998,87 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "waste_management",
+      "kicker": "{3}{B}",
+      "mana_cost": "{2}{B}",
+      "name": "Waste Management",
+      "oracle_text": "Kicker {3}{B} (You may pay an additional {3}{B} as you cast this spell.)\nExile up to two target cards from a single graveyard. If this spell was kicked, instead exile target player's graveyard. Create a 2/2 black Rogue creature token for each creature card exiled this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "kicked": true
+          },
+          "else": [
+            {
+              "as": "wasted",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "as": "wasted",
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t2"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ]
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "wasted",
+              "controller": "any",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "op": "create_token",
+          "token": "rogue_2_2_b"
+        }
+      ],
+      "targets": [
+        {
+          "count": 0,
+          "count_if_kicked": 1,
+          "id": "t2",
+          "kind": "player",
+          "selector": {}
+        },
+        {
+          "count": 2,
+          "count_if_kicked": 0,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "zone": "graveyard"
+          },
+          "single_graveyard": true,
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

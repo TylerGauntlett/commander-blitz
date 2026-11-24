@@ -538,6 +538,46 @@ def _controller_count(state: GameState, refs: Sequence[TargetRef]) -> int:
     return len(seats) + loose
 
 
+def _one_graveyard(state: GameState, refs: Sequence[TargetRef]) -> bool:
+    """Do these cards all lie in one graveyard? -- "exile up to two target
+    cards **from a single graveyard**" (Waste Management, Decompose).
+
+    `_one_each` turned inside out: every pick shares an owner, where that one
+    asks that no two do. A card in a graveyard is in its owner's (404.2), so the
+    graveyard a pick came from is its `owner`. A condition on the choice
+    (601.2c), so two cards from different graveyards are not a choice the spell
+    offers at all, while one card alone and none are.
+
+    Nothing re-checks it on resolution, and nothing needs to. Ownership never
+    changes (108.3), so the targets still legal by 608.2b share a graveyard
+    exactly as they did when chosen; a card that left it fails `still_legal` on
+    its zone. A ref with no object has no graveyard to disagree about.
+    """
+    owners = {
+        obj.owner
+        for ref in refs
+        if (obj := state.objects.get(ref.id)) is not None
+    }
+    return len(owners) <= 1
+
+
+def _graveyard_groups(
+    state: GameState, options: Sequence[TargetRef]
+) -> list[list[TargetRef]]:
+    """``options`` split by owner, in first-seen order, each keeping the order
+    it had -- the only pools a `single_graveyard` subset can be drawn from.
+
+    Enumerated group by group rather than filtered from every combination of
+    every graveyard at the table: four full graveyards' mixed subsets are
+    almost all illegal, and the limit would be spent rejecting them.
+    """
+    groups: dict[int | None, list[TargetRef]] = {}
+    for ref in options:
+        obj = state.objects.get(ref.id)
+        groups.setdefault(None if obj is None else obj.owner, []).append(ref)
+    return list(groups.values())
+
+
 def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
     """How many real candidates fit under ``limit`` beside the decline option."""
     return max(1, limit - len(empty))
@@ -794,6 +834,7 @@ def _set_rules_hold(state: GameState, spec: TargetSpec, refs: Sequence[TargetRef
     """Every rule *between* a spec's picks -- `TargetSpec.constrains_the_set`."""
     return (
         (not spec.one_per_player or _one_each(state, refs))
+        and (not spec.single_graveyard or _one_graveyard(state, refs))
         and _within_total(state, refs, spec.total_mana_value)
         and _within_total_power(state, refs, spec.total_power)
     )
@@ -857,6 +898,12 @@ def _spec_options(
             # graveyard" over a few dozen cards would otherwise walk every
             # combination of every size from all of them down, rejecting each.
             ceiling = min(ceiling, _controller_count(state, options))
+        # "From a single graveyard": the pools subsets are drawn from, and no
+        # subset is larger than the fullest one.
+        pools = (
+            _graveyard_groups(state, options) if spec.single_graveyard else [options]
+        )
+        ceiling = min(ceiling, max((len(p) for p in pools), default=0))
         if spec.total_mana_value is not None or spec.total_power is not None:
             ceiling = min(ceiling, _total_ceiling(state, spec, options))
         # "One, two, or three target creature cards" (Aberrant Return): a floor
@@ -872,12 +919,13 @@ def _spec_options(
         # permanents" -- any controller, any type -- asked for exactly that
         # list before slicing it, which hung the verifier. Same order, same
         # filters; it just never builds what it is about to throw away.
-        totals = _total_values(state, spec, options)
+        pooled = [(pool, _total_values(state, spec, pool)) for pool in pools]
         subsets = itertools.islice(
             (
                 tuple(c)
                 for size in range(ceiling, max(floor, 1) - 1, -1)
-                for c in _combinations_under(options, size, totals)
+                for pool, totals in pooled
+                for c in _combinations_under(pool, size, totals)
                 if _set_rules_hold(state, spec, c)
             ),
             _room(limit, tail),
@@ -895,10 +943,18 @@ def _spec_options(
         # where every creature shares one controller offers nothing, and so
         # does a board with one creature on it (601.2c) -- one target is not a
         # pair, and no smaller set is a choice the card offers.
-        size = count if spec.one_per_player else min(count, len(options))
+        #
+        # "Exile four target cards from a single graveyard" (Pestilent
+        # Cauldron) is the same: four from one graveyard, never fewer.
+        exact = spec.one_per_player or spec.single_graveyard
+        size = count if exact else min(count, len(options))
+        pools = (
+            _graveyard_groups(state, options) if spec.single_graveyard else [options]
+        )
         combos = [
             tuple(c)
-            for c in itertools.combinations(options, size)
+            for pool in pools
+            for c in itertools.combinations(pool, size)
             if _set_rules_hold(state, spec, c)
         ]
         if not combos and not spec.optional:

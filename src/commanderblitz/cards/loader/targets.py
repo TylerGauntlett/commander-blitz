@@ -141,6 +141,32 @@ def _compile_targets(
                 f"more without 'optional' -- one target has nobody to differ "
                 f"from, and a computed or optional exact size is not checked"
             )
+        # "From a single graveyard" is a rule between graveyard cards, on the
+        # same printed sizes as the rule above -- and on "you may exile two …"
+        # too, whose exactly-two-or-none the exact enumeration offers as is.
+        if spec.single_graveyard and spec.kind != "card_in_graveyard":
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'single_graveyard' is a rule "
+                f"between cards in graveyards -- it needs 'kind': "
+                f"'card_in_graveyard', not {spec.kind!r}"
+            )
+        if spec.single_graveyard and not (
+            spec.count == "any"
+            or spec.up_to
+            or (isinstance(spec.count, int) and spec.count >= 2)
+        ):
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'single_graveyard' needs 'count': "
+                f"'any', a ceiling ('count': N with 'up_to': true), or a literal "
+                f"'count' of 2 or more -- one card is always from a single "
+                f"graveyard, and a computed exact size is not checked"
+            )
+        if spec.single_graveyard and spec.one_per_player:
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'single_graveyard' and "
+                f"'one_per_player' contradict -- two picks cannot both share "
+                f"and not share an owner"
+            )
         if (
             on_spell
             and not isinstance(spec.count, (int, str))
@@ -203,7 +229,8 @@ def _compile_targets(
             # between them, so a cap or "different players" would be ignored.
             raise DslError(
                 f"{where}.target[{spec.id}]: a random target cannot carry "
-                f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
+                f"'one_per_player', 'single_graveyard', 'total_mana_value' or "
+                f"'total_power' -- the "
                 f"draw takes no rule between its picks"
             )
     for spec in specs:
@@ -629,7 +656,8 @@ def _check_mode_targets(
         if spec.constrains_the_set:
             raise DslError(
                 f"{label}: a mode-owned target cannot carry "
-                f"'one_per_player', 'total_mana_value' or 'total_power' -- the "
+                f"'one_per_player', 'single_graveyard', 'total_mana_value' or "
+                f"'total_power' -- the "
                 f"mode's targets are asked one spec at a time, with no check "
                 f"between the picks"
             )
@@ -1106,6 +1134,7 @@ def _compile_target(
         up_to=model.up_to,
         min_count=model.min_count,
         one_per_player=model.one_per_player,
+        single_graveyard=model.single_graveyard,
         optional=model.optional,
         total_mana_value=model.total_mana_value,
         total_power=model.total_power,

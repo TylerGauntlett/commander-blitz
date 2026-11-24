@@ -311532,12 +311532,12 @@
     },
     "Waste Management": {
       "edhrec_rank": 18721,
-      "gate": "template",
+      "gate": null,
       "name": "Waste Management",
-      "reason": "no template for: Kicker {3}{B}",
+      "reason": "",
       "scryfall_id": "0f979e7a-4e7b-4b7b-b4eb-cefa3c02d64f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Waste Not": {

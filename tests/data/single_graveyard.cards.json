@@ -1,0 +1,49 @@
+{
+  "_comment": "Cards that exist only for tests/unit/targets/test_single_graveyard.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_single_grave_sweep` is Waste Management's unkicked half: up to two target cards, every one from the same graveyard. `t_any_grave_sweep` is the near miss without the rule, and `t_single_grave_pair` the exact-count spelling (Pestilent Cauldron's \"four target cards from a single graveyard\", at two).",
+  "cards": [
+    {
+      "id": "t_single_grave_sweep",
+      "name": "Test Single Grave Sweep",
+      "oracle_text": "Exile up to two target cards from a single graveyard.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 2, "up_to": true,
+         "single_graveyard": true,
+         "selector": {"zone": "graveyard", "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_any_grave_sweep",
+      "name": "Test Any Grave Sweep",
+      "oracle_text": "Exile up to two target cards from graveyards.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 2, "up_to": true,
+         "selector": {"zone": "graveyard", "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_single_grave_pair",
+      "name": "Test Single Grave Pair",
+      "oracle_text": "Exile two target cards from a single graveyard.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 2,
+         "single_graveyard": true,
+         "selector": {"zone": "graveyard", "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

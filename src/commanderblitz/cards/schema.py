@@ -514,6 +514,14 @@ class TargetModel(BaseModel):
     #: Wastes) -- or a literal exact ``count`` of 2 or more: "choose **two**
     #: target creatures controlled by different players" (Run Away Together).
     one_per_player: bool = False
+    #: "Exile up to two target cards **from a single graveyard**" (Waste
+    #: Management, Decompose). Every chosen card shares an owner -- the
+    #: inverse of `one_per_player`, and with no player targeted: a sibling
+    #: ``player`` target would add an unprinted "target player" that hexproof
+    #: stops. Only on ``kind: "card_in_graveyard"``, and on the sizes
+    #: `one_per_player` takes, plus ``optional`` on a literal count ("you may
+    #: exile two target sorcery cards from a single graveyard").
+    single_graveyard: bool = False
     optional: bool = False
     #: "Choose up to two. Return those cards from your graveyard to your hand.
     #: * Target artifact card. * Target creature card. ..." -- the index of the
