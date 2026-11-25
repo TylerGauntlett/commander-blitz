@@ -244142,12 +244142,12 @@
     },
     "Shifting Shadow": {
       "edhrec_rank": 14865,
-      "gate": "template",
+      "gate": null,
       "name": "Shifting Shadow",
-      "reason": "no template for: Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. ",
+      "reason": "",
       "scryfall_id": "f4c34cbe-c41f-4fcb-b1b6-720b6b214fef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shifting Sky": {
@@ -295982,12 +295982,12 @@
     },
     "Ulasht, the Hate Seed": {
       "edhrec_rank": 12598,
-      "gate": "template",
+      "gate": null,
       "name": "Ulasht, the Hate Seed",
-      "reason": "no template for: Ulasht enters with a +1/+1 counter on it for each other red creature you control and a +1/",
+      "reason": "",
       "scryfall_id": "002fe870-eae5-42cc-a44c-32906f60719e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulcerate": {

@@ -23512,6 +23512,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "shifting_shadow": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "shifting_woodland": {
     "battlefield_count": 33,
     "hand_size": {
@@ -28752,6 +28762,10 @@
     "zone": "battlefield"
   },
   "ulamog_s_nullifier": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ulasht_the_hate_seed": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
