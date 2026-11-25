@@ -15150,6 +15150,55 @@
         {
           "effects": [
             {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you become the monarch",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "condition": {
+            "is_monarch": "you"
+          },
+          "effect": "damage_doesnt_cause_life_loss",
+          "kind": "static",
+          "text": "As long as you're the monarch, damage doesn't cause you to lose life"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archon_of_coronation",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Archon of Coronation",
+      "oracle_text": "Flying\nWhen this creature enters, you become the monarch.\nAs long as you're the monarch, damage doesn't cause you to lose life. (When a creature deals combat damage to you, its controller still becomes the monarch.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "any_types": [
                   "Creature",
@@ -51028,6 +51077,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "copying": {
+                    "target": "t1"
+                  },
+                  "duration": "end_of_turn",
+                  "except_": {
+                    "keep_abilities": [
+                      0
+                    ],
+                    "power": 1,
+                    "toughness": 4
+                  },
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have this creature become a copy of that creature until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may have this creature become a copy of another target creature until end of turn, except it's 1/4 and has \"This creature can't be blocked.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "cephalid_facetaker",
+      "mana_cost": "{2}{U}",
+      "name": "Cephalid Facetaker",
+      "oracle_text": "This creature can't be blocked.\nAt the beginning of combat on your turn, you may have this creature become a copy of another target creature until end of turn, except it's 1/4 and has \"This creature can't be blocked.\"",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Octopus",
+        "Rogue"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
@@ -51826,6 +51959,66 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "change_of_plans",
+      "mana_cost": "{X}{1}{U}",
+      "name": "Change of Plans",
+      "oracle_text": "Each of X target creatures you control connive. You may have any number of them phase out. (To have a creature connive, draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature. Treat phased-out permanents and anything attached to them as though they don't exist until their controller's next turn.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "connive"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "phase_out"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have this creature phase out?"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -69531,6 +69724,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "owner",
+                "controller": {
+                  "target": "t1"
+                },
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Whenever you become the monarch, target player sacrifices a creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "becomes_monarch"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "custodi_lich",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Custodi Lich",
+      "oracle_text": "When this creature enters, you become the monarch.\nWhenever you become the monarch, target player sacrifices a creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "custodian_of_the_trove",
@@ -73425,6 +73690,91 @@
       "source": "auto",
       "subtypes": [
         "Elk"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": ">=",
+              "value": 3
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Daxos can't be blocked by creatures with power 3 or greater."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_color": true,
+              "as": "daxos_exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "playable_cast_only": true,
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "daxos_exiled",
+                    "zone": "exile"
+                  }
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Daxos deals combat damage to a player, exile the top card of that player's library. You gain life equal to that card's mana value. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "daxos_of_meletis",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Daxos of Meletis",
+      "oracle_text": "Daxos can't be blocked by creatures with power 3 or greater.\nWhenever Daxos deals combat damage to a player, exile the top card of that player's library. You gain life equal to that card's mana value. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 2,
       "types": [
@@ -85326,6 +85676,71 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true,
+            "tapped": false
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Dragonlord Ojutai has hexproof as long as it's untapped."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Dragonlord Ojutai deals combat damage to a player, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "dragonlord_ojutai",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{U}",
+      "name": "Dragonlord Ojutai",
+      "oracle_text": "Flying\nDragonlord Ojutai has hexproof as long as it's untapped.\nWhenever Dragonlord Ojutai deals combat damage to a player, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -131125,6 +131540,58 @@
               "amount": {
                 "count": {
                   "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, that player loses life equal to the number of creature cards in your graveyard.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "graveblade_marauder",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Graveblade Marauder",
+      "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhenever this creature deals combat damage to a player, that player loses life equal to the number of creature cards in your graveyard.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
                   "subtypes": [
                     "Zombie"
                   ],
@@ -149401,6 +149868,95 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "stolen",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "copying": {
+                    "binding": "stolen",
+                    "zone": "exile"
+                  },
+                  "duration": "end_of_turn",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                },
+                {
+                  "effects": [
+                    {
+                      "controller": "owner",
+                      "objects": {
+                        "binding": "stolen",
+                        "zone": "exile"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Return the exiled card to the battlefield under its owner's control at the beginning of the next end step."
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile that creature and have Identity Thief become a copy of it until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, you may exile another target nontoken creature. If you do, this creature becomes a copy of that creature until end of turn. Return the exiled card to the battlefield under its owner's control at the beginning of the next end step.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "identity_thief",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Identity Thief",
+      "oracle_text": "Whenever this creature attacks, you may exile another target nontoken creature. If you do, this creature becomes a copy of that creature until end of turn. Return the exiled card to the battlefield under its owner's control at the beginning of the next end step.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "condition": {
             "cmp": ">=",
             "left": {
@@ -151409,6 +151965,121 @@
       "abilities": [
         {
           "affects": {
+            "attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities.",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Clue"
+          ],
+          "text": "Enchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "colors": [],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice this artifact: Draw a card."
+        }
+      ],
+      "id": "in_too_deep",
+      "mana_cost": "{U}{U}",
+      "name": "In Too Deep",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nEnchant creature, planeswalker, or Clue\nEnchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities. (It's no longer a creature or planeswalker.)",
+      "source": "auto",
+      "split_second": true,
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Clue"
+                ]
+              }
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "exclude_self": true,
             "subtypes": [
@@ -153203,6 +153874,65 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "blocked": false,
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}{B}: Each unblocked creature has base power and toughness 4/1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "inkfathom_witch",
+      "keywords": [
+        "fear"
+      ],
+      "mana_cost": "{1}{U/B}",
+      "name": "Inkfathom Witch",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\n{2}{U}{B}: Each unblocked creature has base power and toughness 4/1 until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -158380,6 +159110,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "target": "t2"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "jailbreak_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker",
+                  "Battle"
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "jailbroken"
+                    }
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When that permanent enters, return up to one target permanent card with equal or lesser mana value from your graveyard to the battlefield."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "jailbreak",
+      "mana_cost": "{1}{W}",
+      "name": "Jailbreak",
+      "oracle_text": "Return target permanent card in an opponent's graveyard to the battlefield under their control. When that permanent enters, return up to one target permanent card with equal or lesser mana value from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "jailbroken",
+          "controller": "owner",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "exists": {
+              "binding": "jailbroken",
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "ability": "jailbreak_return",
+              "op": "reflexive_trigger"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "opponent",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -162941,6 +163776,112 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "connive"
+            },
+            {
+              "as": "kamiz_conniver",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "as": "kamiz_lesser",
+              "objects": {
+                "attacking": true,
+                "chooser": "controller",
+                "count": 1,
+                "exclude_binding": "kamiz_conniver",
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "target": "t1"
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose another attacking creature with lesser power"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "double_strike"
+              ],
+              "objects": {
+                "binding": "kamiz_lesser"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you attack, target attacking creature can't be blocked this turn. It connives. Then choose another attacking creature with lesser power. That creature gains double strike until end of turn",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "kamiz_obscura_oculus",
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Kamiz, Obscura Oculus",
+      "oracle_text": "Whenever you attack, target attacking creature can't be blocked this turn. It connives. Then choose another attacking creature with lesser power. That creature gains double strike until end of turn. (To have a creature connive, draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Octopus",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -182208,6 +183149,58 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage to an opponent, draw a card, then discard a card.",
+          "trigger": {
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "looter_il_kor",
+      "keywords": [
+        "shadow"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Looter il-Kor",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nWhenever this creature deals damage to an opponent, draw a card, then discard a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -192207,6 +193200,170 @@
       "mana_cost": "{2}",
       "name": "Mask of Memory",
       "oracle_text": "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "fear"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has fear"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, you may draw a card",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "mask_of_riddles",
+      "mana_cost": "{U}{B}",
+      "name": "Mask of Riddles",
+      "oracle_text": "Equipped creature has fear. (It can't be blocked except by artifact creatures and/or black creatures.)\nWhenever equipped creature deals combat damage to a player, you may draw a card.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "connive"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, it connives X, where X is the amount of damage it dealt to that player. (Draw X cards, then discard X cards. Put a +1/+1 counter on that creature for each nonland card discarded this way.)",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mask_of_the_schemer",
+      "mana_cost": "{2}{U}",
+      "name": "Mask of the Schemer",
+      "oracle_text": "Whenever equipped creature deals combat damage to a player, it connives X, where X is the amount of damage it dealt to that player. (Draw X cards, then discard X cards. Put a +1/+1 counter on that creature for each nonland card discarded this way.)\nEquip {2}",
       "source": "auto",
       "subtypes": [
         "Equipment"
@@ -217107,6 +218264,252 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "obscura_charm",
+      "mana_cost": "{W}{U}{B}",
+      "name": "Obscura Charm",
+      "oracle_text": "Choose one —\n• Return target multicolored permanent card with mana value 3 or less from your graveyard to the battlefield tapped.\n• Counter target instant or sorcery spell.\n• Destroy target creature or planeswalker with mana value 3 or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "returned"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "label": "Return target multicolored permanent card with mana value 3 or less from your graveyard to the battlefield tapped."
+            },
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target instant or sorcery spell."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "destroyed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target creature or planeswalker with mana value 3 or less."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "returned",
+          "kind": "card_in_graveyard",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "min_colors": 2,
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "id": "destroyed",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "obscura_confluence",
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Obscura Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Until end of turn, target creature loses all abilities and has base power and toughness 1/1.\n• Target creature connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)\n• Target player returns a creature card from their graveyard to their hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "nullified",
+                    "zone": "battlefield"
+                  },
+                  "op": "lose_all_abilities"
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "nullified",
+                    "zone": "battlefield"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 1
+                  },
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              ],
+              "label": "Until end of turn, target creature loses all abilities and has base power and toughness 1/1."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "conniver"
+                  },
+                  "op": "connive"
+                }
+              ],
+              "label": "Target creature connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)"
+            },
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "chooser": {
+                      "target": "returner"
+                    },
+                    "count": 1,
+                    "player": {
+                      "target": "returner"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Target player returns a creature card from their graveyard to their hand."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "nullified",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "conniver",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "returner",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -222516,6 +223919,63 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "cast_card"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you discard a nonland card, you may cast it from your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard",
+            "filter": {
+              "not_types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "cost_reduction": {
+        "distinct_mana_values": {
+          "controller": "you",
+          "zone": "graveyard"
+        }
+      },
+      "id": "oskar_rubbish_reclaimer",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Oskar, Rubbish Reclaimer",
+      "oracle_text": "This spell costs {1} less to cast for each different mana value among cards in your graveyard.\nWhenever you discard a nonland card, you may cast it from your graveyard.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -241800,6 +243260,94 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has deathtouch."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "life_of": {
+                      "binding": "event_player"
+                    }
+                  },
+                  "round": "up"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "quietus_spike",
+      "mana_cost": "{3}",
+      "name": "Quietus Spike",
+      "oracle_text": "Equipped creature has deathtouch.\nWhenever equipped creature deals combat damage to a player, that player loses half their life, rounded up.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -283371,6 +284919,73 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "not_types": [
+                  "Land"
+                ],
+                "optional": true,
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "text": "This creature escapes with \"Whenever this creature deals combat damage to a player, you may cast an artifact, instant, or sorcery spell from among cards exiled with this creature without paying its mana cost.\"",
+          "trigger": {
+            "condition": {
+              "escaped": true
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 5,
+          "exclude_self": true,
+          "link": true
+        },
+        "mana": "{3}{U}"
+      },
+      "id": "skyway_robber",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Skyway Robber",
+      "oracle_text": "Flying\nEscape—{3}{U}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with \"Whenever this creature deals combat damage to a player, you may cast an artifact, instant, or sorcery spell from among cards exiled with this creature without paying its mana cost.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -285212,6 +286827,94 @@
       "toughness": 5,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "cards_drawn_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 2
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "permanents_entered_this_turn": {
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "types": [
+                          "Land"
+                        ]
+                      }
+                    },
+                    "right": {
+                      "const": 2
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "op": "create_token",
+                      "token": "treasure_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "smuggler_s_share",
+      "mana_cost": "{2}{W}",
+      "name": "Smuggler's Share",
+      "oracle_text": "At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -295529,6 +297232,81 @@
           "kind": "player",
           "selector": {
             "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "exile"
+          ],
+          "effects": [
+            {
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "controller": "any",
+              "encoded_by": "self"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stolen_identity",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Stolen Identity",
+      "oracle_text": "Create a token that's a copy of target artifact or creature.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "encode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "any",
+            "zone": "battlefield"
           }
         }
       ],
@@ -364609,6 +366387,148 @@
           "op": "look_at_top",
           "playable": "end_of_your_next_turn",
           "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": {
+                  "binding": "event_player"
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Wrexial deals combat damage to a player, you may cast target instant or sorcery card from that player's graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "wrexial_the_risen_deep",
+      "keywords": [
+        "islandwalk",
+        "swampwalk"
+      ],
+      "mana_cost": "{3}{U}{U}{B}",
+      "name": "Wrexial, the Risen Deep",
+      "oracle_text": "Islandwalk, swampwalk (This creature can't be blocked as long as defending player controls an Island or a Swamp.)\nWhenever Wrexial deals combat damage to a player, you may cast target instant or sorcery card from that player's graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "exile"
+          ],
+          "effects": [
+            {
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "controller": "any",
+              "encoded_by": "self"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "writ_of_return",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Writ of Return",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield tapped.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "optional": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "encode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
         }
       ],
       "types": [

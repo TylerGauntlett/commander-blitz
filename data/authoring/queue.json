@@ -12242,12 +12242,12 @@
     },
     "Archon of Coronation": {
       "edhrec_rank": 6736,
-      "gate": "template",
+      "gate": null,
       "name": "Archon of Coronation",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "2c306cf7-da52-4cc4-9272-bd7d78f1175d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Cruelty": {
@@ -42602,12 +42602,12 @@
     },
     "Cephalid Facetaker": {
       "edhrec_rank": 6765,
-      "gate": "template",
+      "gate": null,
       "name": "Cephalid Facetaker",
-      "reason": "no template for: This creature can't be blocked",
+      "reason": "",
       "scryfall_id": "a77d91f7-f7c9-47e4-b5c5-46c921335e42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cephalid Illusionist": {
@@ -44132,12 +44132,12 @@
     },
     "Change of Plans": {
       "edhrec_rank": 7083,
-      "gate": "template",
+      "gate": null,
       "name": "Change of Plans",
-      "reason": "no template for: Each of X target creatures you control connive. You may have any number of them phase out",
+      "reason": "",
       "scryfall_id": "7cc7f675-3e56-4e5a-9618-9a9ba8e0310d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Change the Equation": {
@@ -59172,12 +59172,12 @@
     },
     "Custodi Lich": {
       "edhrec_rank": 9655,
-      "gate": "template",
+      "gate": null,
       "name": "Custodi Lich",
-      "reason": "no template for: When this creature enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "5d77f50f-f63d-47bd-8bf9-01febee315fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Custodi Peacekeeper": {
@@ -62472,12 +62472,12 @@
     },
     "Daxos of Meletis": {
       "edhrec_rank": 10019,
-      "gate": "template",
+      "gate": null,
       "name": "Daxos of Meletis",
-      "reason": "no template for: Daxos can't be blocked by creatures with power 3 or greater",
+      "reason": "",
       "scryfall_id": "d2eca63b-7fb2-4a69-84dd-aa0a038a2f8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Daxos the Returned": {
@@ -73672,12 +73672,12 @@
     },
     "Dragonlord Ojutai": {
       "edhrec_rank": 6991,
-      "gate": "template",
+      "gate": null,
       "name": "Dragonlord Ojutai",
-      "reason": "no template for: has hexproof as long as it's untapped",
+      "reason": "",
       "scryfall_id": "019728bc-7d37-4384-81e5-97c47660c092",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragonlord Ojutai // Dragonlord Ojutai": {
@@ -116522,12 +116522,12 @@
     },
     "Graveblade Marauder": {
       "edhrec_rank": 15884,
-      "gate": "template",
+      "gate": null,
       "name": "Graveblade Marauder",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, that player loses life equal to th",
+      "reason": "",
       "scryfall_id": "0d5d05ee-41e9-4e5b-825f-ee10bdbe6883",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Graveborn Muse": {
@@ -133332,12 +133332,12 @@
     },
     "Identity Thief": {
       "edhrec_rank": 9908,
-      "gate": "template",
+      "gate": null,
       "name": "Identity Thief",
-      "reason": "no template for: Whenever this creature attacks, you may exile another target nontoken creature. If you do,",
+      "reason": "",
       "scryfall_id": "a32e1511-2495-454a-9a04-4f3c0d9a75d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Idle Thoughts": {
@@ -135192,12 +135192,12 @@
     },
     "In Too Deep": {
       "edhrec_rank": 12038,
-      "gate": "template",
+      "gate": null,
       "name": "In Too Deep",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "72e7cece-60bd-4641-bbca-99d549654f26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "In the Darkness Bind Them": {
@@ -136932,12 +136932,12 @@
     },
     "Inkfathom Witch": {
       "edhrec_rank": 18275,
-      "gate": "template",
+      "gate": null,
       "name": "Inkfathom Witch",
-      "reason": "no template for: {2}{U}{B}: Each unblocked creature has base power and toughness 4/1 until end of turn",
+      "reason": "",
       "scryfall_id": "fe2837c6-8fb8-4ab6-97f3-3602a92374ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inkling Mascot": {
@@ -141912,12 +141912,12 @@
     },
     "Jailbreak": {
       "edhrec_rank": 13015,
-      "gate": "template",
+      "gate": null,
       "name": "Jailbreak",
-      "reason": "no template for: Return target permanent card in an opponent's graveyard to the battlefield under their con",
+      "reason": "",
       "scryfall_id": "5884d98e-3e02-48ae-9904-4ebbf1e90f6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jailbreak Scheme": {
@@ -145732,12 +145732,12 @@
     },
     "Kamiz, Obscura Oculus": {
       "edhrec_rank": 7815,
-      "gate": "template",
+      "gate": null,
       "name": "Kamiz, Obscura Oculus",
-      "reason": "no template for: Whenever you attack, target attacking creature can't be blocked this turn. It connives. Th",
+      "reason": "",
       "scryfall_id": "19fe0961-b3bc-4a2e-b403-85a3f9202fdc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kang Dynasty": {
@@ -161142,12 +161142,12 @@
     },
     "Looter il-Kor": {
       "edhrec_rank": 5480,
-      "gate": "template",
+      "gate": null,
       "name": "Looter il-Kor",
-      "reason": "no template for: Whenever this creature deals damage to an opponent, draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "4f154d84-695e-44d6-94d8-9a79176f5b3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loporrit Scout": {
@@ -168682,12 +168682,12 @@
     },
     "Mask of Riddles": {
       "edhrec_rank": 7290,
-      "gate": "template",
+      "gate": null,
       "name": "Mask of Riddles",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, you may draw a card",
+      "reason": "",
       "scryfall_id": "bf483e4c-4a6e-4b78-8e5d-c8b17f7bb433",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mask of the Jadecrafter": {
@@ -168712,12 +168712,12 @@
     },
     "Mask of the Schemer": {
       "edhrec_rank": 11393,
-      "gate": "template",
+      "gate": null,
       "name": "Mask of the Schemer",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, it connives X, where X is the ",
+      "reason": "",
       "scryfall_id": "5df2a854-5807-4ce2-b2ef-cbd8aa3f86b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Masked Admirers": {
@@ -190662,22 +190662,22 @@
     },
     "Obscura Charm": {
       "edhrec_rank": 8424,
-      "gate": "template",
+      "gate": null,
       "name": "Obscura Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "4a02b758-65b6-4c25-83b9-de63a1a92b51",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obscura Confluence": {
       "edhrec_rank": 17109,
-      "gate": "template",
+      "gate": null,
       "name": "Obscura Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "4ccbfa84-e2e7-48f9-9ab1-ddb77f28f8de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obscura Initiate": {
@@ -195172,12 +195172,12 @@
     },
     "Oskar, Rubbish Reclaimer": {
       "edhrec_rank": 10412,
-      "gate": "template",
+      "gate": null,
       "name": "Oskar, Rubbish Reclaimer",
-      "reason": "no template for: This spell costs {1} less to cast for each different mana value among cards in your gravey",
+      "reason": "",
       "scryfall_id": "7943423b-52aa-46f1-a44d-e284375f23c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Osseous Exhale": {
@@ -212132,12 +212132,12 @@
     },
     "Quietus Spike": {
       "edhrec_rank": 2708,
-      "gate": "template",
+      "gate": null,
       "name": "Quietus Spike",
-      "reason": "no template for: Whenever equipped creature deals combat damage to a player, that player loses half their l",
+      "reason": "",
       "scryfall_id": "31c776aa-7f7e-4cd7-a188-bbe655f785d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quill-Blade Laureate // Twofold Intent": {
@@ -251252,12 +251252,12 @@
     },
     "Skyway Robber": {
       "edhrec_rank": 16372,
-      "gate": "template",
+      "gate": null,
       "name": "Skyway Robber",
-      "reason": "no template for: Escape—{3}{U}, Exile five other cards from your graveyard",
+      "reason": "",
       "scryfall_id": "7df5aaae-4fa6-4945-bdd4-577ff3235a7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyway Sniper": {
@@ -253162,12 +253162,12 @@
     },
     "Smuggler's Share": {
       "edhrec_rank": 1701,
-      "gate": "compile",
+      "gate": null,
       "name": "Smuggler's Share",
-      "reason": "smuggler_s_share.abilities[0].effects[1].effects[0].condition.left.permanents_entered_this_turn.controller: must name one of ['active_player', 'all', 'controller', 'each_opponent', 'each_player', 'enchanted_player', 'gift_recipient', 'opponent', 'you'] -- 'under whose control' is part of the printed sentence, got {'binding': 'each_player'}",
+      "reason": "",
       "scryfall_id": "f1ced678-5cfd-49ff-9420-6ee52d5edf5a",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smuggler's Surprise": {
@@ -265052,12 +265052,12 @@
     },
     "Stolen Identity": {
       "edhrec_rank": 4703,
-      "gate": "template",
+      "gate": null,
       "name": "Stolen Identity",
-      "reason": "no template for: Create a token that's a copy of target artifact or creature",
+      "reason": "",
       "scryfall_id": "2831fe77-ea98-4334-a78e-01580fb002c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stolen Stark Tech": {
@@ -319752,12 +319752,12 @@
     },
     "Wrexial, the Risen Deep": {
       "edhrec_rank": 5228,
-      "gate": "template",
+      "gate": null,
       "name": "Wrexial, the Risen Deep",
-      "reason": "no template for: Whenever Wrexial deals combat damage to a player, you may cast target instant or sorcery c",
+      "reason": "",
       "scryfall_id": "c96b11ad-67fd-4a2b-89ea-e9df9c50731e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wriggling Grub": {
@@ -319792,12 +319792,12 @@
     },
     "Writ of Return": {
       "edhrec_rank": 11275,
-      "gate": "template",
+      "gate": null,
       "name": "Writ of Return",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield tapped",
+      "reason": "",
       "scryfall_id": "3ea2ebb2-1a88-4371-a948-512f8dc18d0d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Write into Being": {
