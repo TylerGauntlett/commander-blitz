@@ -5032,12 +5032,12 @@
     },
     "Akki Battle Squad": {
       "edhrec_rank": 3918,
-      "gate": "template",
+      "gate": null,
       "name": "Akki Battle Squad",
-      "reason": "no template for: Whenever one or more modified creatures you control attack, untap all modified creatures y",
+      "reason": "",
       "scryfall_id": "b2a2b1f5-bbc7-4af1-b1c8-21570b141cba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Akki Blizzard-Herder": {
@@ -192912,12 +192912,12 @@
     },
     "One with the Kami": {
       "edhrec_rank": 9211,
-      "gate": "template",
+      "gate": null,
       "name": "One with the Kami",
-      "reason": "no template for: Whenever enchanted creature or another modified creature you control dies, create X 1/1 co",
+      "reason": "",
       "scryfall_id": "16fcc1a2-f8e0-4126-81ef-4481985cf0bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "One with the Machine": {

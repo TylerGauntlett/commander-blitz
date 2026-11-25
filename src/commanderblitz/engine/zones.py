@@ -564,6 +564,9 @@ def move_object(
             had_toughness=had_toughness,
             had_auras=had_auras,
             had_keywords=had_keywords,
+            # 1/0 for `was_attacking`'s reason; a trigger filter's `modified`
+            # answers a departure from it (`triggers.departed_modified`).
+            was_modified=1 if was_modified else 0,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -584,6 +587,7 @@ def move_object(
                 card=card.id,
                 was_creature=was_creature,
                 had_auras=had_auras,
+                was_modified=1 if was_modified else 0,
             )
         if to_zone is Zone.GRAVEYARD:
             fire(

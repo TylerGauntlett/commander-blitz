@@ -42,6 +42,7 @@ from .characteristics import (
     granted_wards,
     has_counters_matches,
     has_keyword,
+    is_modified_printed,
     off_battlefield_face,
     parity_matches,
     resolve_chosen_subtypes,
@@ -974,6 +975,20 @@ def departed_auras(event: GameEvent) -> list[int] | None:
     return list(event.data.get("had_auras") or ())
 
 
+def departed_modified(event: GameEvent) -> bool | None:
+    """Whether a departure event's subject was modified as it left, or ``None``.
+
+    700.9 asked by `zones.move_object` before `_detach_all` strips the
+    attachments and `reset_permanent_state` the counters, so a trigger filter's
+    `modified` on "whenever a modified creature you control dies" (One with the
+    Kami) reads the look-back (603.10a). ``None`` on any event that is not a
+    departure, where the live board answers.
+    """
+    if event.type not in LOOK_BACK_EVENTS:
+        return None
+    return bool(event.data.get("was_modified"))
+
+
 def delayed_watches_departure(delayed: DelayedTrigger) -> bool:
     """Whether a delayed ability's event is its subject leaving the battlefield.
 
@@ -1482,7 +1497,14 @@ def _cause_matches(
     if filt:
         if subject is None:
             return False
-        if not matches_card_filter(state, subject, filt, source_obj, departed_auras(event)):
+        if not matches_card_filter(
+            state,
+            subject,
+            filt,
+            source_obj,
+            departed_auras(event),
+            was_modified=departed_modified(event),
+        ):
             return False
     return True
 
@@ -2094,7 +2116,12 @@ def _matches(
                 return False
             filt = {k: v for k, v in filt.items() if k != "attached_to"}
         if filt and not matches_card_filter(
-            state, subject_oid, filt, obj, departed_auras(event)
+            state,
+            subject_oid,
+            filt,
+            obj,
+            departed_auras(event),
+            was_modified=departed_modified(event),
         ):
             return False
 
@@ -2801,6 +2828,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "goaded",
         "face_down",
         "enchanted_by",
+        "modified",
         "entered_this_turn",
         "attacking_player",
         "or_planeswalkers",
@@ -2851,6 +2879,13 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
                 f"{where}: {key} {word!r} is not answered by a trigger filter "
                 f"(use one of {sorted(TRIGGER_FILTER_PLAYER_WORDS)})"
             )
+    # "Modified" names no counter, Equipment or Aura, so the key is `true`
+    # alone, as in a static's filter; `false` would read as no clause at all.
+    if "modified" in filt and filt["modified"] is not True:
+        raise DslError(
+            f"{where}.modified: true only -- a counter, an Equipment, or an Aura "
+            f"its controller controls on the permanent"
+        )
     # "…a noncreature **or** Dragon spell" -- Firespitter Whelp. Each branch is
     # a trigger filter of its own, matched by `matches_card_filter` against the
     # same subject, so it is held to the same list the outer filter is: a key a
@@ -2938,6 +2973,8 @@ def matches_card_filter(
     filt: Mapping[str, Any],
     ability_source: GameObject,
     had_auras: Any = None,
+    *,
+    was_modified: bool | None = None,
 ) -> bool:
     """Match a trigger filter against an object's *printed* card characteristics.
 
@@ -2948,6 +2985,8 @@ def matches_card_filter(
     ``had_auras`` is the departure event's snapshot of the Auras the subject
     wore as it left (`departed_auras`), and ``None`` on every other event:
     given, `enchanted_by` is answered from it rather than from the board.
+    ``was_modified`` is the same event's 700.9 snapshot (`departed_modified`),
+    which `modified` reads in place of the board for the same reason.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -2981,7 +3020,9 @@ def matches_card_filter(
     # it still apply to every branch.
     branches = filt.get("any_of")
     if branches is not None and not any(
-        matches_card_filter(state, oid, branch, ability_source, had_auras)
+        matches_card_filter(
+            state, oid, branch, ability_source, had_auras, was_modified=was_modified
+        )
         for branch in branches
     ):
         return False
@@ -3241,6 +3282,20 @@ def matches_card_filter(
             if not enchanted_by_answer(had_auras, spec, who):
                 return False
         elif not enchanted_by(state, oid, spec, who):
+            return False
+    # "Whenever one or more **modified** creatures you control attack" (Akki
+    # Battle Squad), "…or another modified creature you control dies" (One with
+    # the Kami). 700.9: a counter, an Equipment, or an Aura its *own*
+    # controller controls -- the definition asks the permanent's controller,
+    # not the ability's. Live, for `enchanted_by`'s reason, through
+    # `is_modified_printed`, the reader a static's filter uses; a departure is
+    # answered from the snapshot `zones.move_object` took as it left, since by
+    # now its counters and attachments are gone.
+    if "modified" in filt:
+        if was_modified is not None:
+            if not was_modified:
+                return False
+        elif not (obj.on_battlefield and is_modified_printed(state, obj, obj.controller)):
             return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

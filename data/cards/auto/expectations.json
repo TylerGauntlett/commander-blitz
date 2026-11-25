@@ -470,6 +470,10 @@
     },
     "zone": "battlefield"
   },
+  "akki_battle_squad": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "akoum_hellkite": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18756,6 +18760,10 @@
     "zone": "battlefield"
   },
   "ondu_spiritdancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "one_with_the_kami": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

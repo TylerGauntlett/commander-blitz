@@ -16,7 +16,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
-| [Trigger filters](#trigger-filters) | 40 |
+| [Trigger filters](#trigger-filters) | 41 |
 | [Static effects](#static-effects) | 116 |
 | [Player-wide statics](#player-wide-statics) | 54 |
 | [Grantable statics](#grantable-statics) | 52 |
@@ -580,6 +580,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `mana_cost` | Printed mana cost is one of these. | [Triggers](card-dsl.md#triggers) |
 | `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
+| `modified` | Is modified (equipped, enchanted by you, or has counters). | [Triggers](card-dsl.md#triggers) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
 | `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**557 cards** blocked by **464** capabilities.
+**554 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
-| [modified](#modified) | 3 | 831 | selector |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [remove-bound-counter-kind](#remove-bound-counter-kind) | 3 | 4274 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
@@ -330,6 +329,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [miracle-x](#miracle-x) | 1 | 4945 | engine |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
+| [modified](#modified) | 1 | 831 | selector |
 | [monarch-at-turn-start](#monarch-at-turn-start) | 1 | 11643 | value |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [morph](#morph) | 1 | 7536 | engine |
@@ -416,7 +416,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
-| [self-sacrificed-trigger](#self-sacrificed-trigger) | 1 | 4128 | trigger_event |
 | [separate-permanents-into-piles](#separate-permanents-into-piles) | 1 | 5426 | op |
 | [set-base-power](#set-base-power) | 1 | 16258 | op |
 | [set-name-static](#set-name-static) | 1 | 6322 | static_effect |
@@ -1319,28 +1318,6 @@ Blocks **3** cards.
   - For as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control.
 - **Vislor Turlough** (rank 12342) — `vislor_turlough`
   - Deal with the Black Guardian — When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.
-
-</details>
-
-## modified
-
-Blocks **3** cards.
-
-- **(selector)** the `modified` key (700.9: has a counter, is equipped, or is enchanted by an Aura its controller controls) honoured in a trigger `filter`, so a batched `attacks` trigger can fire on "one or more modified creatures you control attack"
-  <br>Why the existing vocabulary won't do: `modified` exists in selector_keys (so the untap effect is expressible) but not in TRIGGER_FILTER_KEYS, which the loader enforces in `triggers.validate_trigger_filter`. An `any_of` of `has_counters` and `enchanted_by` misses the Equipment limb: the trigger filter's `attached` means attached to the ability source, and `equipped` is not a trigger filter key, so a creature modified only by Equipment would not trigger it
-- **(selector)** the `modified` key (true: has a counter, is equipped, or is enchanted by an Aura its controller controls) accepted in a trigger `filter`, so a `deals_combat_damage_to_player` trigger with filter {controller: you, types: [Creature], modified: true} fires only for a creature that is modified when it deals the damage
-  <br>Why the existing vocabulary won't do: `modified` is in selector_keys and static_affects_filter_keys (so the trample line is expressible), but not in trigger_filter_keys / engine.triggers.TRIGGER_FILTER_KEYS, which the loader enforces. An any_of of has_counters and enchanted_by in the trigger filter misses the equipped limb (`equipped` is not a trigger filter key either; `attached` means attached to the ability's source). Moving the test into the trigger's `condition` as an `exists` over the subject binding makes it an intervening-if that is rechecked on resolution, so a creature that loses its counter or Equipment before resolution would wrongly find no land -- a different card.
-- **(selector)** a `modified` key in a `dies` trigger filter, answered from the departure snapshot (700.9: it had a counter, an Equipment, or an Aura its controller controlled as it left), so `{"event": "dies", "filter": {"types": ["Creature"], "controller": "you", "any_of": [{"enchanted_by": <this Aura>}, {"modified": true}]}}` can be written
-  <br>Why the existing vocabulary won't do: `modified` is in `selector_keys` and the static filters but not in `trigger_filter_keys`; the dies event already carries a `was_modified` snapshot (zones.py) that only feeds the `modified_creatures_died_this_turn` ledger value. The near substitutes fall short: `has_counters` on a dies filter reads counters already cleared by reset_permanent_state, `enchanted_by` covers only the Aura limb, and nothing in a trigger filter sees the Equipment limb
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kodama of the West Tree** (rank 831) — `kodama_of_the_west_tree`
-  - Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
-- **Akki Battle Squad** (rank 3918) — `akki_battle_squad`
-  - Whenever one or more modified creatures you control attack, untap all modified creatures you control. After this phase, there is an additional combat phase. This ability triggers only once each turn.
-- **One with the Kami** (rank 9211) — `one_with_the_kami`
-  - Whenever enchanted creature or another modified creature you control dies, create X 1/1 colorless Spirit creature tokens, where X is that creature's power. (Equipment, Auras you control, and counters are modifications.)
 
 </details>
 
@@ -5735,6 +5712,20 @@ Blocks **1** card.
 
 </details>
 
+## modified
+
+Blocks **1** card.
+
+- **(selector)** the `modified` key (true: has a counter, is equipped, or is enchanted by an Aura its controller controls) accepted in a trigger `filter`, so a `deals_combat_damage_to_player` trigger with filter {controller: you, types: [Creature], modified: true} fires only for a creature that is modified when it deals the damage
+  <br>Why the existing vocabulary won't do: `modified` is in selector_keys and static_affects_filter_keys (so the trample line is expressible), but not in trigger_filter_keys / engine.triggers.TRIGGER_FILTER_KEYS, which the loader enforces. An any_of of has_counters and enchanted_by in the trigger filter misses the equipped limb (`equipped` is not a trigger filter key either; `attached` means attached to the ability's source). Moving the test into the trigger's `condition` as an `exists` over the subject binding makes it an intervening-if that is rechecked on resolution, so a creature that loses its counter or Equipment before resolution would wrongly find no land -- a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kodama of the West Tree** (rank 831) — `kodama_of_the_west_tree`
+  - Whenever a modified creature you control deals combat damage to a player, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
+
+</details>
+
 ## monarch-at-turn-start
 
 Blocks **1** card.
@@ -6965,20 +6956,6 @@ Blocks **1** card.
 
 - **Glitch Interpreter** (rank 10013) — `glitch_interpreter`
   - When this creature enters, if you control no face-down permanents, return this creature to its owner's hand and manifest dread.
-
-</details>
-
-## self-sacrificed-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a `sacrificed` trigger with `source: "self"` ("When you sacrifice this <permanent>") that looks back in time (603.10a) and fires on the permanent's own sacrifice by any means -- its own attack trigger, a sacrifice outlet, an edict -- but not when it is destroyed or bounced. Needs "sacrificed" added to triggers.LEAVE_TRIGGERS and EventType.SACRIFICED to the departed-subject branch of the candidate walk in triggers.py, which today walks the subject's abilities only for DIES, LEAVES_BATTLEFIELD, DISCARD and PUT_INTO_GRAVEYARD-from-battlefield
-  <br>Why the existing vocabulary won't do: `sacrificed` is in trigger_events, but every shipped use is a battlefield observer of other permanents (Juri, Korvold, Carmen); none uses source self, and the look-back path never offers the sacrificed source's own abilities on a SACRIFICED event, so the trigger would never fire. `dies`/`leaves_battlefield` with source self do look back but also fire on destroy, exile or bounce, which is wider than printed. Folding the search into the attack trigger (sacrifice self_only with `as`, then `if exists`) misses every other way the Aura can be sacrificed, so it is an approximation. The other two lines are expressible today: an `attacks` trigger with `controller: any` and `filter: {attached: true}` putting a +1/+1 counter on `subject`, then an `if` on `counters_on` >= 3 sacrificing `self_only`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ordeal of Nylea** (rank 4128) — `ordeal_of_nylea`
-  - When you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.
 
 </details>
 

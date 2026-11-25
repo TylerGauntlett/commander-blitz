@@ -2132,6 +2132,29 @@ selector is, `count` included; the loader refuses anything but a boolean.
 | `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
 | `attached` | names the one permanent the ability's own source is attached to |
 
+### "Whenever a modified creature you control…" — `modified` in a trigger filter
+
+```jsonc
+// One with the Kami: "…or another modified creature you control dies…"
+{ "kind": "triggered",
+  "trigger": { "event": "dies", "controller": "you",
+               "filter": { "types": ["Creature"], "modified": true } },
+  "effects": [ … ] }
+```
+
+700.9 asked of the trigger's subject, with "its controller" the permanent's own:
+a counter, any Equipment, or an Aura its controller controls. Live, through
+`characteristics.is_modified_printed`, on an event about a permanent still on
+the battlefield (Akki Battle Squad's attack). On `dies`, `leaves_battlefield`
+and `sacrificed` the subject has already shed its attachments and counters, so
+the filter reads the `was_modified` snapshot `zones.move_object` puts on the
+event (`triggers.departed_modified`, 603.10a). `true` only.
+
+| Near miss | Why not |
+|---|---|
+| `{"any_of": [{"has_counters": true}, {"enchanted_by": "you"}]}` | misses the Equipment limb, and on a departure reads counters already cleared |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc
