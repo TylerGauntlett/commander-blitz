@@ -1296,6 +1296,48 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "access_denied",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Access Denied",
+      "oracle_text": "Counter target spell. Create X 1/1 colorless Thopter artifact creature tokens with flying, where X is that spell's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "binding": "countered"
+            }
+          },
+          "op": "create_token",
+          "token": "thopter_1_1_c_flying"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -3085,6 +3127,103 @@
         {
           "effects": [
             {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ],
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, if defending player controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "defender"
+                  },
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aerial_surveyor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Aerial Surveyor",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, if defending player controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.\nCrew 2",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "cmp": ">=",
                 "left": {
@@ -3173,6 +3312,47 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vehicle"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Vehicles you control have flying."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aeronaut_admiral",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Aeronaut Admiral",
+      "oracle_text": "Flying\nVehicles you control have flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -13839,6 +14019,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top four cards of your library. You may reveal an artifact or enchantment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "arcanist_s_owl",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{W/U}{W/U}{W/U}{W/U}",
+      "name": "Arcanist's Owl",
+      "oracle_text": "Flying\nWhen this creature enters, look at the top four cards of your library. You may reveal an artifact or enchantment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -16588,6 +16824,67 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "armed_and_armored",
+      "mana_cost": "{1}{W}",
+      "name": "Armed and Armored",
+      "oracle_text": "Vehicles you control become artifact creatures until end of turn. Choose a Dwarf you control. Attach any number of Equipment you control to it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keep_pt": true,
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Vehicle"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "types": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        {
+          "as": "dwarf",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "subtypes": [
+              "Dwarf"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose a Dwarf you control"
+        },
+        {
+          "attachment": {
+            "controller": "you",
+            "count": "any",
+            "subtypes": [
+              "Equipment"
+            ],
+            "zone": "battlefield"
+          },
+          "objects": {
+            "binding": "dwarf"
+          },
+          "op": "attach"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -59878,6 +60175,77 @@
         {
           "effects": [
             {
+              "mana": "{W}{W}{W}",
+              "op": "add_mana",
+              "persists_until_end_of_turn": true,
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, add {W}{W}{W} and you gain 3 life. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 6,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 6"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "colossal_plow",
+      "mana_cost": "{2}",
+      "name": "Colossal Plow",
+      "oracle_text": "Whenever this Vehicle attacks, add {W}{W}{W} and you gain 3 life. Until end of turn, you don't lose this mana as steps and phases end.\nCrew 6 (Tap any number of creatures you control with total power 6 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -72287,6 +72655,100 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "dance_of_the_manse",
+      "mana_cost": "{X}{W}{U}",
+      "name": "Dance of the Manse",
+      "oracle_text": "Return up to X target artifact and/or non-Aura enchantment cards each with mana value X or less from your graveyard to the battlefield. If X is 6 or more, those permanents are 4/4 creatures in addition to their other types.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 6
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "permanent",
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -138637,6 +139099,67 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{W}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{W}{U}, {T}: Return target artifact or enchantment card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "hanna_ship_s_navigator",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Hanna, Ship's Navigator",
+      "oracle_text": "{1}{W}{U}, {T}: Return target artifact or enchantment card from your graveyard to your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -152544,6 +153067,101 @@
         {
           "effects": [
             {
+              "destination": "hand",
+              "objects": {
+                "target": "gy_card"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_card",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 2
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "imperial_recovery_unit",
+      "mana_cost": "{2}{W}",
+      "name": "Imperial Recovery Unit",
+      "oracle_text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -152700,6 +153318,106 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "id": "imposter_mech",
+      "mana_cost": "{1}{U}",
+      "name": "Imposter Mech",
+      "oracle_text": "You may have this Vehicle enter as a copy of a creature an opponent controls, except it's a Vehicle artifact with crew 3 and it loses all other card types.\nCrew 3",
+      "power": 3,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_abilities": [
+              0
+            ],
+            "add_subtypes": [
+              "Vehicle"
+            ],
+            "set_types": [
+              "Artifact"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -158328,6 +159046,92 @@
         {
           "effects": [
             {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature or a commander you control attacks alone, return target artifact card from your graveyard to the battlefield.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cmp": "==",
+                  "left": {
+                    "count": {
+                      "binding": "attackers"
+                    }
+                  },
+                  "right": {
+                    "const": 1
+                  }
+                },
+                {
+                  "exists": {
+                    "any_of": [
+                      {
+                        "self_only": true
+                      },
+                      {
+                        "controller": "you",
+                        "is_commander": true
+                      }
+                    ],
+                    "binding": "attackers"
+                  }
+                }
+              ]
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ironsoul_enforcer",
+      "mana_cost": "{4}{W}",
+      "name": "Ironsoul Enforcer",
+      "oracle_text": "Whenever this creature or a commander you control attacks alone, return target artifact card from your graveyard to the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Samurai"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "ability": 0,
               "objects": {
                 "target": "t1"
@@ -159465,6 +160269,110 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": -1
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn.",
+              "trigger": {
+                "controller": "opponent",
+                "event": "attacks"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "any_order": true,
+              "op": "two_piles",
+              "other": "library_bottom",
+              "to": "hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "as": "found",
+              "count": 1,
+              "destination": "exile",
+              "op": "search_library",
+              "player": "each_player",
+              "searcher": "you",
+              "selector": {
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            {
+              "objects": {
+                "binding": "found",
+                "count": "any"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: For each player, search that player's library for a nonland card and exile it, then that player shuffles. You may cast those cards without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jace_architect_of_thought",
+      "loyalty": 4,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Jace, Architect of Thought",
+      "oracle_text": "+1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn.\n−2: Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order.\n−8: For each player, search that player's library for a nonland card and exile it, then that player shuffles. You may cast those cards without paying their mana costs.",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -166803,6 +167711,141 @@
       "subtypes": [
         "Human",
         "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keep_pt": true,
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "not_subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{U}: Until end of turn, target noncreature artifact you control becomes an artifact creature and gains flying. If it's not a Vehicle, it has base power and toughness 1/1 until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "At the beginning of your upkeep, put a +1/+1 counter on each of up to three target noncreature artifacts.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "katsumasa_the_animator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Katsumasa, the Animator",
+      "oracle_text": "Flying\n{2}{U}: Until end of turn, target noncreature artifact you control becomes an artifact creature and gains flying. If it's not a Vehicle, it has base power and toughness 1/1 until end of turn.\nAt the beginning of your upkeep, put a +1/+1 counter on each of up to three target noncreature artifacts.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Artificer"
       ],
       "supertypes": [
         "Legendary"
@@ -174434,6 +175477,112 @@
         "Legendary"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vehicle"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Vehicles you control have crew 2"
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "lifelink",
+                "vigilance"
+              ],
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, target artifact creature you control gains lifelink and vigilance until end of turn",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "id": "kotori_pilot_prodigy",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Kotori, Pilot Prodigy",
+      "oracle_text": "Vehicles you control have crew 2.\nAt the beginning of combat on your turn, target artifact creature you control gains lifelink and vigilance until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -209536,6 +210685,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "myr_1_1_c"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} to create a 1/1 colorless Myr artifact creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you may pay {1}. If you do, create a 1/1 colorless Myr artifact creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "myrsmith",
+      "mana_cost": "{1}{W}",
+      "name": "Myrsmith",
+      "oracle_text": "Whenever you cast an artifact spell, you may pay {1}. If you do, create a 1/1 colorless Myr artifact creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -229492,6 +230697,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "attacking": true,
+              "op": "create_token",
+              "token": "angel_4_4_w_flying_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Parhelion II attacks, create two 4/4 white Angel creature tokens with flying and vigilance that are attacking.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "parhelion_ii",
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance"
+      ],
+      "mana_cost": "{6}{W}{W}",
+      "name": "Parhelion II",
+      "oracle_text": "Flying, first strike, vigilance\nWhenever Parhelion II attacks, create two 4/4 white Angel creature tokens with flying and vigilance that are attacking.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -230227,6 +231508,89 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{W}: Another target Vehicle you control becomes an artifact creature until end of turn."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "peacewalker_colossus",
+      "mana_cost": "{3}",
+      "name": "Peacewalker Colossus",
+      "oracle_text": "{1}{W}: Another target Vehicle you control becomes an artifact creature until end of turn.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -240908,6 +242272,83 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "pilot_1_1_c_crew2"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Vehicles you control attack, create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Vehicle"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "prodigy_s_prototype",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Prodigy's Prototype",
+      "oracle_text": "Whenever one or more Vehicles you control attack, create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -246270,6 +247711,72 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Saga"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "raff_capashen_ship_s_mage",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{U}",
+      "name": "Raff Capashen, Ship's Mage",
+      "oracle_text": "Flash\nFlying\nYou may cast historic spells as though they had flash. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -246851,6 +248358,82 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "raiders_karve",
+      "mana_cost": "{3}",
+      "name": "Raiders' Karve",
+      "oracle_text": "Whenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -252364,6 +253947,59 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "release_to_memory",
+      "mana_cost": "{3}{W}",
+      "name": "Release to Memory",
+      "oracle_text": "Exile target opponent's graveyard. For each creature card exiled this way, create a 1/1 colorless Spirit creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "count": "all",
+            "player": {
+              "target": "t1"
+            },
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "exiled",
+              "types": [
+                "Creature"
+              ],
+              "zone": "exile"
+            }
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "spirit_1_1_c"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -256826,6 +258462,66 @@
         "Druid"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "riddlesmith",
+      "mana_cost": "{1}{U}",
+      "name": "Riddlesmith",
+      "oracle_text": "Whenever you cast an artifact spell, you may draw a card. If you do, discard a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -289446,6 +291142,121 @@
             {
               "effects": [
                 {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 1"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "smuggler_s_copter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}",
+      "name": "Smuggler's Copter",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
                   "condition": {
                     "cmp": ">=",
                     "left": {
@@ -306864,6 +308675,99 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vehicle"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Vehicle enters, it deals damage equal to twice the number of Vehicles you control to target creature or planeswalker an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "surgehacker_mech",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{4}",
+      "name": "Surgehacker Mech",
+      "oracle_text": "Menace\nWhen this Vehicle enters, it deals damage equal to twice the number of Vehicles you control to target creature or planeswalker an opponent controls.\nCrew 4",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -360957,6 +362861,102 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Weatherlight deals combat damage to a player, look at the top five cards of your library. You may reveal a historic card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 5
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "weatherlight",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}",
+      "name": "Weatherlight",
+      "oracle_text": "Flying\nWhenever Weatherlight deals combat damage to a player, look at the top five cards of your library. You may reveal a historic card from among them and put it into your hand. Put the rest on the bottom of your library in a random order. (Artifacts, legendaries, and Sagas are historic.)\nCrew 3",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
