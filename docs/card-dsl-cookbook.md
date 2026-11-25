@@ -18044,6 +18044,17 @@ Two decisions — a subset chosen by an opponent, then a yes/no from the caster 
 rather than "choose a pile", because the piles are not objects until the split is
 made.
 
+`to` and `other` are each `hand`, `graveyard`, `exile` or `library_bottom`.
+Jace, Architect of Thought's "…and the other on the bottom of your library in
+any order" adds `"any_order": true`, which lets the owner arrange the bottomed
+pile one card at a time, as `put_on_top`'s `any_order` does (401.4). The loader
+refuses `any_order` beside any other `other`.
+
+```jsonc
+{ "op": "two_piles", "amount": { "const": 3 }, "to": "hand",
+  "other": "library_bottom", "any_order": true }
+```
+
 ## Explore
 
 ```jsonc

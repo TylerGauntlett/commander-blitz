@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**553 cards** blocked by **462** capabilities.
+**554 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -460,6 +460,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [turned-face-up-this-turn](#turned-face-up-this-turn) | 1 | 16432 | selector |
 | [turned-face-up-with-counters](#turned-face-up-with-counters) | 1 | 3297 | replacement |
 | [two-share-all-card-types](#two-share-all-card-types) | 1 | 7993 | value |
+| [type-setting-in-timestamp-order](#type-setting-in-timestamp-order) | 1 | 3929 | engine |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [unblockable-by-player](#unblockable-by-player) | 1 | 1205 | op |
@@ -7581,6 +7582,20 @@ Blocks **1** card.
 
 - **Demonic Covenant** (rank 7993) — `demonic_covenant`
   - At the beginning of your end step, create a 5/5 black Demon creature token with flying, then mill two cards. If two cards that share all their card types were milled this way, sacrifice this enchantment.
+
+</details>
+
+## type-setting-in-timestamp-order
+
+Blocks **1** card.
+
+- **(engine)** a layer-4 type-setting static ("is a Vehicle artifact ... loses all other card types") that is ordered by timestamp against later animations, so that the granted Crew 5 ability's "becomes an artifact creature until end of turn" (an `animate` adding Creature, with a later timestamp than the Aura) still makes the enchanted permanent a creature after it is crewed (613.7)
+  <br>Why the existing vocabulary won't do: The `set_types` static (types: ["Artifact"], plus an `add_subtype` static for Vehicle and a `grant_ability` static handing over a crew ability whose cost is tap_permanents total_power 5 and whose effect is `animate`) would load, but `derive_characteristics` applies every `set_types` static AFTER all animations and replaces the type set wholesale (`types = set(static.get("types"))`), so the crew animation's Creature type is always erased: the enchanted permanent could be crewed and never become a creature, a silently wrong card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Swift Reconfiguration** (rank 3929) — `swift_reconfiguration`
+  - Enchanted permanent is a Vehicle artifact with crew 5 and it loses all other card types. (It's not a creature unless it's crewed.)
 
 </details>
 

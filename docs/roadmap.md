@@ -99,7 +99,7 @@ each heading; this table is generated from them.
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | Divided damage that may hit players, Divided damage from a triggered or activated ability, A land that sacrifices itself on entering | 0 |
 | [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | A land that sacrifices itself on entering, Voting: will of the council and council's dilemma | 0 |
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
-| [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | nothing | 0 |
+| [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | A type-setting static ordered against later animations | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
@@ -126,6 +126,7 @@ each heading; this table is generated from them.
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 1 |
+| [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
@@ -155,32 +156,32 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-3. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-4. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-5. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-6. [The Ring tempts you](#the-ring-tempts-you) — M, high
-7. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-8. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-9. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-10. [Difficulty](#difficulty) — S, medium
-11. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-12. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-13. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-14. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-15. [Why a press is refused](#why-a-press-is-refused) — S, medium
-16. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-17. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-18. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-19. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-20. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-21. [Secret choices](#secret-choices) — M, medium
-22. [Experience counters](#experience-counters) — M, medium
-23. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-24. [Outcomes as data](#outcomes-as-data) — M, medium
-25. [Rad counters](#rad-counters) — M, medium
-26. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-27. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+2. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+3. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+4. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+5. [The Ring tempts you](#the-ring-tempts-you) — M, high
+6. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+7. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+8. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+9. [Difficulty](#difficulty) — S, medium
+10. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+11. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+12. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+13. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+14. [Why a press is refused](#why-a-press-is-refused) — S, medium
+15. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+16. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+17. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+18. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+19. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+20. [Secret choices](#secret-choices) — M, medium
+21. [Experience counters](#experience-counters) — M, medium
+22. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+23. [Outcomes as data](#outcomes-as-data) — M, medium
+24. [Rad counters](#rad-counters) — M, medium
+25. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+26. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+27. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
 28. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 29. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 30. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
@@ -249,6 +250,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
+- [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1433,6 +1435,72 @@ gates.
 - **Scope of the harvest.** The two precon cards only, or every Spacecraft
   the template tier and one wave reach? Recommended: one template-tier
   `--retry` and one `/author-cards` wave, the precon items' convention.
+
+### A type-setting static ordered against later animations
+
+Effort **M** · Impact **medium**, Swift Reconfiguration's crewed permanent never becomes a creature, and it alone keeps Buckle Up off the shelf · Depends on nothing · ADR first · Awaiting decisions.
+
+#### Today
+
+Swift Reconfiguration prints "Enchanted permanent is a Vehicle artifact with
+crew 5 and it loses all other card types. (It's not a creature unless it's
+crewed.)". The DSL has every word of it: a `set_types` static to
+`["Artifact"]`, an `add_subtype` static for Vehicle and a `grant_ability`
+static handing over a crew whose `animate` adds Creature. What it lacks is
+the order. `characteristics._compute` applies every animation, timed and
+indefinite, in timestamp order first (step -1), and only then every
+`set_types` static (step 0), which replaces the type set outright. So a
+crew animation that began after the Aura arrived is always erased: the
+enchanted permanent can be crewed and never becomes a creature, a silently
+wrong card. Under 613.7 the later animation applies over the earlier static.
+
+That order is [ADR 0001](adr/0001-layers-lite.md)'s: continuous effects
+in a fixed order rather than by timestamp. The engine already bends it
+inside layer 4 where a rule names a timestamp: the animations sort among
+themselves, and impending and a Duplicant's imprint sit ahead of them as the
+permanent's own arrival. A `set_types` static has a timestamp too, its
+source's (`static_timestamp`), and nothing reads it there. The gap record
+is `data/authoring/gaps/swift_reconfiguration.json`, under
+`type_setting_in_timestamp_order`. `tests/unit/statics/test_conditional_types.py`
+and `tests/unit/copies/test_enters_as_copy_set_types.py` hold what
+`set_types` does today.
+
+#### The change
+
+1. An amendment to ADR 0001 recording that `set_types` statics apply in
+   layer 4 in timestamp order with the animations, each against the others,
+   and why a fixed order was wrong for this one pair.
+2. `characteristics._compute` reads the `set_types` statics into the same
+   sorted pass as the animations, keyed on `static_timestamp` of their
+   source, so whichever began later wins. Nothing else in the fixed order
+   moves: the creature-type replacement, the subtype grants and every layer
+   after 4 stay where they are.
+3. Harvest: Swift Reconfiguration through `/author-cards`, its gap record
+   retired, and the precon item that waits on it unblocked.
+
+It does not order any other static by timestamp, and it does not add
+dependency analysis.
+
+#### Gate
+
+A unit test under `tests/unit/statics/` that an Aura setting a creature's
+types to Artifact, crewed afterwards, is an artifact creature until end of
+turn and an artifact again after cleanup; that an animation older than the
+`set_types` static is still overwritten by it (Imprisoned in the Moon on an
+already-animated land); and the existing `set_types` tests unchanged and
+green. Swift Reconfiguration's six gates.
+
+#### Open questions
+
+- **May `set_types` statics join the timestamp-ordered pass, amending ADR
+  0001?** Recommended: yes, for `set_types` alone. The animations already
+  sort by timestamp in the same layer, so this extends an existing exception
+  rather than starting the layer system, and the alternative, leaving the
+  card unauthored, keeps Buckle Up off the shelf for one card.
+- **Is a crew animation a timed animation for this ordering, whatever the
+  Aura's timestamp?** Recommended: yes. The crew effect always begins after
+  the Aura that granted the crew, so the plain timestamp comparison gives
+  the printed reminder text, "It's not a creature unless it's crewed".
 
 ### Cycling granted to cards in hand
 
@@ -4637,7 +4705,7 @@ whole-game test able to draw the deck.
 
 ### Buckle Up (Neon Dynasty Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations).
 
 #### Today
 

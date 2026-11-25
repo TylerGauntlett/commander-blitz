@@ -108,6 +108,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "access_denied": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 5,
+      "id": "thopter_1_1_c_flying"
+    },
+    "zone": "graveyard"
+  },
   "access_tunnel": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -234,7 +242,15 @@
   "aerial_responder": {
     "zone": "battlefield"
   },
+  "aerial_surveyor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aerith_last_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aeronaut_admiral": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1153,6 +1169,16 @@
   "arcane_sanctum": {
     "zone": "battlefield"
   },
+  "arcanist_s_owl": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "arch_of_orazca": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1388,6 +1414,13 @@
       "0": 33
     },
     "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "armed_and_armored": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "graveyard"
   },
   "armed_with_proof": {
@@ -4875,6 +4908,13 @@
     },
     "zone": "battlefield"
   },
+  "colossal_plow": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "colossal_whale": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -5909,6 +5949,16 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "dance_of_the_manse": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "dance_with_calamity": {
     "graveyard_size": {
@@ -11711,6 +11761,13 @@
   "hanged_executioner": {
     "zone": "battlefield"
   },
+  "hanna_ship_s_navigator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "hapatra_vizier_of_poisons": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12817,6 +12874,10 @@
   "imperial_outrider": {
     "zone": "battlefield"
   },
+  "imperial_recovery_unit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "imperious_inkmage": {
     "zone": "battlefield"
   },
@@ -12831,6 +12892,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "imposter_mech": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "impostor_of_the_sixth_pride": {
     "zone": "battlefield"
@@ -13303,6 +13368,10 @@
   "ironroot_treefolk": {
     "zone": "battlefield"
   },
+  "ironsoul_enforcer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ironwill_forger": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13376,6 +13445,14 @@
     "zone": "battlefield"
   },
   "izzet_signet": {
+    "zone": "battlefield"
+  },
+  "jace_architect_of_thought": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "jace_cunning_castaway": {
@@ -13910,6 +13987,10 @@
     "zone": "battlefield"
   },
   "kate_stewart": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "katsumasa_the_animator": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14548,6 +14629,10 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "kotori_pilot_prodigy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kozilek_s_channeler": {
@@ -17546,6 +17631,10 @@
     },
     "zone": "battlefield"
   },
+  "myrsmith": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mystic_confluence": {
     "zone": "graveyard"
   },
@@ -19082,6 +19171,10 @@
   "pardic_wanderer": {
     "zone": "battlefield"
   },
+  "parhelion_ii": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "park_heights_maverick": {
     "zone": "battlefield"
   },
@@ -19139,6 +19232,10 @@
     "life": {
       "0": 43
     }
+  },
+  "peacewalker_colossus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "pearl_ear_imperial_advisor": {
     "battlefield_count": 33,
@@ -20025,6 +20122,10 @@
       "graveyard"
     ]
   },
+  "prodigy_s_prototype": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "profane_command": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -20490,6 +20591,10 @@
     },
     "zone": "graveyard"
   },
+  "raff_capashen_ship_s_mage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "raffine_s_guidance": {
     "target_pt_delta": {
       "power": 1,
@@ -20534,6 +20639,13 @@
     "zone": "battlefield"
   },
   "raging_swordtooth": {
+    "zone": "battlefield"
+  },
+  "raiders_karve": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "raiding_nightstalker": {
@@ -21051,6 +21163,16 @@
     },
     "zone": "graveyard"
   },
+  "release_to_memory": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "release_to_the_wind": {
     "battlefield_count": 31,
     "zone": "graveyard"
@@ -21441,6 +21563,13 @@
     },
     "graveyard_size": {
       "0": 4
+    },
+    "zone": "battlefield"
+  },
+  "riddlesmith": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -24199,6 +24328,13 @@
     },
     "zone": "battlefield"
   },
+  "smuggler_s_copter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "smuggler_s_share": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25594,6 +25730,10 @@
       "1": 0
     },
     "zone": "graveyard"
+  },
+  "surgehacker_mech": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "surgespanner": {
     "battlefield_count": 33,
@@ -30099,6 +30239,10 @@
     "zone": "battlefield"
   },
   "weathered_wayfarer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "weatherlight": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
