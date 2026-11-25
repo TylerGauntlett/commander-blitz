@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**549 cards** blocked by **460** capabilities.
+**553 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,6 +38,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
 | [omen](#omen) | 3 | 3355 | cost, engine |
+| [remove-bound-counter-kind](#remove-bound-counter-kind) | 3 | 4274 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
 | [targets-only-self](#targets-only-self) | 3 | 8216 | trigger_event |
 | [token-halfling-1-1-w](#token-halfling-1-1-w) | 3 | 2910 | token |
@@ -145,6 +146,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [choose-counter-kind-on-player](#choose-counter-kind-on-player) | 1 | 4320 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
@@ -219,6 +221,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-replacement-exile-unless-cast-with-mana](#enters-replacement-exile-unless-cast-with-mana) | 1 | 10409 | replacement |
 | [enters-with-counter-of-choice](#enters-with-counter-of-choice) | 1 | 9492 | replacement |
 | [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
+| [enters-with-counters-of-each-kind-on-source](#enters-with-counters-of-each-kind-on-source) | 1 | 21605 | static_effect |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -388,7 +391,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-counter-kind](#random-counter-kind) | 1 | 6446 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
-| [remove-bound-counter-kind](#remove-bound-counter-kind) | 1 | 4274 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -1341,6 +1343,28 @@ Blocks **3** cards.
   - Flush Out -- Sorcery - Omen, {1}{R}: <the Omen half's rules text, absent from the packet and from the local catalog> (Then shuffle this card into its owner's library.)
 - **Whirlwing Stormbrood // Dynamic Soar** (rank 6636) — `whirlwing_stormbrood_dynamic_soar`
   - Dynamic Soar -- Sorcery - Omen, {2}{G}: Put three +1/+1 counters on target creature you control. (Then shuffle this card into its owner's library.)
+
+</details>
+
+## remove-bound-counter-kind
+
+Blocks **3** cards.
+
+- **(op)** remove_counters reading `counter: {"binding": <as>}` -- the kind a choose_counter_kind bound -- so "remove that counter" takes one of the chosen kind off the target
+  <br>Why the existing vocabulary won't do: choose_counter_kind binds the kind and add_counters puts one of it, but the loader allows the bound-kind mapping only on add_counters (and counters_on); remove_counters takes a printed kind or any_kind, which asks the kind again rather than using the one chosen
+- **(op)** remove_counters accepting counter: {"binding": <kind>} -- remove one counter of the kind a for_each_counter_kind (or choose_counter_kind) bound, so the loop body can be a two-mode choose_mode: add_counters of the bound kind on the target, or remove_counters of the bound kind from it
+  <br>Why the existing vocabulary won't do: for_each_counter_kind plus add_counters with counter: {binding} covers the 'put another' half, but op_remove_counters (without any_kind/all_kinds) reads the kind as str(spec['counter']), so a binding mapping becomes the literal string "{'binding': 'kind'}" and removes nothing; any_kind lets the controller pick any kind on the permanent rather than the iterated kind, and remove_counters_from_among has the same str() read of 'counter'. The loader's bound-kind check does not cover remove_counters either, so the miswrite would load and silently do nothing
+- **(op)** remove_counters accepting counter: {"binding": <kind>} so that, inside a for_each_counter_kind body, a two-mode choose_mode can say 'put another counter of that kind on it (add_counters with the bound kind) or remove one from it (remove_counters amount 1 of the bound kind)', asked once per kind
+  <br>Why the existing vocabulary won't do: for_each_counter_kind and choose_mode cover the loop and the per-kind choice, and add_counters reads the bound kind, but the loader refuses a {binding} counter mapping on any op except add_counters, and op_remove_counters str()s its 'counter' as a literal kind; remove_counters any_kind lets the controller pick any kind rather than exactly the iterated one, and proliferate adds only and picks recipients freely
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+- **Dramatist's Puppet** (rank 20547) — `dramatist_s_puppet`
+  - When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it.
+- **Quarry Hauler** (rank 26088) — `quarry_hauler`
+  - When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it.
 
 </details>
 
@@ -3083,6 +3107,20 @@ Blocks **1** card.
 
 </details>
 
+## choose-counter-kind-on-player
+
+Blocks **1** card.
+
+- **(op)** choose_counter_kind able to choose a counter on a PLAYER as well as a permanent: a `players` key (beside `from`) naming the target player, offering each kind in PLAYER_COUNTER_KINDS that player has, binding the kind under `as` so add_counters with `player` and counter {binding} gives that player another of it
+  <br>Why the existing vocabulary won't do: choose_counter_kind takes only `from`, a permanent selector (resolve_pool, ask_objects over permanents carrying counters), so a targeted player's poison or energy counters can never be chosen; for_each_counter_kind does accept `players` but adds one of EVERY kind (Skyship Plunderer), not one chosen kind, so it is a stronger card; a printed +1/+1 add_counters drops the choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Animation Module** (rank 4320) — `animation_module`
+  - {3}, {T}: Choose a counter on target permanent or player. Give that permanent or player another counter of that kind.
+
+</details>
+
 ## choose-from-linked-exile
 
 Blocks **1** card.
@@ -4128,6 +4166,20 @@ Blocks **1** card.
 
 - **Arwen, Weaver of Hope** (rank 1905) — `arwen_weaver_of_hope`
   - Each other creature you control enters with a number of additional +1/+1 counters on it equal to Arwen's toughness.
+
+</details>
+
+## enters-with-counters-of-each-kind-on-source
+
+Blocks **1** card.
+
+- **(static_effect)** a static enters-with replacement (614.1c) on other arriving permanents matching `affects` (other Dinosaurs you control) whose counter kinds are not printed but read as the set of kinds on the source at the moment of entry: for each kind of counter on this permanent, the arrival enters with one counter of that kind -- e.g. `enters_with_additional_counters` accepting `counter: {"kinds_on": "self"}` (amount 1 per kind)
+  <br>Why the existing vocabulary won't do: `enters_with_additional_counters` takes exactly one printed `counter` kind (loader `_check_counter_kind`; engine `zones` reads `static.get('counter')` as a string), so it cannot iterate the source's kinds; `for_each_counter_kind` is an op that could only run inside a `permanent_enters` trigger, which places the counters after entry rather than as a replacement (a 0-toughness Dinosaur dies, its own ETB triggers and enters-with checks miss them) -- an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blue, Loyal Raptor** (rank 21605) — `blue_loyal_raptor`
+  - For each kind of counter on Blue, Loyal Raptor, each other Dinosaur you control enters with a counter of that kind on it.
 
 </details>
 
@@ -6540,20 +6592,6 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
-
-</details>
-
-## remove-bound-counter-kind
-
-Blocks **1** card.
-
-- **(op)** remove_counters reading `counter: {"binding": <as>}` -- the kind a choose_counter_kind bound -- so "remove that counter" takes one of the chosen kind off the target
-  <br>Why the existing vocabulary won't do: choose_counter_kind binds the kind and add_counters puts one of it, but the loader allows the bound-kind mapping only on add_counters (and counters_on); remove_counters takes a printed kind or any_kind, which asks the kind again rather than using the one chosen
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clockspinning** (rank 4274) — `clockspinning`
-  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
 
 </details>
 

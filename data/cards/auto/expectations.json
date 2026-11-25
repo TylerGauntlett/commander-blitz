@@ -8601,6 +8601,10 @@
     },
     "zone": "graveyard"
   },
+  "expendable_lackey": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "experiment_twelve": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12701,6 +12705,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ichormoon_gauntlet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "icon_of_ancestry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16381,6 +16389,10 @@
     },
     "zone": "battlefield"
   },
+  "maulfist_revolutionary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mawloc": {
     "battlefield_count": 33,
     "counters": {
@@ -19753,6 +19765,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "powerful_broker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "poxwalkers": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21165,6 +21184,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "reservoir_kraken": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "reshape_the_earth": {
@@ -24031,6 +24054,14 @@
   },
   "slayers_stronghold": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sleep_with_the_fishes": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "fish_1_1_u_unblockable"
+    },
     "zone": "battlefield"
   },
   "slimebind": {

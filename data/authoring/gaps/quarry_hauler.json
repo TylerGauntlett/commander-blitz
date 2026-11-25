@@ -1,0 +1,16 @@
+{
+  "card_id": "quarry_hauler",
+  "name": "Quarry Hauler",
+  "oracle_text": "When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it.",
+  "blocked_sentences": [
+    "When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it."
+  ],
+  "needs": [{
+    "capability": "remove_bound_counter_kind",
+    "kind": "op",
+    "what": "remove_counters accepting counter: {\"binding\": <kind>} so that, inside a for_each_counter_kind body, a two-mode choose_mode can say 'put another counter of that kind on it (add_counters with the bound kind) or remove one from it (remove_counters amount 1 of the bound kind)', asked once per kind",
+    "why_existing_wont_do": "for_each_counter_kind and choose_mode cover the loop and the per-kind choice, and add_counters reads the bound kind, but the loader refuses a {binding} counter mapping on any op except add_counters, and op_remove_counters str()s its 'counter' as a literal kind; remove_counters any_kind lets the controller pick any kind rather than exactly the iterated one, and proliferate adds only and picks recipients freely"
+  }],
+  "closest_existing": ["for_each_counter_kind", "choose_mode", "remove_counters", "add_counters"],
+  "confidence": "high"
+}

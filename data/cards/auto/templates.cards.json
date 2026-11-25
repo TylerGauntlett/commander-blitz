@@ -102408,6 +102408,55 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "fish_1_1_u_unblockable"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{1}{U}, Exile this card from your graveyard: Create a 1/1 blue Fish creature token with \"This token can't be blocked.\" Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "expendable_lackey",
+      "mana_cost": "{U}",
+      "name": "Expendable Lackey",
+      "oracle_text": "{1}{U}, Exile this card from your graveyard: Create a 1/1 blue Fish creature token with \"This token can't be blocked.\" Activate only as a sorcery.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -150880,6 +150929,120 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Planeswalkers you control have \"[0]: Proliferate\" and \"[−12]: Take an extra turn after this one.\""
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Planeswalker"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Planeswalkers you control have \"[0]: Proliferate\" and \"[−12]: Take an extra turn after this one.\""
+        },
+        {
+          "effects": [
+            {
+              "as": "kind",
+              "from": {
+                "target": "t1"
+              },
+              "op": "choose_counter_kind"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": {
+                "binding": "kind"
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a noncreature spell, choose a counter on target permanent. Put an additional counter of that kind on that permanent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "[0]: Proliferate"
+        },
+        {
+          "cost": {
+            "loyalty": -12
+          },
+          "effects": [
+            {
+              "op": "extra_turn",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "[−12]: Take an extra turn after this one."
+        }
+      ],
+      "id": "ichormoon_gauntlet",
+      "mana_cost": "{2}{U}",
+      "name": "Ichormoon Gauntlet",
+      "oracle_text": "Planeswalkers you control have \"[0]: Proliferate\" and \"[−12]: Take an extra turn after this one.\"\nWhenever you cast a noncreature spell, choose a counter on target permanent. Put an additional counter of that kind on that permanent.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "choose_type",
@@ -196030,6 +196193,127 @@
         {
           "effects": [
             {
+              "as": "kind",
+              "effects": [
+                {
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "op": "add_counters",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each_counter_kind",
+              "players": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature enters or dies, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "kind",
+              "effects": [
+                {
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "op": "add_counters",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each_counter_kind",
+              "players": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "any",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature enters or dies, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "maulfist_revolutionary",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{1}{G}{G}",
+      "name": "Maulfist Revolutionary",
+      "oracle_text": "Trample\nWhen this creature enters or dies, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -237341,6 +237625,84 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "kind",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "op": "add_counters",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each_counter_kind",
+              "players": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {}
+            }
+          ],
+          "text": "{T}: For each kind of counter on target permanent or player, give that permanent or player another counter of that kind. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "powerful_broker",
+      "mana_cost": "{2}{G}",
+      "name": "Powerful Broker",
+      "oracle_text": "{T}: For each kind of counter on target permanent or player, give that permanent or player another counter of that kind. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "graveyard"
           ],
@@ -253755,6 +254117,99 @@
       "toughness": 3,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Trample, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "exists": {
+                      "self_only": true,
+                      "tapped": false
+                    }
+                  },
+                  "effects": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "tap"
+                    },
+                    {
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "fish_1_1_u_unblockable"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "tap_permanents": {
+                      "types": [
+                        "Creature"
+                      ]
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Tap an untapped creature you control to tap Reservoir Kraken and create a 1/1 blue Fish token that can't be blocked?"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent",
+              "starting_with": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each combat, if this creature is untapped, any opponent may tap an untapped creature they control. If they do, tap this creature and create a 1/1 blue Fish creature token with \"This token can't be blocked.\"",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "self_only": true,
+                "tapped": false
+              }
+            },
+            "controller": "any",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "reservoir_kraken",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Reservoir Kraken",
+      "oracle_text": "Trample, ward {2}\nAt the beginning of each combat, if this creature is untapped, any opponent may tap an untapped creature they control. If they do, tap this creature and create a 1/1 blue Fish creature token with \"This token can't be blocked.\"",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "toughness": 6,
+      "types": [
         "Creature"
       ]
     },
@@ -287291,6 +287746,73 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "fish_1_1_u_unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, tap enchanted creature and you create a 1/1 blue Fish creature token with \"This token can't be blocked.\"",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Enchanted creature doesn't untap during its controller's untap step."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sleep_with_the_fishes",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Sleep with the Fishes",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you create a 1/1 blue Fish creature token with \"This token can't be blocked.\"\nEnchanted creature doesn't untap during its controller's untap step.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

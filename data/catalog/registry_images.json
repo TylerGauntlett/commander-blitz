@@ -7152,6 +7152,10 @@
     "artist": "Danny Schwartz",
     "scryfall_id": "5f68baee-f503-407d-931f-2a550470a55f"
   },
+  "expendable_lackey": {
+    "artist": "Randy Gallegos",
+    "scryfall_id": "9e671b0f-55b9-4bff-b02a-0be1f6db193f"
+  },
   "experiment_twelve": {
     "artist": "Michele Giorgi",
     "scryfall_id": "1c1d66b4-2e40-41fd-afc8-901835108931"
@@ -10645,6 +10649,10 @@
     "artist": "Eric Deschamps",
     "scryfall_id": "06ad4974-d806-4417-883a-2e622e909a7b"
   },
+  "ichormoon_gauntlet": {
+    "artist": "Tiffany Turrill",
+    "scryfall_id": "2c093ce0-2561-4847-ab58-f6f1650d743e"
+  },
   "icon_of_ancestry": {
     "artist": "Chris Seaman",
     "scryfall_id": "f6cdbdf3-f8bd-48a9-8a47-6b0b9d5de0db"
@@ -13646,6 +13654,10 @@
     "artist": "Joseph Meehan",
     "scryfall_id": "213dd8d4-4be1-40ce-88a2-962056903282"
   },
+  "maulfist_revolutionary": {
+    "artist": "Scott Murphy",
+    "scryfall_id": "a83dcdba-419b-41e1-8c9d-8bca6fe2752b"
+  },
   "mavren_fein_dusk_apostle": {
     "artist": "Daarken",
     "scryfall_id": "fdc3e998-760b-41ca-9f92-270aaa82f3fb"
@@ -16525,6 +16537,10 @@
     "artist": "Billy Christian",
     "scryfall_id": "04f8aa71-f27b-48b3-9146-b9e785555428"
   },
+  "powerful_broker": {
+    "artist": "JB Casacop",
+    "scryfall_id": "801f0417-b663-4e28-9a61-9570061654d7"
+  },
   "powerstone_token": {
     "artist": "Karl Kopinski",
     "scryfall_id": "d45fe4b6-aeaf-4f84-b660-c7b482ed8512"
@@ -17660,6 +17676,10 @@
   "research_thief": {
     "artist": "Cristi Balanescu",
     "scryfall_id": "f6287354-4503-43c6-bfc0-39efb6179428"
+  },
+  "reservoir_kraken": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "01479b8a-b5a4-4d45-9073-5d24becad45b"
   },
   "reshape_the_earth": {
     "artist": "Adam Paquette",
@@ -20120,6 +20140,10 @@
   "slayers_stronghold": {
     "artist": "Randy Gallegos",
     "scryfall_id": "30d0754a-f7bb-4c13-b7e3-28046db48cc1"
+  },
+  "sleep_with_the_fishes": {
+    "artist": "Randy Gallegos",
+    "scryfall_id": "3742a0fb-4b86-49d6-b6fb-bd6a42fa1bcb"
   },
   "slimebind": {
     "artist": "Mark Behm",

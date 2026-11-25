@@ -1,0 +1,22 @@
+{
+  "card_id": "blue_loyal_raptor",
+  "name": "Blue, Loyal Raptor",
+  "oracle_text": "Partner with Owen Grady, Raptor Trainer (When this creature enters, target player may put Owen into their hand from their library, then shuffle.)\nFor each kind of counter on Blue, Loyal Raptor, each other Dinosaur you control enters with a counter of that kind on it.",
+  "blocked_sentences": [
+    "For each kind of counter on Blue, Loyal Raptor, each other Dinosaur you control enters with a counter of that kind on it."
+  ],
+  "needs": [
+    {
+      "capability": "enters_with_counters_of_each_kind_on_source",
+      "kind": "static_effect",
+      "what": "a static enters-with replacement (614.1c) on other arriving permanents matching `affects` (other Dinosaurs you control) whose counter kinds are not printed but read as the set of kinds on the source at the moment of entry: for each kind of counter on this permanent, the arrival enters with one counter of that kind -- e.g. `enters_with_additional_counters` accepting `counter: {\"kinds_on\": \"self\"}` (amount 1 per kind)",
+      "why_existing_wont_do": "`enters_with_additional_counters` takes exactly one printed `counter` kind (loader `_check_counter_kind`; engine `zones` reads `static.get('counter')` as a string), so it cannot iterate the source's kinds; `for_each_counter_kind` is an op that could only run inside a `permanent_enters` trigger, which places the counters after entry rather than as a replacement (a 0-toughness Dinosaur dies, its own ETB triggers and enters-with checks miss them) -- an approximation"
+    }
+  ],
+  "closest_existing": [
+    "enters_with_additional_counters",
+    "for_each_counter_kind",
+    "permanent_enters"
+  ],
+  "confidence": "high"
+}
