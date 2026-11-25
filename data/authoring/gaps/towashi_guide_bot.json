@@ -1,0 +1,18 @@
+{
+  "card_id": "towashi_guide_bot",
+  "name": "Towashi Guide-Bot",
+  "oracle_text": "When this creature enters, put a +1/+1 counter on target creature you control.\n{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+  "blocked_sentences": [
+    "{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)"
+  ],
+  "needs": [
+    {
+      "capability": "modified",
+      "kind": "selector",
+      "what": "the `modified` key (700.9: has a counter, is equipped, or is enchanted by an Aura its controller controls) accepted in a cost-reduction filter, so an activated ability's `mana_reduction` can be {\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"modified\": true}}",
+      "why_existing_wont_do": "`modified` is in selector_keys and static_affects_filter_keys but not in cost_reduction_filter_keys, and the note says any key outside that list is a load error. An `any_of` of `has_counters` and `enchanted_by` misses the Equipment limb (`equipped` is not a cost-reduction filter key either), and two summed reductions would also double-count a creature that has both a counter and an Aura"
+    }
+  ],
+  "closest_existing": ["mana_reduction", "has_counters", "enchanted_by"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "ordeal_of_nylea",
+  "name": "Ordeal of Nylea",
+  "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or more +1/+1 counters on it, sacrifice this Aura.\nWhen you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+  "blocked_sentences": [
+    "When you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "self_sacrificed_trigger",
+      "kind": "trigger_event",
+      "what": "a `sacrificed` trigger with `source: \"self\"` (\"When you sacrifice this <permanent>\") that looks back in time (603.10a) and fires on the permanent's own sacrifice by any means -- its own attack trigger, a sacrifice outlet, an edict -- but not when it is destroyed or bounced. Needs \"sacrificed\" added to triggers.LEAVE_TRIGGERS and EventType.SACRIFICED to the departed-subject branch of the candidate walk in triggers.py, which today walks the subject's abilities only for DIES, LEAVES_BATTLEFIELD, DISCARD and PUT_INTO_GRAVEYARD-from-battlefield",
+      "why_existing_wont_do": "`sacrificed` is in trigger_events, but every shipped use is a battlefield observer of other permanents (Juri, Korvold, Carmen); none uses source self, and the look-back path never offers the sacrificed source's own abilities on a SACRIFICED event, so the trigger would never fire. `dies`/`leaves_battlefield` with source self do look back but also fire on destroy, exile or bounce, which is wider than printed. Folding the search into the attack trigger (sacrifice self_only with `as`, then `if exists`) misses every other way the Aura can be sacrificed, so it is an approximation. The other two lines are expressible today: an `attacks` trigger with `controller: any` and `filter: {attached: true}` putting a +1/+1 counter on `subject`, then an `if` on `counters_on` >= 3 sacrificing `self_only`"
+    }
+  ],
+  "closest_existing": ["sacrificed", "dies", "leaves_battlefield", "search_library"],
+  "confidence": "high"
+}
