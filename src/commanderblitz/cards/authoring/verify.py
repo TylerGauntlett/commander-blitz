@@ -2707,6 +2707,16 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.rebound and _bare_keyword_line(stripped) == "rebound":
         return True
 
+    # "Split second (As long as this spell is on the stack, players can't cast
+    # spells or activate abilities that aren't mana abilities.)" is the
+    # card-level `split_second` flag, read off the stack by
+    # `legality.split_second_active`. An instant's `spell_effects` already claim
+    # the line; a permanent spell (In Too Deep, an Aura) has no ability that
+    # could, since the keyword works only while the card is a spell. Strict like
+    # rebound's: the bare word plus its reminder, and the flag must be set.
+    if card.split_second and _bare_keyword_line(stripped) == "split second":
+        return True
+
     # "Improvise (Your artifacts can help cast this spell…)", and convoke and
     # delve beside it: `pay_generic_with`, a card-level way to pay the generic
     # cost read by `casting` and `game._cast`, with no ability that could
