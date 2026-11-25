@@ -3204,8 +3204,26 @@ def _covered(card: CardDef, line: str) -> bool:
             # ability the copy has is one ``add_abilities`` position, so a copy
             # that drops the mana ability cannot claim the sentence, and one
             # that adds an ability nobody quoted cannot either.
+            #
+            # "\u2026except it's a Vehicle artifact with crew 3" (Imposter Mech)
+            # names a keyword ability unquoted: each "with crew N" is one more
+            # position, and the ability it points at must be that crew -- a
+            # crew ability (by its cost, ADR 0032) whose text is "Crew N" -- so
+            # a copy granting crew 2, or a quoted mana ability, cannot claim it.
             quoted = len(re.findall(r"\bhas [\"\u201c]", lowered))
-            if quoted != len(exception.get("add_abilities") or ()):
+            crews = re.findall(r"\bwith crew (\d+)\b", lowered)
+            positions = list(exception.get("add_abilities") or ())
+            if quoted + len(crews) != len(positions):
+                continue
+            granted = [
+                card.grantable_abilities[p]
+                for p in positions
+                if isinstance(p, int) and 0 <= p < len(card.grantable_abilities)
+            ]
+            granted_crews = sorted(
+                (ability.text or "").strip().lower() for ability in granted if ability.is_crew
+            )
+            if granted_crews != sorted(f"crew {n}" for n in crews):
                 continue
             # "…with a number of additional +1/+1 counters on it" (The
             # Mimeoplasm) is the same half without the words "enters with".

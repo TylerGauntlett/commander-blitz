@@ -270,6 +270,27 @@ boolean, a `count` above 1 — plus one more: the two together are refused, sinc
 they stage the pool differently and whichever ran would silently drop the other
 half of the sentence.
 
+`searcher: "you"` is who looks and picks when it is not the library's owner.
+`player` names the libraries and, without the key, each owner searches their
+own (Tempt with Discovery). Jace, Architect of Thought's "for each player,
+search that player's library for a nonland card and exile it, then that player
+shuffles" is the resolving player searching all of them:
+
+```jsonc
+{ "op": "search_library", "player": "each_player", "searcher": "you",
+  "selector": { "not_types": ["Land"] }, "count": 1, "destination": "exile",
+  "as": "found" }
+```
+
+The owner still shuffles, the cards go to the owner's zones, and the
+`searches_library` event names the searcher as its player and the owner as
+`owner`. `cant_search_library` (Ashiok, Dream Render) stops a player searching
+their own library, so it does not bar a search of somebody else's. The near
+miss is the same op inside `for_each_player` with no `searcher`, which hands
+each opponent the choice of what is taken from them. Refused on any other op,
+with any value but `"you"`, and with a `battlefield` destination or a
+`may_destination`, where the card would also have to say under whose control.
+
 `look_at_top` is `search_library` with the pool bounded to the top `amount`
 cards, and the bound is the card:
 
@@ -4005,7 +4026,7 @@ The other keys, each a copiable value the copy carries until it ends:
 | key | meaning |
 |---|---|
 | `add_keywords` | keywords added to the copied face |
-| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability |
+| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. Imposter Mech's unquoted "…a Vehicle artifact with crew 3" is the same key: the Crew 3 written once under `grantable_abilities` and named here, and the verifier holds each printed "with crew N" to one position whose ability is a crew whose text is "Crew N". The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability that is a word alone |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
 | `set_types` | the card types the copy has *instead of* the copied ones, on `copying_set_types`; every subtype of a type it no longer has goes with it (205.1b), so Machine God's Effigy's "…except it's an artifact" (`["Artifact"]`) makes the copy of a Bear a bare Artifact. The near miss is `add_types`, which is right only when the card prints "in addition to its other types"; the two are refused together |
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
@@ -6072,9 +6093,9 @@ sized by the effect that made it -- crews with `"keep_pt": true` in place of
 `power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
 own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
 is refused beside `power` or `toughness`, and on any pool but `objects`
-`self_only` or a `{"target": …}` narrowed to `"subtypes": ["Vehicle"]`; a
-`self_only` one is refused on a card with no printed power and toughness. An
-animation into a creature without it still needs both.
+`self_only` or a target or selector narrowed to `"subtypes": ["Vehicle"]` (never
+a binding); a `self_only` one is refused on a card with no printed power and
+toughness. An animation into a creature without it still needs both.
 
 The targeted form is Tezzeret, Betrayer of Flesh's "target artifact becomes an
 artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4":
@@ -6086,6 +6107,16 @@ two animations over the one target, each narrowed so exactly one applies.
 { "op": "animate", "objects": { "target": "t1", "not_subtypes": ["Vehicle"] },
   "types": ["Artifact", "Creature"], "duration": "permanent",
   "power": { "const": 4 }, "toughness": { "const": 4 } }
+```
+
+The mass form is Armed and Armored's "Vehicles you control become artifact
+creatures until end of turn": one animation over a selector, every Vehicle it
+finds at its own size.
+
+```jsonc
+{ "op": "animate",
+  "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "keep_pt": true }
 ```
 
 The near miss is `power_of`/`toughness_of` the target, which snapshots the

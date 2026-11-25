@@ -1,0 +1,17 @@
+{
+  "_comment": "Shapes for tests/unit/choices/test_two_piles_any_order.py. t_tpao_architect is Jace, Architect of Thought's -2 as a sorcery: the top three, split by an opponent, one pile to hand and the other on the bottom of the library in any order.",
+  "cards": [
+    {
+      "id": "t_tpao_architect",
+      "name": "Test Pile Architect",
+      "oracle_text": "Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "two_piles", "amount": {"const": 3}, "to": "hand", "other": "library_bottom", "any_order": true}
+      ]
+    }
+  ]
+}

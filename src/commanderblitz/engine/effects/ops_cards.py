@@ -438,11 +438,19 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     found: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         pool: list[int] = []
+        # Who looks through the library and picks. Its owner, unless the card
+        # says otherwise: "For each player, **search that player's library**
+        # for a nonland card and exile it" (Jace, Architect of Thought) is the
+        # resolving player searching every library, `searcher: "you"`. The
+        # owner still shuffles their own library afterwards (701.19c).
+        searcher = ctx.controller if spec.get("searcher") == "you" else pid
         # "Spells and abilities your opponents control can't cause their
         # controller to search their library" (Ashiok, Dream Render). The
         # library drops out of the pool and nothing else does: a graveyard half
-        # is still searched, and the shuffle below still happens.
-        barred = search_forbidden(ctx.state, pid, ctx.controller)
+        # is still searched, and the shuffle below still happens. Only a
+        # player's own library is named, so a search of somebody else's is
+        # never barred.
+        barred = searcher == pid and search_forbidden(ctx.state, pid, ctx.controller)
         if "library" in zones and not barred:
             # "Whenever an opponent searches their library" (Archivist of
             # Oghma). Fired before the pool is even looked at, because the
@@ -453,7 +461,7 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
             fire(
                 ctx.state,
                 EventType.LIBRARY_SEARCHED,
-                player=pid,
+                player=searcher,
                 source=ctx.source_oid,
                 owner=pid,
             )
@@ -470,12 +478,15 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         if pool:
             take = min(count, len(pool))
             prompt = "Search your library" if zones == ("library",) else "Search"
+            if searcher != pid:
+                seat = ctx.state.players[pid].name or f"Player {pid}"
+                prompt = f"Search {seat}'s library"
             if spec.get("distinct_names") and take > 1:
-                picked = yield from _search_distinct(ctx, prompt, pool, take, pid)
+                picked = yield from _search_distinct(ctx, prompt, pool, take, searcher)
             elif spec.get("share_subtype") and take > 1:
-                picked = yield from _search_sharing(ctx, prompt, pool, take, pid)
+                picked = yield from _search_sharing(ctx, prompt, pool, take, searcher)
             else:
-                picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
+                picked = yield from ask_objects(ctx, prompt, pool, 0, take, searcher, "search")
             if spec.get("reveal") and picked:
                 # "…search your library for a Vampire card, **reveal it**, then
                 # shuffle and put that card on top." Revealed on the way out, so
@@ -3464,6 +3475,9 @@ def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
     pile, then the controller says whether to take it. Modelled as a subset plus
     a yes/no rather than as "choose a pile", because the piles do not exist as
     objects until the split is made.
+
+    ``to`` and ``other`` name where each pile goes; ``any_order`` lets the
+    owner arrange the other pile on the bottom of the library (401.4).
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     pid = ctx.controller
@@ -3496,6 +3510,13 @@ def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
 
     to_taken = DESTINATIONS[str(spec.get("to", "hand"))]
     to_rest = DESTINATIONS[str(spec.get("other", "graveyard"))]
+    if spec.get("any_order"):
+        # "…and the other on the bottom of your library **in any order**"
+        # (Jace, Architect of Thought). 401.4 lets the owner arrange cards put
+        # into one position of a library together; without it the pile went
+        # down in the order it was revealed, which nobody chose. The loader
+        # holds the key to `other: "library_bottom"`.
+        discarded = yield from _in_owners_order(ctx, list(discarded), True)
     for oid in taken:
         move_object(ctx.state, oid, to_taken, to_player=pid, cause="two_piles")
     for oid in discarded:

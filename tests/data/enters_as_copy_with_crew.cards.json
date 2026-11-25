@@ -1,0 +1,104 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_with_crew.py. t_eaxc_mech is Imposter Mech whole: a Vehicle that may enter as a copy of a creature an opponent controls, except it's a Vehicle artifact with crew 3 and it loses all other card types; the unquoted crew is written once under grantable_abilities and named by add_abilities, and printed Crew 3 is its own ability uncopied.",
+  "cards": [
+    {
+      "id": "t_eaxc_mech",
+      "name": "Test Imposter Mech",
+      "oracle_text": "You may have this Vehicle enter as a copy of a creature an opponent controls, except it's a Vehicle artifact with crew 3 and it loses all other card types.\nCrew 3",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "power": 3,
+      "toughness": 1,
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "controller": "opponent",
+            "zone": "battlefield"
+          },
+          "except_": {
+            "set_types": [
+              "Artifact"
+            ],
+            "add_subtypes": [
+              "Vehicle"
+            ],
+            "add_abilities": [
+              0
+            ]
+          }
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 3",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 3",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
