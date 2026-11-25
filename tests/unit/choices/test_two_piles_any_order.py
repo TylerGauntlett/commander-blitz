@@ -3,7 +3,7 @@
     "Reveal the top three cards of your library. An opponent separates those
     cards into two piles. Put one pile into your hand and the other on the
     bottom of your library **in any order**."
-                                  -- Jace, Architect of Thought's −2
+                                  -- Jace, Architect of Thought's -2
 
 401.4: when cards are put into one position of a library together, their
 owner arranges them. Without `any_order` the pile went to the bottom in the

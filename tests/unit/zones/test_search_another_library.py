@@ -2,7 +2,7 @@
 
     "For each player, search that player's library for a nonland card and
     exile it, then that player shuffles."
-                                  -- Jace, Architect of Thought's −8
+                                  -- Jace, Architect of Thought's -8
 
 701.19: the player told to search is the one who looks and picks. Every
 other `search_library` makes a library's owner search it ("each player
@@ -30,7 +30,7 @@ from commanderblitz.engine.errors import DslError
 ASHIOK = "t_ashiok_lock"  # Spells and abilities your opponents control can't cause ...
 BEAR = "t_bear"
 
-#: Jace's −8, its search half, as the card writes it.
+#: Jace's -8, its search half, as the card writes it.
 SEARCH = {
     "op": "search_library",
     "player": "each_player",
