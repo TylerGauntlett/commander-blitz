@@ -1722,7 +1722,8 @@ def _candidate_abilities(state: GameState, event: GameEvent):
 
     subject = (
         event.data.get("oid")
-        if event.type in (EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.DISCARD)
+        if event.type
+        in (EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.SACRIFICED, EventType.DISCARD)
         or (
             event.type == EventType.PUT_INTO_GRAVEYARD
             and event.data.get("from_zone") == Zone.BATTLEFIELD.value
@@ -1749,6 +1750,20 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
+                    yield obj, ability
+                elif (
+                    event.type is EventType.SACRIFICED
+                    and ability.trigger.event == "sacrificed"
+                    and ability.trigger.source == "self"
+                ):
+                    # "When you sacrifice **this Aura**" (the Theros Ordeals).
+                    # A sacrifice is a leaves-the-battlefield event (603.6c), so
+                    # the permanent hears its own (603.10a) -- and only that:
+                    # destroyed or bounced it is not sacrificed, which is why
+                    # `dies` with `source: "self"` would be wider than printed.
+                    # Narrowed to `source: "self"`; a battlefield observer's
+                    # "whenever you sacrifice a permanent" hearing its own
+                    # sacrifice is a separate question, left as it was.
                     yield obj, ability
                 elif (
                     ability.trigger.event in LEAVE_TRIGGERS

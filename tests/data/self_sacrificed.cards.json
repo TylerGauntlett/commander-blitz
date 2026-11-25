@@ -1,0 +1,36 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_self_sacrificed_trigger.py. t_ss_ordeal is the Theros Ordeals' last line -- 'When you sacrifice this Aura, ...' -- on a plain enchantment, gaining 3 life so the test reads a life total.",
+  "cards": [
+    {
+      "id": "t_ss_ordeal",
+      "name": "Test Sacrificed Ordeal",
+      "oracle_text": "When you sacrifice this enchantment, you gain 3 life.",
+      "mana_cost": "{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you sacrifice this enchantment, you gain 3 life.",
+          "trigger": {
+            "event": "sacrificed",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

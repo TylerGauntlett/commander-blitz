@@ -194192,12 +194192,12 @@
     },
     "Ordeal of Nylea": {
       "edhrec_rank": 4128,
-      "gate": "template",
+      "gate": null,
       "name": "Ordeal of Nylea",
-      "reason": "no template for: Whenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or mo",
+      "reason": "",
       "scryfall_id": "1a70424d-86a7-44a3-acda-4463d7ac503b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ordeal of Purphoros": {
