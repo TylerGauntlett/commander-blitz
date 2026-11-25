@@ -14312,12 +14312,12 @@
     },
     "Ascendant Acolyte": {
       "edhrec_rank": 10804,
-      "gate": "template",
+      "gate": null,
       "name": "Ascendant Acolyte",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it for each +1/+1 counter among other creatur",
+      "reason": "",
       "scryfall_id": "918a9e38-29ec-4279-8cf6-f01141497cab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ascendant Dustspeaker": {
@@ -31062,12 +31062,12 @@
     },
     "Bonehoard": {
       "edhrec_rank": 5002,
-      "gate": "template",
+      "gate": null,
       "name": "Bonehoard",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "57c0258f-f464-4f52-b234-ba44a76d932a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bonehoard Dracosaur": {
@@ -51452,12 +51452,12 @@
     },
     "Concord with the Kami": {
       "edhrec_rank": 12563,
-      "gate": "template",
+      "gate": null,
       "name": "Concord with the Kami",
-      "reason": "no template for: At the beginning of your end step, choose one or more —",
+      "reason": "",
       "scryfall_id": "c3e38dec-178b-497a-bfbd-371905690a39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Concordant Crossroads": {
