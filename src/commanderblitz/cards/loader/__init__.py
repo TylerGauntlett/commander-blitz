@@ -139,6 +139,7 @@ from .vocabulary import (  # noqa: F401
     _FILTER_PLAYERS,
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
+    BLITZ_GRANT_FILTER_KEYS,
     BOAST_CONDITION,
     CAST_LOCK_FILTER_KEYS,
     CAST_ORIGIN_ZONES,
@@ -2234,10 +2235,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # A permanent spell becomes the permanent its cost's exiled cards
             # are linked to; an instant or sorcery becomes nothing.
             may_link=bool(set(model.types) & PERMANENT_TYPES),
+            # "Draw cards equal to **the sacrificed creature's** power" (Life's
+            # Legacy): `Game._cast` hands the payment a place to write the
+            # name and binds it on the stack item, so `spell_effects` read it.
+            binds_spell=True,
         )
         if model.additional_cost
         else None
     )
+    if (
+        additional_cost is not None
+        and model.additional_repeatable
+        and (additional_cost.sacrifice or {}).get("as")
+    ):
+        # A cost paid any number of times sacrifices one creature per payment,
+        # so no single creature is *the* sacrificed one.
+        raise DslError(
+            f"{where}.additional_cost.sacrifice.as: names *the* sacrificed "
+            f"permanent, and a repeatable additional cost sacrifices one per payment"
+        )
     additional_cost_options: tuple = ()
     if model.additional_cost_options:
         if model.additional_cost is not None:
@@ -2262,7 +2278,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'additional_repeatable' does not compose with 'additional_cost_options'"
             )
         additional_cost_options = tuple(
-            _compile_cost(option, f"{where}.additional_cost_options[{i}]")
+            _compile_cost(option, f"{where}.additional_cost_options[{i}]", binds_spell=True)
             for i, option in enumerate(model.additional_cost_options)
         )
     # Spree (702.166a): "Choose one or more additional costs." A *subset* of the
@@ -5676,6 +5692,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
+    elif model.effect == "lure":
+        # "All Walls able to block this creature do so": `blockers` narrows who
+        # owes the block, and is optional -- without it every creature does.
+        # The counting forms restrict a declaration and require nothing.
+        if model.require_all or model.max_blockers is not None or model.min_blockers is not None:
+            raise DslError(
+                f"{where}: lure takes only 'affects' and 'blockers'; "
+                f"'require_all'/'max_blockers'/'min_blockers' are block_restriction's"
+            )
+        if model.blockers is not None:
+            unknown = set(model.blockers) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}: lure 'blockers' may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
+            _check_owner_key(model.blockers, f"{where}.blockers")
     elif (
         model.blockers is not None
         or model.require_all
@@ -5684,7 +5717,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     ):
         raise DslError(
             f"{where}: 'blockers'/'require_all'/'max_blockers'/'min_blockers' only mean "
-            f"anything on a block_restriction static, not on {model.effect!r}"
+            f"anything on a block_restriction static ('blockers' also on lure), "
+            f"not on {model.effect!r}"
         )
     if model.effect == "can_block_only":
         # Without a filter the static says "can block only creatures", which
@@ -6144,6 +6178,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.warp_cost).x_count:
             raise DslError(f"{where}: a warp cost with X is not implemented")
+    elif model.effect == "grant_blitz":
+        # "Each creature spell you cast with mana value 4 or greater has blitz.
+        # The blitz cost is equal to its mana cost." Henzie "Toolbox" Torre.
+        # `grant_warp`'s guards, less the price -- the grant prices each spell
+        # at its own mana cost, so there is nothing to write -- and with the
+        # literal `mana_value` comparison the printed filter needs. A grant
+        # with no filter is blitz on every spell in the game.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_blitz filters spells with 'affects_spells', "
+                f"not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(
+                f"{where}: grant_blitz needs 'affects_spells' naming which spells "
+                f"have blitz -- without one every spell in the game has it"
+            )
+        unknown = set(model.affects_spells) - BLITZ_GRANT_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and a caster and no board state; unsupported keys {sorted(unknown)}"
+            )
+        check_literal_mana_value_key(model.affects_spells, f"{where}.affects_spells")
+        if "Creature" not in (model.affects_spells.get("types") or ()):
+            # 702.152a's riders are a creature's -- haste, "when this creature
+            # dies", a sacrifice -- and no printing grants blitz to anything
+            # else. A noncreature spell would load and blitz for its own cost.
+            raise DslError(
+                f"{where}: grant_blitz's 'affects_spells' must name "
+                f"types ['Creature'] -- blitz's riders are a creature's"
+            )
     elif model.effect == "grant_miracle":
         # `grant_warp`'s guards for its reasons: no filter is miracle on every
         # card in every hand rather than the printed "nonland cards", and no
@@ -7244,6 +7310,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: plot_cost_reduction takes 'affects_player', 'amount' "
                 f"and an optional 'condition', and no 'affects'"
+            )
+    if model.effect == "blitz_cost_reduction":
+        # "Blitz costs you pay cost {1} less for each time you've cast your
+        # commander from the command zone this game." `plot_cost_reduction`'s
+        # guards, for its reasons: without the number nothing is discounted, a
+        # constant under 1 is a tax the clamp rounds away, and a permanent
+        # filter has nothing to mean on a price.
+        if model.amount is None:
+            raise DslError(
+                f"{where}: blitz_cost_reduction needs an 'amount' -- how much "
+                f"less generic mana a blitz cost costs"
+            )
+        size = model.amount.get("const") if isinstance(model.amount, dict) else model.amount
+        if isinstance(size, int) and size < 1:
+            raise DslError(
+                f"{where}.amount: a blitz cost reduction is 1 or more, got {size!r}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: blitz_cost_reduction takes 'affects_player', 'amount' "
+                f"and an optional 'condition' -- the cost being paid is the filter"
             )
     if model.effect == "maximum_hand_size":
         # "Your maximum hand size is twenty." Without the number `_static_value`

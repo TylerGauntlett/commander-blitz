@@ -130,8 +130,41 @@ def _compile_targets(
         # declared by a pick that asks the objects one toggle at a time, and
         # `optional`'s "exactly N, or none" is not a size any such card prints,
         # so both are refused rather than left unchecked.
+        # "For each player, put a contested counter on target land that player
+        # controls" (Turf War) is `count: "each"`: one pick from every seat
+        # with a candidate, a size the board sets and the caster cannot shade.
+        # `stack._choose_each_target` asks it seat by seat as a triggered or
+        # reflexive ability goes on the stack (603.3d); a spell's or an
+        # activated ability's targets are whole tuples in legality, cut at
+        # `targeting.MAX_TARGET_OPTIONS`, where most of a pod's lands could
+        # never be chosen -- so it is refused there rather than offered short.
+        if spec.count == "each":
+            if not spec.one_per_player:
+                raise DslError(
+                    f"{where}.target[{spec.id}]: 'count': 'each' is \"for each "
+                    f"player, target … that player controls\" -- it needs "
+                    f"'one_per_player': true"
+                )
+            if spec.up_to or spec.optional or spec.min_count:
+                raise DslError(
+                    f"{where}.target[{spec.id}]: 'count': 'each' is exactly one "
+                    f"from every seat with a candidate -- it takes no 'up_to', "
+                    f"'optional' or 'min_count' (\"up to one … that player "
+                    f"controls\" is 'count': 'any')"
+                )
+            if not (on_trigger or on_reflexive):
+                raise DslError(
+                    f"{where}.target[{spec.id}]: 'count': 'each' is a triggered "
+                    f"or reflexive ability's target -- nothing else asks it seat "
+                    f"by seat"
+                )
+            if len(specs) != 1 or spec.mode is not None:
+                raise DslError(
+                    f"{where}.target[{spec.id}]: a 'count': 'each' target must be "
+                    f"the ability's only target, owned by no mode"
+                )
         if spec.one_per_player and not (
-            spec.count == "any"
+            spec.count in ("any", "each")
             or spec.up_to
             or (isinstance(spec.count, int) and spec.count >= 2 and not spec.optional)
         ):
@@ -935,6 +968,13 @@ def _compile_target(
         )
     else:
         validate_selector(model.selector, label)
+    if "one_of_each_card_type" in model.selector:
+        # Staged by `pick_from_pool` on resolution; a declared target is chosen
+        # by `targeting` on the cast line, which never reads it.
+        raise DslError(
+            f"{label}: 'one_of_each_card_type' constrains a choice made on "
+            f"resolution and means nothing on a declared target"
+        )
     controller_clause = model.selector.get("controller")
     if (
         # `"any"` is a *target* word, not a player spec: `_player_allowed`

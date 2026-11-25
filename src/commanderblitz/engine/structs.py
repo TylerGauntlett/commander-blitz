@@ -1781,6 +1781,11 @@ class StackItem:
     #: cast from exile on a later turn, and no warp card prints a sentence
     #: saying so. See `_place_after_resolution`.
     warped: bool = False
+    #: Cast for a **granted** blitz cost (702.152a, `Action.blitzed`).
+    #: `warped`'s kind of flag -- every rider is the rule's, because the card
+    #: that has blitz this way prints none of them -- and read at the same
+    #: moment, in `_place_after_resolution`. A printed blitz is `evoked`.
+    blitzed: bool = False
     #: Cast for its **impending** cost (702.176a). `warped`'s kind of flag --
     #: every rider is the rule's -- and read at the same moment: copied onto
     #: the object as `cast_impending` just before the permanent enters, so the

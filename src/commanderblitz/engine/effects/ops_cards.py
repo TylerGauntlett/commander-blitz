@@ -44,6 +44,7 @@ from .context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_n
 from .registry import register
 from .selectors import (
     ZONE_NAMES,
+    arrival_controller,
     choose_objects,
     matches,
     named_hosts,
@@ -1417,6 +1418,14 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     """Return cards from a graveyard to a hand, a library or the battlefield.
 
+    ``controller`` on a return to the battlefield is whose control the card
+    enters under (110.2): ``"you"``, ``"owner"`` (the default), or a player spec
+    naming the one seat who puts it there -- The Beamtown Bullies' "target
+    opponent … puts target creature card from your graveyard onto the
+    battlefield under their control", ``{"target": "t1"}``. Every arrival
+    question below is that seat's, and nothing moves when it names nobody; see
+    `selectors.arrival_controller`.
+
     ``face_down`` puts a card onto the battlefield **face down** (708.2):
     ``true`` is "return it to the battlefield face down" (Ashcloud Phoenix),
     and ``"choose"`` is "face up or face down", the card's new controller
@@ -1481,7 +1490,9 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
         if destination is Zone.BATTLEFIELD:
             # Same reason as op_search_library: the battlefield is one global
             # list, so nothing else sets controller. Mirrors put_onto_battlefield.
-            controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+            controller = arrival_controller(ctx, spec, obj.owner)
+            if controller is None:
+                continue
             if face_down == "choose":
                 picked = yield from ask_mode(
                     ctx,

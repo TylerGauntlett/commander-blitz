@@ -15,7 +15,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Cost
-from .characteristics import block_restrictions, chars, matches_static, protected_from
+from .characteristics import block_restrictions, chars, lures, matches_static, protected_from
 from .costs import can_pay
 from .effects.context import EffectContext, ask_objects, ask_yes_no
 from .enums import LANDWALK_SUBTYPE, Keyword
@@ -48,7 +48,13 @@ from .temp_effects import clear_attack_restrictions, damage_redirect
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Mapping
+
+    from .objects import GameObject
     from .state import GameState
+
+    #: Each attacker under a `lure` static, with the ``(source, static)`` of each.
+    Lured = dict[int, list[tuple[GameObject, Mapping[str, Any]]]]
 
 
 @dataclass(frozen=True)
@@ -335,7 +341,7 @@ def discharge_attack_requirements(state: GameState) -> None:
 
 
 def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
-    """Creatures of ``defender`` that must block something and are not.
+    """Creatures of ``defender`` that obey fewer block requirements than they could.
 
     The mirror of :func:`unmet_attack_requirements`, and "…if able" is the same
     whole second half: a requirement never makes an illegal block legal, so a
@@ -344,39 +350,136 @@ def unmet_block_requirements(state: GameState, defender: int) -> list[int]:
     untaps its victim precisely because a tapped creature would otherwise be
     excused.
 
-    A creature blocking *something else* has still not met this requirement:
-    the obligation names one attacker, and rule 509.1c requires the declaration
-    to satisfy the maximum number of requirements it can.
-
-    The second kind, "blocks this turn if able" (`must_block_any`), names no
-    attacker, so any block meets it; see :func:`block_any_required`. One
-    creature can carry both, and blocking the named attacker meets both, which
-    is why `legal_blocks` narrowing a provoked creature to its attacker never
-    costs the other requirement anything.
+    Three kinds bind one creature, and rule 509.1c asks the declaration to obey
+    as many of them as it can, so they are counted rather than checked one by
+    one (:func:`_block_scores`): provoke (`must_block`) names one attacker for
+    one combat; a lure (the `lure` static, Treeshaker Chimera's "all creatures
+    able to block this creature do so") names its own attacker, live, once per
+    static; and "blocks this turn if able" (`must_block_any`, the
+    `blocks_if_able` static) names no attacker, so any block meets it -- see
+    :func:`block_any_required`. A creature blocking *something else* has not
+    met a requirement naming another attacker, and one torn between two lures
+    obeys one of them whichever it blocks.
     """
     combat = state.combat
     if combat is None:
         return []
+    lured = _lures_in_combat(state)
     unmet: list[int] = []
     for oid in state.battlefield:
-        if block_any_required(state, oid, defender) and not _is_blocking(state, oid):
-            unmet.append(oid)
-            continue
         obj = state.objects.get(oid)
-        if obj is None or obj.must_block is None or obj.controller != defender:
+        if obj is None or obj.controller != defender:
             continue
-        attacker = obj.must_block
-        if attacker not in combat.attackers or attacker in combat.removed:
-            continue
-        if combat.blockers.get(oid) == attacker:
-            continue
-        if not can_block(state, oid, attacker, defender, ignore_existing=True):
-            continue
-        # 509.1c: nobody is required to pay a block tax to obey a requirement.
-        if block_taxed(state, oid):
-            continue
-        unmet.append(oid)
+        scores = _block_scores(state, oid, defender, lured)
+        best = max(scores.values(), default=0)
+        if best and _obeyed(state, oid, lured) < best:
+            unmet.append(oid)
     return unmet
+
+
+def _lures_in_combat(state: GameState) -> Lured:
+    """Each attacker under a `lure` static, with the ``(source, static)`` of each.
+
+    Read once per question rather than once per blocker: `characteristics.lures`
+    walks every static on the battlefield.
+    """
+    combat = state.combat
+    out: Lured = {}
+    if combat is None:
+        return out
+    for attacker in combat.attackers:
+        if attacker in combat.removed:
+            continue
+        if found := lures(state, attacker):
+            out[attacker] = found
+    return out
+
+
+def _lure_count(state: GameState, blocker_oid: int, attacker: int, lured: Lured) -> int:
+    """How many lures on ``attacker`` bind this would-be blocker.
+
+    A lure with no ``blockers`` binds every creature; one with a filter binds
+    those it matches on their derived characteristics, as a
+    `block_restriction`'s ``blockers`` does.
+    """
+    blocker = state.objects.get(blocker_oid)
+    if blocker is None:
+        return 0
+    n = 0
+    for source_obj, static in lured.get(attacker, ()):
+        spec = static.get("blockers")
+        # `controller` defaults to "you" in a static filter, which a blocker
+        # never is -- the same default `blockers_filter_refuses` overrides.
+        if spec is None or matches_static(
+            state, blocker, source_obj, {"controller": "any", **dict(spec)}, derived=True
+        ):
+            n += 1
+    return n
+
+
+def _block_scores(state: GameState, oid: int, defender: int, lured: Lured) -> dict[int, int]:
+    """For each attacker this creature is able to block, the requirements blocking it obeys.
+
+    Only attackers where at least one requirement is both owed and able to be
+    obeyed are listed (509.1c's "if able"): no block tax owed, `can_block` with
+    ``ignore_existing``, and for a lure or a nameless requirement the menace
+    exception of :func:`_able_to_obey`. An empty map is a creature that owes
+    nothing.
+    """
+    obj = state.objects.get(oid)
+    combat = state.combat
+    if obj is None or combat is None or obj.controller != defender:
+        return {}
+    # 509.1c: nobody is required to pay a block tax to obey a requirement.
+    if block_taxed(state, oid):
+        return {}
+    nameless = obj.must_block_any_turn == state.turn or block_compelled(state, oid)
+    provoker = _required_block(state, oid, defender)
+    scores: dict[int, int] = {}
+    for attacker in combat.attackers:
+        if attacker in combat.removed:
+            continue
+        score = 1 if attacker == provoker else 0
+        if (nameless or attacker in lured) and _able_to_obey(state, oid, attacker, defender):
+            score += int(nameless) + _lure_count(state, oid, attacker, lured)
+        if score:
+            scores[attacker] = score
+    return scores
+
+
+def _obeyed(state: GameState, oid: int, lured: Lured) -> int:
+    """How many of its block requirements this creature's declared block obeys."""
+    combat = state.combat
+    if combat is None or not _is_blocking(state, oid):
+        return 0
+    obj = state.objects[oid]
+    attacker = combat.blockers[oid]
+    nameless = obj.must_block_any_turn == state.turn or block_compelled(state, oid)
+    return (
+        int(nameless)
+        + int(obj.must_block == attacker)
+        + _lure_count(state, oid, attacker, lured)
+    )
+
+
+def _able_to_obey(state: GameState, oid: int, attacker: int, defender: int) -> bool:
+    """Could this creature block ``attacker`` in a legal declaration?
+
+    `can_block` with ``ignore_existing``. A minimum number of blockers
+    (menace's two, a `min_blockers` restriction's N) is the one
+    declaration-wide restriction that can make a per-pair "able" a lie -- a
+    creature alone cannot block a menacing attacker, and `drop_illegal_blocks`
+    would retract that block -- so such an attacker counts only when enough
+    other creatures of the same player could block it beside this one.
+    """
+    if not can_block(state, oid, attacker, defender, ignore_existing=True):
+        return False
+    needed = min_blockers(state, attacker)
+    return needed <= 1 or sum(
+        1
+        for other in state.battlefield
+        if other != oid and can_block(state, other, attacker, defender, ignore_existing=True)
+    ) >= needed - 1
 
 
 def block_any_required(state: GameState, oid: int, defender: int) -> bool:
@@ -391,13 +494,7 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
     continuously, read live by `player_statics.block_compelled`.
 
     "…if able" is asked per attacker, as the named requirement asks it:
-    `can_block` with ``ignore_existing``, and no block tax owed (509.1c).
-    A minimum number of blockers (menace's two, a `min_blockers` restriction's
-    N) is the one declaration-wide restriction that can make a per-pair "able"
-    a lie -- a creature alone cannot block a menacing attacker, and
-    `drop_illegal_blocks` would retract that block -- so such an attacker
-    counts only when enough other creatures of the same player could block it
-    beside this one.
+    :func:`_able_to_obey`, and no block tax owed (509.1c).
     """
     obj = state.objects.get(oid)
     if obj is None or obj.controller != defender:
@@ -409,20 +506,10 @@ def block_any_required(state: GameState, oid: int, defender: int) -> bool:
     combat = state.combat
     if combat is None or block_taxed(state, oid):
         return False
-    for attacker in combat.attackers:
-        if attacker in combat.removed:
-            continue
-        if not can_block(state, oid, attacker, defender, ignore_existing=True):
-            continue
-        needed = min_blockers(state, attacker)
-        if needed > 1 and sum(
-            1
-            for other in state.battlefield
-            if other != oid and can_block(state, other, attacker, defender, ignore_existing=True)
-        ) < needed - 1:
-            continue
-        return True
-    return False
+    return any(
+        attacker not in combat.removed and _able_to_obey(state, oid, attacker, defender)
+        for attacker in combat.attackers
+    )
 
 
 def _is_blocking(state: GameState, oid: int) -> bool:
@@ -1366,6 +1453,7 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
     combat = state.combat
     if combat is None:
         return []
+    lured = _lures_in_combat(state)
     out: list[tuple[int, int]] = []
     for blocker_oid in state.battlefield:
         # A block requirement has to narrow what is *offered*, not merely what
@@ -1377,13 +1465,37 @@ def legal_blocks(state: GameState, defender: int) -> list[tuple[int, int]]:
         # no way back, `legal_blocks` then offers nothing, and the deadlock
         # escape in `legality._blocker_actions` hands out "Done blocking"
         # anyway -- so the requirement would be evadable by ignoring it early.
-        required = _required_block(state, blocker_oid, defender)
+        # A lure is the same trap: a creature that blocks another attacker
+        # first could never be brought back to the one luring it. So a
+        # creature owing a named block -- provoke or a lure -- is offered only
+        # the attackers that obey the most of its requirements (509.1c).
+        required = _named_blocks(state, blocker_oid, defender, lured)
         for attacker_oid in sorted(combat.attackers):
-            if required is not None and attacker_oid != required:
+            if required is not None and attacker_oid not in required:
                 continue
             if can_block(state, blocker_oid, attacker_oid, defender):
                 out.append((blocker_oid, attacker_oid))
     return out
+
+
+def _named_blocks(
+    state: GameState, blocker_oid: int, defender: int, lured: Lured
+) -> set[int] | None:
+    """The attackers this creature may be offered, when it owes a named block.
+
+    ``None`` for a creature owing none -- nothing to narrow, and a nameless
+    "blocks if able" is met by any block, so it narrows nothing either.
+    """
+    scores = _block_scores(state, blocker_oid, defender, lured)
+    if not scores:
+        return None
+    if _required_block(state, blocker_oid, defender) is None and not any(
+        attacker in lured and _lure_count(state, blocker_oid, attacker, lured)
+        for attacker in scores
+    ):
+        return None
+    best = max(scores.values())
+    return {attacker for attacker, score in scores.items() if score == best}
 
 
 def _required_block(state: GameState, blocker_oid: int, defender: int) -> int | None:

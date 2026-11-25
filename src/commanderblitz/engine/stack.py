@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 from .actions import DecisionOption, PendingDecision
 from .carddef import (
     BESTOW_TARGET,
+    BLITZ_DIES_DRAW,
     MUTATE_TARGET,
     Ability,
     CardDef,
@@ -45,13 +46,21 @@ from .effects.selectors import select_players
 from .effects.values import evaluate_value
 from .enums import DecisionKind, Step, Zone
 from .events import EventType
-from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
+from .primitives import (
+    attach,
+    attach_to_player,
+    grant_ability,
+    grant_keyword,
+    merge_permanents,
+    shuffle_library,
+)
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
 from .targeting import (
     describe_ref,
     enumerate_target_tuples,
     filter_legal,
     kicked_targets,
+    seat_groups,
     selectable_modes,
     target_count,
 )
@@ -82,6 +91,7 @@ def push_spell(
     gift_to: int | None = None,
     evoked: bool = False,
     warped: bool = False,
+    blitzed: bool = False,
     impending: bool = False,
     flashback: bool = False,
     granted_escape: bool = False,
@@ -178,6 +188,7 @@ def push_spell(
         gift_to=gift_to,
         evoked=evoked,
         warped=warped,
+        blitzed=blitzed,
         impending=impending,
         fused=fused,
         bestowed=bestowed,
@@ -672,12 +683,16 @@ def _choose_each_target(
     A spec with a cross-target rule (one per player, a total mana value or
     power -- `TargetSpec.constrains_the_set`) keeps the subset enumeration, which is the only thing that can check it. So does
     ``optional`` with a count above one -- "exactly N, or none" forbids the
-    sizes in between, and a min/max pick cannot say that.
+    sizes in between, and a min/max pick cannot say that. "For each player,
+    target … that player controls" (``count: "each"``) is asked seat by seat
+    instead, by `_ask_one_from_each_seat`.
     """
 
     if len(specs) != 1:
         return None
     spec = specs[0]
+    if spec.count == "each":
+        return (yield from _ask_one_from_each_seat(state, trig, spec))
     if spec.constrains_the_set:
         return None
     count = target_count(state, trig.controller, spec, trig.source_oid, bindings=trig.bindings)
@@ -724,6 +739,64 @@ def _choose_each_target(
         extra=_chosen_for(trig, chooser),
     )
     return tuple(chosen)
+
+
+def _ask_one_from_each_seat(
+    state: GameState, trig: TriggerInstance, spec: TargetSpec
+) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+    """"**For each player**, put a contested counter on target land that
+    player controls" -- Turf War, ``one_per_player`` with ``count: "each"``.
+
+    One pick per seat that controls a candidate, asked seat by seat over that
+    seat's whole pool, starting with the controller's own and going round the
+    table in turn order -- the declaration 601.2c makes, as a list of
+    questions rather than as `targeting._one_from_each_seat`'s product of
+    tuples, which a pod's worth of lands would cut to a few the controller
+    did not want. Exactly one each: ``ask_targets`` with a floor and ceiling of
+    one, so no seat is skipped and none gives two; a seat with one candidate is
+    not asked at all, and a seat with none is owed nothing.
+    """
+    single = replace(spec, count=1, one_per_player=False)
+    found = [
+        combo[0]
+        for combo in enumerate_target_tuples(
+            state, trig.controller, [single], trig.source_oid, bindings=trig.bindings,
+            limit=10_000,
+        )
+        if combo
+    ]
+    if not found:
+        return ()
+    chooser = target_chooser(state, trig, (spec,))
+    if chooser is None:
+        return ()
+    order = {pid: i for i, pid in enumerate(state.turn_order(trig.controller))}
+
+    def seat_of(pool: list[TargetRef]) -> int | None:
+        obj = state.objects.get(pool[0].id)
+        return None if obj is None else obj.controller
+
+    pools = sorted(
+        seat_groups(state, found),
+        key=lambda pool: order.get(seat_of(pool), len(order)),  # type: ignore[arg-type]
+    )
+    ctx = EffectContext(state=state, controller=trig.controller, source_oid=trig.source_oid)
+    what = f"Choose targets for {trig.description}" if trig.description else "Choose targets"
+    picked: list[TargetRef] = []
+    for pool in pools:
+        seat = seat_of(pool)
+        whose = "?" if seat is None else state.players[seat].name or f"p{seat}"
+        chosen = yield from ask_targets(
+            ctx,
+            f"{what}: one that {whose} controls",
+            [(describe_ref(state, ref), ref) for ref in pool],
+            1,
+            1,
+            chooser,
+            extra=_chosen_for(trig, chooser),
+        )
+        picked.extend(chosen or pool[:1])
+    return tuple(picked)
 
 
 def target_chooser(
@@ -1175,6 +1248,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         card,
         enters_tapped=item.enters_tapped,
         warped=item.warped,
+        blitzed=item.blitzed,
         exiles_instead=item.exiles_instead,
         flashback=item.flashback,
     )
@@ -1228,6 +1302,7 @@ def _place_after_resolution(
     *,
     enters_tapped: bool = False,
     warped: bool = False,
+    blitzed: bool = False,
     exiles_instead: bool = False,
     flashback: bool = False,
 ):
@@ -1516,6 +1591,42 @@ def _place_after_resolution(
                 bindings={"warped": [obj.oid]},
                 source_oid=obj.oid,
                 description=f"Warp ({card.name})",
+                turn=state.turn,
+            )
+        )
+    if blitzed and destination is Zone.BATTLEFIELD:
+        # A **granted** blitz's three riders (702.152a), and like warp's they
+        # are the rule's: the card has blitz only because something else said
+        # so (Henzie "Toolbox" Torre), so it prints none of them. A printed
+        # blitz writes the same three on its own `evoked` enters trigger, and
+        # a card with both is two lines (`casting._cast_options`), each paying
+        # for one set -- never both.
+        #
+        # "It gains haste and 'When this creature dies, draw a card.'" -- gains
+        # for as long as it is this object, after the move for `rebound_by`'s
+        # reason (`reset_permanent_state` would wipe a grant made first). The
+        # draw is the rules' ability (`carddef.BLITZ_DIES_DRAW`), granted the
+        # way a printed one is, so the creature has it and can lose it.
+        grant_keyword(state, obj.oid, "haste", obj.oid, permanent=True)
+        grant_ability(state, obj.oid, BLITZ_DIES_DRAW.index, obj.oid, permanent=True)
+        # "Sacrifice it at the beginning of the next end step." Warp's delay,
+        # scoped through a binding and to the battlefield for warp's reasons:
+        # it names this permanent, and one that already died is not chased.
+        # The sacrifice is the caster's (`controller: "you"`), so a creature
+        # stolen before the end step is not sacrificed by them (701.17a).
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="end_step",
+                controller=controller,
+                effects=(
+                    {
+                        "op": "sacrifice",
+                        "objects": {"binding": "blitzed", "zone": "battlefield"},
+                    },
+                ),
+                bindings={"blitzed": [obj.oid]},
+                source_oid=obj.oid,
+                description=f"Blitz ({card.name})",
                 turn=state.turn,
             )
         )

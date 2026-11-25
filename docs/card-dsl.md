@@ -356,10 +356,13 @@ The pick and the arrival are separate questions: the chooser above already
 hands the pick to "you", and without `controller` the picked card still enters
 under its owner — Lonis would sacrifice its Clues to give the opponent a free
 permanent. The library's player stays the owner, and "the rest" goes back to
-that library. It is the spelling `reveal_until`, `put_onto_battlefield` and
-`return_from_graveyard` use. The loader admits only `"you"`, and only beside a
-battlefield arrival — `destination: "battlefield"` or a `destinations` step
-`to` it — never with `cast_free`.
+that library. It is the key `reveal_until`, `put_onto_battlefield` and
+`return_from_graveyard` read. Here the loader admits only `"you"`, and only
+beside a battlefield arrival — `destination: "battlefield"` or a `destinations`
+step `to` it — never with `cast_free`; `put_onto_battlefield` and
+`return_from_graveyard` also take a player spec naming the one seat who puts
+the card there ([under another player's
+control](card-dsl-cookbook.md#put-onto-the-battlefield-under-another-players-control)).
 
 `counters` and `counters_if` are a card put onto the battlefield **with**
 counters — Turntimber Symbiosis' "If that card has mana value 3 or less, it
@@ -1761,6 +1764,23 @@ picks, it is refused on a mode-owned or random target. The near misses: without
 it the picks may come from two graveyards; a sibling `player` target with
 `controller: {"target": …}` adds an unprinted "target player" that hexproof
 stops; a fixed `controller` drops every other graveyard.
+
+### "For each player, target … that player controls" -- `count: "each"`
+
+```jsonc
+// Turf War: "When this enchantment enters, for each player, put a contested
+// counter on target land that player controls."
+{ "id": "t1", "kind": "permanent", "count": "each", "one_per_player": true,
+  "selector": { "zone": "battlefield", "types": ["Land"], "controller": "any" } }
+```
+
+`count: "each"` beside `one_per_player` is a size the board sets: exactly one
+target from every player who controls a candidate, the controller's own seat
+included, none from a player with none (601.2c). A triggered or reflexive
+ability's only target, asked seat by seat as it goes on the stack; the loader
+refuses it anywhere else, without `one_per_player`, and beside `up_to`,
+`optional` or `min_count`. The worked mechanic and its near misses are in the
+cookbook's "For each player, up to one target permanent that player controls".
 
 ### "Each of X targets"
 
@@ -6172,10 +6192,27 @@ writes — so counters, anthems and pumps on the creature count, and a sacrifice
 token, which no longer exists once it has left, still has a power.
 
 `as` names *the* sacrificed permanent, so the loader refuses it beside a `count`
-above 1, and anywhere but an activated ability's cost: an additional cost to
-cast and a ward or tax price have no effects that receive what the cost named,
-so the name would bind nothing and read 0. A mana ability's `amount` reads it
-(Illuminor Szeras; see the cookbook's "Add {G} for each …").
+above 1, and anywhere but an activated ability's cost and a spell's
+`additional_cost` (or one of its `additional_cost_options`): a ward or tax
+price, an alternative or graveyard cost have no effects that receive what the
+cost named, so the name would bind nothing and read 0. A mana ability's
+`amount` reads it (Illuminor Szeras; see the cookbook's "Add {G} for each …").
+
+On a spell's additional cost the name is bound on the spell's stack item, so
+its `spell_effects` read it on resolution and a copy of the spell reads the
+same creature (707.10):
+
+```jsonc
+{ "id": "life_s_legacy",
+  "additional_cost": { "sacrifice": { "types": ["Creature"], "as": "sacrificed" } },
+  "spell_effects": [ { "op": "draw",
+                       "amount": { "power_of": { "binding": "sacrificed" } } } ] }
+```
+
+An optional additional cost that was declined binds nothing, and the read is 0.
+The loader refuses the name beside `additional_repeatable`: a cost paid any
+number of times sacrifices one permanent per payment, and none of them is *the*
+sacrificed one.
 
 Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to

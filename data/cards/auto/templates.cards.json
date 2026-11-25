@@ -3549,6 +3549,42 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "aether_snap",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Aether Snap",
+      "oracle_text": "Remove all counters from all permanents and exile all tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "all_kinds": true,
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "zone": "battlefield"
+          },
+          "op": "remove_counters"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "is_token": true,
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -28334,6 +28370,76 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "effects": [],
+                  "else": [
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "sacrifice": {
+                      "controller": "you",
+                      "count": 1,
+                      "is_token": false,
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Sacrifice a nontoken creature? (Otherwise you lose 4 life.)"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each player loses 4 life unless they sacrifice a nontoken creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bellowing_mauler",
+      "mana_cost": "{4}{B}",
+      "name": "Bellowing Mauler",
+      "oracle_text": "At the beginning of your end step, each player loses 4 life unless they sacrifice a nontoken creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 3
               },
@@ -44002,6 +44108,118 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              }
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "evoke": "{2}{G}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "caldaia_guardian",
+      "mana_cost": "{3}{G}",
+      "name": "Caldaia Guardian",
+      "oracle_text": "Whenever this creature or another creature you control with mana value 4 or greater dies, create two 1/1 green and white Citizen creature tokens.\nBlitz {2}{G} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -74367,6 +74585,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if you cast it from your hand and there are five or more other creatures on the battlefield, destroy all other creatures.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cast_from_hand": true
+                },
+                {
+                  "cmp": ">=",
+                  "left": {
+                    "count": {
+                      "controller": "any",
+                      "exclude_self": true,
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "right": {
+                    "const": 5
+                  }
+                }
+              ]
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "deathbringer_regent",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Deathbringer Regent",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it from your hand and there are five or more other creatures on the battlefield, destroy all other creatures.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -82357,6 +82646,125 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "text": "Dodgy Jalopy's power is equal to the greatest mana value among creatures you control.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Scavenge {2}{G} ({2}{G}, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "dodgy_jalopy",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Dodgy Jalopy",
+      "oracle_text": "Trample\nDodgy Jalopy's power is equal to the greatest mana value among creatures you control.\nCrew 3\nScavenge {2}{G} ({2}{G}, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -99412,6 +99820,52 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "evolutionary_leap",
+      "mana_cost": "{1}{G}",
+      "name": "Evolutionary Leap",
+      "oracle_text": "{G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -108686,6 +109140,89 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "responder_choice",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "exclude_self": true,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose another creature you control to return"
+                },
+                {
+                  "as": "responder_lki",
+                  "objects": {
+                    "binding": "responder_choice"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "responder_choice"
+                  },
+                  "op": "return_to_hand"
+                },
+                {
+                  "amount": {
+                    "power_of": {
+                      "binding": "responder_lki"
+                    }
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return another creature you control to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "first_responder",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "First Responder",
+      "oracle_text": "Vigilance\nAt the beginning of your end step, you may return another creature you control to its owner's hand, then put a number of +1/+1 counters equal to that creature's power on this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -133096,6 +133633,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "gorged",
+              "objects": {
+                "count": "any",
+                "one_of_each_card_type": true,
+                "player": {
+                  "binding": "defender"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "gorged"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "grime_gorger",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{G}",
+      "name": "Grime Gorger",
+      "oracle_text": "Menace\nWhenever this creature attacks, exile up to one card of each card type from defending player's graveyard. Put a +1/+1 counter on this creature for each card exiled this way.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "discard": 1,
             "mana": "{1}",
@@ -141071,6 +141671,61 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "mana_value": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_blitz",
+          "kind": "static",
+          "text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)"
+        },
+        {
+          "affects_player": "you",
+          "amount": {
+            "commander_casts_this_game": "you"
+          },
+          "effect": "blitz_cost_reduction",
+          "kind": "static",
+          "text": "Blitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "henzie_toolbox_torre",
+      "mana_cost": "{B}{R}{G}",
+      "name": "Henzie \"Toolbox\" Torre",
+      "oracle_text": "Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equal to its mana cost. (You may choose to cast that spell for its blitz cost. If you do, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)\nBlitz costs you pay cost {1} less for each time you've cast your commander from the command zone this game.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Devil",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -151500,6 +152155,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target artifact or enchantment.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "indrik_stomphowler",
+      "mana_cost": "{4}{G}",
+      "name": "Indrik Stomphowler",
+      "oracle_text": "When this creature enters, destroy target artifact or enchantment.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -151714,6 +152421,80 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice",
+                  "snapshot": "sacrificed"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "binding": "sacrificed"
+                    }
+                  },
+                  "destination": "battlefield",
+                  "objects": {
+                    "count": 1,
+                    "optional": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "look_at_top",
+                  "player": "you",
+                  "rest_to_bottom": true
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Sacrifice a creature to look at the top X cards of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "industrial_advancement",
+      "mana_cost": "{3}{R}",
+      "name": "Industrial Advancement",
+      "oracle_text": "At the beginning of your end step, you may sacrifice a creature. If you do, look at the top X cards of your library, where X is that creature's mana value. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -159480,6 +160261,102 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player attacks one or more of your opponents, that attacking player creates a Treasure token.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "opponent",
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "any",
+            "event": "you_attack",
+            "recheck": false
+          }
+        },
+        {
+          "affects_token": {
+            "subtypes": [
+              "Treasure"
+            ]
+          },
+          "and_create": [
+            "treasure_token"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If you would create one or more Treasure tokens, instead create those tokens plus an additional Treasure token."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 5,
+              "subtypes": [
+                "Treasure"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice five Treasures: Put five +1/+1 counters on Jolene."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "jolene_the_plunder_queen",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Jolene, the Plunder Queen",
+      "oracle_text": "Whenever a player attacks one or more of your opponents, that attacking player creates a Treasure token.\nIf you would create one or more Treasure tokens, instead create those tokens plus an additional Treasure token.\nSacrifice five Treasures: Put five +1/+1 counters on Jolene.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -171638,6 +172515,67 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "power_had": true
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put +1/+1 counters on Kresh?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that creature's power.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "kresh_the_bloodbraided",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Kresh the Bloodbraided",
+      "oracle_text": "Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that creature's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "not": {
                   "has_turn_flag": "krile_trace_aether"
@@ -176815,6 +177753,40 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "additional_cost": {
+        "sacrifice": {
+          "as": "sacrificed",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "life_s_legacy",
+      "mana_cost": "{1}{G}",
+      "name": "Life's Legacy",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw cards equal to the sacrificed creature's power.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "binding": "sacrificed"
+            }
+          },
+          "op": "draw"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -195419,6 +196391,116 @@
               "amount": {
                 "const": 1
               },
+              "any_color": true,
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "this_turn",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, exile the top card of each player's library. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {2}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": "{2}{R}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "mezzio_mugger",
+      "mana_cost": "{4}{R}",
+      "name": "Mezzio Mugger",
+      "oracle_text": "Whenever this creature attacks, exile the top card of each player's library. You may play those cards this turn, and you may spend mana as though it were mana of any color to cast those spells.\nBlitz {2}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Lizard",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "as": "soldier",
               "controller": "you",
               "op": "create_token",
@@ -199259,6 +200341,88 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "oozes",
+              "controller": "you",
+              "op": "create_token",
+              "power": {
+                "const": 2
+              },
+              "token": "ooze_x_x_g",
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "binding": "oozes"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this token dies, create two 1/1 green Ooze creature tokens.\"",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "power": {
+                "const": 1
+              },
+              "token": "ooze_x_x_g",
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this token dies, create two 1/1 green Ooze creature tokens.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "mitotic_slime",
+      "mana_cost": "{4}{G}",
+      "name": "Mitotic Slime",
+      "oracle_text": "When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this token dies, create two 1/1 green Ooze creature tokens.\"",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -210159,6 +211323,144 @@
           "selector": {
             "types": [
               "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "next_of_kin_put",
+                  "controller": "you",
+                  "objects": {
+                    "chooser": "you",
+                    "count": 1,
+                    "union": [
+                      {
+                        "controller": "you",
+                        "mana_value": {
+                          "op": "<",
+                          "value": {
+                            "mana_value_of": {
+                              "binding": "subject"
+                            }
+                          }
+                        },
+                        "owner": "you",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "hand"
+                      },
+                      {
+                        "mana_value": {
+                          "op": "<",
+                          "value": {
+                            "mana_value_of": {
+                              "binding": "subject"
+                            }
+                          }
+                        },
+                        "owner": "you",
+                        "player": "you",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "command"
+                      }
+                    ]
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "next_of_kin_put",
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "effects": [
+                        {
+                          "condition": {
+                            "exists": {
+                              "binding": "next_of_kin_put",
+                              "zone": "battlefield"
+                            }
+                          },
+                          "op": "if",
+                          "then": [
+                            {
+                              "controller": "you",
+                              "destination": "battlefield",
+                              "host_named": {
+                                "binding": "next_of_kin_put",
+                                "zone": "battlefield"
+                              },
+                              "objects": {
+                                "self_only": true,
+                                "zone": "graveyard"
+                              },
+                              "op": "return_from_graveyard"
+                            }
+                          ]
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_step",
+                      "text": "Return this card to the battlefield attached to that creature at the beginning of the next end step."
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a creature card with lesser mana value from your hand or the command zone onto the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, you may put a creature card you own with lesser mana value from your hand or from the command zone onto the battlefield. If you do, return this card to the battlefield attached to that creature at the beginning of the next end step.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "next_of_kin",
+      "mana_cost": "{2}{G}",
+      "name": "Next of Kin",
+      "oracle_text": "Enchant creature\nWhen enchanted creature dies, you may put a creature card you own with lesser mana value from your hand or from the command zone onto the battlefield. If you do, return this card to the battlefield attached to that creature at the beginning of the next end step.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
             ],
             "zone": "battlefield"
           }
@@ -237678,6 +238980,86 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "as": "racket_card",
+                  "objects": {
+                    "player": "you",
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "racket_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "racket_card",
+                        "zone": "library"
+                      },
+                      "op": "exile"
+                    }
+                  ],
+                  "else": [
+                    {
+                      "objects": {
+                        "binding": "racket_card",
+                        "zone": "library"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "pay_life": {
+                      "mana_value_of": {
+                        "binding": "racket_card"
+                      }
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Pay life equal to that card's mana value to exile it? (Otherwise it goes to its owner's hand.)"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "protection_racket",
+      "mana_cost": "{2}{B}",
+      "name": "Protection Racket",
+      "oracle_text": "At the beginning of your upkeep, repeat the following process for each opponent in turn order. Reveal the top card of your library. That player may pay life equal to that card's mana value. If they do, exile that card. Otherwise, put it into your hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "target": "t1"
               },
@@ -253185,6 +254567,61 @@
       ]
     },
     {
+      "additional_cost": {
+        "sacrifice": {
+          "as": "sacrificed",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "rite_of_consumption",
+      "mana_cost": "{1}{B}",
+      "name": "Rite of Consumption",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nRite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "binding": "sacrificed"
+            }
+          },
+          "as": "dealt",
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "binding": "dealt"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -253876,6 +255313,103 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "riveteers_confluence",
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Riveteers Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• You draw a card and you lose 1 life.\n• Riveteers Confluence deals 1 damage to each creature and planeswalker you don't control.\n• You may put a land card from your hand or graveyard onto the battlefield tapped.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "lose_life",
+                  "player": "you"
+                }
+              ],
+              "label": "You draw a card and you lose 1 life."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "objects": {
+                    "any_types": [
+                      "Creature",
+                      "Planeswalker"
+                    ],
+                    "controller": "opponent",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "damage"
+                }
+              ],
+              "label": "Riveteers Confluence deals 1 damage to each creature and planeswalker you don't control."
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "count": {
+                        "const": 1
+                      },
+                      "destination": "battlefield",
+                      "op": "search_zones",
+                      "player": "you",
+                      "selector": {
+                        "types": [
+                          "Land"
+                        ]
+                      },
+                      "tapped": true,
+                      "zones": [
+                        "hand",
+                        "graveyard"
+                      ]
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put a land card from your hand or graveyard onto the battlefield tapped?"
+                }
+              ],
+              "label": "You may put a land card from your hand or graveyard onto the battlefield tapped."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -291809,6 +293343,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever another creature you control dies, it deals damage equal to its power to target player or planeswalker.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "stalking_vengeance",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{5}{R}{R}",
+      "name": "Stalking Vengeance",
+      "oracle_text": "Haste\nWhenever another creature you control dies, it deals damage equal to its power to target player or planeswalker.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -311586,6 +313181,63 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "return_to_hand": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "prompt": "Return another creature you control to its owner's hand?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "temur_sabertooth",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Temur Sabertooth",
+      "oracle_text": "{1}{G}: You may return another creature you control to its owner's hand. If you do, this creature gains indestructible until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -314041,6 +315693,127 @@
         "Legendary"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "bullied",
+              "controller": {
+                "target": "t1"
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t2"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "bullied",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "At the beginning of the next end step, exile it."
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": {
+                  "except": "you",
+                  "not": {
+                    "not": "active_player"
+                  }
+                }
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "the_beamtown_bullies",
+      "keywords": [
+        "vigilance",
+        "haste"
+      ],
+      "mana_cost": "{1}{B}{R}{G}",
+      "name": "The Beamtown Bullies",
+      "oracle_text": "Vigilance, haste\n{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Devil",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -331359,6 +333132,55 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "lure",
+          "kind": "static",
+          "text": "All creatures able to block this creature do so."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw three cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "treeshaker_chimera",
+      "mana_cost": "{5}{G}{G}",
+      "name": "Treeshaker Chimera",
+      "oracle_text": "All creatures able to block this creature do so.\nWhen this creature dies, draw three cards.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Chimera"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -333927,6 +335749,109 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "contested",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "each",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, for each player, put a contested counter on target land that player controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "turf",
+              "duration": "permanent",
+              "objects": {
+                "chooser": {
+                  "controller_of": "subject"
+                },
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": 1,
+                "has_counters": "contested",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "gain_control",
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "objects": {
+                "binding": "turf"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature deals combat damage to a player, if that player controls one or more lands with contested counters on them, that creature's controller gains control of one of those lands of their choice and untaps it.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "has_counters": "contested",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "any",
+            "event": "deals_combat_damage_to_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "turf_war",
+      "mana_cost": "{4}{R}",
+      "name": "Turf War",
+      "oracle_text": "When this enchantment enters, for each player, put a contested counter on target land that player controls.\nWhenever a creature deals combat damage to a player, if that player controls one or more lands with contested counters on them, that creature's controller gains control of one of those lands of their choice and untaps it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -353608,6 +355533,124 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "player_count": {
+                  "dealt_combat_damage_by": "self"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "evoke": "{4}{B}",
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "wave_of_rats",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Wave of Rats",
+      "oracle_text": "Trample\nWhen this creature dies, if it dealt combat damage to a player this turn, return it to the battlefield under its owner's control.\nBlitz {4}{B} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Rat"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

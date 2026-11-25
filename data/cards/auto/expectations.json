@@ -265,6 +265,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "aether_snap": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "aether_spellbomb": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2313,6 +2318,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bellowing_mauler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "belonging": {
     "battlefield_count": 36,
     "tokens": {
@@ -3620,6 +3629,10 @@
   "calamity_of_cinders": {
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "caldaia_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "caldera_lake": {
     "zone": "battlefield"
@@ -6121,6 +6134,11 @@
   "deathbloom_gardener": {
     "zone": "battlefield"
   },
+  "deathbringer_regent": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "deathcap_cultivator": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6812,6 +6830,10 @@
     "zone": "battlefield"
   },
   "doctor_doom_king_of_latveria": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "dodgy_jalopy": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -8294,6 +8316,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "evolutionary_leap": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "exalted_angel": {
     "zone": "battlefield"
   },
@@ -9182,6 +9208,10 @@
       "0": 42
     },
     "zone": "graveyard"
+  },
+  "first_responder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "first_sliver_s_chosen": {
     "battlefield_count": 33,
@@ -11263,6 +11293,10 @@
     },
     "zone": "battlefield"
   },
+  "grime_gorger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grimoire_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11911,6 +11945,10 @@
       "1": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "henzie_toolbox_torre": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "herald_of_amity": {
@@ -12732,6 +12770,11 @@
       "graveyard"
     ]
   },
+  "indrik_stomphowler": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "indulge_excess": {
     "hand_size": {
       "0": 1
@@ -12751,6 +12794,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "industrial_advancement": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inexorable_tide": {
@@ -13380,6 +13427,10 @@
     "zone": "battlefield"
   },
   "jocasta_automaton_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jolene_the_plunder_queen": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14348,6 +14399,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kresh_the_bloodbraided": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "krile_baldesion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14780,6 +14835,13 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 7,
     "zone": "battlefield"
+  },
+  "life_s_legacy": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "lifeblood_hydra": {
     "battlefield_count": 33,
@@ -16391,6 +16453,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mezzio_mugger": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "midnight_angel_armor": {
     "battlefield_count": 34,
     "tokens": {
@@ -16683,6 +16752,10 @@
     "zone": "battlefield"
   },
   "misty_rainforest": {
+    "zone": "battlefield"
+  },
+  "mitotic_slime": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mizzix_s_mastery": {
@@ -17621,6 +17694,13 @@
   },
   "new_horizons": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "next_of_kin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "neyam_shai_murad": {
@@ -19805,6 +19885,10 @@
   "protection_magic": {
     "zone": "graveyard"
   },
+  "protection_racket": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "protector_of_the_wastes": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -21200,6 +21284,13 @@
   "rishkar_s_expertise": {
     "zone": "graveyard"
   },
+  "rite_of_consumption": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "rite_of_flame": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -21283,6 +21374,18 @@
   },
   "riveteers_charm": {
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "riveteers_confluence": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
     "zone": "graveyard"
   },
   "rms_titanic": {
@@ -24471,6 +24574,10 @@
   "stalker_hag": {
     "zone": "battlefield"
   },
+  "stalking_vengeance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stampeding_rhino": {
     "zone": "battlefield"
   },
@@ -25972,6 +26079,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "temur_sabertooth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "temur_war_shaman": {
     "battlefield_count": 34,
     "library_size": {
@@ -26192,6 +26303,17 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "the_beamtown_bullies": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "vigilance",
+        "haste"
+      ]
     },
     "zone": "battlefield"
   },
@@ -27621,6 +27743,13 @@
     },
     "zone": "battlefield"
   },
+  "treeshaker_chimera": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "treetop_village": {
     "zone": "battlefield"
   },
@@ -27823,6 +27952,10 @@
     "zone": "battlefield"
   },
   "turbulent_wilderness": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turf_war": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -29570,6 +29703,13 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "wave_of_rats": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "wave_of_reckoning": {
     "zone": "graveyard"

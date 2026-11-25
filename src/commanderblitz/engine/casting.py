@@ -39,9 +39,11 @@ from .enums import COLORLESS, ActionKind, Keyword, Step, Zone
 from .mana import SYMBOL_INDEX, ManaCost, max_affordable_x, solve_payment
 from .objects import playable_condition_met
 from .player_statics import (
+    blitz_cost_reduction,
     cast_lock_min_x,
     free_cast_permission,
     granted_alternative_cost,
+    granted_blitz,
     granted_pay_generic_with,
     granted_warp_cost,
     graveyard_cast_allows,
@@ -713,6 +715,48 @@ def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return granted_warp_cost(state, pid, card)
 
 
+def pays_blitz(card: CardDef, *, evoked: bool, blitzed: bool) -> bool:
+    """Is this line paying a blitz cost (702.152a), granted or printed?
+
+    The one question `blitz_cost_reduction` asks of a line, by `_cast_variant`
+    and `Game._cast` alike: a granted blitz is the `blitzed` flag, and a
+    printed one is the evoke slot under the card's own word for it.
+    """
+    return blitzed or (evoked and card.evoke is not None and card.evoke_label == "blitz")
+
+
+def blitz_granted(state: GameState, pid: int, card: CardDef) -> bool:
+    """Whether this player may cast this card for a granted blitz cost.
+
+    Henzie "Toolbox" Torre's "each creature spell you cast with mana value 4 or
+    greater has blitz. The blitz cost is equal to its mana cost." The price is
+    the card's mana cost, so the line costs what the printed one does and the
+    flag is all that tells them apart (`Action.blitzed`).
+
+    A card that **prints** blitz already has that line, as its `evoked` one,
+    and has two blitz lines only when the prices differ -- `warp_cost`'s rule
+    the other way round: there the printed price wins outright, here a grant
+    at the printed price would be the same line offered twice. The loader
+    refuses an evoke-slot cost equal to the mana cost, so today every printed
+    blitz differs and both lines are offered.
+
+    Never on a card with X in its mana cost: its mana value as a spell counts
+    the X announced for it (202.3e), so "mana value 4 or greater" is a
+    question about a cast nobody has priced yet, and the face alone would
+    answer it wrong.
+    """
+    if card.mana_cost.x_count:
+        return False
+    if (
+        card.evoke is not None
+        and card.evoke_label == "blitz"
+        and card.evoke_payment is None
+        and card.evoke.text == card.mana_cost.text
+    ):
+        return False
+    return granted_blitz(state, pid, card)
+
+
 def _kicked_lines(
     state: GameState,
     pid: int,
@@ -996,6 +1040,19 @@ def _cast_options(
                 kicked=False,
                 granted_cost=tuple(sorted((str(k), int(v)) for k, v in granted.items())),
             )
+    # A granted blitz (702.152a) -- Henzie "Toolbox" Torre. Nissa's slot for
+    # Nissa's reasons: a standing grant from the board, asked afresh whenever
+    # the lines are built, offered beside the printed line because blitz is a
+    # "you may", and with no zone gate because the sentence is about spells
+    # cast rather than cards in hand (a commander blitzed out of the command
+    # zone still owes its tax, which `extra_generic` carries). Priced at the
+    # mana cost by `_cast_variant`'s fall-through; the riders are
+    # `stack._place_after_resolution`'s. Not under airbend's price either:
+    # that is an alternative cost already, and 118.9a allows one.
+    if not free and alt_cost is None and blitz_granted(state, pid, card):
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, blitzed=True
+        )
     out += _kicked_lines(state, pid, oid, card, tuples, extra_generic=extra_generic)
     # Gift (702.164a): "you may promise an opponent a gift as you cast this
     # spell". Kicker's slot -- an optional cast-time choice offered as extra
@@ -2285,6 +2342,10 @@ def _cast_variant(
     # another permanent, so there is nothing on the card to read it back off.
     # `Action.warp` carries the same string for the same reason.
     warp: str | None = None,
+    # A granted blitz. Priced at the printed mana cost -- the grant's own
+    # words -- so no branch of the price chain below reads it; the label and
+    # the action carry it, and the riders are applied on resolution.
+    blitzed: bool = False,
     impending: bool = False,
     emerge_oid: int | None = None,
     flashback: bool = False,
@@ -2456,6 +2517,12 @@ def _cast_variant(
         second_face=second_face,
         fused=fused,
     )
+    # "Blitz costs you pay cost {1} less for each time you've cast your
+    # commander from the command zone this game" -- Henzie "Toolbox" Torre. A
+    # discount on the cost being paid, so it rides this line's variant
+    # discount and `Game._cast` nets the same number off the same flags.
+    if pays_blitz(card, evoked=evoked, blitzed=blitzed):
+        variant_less += blitz_cost_reduction(state, pid)
 
     if free:
         # "…without paying its mana cost." Plot (702.171a). First in the chain
@@ -2759,6 +2826,11 @@ def _cast_variant(
             # card: a player looking at an artifact in hand under Tannuk has no
             # other way to see what this line costs.
             label_base += f" (warp {warp})"
+        if blitzed:
+            # The word plus the price, for warp's reason, and one more: a card
+            # that prints its own blitz is offered that line too, labelled
+            # "(blitz)" by `evoke_label`, and the two rows must not collapse.
+            label_base += f" (blitz {card.mana_cost.text})"
         if impending:
             label_base += " (impending)"
         if fused:
@@ -2829,6 +2901,7 @@ def _cast_variant(
                     gift_to=gift_to,
                     evoked=evoked,
                     warp=warp,
+                    blitzed=blitzed,
                     impending=impending,
                     alternative=alternative,
                     overloaded=overloaded,

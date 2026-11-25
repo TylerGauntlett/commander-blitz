@@ -1,0 +1,204 @@
+{
+  "_comment": "Shapes for tests/unit/zones/test_put_under_player_control.py. t_pupc_bullies is The Beamtown Bullies' ability as the card pool writes it, through return_from_graveyard; t_pupc_putter is the same ability through put_onto_battlefield, which reads the same controller key.",
+  "cards": [
+    {
+      "id": "t_pupc_bullies",
+      "name": "Test Beamtown Bullies",
+      "oracle_text": "{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it.",
+      "mana_cost": "{4}{B}{R}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "activated",
+          "cost": {
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {
+                "controller": {
+                  "except": "you",
+                  "not": {
+                    "not": "active_player"
+                  }
+                }
+              }
+            },
+            {
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "destination": "battlefield",
+              "controller": {
+                "target": "t1"
+              },
+              "objects": {
+                "target": "t2"
+              },
+              "as": "bullied"
+            },
+            {
+              "op": "grant_keyword",
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "goad",
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "binding": "bullied",
+                    "count": "all",
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pupc_putter",
+      "name": "Test Beamtown Putter",
+      "oracle_text": "{T}: Target opponent whose turn it is puts target nonlegendary creature card from your graveyard onto the battlefield under their control. It gains haste. Goad it. At the beginning of the next end step, exile it.",
+      "mana_cost": "{4}{B}{R}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "activated",
+          "cost": {
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1,
+              "selector": {
+                "controller": {
+                  "except": "you",
+                  "not": {
+                    "not": "active_player"
+                  }
+                }
+              }
+            },
+            {
+              "id": "t2",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "controller": {
+                "target": "t1"
+              },
+              "objects": {
+                "target": "t2"
+              },
+              "as": "bullied"
+            },
+            {
+              "op": "grant_keyword",
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "goad",
+              "objects": {
+                "binding": "bullied",
+                "count": "all",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "binding": "bullied",
+                    "count": "all",
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

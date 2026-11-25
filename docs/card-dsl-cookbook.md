@@ -446,6 +446,69 @@ an artifact card has warp, a red creature card has warp, a blue creature card
 with the same body does not — along with the alternative cost, the exile at the
 next end step, and the cast from exile a turn later.
 
+### `grant_blitz` — blitz at a spell's own mana cost
+
+```jsonc
+{ "kind": "static", "effect": "grant_blitz", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"],
+                      "mana_value": { "op": ">=", "value": 4 } } }
+```
+
+Henzie "Toolbox" Torre: *"Each creature spell you cast with mana value 4 or
+greater has blitz. The blitz cost is equal to its mana cost."* `grant_warp`'s
+shape with **no price to write**: each spell's blitz cost is its own mana cost,
+so the line costs what the printed line costs and `Action.blitzed` is the only
+thing telling them apart. Read by `player_statics.granted_blitz` through
+`casting.blitz_granted` every time `casting._cast_options` builds the lines.
+
+**From any zone**, unlike warp: the sentence is about spells you cast, not cards
+in your hand, so a creature cast from a graveyard or the command zone under
+another permission has blitz too, and a commander still owes its tax. Never
+beside a line that already replaces the mana cost (a free cast, airbend's
+price), and never on a card with X in its cost, whose mana value as a spell is
+not its face's (202.3e).
+
+**The riders are the rule's** (702.152a), applied by
+`stack._place_after_resolution` as the blitzed permanent arrives: haste, the
+rules-supplied `carddef.BLITZ_DIES_DRAW` ("When this creature dies, draw a
+card.") granted through the ordinary `grant_ability` record, and a delayed
+sacrifice at the beginning of the next end step bound to that object. A copy of
+a blitzed spell is blitzed (707.10). The near miss is the printed blitz — the
+`evoke` slot under `evoke_label: "blitz"` with the riders on the card's own
+`evoked` enters trigger — which the creature that is granted blitz has no text
+for.
+
+A card that prints blitz and is granted it has **two blitz lines** when the
+prices differ (always, since the loader refuses an evoke-slot cost equal to the
+mana cost); each pays for one set of riders, never both.
+
+`affects_spells` is required, must name `types: ["Creature"]` — the riders are
+a creature's — and takes `SPELL_FILTER_KEYS` plus Brisela's literal
+`mana_value` comparison (`BLITZ_GRANT_FILTER_KEYS`).
+
+Henzie's second line is **`blitz_cost_reduction`**, a discount on the *cost
+being paid* rather than on the spell:
+
+```jsonc
+// "Blitz costs you pay cost {1} less for each time you've cast your
+// commander from the command zone this game."
+{ "kind": "static", "effect": "blitz_cost_reduction", "affects_player": "you",
+  "amount": { "commander_casts_this_game": "you" } }
+```
+
+`plot_cost_reduction`'s shape for a spell line. `spell_cost_reduction` is the
+near miss and cannot say it: its filter reads what a spell is, and the same
+creature cast for its mana cost is not discounted. `player_statics.
+blitz_cost_reduction` is asked only on a line `casting.pays_blitz` names — a
+granted blitz (`Action.blitzed`) or a printed one (`evoked` under `evoke_label:
+"blitz"`) — by `casting._cast_variant` and `Game._cast` alike, netted into the
+generic part with every other discount and clamped at zero (601.2f). Several
+add up. The loader requires an `amount` of at least 1 and refuses `affects`
+and `affects_spells`. `tests/unit/costs/test_blitz_cost_reduction.py` pins the
+granted and printed discounts, the clamp, and the full-price printed line.
+`tests/unit/keywords/test_grant_blitz.py` pins the price, each rider, the
+scope at the mana value boundary, and the printed-and-granted pair.
+
 ### `grant_miracle` — miracle handed to cards in your hand
 
 ```jsonc
@@ -1965,6 +2028,10 @@ they take `affects_player` instead of `affects` — the full list is
   "affects_spells": { "subtypes": ["Dragon"] } }
 { "kind": "static", "effect": "grant_warp", "affects_player": "you",
   "warp_cost": "{2}{R}", "affects_spells": { "types": ["Artifact"] } }
+{ "kind": "static", "effect": "grant_blitz", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"], "mana_value": { "op": ">=", "value": 4 } } }
+{ "kind": "static", "effect": "blitz_cost_reduction", "affects_player": "you",
+  "amount": { "commander_casts_this_game": "you" } }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
@@ -6378,7 +6445,7 @@ the two carry different data on different clocks:
 
 | | |
 |---|---|
-| `must_block` | provoke and the lure family — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
+| `must_block` | provoke — "blocks **this creature** this combat if able". Records the attacker (`attacker`, defaulting to the ability's source) on the blocker; `combat.discharge_block_requirements` spends it when blockers lock in |
 | `must_block_any` | "blocks this turn if able" — no attacker, so blocking any creature attacking its controller obeys it (509.1c), and it binds **every** combat this turn. Records the turn number (`GameObject.must_block_any_turn`); nothing spends it, and the next turn ends it |
 
 Both are enforced by `combat.unmet_block_requirements`, which withholds "Done
@@ -6406,6 +6473,31 @@ same combat and together are exactly the printed line.
 ```
 
 Its `affects` reads derived characteristics, as `attacks_if_able`'s does.
+
+The `lure` static is the requirement that sits on the **attacker**: "all creatures
+able to block this creature do so" (Treeshaker Chimera). Its `affects` names the
+luring attacker on derived characteristics; an optional `blockers` filter, read
+on the blocker's derived characteristics with `controller` defaulting to `any`,
+narrows who owes the block — Marble Priest's "All Walls able to block this
+creature do so". It is read live by `characteristics.lures` whenever the creature
+is attacking, so a creature put onto the battlefield attacking lures as one
+declared does, and nothing spends it.
+
+```jsonc
+{ "kind": "static", "effect": "lure", "affects": { "self_only": true },
+  "blockers": { "subtypes": ["Wall"] } }
+```
+
+Every kind is weighed together in `combat.unmet_block_requirements` (509.1c's
+maximum): provoke and each lure count one for blocking the attacker they name, a
+nameless requirement one for any block, and a creature is unmet while some
+attacker it is able to block obeys more of them than its declared block does. A
+creature owing a named block, provoke or lure, is offered by `legal_blocks` only
+the attackers that obey the most; one torn between two lures may block either.
+"If able" for a lure carries the menace exception `block_any_required` uses. The
+loader refuses `require_all`, `max_blockers` and `min_blockers` on it, and a
+`blockers` key outside `STATIC_FILTER_KEYS`. "Must be blocked if able", met by one
+blocker, is a near miss it does not say.
 
 ## Goad
 
@@ -13930,6 +14022,46 @@ for a permanent on the battlefield — and `matches` reads derived characteristi
 for the one and printed ones for the other. Whatever it was meant to narrow
 belongs in a branch, so the loader says so rather than picking a reading.
 
+## One card of each card type — `one_of_each_card_type`
+
+Grime Gorger — *"Whenever this creature attacks, exile up to one card of each
+card type from defending player's graveyard. Put a +1/+1 counter on this
+creature for each card exiled this way."*
+
+```jsonc
+"trigger": { "event": "attacks", "source": "self" },
+"effects": [
+  { "op": "exile", "as": "gorged",
+    "objects": { "zone": "graveyard", "player": { "binding": "defender" },
+                 "count": "any", "one_of_each_card_type": true } },
+  { "op": "add_counters", "counter": "+1/+1",
+    "amount": { "count": { "binding": "gorged" } },
+    "objects": { "zone": "battlefield", "self_only": true } } ]
+```
+
+The constraint is on the chosen **set**: it is legal when each chosen card can
+be given a card type it has, no type given twice — a bipartite matching,
+`selectors.card_types_assignable`. A multi-typed card is one card of one type,
+at the chooser's assignment, so an artifact creature beside a creature card is
+legal (it is the artifact) and beside an artifact card *and* a creature card is
+not.
+
+`pick_from_pool` stages it one card at a time, each stage offering only the
+cards that keep the set assignable; declining a stage ends the choice. Any
+subset of a legal set is legal, so every legal set is reachable in any order.
+It reaches every op that resolves its `objects` through `choose_objects`.
+
+- It sits beside `count: "any"` only — the types bound the set. `"all"`, a
+  number, `random` and `chooser: "none"` are load errors, and so is the key on a
+  declared target, which `targeting` chooses on the cast line without reading it.
+- **The near miss is a `for_each` over the card types**, exiling one card per
+  type: it takes an artifact creature as the artifact and another creature card
+  as the creature beside an artifact card, three cards for two types. Filtering
+  out every type a chosen card has errs the other way and refuses the legal
+  artifact creature and creature pair.
+- `distinct_names` on the search ops is the same staging with a name
+  comparison in place of the matching.
+
 ## "Target opponent and up to one target creature they control"
 
 Cloak and Dagger, Entwined. One target spec reading another spec's answer:
@@ -14065,6 +14197,34 @@ one player's, offer nothing. `count: 2, up_to: true` is the near miss: it casts
 at zero or one creature. So is a `controller: "you"` spec beside a
 `controller: "opponent"` one, which cannot reach two different opponents'
 creatures in a pod.
+
+**One for every seat.** "When this enchantment enters, **for each player**, put
+a contested counter on target land that player controls" (Turf War) is
+`count: "each"`:
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": "each",
+              "one_per_player": true,
+              "selector": {"zone": "battlefield", "types": ["Land"],
+                           "controller": "any"}}],
+ "effects": [{"op": "add_counters", "counter": "contested",
+              "amount": {"const": 1}, "objects": {"target": "t1"}}]}
+```
+
+Exactly one target from every player who controls a candidate, the
+controller's own seat included, and none from a player who controls none
+(601.2c): the board sets the size and the controller cannot leave a seat out.
+Hexproof and shroud apply as to any target, so an opponent whose only land has
+hexproof is owed nothing, and with no candidate anywhere the ability declares
+no target and does nothing. It is asked seat by seat as the ability goes on
+the stack (`stack._ask_one_from_each_seat`), the controller's own seat first,
+each over that seat's whole pool; a seat with one candidate is not asked.
+`count: "any"` is the near miss — "up to one" per player, which lets the
+controller skip their own land — and so is a literal `count`, right in one pod
+size only. The loader holds it to `one_per_player`, to a triggered or
+reflexive ability's only target owned by no mode, and refuses `up_to`,
+`optional` and `min_count` beside it: a spell's or an activated ability's
+targets are offered as whole tuples, which cut a pod's lands short.
 
 **Re-checked on resolution, target by target.** "Controlled by a different
 player" is part of what made each target legal, so 608.2b asks it again
@@ -15843,6 +16003,54 @@ The order of Dack's three ops is the card. The goad comes first, while his
 controller still controls the creatures. A [permanent goad](#goad) records the
 mark even then, so each opponent's new creature must attack a player other than
 Dack's controller for the rest of the game.
+
+### Put onto the battlefield under another player's control
+
+```jsonc
+// The Beamtown Bullies — "{T}: Target opponent whose turn it is puts target
+// nonlegendary creature card from your graveyard onto the battlefield under
+// their control. It gains haste. Goad it. At the beginning of the next end
+// step, exile it."
+"targets": [
+  { "id": "t1", "kind": "player", "count": 1,
+    "selector": { "controller": { "except": "you", "not": { "not": "active_player" } } } },
+  { "id": "t2", "kind": "card_in_graveyard", "count": 1,
+    "selector": { "controller": "you", "types": ["Creature"],
+                  "not_supertypes": ["Legendary"], "zone": "graveyard" } }
+],
+"effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield",
+    "controller": { "target": "t1" }, "objects": { "target": "t2" }, "as": "bullied" },
+  { "op": "grant_keyword", "duration": "permanent", "keywords": ["haste"],
+    "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } },
+  { "op": "goad", "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } },
+  { "op": "delay", "step": "end_step",
+    "effects": [ { "op": "exile",
+                   "objects": { "binding": "bullied", "count": "all", "zone": "battlefield" } } ] }
+]
+```
+
+`controller` on `put_onto_battlefield`, and on `return_from_graveyard` beside
+`destination: "battlefield"`, is whose control the card enters under (110.2):
+`"you"`, `"owner"` (the default), or a player spec naming one seat, read by
+`selectors.arrival_controller`. That seat is the one who puts the card there
+(110.2a), so it answers every arrival question — the Aura host, the "would
+enter" replacement, riot, "as this enters" — and the permanent's enters
+triggers are its own (603.3a). With the spec naming nobody, the target player
+gone or no longer legal, the card stays where it was. The loader refuses a
+plural word (`"each_opponent"`), an undeclared target, and a player spec on a
+return to anywhere but the battlefield.
+
+`return_from_graveyard` under `"you"` followed by `gain_control` is the near
+miss: the creature enters under you, so its enters triggers are yours and the
+opponent never put it anywhere.
+
+"Target opponent **whose turn it is**" needs no key of its own: `except` takes
+you out of `{"not": {"not": "active_player"}}`, the active player as a mapping
+`except` can narrow, so on your own turn nobody is a legal target and the
+ability cannot be activated. `"opponent"` with an "activate only during an
+opponent's turn" condition is wider — at a pod it reaches the opponents whose
+turn it is not.
 
 ### Exchanging control
 

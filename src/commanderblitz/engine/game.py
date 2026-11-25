@@ -40,6 +40,7 @@ from .casting import (
     pay_generic_colors,
     pay_generic_currencies,
     pay_generic_pool,
+    pays_blitz,
     permission_cost_reduction,
     strive_surcharge,
 )
@@ -90,6 +91,7 @@ from .player import PlayerState
 from .player_statics import (
     ability_mana_tax,
     any_color_added_on_tap,
+    blitz_cost_reduction,
     cast_lock_min_x,
     graveyard_cast_permissions,
     library_top_cast_permissions,
@@ -579,6 +581,10 @@ class Game:
             second_face=action.second_face,
             fused=action.fused,
         )
+        # Henzie's "blitz costs you pay cost {1} less …", decided from the same
+        # flags `_cast_variant` priced the line with (`casting.pays_blitz`).
+        if pays_blitz(card, evoked=action.evoked, blitzed=action.blitzed):
+            extra -= blitz_cost_reduction(state, pid)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
@@ -969,9 +975,18 @@ class Game:
             # stack item, which is how the sweep reads `{"x": true}` on
             # resolution.
             yield from pay(state, pid, Cost(pay_life=life_x), oid)
+        # What the additional cost named as it was paid -- Life's Legacy's
+        # "the sacrificed creature", a last-known snapshot (608.2h) taken in
+        # the window where it is chosen and not yet moved. Bound on the stack
+        # item below, so the resolving `spell_effects` and a copy (707.10)
+        # read it. The loader refuses `as` on a repeatable cost, so at most
+        # one payment writes it.
+        paid_bindings: dict[str, Any] = {}
         if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
-                ok = yield from pay(state, pid, additional.without_mana(), oid)
+                ok = yield from pay(
+                    state, pid, additional.without_mana(), oid, bindings=paid_bindings
+                )
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
         # The non-mana half of the card's priced flash permission -- Tegwyll's
@@ -1161,6 +1176,7 @@ class Game:
             gift_to=action.gift_to,
             evoked=action.evoked,
             warped=action.warp is not None,
+            blitzed=action.blitzed,
             impending=action.impending,
             flashback=action.flashback,
             granted_escape=action.escape is not None,
@@ -1184,6 +1200,7 @@ class Game:
             # `StackItem.modes_answered`.
             modes_answered=card.cast_time_modes is not None,
         )
+        item.bindings.update(paid_bindings)
         if division:
             item.bindings["distribution"] = division
         if "tap_creatures" in currencies:

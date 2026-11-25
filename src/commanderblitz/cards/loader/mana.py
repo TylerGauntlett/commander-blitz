@@ -43,7 +43,12 @@ from .vocabulary import (
 
 
 def _compile_cost(
-    model, where: str, *, defines_x: bool = False, may_link: bool = False
+    model,
+    where: str,
+    *,
+    defines_x: bool = False,
+    may_link: bool = False,
+    binds_spell: bool = False,
 ) -> Cost:
     if model.x_value is not None:
         # "X is the mana value of that card." Two guards, because both failures
@@ -107,16 +112,17 @@ def _compile_cost(
                 f"{where}.cost.sacrifice.as: names *the* sacrificed permanent, so "
                 f"the cost must sacrifice exactly one -- no 'count' above 1"
             )
-        if not defines_x:
-            # Only an activated ability hands its cost a place to write the
-            # name (`costs.pay`'s `bindings`) and reads it back -- on
-            # resolution, or a mana ability's amount as it is activated. An
-            # additional cost to cast or a ward or attack tax would pay the
-            # sacrifice and bind nothing, so every read of the name would
-            # answer 0 while the card looked implemented.
+        if not defines_x and not binds_spell:
+            # Only an activated ability's cost and a spell's additional cost
+            # are handed a place to write the name (`costs.pay`'s `bindings`)
+            # and read it back -- on resolution, or a mana ability's amount as
+            # it is activated. A ward or attack tax, an alternative or
+            # graveyard cost would pay the sacrifice and bind nothing, so every
+            # read of the name would answer 0 while the card looked implemented.
             raise DslError(
-                f"{where}.cost.sacrifice.as: only an activated ability's effects "
-                f"can read what its cost sacrificed; this cost names it for nothing"
+                f"{where}.cost.sacrifice.as: only an activated ability's or a "
+                f"spell's additional cost's effects can read what the cost "
+                f"sacrificed; this cost names it for nothing"
             )
     validate_selector(sacrifice_selector, f"{where}.cost.sacrifice")
     return_selector = dict(model.return_to_hand) if model.return_to_hand is not None else None

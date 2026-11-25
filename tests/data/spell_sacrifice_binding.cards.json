@@ -1,0 +1,32 @@
+{
+  "_comment": "A spell's additional sacrifice cost that names what it sacrificed -- Life's Legacy's shape, standing in for it. Test-only; read by tests/unit/costs/test_spell_sacrifice_binding.py.",
+  "cards": [
+    {
+      "id": "t_legacy",
+      "name": "Test Legacy",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw cards equal to the sacrificed creature's power.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "additional_cost": {"sacrifice": {"types": ["Creature"], "as": "sacrificed"}},
+      "spell_effects": [
+        {"op": "draw", "amount": {"power_of": {"binding": "sacrificed"}}}
+      ]
+    },
+    {
+      "id": "t_legacy_optional",
+      "name": "Test Optional Legacy",
+      "oracle_text": "As an additional cost to cast this spell, you may sacrifice a creature.\nDraw cards equal to the sacrificed creature's power.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "additional_cost": {"sacrifice": {"types": ["Creature"], "as": "sacrificed"}},
+      "additional_optional": true,
+      "spell_effects": [
+        {"op": "draw", "amount": {"power_of": {"binding": "sacrificed"}}}
+      ]
+    }
+  ]
+}

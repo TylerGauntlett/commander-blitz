@@ -538,6 +538,51 @@ def _controller_count(state: GameState, refs: Sequence[TargetRef]) -> int:
     return len(seats) + loose
 
 
+def seat_groups(
+    state: GameState, options: Sequence[TargetRef]
+) -> list[list[TargetRef]]:
+    """``options`` split by controller, in first-seen order, each keeping the
+    order it had -- the pools a ``count: "each"`` set takes one pick from.
+
+    A ref with no object is a seat of its own, the way `_controller_count`
+    counts it; a candidate always has one, so that is only ever defensive.
+    """
+    groups: dict[object, list[TargetRef]] = {}
+    for index, ref in enumerate(options):
+        obj = state.objects.get(ref.id) if ref.kind == "object" else None
+        key: object = ("loose", index) if obj is None else obj.controller
+        groups.setdefault(key, []).append(ref)
+    return list(groups.values())
+
+
+def _one_from_each_seat(
+    state: GameState, options: Sequence[TargetRef], limit: int
+) -> list[tuple[TargetRef, ...]]:
+    """Every choice "**for each player**, target land that player controls"
+    offers -- Turf War, ``one_per_player`` with ``count: "each"``.
+
+    601.2c: one target per player who controls a candidate, and none for a
+    player who controls none -- the number of targets is fixed by the board as
+    the ability is put on the stack, and the controller cannot leave a seat
+    out, their own included. So the legal sets are exactly the product of one
+    pick per seat's pool: no smaller set, and no two from one seat
+    (`_one_each`). Hexproof and shroud are already out of ``options``
+    (`candidates`), so a seat whose only land has hexproof has no candidate and
+    is not owed a target.
+
+    A board where nobody controls a candidate asks for nothing: ``[()]``, the
+    same answer a computed count of zero gives, not "no legal choice" -- the
+    sentence names no target to be missing. Lazily, and stopped at
+    ``limit``: four seats of a dozen lands is twenty thousand sets. Whoever
+    takes a tuple without asking takes the first; a seat that is asked is
+    asked pool by pool, `stack._choose_each_target`.
+    """
+    pools = seat_groups(state, options)
+    if not pools:
+        return [()]
+    return list(itertools.islice(itertools.product(*pools), max(1, limit)))
+
+
 def _one_graveyard(state: GameState, refs: Sequence[TargetRef]) -> bool:
     """Do these cards all lie in one graveyard? -- "exile up to two target
     cards **from a single graveyard**" (Waste Management, Decompose).
@@ -594,7 +639,8 @@ def target_count(
 ) -> int | str:
     """How many targets this spec asks for **right now** -- 601.2c's number.
 
-    A literal or ``"any"`` answers itself.  Anything else is a value expression:
+    A literal, ``"any"`` or ``"each"`` answers itself -- the last is sized by
+    the seats `_one_from_each_seat` finds, not by a number.  Anything else is a value expression:
     "return up to **X** target creature cards…, where X is the number of times
     this enchantment was kicked" is ``{"additional_paid": true}``, and the only
     honest moment to read it is the one this function is called from -- when the
@@ -629,7 +675,7 @@ def target_count(
     Command) is declared by `Game._ask_mode_targets` after `_ask_x`, so the
     number is the announced one rather than the zero legality enumerates at.
     """
-    if isinstance(spec.count, int) or spec.count == "any":
+    if isinstance(spec.count, int) or spec.count in ("any", "each"):
         return spec.count
     bound = dict(bindings or {})
     ctx = EffectContext(
@@ -875,6 +921,8 @@ def _spec_options(
     # card.
     empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
     count = target_count(state, controller, spec, source_oid, bindings=bindings, x=x)
+    if count == "each":
+        return _one_from_each_seat(state, options, limit)
     if count == "any" or spec.up_to:
         # "Any number of target creatures", and "up to X target creature
         # cards". A size the caster picks, so every subset up to the ceiling is

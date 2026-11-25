@@ -3152,12 +3152,12 @@
     },
     "Aether Snap": {
       "edhrec_rank": 11457,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Snap",
-      "reason": "no template for: Remove all counters from all permanents and exile all tokens",
+      "reason": "",
       "scryfall_id": "41f0bd4c-ecfd-402e-a7a6-5e48309ae80b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Spellbomb": {
@@ -23472,12 +23472,12 @@
     },
     "Bellowing Mauler": {
       "edhrec_rank": 18430,
-      "gate": "template",
+      "gate": null,
       "name": "Bellowing Mauler",
-      "reason": "no template for: At the beginning of your end step, each player loses 4 life unless they sacrifice a nontok",
+      "reason": "",
       "scryfall_id": "54fe1db9-1ee8-4ba3-b484-68a698b17359",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bellowing Saddlebrute": {
@@ -37892,12 +37892,12 @@
     },
     "Caldaia Guardian": {
       "edhrec_rank": 18123,
-      "gate": "template",
+      "gate": null,
       "name": "Caldaia Guardian",
-      "reason": "no template for: Whenever this creature or another creature you control with mana value 4 or greater dies, ",
+      "reason": "",
       "scryfall_id": "287c7d61-13a0-46f7-a8d7-33320e250bbe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caldaia Strongarm": {
@@ -63772,12 +63772,12 @@
     },
     "Deathbringer Regent": {
       "edhrec_rank": 7253,
-      "gate": "template",
+      "gate": null,
       "name": "Deathbringer Regent",
-      "reason": "no template for: When this creature enters, if you cast it from your hand and there are five or more other ",
+      "reason": "",
       "scryfall_id": "78229484-b07a-4b6c-ae27-74c7dac3d620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deathbringer Thoctar": {
@@ -71392,12 +71392,12 @@
     },
     "Dodgy Jalopy": {
       "edhrec_rank": 16987,
-      "gate": "template",
+      "gate": null,
       "name": "Dodgy Jalopy",
-      "reason": "no template for: 's power is equal to the greatest mana value among creatures you control",
+      "reason": "",
       "scryfall_id": "330cae18-9b9a-4ec9-a4c6-83bbf42f1f70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Does Machines": {
@@ -87592,12 +87592,12 @@
     },
     "Evolutionary Leap": {
       "edhrec_rank": 3293,
-      "gate": "template",
+      "gate": null,
       "name": "Evolutionary Leap",
-      "reason": "no template for: {G}, Sacrifice a creature: Reveal cards from the top of your library until you reveal a cr",
+      "reason": "",
       "scryfall_id": "4d007d3c-3356-4394-9bcd-2b2c1031c20b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evolved Sleeper": {
@@ -96342,12 +96342,12 @@
     },
     "First Responder": {
       "edhrec_rank": 15640,
-      "gate": "template",
+      "gate": null,
       "name": "First Responder",
-      "reason": "no template for: At the beginning of your end step, you may return another creature you control to its owne",
+      "reason": "",
       "scryfall_id": "3688a806-9bff-4106-a14e-81d00bc6c87c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "First Response": {
@@ -118402,12 +118402,12 @@
     },
     "Grime Gorger": {
       "edhrec_rank": 21457,
-      "gate": "template",
+      "gate": null,
       "name": "Grime Gorger",
-      "reason": "no template for: Whenever this creature attacks, exile up to one card of each card type from defending play",
+      "reason": "",
       "scryfall_id": "e72d9121-fd09-4035-bb3b-0eb6241107e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grimgrin, Corpse-Born": {
@@ -126132,12 +126132,12 @@
     },
     "Henzie \"Toolbox\" Torre": {
       "edhrec_rank": 7030,
-      "gate": "template",
+      "gate": null,
       "name": "Henzie \"Toolbox\" Torre",
-      "reason": "no template for: Each creature spell you cast with mana value 4 or greater has blitz. The blitz cost is equ",
+      "reason": "",
       "scryfall_id": "266dd649-b767-4e40-8ccc-06d9f8db9be3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Amity": {
@@ -135842,12 +135842,12 @@
     },
     "Indrik Stomphowler": {
       "edhrec_rank": 15041,
-      "gate": "template",
+      "gate": null,
       "name": "Indrik Stomphowler",
-      "reason": "no template for: When this creature enters, destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "fe7deb63-6236-4ff2-92cc-7cab962a258f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Indrik Umbra": {
@@ -135922,12 +135922,12 @@
     },
     "Industrial Advancement": {
       "edhrec_rank": 6448,
-      "gate": "template",
+      "gate": null,
       "name": "Industrial Advancement",
-      "reason": "no template for: At the beginning of your end step, you may sacrifice a creature. If you do, look at the to",
+      "reason": "",
       "scryfall_id": "81f1416c-48bd-4168-aacd-a9b0a3afb8bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inertia Bubble": {
@@ -143612,12 +143612,12 @@
     },
     "Jolene, the Plunder Queen": {
       "edhrec_rank": 4595,
-      "gate": "template",
+      "gate": null,
       "name": "Jolene, the Plunder Queen",
-      "reason": "no template for: Whenever a player attacks one or more of your opponents, that attacking player creates a T",
+      "reason": "",
       "scryfall_id": "61c217d9-21d5-45ef-938a-138192a901f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jolly Gerbils": {
@@ -152522,12 +152522,12 @@
     },
     "Kresh the Bloodbraided": {
       "edhrec_rank": 9129,
-      "gate": "template",
+      "gate": null,
       "name": "Kresh the Bloodbraided",
-      "reason": "no template for: Whenever another creature dies, you may put X +1/+1 counters on Kresh, where X is that cre",
+      "reason": "",
       "scryfall_id": "8b4b3c5f-32ea-4208-86d4-bb86e3b8d7d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krile Baldesion": {
@@ -157752,12 +157752,12 @@
     },
     "Life's Legacy": {
       "edhrec_rank": 2507,
-      "gate": "template",
+      "gate": null,
       "name": "Life's Legacy",
-      "reason": "no template for: Draw cards equal to the sacrificed creature's power",
+      "reason": "",
       "scryfall_id": "bf0e70d2-5f1a-441b-99b9-d003fa15b999",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifebane Zombie": {
@@ -172502,12 +172502,12 @@
     },
     "Mezzio Mugger": {
       "edhrec_rank": 12455,
-      "gate": "template",
+      "gate": null,
       "name": "Mezzio Mugger",
-      "reason": "no template for: Whenever this creature attacks, exile the top card of each player's library. You may play ",
+      "reason": "",
       "scryfall_id": "5aaa4be7-32d2-4e17-95c0-78344b09c889",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Miara, Thorn of the Glade": {
@@ -176582,12 +176582,12 @@
     },
     "Mitotic Slime": {
       "edhrec_rank": 9554,
-      "gate": "template",
+      "gate": null,
       "name": "Mitotic Slime",
-      "reason": "no template for: When this creature dies, create two 2/2 green Ooze creature tokens. They have \"When this t",
+      "reason": "",
       "scryfall_id": "883840b7-32db-4bda-8e02-0f6ba844fd34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mizzium Meddler": {
@@ -186002,12 +186002,12 @@
     },
     "Next of Kin": {
       "edhrec_rank": 19705,
-      "gate": "template",
+      "gate": null,
       "name": "Next of Kin",
-      "reason": "no template for: When enchanted creature dies, you may put a creature card you own with lesser mana value f",
+      "reason": "",
       "scryfall_id": "51a4414b-3cab-463f-a2b5-e49104f251da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nexus Mentality": {
@@ -208722,12 +208722,12 @@
     },
     "Protection Racket": {
       "edhrec_rank": 7012,
-      "gate": "template",
+      "gate": null,
       "name": "Protection Racket",
-      "reason": "no template for: At the beginning of your upkeep, repeat the following process for each opponent in turn or",
+      "reason": "",
       "scryfall_id": "046c2801-4e94-4e33-9039-9b7d2f409d19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protection of the Hekma": {
@@ -225112,12 +225112,12 @@
     },
     "Rite of Consumption": {
       "edhrec_rank": 8076,
-      "gate": "template",
+      "gate": null,
       "name": "Rite of Consumption",
-      "reason": "no template for: deals damage equal to the sacrificed creature's power to target player or planeswalker. Yo",
+      "reason": "",
       "scryfall_id": "67cc5d9a-fba5-4a42-a3fa-d41e20b7b8fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rite of Flame": {
@@ -225772,12 +225772,12 @@
     },
     "Riveteers Confluence": {
       "edhrec_rank": 17008,
-      "gate": "template",
+      "gate": null,
       "name": "Riveteers Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "233721d8-636b-4061-b0ed-57c3b7192634",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riveteers Decoy": {
@@ -262302,12 +262302,12 @@
     },
     "Stalking Vengeance": {
       "edhrec_rank": 5207,
-      "gate": "template",
+      "gate": null,
       "name": "Stalking Vengeance",
-      "reason": "no template for: Whenever another creature you control dies, it deals damage equal to its power to target p",
+      "reason": "",
       "scryfall_id": "22ab5c53-932e-465d-84b7-2c8263c835e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stalking Yeti": {
@@ -277752,12 +277752,12 @@
     },
     "Temur Sabertooth": {
       "edhrec_rank": 1859,
-      "gate": "template",
+      "gate": null,
       "name": "Temur Sabertooth",
-      "reason": "no template for: {1}{G}: You may return another creature you control to its owner's hand. If you do, this c",
+      "reason": "",
       "scryfall_id": "a5314aa1-77e5-4946-bb9c-8a14777e4795",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temur Tawnyback": {
@@ -279892,12 +279892,12 @@
     },
     "The Beamtown Bullies": {
       "edhrec_rank": 11862,
-      "gate": "template",
+      "gate": null,
       "name": "The Beamtown Bullies",
-      "reason": "no template for: {T}: Target opponent whose turn it is puts target nonlegendary creature card from your gra",
+      "reason": "",
       "scryfall_id": "087edfc0-4d57-4c2d-95a6-e52ed8f78327",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Bears of Littjara": {
@@ -292112,12 +292112,12 @@
     },
     "Treeshaker Chimera": {
       "edhrec_rank": 7211,
-      "gate": "template",
+      "gate": null,
       "name": "Treeshaker Chimera",
-      "reason": "no template for: All creatures able to block this creature do so",
+      "reason": "",
       "scryfall_id": "332e8353-3ef3-4c17-b544-9d59728e8afc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treespring Lorian": {
@@ -294272,12 +294272,12 @@
     },
     "Turf War": {
       "edhrec_rank": 21263,
-      "gate": "template",
+      "gate": null,
       "name": "Turf War",
-      "reason": "no template for: When this enchantment enters, for each player, put a contested counter on target land that",
+      "reason": "",
       "scryfall_id": "5e7fecbd-66f6-44b7-8fe4-b9b5bfce3e2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turf Wound": {
@@ -312142,12 +312142,12 @@
     },
     "Wave of Rats": {
       "edhrec_rank": 9312,
-      "gate": "template",
+      "gate": null,
       "name": "Wave of Rats",
-      "reason": "no template for: When this creature dies, if it dealt combat damage to a player this turn, return it to the",
+      "reason": "",
       "scryfall_id": "154dc126-67ca-4759-a424-37f0eb52e1fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wave of Reckoning": {

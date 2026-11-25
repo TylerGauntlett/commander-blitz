@@ -56,6 +56,17 @@ class Action:
     #: permanent is exiled at the next end step and the printed cast is not, so
     #: the two lines are very different things to do with one card.
     warp: str | None = None
+    #: Cast for a **granted** blitz cost (702.152a) -- "each creature spell you
+    #: cast with mana value 4 or greater has blitz. The blitz cost is equal to
+    #: its mana cost" (Henzie "Toolbox" Torre). A flag rather than warp's price
+    #: string, because the price is fixed by the grant to the card's own mana
+    #: cost, which the card always carries. A *printed* blitz is the `evoked`
+    #: line under the card's `evoke_label`; this is the other one.
+    #:
+    #: Part of the identity for `evoked`'s reason, and more so here: the line
+    #: costs exactly what the printed cast costs, so the flag is the only field
+    #: separating a creature that stays from one sacrificed tonight.
+    blitzed: bool = False
     #: Cast for the card's **impending** cost (702.176a). Part of the identity
     #: for `evoked`'s reason: the impending line and the printed one share every
     #: other field, and only one of them arrives as a non-creature with time
@@ -284,6 +295,7 @@ class Action:
             -1 if self.gift_to is None else self.gift_to,
             self.evoked,
             "" if self.warp is None else self.warp,
+            self.blitzed,
             self.impending,
             self.flashback,
             self.alternative,
@@ -325,6 +337,7 @@ class Action:
             "gift_to": self.gift_to,
             "evoked": self.evoked,
             "warp": self.warp,
+            "blitzed": self.blitzed,
             "impending": self.impending,
             "cast_free": self.cast_free,
             "alternative": self.alternative,

@@ -11,15 +11,15 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 188 |
-| [Selectors](#selectors) | 82 |
+| [Selectors](#selectors) | 83 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 112 |
-| [Player-wide statics](#player-wide-statics) | 51 |
-| [Grantable statics](#grantable-statics) | 51 |
+| [Static effects](#static-effects) | 115 |
+| [Player-wide statics](#player-wide-statics) | 53 |
+| [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
 | [Card-level costs](#card-level-costs) | 36 |
@@ -66,7 +66,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_exiled_into_graveyard` | Cards | yes | Put cards from exile into their owners' graveyards, `count` over every exile the selector walks; `as` records the ones that arrived. | ["Put a card exiled with it into its owner's graveyard" — put_exiled_into_graveyard](card-dsl-cookbook.md#put-a-card-exiled-with-it-into-its-owners-graveyard--put_exiled_into_graveyard) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth; `any_order` lets the owner arrange them, `random_order` shuffles only them. | [Effect ops](card-dsl.md#effect-ops) |
-| `return_from_graveyard` | Cards | yes | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `"choose"`) returns it face down as a 2/2; `total_mana_value` caps the returned cards' summed mana value, picked on resolution. | [Returned face down — face_down on return_from_graveyard](card-dsl-cookbook.md#returned-face-down--face_down-on-return_from_graveyard) |
+| `return_from_graveyard` | Cards | yes | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `link` records the card as returned with this source; `face_down` (`true` or `"choose"`) returns it face down as a 2/2; `total_mana_value` caps the returned cards' summed mana value, picked on resolution; `controller` (`you`, `owner` or a one-seat player spec) is whom a card returned to the battlefield enters under. | [Returned face down — face_down on return_from_graveyard](card-dsl-cookbook.md#returned-face-down--face_down-on-return_from_graveyard) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
@@ -132,7 +132,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board | yes | Proliferate: choose permanents and players, add one of each counter; `as` binds the permanents that received one. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
-| `put_onto_battlefield` | Board | yes | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `as` binds what arrived. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_onto_battlefield` | Board | yes | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters (among those matching `aura_host`, when given), or enters on the host `host_named` names if it can enchant it; `controller` (`you`, `owner` or a one-seat player spec) is whom it enters under; `as` binds what arrived. | [Effect ops](card-dsl.md#effect-ops) |
 | `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board | yes | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
@@ -293,6 +293,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `not_types` | Has none of these card types ("noncreature"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `object_kind` | Restrict to cards, tokens, spells or abilities. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `one_of_each_card_type` | Beside `count: "any"`: up to one card of each card type, a multi-typed card filling one type of the chooser's assignment; never on a declared target. | [One card of each card type — one_of_each_card_type](card-dsl-cookbook.md#one-card-of-each-card-type--one_of_each_card_type) |
 | `optional` | Exactly N, or none at all ("you may"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
 | `owner` | Owned by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -610,6 +611,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
+| `blitz_cost_reduction` | yes |  | Blitz costs the player pays cost N less generic mana. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `blocks_if_able` |  | yes | Matching creatures block each combat if able (any attacker obeys it). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
@@ -652,6 +654,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `freeze_opponent_lands` | yes |  | The player's lands don't untap during their untap step. | [Static abilities](card-dsl.md#static-abilities) |
 | `goaded` |  | yes | Matching creatures are goaded by the static's controller while it applies. | [Goaded for as long as a static applies](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `grant_blitz` | yes |  | Matching creature spells the player casts have blitz at their own mana cost. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `grant_exiled_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` exiled with this permanent. | [grant_exiled_abilities — abilities lent by the cards exiled with a permanent](card-dsl-cookbook.md#grant_exiled_abilities--abilities-lent-by-the-cards-exiled-with-a-permanent) |
 | `grant_graveyard_abilities` |  |  | Matching permanents have every activated ability of the cards of `types` in the controller's graveyard. | [grant_graveyard_abilities — abilities lent by the cards in your graveyard](card-dsl-cookbook.md#grant_graveyard_abilities--abilities-lent-by-the-cards-in-your-graveyard) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
@@ -665,6 +668,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `lose_all_abilities` |  |  | Matching permanents lose all abilities. | [lose_all_abilities, and why abilities_of exists](card-dsl-cookbook.md#lose_all_abilities-and-why-abilities_of-exists) |
 | `lose_keyword` |  | yes | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
 | `lose_keyword_timestamped` |  |  | Matching permanents lose keywords; a grant newer than the removal gives one back (613.7). | [lose_keyword_timestamped — "loses flying", with no "can't have"](card-dsl-cookbook.md#lose_keyword_timestamped--loses-flying-with-no-cant-have) |
+| `lure` |  | yes | All creatures able to block a matching attacker do so (`blockers`: only those). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `mana_becomes_colorless` | yes |  | Unspent mana the player would lose becomes colorless instead. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `mana_retention` | yes |  | The player doesn't lose unspent mana of the listed symbols as steps and phases end. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `maximum_hand_size` | yes |  | The player's maximum hand size is N; the newest hand-size effect wins. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -720,6 +724,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 |---|---|---|
 | `add_mana_on_tap` | Whenever a matching permanent is tapped for mana, add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `black_mana_as_phyrexian` | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
+| `blitz_cost_reduction` | Blitz costs the player pays cost N less generic mana. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `cant_activate_abilities` | The player can't activate matching abilities. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells` | The player can't cast matching spells. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells_from_zones` | The player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
@@ -739,6 +744,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `extra_land_drops` | The player may play N additional lands each turn. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `free_cast_permission` | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
 | `freeze_opponent_lands` | The player's lands don't untap during their untap step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `grant_blitz` | Matching creature spells the player casts have blitz at their own mana cost. | [grant_blitz — blitz at a spell's own mana cost](card-dsl-cookbook.md#grant_blitz--blitz-at-a-spells-own-mana-cost) |
 | `grant_miracle` | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_pay_generic_with` | Matching spells the player casts have convoke, improvise or delve. | [grant_pay_generic_with — "spells you cast have improvise"](card-dsl-cookbook.md#grant_pay_generic_with--spells-you-cast-have-improvise) |
 | `grant_warp` | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
@@ -808,6 +814,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `imprint_characteristics` | This creature has the power, toughness and creature types of the last creature card exiled with it. | [imprint_characteristics — Duplicant's size from a card in exile](card-dsl-cookbook.md#imprint_characteristics--duplicants-size-from-a-card-in-exile) |
 | `legend_rule_exemption` | The legend rule doesn't apply to matching permanents. | [legend_rule_exemption — the legend rule doesn't apply](card-dsl-cookbook.md#legend_rule_exemption--the-legend-rule-doesnt-apply) |
 | `lose_keyword` | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
+| `lure` | All creatures able to block a matching attacker do so (`blockers`: only those). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `prevent_all_but` | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
 | `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |

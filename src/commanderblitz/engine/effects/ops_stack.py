@@ -287,6 +287,9 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # original. A copied Baleful Mastery cast for {1}{B} still hands an
         # opponent a card; without this the copy was the rider-free half.
         evoked=original.evoked,
+        # A granted blitz, for the same 707.10 reason: the copy of a blitzed
+        # creature spell becomes a token with haste that is sacrificed tonight.
+        blitzed=original.blitzed,
         # Impending, for the same 707.10 reason: a copy of an Overlord spell
         # cast for its impending cost enters with the time counters too.
         impending=original.impending,

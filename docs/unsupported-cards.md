@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **456** capabilities.
+**541 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -58,10 +58,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
-| [lure](#lure) | 2 | 9914 | static_effect |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 2 | 653 | engine, replacement |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
+| [must-be-blocked](#must-be-blocked) | 2 | 9914 | static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [paradox](#paradox) | 2 | 6730 | value |
 | [partner-with](#partner-with) | 2 | 4906 | keyword |
@@ -93,7 +93,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-card-type-to-spells](#add-card-type-to-spells) | 1 | 4178 | static_effect |
 | [add-supertype](#add-supertype) | 1 | 17905 | op |
-| [additional-cost-sacrificed-binding](#additional-cost-sacrificed-binding) | 1 | 8076 | cost |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [alien-angel-token](#alien-angel-token) | 1 | 13679 | token |
 | [alien-insect-1-1-gw-flying-token](#alien-insect-1-1-gw-flying-token) | 1 | 13408 | token |
@@ -332,7 +331,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multicolored](#multicolored) | 1 | 6988 | selector |
 | [multiple-kicker](#multiple-kicker) | 1 | 7023 | cost |
 | [multiple-variable-size-targets](#multiple-variable-size-targets) | 1 | 4747 | engine |
-| [must-be-blocked](#must-be-blocked) | 1 | 19620 | static_effect |
 | [must-be-blocked-if-able](#must-be-blocked-if-able) | 1 | 11381 | static_effect |
 | [mutant-3-3-g-deathtouch-token](#mutant-3-3-g-deathtouch-token) | 1 | 17905 | token |
 | [next-spell-alternative-cost](#next-spell-alternative-cost) | 1 | 10449 | op |
@@ -740,7 +738,6 @@ Blocks **11** cards.
 - **Sandskin** (rank 27695) — `sandskin`
   - Prevent all combat damage that would be dealt to and dealt by enchanted creature.
 - **Marble Priest** (rank 31502) — `marble_priest`
-  - All Walls able to block this creature do so.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
@@ -1705,26 +1702,6 @@ Blocks **2** cards.
 
 </details>
 
-## lure
-
-Blocks **2** cards.
-
-- **(static_effect)** a static block requirement on the source attacker (509.1c): every creature matching a printed blocker filter (here subtypes: ["Wall"]) that is able to block this creature must do so -- Lure-style, narrowed by a `blockers` filter
-  <br>Why the existing vocabulary won't do: The `must_block` op is a one-shot on resolution with no trigger to hang it on, and the only static that reads `blockers` is `block_restriction`, which restricts who MAY block (menace, Tromokratis' `require_all`) rather than requiring blocks; no static_effect imposes a block requirement
-- **(static_effect)** a static on the creature itself requiring the defending player to block it with at least one creature if able ("must be blocked if able"), combined with the existing max_blockers 1
-  <br>Why the existing vocabulary won't do: `attacks_if_able` is the attacker-side requirement; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Foretold Soldier** (rank 9914) — `the_foretold_soldier`
-  - Whenever this creature deals damage, exile it face down. It becomes foretold.
-  - This creature must be blocked if able.
-- **Marble Priest** (rank 31502) — `marble_priest`
-  - All Walls able to block this creature do so.
-  - Prevent all combat damage that would be dealt to this creature by Walls.
-
-</details>
-
 ## mana-spent-enters-with-counters
 
 Blocks **2** cards.
@@ -1776,6 +1753,25 @@ Blocks **2** cards.
   - {1}{U}, {T}, Remove twelve time counters from Trenzalore Clocktower and exile it: Shuffle your graveyard and hand into your library, then draw seven cards. Activate only if you control a Time Lord.
 - **Time Lord Regeneration** (rank 14672) — `time_lord_regeneration`
   - Until end of turn, target Time Lord you control gains "When this creature dies, reveal cards from the top of your library until you reveal a Time Lord creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
+
+</details>
+
+## must-be-blocked
+
+Blocks **2** cards.
+
+- **(static_effect)** a static block requirement on the source attacker (509.1c): while this creature is attacking, the defending player must block it with at least one creature if any creature they control is able to (one blocker satisfies it; unlike lure, not every able creature must block). Shape: a static such as `{"effect": "must_be_blocked", "affects": {"self_only": true}}` checked by combat's block-requirement maximisation
+  <br>Why the existing vocabulary won't do: `block_restriction` (with `blockers`, `max_blockers`, `require_all`) only restricts who MAY block, never requires a block; `must_block` / `must_block_any` are one-shot ops that set a requirement on a chosen defending creature on resolution, with no trigger here to hang them on and no way to say 'some creature must block this attacker'; no static_effect imposes a block requirement
+- **(static_effect)** a static on the creature itself requiring the defending player to block it with at least one creature if able ("must be blocked if able"), combined with the existing max_blockers 1
+  <br>Why the existing vocabulary won't do: the `lure` static requires every able creature (or every one its `blockers` matches) to block, where this is met by one; the `must_block` / `must_block_any` ops are one-shot effects on blockers, not a standing requirement imposed by the attacker on the defending player's blocks
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Foretold Soldier** (rank 9914) — `the_foretold_soldier`
+  - Whenever this creature deals damage, exile it face down. It becomes foretold.
+  - This creature must be blocked if able.
+- **Madame Vastra** (rank 19620) — `madame_vastra`
+  - Madame Vastra must be blocked if able.
 
 </details>
 
@@ -2327,20 +2323,6 @@ Blocks **1** card.
 - **The Curse of Fenric** (rank 17905) — `the_curse_of_fenric`
   - I — For each player, destroy up to one target creature that player controls. For each creature destroyed this way, its controller creates a 3/3 green Mutant creature token with deathtouch.
   - II — Target nontoken creature becomes a 6/6 legendary Horror creature named Fenric and loses all abilities.
-
-</details>
-
-## additional-cost-sacrificed-binding
-
-Blocks **1** card.
-
-- **(cost)** an `as` on a spell's `additional_cost.sacrifice` that snapshots the sacrificed creature (608.2h last-known information, as the activated-ability cost does via `costs.pay`'s `bindings`) into the stack item's bindings, so `spell_effects` can read `{"power_of": {"binding": <as>}}` on resolution
-  <br>Why the existing vocabulary won't do: `cost.sacrifice.as` loads only on an activated ability's cost (`loader.mana` refuses it elsewhere: 'only an activated ability's effects can read what its cost sacrificed'), so an additional cost to cast pays the sacrifice and binds nothing. The damage-dealt-this-way half is expressible: `damage`'s `as` read by `gain_life`
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rite of Consumption** (rank 8076) — `rite_of_consumption`
-  - Rite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way.
 
 </details>
 
@@ -5729,20 +5711,6 @@ Blocks **1** card.
 
 - **Filigree Vector** (rank 4747) — `filigree_vector`
   - When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts.
-
-</details>
-
-## must-be-blocked
-
-Blocks **1** card.
-
-- **(static_effect)** a static block requirement on the source attacker (509.1c): while this creature is attacking, the defending player must block it with at least one creature if any creature they control is able to (one blocker satisfies it; unlike lure, not every able creature must block). Shape: a static such as `{"effect": "must_be_blocked", "affects": {"self_only": true}}` checked by combat's block-requirement maximisation
-  <br>Why the existing vocabulary won't do: `block_restriction` (with `blockers`, `max_blockers`, `require_all`) only restricts who MAY block, never requires a block; `must_block` / `must_block_any` are one-shot ops that set a requirement on a chosen defending creature on resolution, with no trigger here to hang them on and no way to say 'some creature must block this attacker'; no static_effect imposes a block requirement
-
-<details><summary>Cards waiting on this</summary>
-
-- **Madame Vastra** (rank 19620) — `madame_vastra`
-  - Madame Vastra must be blocked if able.
 
 </details>
 

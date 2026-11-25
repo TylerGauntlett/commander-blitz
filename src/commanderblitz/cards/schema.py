@@ -435,7 +435,13 @@ class TargetModel(BaseModel):
     #: Only on an *ability's* targets -- see `loader.targets._compile_targets`, which
     #: refuses one on a card's own `targets` because a spell's are chosen before
     #: it has been paid for and the expression would read zero.
-    count: int | Literal["any"] | dict[str, Any] = 1
+    #:
+    #: ``"each"`` is the fourth, and only beside `one_per_player`: "**for each
+    #: player**, put a contested counter on target land that player controls"
+    #: (Turf War) is one target from every seat controlling a candidate, so the
+    #: size is the number of such seats -- set by the board, never by the
+    #: caster.
+    count: int | Literal["any", "each"] | dict[str, Any] = 1
     #: The ``count`` this spec takes instead **when the spell was kicked** --
     #: "If this spell was kicked, instead choose any number of target
     #: creatures you own" (The Eagles Are Coming!).
@@ -513,6 +519,10 @@ class TargetModel(BaseModel):
     #: and/or enchantments controlled by different players" (Protector of the
     #: Wastes) -- or a literal exact ``count`` of 2 or more: "choose **two**
     #: target creatures controlled by different players" (Run Away Together).
+    #: With ``count: "each"`` it is "for each player, target land **that
+    #: player controls**" (Turf War): exactly one from every seat that has a
+    #: candidate, the controller's own included -- a triggered or reflexive
+    #: ability's only, its picks asked seat by seat as it goes on the stack.
     one_per_player: bool = False
     #: "Exile up to two target cards **from a single graveyard**" (Waste
     #: Management, Decompose). Every chosen card shares an owner -- the
@@ -1263,7 +1273,8 @@ class AbilityModel(BaseModel):
     ability: int | None = None
     #: ``block_restriction``: which would-be blockers are refused. A static
     #: filter over the *blocker*, so "can't be blocked by Humans" is
-    #: ``{"subtypes": ["Human"]}``.
+    #: ``{"subtypes": ["Human"]}``. On ``lure``, which would-be blockers
+    #: owe the block instead: Marble Priest's ``{"subtypes": ["Wall"]}``.
     blockers: dict[str, Any] | None = None
     #: ``block_restriction``: Tromokratis' "can't be blocked unless all
     #: creatures defending player controls block it". Judged on the whole

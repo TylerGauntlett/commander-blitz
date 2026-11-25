@@ -404,6 +404,27 @@ def plot_cost_reduction(state: GameState, pid: int) -> int:
     return total
 
 
+def blitz_cost_reduction(state: GameState, pid: int) -> int:
+    """How much less generic mana ``pid`` pays for a blitz cost (`blitz_cost_reduction`).
+
+    Henzie "Toolbox" Torre: "Blitz costs you pay cost {1} less for each time
+    you've cast your commander from the command zone this game."
+    `plot_cost_reduction`'s shape for a spell line: the discount belongs to the
+    *cost being paid* rather than to the spell, so `spell_cost_reduction`'s
+    filter -- which reads what a spell is -- cannot say it. Asked only on a line
+    that pays a blitz cost, granted (`Action.blitzed`) or printed (`evoked`
+    under `evoke_label: "blitz"`), by `casting._cast_variant` and `Game._cast`
+    alike. Several add up; the total is netted into the line's generic part
+    with every other discount and clamped at zero there (601.2f), so it never
+    reaches a coloured pip.
+    """
+    total = 0
+    for obj, static in _active_player_statics(state, "blitz_cost_reduction"):
+        if _reaches_player(obj, static, pid):
+            total += max(0, _static_value(state, static.get("amount"), obj))
+    return total
+
+
 def search_forbidden(state: GameState, searcher: int, cause_controller: int | None) -> bool:
     """May ``searcher`` not search their own library right now (`cant_search_library`)?
 
@@ -3375,6 +3396,45 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
         if _matches_printed(card, resolved):
             return str(price)
     return None
+
+
+def granted_blitz(state: GameState, pid: int, card: CardDef) -> bool:
+    """Whether a static gives this creature spell blitz as ``pid`` casts it.
+
+    "Each creature spell you cast with mana value 4 or greater has blitz. The
+    blitz cost is equal to its mana cost." -- Henzie "Toolbox" Torre.
+    `granted_warp_cost`'s shape, with two differences that are the printed
+    sentence. There is **no price on the static**: the grant prices each spell
+    at that spell's own mana cost, so `casting._cast_options` reads it off the
+    card. And there is **no zone**: the sentence is about spells you cast, not
+    cards in your hand, so a creature cast from a graveyard or the command zone
+    under another permission has blitz too -- the reason
+    `granted_alternative_cost` takes no zone either.
+
+    The filter reads the printed face, plus the literal ``mana_value``
+    comparison Brisela's lock reads; `casting` never offers the grant on a card
+    with X in its cost, whose mana value as a spell is not its face's (202.3e).
+
+    A bool, not a count: a spell with blitz twice at one price is one cast line,
+    for `granted_warp_cost`'s reason.
+    """
+    for source_obj, static in _active_player_statics(state, "grant_blitz"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` would hand blitz to
+            # every spell in the game.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return True
+    return False
 
 
 def granted_pay_generic_with(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
