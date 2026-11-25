@@ -54913,6 +54913,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_2_2_r_menace"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Aura"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              ],
+              "controller": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "chishiro_the_shattered_blade",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Chishiro, the Shattered Blade",
+      "oracle_text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.\nAt the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -291970,6 +292057,58 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "smoke_spirits_aid",
+      "mana_cost": "{X}{R}",
+      "name": "Smoke Spirits' Aid",
+      "oracle_text": "For each of up to X target creatures, create a red Aura enchantment token named Smoke Blessing attached to that creature. Those tokens have enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "attached_to": {
+                "binding": "each"
+              },
+              "op": "create_token",
+              "token": "smoke_blessing"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

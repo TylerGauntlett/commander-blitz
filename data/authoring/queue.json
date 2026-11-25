@@ -45652,12 +45652,12 @@
     },
     "Chishiro, the Shattered Blade": {
       "edhrec_rank": 5837,
-      "gate": "template",
+      "gate": null,
       "name": "Chishiro, the Shattered Blade",
-      "reason": "no template for: Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token w",
+      "reason": "",
       "scryfall_id": "3305c70f-188a-4c01-b605-d583ded84e18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chiss-Goria, Forge Tyrant": {
@@ -252932,12 +252932,12 @@
     },
     "Smoke Spirits' Aid": {
       "edhrec_rank": 9855,
-      "gate": "template",
+      "gate": null,
       "name": "Smoke Spirits' Aid",
-      "reason": "no template for: For each of up to X target creatures, create a red Aura enchantment token named Smoke Bles",
+      "reason": "",
       "scryfall_id": "cbcade55-8ae3-4ac0-b2a9-f890b83ed530",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smoke Teller": {

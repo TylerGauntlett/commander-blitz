@@ -4488,6 +4488,10 @@
     },
     "zone": "battlefield"
   },
+  "chishiro_the_shattered_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chitinous_cloak": {
     "zone": "battlefield"
   },
@@ -24392,6 +24396,15 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "smoke_spirits_aid": {
+    "battlefield_count": 36,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 4,
+      "id": "smoke_blessing"
+    },
+    "zone": "graveyard"
   },
   "smokebraider": {
     "battlefield_count": 33,
