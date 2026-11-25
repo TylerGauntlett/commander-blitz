@@ -258575,6 +258575,90 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Roalesk enters, put two +1/+1 counters on another target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            },
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Roalesk dies, proliferate, then proliferate again.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "roalesk_apex_hybrid",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{2}{G}{G}{U}",
+      "name": "Roalesk, Apex Hybrid",
+      "oracle_text": "Flying, trample\nWhen Roalesk enters, put two +1/+1 counters on another target creature you control.\nWhen Roalesk dies, proliferate, then proliferate again. (Choose any number of permanents and/or players, then give each another counter of each kind already there. Then do it again.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Mutant"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -285230,6 +285314,96 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 6,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters, support 6",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with a counter on it attacks one of your opponents, that creature gains flying until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "attacks",
+            "filter": {
+              "has_counters": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "skyboon_evangelist",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Skyboon Evangelist",
+      "oracle_text": "Flying\nWhen this creature enters, support 6. (Put a +1/+1 counter on each of up to six other target creatures.)\nWhenever a creature with a counter on it attacks one of your opponents, that creature gains flying until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -286859,6 +287033,90 @@
         "Legendary"
       ],
       "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "hexproof",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "as": "onto",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "any_kind": true,
+              "any_number": true,
+              "from": {
+                "controller": "you",
+                "count": "all",
+                "exclude_binding": "onto",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a hexproof counter on target creature. Then move any number of counters from among creatures you control onto that creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "slippery_bogbonder",
+      "keywords": [
+        "flash",
+        "hexproof"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Slippery Bogbonder",
+      "oracle_text": "Flash\nHexproof\nWhen this creature enters, put a hexproof counter on target creature. Then move any number of counters from among creatures you control onto that creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -299389,6 +299647,72 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "distinct": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "battlefield"
+                  },
+                  "of": "counter_kind"
+                }
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cast this spell, copy it for each kind of counter among permanents you control. You may choose new targets for the copies.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "storm_of_forms",
+      "mana_cost": "{3}{U}",
+      "name": "Storm of Forms",
+      "oracle_text": "When you cast this spell, copy it for each kind of counter among permanents you control. You may choose new targets for the copies.\nReturn target nonland permanent to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

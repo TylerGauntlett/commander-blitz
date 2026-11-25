@@ -21628,6 +21628,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "roalesk_apex_hybrid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "roaming_throne": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -23885,6 +23889,10 @@
   "skyblade_of_the_legion": {
     "zone": "battlefield"
   },
+  "skyboon_evangelist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skycat_sovereign": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -24012,6 +24020,11 @@
       "0": 3
     },
     "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
+  "slippery_bogbonder": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "slippery_bogle": {
@@ -25070,6 +25083,9 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "storm_of_forms": {
+    "zone": "graveyard"
   },
   "storm_of_souls": {
     "battlefield_count": 34,

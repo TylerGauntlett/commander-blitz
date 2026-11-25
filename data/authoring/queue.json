@@ -225932,12 +225932,12 @@
     },
     "Roalesk, Apex Hybrid": {
       "edhrec_rank": 10541,
-      "gate": "template",
+      "gate": null,
       "name": "Roalesk, Apex Hybrid",
-      "reason": "no template for: When Roalesk enters, put two +1/+1 counters on another target creature you control",
+      "reason": "",
       "scryfall_id": "a52a5f4b-d2e1-405e-82b4-ea35ab851c42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roamer's Routine": {
@@ -250362,12 +250362,12 @@
     },
     "Skyboon Evangelist": {
       "edhrec_rank": 11459,
-      "gate": "template",
+      "gate": null,
       "name": "Skyboon Evangelist",
-      "reason": "no template for: When this creature enters, support 6",
+      "reason": "",
       "scryfall_id": "a776f162-5ac4-444a-8254-ff6915932358",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skybox Ferry": {
@@ -252122,12 +252122,12 @@
     },
     "Slippery Bogbonder": {
       "edhrec_rank": 3839,
-      "gate": "template",
+      "gate": null,
       "name": "Slippery Bogbonder",
-      "reason": "no template for: When this creature enters, put a hexproof counter on target creature. Then move any number",
+      "reason": "",
       "scryfall_id": "f9fc4f93-398c-4d11-a393-dd35e16ac1cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slippery Bogle": {
@@ -265982,12 +265982,12 @@
     },
     "Storm of Forms": {
       "edhrec_rank": 15754,
-      "gate": "template",
+      "gate": null,
       "name": "Storm of Forms",
-      "reason": "no template for: When you cast this spell, copy it for each kind of counter among permanents you control. Y",
+      "reason": "",
       "scryfall_id": "5fab4f0d-006d-4a94-80ba-924f19b42f63",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm of Memories": {
