@@ -2865,6 +2865,26 @@ an any-of spelling would still count an artifact land.
 `controller` is **required** — omitted, it would silently count the opponents'
 arrivals too. Say `"all"` when a card really does mean anybody's.
 
+**"Each opponent who had two or more lands enter under their control" asks each
+opponent alone**, so inside a `for_each_player` loop `controller` takes
+`{"binding": "each_player"}`, the player the loop is visiting. Smuggler's Share:
+
+```jsonc
+{ "op": "for_each_player", "players": "each_opponent", "effects": [
+  { "op": "if",
+    "condition": { "cmp": ">=",
+                   "left": { "permanents_entered_this_turn": {
+                               "controller": { "binding": "each_player" },
+                               "types": ["Land"] } },
+                   "right": { "const": 2 } },
+    "then": [ { "op": "create_token", "token": "treasure_token" } ] } ] }
+```
+
+`"each_opponent"` is the near miss: it sums every opponent's arrivals, so two
+opponents with one land each read as one who had two. A binding is the only
+mapping `controller` takes, and only on the effect side; a static has no loop
+to bind a player and refuses it.
+
 **`is_token: false` is the printed word "nontoken"**, and `true` is "token"; it
 must be a boolean. Gyome, Master Chef counts "nontoken creatures you had enter
 the battlefield under your control this turn":
