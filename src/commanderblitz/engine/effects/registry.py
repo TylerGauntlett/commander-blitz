@@ -58,6 +58,11 @@ RECORDING_OPS = frozenset(
         #: was on as a list of one oid. Contractual Safeguard. See
         #: `ops_counters.op_choose_counter_kind`.
         "choose_counter_kind",
+        #: A loop's binding, not a record: each **counter kind** in its domain
+        #: in turn, a string read by the same ``counter: {"binding": …}`` as
+        #: `choose_counter_kind`'s, and only inside the loop's body. Bribe
+        #: Taker. See `ops_counters.op_for_each_counter_kind`.
+        "for_each_counter_kind",
         #: The one recorder whose binding is a **chosen integer**, read back by
         #: a value expression's ``{"binding": …}`` -- Expel the Interlopers'
         #: "power greater than or equal to the chosen number". See

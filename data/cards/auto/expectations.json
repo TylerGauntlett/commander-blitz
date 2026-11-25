@@ -3370,6 +3370,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bribe_taker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bridgeworks_battle_tanglespan_bridgeworks": {
     "hand_size": {
       "0": 1
@@ -23964,6 +23968,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "skyship_plunderer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "skyshroud_falcon": {
     "zone": "battlefield"

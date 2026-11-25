@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**552 cards** blocked by **464** capabilities.
+**550 cards** blocked by **461** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -162,7 +162,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
-| [copy-counters](#copy-counters) | 1 | 9492 | op |
 | [copy-from-last-known-information](#copy-from-last-known-information) | 1 | 15208 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -175,7 +174,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-targeting-damaged](#cost-reduction-targeting-damaged) | 1 | 10619 | selector |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
-| [counter-kind-copy](#counter-kind-copy) | 1 | 16753 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -219,6 +217,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-of-exiled-card](#enters-as-copy-of-exiled-card) | 1 | 19072 | replacement |
 | [enters-as-copy-with-ability](#enters-as-copy-with-ability) | 1 | 2009 | replacement |
 | [enters-replacement-exile-unless-cast-with-mana](#enters-replacement-exile-unless-cast-with-mana) | 1 | 10409 | replacement |
+| [enters-with-counter-of-choice](#enters-with-counter-of-choice) | 1 | 9492 | replacement |
 | [enters-with-counters-equal-to-source-toughness](#enters-with-counters-equal-to-source-toughness) | 1 | 1905 | value |
 | [equipment-had](#equipment-had) | 1 | 14101 | value |
 | [equipped-trigger-filter](#equipped-trigger-filter) | 1 | 9043 | selector |
@@ -257,7 +256,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
-| [for-each-counter-kind](#for-each-counter-kind) | 1 | 20085 | op |
 | [foretell](#foretell) | 1 | 9914 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
@@ -424,7 +422,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with](#shares-card-type-with) | 1 | 12729 | selector |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
-| [single-target-proliferate](#single-target-proliferate) | 1 | 16105 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
@@ -3329,20 +3326,6 @@ Blocks **1** card.
 
 </details>
 
-## copy-counters
-
-Blocks **1** card.
-
-- **(op)** an op that, for every kind of counter on a source object (self), puts that many counters of the same kind on another object (the entering creature bound by the trigger), without removing them from the source -- any kind, keyword counters included
-  <br>Why the existing vocabulary won't do: add_counters takes one named `counter` kind, so three add_counters reading counters_on self for +1/+1, first strike and vigilance would miss any other kind Denry later gains (proliferate onto -1/-1, shield, etc.); move_counters with all_kinds removes the counters from the source; double_counters only doubles counters on the same object
-
-<details><summary>Cards waiting on this</summary>
-
-- **Denry Klin, Editor in Chief** (rank 9492) — `denry_klin_editor_in_chief`
-  - Whenever a nontoken creature you control enters, if Denry Klin has counters on it, put the same number of each kind of counter on that creature.
-
-</details>
-
 ## copy-from-last-known-information
 
 Blocks **1** card.
@@ -3510,21 +3493,6 @@ Blocks **1** card.
 - **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
   - • Switch each creature's power and toughness until end of turn.
   - • Counter all other spells.
-
-</details>
-
-## counter-kind-copy
-
-Blocks **1** card.
-
-- **(op)** an op that collects the distinct counter kinds among a selector's objects (creatures you control, including the just-created tokens) and, for each kind, puts one counter of that kind on a chosen one of a bound set of objects (the two tokens created via create_token `as`)
-  <br>Why the existing vocabulary won't do: add_counters takes one fixed `counter` kind; move_counters/remove_counters have any_kind/all_kinds but move or remove existing counters rather than adding a fresh one per distinct kind; proliferate adds to permanents that already have counters, not to a chosen token; no value or for_each iterates over counter kinds
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exotic Pets** (rank 16753) — `exotic_pets`
-  - Create two 1/1 blue Fish creature tokens with "This token can't be blocked."
-  - Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.
 
 </details>
 
@@ -4136,6 +4104,20 @@ Blocks **1** card.
 
 </details>
 
+## enters-with-counter-of-choice
+
+Blocks **1** card.
+
+- **(replacement)** a self_enters_with_counters replacement whose kind is chosen by the controller as the permanent enters, from a printed list of kinds (+1/+1, first_strike, vigilance), the choice offered by kind name and the one counter placed in the arrival's single placement (122.6, 614.1c)
+  <br>Why the existing vocabulary won't do: self_enters_with_counters takes one printed `counter`, or a `modify.counters` map of printed kinds; its `as_enters` effects can run a choice, but no op binds a chosen printed kind (choose_counter_kind chooses among counters already on a permanent, and choose_mode binds nothing), so the only spelling is a choose_number 1-3 decoded by arithmetic per kind, which offers the player bare numbers; riot's choice is fixed to +1/+1 or haste. The second sentence is expressible with for_each_counter_kind (objects self_only, count_as) over a permanent_enters trigger on nontoken creatures you control, with an add_counters of the bound kind and amount onto the subject
+
+<details><summary>Cards waiting on this</summary>
+
+- **Denry Klin, Editor in Chief** (rank 9492) — `denry_klin_editor_in_chief`
+  - Denry Klin enters with your choice of a +1/+1, first strike, or vigilance counter on it.
+
+</details>
+
 ## enters-with-counters-equal-to-source-toughness
 
 Blocks **1** card.
@@ -4617,7 +4599,6 @@ Blocks **1** card.
 
 - **Exotic Pets** (rank 16753) — `exotic_pets`
   - Create two 1/1 blue Fish creature tokens with "This token can't be blocked."
-  - Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.
 
 </details>
 
@@ -4679,20 +4660,6 @@ Blocks **1** card.
 
 - **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
   - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
-
-</details>
-
-## for-each-counter-kind
-
-Blocks **1** card.
-
-- **(op)** an iteration over the distinct counter kinds present on a set of permanents (here: permanents you control), binding each kind so the loop body can name it as a counter type; the body is an optional choice between add_counters +1/+1 and add_counters of the bound kind on the source
-  <br>Why the existing vocabulary won't do: for_each iterates objects, not counter kinds; add_counters takes a printed `counter` string with no way to read a bound kind; move_counters/remove_counters have any_kind/all_kinds but those act on counters already on an object rather than enumerating kinds to put new ones; value_keys has `distinct` and `counters_on` but neither yields the set of kinds as a loop domain or a counter-name binding
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bribe Taker** (rank 20085) — `bribe_taker`
-  - When this creature enters, for each kind of counter on permanents you control, you may put your choice of a +1/+1 counter or a counter of that kind on this creature.
 
 </details>
 
@@ -7066,20 +7033,6 @@ Blocks **1** card.
 
 - **Vault 21: House Gambit** (rank 11266) — `vault_21_house_gambit`
   - III — Reveal up to five nonland cards from your hand. For each of those cards that has the same mana value as another card revealed this way, create a Treasure token.
-
-</details>
-
-## single-target-proliferate
-
-Blocks **1** card.
-
-- **(op)** an op that, for ONE targeted permanent or player (a single target spec accepting either a permanent or a player), puts one more counter of each kind already on it -- +1 of every counter kind present on a permanent, or +1 poison/energy/experience etc. on a player
-  <br>Why the existing vocabulary won't do: proliferate takes only `as` and is untargeted, letting the controller choose any number of permanents and players, which is a different (broader) effect; add_counters needs one named `counter` kind and cannot iterate over the kinds present; for_each iterates objects, not counter kinds; double_counters/double_player_counters double every count rather than adding one of each kind
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skyship Plunderer** (rank 16105) — `skyship_plunderer`
-  - Whenever this creature deals combat damage to a player, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind.
 
 </details>
 

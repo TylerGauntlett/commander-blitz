@@ -40347,6 +40347,97 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "kind",
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "count": 1,
+                      "modes": [
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "counter": "+1/+1",
+                              "objects": {
+                                "self_only": true
+                              },
+                              "op": "add_counters"
+                            }
+                          ],
+                          "label": "Put a +1/+1 counter on this creature."
+                        },
+                        {
+                          "effects": [
+                            {
+                              "amount": {
+                                "const": 1
+                              },
+                              "counter": {
+                                "binding": "kind"
+                              },
+                              "objects": {
+                                "self_only": true
+                              },
+                              "op": "add_counters"
+                            }
+                          ],
+                          "label": "Put a counter of that kind on this creature."
+                        }
+                      ],
+                      "op": "choose_mode"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put a counter on this creature?"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "op": "for_each_counter_kind"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, for each kind of counter on permanents you control, you may put your choice of a +1/+1 counter or a counter of that kind on this creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bribe_taker",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{G}",
+      "name": "Bribe Taker",
+      "oracle_text": "Trample\nWhen this creature enters, for each kind of counter on permanents you control, you may put your choice of a +1/+1 counter or a counter of that kind on this creature.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Rhino",
+        "Warrior"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -286356,6 +286447,87 @@
       "toughness": 1,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "kind",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "op": "add_counters",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each_counter_kind",
+              "players": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {}
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "skyship_plunderer",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Skyship Plunderer",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },

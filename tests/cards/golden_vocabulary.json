@@ -1175,6 +1175,7 @@
   "fight",
   "flip_coin",
   "for_each",
+  "for_each_counter_kind",
   "for_each_player",
   "freeze",
   "gain_activated_abilities",

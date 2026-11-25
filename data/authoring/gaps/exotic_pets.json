@@ -3,8 +3,7 @@
   "name": "Exotic Pets",
   "oracle_text": "Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\" Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.",
   "blocked_sentences": [
-    "Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\"",
-    "Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens."
+    "Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\""
   ],
   "needs": [
     {
@@ -12,14 +11,11 @@
       "kind": "token",
       "what": "a 1/1 blue Fish creature token with \"This token can't be blocked.\"",
       "why_existing_wont_do": "token_ids has only fish_1_1_u, a plain 1/1 blue Fish with no evasion; substituting it would drop the unblockable clause"
-    },
-    {
-      "capability": "counter_kind_copy",
-      "kind": "op",
-      "what": "an op that collects the distinct counter kinds among a selector's objects (creatures you control, including the just-created tokens) and, for each kind, puts one counter of that kind on a chosen one of a bound set of objects (the two tokens created via create_token `as`)",
-      "why_existing_wont_do": "add_counters takes one fixed `counter` kind; move_counters/remove_counters have any_kind/all_kinds but move or remove existing counters rather than adding a fresh one per distinct kind; proliferate adds to permanents that already have counters, not to a chosen token; no value or for_each iterates over counter kinds"
     }
   ],
-  "closest_existing": ["add_counters", "move_counters", "proliferate"],
+  "closest_existing": [
+    "create_token",
+    "for_each_counter_kind"
+  ],
   "confidence": "high"
 }

@@ -34132,12 +34132,12 @@
     },
     "Bribe Taker": {
       "edhrec_rank": 20085,
-      "gate": "template",
+      "gate": null,
       "name": "Bribe Taker",
-      "reason": "no template for: When this creature enters, for each kind of counter on permanents you control, you may put",
+      "reason": "",
       "scryfall_id": "08d8a568-196e-4865-b2df-858152e3aece",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Briber's Purse": {
@@ -250902,12 +250902,12 @@
     },
     "Skyship Plunderer": {
       "edhrec_rank": 16105,
-      "gate": "template",
+      "gate": null,
       "name": "Skyship Plunderer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, for each kind of counter on target",
+      "reason": "",
       "scryfall_id": "113ebd1b-380d-42a1-accb-9889c40478f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyship Stalker": {
