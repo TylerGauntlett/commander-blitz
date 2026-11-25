@@ -24676,6 +24676,9 @@
     },
     "zone": "battlefield"
   },
+  "soul_s_majesty": {
+    "zone": "graveyard"
+  },
   "soul_shatter": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
@@ -24749,6 +24752,16 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "spearbreaker_behemoth": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
     },
     "zone": "battlefield"
   },
@@ -29004,6 +29017,13 @@
     },
     "zone": "graveyard"
   },
+  "unquenchable_fury": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "unshakable_tail": {
     "battlefield_count": 33,
     "hand_size": {
@@ -29312,6 +29332,13 @@
   },
   "vastwood_gorger": {
     "zone": "battlefield"
+  },
+  "vastwood_surge": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "vat_emergence": {
     "battlefield_count": 33,

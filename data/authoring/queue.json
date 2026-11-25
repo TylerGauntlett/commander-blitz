@@ -256132,12 +256132,12 @@
     },
     "Soul's Majesty": {
       "edhrec_rank": 3253,
-      "gate": "template",
+      "gate": null,
       "name": "Soul's Majesty",
-      "reason": "no template for: Draw cards equal to the power of target creature you control",
+      "reason": "",
       "scryfall_id": "9fe03ee0-50e4-4893-84ed-0d099be21d4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul's Might": {
@@ -257322,12 +257322,12 @@
     },
     "Spearbreaker Behemoth": {
       "edhrec_rank": 7222,
-      "gate": "template",
+      "gate": null,
       "name": "Spearbreaker Behemoth",
-      "reason": "no template for: {1}: Target creature with power 5 or greater gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "d7f5cae6-5f1d-4537-9cc5-46d727d1beb1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spearpoint Oread": {
@@ -298432,12 +298432,12 @@
     },
     "Unquenchable Fury": {
       "edhrec_rank": 8621,
-      "gate": "template",
+      "gate": null,
       "name": "Unquenchable Fury",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks, it deals X damage to defending pla",
+      "reason": "",
       "scryfall_id": "468864b4-d10f-4920-af05-ba107fe54a25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unquenchable Thirst": {
@@ -301512,12 +301512,12 @@
     },
     "Vastwood Surge": {
       "edhrec_rank": 4950,
-      "gate": "template",
+      "gate": null,
       "name": "Vastwood Surge",
-      "reason": "no template for: Kicker {4}",
+      "reason": "",
       "scryfall_id": "2a86e896-2be1-4ac0-ba68-9117761a0464",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vastwood Zendikon": {
