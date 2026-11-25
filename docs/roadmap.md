@@ -97,7 +97,7 @@ each heading; this table is generated from them.
 | [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | Divided damage that may hit players, Divided damage from a triggered or activated ability, A land that sacrifices itself on entering | 0 |
-| [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
+| [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | A land that sacrifices itself on entering, Voting: will of the council and council's dilemma | 0 |
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | nothing | 0 |
 | [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
@@ -106,7 +106,7 @@ each heading; this table is generated from them.
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
-| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 3 |
+| [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 4 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
@@ -114,7 +114,7 @@ each heading; this table is generated from them.
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 9 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 10 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 6 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 5 |
@@ -151,8 +151,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander).
 
 **Ready now, best first:**
 
@@ -250,6 +248,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
+- [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -4540,7 +4539,7 @@ whole-game test able to draw the deck.
 
 ### Obscura Operation (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
