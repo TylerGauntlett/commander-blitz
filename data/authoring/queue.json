@@ -294272,12 +294272,12 @@
     },
     "Turf War": {
       "edhrec_rank": 21263,
-      "gate": "template",
+      "gate": null,
       "name": "Turf War",
-      "reason": "no template for: When this enchantment enters, for each player, put a contested counter on target land that",
+      "reason": "",
       "scryfall_id": "5e7fecbd-66f6-44b7-8fe4-b9b5bfce3e2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turf Wound": {

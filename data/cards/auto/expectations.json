@@ -27955,6 +27955,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "turf_war": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "turntimber_ascetic": {
     "life": {
       "0": 43

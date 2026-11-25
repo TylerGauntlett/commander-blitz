@@ -1765,6 +1765,23 @@ it the picks may come from two graveyards; a sibling `player` target with
 `controller: {"target": …}` adds an unprinted "target player" that hexproof
 stops; a fixed `controller` drops every other graveyard.
 
+### "For each player, target … that player controls" -- `count: "each"`
+
+```jsonc
+// Turf War: "When this enchantment enters, for each player, put a contested
+// counter on target land that player controls."
+{ "id": "t1", "kind": "permanent", "count": "each", "one_per_player": true,
+  "selector": { "zone": "battlefield", "types": ["Land"], "controller": "any" } }
+```
+
+`count: "each"` beside `one_per_player` is a size the board sets: exactly one
+target from every player who controls a candidate, the controller's own seat
+included, none from a player with none (601.2c). A triggered or reflexive
+ability's only target, asked seat by seat as it goes on the stack; the loader
+refuses it anywhere else, without `one_per_player`, and beside `up_to`,
+`optional` or `min_count`. The worked mechanic and its near misses are in the
+cookbook's "For each player, up to one target permanent that player controls".
+
 ### "Each of X targets"
 
 ```jsonc

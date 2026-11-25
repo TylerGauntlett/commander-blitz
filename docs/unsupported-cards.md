@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**542 cards** blocked by **455** capabilities.
+**541 cards** blocked by **454** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -343,7 +343,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [offspring](#offspring) | 1 | 6566 | keyword |
 | [one-target-per-graveyard](#one-target-per-graveyard) | 1 | 9139 | selector |
-| [one-target-per-player](#one-target-per-player) | 1 | 21263 | selector |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [opponents-attacked-this-turn](#opponents-attacked-this-turn) | 1 | 4544 | value |
 | [optional-untap](#optional-untap) | 1 | 13446 | static_effect |
@@ -5884,20 +5883,6 @@ Blocks **1** card.
 
 - **Mysterious Stranger** (rank 9139) — `mysterious_stranger`
   - When this creature enters, for each graveyard with an instant or sorcery card in it, exile target instant or sorcery card from that graveyard.
-
-</details>
-
-## one-target-per-player
-
-Blocks **1** card.
-
-- **(selector)** a target spec whose size is mandatory and set by the board: exactly one target land for EACH player who controls one (no two from the same player, nobody skipped, the caster's own seat included), so the controller must mark one of their own lands as well as one of each opponent's
-  <br>Why the existing vocabulary won't do: `one_per_player` is accepted only with count 'any', a ceiling (count N with up_to) or a literal count of 2 or more (cards/loader/targets.py), so it says 'up to one target land per player' and lets the caster skip their own land -- the card's whole drawback -- or a literal 2 that is wrong in any pod that is not two players; a computed exact count is refused by the loader. A for_each_player with a non-targeting choice would dodge hexproof/shroud and is not 'target'. The second sentence looks expressible: a deals_combat_damage_to_player trigger with an `exists` condition over lands with has_counters 'contested' controlled by {binding: event_player}, then gain_control with player {controller_of: subject}, a count-1 selector with chooser {controller_of: subject} and `as`, then untap of that binding
-
-<details><summary>Cards waiting on this</summary>
-
-- **Turf War** (rank 21263) — `turf_war`
-  - When this enchantment enters, for each player, put a contested counter on target land that player controls.
 
 </details>
 

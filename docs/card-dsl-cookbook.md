@@ -14198,6 +14198,34 @@ at zero or one creature. So is a `controller: "you"` spec beside a
 `controller: "opponent"` one, which cannot reach two different opponents'
 creatures in a pod.
 
+**One for every seat.** "When this enchantment enters, **for each player**, put
+a contested counter on target land that player controls" (Turf War) is
+`count: "each"`:
+
+```jsonc
+{"targets": [{"id": "t1", "kind": "permanent", "count": "each",
+              "one_per_player": true,
+              "selector": {"zone": "battlefield", "types": ["Land"],
+                           "controller": "any"}}],
+ "effects": [{"op": "add_counters", "counter": "contested",
+              "amount": {"const": 1}, "objects": {"target": "t1"}}]}
+```
+
+Exactly one target from every player who controls a candidate, the
+controller's own seat included, and none from a player who controls none
+(601.2c): the board sets the size and the controller cannot leave a seat out.
+Hexproof and shroud apply as to any target, so an opponent whose only land has
+hexproof is owed nothing, and with no candidate anywhere the ability declares
+no target and does nothing. It is asked seat by seat as the ability goes on
+the stack (`stack._ask_one_from_each_seat`), the controller's own seat first,
+each over that seat's whole pool; a seat with one candidate is not asked.
+`count: "any"` is the near miss — "up to one" per player, which lets the
+controller skip their own land — and so is a literal `count`, right in one pod
+size only. The loader holds it to `one_per_player`, to a triggered or
+reflexive ability's only target owned by no mode, and refuses `up_to`,
+`optional` and `min_count` beside it: a spell's or an activated ability's
+targets are offered as whole tuples, which cut a pod's lands short.
+
 **Re-checked on resolution, target by target.** "Controlled by a different
 player" is part of what made each target legal, so 608.2b asks it again
 (`targeting._drop_shared_controllers`): among the targets still legal on their
