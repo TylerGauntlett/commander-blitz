@@ -38,7 +38,7 @@ from commanderblitz.cards.registry import CardRegistry
 from commanderblitz.engine.actions import PendingDecision
 from commanderblitz.engine.carddef import CardDef
 from commanderblitz.engine.characteristics import chars
-from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
+from commanderblitz.engine.enums import SUBTYPE_CLASS, ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.objects import PLUS_ONE
@@ -1773,8 +1773,15 @@ def _target_fodder(registry, spec):
     # Bastion's 12+ line -- is `any_types`, and read as nothing it defaulted to
     # a creature neither half accepts. The first listed type is one it does.
     either = [str(t) for t in selector.get("any_types") or []]
-    types = {str(t) for t in selector.get("types") or either[:1] or ["Creature"]}
     subtypes = {str(s) for s in selector.get("subtypes") or []}
+    # Peacewalker Colossus -- "Another target **Vehicle** you control becomes
+    # an artifact creature". A spec naming only a subtype defaulted to a
+    # creature, and no Vehicle is one, so the ability read as unusable when it
+    # was only unaimed. A subtype of one card type stands for that type.
+    implied = sorted({SUBTYPE_CLASS[s] for s in subtypes if s in SUBTYPE_CLASS})
+    types = {
+        str(t) for t in selector.get("types") or either[:1] or implied[:1] or ["Creature"]
+    }
     forbidden = {str(s) for s in selector.get("not_supertypes") or []}
     # Deekah, Fractal Theorist -- "{3}{U}: Target **creature token** can't be
     # blocked this turn." The fodder is a card from hand by default, which a
