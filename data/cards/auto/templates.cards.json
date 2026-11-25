@@ -176264,6 +176264,114 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "enchanted_by": true,
+                  "self_only": true
+                }
+              },
+              {
+                "exists": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "controller": "any",
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              },
+              {
+                "exists": {
+                  "has_counters": true,
+                  "self_only": true
+                }
+              }
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "kosei_penitent_warlord",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Kosei, Penitent Warlord",
+      "oracle_text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\"",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -227152,6 +227260,70 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "modified": true,
+            "self_only": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}."
+        }
+      ],
+      "id": "orochi_merge_keeper",
+      "mana_cost": "{1}{G}",
+      "name": "Orochi Merge-Keeper",
+      "oracle_text": "{T}: Add {G}.\nAs long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -230005,6 +230177,69 @@
         "Peasant"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "discard",
+              "player": "you",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, discard your hand, then draw three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 8,
+          "exclude_self": true
+        },
+        "mana": "{R}{R}"
+      },
+      "id": "ox_of_agonas",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Ox of Agonas",
+      "oracle_text": "When this creature enters, discard your hand, then draw three cards.\nEscape—{R}{R}, Exile eight other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": 4,
+      "replacements": [
+        {
+          "amount": 1,
+          "condition": {
+            "escaped": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Ox"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

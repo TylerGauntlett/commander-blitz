@@ -151782,12 +151782,12 @@
     },
     "Kosei, Penitent Warlord": {
       "edhrec_rank": 14549,
-      "gate": "template",
+      "gate": null,
       "name": "Kosei, Penitent Warlord",
-      "reason": "no template for: As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kose",
+      "reason": "",
       "scryfall_id": "49db5812-49f7-452a-8f1d-88e6fb4880f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Koskun Falls": {
@@ -194872,12 +194872,12 @@
     },
     "Orochi Merge-Keeper": {
       "edhrec_rank": 9436,
-      "gate": "template",
+      "gate": null,
       "name": "Orochi Merge-Keeper",
-      "reason": "no template for: As long as this creature is modified, it has \"{T}: Add {G}{G}.\"",
+      "reason": "",
       "scryfall_id": "51bcdae5-8081-4d26-b5b9-571c54d7d668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orochi Ranger": {
@@ -196482,12 +196482,12 @@
     },
     "Ox of Agonas": {
       "edhrec_rank": 9606,
-      "gate": "template",
+      "gate": null,
       "name": "Ox of Agonas",
-      "reason": "no template for: When this creature enters, discard your hand, then draw three cards",
+      "reason": "",
       "scryfall_id": "00c46d18-064e-403a-bf39-ec655d78390a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oxidda Daredevil": {

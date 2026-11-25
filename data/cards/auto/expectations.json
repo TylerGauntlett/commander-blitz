@@ -14679,6 +14679,13 @@
     },
     "zone": "battlefield"
   },
+  "kosei_penitent_warlord": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "koskun_keep": {
     "zone": "battlefield"
   },
@@ -18885,6 +18892,10 @@
   "ornithopter_of_paradise": {
     "zone": "battlefield"
   },
+  "orochi_merge_keeper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orochi_soul_reaver": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19118,6 +19129,19 @@
       "0": 39
     },
     "opponent_battlefield_count": 7,
+    "zone": "battlefield"
+  },
+  "ox_of_agonas": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "ozolith_the_shattered_spire": {
