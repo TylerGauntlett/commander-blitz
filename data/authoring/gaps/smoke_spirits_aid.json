@@ -1,0 +1,16 @@
+{
+  "card_id": "smoke_spirits_aid",
+  "name": "Smoke Spirits' Aid",
+  "oracle_text": "For each of up to X target creatures, create a red Aura enchantment token named Smoke Blessing attached to that creature. Those tokens have enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\"",
+  "blocked_sentences": [
+    "For each of up to X target creatures, create a red Aura enchantment token named Smoke Blessing attached to that creature. Those tokens have enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\""
+  ],
+  "needs": [{
+    "capability": "smoke_blessing_token",
+    "kind": "token",
+    "what": "a red Aura enchantment token named Smoke Blessing with enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\" (the Aura token is the source of the damage; the Treasure is treasure_token)",
+    "why_existing_wont_do": "token_ids has Aura tokens only for Roles (wicked_role, monster_role, ...) and contract; none is red or carries the enchanted-creature-dies trigger. create_token's attached_to already handles attaching to each of up to X targets, so the token definition is the only missing piece"
+  }],
+  "closest_existing": ["wicked_role", "contract", "treasure_token"],
+  "confidence": "high"
+}
