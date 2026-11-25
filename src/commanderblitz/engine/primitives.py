@@ -33,6 +33,7 @@ from .player_statics import (
     counters_prohibited,
     damage_cant_be_prevented,
     damage_cap,
+    damage_causes_no_life_loss,
     life_gain_addend,
     life_gain_becomes_loss,
     life_gain_multiplier,
@@ -641,7 +642,11 @@ def damage_player(
         # it is still damage, and only where the number lands changes -- and
         # getting it wrong would make a doubled hit from a lifelinking commander
         # gain double life and kill on half the commander damage.
-        lost = 0 if life_locked(state, pid) else amount * life_loss_multiplier(state, pid)
+        lost = (
+            0
+            if life_locked(state, pid) or damage_causes_no_life_loss(state, pid)
+            else amount * life_loss_multiplier(state, pid)
+        )
         # "Until end of turn, damage that would reduce your life total to less
         # than 1 reduces it to 1 instead." -- Angel's Grace. 614: a replacement
         # on the *loss*, applied after the multiplier for the reason the

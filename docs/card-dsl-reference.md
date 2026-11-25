@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 115 |
-| [Player-wide statics](#player-wide-statics) | 53 |
+| [Static effects](#static-effects) | 116 |
+| [Player-wide statics](#player-wide-statics) | 54 |
 | [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
@@ -640,6 +640,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `control` |  |  | The `controller` seat (`you`, `monarch`) controls the enchanted permanent while it applies. | ["You control enchanted creature" — the control static](card-dsl-cookbook.md#you-control-enchanted-creature--the-control-static) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_cant_be_prevented` |  |  | No damage can be prevented: every prevention effect is skipped. | ["Damage can't be prevented"](card-dsl-cookbook.md#damage-cant-be-prevented) |
+| `damage_doesnt_cause_life_loss` | yes |  | Damage dealt to the player causes no life loss; it is still dealt. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_land_mana` | yes |  | Lands the player taps for mana add twice as much. | [Static abilities](card-dsl.md#static-abilities) |
 | `double_land_triggers` | yes |  | The player's landfall-style triggers fire twice. | [Static abilities](card-dsl.md#static-abilities) |
@@ -736,6 +737,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `cast_from_graveyard` | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`, for an escape cost with `escape`, or with retrace's land discard on top with `grants_retrace`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_only_at_sorcery_speed` | The player may cast matching spells only at sorcery speed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `damage_doesnt_cause_life_loss` | Damage dealt to the player causes no life loss; it is still dealt. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `damage_life_floor` | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_land_mana` | Lands the player taps for mana add twice as much. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `double_land_triggers` | The player's landfall-style triggers fire twice. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

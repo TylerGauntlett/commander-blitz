@@ -10852,6 +10852,24 @@ it. Read in `primitives.damage_player` through `temp_effects.life_floor`, which
 takes the highest of the timed records and the statics; with several floors the
 highest bites.
 
+**"Damage doesn't cause you to lose life"** is the floor taken all the way:
+`damage_doesnt_cause_life_loss`, with `affects_player` and an optional
+`condition`, and no `amount` or `affects`.
+
+```jsonc
+// Archon of Coronation: "As long as you're the monarch, damage doesn't cause
+//   you to lose life."
+{ "kind": "static", "effect": "damage_doesnt_cause_life_loss",
+  "affects_player": "you", "condition": { "is_monarch": "you" } }
+```
+
+The damage is dealt, so lifelink gains, `DAMAGE_DEALT` fires, commander damage
+is tallied and a combat hit still takes the crown (the card's reminder text);
+only the loss is skipped, and no `LIFE_LOST` fires. Infect still gives poison.
+`prevent_damage` is the near miss and stops all of that; `replace_life_loss`
+reaches every loss, not just damage's. Read in `primitives.damage_player`
+through `player_statics.damage_causes_no_life_loss`, beside the life lock.
+
 ## "If it would die this turn, exile it instead"
 
 ```jsonc
