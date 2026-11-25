@@ -88162,12 +88162,12 @@
     },
     "Exotic Pets": {
       "edhrec_rank": 16753,
-      "gate": "template",
+      "gate": null,
       "name": "Exotic Pets",
-      "reason": "no template for: Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\" Then for each",
+      "reason": "",
       "scryfall_id": "902f1ed8-5c10-45e4-8f2f-182e800faab4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expand the Sphere": {

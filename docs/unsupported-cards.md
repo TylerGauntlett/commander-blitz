@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**550 cards** blocked by **461** capabilities.
+**549 cards** blocked by **460** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -251,7 +251,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
-| [fish-token-unblockable](#fish-token-unblockable) | 1 | 16753 | token |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
@@ -4585,20 +4584,6 @@ Blocks **1** card.
 - **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
   - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
-
-</details>
-
-## fish-token-unblockable
-
-Blocks **1** card.
-
-- **(token)** a 1/1 blue Fish creature token with "This token can't be blocked."
-  <br>Why the existing vocabulary won't do: token_ids has only fish_1_1_u, a plain 1/1 blue Fish with no evasion; substituting it would drop the unblockable clause
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exotic Pets** (rank 16753) — `exotic_pets`
-  - Create two 1/1 blue Fish creature tokens with "This token can't be blocked."
 
 </details>
 

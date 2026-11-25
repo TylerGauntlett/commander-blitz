@@ -1661,6 +1661,39 @@
       "is_token": true
     },
     {
+      "id": "fish_1_1_u_unblockable",
+      "name": "Fish Token",
+      "oracle_text": "1/1 blue Fish creature token with \"This token can't be blocked.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Fish"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't be blocked.",
+          "effect": "block_restriction",
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          }
+        }
+      ]
+    },
+    {
       "id": "astartes_warrior_2_2_w_vigilance",
       "name": "Astartes Warrior Token",
       "oracle_text": "2/2 white Astartes Warrior creature token with vigilance.",

@@ -102049,6 +102049,62 @@
     },
     {
       "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "exotic_pets",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Exotic Pets",
+      "oracle_text": "Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\" Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "as": "pets",
+          "op": "create_token",
+          "token": "fish_1_1_u_unblockable"
+        },
+        {
+          "as": "kind",
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": {
+                "binding": "kind"
+              },
+              "objects": {
+                "binding": "pets",
+                "chooser": "controller",
+                "count": 1
+              },
+              "op": "add_counters"
+            }
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "for_each_counter_kind"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
