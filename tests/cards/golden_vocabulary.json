@@ -81,6 +81,7 @@
   ],
   "COST_REDUCTION_FILTER_KEYS": [
    "any_of",
+   "modified",
    "zone"
   ],
   "COST_REDUCTION_KEYS": [
