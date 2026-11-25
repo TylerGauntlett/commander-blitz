@@ -4012,12 +4012,12 @@
     },
     "Agent's Toolkit": {
       "edhrec_rank": 8332,
-      "gate": "template",
+      "gate": null,
       "name": "Agent's Toolkit",
-      "reason": "no template for: This artifact enters with a +1/+1 counter, a flying counter, a deathtouch counter, and a s",
+      "reason": "",
       "scryfall_id": "4958486a-0f02-4312-8b3f-fb90e54d332c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agents of HYDRA": {
@@ -17802,12 +17802,12 @@
     },
     "Avenging Huntbonder": {
       "edhrec_rank": 13428,
-      "gate": "template",
+      "gate": null,
       "name": "Avenging Huntbonder",
-      "reason": "no template for: Whenever this creature attacks, put a double strike counter on another target attacking cr",
+      "reason": "",
       "scryfall_id": "05e201fa-fdd3-45bf-89a2-dae8c896aa28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avenging Hunter": {
@@ -20182,12 +20182,12 @@
     },
     "Bant Charm": {
       "edhrec_rank": 4902,
-      "gate": "template",
+      "gate": null,
       "name": "Bant Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "7906b1e8-3049-4f4e-b1fd-b2547e7079f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bant Panorama": {

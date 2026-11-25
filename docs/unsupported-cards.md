@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**543 cards** blocked by **455** capabilities.
+**546 cards** blocked by **457** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [casualty](#casualty) | 2 | 11576 | static_effect |
+| [choose-counter-kind](#choose-counter-kind) | 2 | 4274 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
@@ -144,7 +145,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [chaos-ensues](#chaos-ensues) | 1 | 9707 | op |
 | [characteristics-outside-battlefield](#characteristics-outside-battlefield) | 1 | 1924 | static_effect |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
-| [choose-counter-kind](#choose-counter-kind) | 1 | 4274 | op |
 | [choose-from-linked-exile](#choose-from-linked-exile) | 1 | 14457 | op |
 | [choose-land-type](#choose-land-type) | 1 | 11432 | decision |
 | [choose-opponent-with-most-life](#choose-opponent-with-most-life) | 1 | 12040 | selector |
@@ -254,6 +254,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
 | [flip-coins-count](#flip-coins-count) | 1 | 6651 | value |
+| [for-each-counter-kind](#for-each-counter-kind) | 1 | 20085 | op |
 | [foretell](#foretell) | 1 | 9914 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-by-other-player](#free-cast-by-other-player) | 1 | 11704 | op |
@@ -463,6 +464,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [vanishing](#vanishing) | 1 | 2735 | replacement |
 | [villainous-choice](#villainous-choice) | 1 | 8294 | op |
 | [wasteland-survival-guide-token](#wasteland-survival-guide-token) | 1 | 14880 | token |
+| [while-counter-duration](#while-counter-duration) | 1 | 13251 | op |
 | [wurm-5-5-g-trample](#wurm-5-5-g-trample) | 1 | 2387 | token |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-sized-ability-targets](#x-sized-ability-targets) | 1 | 1668 | engine |
@@ -1547,6 +1549,24 @@ Blocks **2** cards.
   - The first instant or sorcery spell you cast each turn has casualty 2. (As you cast that spell, you may sacrifice a creature with power 2 or greater. When you do, copy the spell and you may choose new targets for the copy.)
 - **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
   - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
+
+</details>
+
+## choose-counter-kind
+
+Blocks **2** cards.
+
+- **(op)** an op that has the controller choose one counter kind from among the kinds currently on permanents they control, binding it (e.g. `as: "kind"`) so a later `add_counters` can take `counter: {"binding": "kind"}` and a condition/selector can test `has_counters: {"binding": "kind"}` on the target ("if it doesn't have a counter of that kind on it")
+  <br>Why the existing vocabulary won't do: `add_counters` takes only a fixed printed `counter` kind; `move_counters`/`remove_counters` have `any_kind` but move or remove existing counters from a source rather than naming a kind and putting a fresh one elsewhere; `proliferate` adds to every kind already present on chosen objects, not one chosen kind onto a permanent lacking it; `choose_type`/`choose_color`/`choose_card_name` choose other vocabularies, not counter kinds
+- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
+  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+- **Aven Courier** (rank 8469) — `aven_courier`
+  - Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.
 
 </details>
 
@@ -3059,20 +3079,6 @@ Blocks **1** card.
 - **Cloud Key** (rank 611) — `cloud_key`
   - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
   - Spells you cast of the chosen type cost {1} less to cast
-
-</details>
-
-## choose-counter-kind
-
-Blocks **1** card.
-
-- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
-  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clockspinning** (rank 4274) — `clockspinning`
-  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
 
 </details>
 
@@ -4624,6 +4630,20 @@ Blocks **1** card.
 
 - **Yusri, Fortune's Flame** (rank 6651) — `yusri_fortune_s_flame`
   - Whenever Yusri attacks, choose a number between 1 and 5. Flip that many coins. For each flip you win, draw a card. For each flip you lose, Yusri deals 2 damage to you. If you won five flips this way, you may cast spells from your hand this turn without paying their mana costs.
+
+</details>
+
+## for-each-counter-kind
+
+Blocks **1** card.
+
+- **(op)** an iteration over the distinct counter kinds present on a set of permanents (here: permanents you control), binding each kind so the loop body can name it as a counter type; the body is an optional choice between add_counters +1/+1 and add_counters of the bound kind on the source
+  <br>Why the existing vocabulary won't do: for_each iterates objects, not counter kinds; add_counters takes a printed `counter` string with no way to read a bound kind; move_counters/remove_counters have any_kind/all_kinds but those act on counters already on an object rather than enumerating kinds to put new ones; value_keys has `distinct` and `counters_on` but neither yields the set of kinds as a loop domain or a counter-name binding
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bribe Taker** (rank 20085) — `bribe_taker`
+  - When this creature enters, for each kind of counter on permanents you control, you may put your choice of a +1/+1 counter or a counter of that kind on this creature.
 
 </details>
 
@@ -7608,6 +7628,20 @@ Blocks **1** card.
 
 - **Moira Brown, Guide Author** (rank 14880) — `moira_brown_guide_author`
   - When Moira Brown enters, create a colorless Book Equipment artifact token named Wasteland Survival Guide with "Equipped creature gets +1/+1 for each quest counter among permanents you control" and equip {1}.
+
+</details>
+
+## while-counter-duration
+
+Blocks **1** card.
+
+- **(op)** a `duration: "while_counter"` (with `counter` naming the kind, here "feather") on the ops that set base power/toughness and grant keywords -- `animate` with `keep_colors`/no type change setting base 3/1 and `keywords: ["flying"]` (or `set_pt` plus `grant_keyword`) -- so the effect lasts exactly as long as the target has a counter of that kind, ending when the last one is removed, with no end-of-turn clock
+  <br>Why the existing vocabulary won't do: `add_subtype` is the only op with a `while_counter` duration (Xolatoyac's flood counter). `animate` accepts only until-end-of-turn, until-your-next-turn or `permanent`; `grant_keyword` accepts until-end-of-turn, `permanent` or `as_long_as_you_control_source`; `set_pt` is an until-end-of-turn compensating pump. A `permanent` duration would keep the 3/1 flying body after the feather counter is removed, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aven Mimeomancer** (rank 13251) — `aven_mimeomancer`
+  - At the beginning of your upkeep, you may put a feather counter on target creature. If you do, that creature has base power and toughness 3/1 and has flying for as long as it has a feather counter on it.
 
 </details>
 

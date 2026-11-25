@@ -374,6 +374,14 @@
   "agent_of_atlas": {
     "zone": "battlefield"
   },
+  "agent_s_toolkit": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "agility_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1855,6 +1863,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "avenging_huntbonder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "avian_changeling": {
     "zone": "battlefield"
   },
@@ -2020,6 +2032,14 @@
   "banquet_guests": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "bant_charm": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "bant_panorama": {
     "zone": "battlefield"

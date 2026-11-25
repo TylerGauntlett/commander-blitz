@@ -1,0 +1,18 @@
+{
+  "card_id": "aven_courier",
+  "name": "Aven Courier",
+  "oracle_text": "Flying\nWhenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.",
+  "blocked_sentences": [
+    "Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it."
+  ],
+  "needs": [
+    {
+      "capability": "choose_counter_kind",
+      "kind": "op",
+      "what": "an op that has the controller choose one counter kind from among the kinds currently on permanents they control, binding it (e.g. `as: \"kind\"`) so a later `add_counters` can take `counter: {\"binding\": \"kind\"}` and a condition/selector can test `has_counters: {\"binding\": \"kind\"}` on the target (\"if it doesn't have a counter of that kind on it\")",
+      "why_existing_wont_do": "`add_counters` takes only a fixed printed `counter` kind; `move_counters`/`remove_counters` have `any_kind` but move or remove existing counters from a source rather than naming a kind and putting a fresh one elsewhere; `proliferate` adds to every kind already present on chosen objects, not one chosen kind onto a permanent lacking it; `choose_type`/`choose_color`/`choose_card_name` choose other vocabularies, not counter kinds"
+    }
+  ],
+  "closest_existing": ["add_counters", "move_counters", "proliferate", "choose_type"],
+  "confidence": "high"
+}

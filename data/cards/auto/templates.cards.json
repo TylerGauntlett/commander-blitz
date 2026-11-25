@@ -4861,6 +4861,104 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_kind": true,
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "move_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Move a counter from Agent's Toolkit onto that creature?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you may move a counter from this artifact onto that creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Sacrifice this artifact: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "agent_s_toolkit",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Agent's Toolkit",
+      "oracle_text": "This artifact enters with a +1/+1 counter, a flying counter, a deathtouch counter, and a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\nWhenever a creature you control enters, you may move a counter from this artifact onto that creature.\n{2}, Sacrifice this artifact: Draw a card.",
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        },
+        {
+          "amount": 1,
+          "counter": "flying",
+          "event": "self_enters_with_counters"
+        },
+        {
+          "amount": 1,
+          "counter": "deathtouch",
+          "event": "self_enters_with_counters"
+        },
+        {
+          "amount": 1,
+          "counter": "shield",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Clue"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -22524,6 +22622,68 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "double_strike",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, put a double strike counter on another target attacking creature.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "avenging_huntbonder",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Avenging Huntbonder",
+      "oracle_text": "Double strike\nWhenever this creature attacks, put a double strike counter on another target attacking creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -24459,6 +24619,101 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "bant_charm",
+      "mana_cost": "{G}{W}{U}",
+      "name": "Bant Charm",
+      "oracle_text": "Choose one —\n• Destroy target artifact.\n• Put target creature on the bottom of its owner's library.\n• Counter target instant spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "bottom": true,
+                  "objects": {
+                    "target": "tucked"
+                  },
+                  "op": "put_on_top"
+                }
+              ],
+              "label": "Put target creature on the bottom of its owner's library."
+            },
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target instant spell."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "tucked",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Instant"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
