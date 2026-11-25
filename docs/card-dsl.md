@@ -3710,6 +3710,24 @@ The near misses: `deals_combat_damage` is combat only; `deals_damage_to_player`
 is the player half only and misses a fight or a blocked creature; lifelink is a
 static that gains as the damage is dealt, not a trigger on the stack.
 
+### A reduction that counts modified creatures
+
+```jsonc
+// Walking Skyscraper -- "costs {1} less to cast for each modified creature you control"
+"cost_reduction": {
+  "count": { "controller": "you", "types": ["Creature"], "modified": true }
+}
+```
+
+700.9: a counter of any kind, any Equipment attached, or an Aura its
+controller controls. `has_counters` and `enchanted_by` say two of the limbs and
+nothing in a reduction filter says the Equipment, so an `any_of` of the two
+would leave the equipped creature uncounted. The key is `true` alone, as in a
+static's filter, and is read through `characteristics.is_modified_printed`, the
+static filter's reader: every limb is board state, and a creature with all
+three is still one creature. The same filter prices an activated ability's
+`mana_reduction` (Towashi Guide-Bot).
+
 ### A reduction that counts an *or* of characteristics
 
 ```jsonc

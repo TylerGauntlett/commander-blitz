@@ -1702,7 +1702,14 @@ COST_REDUCTION_TARGETING_REFUSED_KEYS = frozenset({"zone", "self_only", "exclude
 #: Spelled as the effect-side selector language already spells it (Lost to
 #: Legend's target line is exactly this shape), so one printed word has one
 #: spelling wherever it is written.
-COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of"})
+#:
+#: ``modified`` is the third: "for each **modified** creature you control"
+#: (Walking Skyscraper). 700.9 is a disjunction over three relations -- a
+#: counter, an Equipment, an Aura you control -- and `has_counters` and
+#: `enchanted_by` reach only two of them, so an `any_of` of those would leave
+#: the Equipped creature uncounted. Read by `cost_reduction._object_matches`
+#: through `is_modified_printed`, the static filter's own reader.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of", "modified"})
 
 #: Filter keys a cost reduction *refuses*, though a static ability accepts them.
 #:

@@ -8,7 +8,13 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import chars, compare_pt, enchanted_by, has_counters_matches
+from .characteristics import (
+    chars,
+    compare_pt,
+    enchanted_by,
+    has_counters_matches,
+    is_modified_printed,
+)
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
 from .effects.selectors import has_printed_cost
@@ -478,6 +484,13 @@ def _object_matches(
     # Whether it is enchanted, an input for the same reason: nothing in the
     # characteristics layer attaches an Aura. "You" is the player paying.
     if "enchanted_by" in filt and not enchanted_by(state, oid, filt["enchanted_by"], pid):
+        return False
+    # "…costs {1} less for each **modified** creature you control" (Walking
+    # Skyscraper, Towashi Guide-Bot). 700.9's three limbs -- a counter, an
+    # Equipment, an Aura the payer controls -- and each is an input for the same
+    # reason the two keys above are, so `is_modified_printed`, the static
+    # filter's reader, answers it. Only a permanent can be modified.
+    if filt.get("modified") and not (obj.on_battlefield and is_modified_printed(state, obj, pid)):
         return False
     # "…for each creature that entered this turn". Honoured here because the
     # docstring above promises it: **every key the loader accepts is read here**,

@@ -32,7 +32,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static values](#static-values) | 27 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
-| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
+| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 3 |
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
@@ -1185,6 +1185,7 @@ Keys a cost-reduction filter accepts beyond the static filter. Refused there: `a
 | Name | Description | Defined in |
 |---|---|---|
 | `any_of` | Count an *or* of characteristics. | [A reduction that counts an or of characteristics](card-dsl.md#a-reduction-that-counts-an-or-of-characteristics) |
+| `modified` | A counter, an Equipment, or an Aura you control on it (700.9). | [A reduction that counts modified creatures](card-dsl.md#a-reduction-that-counts-modified-creatures) |
 | `zone` | Count in a zone other than the battlefield. | [Counting filters, and the zone key](card-dsl.md#counting-filters-and-the-zone-key) |
 
 ## Mana rider ops

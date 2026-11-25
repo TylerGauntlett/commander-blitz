@@ -28128,6 +28128,10 @@
       "0": 3
     }
   },
+  "towashi_guide_bot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tower_defense": {
     "granted": {
       "count": 2,
@@ -30104,6 +30108,10 @@
     "zone": "battlefield"
   },
   "walking_corpse": {
+    "zone": "battlefield"
+  },
+  "walking_skyscraper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wall_of_air": {

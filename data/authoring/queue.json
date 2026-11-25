@@ -290202,12 +290202,12 @@
     },
     "Towashi Guide-Bot": {
       "edhrec_rank": 7426,
-      "gate": "template",
+      "gate": null,
       "name": "Towashi Guide-Bot",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "da4ccf70-b661-46ea-bea9-4466a3a35562",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Towashi Songshaper": {
@@ -309102,12 +309102,12 @@
     },
     "Walking Skyscraper": {
       "edhrec_rank": 13157,
-      "gate": "template",
+      "gate": null,
       "name": "Walking Skyscraper",
-      "reason": "no template for: This spell costs {1} less to cast for each modified creature you control",
+      "reason": "",
       "scryfall_id": "958af4ba-f29e-47ef-995e-3985982c75ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walking Sponge": {
